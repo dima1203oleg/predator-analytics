@@ -1,5 +1,0 @@
-apiVersion: v2
-name: policy-engine
-description: Policy Engine to evaluate signals and return allow/deny decisions
-type: application
-version: 0.1.0

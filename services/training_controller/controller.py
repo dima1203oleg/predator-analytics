@@ -20,11 +20,12 @@ app = FastAPI(title="Predator Training Controller", version="25.1")
 # Initialize K8s Client
 try:
     config.load_incluster_config()
-except Exception:
+except Exception as e:  # type: ignore[misc]
+    logger.debug(f"Incluster config failed: {e}")
     try:
         config.load_kube_config()
-    except Exception as e:
-        logger.warning("Failed to load K8s config, running in simulation mode: %s", e)
+    except Exception as e:  # type: ignore[misc]
+        logger.warning(f"Failed to load K8s config, running in simulation mode: {e}")
 
 batch_api = client.BatchV1Api()
 
@@ -87,8 +88,8 @@ async def launch_training_job(event: PredatorEvent):
         batch_api.create_namespaced_job(namespace="predator-analytics", body=job_spec)
         logger.info("Training Job created: %s", job_spec.metadata.name)
 
-    except Exception:
-        logger.exception("Failed to create training job")
+    except (client.ApiException, Exception) as e:  # type: ignore[misc]
+        logger.exception(f"Failed to create training job: {e}")
 
 
 @app.post("/events/train")

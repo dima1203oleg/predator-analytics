@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import MarketPage from '../MarketPage';
 import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
 
-// Mock APIs
+// Моки API
 vi.mock('@/services/api', () => ({
     dashboardApi: {
         getOverview: vi.fn()
@@ -16,7 +16,7 @@ vi.mock('@/services/api', () => ({
     }
 }));
 
-// Mock framer-motion
+// Мок framer-motion
 vi.mock('framer-motion', async () => {
     const actual = await vi.importActual('framer-motion');
     return {
@@ -33,7 +33,7 @@ vi.mock('framer-motion', async () => {
     };
 });
 
-// Mock echarts
+// Мок echarts
 vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock">Chart Mock</div>
 }));
@@ -84,7 +84,7 @@ describe('MarketPage Component', () => {
         render(<MarketPage />);
         
         expect(await screen.findByText('Ринок')).toBeInTheDocument();
-        expect(screen.getByText('Огляд ринку')).toBeInTheDocument();
+        expect(screen.getAllByText('Огляд ринку').length).toBeGreaterThan(0);
         expect(screen.getByText('Декларації')).toBeInTheDocument();
         expect(screen.getByText('Конкуренти')).toBeInTheDocument();
         expect(screen.getByText('Митниця')).toBeInTheDocument();
@@ -94,9 +94,9 @@ describe('MarketPage Component', () => {
         render(<MarketPage />);
         
         // Перевіряємо дані з моків
-        expect(await screen.findByText('15,400')).toBeInTheDocument(); // total_declarations
-        expect(screen.getByText('$120.0M')).toBeInTheDocument(); // total_value_usd
-        expect(screen.getByText('3,200')).toBeInTheDocument(); // active_companies
+        expect(await screen.findByText(/15[\s\xa0]400/)).toBeInTheDocument();
+        expect(screen.getByText('$120.0M')).toBeInTheDocument();
+        expect(screen.getByText(/3[\s\xa0]200/)).toBeInTheDocument();
         
         // Перевіряємо топ продукти
         expect(screen.getByText('Телефони')).toBeInTheDocument();

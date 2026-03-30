@@ -1,11 +1,23 @@
 /**
- * UNIFIED DATA SERVICE - V45 Truth Protocol
+ * UNIFIED DATA SERVICE - V56 Truth Protocol
  *
  * Замінює всі MOCK дані реальними API викликами.
  * Централізує всю логіку отримання даних з backend.
+ * 
+ * v56: Поліпшена обробка помилок, консолідована логування
  */
 
 import { api, apiClient, v45Client } from './api';
+
+// ============================================================================
+// LOGGING UTILITY - Централізована обробка помилок
+// ============================================================================
+
+const logError = (service: string, operation: string, error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`[${service}] ${operation} failed:`, message);
+  // TODO: Надіслати в error tracking систему (e.g. Sentry)
+};
 
 // ============================================================================
 // TYPES - Загальні типи для даних
@@ -53,7 +65,7 @@ class InfrastructureService {
       const response = await v45Client.get('/infrastructure');
       return response.data?.environments || [];
     } catch (error) {
-      console.error('[InfraService] Failed to fetch environments:', error);
+      logError('InfraService', 'Fetch environments', error);
       return [];
     }
   }
@@ -62,7 +74,7 @@ class InfrastructureService {
     try {
       return await api.v45.getLiveHealth();
     } catch (error) {
-      console.error('[InfraService] Failed to fetch system metrics:', error);
+      logError('InfraService', 'Fetch system metrics', error);
       return null;
     }
   }
@@ -72,7 +84,7 @@ class InfrastructureService {
       const response = await v45Client.get('/infrastructure/services');
       return response.data?.services || [];
     } catch (error) {
-      console.error('[InfraService] Failed to fetch services:', error);
+      logError('InfraService', 'Fetch services', error);
       return [];
     }
   }
@@ -81,7 +93,7 @@ class InfrastructureService {
     try {
       return await api.getClusterStatus();
     } catch (error) {
-      console.error('[InfraService] Failed to fetch cluster status:', error);
+      logError('InfraService', 'Fetch cluster status', error);
       return { status: 'unknown', nodes: [], pods: [] };
     }
   }
@@ -96,7 +108,7 @@ class DataSourcesService {
     try {
       return await api.getConnectors();
     } catch (error) {
-      console.error('[DataSourcesService] Failed to fetch connectors:', error);
+      logError('DataSourcesService', 'Fetch connectors', error);
       return [];
     }
   }
@@ -105,7 +117,7 @@ class DataSourcesService {
     try {
       return (await apiClient.get('/sources')).data;
     } catch (error) {
-      console.error('[DataSourcesService] Failed to fetch sources:', error);
+      logError('DataSourcesService', 'Fetch sources', error);
       return [];
     }
   }
@@ -114,7 +126,7 @@ class DataSourcesService {
     try {
       return (await apiClient.get('/databases')).data;
     } catch (error) {
-      console.error('[DataSourcesService] Failed to fetch databases:', error);
+      logError('DataSourcesService', 'Fetch databases', error);
       return [];
     }
   }
@@ -123,7 +135,7 @@ class DataSourcesService {
     try {
       return (await apiClient.get('/vectors')).data;
     } catch (error) {
-      console.error('[DataSourcesService] Failed to fetch vectors:', error);
+      logError('DataSourcesService', 'Fetch vectors', error);
       return [];
     }
   }
@@ -138,7 +150,7 @@ class ETLService {
     try {
       return await api.getETLJobs(limit);
     } catch (error) {
-      console.error('[ETLService] Failed to fetch ETL jobs:', error);
+      logError('ETLService', 'Fetch ETL jobs', error);
       return [];
     }
   }
@@ -147,7 +159,7 @@ class ETLService {
     try {
       return (await apiClient.get('/etl/status')).data;
     } catch (error) {
-      console.error('[ETLService] Failed to fetch ETL status:', error);
+      logError('ETLService', 'Fetch ETL status', error);
       return { etl_running: false, global_progress: 0 };
     }
   }
@@ -156,7 +168,7 @@ class ETLService {
     try {
       return await api.syncETL();
     } catch (error) {
-      console.error('[ETLService] Failed to sync ETL:', error);
+      logError('ETLService', 'Sync ETL', error);
       throw error;
     }
   }
@@ -176,7 +188,7 @@ class SecurityService {
       // Fallback to system logs
       return await api.streamSystemLogs();
     } catch (error) {
-      console.error('[SecurityService] Failed to fetch audit logs:', error);
+      logError('SecurityService', 'Fetch audit logs', error);
       return [];
     }
   }
@@ -185,7 +197,7 @@ class SecurityService {
     try {
       return (await apiClient.get('/security/secrets')).data;
     } catch (error) {
-      console.error('[SecurityService] Failed to fetch secrets:', error);
+      logError('SecurityService', 'Fetch secrets', error);
       return [];
     }
   }
@@ -194,7 +206,7 @@ class SecurityService {
     try {
       return await api.v45.getLiveAlerts();
     } catch (error) {
-      console.error('[SecurityService] Failed to fetch alerts:', error);
+      logError('SecurityService', 'Fetch alerts', error);
       return [];
     }
   }
@@ -210,7 +222,7 @@ class AgentsService {
       const response = await v45Client.get('/agents');
       return response.data?.agents || [];
     } catch (error) {
-      console.error('[AgentsService] Failed to fetch agents:', error);
+      logError('AgentsService', 'Fetch agents', error);
       return [];
     }
   }
@@ -219,7 +231,7 @@ class AgentsService {
     try {
       return await api.llm.getProviders(); // LLM providers serve as agent configs
     } catch (error) {
-      console.error('[AgentsService] Failed to fetch agent configs:', error);
+      logError('AgentsService', 'Fetch agent configs', error);
       return [];
     }
   }
@@ -228,7 +240,7 @@ class AgentsService {
     try {
       return await api.llm.getProviders();
     } catch (error) {
-      console.error('[AgentsService] Failed to fetch LLM providers:', error);
+      logError('AgentsService', 'Fetch LLM providers', error);
       return [];
     }
   }

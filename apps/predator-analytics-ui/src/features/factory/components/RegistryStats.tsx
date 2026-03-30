@@ -2,19 +2,37 @@ import React from 'react';
 import { TacticalCard } from '@/components/TacticalCard';
 import { Database, Network, Search, HardDrive, Cpu, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { FactoryRegistryStatsSnapshot, RegistryAvailability } from '../systemFactoryView.utils';
 
 interface RegistryStatsProps {
-  stats: {
-    postgres: { rows: number; size: string; status: 'online' | 'offline' };
-    neo4j: { nodes: number; edges: number; status: 'online' | 'offline' };
-    opensearch: { docs: number; indices: number; status: 'online' | 'offline' };
-    qdrant: { points: number; collections: number; status: 'online' | 'offline' };
-    redis: { keys: number; memory: string; status: 'online' | 'offline' };
-    kafka: { topics: number; messages_sec: number; status: 'online' | 'offline' };
-  };
+  stats: FactoryRegistryStatsSnapshot;
 }
 
 export function RegistryStats({ stats }: RegistryStatsProps) {
+  const getStatusMeta = (status: RegistryAvailability) => {
+    if (status === 'online') {
+      return {
+        dot: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]',
+        text: 'text-emerald-500',
+        label: 'В мережі',
+      };
+    }
+
+    if (status === 'offline') {
+      return {
+        dot: 'bg-rose-500 animate-pulse',
+        text: 'text-rose-500',
+        label: 'Помилка',
+      };
+    }
+
+    return {
+      dot: 'bg-slate-500',
+      text: 'text-slate-500',
+      label: 'Немає даних',
+    };
+  };
+
   const items = [
     { 
       id: 'pg', 
@@ -24,7 +42,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-blue-500/10',
       border: 'border-blue-500/20',
       metrics: [
-        { label: 'Записів', value: stats.postgres.rows.toLocaleString() },
+        { label: 'Записів', value: stats.postgres.rows },
         { label: 'Розмір', value: stats.postgres.size }
       ],
       status: stats.postgres.status
@@ -37,8 +55,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-emerald-500/10',
       border: 'border-emerald-500/20',
       metrics: [
-        { label: 'Вузлів', value: stats.neo4j.nodes.toLocaleString() },
-        { label: 'Зв\'язків', value: stats.neo4j.edges.toLocaleString() }
+        { label: 'Вузлів', value: stats.neo4j.nodes },
+        { label: 'Зв\'язків', value: stats.neo4j.edges }
       ],
       status: stats.neo4j.status
     },
@@ -50,8 +68,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-amber-500/10',
       border: 'border-amber-500/20',
       metrics: [
-        { label: 'Документів', value: stats.opensearch.docs.toLocaleString() },
-        { label: 'Індексів', value: stats.opensearch.indices.toString() }
+        { label: 'Документів', value: stats.opensearch.docs },
+        { label: 'Індексів', value: stats.opensearch.indices }
       ],
       status: stats.opensearch.status
     },
@@ -63,8 +81,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-indigo-500/10',
       border: 'border-indigo-500/20',
       metrics: [
-        { label: 'Векторів', value: stats.qdrant.points.toLocaleString() },
-        { label: 'Колекцій', value: stats.qdrant.collections.toString() }
+        { label: 'Векторів', value: stats.qdrant.points },
+        { label: 'Колекцій', value: stats.qdrant.collections }
       ],
       status: stats.qdrant.status
     },
@@ -76,7 +94,7 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-rose-500/10',
       border: 'border-rose-500/20',
       metrics: [
-        { label: 'Ключів', value: stats.redis.keys.toLocaleString() },
+        { label: 'Ключів', value: stats.redis.keys },
         { label: 'Пам\'ять', value: stats.redis.memory }
       ],
       status: stats.redis.status
@@ -89,8 +107,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       bg: 'bg-orange-500/10',
       border: 'border-orange-500/20',
       metrics: [
-        { label: 'Топіків', value: stats.kafka.topics.toString() },
-        { label: 'Мв/сек', value: stats.kafka.messages_sec.toString() }
+        { label: 'Топіків', value: stats.kafka.topics },
+        { label: 'Подій/сек', value: stats.kafka.messages_sec }
       ],
       status: stats.kafka.status
     }
@@ -98,7 +116,10 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {items.map((item, idx) => (
+      {items.map((item, idx) => {
+        const statusMeta = getStatusMeta(item.status);
+
+        return (
         <motion.div
           key={item.id}
           initial={{ opacity: 0, y: 20 }}
@@ -123,15 +144,16 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
                 ))}
               </div>
               <div className="flex flex-col items-end gap-1">
-                <div className={`w-2 h-2 rounded-full ${item.status === 'online' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 animate-pulse'} `} />
-                <span className={`text-[8px] font-black uppercase tracking-widest ${item.status === 'online' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                  {item.status === 'online' ? 'В мережі' : 'Помилка'}
+                <div className={`w-2 h-2 rounded-full ${statusMeta.dot}`} />
+                <span className={`text-[8px] font-black uppercase tracking-widest ${statusMeta.text}`}>
+                  {statusMeta.label}
                 </span>
               </div>
             </div>
           </TacticalCard>
         </motion.div>
-      ))}
+        );
+      })}
     </div>
   );
 }

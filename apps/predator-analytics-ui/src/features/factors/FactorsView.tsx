@@ -1,280 +1,436 @@
 /**
- * PREDATOR v55 | ФАКТОРНИЙ БОРД
- * 
- * Інтегрована панель для управління та аналізу факторів впливу
- * - Командний центр
- * - Симуляція даних реального часу
- * 
- * © 2026 PREDATOR Analytics
+ * Операційний борд факторів.
+ *
+ * Використовує тільки підтверджені агрегати з:
+ * - /api/v1/factory/stats
+ * - /api/v1/dashboard/overview
+ * - /api/v1/system/stats
  */
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Factory, AlertCircle, Shield, RefreshCw, Activity,
-  Database, Server, Fingerprint, Radar, ChevronRight, Zap
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+    Activity,
+    AlertCircle,
+    ChevronRight,
+    Factory,
+    Loader2,
+    Radar,
+    RefreshCw,
+    Server,
+    Shield,
+    Zap,
 } from 'lucide-react';
-import { PageTransition } from '@/components/layout/PageTransition';
-import { ViewHeader } from '@/components/ViewHeader';
+import { useNavigate } from 'react-router-dom';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
+import { ViewHeader } from '@/components/ViewHeader';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
+import { factoryApi } from '@/services/api/factory';
+import type { FactoryStats } from '@/features/factory/types';
+import { systemApi, type SystemStatsResponse } from '@/services/api/system';
 import { cn } from '@/utils/cn';
-import { useNavigate } from 'react-router-dom';
+import { normalizeFactorsSnapshot, type FactorTone } from './factorsView.utils';
 
-// Симуляція даних
-const mockMetrics = {
-  activeFactors: 142,
-  anomalyDetected: 5,
-  scannedEntities: 8934,
-  amlFlags: 12,
-  systemLoad: 42,
-  networkLatency: 18,
+const toneClasses: Record<FactorTone, { icon: string; badge: string; border: string; glow: string }> = {
+    indigo: {
+        icon: 'border-indigo-500/25 bg-indigo-500/10 text-indigo-300',
+        badge: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
+        border: 'border-indigo-500/15',
+        glow: 'from-indigo-500/20 via-indigo-500/5 to-transparent',
+    },
+    amber: {
+        icon: 'border-amber-500/25 bg-amber-500/10 text-amber-300',
+        badge: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
+        border: 'border-amber-500/15',
+        glow: 'from-amber-500/20 via-amber-500/5 to-transparent',
+    },
+    rose: {
+        icon: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-200',
+        border: 'border-rose-500/15',
+        glow: 'from-rose-500/20 via-rose-500/5 to-transparent',
+    },
+    emerald: {
+        icon: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300',
+        badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
+        border: 'border-emerald-500/15',
+        glow: 'from-emerald-500/20 via-emerald-500/5 to-transparent',
+    },
+    cyan: {
+        icon: 'border-cyan-500/25 bg-cyan-500/10 text-cyan-300',
+        badge: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
+        border: 'border-cyan-500/15',
+        glow: 'from-cyan-500/20 via-cyan-500/5 to-transparent',
+    },
+    slate: {
+        icon: 'border-slate-500/25 bg-slate-500/10 text-slate-300',
+        badge: 'border-slate-500/30 bg-slate-500/10 text-slate-200',
+        border: 'border-slate-500/15',
+        glow: 'from-slate-500/20 via-slate-500/5 to-transparent',
+    },
 };
 
-const FACTOR_MODULES = [
-  {
-    id: 'factory',
-    label: 'Фабрика Факторів',
-    icon: <Factory className="w-8 h-8" />,
-    color: 'indigo',
-    path: '/system-factory',
-    description: 'Генерація, управління та оркестрація впливових факторів. Автоматичне створення наборів правил для оцінки ризиків.',
-    metrics: [
-      { label: 'Активні правила', value: '1,240' },
-      { label: 'Кластери', value: '8' }
-    ]
-  },
-  {
-    id: 'risk-scoring',
-    label: 'Ризик-Скоринг',
-    icon: <AlertCircle className="w-8 h-8" />,
-    color: 'amber',
-    path: '/risk-scoring',
-    description: 'Матриця вірогідностей та калібрування ризик-факторів. Обчислення коефіцієнтів небезпеки в реальному часі.',
-    metrics: [
-      { label: 'Середній ризик', value: '47%' },
-      { label: 'Критичні', value: '14' }
-    ]
-  },
-  {
-    id: 'aml',
-    label: 'AML Аналізатор',
-    icon: <Shield className="w-8 h-8" />,
-    color: 'rose',
-    path: '/aml',
-    description: 'Детектування патернів протидії відмиванню коштів. Зв\'язок з PEP-базами та санкційними списками.',
-    metrics: [
-      { label: 'Матчінг PEP', value: '3' },
-      { label: 'Блокування', value: '2' }
-    ]
-  }
-];
+const moduleIcons = {
+    aml: Shield,
+    factory: Factory,
+    'risk-scoring': AlertCircle,
+} as const;
+
+const summaryIcons = {
+    activeFactors: Factory,
+    anomalyCount: Radar,
+    systemLoad: Server,
+} as const;
+
+const EmptyPanel = ({ title, description }: { title: string; description: string }) => (
+    <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-black/30 px-8 text-center">
+        <AlertCircle className="mb-4 h-10 w-10 text-amber-300" />
+        <div className="text-lg font-black text-white">{title}</div>
+        <div className="mt-2 max-w-xl text-sm leading-6 text-slate-400">{description}</div>
+    </div>
+);
 
 export default function FactorsView() {
-  const navigate = useNavigate();
-  const [metrics, setMetrics] = useState(mockMetrics);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+    const navigate = useNavigate();
+    const backendStatus = useBackendStatus();
+    const [factoryStats, setFactoryStats] = useState<FactoryStats | null>(null);
+    const [overview, setOverview] = useState<DashboardOverview | null>(null);
+    const [systemStats, setSystemStats] = useState<SystemStatsResponse | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  // Симуляція оновлення даних в реальному часі
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMetrics(prev => ({
-        ...prev,
-        systemLoad: Math.floor(Math.random() * 20) + 30,
-        networkLatency: Math.floor(Math.random() * 10) + 10,
-        scannedEntities: prev.scannedEntities + Math.floor(Math.random() * 5),
-      }));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    const loadData = useCallback(async (silent: boolean = false) => {
+        if (silent) {
+            setRefreshing(true);
+        } else {
+            setLoading(true);
+        }
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setMetrics({
-        activeFactors: 145,
-        anomalyDetected: 2,
-        scannedEntities: 9021,
-        amlFlags: 15,
-        systemLoad: 38,
-        networkLatency: 14,
-      });
-      setIsRefreshing(false);
-    }, 1000);
-  };
+        try {
+            const [factoryResult, overviewResult, systemResult] = await Promise.allSettled([
+                factoryApi.getStats(),
+                dashboardApi.getOverview(),
+                systemApi.getStats(),
+            ]);
 
-  return (
-    <PageTransition>
-      <div className="relative w-full min-h-screen bg-[#020617] overflow-hidden pb-10">
-        <AdvancedBackground />
-        <CyberGrid opacity={0.08} />
+            const nextFactory = factoryResult.status === 'fulfilled' ? factoryResult.value : null;
+            const nextOverview = overviewResult.status === 'fulfilled' ? overviewResult.value : null;
+            const nextSystem = systemResult.status === 'fulfilled' ? systemResult.value : null;
 
-        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-500/40 to-transparent z-50 opacity-20" />
+            setFactoryStats(nextFactory);
+            setOverview(nextOverview);
+            setSystemStats(nextSystem);
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12"
-        >
-          {/* Header */}
-          <ViewHeader
-            title={
-              <div className="flex items-center gap-8">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-indigo-500/30 blur-[60px] rounded-full scale-150 animate-pulse" />
-                  <div className="relative w-16 h-16 bg-slate-900 border border-indigo-500/30 rounded-3xl flex items-center justify-center panel-3d shadow-2xl overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-transparent" />
-                    <Factory size={32} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,1)] relative z-10" />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display skew-x-[-4deg]">
-                    ЦЕНТР <span className="text-indigo-500">ФАКТОРІВ</span>
-                  </h1>
-                  <p className="text-[11px] font-mono font-black text-indigo-400/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                    <Activity size={12} className="animate-pulse" /> 
-                    СИНТЕЗ ТА АНАЛІЗ ВПЛИВІВ // ВУЗОЛ-09
-                  </p>
-                </div>
-              </div>
+            if (!nextFactory && !nextOverview && !nextSystem) {
+                setError('Борд факторів тимчасово не отримав підтверджених даних від бекенду.');
+            } else {
+                setError(null);
             }
-            icon={<Factory size={22} className="text-indigo-500" />}
-            breadcrumbs={['PREDATOR', 'СИСТЕМА', 'БОРД ФАКТОРІВ']}
-            stats={[
-              { label: 'АКТИВНІ ФАКТОРИ', value: String(metrics.activeFactors), color: 'primary', icon: <Database size={14} />, animate: true },
-              { label: 'АНОМАЛІЇ', value: String(metrics.anomalyDetected), color: metrics.anomalyDetected > 3 ? 'danger' : 'success', icon: <Radar size={14} /> },
-              { label: 'НАВАНТАЖЕННЯ', value: `${metrics.systemLoad}%`, color: 'warning', icon: <Server size={14} /> }
-            ]}
-            actions={
-              <div className="flex gap-4">
-                <button 
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className="px-6 py-3.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-4 disabled:opacity-50 panel-3d"
-                >
-                  <RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
-                  <span>СИНХРОНІЗУВАТИ</span>
-                </button>
-              </div>
-            }
-          />
+        } catch (fetchError) {
+            console.error('[FactorsView] Не вдалося оновити борд факторів:', fetchError);
+            setError('Борд факторів тимчасово не отримав підтверджених даних від бекенду.');
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, []);
 
-          {/* Main Content Dashboard */}
-          <div className="mt-12 grid grid-cols-1 xl:grid-cols-3 gap-8">
-            
-            {/* Quick Metrics Timeline */}
-            <div className="xl:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: 'Оброблені сутності', value: metrics.scannedEntities.toLocaleString('uk-UA'), color: 'text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20' },
-                { label: 'AML Тригери', value: metrics.amlFlags, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
-                { label: 'Навантаження вузлів', value: `${metrics.systemLoad}%`, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
-                { label: 'Затримка мережі', value: `${metrics.networkLatency}ms`, color: 'text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20' }
-              ].map((m, i) => (
+    useEffect(() => {
+        void loadData();
+
+        const interval = window.setInterval(() => {
+            void loadData(true);
+        }, 30000);
+
+        return () => window.clearInterval(interval);
+    }, [loadData]);
+
+    const snapshot = useMemo(
+        () => normalizeFactorsSnapshot(factoryStats, overview, systemStats),
+        [factoryStats, overview, systemStats],
+    );
+
+    return (
+        <PageTransition>
+            <div className="relative min-h-screen overflow-hidden bg-[#020617] pb-12">
+                <AdvancedBackground />
+                <CyberGrid opacity={0.08} />
+
+                <div className="pointer-events-none fixed inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-indigo-500/40 to-transparent" />
+
                 <motion.div
-                  key={m.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className={cn("p-5 rounded-2xl border backdrop-blur-md flex flex-col items-center justify-center text-center panel-3d", m.bg, m.border)}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative z-10 mx-auto max-w-[1900px] p-4 sm:p-8 lg:p-12"
                 >
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{m.label}</span>
-                  <span className={cn("text-3xl font-mono font-black", m.color)}>{m.value}</span>
-                </motion.div>
-              ))}
-            </div>
+                    <ViewHeader
+                        title={(
+                            <div className="flex items-center gap-8">
+                                <div className="relative">
+                                    <div className="absolute inset-0 scale-150 rounded-full bg-indigo-500/25 blur-[60px]" />
+                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-indigo-500/25 bg-slate-950/90 shadow-2xl">
+                                        <Factory size={32} className="text-indigo-300 drop-shadow-[0_0_14px_rgba(129,140,248,0.85)]" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
+                                        Центр <span className="text-indigo-400">факторів</span>
+                                    </h1>
+                                    <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.45em] text-indigo-300/75">
+                                        <Activity size={12} className="animate-pulse" />
+                                        Робочий контур факторних модулів без синтетичних метрик
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                        icon={<Factory size={22} className="text-indigo-400" />}
+                        breadcrumbs={['PREDATOR', 'Система', 'Борд факторів']}
+                        stats={[
+                            {
+                                label: 'Активні фактори',
+                                value: snapshot.summary.activeFactors,
+                                color: 'primary',
+                                icon: <summaryIcons.activeFactors size={14} />,
+                                animate: refreshing,
+                            },
+                            {
+                                label: 'Аномалії',
+                                value: snapshot.summary.anomalyCount,
+                                color: snapshot.summary.anomalyCount !== 'Н/д' && snapshot.summary.anomalyCount !== '0' ? 'warning' : 'success',
+                                icon: <summaryIcons.anomalyCount size={14} />,
+                            },
+                            {
+                                label: 'Навантаження',
+                                value: snapshot.summary.systemLoad,
+                                color: 'warning',
+                                icon: <summaryIcons.systemLoad size={14} />,
+                            },
+                        ]}
+                        actions={(
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    void loadData(true);
+                                }}
+                                disabled={refreshing}
+                                className="inline-flex items-center gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-white/10 disabled:opacity-60"
+                            >
+                                {refreshing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                                Синхронізувати
+                            </button>
+                        )}
+                    />
 
-            {/* Application Modules */}
-            {FACTOR_MODULES.map((mod, idx) => (
-              <motion.div
-                key={mod.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2 + (idx * 0.1) }}
-              >
-                <TacticalCard
-                  title={mod.label}
-                  icon={mod.icon}
-                  variant="holographic"
-                  className="h-full flex flex-col group cursor-pointer hover:border-white/30 transition-all panel-3d overflow-hidden relative"
-                  onClick={() => navigate(mod.path)}
-                >
-                  {/* Hover Effects */}
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-${mod.color}-500/10 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                  
-                  <div className="flex-1 space-y-6 relative z-10 pt-4">
-                    <p className="text-sm text-slate-400 leading-relaxed font-medium">
-                      {mod.description}
-                    </p>
+                    <section className="mt-10 overflow-hidden rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.92),rgba(9,14,27,0.94))] p-6 shadow-[0_32px_90px_rgba(2,6,23,0.45)] sm:p-8">
+                        <div className="pointer-events-none absolute" />
+                        <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+                            <div>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.cyan.badge)}>
+                                        {backendStatus.statusLabel}
+                                    </Badge>
+                                    <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                                        Джерело: {backendStatus.sourceLabel}
+                                    </Badge>
+                                    <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                                        Оновлено: {snapshot.lastUpdatedLabel ?? 'Немає підтвердженої синхронізації'}
+                                    </Badge>
+                                </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      {mod.metrics.map((met, i) => (
-                        <div key={i} className="bg-slate-900/50 p-4 rounded-xl border border-white/5">
-                          <p className="text-[10px] uppercase font-black tracking-wider text-slate-500 mb-1">{met.label}</p>
-                          <p className={`text-xl font-mono font-black text-${mod.color}-400`}>{met.value}</p>
+                                <h2 className="mt-6 max-w-3xl text-3xl font-black tracking-tight text-white">
+                                    Єдиний вхід у факторні модулі, де кожна картка показує лише підтверджені агрегати.
+                                </h2>
+                                <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
+                                    Борд зводить ядро фабрики факторів, огляд ризиків та системні метрики в один зрозумілий контур.
+                                    Якщо певний ендпоїнт нічого не повернув, значення залишається порожнім або позначається як <span className="font-bold text-white">Н/д</span>,
+                                    без підміни випадковими числами.
+                                </p>
+
+                                {error && (
+                                    <div className="mt-5 rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
+                                        {error}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 xl:grid-cols-1">
+                                {[
+                                    {
+                                        label: 'Активні фактори',
+                                        value: snapshot.summary.activeFactors,
+                                        tone: 'indigo' as const,
+                                        icon: Factory,
+                                    },
+                                    {
+                                        label: 'Сигнали',
+                                        value: snapshot.summary.anomalyCount,
+                                        tone: 'amber' as const,
+                                        icon: Radar,
+                                    },
+                                    {
+                                        label: 'Навантаження ЦП',
+                                        value: snapshot.summary.systemLoad,
+                                        tone: 'cyan' as const,
+                                        icon: Server,
+                                    },
+                                ].map((item) => {
+                                    const styles = toneClasses[item.tone];
+                                    return (
+                                        <div key={item.label} className={cn('rounded-[28px] border bg-black/25 p-5', styles.border)}>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border', styles.icon)}>
+                                                    <item.icon size={20} />
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
+                                                    <div className="mt-2 text-3xl font-black tracking-tight text-white">{item.value}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                    </section>
 
-                  <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between relative z-10">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full bg-${mod.color}-500 animate-pulse`} />
-                      <span className="text-[10px] uppercase font-black tracking-widest text-slate-400">Модуль активний</span>
-                    </div>
-                    
-                    <button className={cn(
-                      `px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all`,
-                      `bg-${mod.color}-500/10 text-${mod.color}-400 group-hover:bg-${mod.color}-500/20`
-                    )}>
-                      Увійти
-                      <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </TacticalCard>
-              </motion.div>
-            ))}
+                    <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        {snapshot.quickStats.map((stat, index) => {
+                            const styles = toneClasses[stat.tone];
 
-            {/* Neural Log Streaming */}
-            <div className="xl:col-span-3">
-              <TacticalCard title="ПОТІК ОПЕРАЦІЙ" icon={<Zap size={18} className="text-emerald-400" />} variant="holographic">
-                <div className="space-y-3 font-mono text-[10px] uppercase">
-                  {[
-                    { text: 'Система: Синхронізація з Qdrant успішна', color: 'text-emerald-400', time: '0.002s тому' },
-                    { text: 'Ризик: Перерахунок матриці впливу (5924 сутності)', color: 'text-amber-400', time: '0.14s тому' },
-                    { text: 'AML: Детектовано збіг за параметром PEP_U-21', color: 'text-rose-400', time: '1.2s тому' },
-                    { text: 'Фабрика: Генерація нових факторів (ID: F-88-91)', color: 'text-indigo-400', time: '3.4s тому' },
-                    { text: 'Система: Базовий дамп пам\'яті кластера', color: 'text-slate-400', time: '12s тому' },
-                  ].map((log, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-slate-900/60 rounded-lg border border-white/5">
-                      <div className="flex items-center gap-3">
-                        <Fingerprint size={12} className={log.color} />
-                        <span className="text-slate-300 tracking-wider font-bold">{log.text}</span>
-                      </div>
-                      <span className="text-slate-600 font-bold">{log.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </TacticalCard>
+                            return (
+                                <motion.div
+                                    key={stat.label}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.08 }}
+                                    className={cn('rounded-[28px] border bg-slate-950/60 p-5 shadow-[0_18px_45px_rgba(2,6,23,0.32)]', styles.border)}
+                                >
+                                    <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">{stat.label}</div>
+                                    <div className="mt-3 text-3xl font-black tracking-tight text-white">{stat.value}</div>
+                                    <div className="mt-2 text-sm leading-6 text-slate-400">{stat.hint}</div>
+                                </motion.div>
+                            );
+                        })}
+                    </section>
+
+                    <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                            {snapshot.modules.map((module, index) => {
+                                const Icon = moduleIcons[module.id as keyof typeof moduleIcons] ?? Factory;
+                                const styles = toneClasses[module.tone];
+
+                                return (
+                                    <motion.div
+                                        key={module.id}
+                                        initial={{ opacity: 0, y: 16 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.15 + index * 0.08 }}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => navigate(module.path)}
+                                            className={cn(
+                                                'group relative flex h-full w-full flex-col overflow-hidden rounded-[34px] border bg-slate-950/65 p-6 text-left shadow-[0_22px_60px_rgba(2,6,23,0.35)] transition hover:-translate-y-1 hover:border-white/15',
+                                                styles.border,
+                                            )}
+                                        >
+                                            <div className={cn('pointer-events-none absolute inset-0 bg-gradient-to-br opacity-80', styles.glow)} />
+                                            <div className="relative z-10 space-y-6">
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className={cn('flex h-14 w-14 items-center justify-center rounded-[20px] border', styles.icon)}>
+                                                        <Icon size={24} />
+                                                    </div>
+                                                    <Badge className={cn('border px-3 py-1 text-[10px] font-bold', styles.badge)}>
+                                                        {module.statusLabel}
+                                                    </Badge>
+                                                </div>
+
+                                                <div>
+                                                    <h3 className="text-2xl font-black text-white">{module.label}</h3>
+                                                    <p className="mt-3 text-sm leading-7 text-slate-300">{module.description}</p>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    {module.metrics.map((metric) => (
+                                                        <div key={metric.label} className="rounded-[20px] border border-white/5 bg-black/35 p-4">
+                                                            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{metric.label}</div>
+                                                            <div className="mt-2 text-2xl font-black text-white">{metric.value}</div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                                                    <span className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                                                        Відкрити модуль
+                                                    </span>
+                                                    <span className={cn('inline-flex items-center gap-2 text-sm font-black', styles.badge)}>
+                                                        Увійти
+                                                        <ChevronRight size={16} className="transition-transform group-hover:translate-x-1" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+
+                        <TacticalCard
+                            title="Останні сигнали"
+                            icon={<Zap size={18} className="text-emerald-300" />}
+                            variant="holographic"
+                            className="rounded-[34px] border border-emerald-500/15 bg-slate-950/60"
+                        >
+                            {snapshot.signals.length > 0 ? (
+                                <div className="space-y-3">
+                                    {snapshot.signals.map((signal) => {
+                                        const styles = toneClasses[signal.tone];
+
+                                        return (
+                                            <div
+                                                key={signal.id}
+                                                className={cn('rounded-[22px] border bg-black/30 p-4', styles.border)}
+                                            >
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <Badge className={cn('border px-3 py-1 text-[10px] font-bold', styles.badge)}>
+                                                        {signal.severityLabel}
+                                                    </Badge>
+                                                    <span className="text-xs text-slate-500">{signal.timestampLabel}</span>
+                                                </div>
+                                                <div className="mt-3 text-sm font-bold leading-6 text-white">{signal.title}</div>
+                                                <div className="mt-2 text-xs leading-5 text-slate-400">{signal.subtitle}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <EmptyPanel
+                                    title={snapshot.hasAnyData ? 'Стрічка сигналів порожня' : 'Немає підтверджених сигналів'}
+                                    description={
+                                        snapshot.hasAnyData
+                                            ? 'Агрегований огляд не повернув критичних або попереджувальних подій для цього борду.'
+                                            : 'Спочатку борд має отримати дані з бекенду. Поки що жодні сигнали не домальовуються.'
+                                    }
+                                />
+                            )}
+                        </TacticalCard>
+                    </section>
+
+                    {loading && (
+                        <div className="mt-6 flex items-center gap-3 rounded-[24px] border border-white/5 bg-black/30 px-5 py-4 text-sm text-slate-400">
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Отримую підтверджені агрегати факторного контуру…
+                        </div>
+                    )}
+                </motion.div>
             </div>
-            
-          </div>
-        </motion.div>
-
-        <style dangerouslySetInnerHTML={{
-          __html: `
-          .panel-3d {
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-          }
-          .panel-3d:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.1);
-          }
-        `}} />
-      </div>
-    </PageTransition>
-  );
+        </PageTransition>
+    );
 }
-

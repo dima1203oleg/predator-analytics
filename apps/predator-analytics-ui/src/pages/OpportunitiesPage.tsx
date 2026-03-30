@@ -1,97 +1,234 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { marketApi } from '@/features/market/api/market';
-import { premiumLocales } from '@/locales/uk/premium';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { cn } from '@/lib/utils';
 import {
-    Lightbulb,
-    Sparkles,
-    FileBarChart,
-    Zap,
-    Star,
-    ExternalLink,
-    Clock,
     ArrowUpRight,
+    Clock,
+    ExternalLink,
+    FileBarChart,
+    Lightbulb,
     Loader2,
+    Sparkles,
+    Star,
+    TrendingUp,
+    Zap,
 } from 'lucide-react';
 
-type OpportunityTab = 'insights' | 'executive' | 'recommendations';
+type OpportunityTab = 'insights' | 'recommendations' | 'executive';
 
-const tabs: { key: OpportunityTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'insights', label: 'Insights', icon: <Sparkles size={18} /> },
-    { key: 'recommendations', label: 'Recommendations', icon: <Star size={18} /> },
-    { key: 'executive', label: 'Executive', icon: <FileBarChart size={18} /> },
+interface MarketInsightAction {
+    label: string;
+}
+
+interface MarketInsight {
+    id: string;
+    type: 'opportunity' | 'risk' | 'trend' | 'anomaly' | 'prediction' | string;
+    title: string;
+    description: string;
+    priority: 'critical' | 'high' | 'medium' | 'low' | string;
+    impact: string;
+    confidence: number;
+    created_at: string;
+    actions?: MarketInsightAction[];
+}
+
+const tabs: Array<{ key: OpportunityTab; label: string; icon: JSX.Element }> = [
+    { key: 'insights', label: 'Інсайти', icon: <Sparkles size={18} /> },
+    { key: 'recommendations', label: 'Рекомендації', icon: <Star size={18} /> },
+    { key: 'executive', label: 'Виконавчий огляд', icon: <FileBarChart size={18} /> },
 ];
 
-const typeConfig: Record<string, any> = {
-    opportunity: { label: 'Opportunity', color: 'emerald', icon: Lightbulb },
-    risk: { label: 'Risk', color: 'red', icon: Zap },
-    trend: { label: 'Trend', color: 'cyan', icon: ArrowUpRight },
-    anomaly: { label: 'Anomaly', color: 'amber', icon: Zap },
-    prediction: { label: 'Prediction', color: 'blue', icon: ArrowUpRight },
+const typeConfig: Record<
+    string,
+    { label: string; icon: JSX.Element; badge: string }
+> = {
+    opportunity: {
+        label: 'Можливість',
+        icon: <Lightbulb size={18} className="text-emerald-300" />,
+        badge: 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+    },
+    risk: {
+        label: 'Ризик',
+        icon: <Zap size={18} className="text-rose-300" />,
+        badge: 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+    },
+    trend: {
+        label: 'Тренд',
+        icon: <TrendingUp size={18} className="text-cyan-300" />,
+        badge: 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
+    },
+    anomaly: {
+        label: 'Аномалія',
+        icon: <Zap size={18} className="text-amber-300" />,
+        badge: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
+    },
+    prediction: {
+        label: 'Прогноз',
+        icon: <ArrowUpRight size={18} className="text-indigo-300" />,
+        badge: 'border-indigo-400/20 bg-indigo-500/10 text-indigo-200',
+    },
 };
 
-const impactConfig: Record<string, any> = {
-    critical: { label: 'Critical', bg: 'bg-red-500/10', text: 'text-red-400' },
-    high: { label: 'High', bg: 'bg-orange-500/10', text: 'text-orange-400' },
-    medium: { label: 'Medium', bg: 'bg-amber-500/10', text: 'text-amber-400' },
-    low: { label: 'Low', bg: 'bg-gray-500/10', text: 'text-gray-400' },
+const priorityConfig: Record<
+    string,
+    { label: string; badge: string }
+> = {
+    critical: { label: 'Критично', badge: 'border-rose-400/20 bg-rose-500/10 text-rose-200' },
+    high: { label: 'Високий', badge: 'border-orange-400/20 bg-orange-500/10 text-orange-200' },
+    medium: { label: 'Середній', badge: 'border-amber-400/20 bg-amber-500/10 text-amber-200' },
+    low: { label: 'Низький', badge: 'border-slate-400/20 bg-slate-500/10 text-slate-200' },
+};
+
+const formatTime = (value: string): string =>
+    new Date(value).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+const extractMoneyValue = (value: string): number | null => {
+    const normalized = value.replace(/\s+/g, '');
+    const match = normalized.match(/\$?(\d+(?:[.,]\d+)?)([kKmM])?/);
+
+    if (!match) {
+        return null;
+    }
+
+    const amount = Number(match[1].replace(',', '.'));
+
+    if (Number.isNaN(amount)) {
+        return null;
+    }
+
+    if (match[2]?.toLowerCase() === 'm') {
+        return amount * 1_000_000;
+    }
+
+    if (match[2]?.toLowerCase() === 'k') {
+        return amount * 1_000;
+    }
+
+    return amount;
+};
+
+const formatMoney = (value: number): string => {
+    if (value >= 1_000_000) {
+        return `$${(value / 1_000_000).toFixed(1)}M`;
+    }
+
+    if (value >= 1_000) {
+        return `$${(value / 1_000).toFixed(1)}K`;
+    }
+
+    return `$${value.toLocaleString('uk-UA')}`;
 };
 
 export default function OpportunitiesPage() {
+    const backendStatus = useBackendStatus();
     const [activeTab, setActiveTab] = useState<OpportunityTab>('insights');
 
     const { data, isLoading } = useQuery({
         queryKey: ['market-insights'],
         queryFn: marketApi.getInsights,
-        refetchInterval: 60000, // Refresh every minute
+        refetchInterval: 60_000,
     });
 
-    const insights = data?.insights || [];
+    const insights = (data?.insights ?? []) as MarketInsight[];
+
+    const insightSummary = useMemo(() => {
+        const actionable = insights.filter((insight) => (insight.actions?.length ?? 0) > 0).length;
+        const critical = insights.filter((insight) => insight.priority === 'critical').length;
+        const averageConfidence =
+            insights.length > 0
+                ? insights.reduce((sum, insight) => sum + insight.confidence, 0) / insights.length
+                : 0;
+
+        return {
+            actionable,
+            averageConfidence,
+            critical,
+        };
+    }, [insights]);
+
+    const topRecommendations = useMemo(
+        () =>
+            insights
+                .filter((insight) => insight.type === 'opportunity' || insight.type === 'prediction' || (insight.actions?.length ?? 0) > 0)
+                .sort((left, right) => right.confidence - left.confidence),
+        [insights],
+    );
+
+    const executiveStats = useMemo(() => {
+        const monetaryImpact = insights.reduce((sum, insight) => sum + (extractMoneyValue(insight.impact) ?? 0), 0);
+
+        return {
+            signals: insights.length,
+            monetaryImpact,
+            averageConfidence: insightSummary.averageConfidence,
+            lastUpdate:
+                insights.length > 0
+                    ? [...insights].sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime())[0].created_at
+                    : null,
+        };
+    }, [insightSummary.averageConfidence, insights]);
 
     return (
         <div className="space-y-6">
-            {/* Page Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <Lightbulb className="text-amber-400" size={28} />
-                        {premiumLocales.opportunities.title}
-                    </h1>
-                    <p className="text-gray-400 mt-1">
-                        {premiumLocales.opportunities.subtitle}
-                    </p>
+            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+                    <div className="max-w-3xl">
+                        <div className="mb-3 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-200">
+                                Ринкові сигнали
+                            </span>
+                            <span
+                                className={cn(
+                                    'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
+                                    backendStatus.isOffline
+                                        ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                                        : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                                )}
+                            >
+                                {backendStatus.statusLabel}
+                            </span>
+                        </div>
+                        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                            <Lightbulb className="text-amber-300" size={30} />
+                            Можливості
+                        </h1>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+                            Сторінка агрегує реальні інсайти ринку, а вкладки рекомендацій та виконавчого
+                            огляду формуються з цього самого потоку без статичних демо-блоків.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
+                        <MetricTile label="Сигнали" value={insights.length.toString()} />
+                        <MetricTile label="Критичні" value={insightSummary.critical.toString()} />
+                        <MetricTile label="Середня впевненість" value={`${insightSummary.averageConfidence.toFixed(0)}%`} />
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                    {isLoading ? (
-                        <Loader2 className="animate-spin text-amber-400" size={18} />
-                    ) : (
-                        <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full">
-                            {premiumLocales.opportunities.insights.newCount.replace('{count}', insights.length.toString())}
-                        </span>
-                    )}
+            </section>
+
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
+                <div className="flex flex-wrap gap-2">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setActiveTab(tab.key)}
+                            className={cn(
+                                'flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all',
+                                activeTab === tab.key
+                                    ? 'border-amber-400/20 bg-amber-500/10 text-amber-200'
+                                    : 'border-transparent text-slate-300 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+                            )}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            {/* Tab Navigation */}
-            <div className="flex gap-1 bg-gray-800/50 rounded-xl p-1 border border-gray-700/50">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          activeTab === tab.key
-                            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                            : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'
-                        }`}
-                    >
-                        {tab.icon}
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {/* Tab Content */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={activeTab}
@@ -101,109 +238,102 @@ export default function OpportunitiesPage() {
                     transition={{ duration: 0.2 }}
                 >
                     {activeTab === 'insights' && <InsightsTab insights={insights} isLoading={isLoading} />}
-                    {activeTab === 'recommendations' && <RecommendationsTab />}
-                    {activeTab === 'executive' && <ExecutiveTab />}
+                    {activeTab === 'recommendations' && (
+                        <RecommendationsTab recommendations={topRecommendations} isLoading={isLoading} />
+                    )}
+                    {activeTab === 'executive' && (
+                        <ExecutiveTab executiveStats={executiveStats} insights={insights} isLoading={isLoading} />
+                    )}
                 </motion.div>
             </AnimatePresence>
         </div>
     );
 }
 
-
-function InsightsTab({ insights, isLoading }: { insights: any[], isLoading: boolean }) {
+function InsightsTab({
+    insights,
+    isLoading,
+}: {
+    insights: MarketInsight[];
+    isLoading: boolean;
+}) {
     if (isLoading && insights.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-                <Loader2 className="animate-spin mb-4" size={48} />
-                <p>{premiumLocales.opportunities.insights.analyzing}</p>
+            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                <Loader2 className="mb-4 h-10 w-10 animate-spin text-amber-300" />
+                <p>Аналізуємо ринок і формуємо поточні інсайти...</p>
             </div>
         );
     }
 
     if (insights.length === 0) {
         return (
-            <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-12 text-center">
-                <Sparkles size={48} className="text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-400">{premiumLocales.opportunities.insights.empty.title}</h3>
-                <p className="text-gray-500 mt-2">{premiumLocales.opportunities.insights.empty.subtitle}</p>
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-12 text-center">
+                <Sparkles size={48} className="mx-auto mb-4 text-slate-600" />
+                <h3 className="text-lg font-semibold text-white">Інсайти поки не сформовано</h3>
+                <p className="mt-2 text-sm text-slate-500">
+                    Система не отримала достатньо підтверджених ринкових сигналів для цього блоку.
+                </p>
             </div>
         );
     }
 
-    // Calculate statistics for insights
-    const typeStats = insights.reduce((acc: any, insight: any) => {
-        acc[insight.type] = (acc[insight.type] || 0) + 1;
-        return acc;
-    }, {});
-
-    const priorityStats = insights.reduce((acc: any, insight: any) => {
-        acc[insight.priority] = (acc[insight.priority] || 0) + 1;
-        return acc;
-    }, {});
-
     return (
         <div className="space-y-4">
-            {insights.map((insight: any, i: number) => {
-                const config = typeConfig[insight.type] || typeConfig.opportunity;
-                const impact = impactConfig[insight.priority] || impactConfig.medium;
-                const Icon = config.icon;
+            {insights.map((insight, index) => {
+                const type = typeConfig[insight.type] ?? typeConfig.opportunity;
+                const priority = priorityConfig[insight.priority] ?? priorityConfig.medium;
 
                 return (
                     <motion.div
                         key={insight.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-gray-800/60 backdrop-blur-sm rounded-xl border border-gray-700/50 p-5 hover:border-amber-500/30 transition-all duration-300 cursor-pointer group"
+                        transition={{ delay: index * 0.05 }}
+                        className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5 transition-all hover:border-amber-400/16 hover:bg-white/[0.04]"
                     >
                         <div className="flex items-start gap-4">
-                            <div className="p-2 rounded-lg bg-gray-700/50 mt-0.5">
-                                <Icon size={20} className="text-amber-400" />
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/20">
+                                {type.icon}
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 mb-1">
-                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-500/10 text-amber-400">
-                                        {config.label}
+                            <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className={cn('rounded-full border px-2.5 py-1 text-[11px] font-semibold', type.badge)}>
+                                        {type.label}
                                     </span>
-                                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${impact.bg} ${impact.text}`}>
-                                        Priority: {impact.label}
+                                    <span className={cn('rounded-full border px-2.5 py-1 text-[11px] font-semibold', priority.badge)}>
+                                        Пріоритет: {priority.label}
                                     </span>
-                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <span className="inline-flex items-center gap-1 text-xs text-slate-500">
                                         <Clock size={12} />
-                                        {new Date(insight.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                                        {formatTime(insight.created_at)}
                                     </span>
                                 </div>
-                                <h4 className="text-white font-semibold group-hover:text-amber-400 transition-colors">
-                                    {insight.title}
-                                </h4>
-                                <p className="text-gray-400 text-sm mt-1 leading-relaxed">
-                                    {insight.description}
-                                </p>
-                                <div className="mt-2 text-xs font-medium text-cyan-400/90 italic">
-                                    Impact: {insight.impact}
+                                <h4 className="mt-3 text-lg font-black text-white">{insight.title}</h4>
+                                <p className="mt-2 text-sm leading-7 text-slate-400">{insight.description}</p>
+                                <div className="mt-3 text-sm font-semibold text-cyan-200">
+                                    Вплив: {insight.impact}
                                 </div>
-                                <div className="flex items-center justify-between mt-3">
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-gray-500">Confidence:</span>
-                                            <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-amber-400 rounded-full"
-                                                    style={{ width: `${insight.confidence}%` }}
-                                                />
-                                            </div>
-                                            <span className="text-xs font-mono text-gray-400">
-                                                {insight.confidence.toFixed(1)}%
-                                            </span>
+                                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                                        <span>Впевненість:</span>
+                                        <div className="h-2 w-24 overflow-hidden rounded-full bg-white/[0.08]">
+                                            <div
+                                                className="h-full rounded-full bg-amber-300"
+                                                style={{ width: `${Math.max(0, Math.min(100, insight.confidence))}%` }}
+                                            />
                                         </div>
+                                        <span className="font-semibold text-slate-200">{insight.confidence.toFixed(1)}%</span>
                                     </div>
-                                    <div className="flex gap-2">
-                                        {insight.actions?.map((action: any, idx: number) => (
+
+                                    <div className="flex flex-wrap gap-2">
+                                        {insight.actions?.map((action, actionIndex) => (
                                             <button
-                                                key={idx}
-                                                className="text-xs px-3 py-1 rounded-lg border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-colors flex items-center gap-1"
+                                                key={actionIndex}
+                                                className="inline-flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition-all hover:bg-cyan-500/16"
                                             >
-                                                {action.label} <ExternalLink size={12} />
+                                                {action.label}
+                                                <ExternalLink size={12} />
                                             </button>
                                         ))}
                                     </div>
@@ -217,105 +347,143 @@ function InsightsTab({ insights, isLoading }: { insights: any[], isLoading: bool
     );
 }
 
+function RecommendationsTab({
+    recommendations,
+    isLoading,
+}: {
+    recommendations: MarketInsight[];
+    isLoading: boolean;
+}) {
+    if (isLoading && recommendations.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                <Loader2 className="mb-4 h-10 w-10 animate-spin text-amber-300" />
+                <p>Підбираємо релевантні рекомендації з поточних сигналів...</p>
+            </div>
+        );
+    }
 
-function RecommendationsTab() {
-    const recommendations = [
-        { id: 1, type: 'supplier', name: 'Zhejiang Electronics Co.', product: 'Power Units 500W', efficiency: '+12.4%', icon: <Star className="text-amber-400" /> },
-        { id: 2, type: 'product', name: 'Industrial Controllers', product: 'Model X-200', efficiency: '+8.1%', icon: <Sparkles className="text-cyan-400" /> },
-    ];
-
-    return (
-        <div className="space-y-6">
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 text-center">
-                <Star size={32} className="text-amber-500 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">{premiumLocales.opportunities.recommendations.title}</h3>
-                <p className="text-gray-400 max-w-lg mx-auto text-sm">
-                    {premiumLocales.opportunities.recommendations.description}
+    if (recommendations.length === 0) {
+        return (
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-12 text-center">
+                <Star size={48} className="mx-auto mb-4 text-slate-600" />
+                <h3 className="text-lg font-semibold text-white">Рекомендацій поки немає</h3>
+                <p className="mt-2 text-sm text-slate-500">
+                    Поточний потік інсайтів не містить дій, які можна впевнено винести в рекомендації.
                 </p>
             </div>
+        );
+    }
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recommendations.map((rec) => (
-                    <div key={rec.id} className="bg-gray-800/60 p-5 rounded-xl border border-gray-700/50 hover:border-amber-500/30 transition-all">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-gray-700/50 rounded-lg">
-                                {rec.icon}
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                                    {rec.type === 'supplier' ? premiumLocales.opportunities.recommendations.items.supplier : premiumLocales.opportunities.recommendations.items.product}
-                                </div>
-                                <div className="text-white font-medium">{rec.name}</div>
-                            </div>
+    return (
+        <div className="grid gap-4 md:grid-cols-2">
+            {recommendations.map((recommendation) => (
+                <div
+                    key={recommendation.id}
+                    className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5"
+                >
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            Рекомендована дія
                         </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">{premiumLocales.opportunities.recommendations.items.product}:</span>
-                                <span className="text-gray-300">{rec.product}</span>
-                            </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">{premiumLocales.opportunities.recommendations.items.efficiency}:</span>
-                                <span className="text-emerald-400 font-mono">{rec.efficiency}</span>
-                            </div>
-                        </div>
-                        <button className="w-full mt-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-lg border border-amber-500/30 transition-all text-sm font-medium">
-                            {premiumLocales.opportunities.recommendations.items.action}
-                        </button>
+                        <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
+                            {recommendation.confidence.toFixed(0)}% впевненості
+                        </span>
                     </div>
-                ))}
-            </div>
-
-            <div className="text-center text-xs text-gray-600 mt-4">
-                {premiumLocales.opportunities.recommendations.sprintInfo}
-            </div>
+                    <h3 className="mt-4 text-lg font-black text-white">{recommendation.title}</h3>
+                    <p className="mt-2 text-sm leading-7 text-slate-400">{recommendation.description}</p>
+                    <div className="mt-4 rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3 text-sm text-slate-300">
+                        Очікуваний вплив: {recommendation.impact}
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                        {(recommendation.actions?.length ? recommendation.actions : [{ label: 'Відкрити картку сигналу' }]).map((action, index) => (
+                            <button
+                                key={index}
+                                className="inline-flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition-all hover:bg-cyan-500/16"
+                            >
+                                {action.label}
+                                <ExternalLink size={12} />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }
 
-
-function ExecutiveTab() {
-    const metrics = [
-        { label: premiumLocales.opportunities.executive.metrics.revenue, value: '$1.4M', color: 'text-emerald-400', icon: ArrowUpRight },
-        { label: premiumLocales.opportunities.executive.metrics.savings, value: '$85k', color: 'text-cyan-400', icon: Lightbulb },
-        { label: premiumLocales.opportunities.executive.metrics.risk, value: 'Low', color: 'text-amber-400', icon: Zap },
-    ];
+function ExecutiveTab({
+    executiveStats,
+    insights,
+    isLoading,
+}: {
+    executiveStats: {
+        signals: number;
+        monetaryImpact: number;
+        averageConfidence: number;
+        lastUpdate: string | null;
+    };
+    insights: MarketInsight[];
+    isLoading: boolean;
+}) {
+    if (isLoading && insights.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                <Loader2 className="mb-4 h-10 w-10 animate-spin text-cyan-300" />
+                <p>Готуємо виконавчий огляд із поточного потоку інсайтів...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
-            <div className="bg-gray-800/40 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 text-center">
-                <FileBarChart size={32} className="text-cyan-500 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">{premiumLocales.opportunities.executive.title}</h3>
-                <p className="text-gray-400 max-w-lg mx-auto text-sm">
-                    {premiumLocales.opportunities.executive.description}
-                </p>
+            <div className="grid gap-4 md:grid-cols-3">
+                <MetricTile label="Активні сигнали" value={executiveStats.signals.toString()} />
+                <MetricTile
+                    label="Оцінений грошовий вплив"
+                    value={executiveStats.monetaryImpact > 0 ? formatMoney(executiveStats.monetaryImpact) : 'Н/Д'}
+                />
+                <MetricTile label="Середня впевненість" value={`${executiveStats.averageConfidence.toFixed(0)}%`} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {metrics.map((m, i) => (
-                    <div key={i} className="bg-gray-900/40 p-5 rounded-xl border border-gray-700/30 flex flex-col items-center">
-                        <m.icon size={20} className={`${m.color} mb-2`} />
-                        <div className="text-xs text-gray-500 mb-1">{m.label}</div>
-                        <div className={`text-xl font-bold ${m.color}`}>{m.value}</div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="bg-gradient-to-r from-amber-500/10 to-transparent p-6 rounded-xl border border-amber-500/20">
-                <div className="flex items-center justify-between">
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+                <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <div className="text-white font-medium mb-1">{premiumLocales.opportunities.executive.generate}</div>
-                        <div className="text-xs text-gray-500">{premiumLocales.opportunities.executive.lastReport.replace('{date}', '07.03.2026')}</div>
+                        <h3 className="text-lg font-black tracking-tight text-white">Короткий виконавчий огляд</h3>
+                        <p className="mt-1 text-sm text-slate-400">
+                            Блок зібрано з реальних інсайтів, які вже є на сторінці.
+                        </p>
                     </div>
-                    <button className="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition-all shadow-lg shadow-amber-500/20">
-                        {premiumLocales.opportunities.executive.generate}
-                    </button>
+                    <div className="text-xs text-slate-500">
+                        Останнє оновлення: {executiveStats.lastUpdate ? formatTime(executiveStats.lastUpdate) : 'немає'}
+                    </div>
+                </div>
+
+                <div className="mt-5 space-y-3">
+                    {insights.slice(0, 3).map((insight) => (
+                        <div
+                            key={insight.id}
+                            className="rounded-[24px] border border-white/[0.08] bg-black/20 px-4 py-4"
+                        >
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="font-semibold text-white">{insight.title}</div>
+                                <span className="text-xs text-slate-500">{formatTime(insight.created_at)}</span>
+                            </div>
+                            <p className="mt-2 text-sm leading-7 text-slate-400">{insight.description}</p>
+                            <div className="mt-3 text-sm font-semibold text-cyan-200">{insight.impact}</div>
+                        </div>
+                    ))}
                 </div>
             </div>
-
-            <div className="text-center text-xs text-gray-600 mt-4">
-                {premiumLocales.opportunities.executive.phaseInfo}
-            </div>
         </div>
     );
 }
 
+function MetricTile({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{label}</div>
+            <div className="mt-2 text-3xl font-black tracking-tight text-white">{value}</div>
+        </div>
+    );
+}

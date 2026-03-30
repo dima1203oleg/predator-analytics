@@ -8,6 +8,7 @@ const {
   apiMock,
   factoryApiMock,
   monitoringApiMock,
+  systemApiMock,
 } = vi.hoisted(() => ({
   apiClientMock: {
     get: vi.fn(),
@@ -34,6 +35,10 @@ const {
   },
   monitoringApiMock: {
     getClusterStatus: vi.fn(),
+    streamSystemLogs: vi.fn(),
+  },
+  systemApiMock: {
+    getStatus: vi.fn(),
   },
 }));
 
@@ -110,6 +115,10 @@ vi.mock('@/services/api', () => ({
   },
 }));
 
+vi.mock('@/services/api/system', () => ({
+  systemApi: systemApiMock,
+}));
+
 describe('SystemFactoryView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -132,8 +141,21 @@ describe('SystemFactoryView', () => {
     factoryApiMock.startInfinite.mockResolvedValue({ status: 'started' });
     factoryApiMock.stopInfinite.mockResolvedValue({ status: 'stopped' });
     monitoringApiMock.getClusterStatus.mockResolvedValue({ pods: [] });
+    monitoringApiMock.streamSystemLogs.mockResolvedValue([]);
     apiClientMock.get.mockResolvedValue({ data: { status: 'ok' } });
     apiMock.graph.getSummary.mockResolvedValue({ node_count: 10, relationship_count: 20 });
+    systemApiMock.getStatus.mockResolvedValue({
+      status: 'ok',
+      healthy: true,
+      overall_status: 'healthy',
+      version: '55.1',
+      environment: 'test',
+      uptime: '1d',
+      services: [],
+      summary: { total: 0, healthy: 0, degraded: 0, failed: 0 },
+      metrics: {},
+      timestamp: new Date('2026-03-24T18:00:00.000Z').toISOString(),
+    });
   });
 
   it('показує активний серверний стан OODA після відновлення з бекенду', async () => {
@@ -144,8 +166,8 @@ describe('SystemFactoryView', () => {
     });
 
     expect(await screen.findByText(/Сервер: АКТИВНИЙ/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /ЗУПИНИТИ НА БЕКЕНДІ/i })).toBeInTheDocument();
-    expect(screen.getByText(/Автовідновлення після рестарту/i)).toBeInTheDocument();
-    expect(screen.getByText(/Після переходу між розділами стан не губиться/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ЗУПИНИТИ/i })).toBeInTheDocument();
+    expect(screen.getByText(/Автовідновлення/i)).toBeInTheDocument();
+    expect(screen.getByText(/Збереження стану/i)).toBeInTheDocument();
   });
 });

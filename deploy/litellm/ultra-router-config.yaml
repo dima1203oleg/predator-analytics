@@ -50,7 +50,7 @@ model_list:
   # ==============================================================
   - model_name: ultra-router-reasoning
     litellm_params:
-      model: together/qwen2.5-72b-instruct
+      model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
       api_key: ${TOGETHER_API_KEY}
       api_base: https://api.together.xyz/v1
       timeout: 180

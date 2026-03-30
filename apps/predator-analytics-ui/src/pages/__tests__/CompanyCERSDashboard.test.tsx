@@ -5,7 +5,7 @@ import { diligenceApi } from '@/features/diligence/api/diligence';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
 
-// Mock API
+// Мок API
 vi.mock('@/features/diligence/api/diligence', () => ({
     diligenceApi: {
         searchCompanies: vi.fn(),
@@ -14,12 +14,12 @@ vi.mock('@/features/diligence/api/diligence', () => ({
     },
 }));
 
-// Mock echarts
+// Мок echarts
 vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock" />
 }));
 
-// Mock framer-motion
+// Мок framer-motion
 vi.mock('framer-motion', () => ({
     motion: {
         div: (props: any) => <div {...props}>{props.children}</div>,
@@ -31,7 +31,7 @@ describe('CompanyCERSDashboard', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         
-        // Setup default mocks
+        // Налаштовуємо типові відповіді
         (diligenceApi.searchCompanies as any).mockResolvedValue({
             items: [{ edrpou: '41829391', name: 'ТОВ ЕНЕРГО-РЕСУРС' }]
         });
@@ -39,7 +39,19 @@ describe('CompanyCERSDashboard', () => {
             edrpou: '41829391',
             name: 'ТОВ ЕНЕРГО-РЕСУРС',
             risk_score: 68,
-            risk_level: 'medium'
+            risk_level: 'medium',
+            events: [
+                {
+                    type: 'alert',
+                    text: 'Виявлено зв\'язок з офшорною юрисдикцією',
+                    date: '2026-03-20',
+                },
+                {
+                    type: 'success',
+                    text: 'Успішне виконання контракту з Міноборони',
+                    date: '2026-03-18',
+                },
+            ],
         });
         (diligenceApi.getRiskScores as any).mockResolvedValue({
             '41829391': {
@@ -76,7 +88,7 @@ describe('CompanyCERSDashboard', () => {
             expect(diligenceApi.getCompanyProfile).toHaveBeenCalled();
         });
 
-        expect(screen.getByText(/ТОВ "ЕНЕРГО-РЕСУРС"/i)).toBeInTheDocument();
+        expect(screen.getByText(/ТОВ ЕНЕРГО-РЕСУРС/i)).toBeInTheDocument();
         expect(screen.getByText(/ЄДРПОУ: 41829391/i)).toBeInTheDocument();
         expect(screen.getByText('B-')).toBeInTheDocument();
         expect(screen.getByText('68 / 100')).toBeInTheDocument();
@@ -110,7 +122,9 @@ describe('CompanyCERSDashboard', () => {
     it('displays timeline events', async () => {
         renderDashboard();
         
-        expect(screen.getByText(/ХРОНОЛОГІЯ ТА СИГНАЛИ/i)).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText(/ХРОНОЛОГІЯ ТА СИГНАЛИ/i)).toBeInTheDocument();
+        });
         expect(screen.getByText(/Виявлено зв'язок з офшорною юрисдикцією/i)).toBeInTheDocument();
         expect(screen.getByText(/Успішне виконання контракту з Міноборони/i)).toBeInTheDocument();
     });

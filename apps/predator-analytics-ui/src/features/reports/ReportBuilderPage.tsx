@@ -1,13 +1,23 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    FileText, Download, Target, ShieldAlert, Landmark, Ship, Network,
-    Search, Filter, RefreshCw, Layers, Cpu, 
-    Zap, Binary, Fingerprint, ExternalLink, 
-    Skull, Gem, Activity, FilePlus, Save,
-    CheckCircle2, AlertCircle, Clock, BarChart3,
-    Upload, Users, Database, Globe, BrainCircuit,
-    ChevronDown, Send, Sparkles, Wand2, Eye, Gavel, Trash2
+import {
+    FileText,
+    Target,
+    ShieldAlert,
+    CheckCircle2,
+    AlertCircle,
+    Clock,
+    BrainCircuit,
+    Send,
+    Wand2,
+    Trash2,
+    ScanText,
+    Layers,
+    Loader2,
+    ClipboardList,
+    ShieldCheck,
+    GitBranch,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -15,365 +25,866 @@ import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberGrid } from '@/components/CyberGrid';
-import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 import { intelligenceApi } from '@/services/api/intelligence';
-import { copilotApi } from '@/services/api/copilot';
+import { copilotApi, type ChatSource } from '@/services/api/copilot';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { cn } from '@/utils/cn';
+
+type TemplateId = 'sovereign' | 'executive' | 'customs' | 'cartel';
+type GenerationStatus = 'idle' | 'running' | 'success' | 'error';
+type ReportStatus = 'ready' | 'partial' | 'error';
+
+interface ReportTemplate {
+    id: TemplateId;
+    name: string;
+    description: string;
+    icon: typeof FileText;
+    color: string;
+    modeLabel: string;
+}
+
+interface GeneratedReport {
+    ueid: string;
+    templateId: TemplateId;
+    templateName: string;
+    report: string | null;
+    status: ReportStatus;
+    generatedAt: string;
+    sourceMode: 'report' | 'report+copilot';
+    error?: string;
+    sources?: ChatSource[];
+}
+
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+    sources?: ChatSource[];
+}
+
+const TEMPLATES: ReportTemplate[] = [
+    {
+        id: 'sovereign',
+        name: 'Суверенний висновок',
+        description: 'Повний аналітичний звіт через підтверджений маршрут звіту.',
+        icon: ShieldAlert,
+        color: 'text-amber-300',
+        modeLabel: 'Базовий маршрут',
+    },
+    {
+        id: 'executive',
+        name: 'Резюме для керівника',
+        description: 'Стислий управлінський виклад на основі готового звіту через Copilot.',
+        icon: FileText,
+        color: 'text-cyan-300',
+        modeLabel: 'Звіт + Copilot',
+    },
+    {
+        id: 'customs',
+        name: 'Митний фокус',
+        description: 'Виділяє торгові, логістичні та митні ризики з готового звіту.',
+        icon: Target,
+        color: 'text-emerald-300',
+        modeLabel: 'Звіт + Copilot',
+    },
+    {
+        id: 'cartel',
+        name: 'Повʼязаність і змова',
+        description: 'Акцент на бенефіціарах, графі звʼязків і можливих узгоджених діях.',
+        icon: GitBranch,
+        color: 'text-rose-300',
+        modeLabel: 'Звіт + Copilot',
+    },
+];
+
+const INITIAL_ASSISTANT_MESSAGE =
+    'Поможу підібрати шаблон і поясню, що реально підтверджує поточний API. Спробуйте запитати: "Який режим краще для короткого висновку по компанії?"';
+
+const parseBatchUeids = (value: string): string[] =>
+    Array.from(
+        new Set(
+            value
+                .split(/[\n,;]+/)
+                .map((item) => item.trim())
+                .filter(Boolean),
+        ),
+    );
+
+const formatDateTime = (value?: string): string => {
+    if (!value) {
+        return 'Немає позначки часу';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleString('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
+
+const truncateText = (value: string, maxLength: number = 180): string => {
+    const normalized = value.replace(/\s+/g, ' ').trim();
+    if (normalized.length <= maxLength) {
+        return normalized;
+    }
+
+    return `${normalized.slice(0, maxLength).trim()}…`;
+};
+
+const extractReportText = (payload: unknown): string | null => {
+    if (typeof payload === 'string' && payload.trim()) {
+        return payload.trim();
+    }
+
+    if (!payload || typeof payload !== 'object') {
+        return null;
+    }
+
+    const record = payload as Record<string, unknown>;
+
+    if (typeof record.report === 'string' && record.report.trim()) {
+        return record.report.trim();
+    }
+
+    if (typeof record.summary === 'string' && record.summary.trim()) {
+        return record.summary.trim();
+    }
+
+    return null;
+};
+
+const extractGeneratedAt = (payload: unknown): string => {
+    if (payload && typeof payload === 'object') {
+        const record = payload as Record<string, unknown>;
+        if (typeof record.generated_at === 'string' && record.generated_at.trim()) {
+            return record.generated_at;
+        }
+    }
+
+    return new Date().toISOString();
+};
+
+const buildCopilotPrompt = (templateId: TemplateId, ueid: string, report: string): string => {
+    const tasks: Record<Exclude<TemplateId, 'sovereign'>, string> = {
+        executive:
+            'Стисло перепиши цей звіт для керівника. Залиш лише 4-6 найважливіших висновків, ризики й рекомендовані дії. Відповідь дай українською у Markdown.',
+        customs:
+            'На основі цього звіту виділи саме митні, торгові та логістичні ризики. Додай короткий блок "Що перевірити далі". Відповідь дай українською у Markdown.',
+        cartel:
+            'На основі цього звіту виділи ознаки повʼязаності, бенефіціарного контролю та можливих узгоджених дій. Дай результат українською у Markdown.',
+    };
+
+    return [
+        `UEID: ${ueid}.`,
+        tasks[templateId],
+        '',
+        'Базовий звіт для обробки:',
+        report,
+    ].join('\n');
+};
+
+const getTemplateById = (templateId: TemplateId): ReportTemplate =>
+    TEMPLATES.find((template) => template.id === templateId) ?? TEMPLATES[0];
+
+const buildStatusText = (status: GenerationStatus, batchMode: boolean): string => {
+    if (status === 'running') {
+        return batchMode ? 'Виконується пакетна обробка' : 'Формується звіт';
+    }
+    if (status === 'success') {
+        return 'Готово до перегляду';
+    }
+    if (status === 'error') {
+        return 'Потрібне втручання';
+    }
+
+    return 'Готово до запуску';
+};
+
+const buildSourceCards = (
+    backendOffline: boolean,
+    selectedTemplate: TemplateId,
+): Array<{
+    id: string;
+    name: string;
+    description: string;
+    tone: 'ready' | 'muted' | 'inactive';
+}> => [
+    {
+        id: 'company',
+        name: 'Профіль компанії',
+        description: backendOffline
+            ? 'Недоступно, поки бекенд офлайн.'
+            : 'Підтягується базова картка сутності для маршруту звіту.',
+        tone: backendOffline ? 'inactive' : 'ready',
+    },
+    {
+        id: 'risk',
+        name: 'CERS та ризикові деталі',
+        description: backendOffline
+            ? 'Недоступно без відповіді маршруту звіту.'
+            : 'Включаються до контексту звіту, якщо присутні у профілі.',
+        tone: backendOffline ? 'inactive' : 'ready',
+    },
+    {
+        id: 'graph',
+        name: 'Тіньова мапа і звʼязки',
+        description: backendOffline
+            ? 'Побудова графа тимчасово недоступна.'
+            : 'Маршрут звіту звертається до графових звʼязків і бенефіціарів.',
+        tone: backendOffline ? 'inactive' : 'ready',
+    },
+    {
+        id: 'copilot',
+        name: 'Адаптація шаблону',
+        description:
+            selectedTemplate === 'sovereign'
+                ? 'Для базового шаблону Copilot не використовується.'
+                : backendOffline
+                  ? 'Copilot не викликається, поки бекенд офлайн.'
+                  : 'Після базового звіту формується профільований виклад під обраний сценарій.',
+        tone: selectedTemplate === 'sovereign' ? 'muted' : backendOffline ? 'inactive' : 'ready',
+    },
+];
 
 const ReportBuilderPage: React.FC = () => {
-    const [selectedTemplate, setSelectedTemplate] = useState('diligence');
+    const backendStatus = useBackendStatus();
+    const [selectedTemplate, setSelectedTemplate] = useState<TemplateId>('sovereign');
+    const [generationState, setGenerationState] = useState<GenerationStatus>('idle');
     const [generating, setGenerating] = useState(false);
     const [progress, setProgress] = useState(0);
     const [batchMode, setBatchMode] = useState(false);
     const [targetUeid, setTargetUeid] = useState('');
     const [batchUeids, setBatchUeids] = useState('');
-    const [previewMode, setPreviewMode] = useState(false);
-    
-    // AI Copilot state
+    const [previewReport, setPreviewReport] = useState<GeneratedReport | null>(null);
+    const [sessionReports, setSessionReports] = useState<GeneratedReport[]>([]);
+    const [batchResults, setBatchResults] = useState<GeneratedReport[]>([]);
+    const [generationError, setGenerationError] = useState<string | null>(null);
+    const [currentUeid, setCurrentUeid] = useState<string | null>(null);
+
     const [aiQuery, setAiQuery] = useState('');
-    const [aiMessages, setAiMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([
-        { role: 'assistant', content: 'Вітаю. Я допоможу налаштувати оптимальні джерела для вашого звіту. Спробуйте запитати: "Які джерела найкращі для перевірки митних ризиків?"' }
+    const [aiMessages, setAiMessages] = useState<ChatMessage[]>([
+        { role: 'assistant', content: INITIAL_ASSISTANT_MESSAGE },
     ]);
     const [aiTyping, setAiTyping] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
 
-    const templates = [
-        { id: 'diligence', name: 'Due Diligence V4', icon: ShieldAlert, color: 'text-indigo-400', desc: 'Повний аудит ризиків, зв\'язків та репутації.' },
-        { id: 'cartel', name: 'Аналіз Картелів', icon: Skull, color: 'text-rose-400', desc: 'Виявлення узгоджених дій та прихованих бенефіціарів.' },
-        { id: 'customs', name: 'Митна Розвідка', icon: Target, color: 'text-emerald-400', desc: 'Аналіз товарних потоків та схем розмитнення.' },
-        { id: 'executive', name: 'Executive Summary', icon: Gem, color: 'text-amber-400', desc: 'Концентроване резюме для прийняття стратегічних рішень.' }
-    ];
+    const batchItems = parseBatchUeids(batchUeids);
+    const selectedTemplateConfig = getTemplateById(selectedTemplate);
+    const sourceCards = buildSourceCards(backendStatus.isOffline, selectedTemplate);
 
-    const dataSources = [
-        { id: 'edr', name: 'Реєстраційні дані (ЄДРПОУ)', status: 'Active', icon: Landmark, category: 'CORE' },
-        { id: 'court', name: 'Судовий реєстр (5 років)', status: 'Active', icon: Gavel, category: 'LEGAL' },
-        { id: 'customs', name: 'Митна історія (Експорт/Імпорт)', status: 'Premium', icon: Ship, category: 'TRADE' },
-        { id: 'sanctions', name: 'Ризики та Санкційні списки', status: 'Active', icon: ShieldAlert, category: 'RISK' },
-        { id: 'graph', name: 'Граф зв\'язків (L1-L3)', status: 'Active', icon: Network, category: 'GRAPH' },
-        { id: 'media', name: 'Медіа-моніторинг OSINT', status: 'Inactive', icon: Globe, category: 'SOCIAL' }
-    ];
+    const runTemplatePipeline = async (ueid: string, templateId: TemplateId): Promise<GeneratedReport> => {
+        const template = getTemplateById(templateId);
+        const basePayload = await intelligenceApi.generateReport(ueid);
+        const baseReport = extractReportText(basePayload);
+        const generatedAt = extractGeneratedAt(basePayload);
 
-    const handleGenerate = () => {
-        if (!targetUeid && !batchUeids) return;
-        
-        setGenerating(true);
-        setProgress(0);
-        setPreviewMode(false);
-        
-        const interval = setInterval(() => {
-            setProgress(p => {
-                if (p >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        setGenerating(false);
-                        setPreviewMode(true);
-                    }, 800);
-                    return 100;
-                }
-                return p + Math.floor(Math.random() * 5) + 1;
+        if (!baseReport) {
+            return {
+                ueid,
+                templateId,
+                templateName: template.name,
+                report: null,
+                status: 'error',
+                generatedAt,
+                sourceMode: 'report',
+                error: 'API не повернув текст звіту для цієї сутності.',
+            };
+        }
+
+        if (templateId === 'sovereign') {
+            return {
+                ueid,
+                templateId,
+                templateName: template.name,
+                report: baseReport,
+                status: 'ready',
+                generatedAt,
+                sourceMode: 'report',
+            };
+        }
+
+        try {
+            const copilotResponse = await copilotApi.chat({
+                message: buildCopilotPrompt(templateId, ueid, baseReport),
+                context_ueid: ueid,
             });
-        }, 150);
+
+            const synthesizedReport =
+                typeof copilotResponse.reply === 'string' && copilotResponse.reply.trim()
+                    ? copilotResponse.reply.trim()
+                    : baseReport;
+
+            return {
+                ueid,
+                templateId,
+                templateName: template.name,
+                report: synthesizedReport,
+                status: typeof copilotResponse.reply === 'string' && copilotResponse.reply.trim() ? 'ready' : 'partial',
+                generatedAt,
+                sourceMode: 'report+copilot',
+                error:
+                    synthesizedReport === baseReport
+                        ? 'Copilot не повернув окремий виклад, тому показано базовий звіт.'
+                        : undefined,
+                sources: Array.isArray(copilotResponse.sources) ? copilotResponse.sources : [],
+            };
+        } catch {
+            return {
+                ueid,
+                templateId,
+                templateName: template.name,
+                report: baseReport,
+                status: 'partial',
+                generatedAt,
+                sourceMode: 'report',
+                error: 'Не вдалося адаптувати шаблон через Copilot. Показано базовий звіт.',
+            };
+        }
+    };
+
+    const appendSessionReports = (items: GeneratedReport[]) => {
+        setSessionReports((previous) => [...items, ...previous].slice(0, 12));
+    };
+
+    const handleGenerate = async () => {
+        const singleUeid = targetUeid.trim();
+
+        if (backendStatus.isOffline) {
+            setGenerationState('error');
+            setGenerationError('Бекенд позначений як недоступний. Формування звіту неможливе.');
+            return;
+        }
+
+        if (!batchMode && !singleUeid) {
+            setGenerationState('error');
+            setGenerationError('Вкажіть UEID для одиничного формування.');
+            return;
+        }
+
+        if (batchMode && batchItems.length === 0) {
+            setGenerationState('error');
+            setGenerationError('Додайте хоча б один UEID для пакетної обробки.');
+            return;
+        }
+
+        setGenerating(true);
+        setGenerationState('running');
+        setGenerationError(null);
+        setPreviewReport(null);
+        setBatchResults([]);
+        setProgress(0);
+
+        try {
+            if (batchMode) {
+                const collected: GeneratedReport[] = [];
+                let firstPreview: GeneratedReport | null = null;
+
+                for (const [index, ueid] of batchItems.entries()) {
+                    setCurrentUeid(ueid);
+
+                    try {
+                        const report = await runTemplatePipeline(ueid, selectedTemplate);
+                        collected.push(report);
+                        if (!firstPreview && report.report) {
+                            firstPreview = report;
+                        }
+                    } catch {
+                        collected.push({
+                            ueid,
+                            templateId: selectedTemplate,
+                            templateName: selectedTemplateConfig.name,
+                            report: null,
+                            status: 'error',
+                            generatedAt: new Date().toISOString(),
+                            sourceMode: 'report',
+                            error: 'Не вдалося сформувати звіт для цієї сутності.',
+                        });
+                    }
+
+                    setBatchResults([...collected]);
+                    setProgress(Math.round(((index + 1) / batchItems.length) * 100));
+                }
+
+                setPreviewReport(firstPreview);
+                appendSessionReports([...collected].reverse());
+                setGenerationState(collected.some((item) => item.status !== 'error') ? 'success' : 'error');
+
+                if (!firstPreview) {
+                    setGenerationError('Жоден пакетний запит не повернув готового тексту звіту.');
+                }
+            } else {
+                setCurrentUeid(singleUeid);
+                const report = await runTemplatePipeline(singleUeid, selectedTemplate);
+                setProgress(100);
+                setBatchResults([report]);
+                setPreviewReport(report);
+                appendSessionReports([report]);
+                setGenerationState(report.status === 'error' ? 'error' : 'success');
+                setGenerationError(report.error || null);
+            }
+        } catch {
+            setGenerationState('error');
+            setGenerationError('Формування звіту завершилося помилкою. Повторіть спробу пізніше.');
+        } finally {
+            setGenerating(false);
+            setCurrentUeid(null);
+        }
     };
 
     const handleAiAsk = async () => {
-        if (!aiQuery) return;
-        
-        const userMsg = aiQuery;
+        const message = aiQuery.trim();
+        if (!message) {
+            return;
+        }
+
+        const history = aiMessages.slice(-6).map((item) => ({ role: item.role, content: item.content }));
+
         setAiQuery('');
-        setAiMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+        setAiMessages((previous) => [...previous, { role: 'user', content: message }]);
         setAiTyping(true);
-        
+
         try {
-            const response = await copilotApi.chat({
-                message: userMsg,
-                session_id: sessionId || undefined,
-                history: aiMessages.slice(-5) // Send last 5 messages for context
-            });
-            
-            if (response.reply) {
-                setAiMessages(prev => [...prev, { role: 'assistant', content: response.reply }]);
-                if (!sessionId && response.message_id) {
-                    // In a real app we'd get session_id back or use message_id to track
+            let activeSessionId = sessionId;
+            if (!activeSessionId) {
+                try {
+                    const session = await copilotApi.createSession();
+                    activeSessionId = session.session_id;
+                    setSessionId(session.session_id);
+                } catch {
+                    activeSessionId = null;
                 }
             }
-        } catch (err) {
-            setAiMessages(prev => [...prev, { role: 'assistant', content: 'Вибачте, виникла помилка підключення до нейромережі. Перевірте з\'єднання з сервером.' }]);
+
+            const response = await copilotApi.chat({
+                message,
+                session_id: activeSessionId || undefined,
+                context_ueid: !batchMode ? targetUeid.trim() || undefined : undefined,
+                history,
+            });
+
+            setAiMessages((previous) => [
+                ...previous,
+                {
+                    role: 'assistant',
+                    content: response.reply,
+                    sources: Array.isArray(response.sources) ? response.sources : [],
+                },
+            ]);
+        } catch {
+            setAiMessages((previous) => [
+                ...previous,
+                {
+                    role: 'assistant',
+                    content: 'Не вдалося отримати відповідь від Copilot. Перевірте стан бекенду і повторіть запит.',
+                },
+            ]);
         } finally {
             setAiTyping(false);
         }
     };
 
     const clearAiChat = () => {
-        setAiMessages([{ role: 'assistant', content: 'Чат очищено. Чим я можу допомогти?' }]);
+        setAiMessages([{ role: 'assistant', content: INITIAL_ASSISTANT_MESSAGE }]);
         setSessionId(null);
     };
 
     return (
         <PageTransition>
-            <div className="min-h-screen p-8 flex flex-col gap-8 relative overflow-hidden text-white bg-slate-950">
+            <div className="relative min-h-screen overflow-hidden bg-slate-950 p-8 text-white">
                 <AdvancedBackground />
                 <CyberGrid color="rgba(245,158,11,0.03)" />
 
-                {/* Top Actions Bar */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6 z-20">
-                    <div className="flex items-center gap-6">
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-amber-500/20 blur-xl group-hover:bg-amber-500/40 transition-all rounded-full" />
-                            <div className="relative p-4 bg-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl">
-                                <Wand2 size={28} className="text-amber-400" />
+                <div className="relative z-20 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="flex items-center gap-5">
+                        <div className="relative">
+                            <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-2xl" />
+                            <div className="relative rounded-2xl border border-amber-500/30 bg-slate-900 p-4 shadow-2xl">
+                                <Wand2 size={28} className="text-amber-300" />
                             </div>
                         </div>
+
                         <div>
-                            <div className="flex items-center gap-3 mb-1">
-                                <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em] animate-pulse">INTELLIGENCE_FORGE // v55.2</span>
-                                <Badge className="bg-amber-500/10 text-amber-500 border-none text-[8px] tracking-widest px-2 py-0">ULTIMATE</Badge>
+                            <div className="mb-2 flex flex-wrap items-center gap-3">
+                                <span className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-300">
+                                    КОНСТРУКТОР_ЗВІТІВ
+                                </span>
+                                <Badge className="border-none bg-amber-500/10 px-2 py-0 text-[8px] tracking-widest text-amber-300">
+                                    ПРАВДИВІ ДАНІ
+                                </Badge>
                             </div>
-                            <h1 className="text-4xl font-black text-white italic tracking-tighter uppercase font-display leading-none">
-                                ГЕНЕРАТОР <span className="text-amber-500">ЗВІТІВ</span>
+
+                            <h1 className="text-4xl font-black uppercase tracking-tight text-white">
+                                КОНСТРУКТОР <span className="text-amber-300">ЗВІТІВ</span>
                             </h1>
+                            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
+                                Формує звіти тільки через підтверджені маршрути бекенду. Без фейкового прогресу, статичних архівів і демонстраційних даних.
+                            </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="flex p-1 bg-white/5 border border-white/10 rounded-2xl">
-                            <button 
+                    <div className="flex flex-wrap items-center gap-4">
+                        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+                            <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">Джерело</div>
+                            <div>{backendStatus.sourceLabel}</div>
+                        </div>
+                        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
+                            <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">Стан</div>
+                            <div>{backendStatus.statusLabel}</div>
+                        </div>
+                        <div className="flex rounded-2xl border border-white/10 bg-white/5 p-1">
+                            <button
                                 onClick={() => setBatchMode(false)}
-                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${!batchMode ? 'bg-amber-500 text-slate-950 shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                                className={cn(
+                                    'rounded-xl px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all',
+                                    !batchMode ? 'bg-amber-300 text-slate-950' : 'text-slate-500 hover:text-white',
+                                )}
                             >
-                                Single
+                                Одиничний
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setBatchMode(true)}
-                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${batchMode ? 'bg-amber-500 text-slate-950 shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                                className={cn(
+                                    'rounded-xl px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-all',
+                                    batchMode ? 'bg-amber-300 text-slate-950' : 'text-slate-500 hover:text-white',
+                                )}
                             >
-                                Batch
+                                Пакетний
                             </button>
                         </div>
-                        <button className="p-4 bg-white/5 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all">
-                            <Save size={20} />
-                        </button>
-                        <button 
+                        <button
                             onClick={handleGenerate}
-                            disabled={generating}
-                            className="px-10 py-4 bg-amber-500 text-slate-950 rounded-2xl font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-[0_0_30px_rgba(245,158,11,0.3)] disabled:opacity-50 relative overflow-hidden group"
+                            disabled={generating || backendStatus.isOffline}
+                            className="rounded-2xl bg-amber-300 px-8 py-4 text-[10px] font-black uppercase tracking-[0.25em] text-slate-950 transition-all hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            <span className="relative z-10">{generating ? 'СИНТЕЗУЮ...' : 'ЗАПУСТИТИ_ГЕНЕРАЦІЮ'}</span>
-                            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+                            {generating ? 'Формую...' : batchMode ? 'Запустити пакет' : 'Сформувати звіт'}
                         </button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-12 gap-8 z-10 flex-1">
-                    {/* LEFT: TEMPLATES & AI COPILOT */}
-                    <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
+                <div className="relative z-10 mt-8 grid grid-cols-12 gap-8">
+                    <div className="col-span-12 flex flex-col gap-6 lg:col-span-3">
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] px-2">АРХІТЕКТУРА_ЗВІТУ</h3>
+                            <h3 className="px-2 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                                Шаблони формування
+                            </h3>
+
                             <div className="flex flex-col gap-3">
-                                {templates.map((t) => (
+                                {TEMPLATES.map((template) => (
                                     <button
-                                        key={t.id}
-                                        onClick={() => setSelectedTemplate(t.id)}
-                                        className={`p-5 rounded-3xl border transition-all text-left group relative overflow-hidden ${
-                                            selectedTemplate === t.id 
-                                            ? 'bg-amber-500/10 border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.1)]' 
-                                            : 'bg-white/5 border-white/5 hover:border-white/10'
-                                        }`}
+                                        key={template.id}
+                                        onClick={() => setSelectedTemplate(template.id)}
+                                        className={cn(
+                                            'relative overflow-hidden rounded-3xl border p-5 text-left transition-all',
+                                            selectedTemplate === template.id
+                                                ? 'border-amber-500/30 bg-amber-500/10'
+                                                : 'border-white/5 bg-white/5 hover:border-white/10',
+                                        )}
                                     >
-                                        <div className="flex items-center gap-4 relative z-10">
-                                            <div className={`p-3 rounded-2xl bg-black/40 ${t.color}`}>
-                                                <t.icon size={18} />
+                                        <div className="relative z-10 flex items-start gap-4">
+                                            <div className={cn('rounded-2xl bg-black/40 p-3', template.color)}>
+                                                <template.icon size={18} />
                                             </div>
-                                            <div>
-                                                <div className="text-[11px] font-bold uppercase tracking-tight text-white mb-1">{t.name}</div>
-                                                <div className="text-[9px] font-medium text-slate-500 leading-tight">{t.desc}</div>
+                                            <div className="flex-1">
+                                                <div className="mb-2 text-[11px] font-bold uppercase tracking-tight text-white">
+                                                    {template.name}
+                                                </div>
+                                                <div className="text-[10px] leading-relaxed text-slate-400">
+                                                    {template.description}
+                                                </div>
+                                                <div className="mt-3">
+                                                    <Badge className="border-none bg-white/10 px-2 py-0 text-[8px] tracking-widest text-slate-300">
+                                                        {template.modeLabel}
+                                                    </Badge>
+                                                </div>
                                             </div>
                                         </div>
-                                        {selectedTemplate === t.id && (
-                                            <motion.div layoutId="templateGlowActive" className="absolute inset-x-0 bottom-0 h-1 bg-amber-500" />
+
+                                        {selectedTemplate === template.id && (
+                                            <motion.div
+                                                layoutId="selectedReportTemplate"
+                                                className="absolute inset-x-0 bottom-0 h-1 bg-amber-300"
+                                            />
                                         )}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <TacticalCard variant="cyber" className="p-6 mt-auto">
-                            <div className="flex items-center justify-between mb-4">
+                        <TacticalCard variant="cyber" className="mt-auto p-6">
+                            <div className="mb-4 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <BrainCircuit size={18} className="text-cyan-400" />
-                                    <span className="text-[10px] font-black text-white uppercase tracking-widest underline decoration-cyan-400/30">AI_COPILOT_v5</span>
+                                    <BrainCircuit size={18} className="text-cyan-300" />
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                                        Помічник Copilot
+                                    </span>
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <button 
-                                        onClick={clearAiChat}
-                                        className="p-1 px-2 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all text-[8px] font-black uppercase tracking-tighter flex items-center gap-1"
-                                    >
-                                        <Trash2 size={10} />
-                                        CLEAR
-                                    </button>
-                                    <Sparkles size={14} className="text-cyan-400 animate-pulse" />
-                                </div>
+
+                                <button
+                                    onClick={clearAiChat}
+                                    className="flex items-center gap-1 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-[8px] font-black uppercase tracking-wide text-rose-300 transition-all hover:bg-rose-500/20"
+                                >
+                                    <Trash2 size={10} />
+                                    Очистити
+                                </button>
                             </div>
-                            <div className="bg-black/40 border border-white/5 rounded-2xl p-4 mb-4 h-[200px] flex flex-col gap-3 overflow-y-auto custom-scrollbar">
-                                {aiMessages.map((msg, i) => (
-                                    <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                                        <div className={`max-w-[85%] p-3 rounded-2xl text-[10px] leading-relaxed font-mono ${
-                                            msg.role === 'user' 
-                                            ? 'bg-amber-500/10 border border-amber-500/20 text-amber-200 rounded-tr-none' 
-                                            : 'bg-white/5 border border-white/10 text-slate-300 rounded-tl-none'
-                                        }`}>
-                                            {msg.content}
+
+                            <div className="mb-4 flex h-[260px] flex-col gap-3 overflow-y-auto rounded-2xl border border-white/5 bg-black/40 p-4 custom-scrollbar">
+                                {aiMessages.map((message, index) => (
+                                    <div
+                                        key={`${message.role}-${index}`}
+                                        className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}
+                                    >
+                                        <div
+                                            className={cn(
+                                                'max-w-[90%] rounded-2xl p-3 text-[11px] leading-relaxed',
+                                                message.role === 'user'
+                                                    ? 'rounded-tr-none border border-amber-500/20 bg-amber-500/10 text-amber-100'
+                                                    : 'rounded-tl-none border border-white/10 bg-white/5 text-slate-200',
+                                            )}
+                                        >
+                                            {message.content}
                                         </div>
+
+                                        {message.sources && message.sources.length > 0 && (
+                                            <div className="mt-2 flex max-w-[90%] flex-wrap gap-2">
+                                                {message.sources.slice(0, 3).map((source, sourceIndex) => (
+                                                    <div
+                                                        key={`${source.title || source.type}-${sourceIndex}`}
+                                                        className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[9px] font-semibold text-cyan-100"
+                                                    >
+                                                        {source.title || source.entity || source.type}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
+
                                 {aiTyping && (
-                                    <div className="flex gap-1 items-center p-2">
-                                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce" />
-                                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:0.2s]" />
-                                        <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                                    <div className="flex items-center gap-2 px-2 text-[10px] font-semibold text-cyan-300">
+                                        <Loader2 size={14} className="animate-spin" />
+                                        Copilot формує відповідь...
                                     </div>
                                 )}
                             </div>
+
                             <div className="relative">
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     value={aiQuery}
-                                    onChange={(e) => setAiQuery(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleAiAsk()}
-                                    placeholder="Запит до AI Асистента..." 
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-[10px] focus:outline-none focus:border-cyan-400/50 transition-all font-mono placeholder:text-slate-600 shadow-inner"
+                                    onChange={(event) => setAiQuery(event.target.value)}
+                                    onKeyDown={(event) => event.key === 'Enter' && handleAiAsk()}
+                                    placeholder="Поставте питання щодо шаблону або звіту"
+                                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-4 text-[11px] text-white outline-none transition-all placeholder:text-slate-600 focus:border-cyan-400/40"
                                 />
-                                <button 
+                                <button
                                     onClick={handleAiAsk}
-                                    disabled={aiTyping || !aiQuery}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-500 hover:text-cyan-400 disabled:opacity-30 disabled:cursor-not-allowed group transition-all"
+                                    disabled={aiTyping || !aiQuery.trim()}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-500 transition-all hover:text-cyan-300 disabled:cursor-not-allowed disabled:opacity-30"
                                 >
-                                    <Send size={16} className="group-hover:scale-110 transition-transform" />
+                                    <Send size={16} />
                                 </button>
                             </div>
                         </TacticalCard>
                     </div>
 
-                    {/* CENTER: CONFIGURATOR */}
-                    <div className="col-span-12 lg:col-span-6 flex flex-col gap-8">
-                        <HoloContainer className="p-10 flex flex-col relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <Database size={150} />
+                    <div className="col-span-12 flex flex-col gap-8 lg:col-span-6">
+                        <HoloContainer className="relative overflow-hidden p-10">
+                            <div className="absolute right-0 top-0 p-8 opacity-5">
+                                <Layers size={140} />
                             </div>
-                            
-                            <div className="flex items-center justify-between mb-8 relative z-10">
+
+                            <div className="relative z-10 mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                 <div>
-                                    <h3 className="text-2xl font-black uppercase tracking-tighter italic">ПАРАМЕТРИ_ФОРМУВАННЯ</h3>
-                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 italic">LAYER: DATA_SYNERGY_UNIT</p>
+                                    <h3 className="text-2xl font-black uppercase tracking-tight text-white">
+                                        Параметри формування
+                                    </h3>
+                                    <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-slate-500">
+                                        {selectedTemplateConfig.description}
+                                    </p>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right">
-                                        <div className="text-[9px] font-bold text-slate-500 uppercase">STATUS</div>
-                                        <div className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">READY_TO_FORGE</div>
-                                    </div>
-                                    <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center">
-                                        <Activity size={20} className="text-emerald-500" />
+
+                                <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-right">
+                                    <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">Стан процесу</div>
+                                    <div
+                                        className={cn(
+                                            'text-[11px] font-black uppercase tracking-[0.2em]',
+                                            generationState === 'success'
+                                                ? 'text-emerald-300'
+                                                : generationState === 'error'
+                                                  ? 'text-rose-300'
+                                                  : generationState === 'running'
+                                                    ? 'text-amber-300'
+                                                    : 'text-slate-300',
+                                        )}
+                                    >
+                                        {buildStatusText(generationState, batchMode)}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-6 relative z-10">
-                                {/* Target Input */}
-                                <div className="space-y-4 p-6 bg-white/[0.03] border border-white/5 rounded-[2rem] hover:border-white/10 transition-all">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{batchMode ? 'ПЕРЕЛІК_UEID' : 'UEID_ПІДПРИЄМСТВА'}</label>
-                                        <div className="flex items-center gap-2 text-[9px] text-amber-500 font-bold uppercase tracking-widest">
-                                            <Search size={12} />
-                                            Авто-пошук
+                            <div className="relative z-10 flex flex-col gap-6">
+                                <div className="rounded-[2rem] border border-white/5 bg-white/[0.03] p-6">
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <label className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">
+                                            {batchMode ? 'Перелік UEID' : 'UEID сутності'}
+                                        </label>
+                                        <div className="text-[10px] font-semibold text-amber-300">
+                                            {batchMode
+                                                ? `${batchItems.length} позицій до запуску`
+                                                : 'Одиничний виклик маршруту звіту'}
                                         </div>
                                     </div>
+
                                     {batchMode ? (
-                                        <textarea 
+                                        <textarea
                                             value={batchUeids}
-                                            onChange={(e) => setBatchUeids(e.target.value)}
-                                            placeholder="Введіть UEID через кому або з нового рядка..."
-                                            className="w-full h-32 bg-black/40 border border-white/10 rounded-2xl p-4 text-xs font-mono focus:outline-none focus:border-amber-500/30 transition-all resize-none"
+                                            onChange={(event) => setBatchUeids(event.target.value)}
+                                            placeholder="Вкажіть UEID через кому або з нового рядка"
+                                            className="h-36 w-full resize-none rounded-2xl border border-white/10 bg-black/40 p-4 text-sm text-white outline-none transition-all placeholder:text-slate-600 focus:border-amber-300/30"
                                         />
                                     ) : (
-                                        <div className="relative">
-                                            <input 
-                                                type="text" 
-                                                value={targetUeid}
-                                                onChange={(e) => setTargetUeid(e.target.value)}
-                                                placeholder="Введіть UEID..."
-                                                className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm font-black italic focus:outline-none focus:border-amber-500/30 transition-all tracking-wider"
-                                            />
-                                            <button className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-amber-500/10 text-amber-400 rounded-xl hover:bg-amber-500/20 transition-all">
-                                                <Fingerprint size={18} />
-                                            </button>
-                                        </div>
+                                        <input
+                                            type="text"
+                                            value={targetUeid}
+                                            onChange={(event) => setTargetUeid(event.target.value)}
+                                            placeholder="Вкажіть UEID компанії"
+                                            className="w-full rounded-2xl border border-white/10 bg-black/40 px-6 py-4 text-sm font-semibold text-white outline-none transition-all placeholder:text-slate-600 focus:border-amber-300/30"
+                                        />
                                     )}
-                                    {batchMode && (
-                                        <div className="flex items-center justify-center p-6 border-2 border-dashed border-white/5 rounded-2xl hover:bg-white/5 transition-all cursor-pointer group">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <Upload size={24} className="text-slate-500 group-hover:text-amber-500 transition-colors" />
-                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Завантажити CSV / XLSX</span>
-                                            </div>
+
+                                    {batchMode && batchItems.length > 0 && (
+                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            {batchItems.slice(0, 12).map((item) => (
+                                                <div
+                                                    key={item}
+                                                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold text-slate-200"
+                                                >
+                                                    {item}
+                                                </div>
+                                            ))}
+                                            {batchItems.length > 12 && (
+                                                <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold text-slate-400">
+                                                    +{batchItems.length - 12} ще
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Data Sources Matrix */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    {dataSources.map((source, i) => (
-                                        <div key={i} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer group relative">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-black/40 rounded-xl text-slate-400 group-hover:text-white transition-colors">
-                                                    {React.createElement(source.icon || FileText, { size: 16 })}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] font-bold text-white tracking-tight">{source.name}</span>
-                                                    <span className="text-[7px] font-mono font-bold text-slate-600 uppercase tracking-widest">{source.category}</span>
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    {sourceCards.map((card) => (
+                                        <div
+                                            key={card.id}
+                                            className="rounded-2xl border border-white/5 bg-white/5 p-4"
+                                        >
+                                            <div className="mb-2 flex items-center gap-2">
+                                                {card.tone === 'ready' ? (
+                                                    <CheckCircle2 size={16} className="text-emerald-300" />
+                                                ) : card.tone === 'inactive' ? (
+                                                    <AlertCircle size={16} className="text-rose-300" />
+                                                ) : (
+                                                    <Clock size={16} className="text-amber-300" />
+                                                )}
+                                                <div className="text-[11px] font-bold uppercase tracking-tight text-white">
+                                                    {card.name}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                {source.status === 'Premium' && <Zap size={10} className="text-amber-500 fill-amber-500" />}
-                                                <div className={`w-1.5 h-1.5 rounded-full ${source.status === 'Active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : source.status === 'Premium' ? 'bg-amber-500' : 'bg-slate-700'}`} />
+                                            <div className="text-[10px] leading-relaxed text-slate-400">
+                                                {card.description}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
+
+                                {generationError && (
+                                    <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
+                                        {generationError}
+                                    </div>
+                                )}
+
+                                {batchResults.length > 0 && (
+                                    <TacticalCard variant="cyber" className="p-6">
+                                        <div className="mb-4 flex items-center gap-3">
+                                            <ClipboardList size={18} className="text-cyan-300" />
+                                            <h4 className="text-sm font-black uppercase tracking-widest text-white">
+                                                Живий стан запуску
+                                            </h4>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {batchResults.map((item) => (
+                                                <button
+                                                    key={`${item.ueid}-${item.generatedAt}`}
+                                                    onClick={() => setPreviewReport(item)}
+                                                    className="flex w-full items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3 text-left transition-all hover:border-white/10"
+                                                >
+                                                    <div>
+                                                        <div className="text-sm font-bold text-white">{item.ueid}</div>
+                                                        <div className="text-[10px] uppercase tracking-widest text-slate-500">
+                                                            {item.templateName}
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        className={cn(
+                                                            'rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-widest',
+                                                            item.status === 'ready'
+                                                                ? 'bg-emerald-500/15 text-emerald-200'
+                                                                : item.status === 'partial'
+                                                                  ? 'bg-amber-500/15 text-amber-200'
+                                                                  : 'bg-rose-500/15 text-rose-200',
+                                                        )}
+                                                    >
+                                                        {item.status === 'ready'
+                                                            ? 'Готово'
+                                                            : item.status === 'partial'
+                                                              ? 'Частково'
+                                                              : 'Помилка'}
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </TacticalCard>
+                                )}
                             </div>
 
-                            {/* Generation Overlay */}
                             <AnimatePresence>
                                 {generating && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="absolute inset-0 z-50 flex flex-col items-center justify-center p-20 bg-slate-950/90 backdrop-blur-3xl"
+                                        className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-slate-950/90 p-10 backdrop-blur-2xl"
                                     >
-                                        <div className="relative mb-12">
-                                            <div className="absolute inset-0 bg-amber-500/20 blur-[100px] scale-150 animate-pulse" />
-                                            <div className="relative">
-                                                <motion.div 
-                                                    animate={{ rotate: 360 }}
-                                                    transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                                                    className="w-48 h-48 border-4 border-dashed border-amber-500/20 rounded-full flex items-center justify-center p-8"
-                                                >
-                                                    <motion.div 
-                                                        animate={{ rotate: -360 }}
-                                                        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                                                        className="w-full h-full border-2 border-amber-500/40 rounded-full border-t-amber-500"
-                                                    />
-                                                </motion.div>
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className="flex flex-col items-center">
-                                                        <span className="text-4xl font-black italic text-amber-500">{progress}%</span>
-                                                        <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.4em]">SYNC_L5</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <Loader2 size={42} className="animate-spin text-amber-300" />
+                                        <div className="text-center">
+                                            <h4 className="text-2xl font-black uppercase tracking-tight text-white">
+                                                Формування звіту в процесі
+                                            </h4>
+                                            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
+                                                {currentUeid
+                                                    ? `Поточний UEID: ${currentUeid}`
+                                                    : 'Підготовка маршруту до виконання.'}
+                                            </p>
                                         </div>
-                                        <div className="text-center space-y-4">
-                                            <h4 className="text-2xl font-black italic tracking-tighter uppercase underline decoration-amber-500/30 underline-offset-8">СИНТЕЗ_РОЗВІДКИ_v55</h4>
-                                            <div className="flex flex-col gap-1 items-center">
-                                                <p className="text-[10px] font-mono text-amber-500/80 uppercase tracking-[0.5em] animate-pulse italic">EXTRACTING_EDRPOU_NODES...</p>
-                                                <p className="text-[9px] font-mono text-slate-600 uppercase tracking-widest italic">{selectedTemplate === 'executive' ? 'Formatting executive Persona...' : 'Building deep relationship graph...'}</p>
+
+                                        <div className="w-full max-w-xl">
+                                            <div className="mb-2 flex items-center justify-between text-[10px] uppercase tracking-widest text-slate-500">
+                                                <span>Прогрес</span>
+                                                <span>{progress}%</span>
+                                            </div>
+                                            <div className="h-3 overflow-hidden rounded-full bg-white/5">
+                                                <div
+                                                    className="h-full rounded-full bg-amber-300 transition-all"
+                                                    style={{ width: `${progress}%` }}
+                                                />
                                             </div>
                                         </div>
                                     </motion.div>
@@ -382,114 +893,174 @@ const ReportBuilderPage: React.FC = () => {
                         </HoloContainer>
                     </div>
 
-                    {/* RIGHT: ARCHIVE & PREVIEW */}
-                    <div className="col-span-12 lg:col-span-3 flex flex-col gap-8">
-                        <AnimatePresence mode="wait">
-                            {previewMode && targetUeid ? (
-                                <motion.div
-                                    key="preview"
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: 20 }}
-                                    className="flex-1 flex flex-col"
-                                >
-                                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 px-2">ПОПЕРЕДНІЙ_ПЕРЕГЛЯД</h3>
-                                    <div className="flex-1 overflow-hidden relative border border-white/10 rounded-[3rem] bg-black/40">
-                                        <div className="absolute inset-0 p-4 transform scale-[0.6] origin-top-left overflow-auto custom-scrollbar grayscale pointer-events-none opacity-50">
-                                            <SovereignReportWidget ueid={targetUeid} className="w-[160%] shadow-none border-dashed" />
-                                        </div>
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent">
-                                            <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
-                                                <Eye size={32} className="text-amber-400" />
-                                            </div>
-                                            <h4 className="text-sm font-black uppercase text-center mb-4 tracking-tighter">ЗВІТ_ГОТОВИЙ_ДО_ПЕРЕГЛЯДУ</h4>
-                                            <button 
-                                                onClick={() => window.open(`/intelligence/report/${targetUeid}`, '_blank')}
-                                                className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3"
-                                            >
-                                                <ExternalLink size={16} />
-                                                ВІДКРИТИ ПОВНУ ВЕРСІЮ
-                                            </button>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="archive"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex flex-col gap-8 flex-1"
-                                >
-                                    <TacticalCard variant="cyber" className="p-8">
-                                        <div className="flex items-center justify-between mb-8">
-                                            <h3 className="text-sm font-black uppercase tracking-tighter italic text-amber-500">Останні Звіти</h3>
-                                            <Clock size={16} className="text-slate-600" />
-                                        </div>
-                                        <div className="space-y-4">
-                                            {[
-                                                { date: 'Сьогодні, 12:44', title: 'Diligence_77201.pdf', size: '2.4 MB', type: 'INDIGO' },
-                                                { date: 'Вчора, 18:20', title: 'Cartel_Cluster_X.pdf', size: '4.8 MB', type: 'ROSE' },
-                                                { date: '12 Березня', title: 'Maritime_Traffic.docx', size: '1.2 MB', type: 'EMERALD' }
-                                            ].map((r, i) => (
-                                                <div key={i} className="p-4 bg-white/[0.03] rounded-2xl border border-white/5 hover:border-white/10 transition-all cursor-pointer flex items-center justify-between group">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`w-1 h-8 rounded-full ${r.type === 'INDIGO' ? 'bg-indigo-500' : r.type === 'ROSE' ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-                                                        <div className="flex flex-col gap-1">
-                                                            <span className="text-[10px] font-bold text-slate-300 truncate w-32 group-hover:text-white">{r.title}</span>
-                                                            <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">{r.date}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="p-2 text-slate-700 group-hover:text-amber-400 transition-colors">
-                                                        <Download size={14} />
-                                                    </div>
+                    <div className="col-span-12 flex flex-col gap-8 lg:col-span-3">
+                        {previewReport ? (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="flex flex-1 flex-col"
+                            >
+                                <TacticalCard variant="cyber" className="flex flex-1 flex-col overflow-hidden p-0">
+                                    <div className="border-b border-white/10 p-6">
+                                        <div className="mb-4 flex items-start justify-between gap-4">
+                                            <div>
+                                                <div className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-300">
+                                                    Попередній перегляд
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </TacticalCard>
-
-                                    <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 rounded-[3rem] p-10 backdrop-blur-xl relative overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer">
-                                        <div className="absolute -top-4 -right-4 p-8 opacity-10 group-hover:scale-125 group-hover:opacity-20 transition-all duration-700">
-                                            <Zap size={120} className="text-amber-500 fill-amber-500" />
-                                        </div>
-                                        <div className="relative z-10">
-                                            <div className="flex items-center gap-3 mb-6">
-                                                <Users size={20} className="text-white" />
-                                                <h4 className="text-xl font-black text-white italic tracking-tighter uppercase leading-none">PREMIUM_BATCH</h4>
+                                                <h3 className="mt-2 text-xl font-black uppercase tracking-tight text-white">
+                                                    {previewReport.templateName}
+                                                </h3>
                                             </div>
-                                            <p className="text-[10px] text-slate-400 leading-relaxed uppercase tracking-wider mb-8 font-mono">
-                                                Аналіз масивів контрагентів через єдину нейромережу. Підтримка тисяч UEID одночасно.
-                                            </p>
-                                            <button className="w-full py-4 bg-white/10 border border-white/20 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                                                НАЛАШТУВАТИ ПОТІК
-                                            </button>
+                                            <Badge
+                                                className={cn(
+                                                    'border-none px-2 py-0 text-[8px] tracking-widest',
+                                                    previewReport.status === 'ready'
+                                                        ? 'bg-emerald-500/15 text-emerald-200'
+                                                        : previewReport.status === 'partial'
+                                                          ? 'bg-amber-500/15 text-amber-200'
+                                                          : 'bg-rose-500/15 text-rose-200',
+                                                )}
+                                            >
+                                                {previewReport.status === 'ready'
+                                                    ? 'ГОТОВО'
+                                                    : previewReport.status === 'partial'
+                                                      ? 'ЧАСТКОВО'
+                                                      : 'ПОМИЛКА'}
+                                            </Badge>
                                         </div>
+
+                                        <div className="space-y-2 text-sm text-slate-400">
+                                            <div>UEID: {previewReport.ueid}</div>
+                                            <div>Оновлено: {formatDateTime(previewReport.generatedAt)}</div>
+                                            <div>
+                                                Джерело: {previewReport.sourceMode === 'report+copilot' ? 'звіт + Copilot' : 'базовий звіт'}
+                                            </div>
+                                        </div>
+
+                                        {previewReport.error && (
+                                            <div className="mt-4 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+                                                {previewReport.error}
+                                            </div>
+                                        )}
                                     </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+
+                                    <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                                        {previewReport.report ? (
+                                            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-amber-200 prose-li:text-slate-300">
+                                                <ReactMarkdown>{previewReport.report}</ReactMarkdown>
+                                            </div>
+                                        ) : (
+                                            <div className="flex h-full flex-col items-center justify-center rounded-[2rem] border border-dashed border-white/10 bg-white/[0.02] px-6 py-16 text-center">
+                                                <ScanText size={44} className="mb-4 text-slate-600" />
+                                                <div className="text-lg font-black uppercase tracking-tight text-slate-300">
+                                                    Текст звіту відсутній
+                                                </div>
+                                                <div className="mt-3 text-sm leading-relaxed text-slate-500">
+                                                    Для цього запуску бекенд не повернув markdown-вміст.
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {previewReport.sources && previewReport.sources.length > 0 && (
+                                        <div className="border-t border-white/10 p-6">
+                                            <div className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+                                                Джерела Copilot
+                                            </div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {previewReport.sources.map((source, index) => (
+                                                    <div
+                                                        key={`${source.title || source.type}-${index}`}
+                                                        className="rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[10px] font-semibold text-cyan-100"
+                                                    >
+                                                        {source.title || source.entity || source.type}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </TacticalCard>
+                            </motion.div>
+                        ) : sessionReports.length > 0 ? (
+                            <TacticalCard variant="cyber" className="p-8">
+                                <div className="mb-6 flex items-center justify-between">
+                                    <h3 className="text-sm font-black uppercase tracking-tight text-amber-300">
+                                        Останні запуски цієї сесії
+                                    </h3>
+                                    <Clock size={16} className="text-slate-600" />
+                                </div>
+
+                                <div className="space-y-3">
+                                    {sessionReports.map((report) => (
+                                        <button
+                                            key={`${report.ueid}-${report.generatedAt}-${report.templateId}`}
+                                            onClick={() => setPreviewReport(report)}
+                                            className="w-full rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-left transition-all hover:border-white/10"
+                                        >
+                                            <div className="mb-2 flex items-center justify-between gap-3">
+                                                <div className="text-sm font-bold text-white">{report.ueid}</div>
+                                                <div className="text-[9px] uppercase tracking-widest text-slate-500">
+                                                    {formatDateTime(report.generatedAt)}
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-amber-300">
+                                                {report.templateName}
+                                            </div>
+
+                                            <div className="text-sm leading-relaxed text-slate-400">
+                                                {report.report ? truncateText(report.report) : report.error || 'Текст не повернувся'}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </TacticalCard>
+                        ) : (
+                            <div className="rounded-[3rem] border border-white/10 bg-black/30 p-10 text-center">
+                                <ScanText size={40} className="mx-auto mb-4 text-slate-600" />
+                                <h3 className="text-xl font-black uppercase tracking-tight text-white">
+                                    Попередній перегляд зʼявиться тут
+                                </h3>
+                                <p className="mt-3 text-sm leading-relaxed text-slate-500">
+                                    Після першого успішного запуску тут зʼявиться markdown-звіт або історія поточної сесії.
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-emerald-500/15 to-cyan-500/10 p-8">
+                            <div className="mb-4 flex items-center gap-3">
+                                <ShieldCheck size={18} className="text-emerald-300" />
+                                <div className="text-sm font-black uppercase tracking-tight text-white">
+                                    Що саме працює зараз
+                                </div>
+                            </div>
+                            <ul className="space-y-3 text-sm leading-relaxed text-slate-200">
+                                <li>Одиничний режим викликає реальний маршрут звіту.</li>
+                                <li>Пакетний режим послідовно опитує кожний UEID без симуляції прогресу.</li>
+                                <li>Профільовані шаблони працюють через Copilot поверх базового звіту.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <style>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(245, 158, 11, 0.1);
-                    border-radius: 20px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(245, 158, 11, 0.3);
-                }
-            `}</style>
+                <style>{`
+                    .custom-scrollbar::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background: rgba(245, 158, 11, 0.15);
+                        border-radius: 20px;
+                    }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                        background: rgba(245, 158, 11, 0.35);
+                    }
+                `}</style>
+            </div>
         </PageTransition>
     );
 };
 
 export default ReportBuilderPage;
-
-

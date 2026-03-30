@@ -18,7 +18,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         // Реальний API Server (порт 8000) замість Mock
-        target: 'http://localhost:8000',
+        target: 'http://localhost:9080',
         changeOrigin: true,
         ws: true,
       }

@@ -11,7 +11,7 @@
 ### Єдиний правильний токен
 ```bash
 TELEGRAM_BOT_TOKEN=8562512293:AAEbO8iKWf4ZX_7STXSDDU8h-xpSQzTTrtE
-TELEGRAM_ADMIN_ID=8562512293
+TELEGRAM_ADMIN_ID=123456789  # Замініть на реальний числовий ID адміністратора
 ```
 
 ## 🤖 Nexus Telegram Bot - Інтелектуальний пульт управління
@@ -72,6 +72,8 @@ Arbiter (вибір кращої відповіді)
 - `/datasets` - Список датасетів
 - `/analyze <dataset>` - Аналіз датасету
 - `/anomalies` - Пошук аномалій
+- `/radar <entity>` - Швидкий звіт по конкуренту (v55.2)
+- `/simulate <params>` - Запуск ринкової симуляції (v55.2)
 - `/forecast` - Прогнозування
 
 #### ML та моделі

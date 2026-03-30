@@ -10,24 +10,57 @@ const getMetaEnv = () => {
 
 const metaEnv = getMetaEnv();
 
-export const API_BASE_URL = metaEnv.VITE_API_URL || '/api/v1';
-export const API_V45_URL = metaEnv.VITE_V45_API_URL || '/api/v45';
+// Determine API endpoint based on environment
+const getApiUrl = (): string => {
+    // Priority: env var > remote server > localhost mock
+    if (metaEnv.VITE_API_URL && metaEnv.VITE_API_URL.includes('194.177')) {
+        return metaEnv.VITE_API_URL; // Remote server
+    }
+    return metaEnv.VITE_API_URL || '/api/v1'; // Fallback to localhost or mock
+};
+
+const getV45Url = (): string => {
+    if (metaEnv.VITE_V45_API_URL && metaEnv.VITE_V45_API_URL.includes('194.177')) {
+        return metaEnv.VITE_V45_API_URL; // Remote server
+    }
+    return metaEnv.VITE_V45_API_URL || '/api/v45';
+};
+
+export const API_BASE_URL = getApiUrl();
+export const API_V45_URL = getV45Url();
 
 /**
- * TRUTH-ONLY MODE — no mock fallbacks.
+ * TRUTH-ONLY MODE — no mock fallbacks when using remote server.
  * All API errors propagate to the component for proper error display.
+ * 
+ * v56.1: Added remote server support
  */
-export const IS_TRUTH_ONLY_MODE = true;
+export const IS_TRUTH_ONLY_MODE = API_BASE_URL.includes('194.177') ? true : false;
 
 // Default timeout: 15 seconds
 const DEFAULT_TIMEOUT = 15_000;
+
+const updateBackendAvailability = (isOffline: boolean) => {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    const globalWindow = window as Window & { __BACKEND_OFFLINE_MODE__?: boolean };
+
+    if (globalWindow.__BACKEND_OFFLINE_MODE__ === isOffline) {
+        return;
+    }
+
+    globalWindow.__BACKEND_OFFLINE_MODE__ = isOffline;
+    window.dispatchEvent(new CustomEvent(isOffline ? 'predator-backend-offline' : 'predator-backend-online'));
+};
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
     timeout: DEFAULT_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '55.0.0',
+        'X-Client-Version': '56.1.0',
     }
 });
 
@@ -36,7 +69,7 @@ export const v45Client = axios.create({
     timeout: DEFAULT_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '55.0.0',
+        'X-Client-Version': '56.1.0',
     }
 });
 
@@ -60,6 +93,7 @@ const resilienceInterceptor = (error: AxiosError) => {
             status,
             message: error.message,
         });
+        updateBackendAvailability(true);
     } else if (status === 401) {
         console.warn(`[API] Unauthorized (401): ${url} — clearing token`);
         sessionStorage.removeItem('predator_auth_token');
@@ -77,11 +111,7 @@ const resilienceInterceptor = (error: AxiosError) => {
 
 // ─── Response Success Interceptor ─────────────────────────────────────────────
 const successInterceptor = (response: any) => {
-    // Clear offline mode flag on successful response
-    if (typeof window !== 'undefined' && (window as any).__BACKEND_OFFLINE_MODE__) {
-        (window as any).__BACKEND_OFFLINE_MODE__ = false;
-        window.dispatchEvent(new CustomEvent('predator-backend-online'));
-    }
+    updateBackendAvailability(false);
     return response;
 };
 

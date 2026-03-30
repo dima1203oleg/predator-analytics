@@ -5,6 +5,41 @@ import ReactECharts from '@/components/ECharts';
 import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 
+const normalizeRiskLevel = (value?: string): string => {
+    switch (value) {
+        case 'critical':
+        case 'high':
+        case 'elevated':
+        case 'watchlist':
+        case 'stable':
+        case 'medium':
+        case 'low':
+            return value;
+        case 'high_alert':
+            return 'high';
+        default:
+            return 'stable';
+    }
+};
+
+const getGradeConfig = (value?: string) => {
+    const riskLevel = normalizeRiskLevel(value);
+
+    switch (riskLevel) {
+        case 'critical':
+            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500' };
+        case 'high':
+            return { grade: 'C', color: 'text-amber-500', ringColor: 'stroke-amber-500' };
+        case 'elevated':
+        case 'medium':
+            return { grade: 'B-', color: 'text-yellow-500', ringColor: 'stroke-yellow-500' };
+        case 'watchlist':
+            return { grade: 'B', color: 'text-cyan-400', ringColor: 'stroke-cyan-400' };
+        default:
+            return { grade: 'A', color: 'text-emerald-500', ringColor: 'stroke-emerald-500' };
+    }
+};
+
 function CERSRadarECharts({ data }: { data: any[] }) {
     const radarOption = {
         backgroundColor: 'transparent',
@@ -142,12 +177,15 @@ export function CompanyCERSDashboard() {
             setHasAttempted(true);
             try {
                 const searchRes = await diligenceApi.searchCompanies({ query: searchQuery });
-                const entity = searchRes.items?.[0];
+                const items = Array.isArray(searchRes) ? searchRes : (searchRes.items || searchRes.data || []);
+                const entity = items[0];
                 
                 if (entity) {
-                    const profile = await diligenceApi.getCompanyProfile(entity.edrpou);
-                    const riskScores = await diligenceApi.getRiskScores([entity.edrpou]);
-                    const scoreData = riskScores[entity.edrpou] || {};
+                    const entityIdentifier = entity.ueid || entity.edrpou;
+                    const profile = await diligenceApi.getCompanyProfile(entityIdentifier);
+                    const riskScores = await diligenceApi.getRiskScores([entityIdentifier]);
+                    const scoreData = riskScores[entityIdentifier] || {};
+                    const gradeConfig = getGradeConfig((profile as any).risk_level);
 
                     setCompanyData({
                         profile,
@@ -164,15 +202,15 @@ export function CompanyCERSDashboard() {
                             type: s.shap_value > 0 ? 'positive' : 'negative'
                         })).sort((a: any, b: any) => a.impact - b.impact) : [],
                         score: profile.risk_score || 0,
-                        grade: (profile as any).risk_level === 'critical' ? 'D' : (profile as any).risk_level === 'high' ? 'C' : (profile as any).risk_level === 'medium' ? 'B' : 'A',
-                        color: (profile as any).risk_level === 'critical' ? 'text-rose-500' : (profile as any).risk_level === 'high' ? 'text-amber-500' : (profile as any).risk_level === 'medium' ? 'text-yellow-500' : 'text-emerald-500',
-                        ringColor: (profile as any).risk_level === 'critical' ? 'stroke-rose-500' : (profile as any).risk_level === 'high' ? 'stroke-amber-500' : (profile as any).risk_level === 'medium' ? 'stroke-yellow-500' : 'stroke-emerald-500'
+                        grade: gradeConfig.grade,
+                        color: gradeConfig.color,
+                        ringColor: gradeConfig.ringColor,
                     });
                 } else {
                     setCompanyData(null);
                 }
             } catch (error) {
-                console.error("Failed to fetch CERS data:", error);
+                console.error('Не вдалося отримати дані CERS:', error);
                 setCompanyData(null);
             } finally {
                 setLoadingData(false);

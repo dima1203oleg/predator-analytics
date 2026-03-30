@@ -1,58 +1,95 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
-import { Sidebar } from '../components/layout/Sidebar';
+import Sidebar from '../components/layout/Sidebar';
 
-let mockedUserRole: 'admin' | 'premium' | 'client' = 'admin';
+let mockedRole = 'admin';
 
 vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
   return {
-    ...actual as any,
     motion: {
-      aside: ({ children, ...props }: any) => <aside {...props}>{children}</aside>,
-      div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-      h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+      aside: ({
+        children,
+        initial: _initial,
+        animate: _animate,
+        exit: _exit,
+        transition: _transition,
+        ...props
+      }: React.HTMLAttributes<HTMLElement> & Record<string, unknown>) => <aside {...props}>{children}</aside>,
+      div: ({
+        children,
+        initial: _initial,
+        animate: _animate,
+        exit: _exit,
+        transition: _transition,
+        ...props
+      }: React.HTMLAttributes<HTMLDivElement> & Record<string, unknown>) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   };
 });
 
-vi.mock('../hooks/useSystemMetrics', () => ({
-  useSystemMetrics: () => null,
+vi.mock('../store/atoms', async () => {
+  const { atom } = await vi.importActual<typeof import('jotai')>('jotai');
+  return {
+    isSidebarOpenAtom: atom(true),
+    sidebarSearchAtom: atom(''),
+  };
+});
+
+vi.mock('../context/UserContext', () => ({
+  useUser: () => ({
+    user: {
+      name: 'Тестовий користувач',
+      role: mockedRole,
+    },
+    logout: vi.fn(),
+  }),
 }));
 
-vi.mock('../store/useAppStore', () => ({
-  useAppStore: () => ({
-    isSidebarOpen: true,
-    userRole: mockedUserRole,
+vi.mock('../hooks/useBackendStatus', () => ({
+  useBackendStatus: () => ({
+    isOffline: false,
+    isTruthOnly: false,
+    modeLabel: 'Локальний робочий режим',
+    sourceLabel: 'Локальний проксі /api/v1',
+    sourceType: 'local',
+    statusLabel: 'Зʼєднання активне',
   }),
 }));
 
 describe('Sidebar', () => {
-  it('показує розділи Factory та SR для адміністратора', () => {
-    mockedUserRole = 'admin';
-    render(
-      <MemoryRouter>
-        <Sidebar />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText('Центр АЗР (Фабрика)')).toBeInTheDocument();
-    expect(screen.getByText('АЗР — Реєстр продавців')).toBeInTheDocument();
-    expect(screen.getByText('Огляд Сегментів')).toBeInTheDocument();
-    expect(screen.getByText('Бізнес та Корпорації')).toBeInTheDocument();
+  beforeEach(() => {
+    if (typeof localStorage?.removeItem === 'function') {
+      localStorage.removeItem('predator-nav-collapsed');
+    }
   });
 
-  it('не показує AZR для не-адміністратора', () => {
-    mockedUserRole = 'premium';
+  it('показує адміністративні секції для адміністратора', () => {
+    mockedRole = 'admin';
+
     render(
       <MemoryRouter>
         <Sidebar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.queryByText('Центр АЗР (Фабрика)')).toBeNull();
+    expect(screen.getByText('Системна фабрика')).toBeInTheDocument();
+    expect(screen.getByText('Центр керування ШІ')).toBeInTheDocument();
+    expect(screen.getByText('Суверенне врядування')).toBeInTheDocument();
+  });
+
+  it('не показує адміністративні пункти для не-адміністратора', () => {
+    mockedRole = 'client_premium';
+
+    render(
+      <MemoryRouter>
+        <Sidebar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByText('Центр керування ШІ')).toBeNull();
+    expect(screen.queryByText('Суверенне врядування')).toBeNull();
   });
 });

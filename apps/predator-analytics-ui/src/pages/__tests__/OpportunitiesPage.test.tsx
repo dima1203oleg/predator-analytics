@@ -5,14 +5,14 @@ import { marketApi } from '@/features/market/api/market';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-// Mock API
+// Мок API
 vi.mock('@/features/market/api/market', () => ({
     marketApi: {
         getInsights: vi.fn(),
     },
 }));
 
-// Mock framer-motion simply
+// Спрощений мок framer-motion
 vi.mock('framer-motion', () => ({
     motion: {
         div: (props: any) => <div {...props}>{props.children}</div>,
@@ -34,7 +34,7 @@ describe('OpportunitiesPage', () => {
             },
         });
         
-        // Setup default mocks
+        // Налаштовуємо типові відповіді
         (marketApi.getInsights as any).mockResolvedValue({
             insights: [
                 {
@@ -86,25 +86,28 @@ describe('OpportunitiesPage', () => {
     it('switches to Recommendations tab', async () => {
         renderWithClient(<OpportunitiesPage />);
         
-        fireEvent.click(screen.getByText('Recommendations'));
+        fireEvent.click(screen.getByText('Рекомендації'));
         
         await waitFor(() => {
-            expect(screen.queryByText('Zhejiang Electronics Co.')).toBeInTheDocument();
+            expect(screen.getByText('New Export Opportunity')).toBeInTheDocument();
+            expect(screen.getByText(/Очікуваний вплив:/)).toBeInTheDocument();
         });
     });
 
     it('switches to Executive tab', async () => {
         renderWithClient(<OpportunitiesPage />);
         
-        fireEvent.click(screen.getByText('Executive'));
+        fireEvent.click(screen.getByText('Виконавчий огляд'));
         
         await waitFor(() => {
-            expect(screen.queryByText('$1.4M')).toBeInTheDocument();
+            expect(screen.getByText('Короткий виконавчий огляд')).toBeInTheDocument();
+            expect(screen.getByText('$200.0K')).toBeInTheDocument();
+            expect(screen.getByText('Активні сигнали')).toBeInTheDocument();
         });
     });
 
     it('displays loading state while fetching insights', async () => {
-        (marketApi.getInsights as any).mockReturnValue(new Promise(() => {})); // Never resolves
+        (marketApi.getInsights as any).mockReturnValue(new Promise(() => {})); // Не завершується навмисно
         
         renderWithClient(<OpportunitiesPage />);
         

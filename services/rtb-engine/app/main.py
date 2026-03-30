@@ -66,7 +66,8 @@ class SimpleConditionEvaluator:
             # Fallback for complex conditions during bootstrapping
             # WARNING: This should be replaced with a real parser.
             return False
-        except Exception:
+        except (ValueError, KeyError, TypeError) as e:  # type: ignore[misc]
+            logger.debug(f"Condition evaluation failed: {e}")
             return False
 
 
@@ -84,7 +85,7 @@ async def consult_llm(prompt: str, trace_id: str, context: dict | None) -> dict 
                 },
             )
             return resp.json() if resp.status_code == 200 else None
-    except Exception as e:
+    except (httpx.TimeoutException, httpx.HTTPError) as e:  # type: ignore[misc]
         logger.warning(f"LLM consultation failed: {e}")
         return None
 

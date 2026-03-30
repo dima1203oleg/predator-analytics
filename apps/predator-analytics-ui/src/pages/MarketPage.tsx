@@ -1,582 +1,818 @@
-/**
- * 📊 MarketPage — COMP-156
- * Головна сторінка режиму "Ринок" — canonical 4-mode UI v4.2.0
- *
- * Об'єднує: DashboardView, AnalyticsView, CustomsIntelligenceView,
- * CompetitorIntelligenceView в єдину page з tabs навігацією.
- */
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
+import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
+import type { Competitor } from '@/features/competitors/api/competitors';
+import type {
+  DeclarationResponse,
+  DeclarationsListResponse,
+  MarketOverviewResponse,
+  TopProduct,
+} from '@/features/market/types';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { cn } from '@/lib/utils';
 import {
-    BarChart3,
-    FileText,
-    Globe2,
-    Radar,
-    TrendingUp,
-    Package,
-    Building2,
-    ArrowUpRight,
-    ArrowDownRight,
+  Activity,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Building2,
+  FileText,
+  Globe2,
+  Loader2,
+  Package,
+  Radar,
+  TrendingUp,
 } from 'lucide-react';
 
 type MarketTab = 'overview' | 'declarations' | 'competitors' | 'customs';
 
-const tabs: { key: MarketTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={18} /> },
-    { key: 'declarations', label: 'Декларації', icon: <FileText size={18} /> },
-    { key: 'competitors', label: 'Конкуренти', icon: <Radar size={18} /> },
-    { key: 'customs', label: 'Митниця', icon: <Globe2 size={18} /> },
+interface OverviewStats {
+  total_declarations: number;
+  declarations_change: number;
+  total_value_usd: number;
+  value_change: number;
+  active_companies: number;
+  companies_change: number;
+  total_products: number;
+  products_change: number;
+}
+
+interface OverviewEnvelope {
+  overview?: {
+    stats?: Partial<OverviewStats>;
+    top_products?: Array<{
+      product_code?: string;
+      product_name?: string;
+      total_value_usd?: number;
+      growth_rate?: number;
+    }>;
+  };
+}
+
+type MarketOverviewPayload = MarketOverviewResponse & OverviewEnvelope;
+
+interface NormalizedMarketOverview {
+  cards: Array<{
+    title: string;
+    value: string;
+    change: string;
+    positive: boolean;
+    icon: typeof FileText;
+  }>;
+  topProducts: Array<{
+    code: string;
+    name: string;
+    value: string;
+    change: number;
+  }>;
+}
+
+const tabs: Array<{ key: MarketTab; label: string; icon: JSX.Element }> = [
+  { key: 'overview', label: 'Огляд ринку', icon: <BarChart3 size={18} /> },
+  { key: 'declarations', label: 'Декларації', icon: <FileText size={18} /> },
+  { key: 'competitors', label: 'Конкуренти', icon: <Radar size={18} /> },
+  { key: 'customs', label: 'Митниця', icon: <Globe2 size={18} /> },
 ];
 
+const formatCurrencyCompact = (value: number): string => {
+  if (value >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(1)}M`;
+  }
 
-export default function MarketPage() {
-    const [activeTab, setActiveTab] = useState<MarketTab>('overview');
-    const [overviewData, setOverviewData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+  if (value >= 1_000) {
+    return `$${(value / 1_000).toFixed(1)}K`;
+  }
 
-    useEffect(() => {
-        const fetchOverview = async () => {
-            try {
-                setLoading(true);
-                const data = await dashboardApi.getOverview();
-                setOverviewData(data);
-            } catch (error) {
-                console.error('Failed to fetch market overview:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  return `$${value.toLocaleString('uk-UA')}`;
+};
 
-        if (activeTab === 'overview') {
-            fetchOverview();
-        }
-    }, [activeTab]);
+const formatDateOnly = (value?: string): string => value?.split('T')[0] ?? '—';
 
-    return (
-        <div className="space-y-6">
-            {/* Page Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <BarChart3 className="text-cyan-400" size={28} />
-                        Ринок
-                    </h1>
-                    <p className="text-gray-300 mt-1">
-                        Аналітика зовнішньоекономічної діяльності України
-                    </p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="text-sm text-gray-300">
-                        Період: <span className="text-cyan-400 font-medium">2026-Q1</span>
-                    </div>
-                    {loading && (
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                            className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full"
-                        />
-                    )}
-                </div>
-            </div>
+const normalizeOverview = (payload: MarketOverviewPayload | null): NormalizedMarketOverview => {
+  if (!payload) {
+    return { cards: [], topProducts: [] };
+  }
 
-            {/* Tab Navigation */}
-            <div className="flex justify-between items-center bg-gray-900/40 backdrop-blur-md rounded-xl p-1 border border-white/5 shadow-2xl">
-                <div className="flex gap-1">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.key}
-                            onClick={() => setActiveTab(tab.key)}
-                            className={`
-                flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-                transition-all duration-300 relative overflow-hidden
-                ${activeTab === tab.key
-                                    ? 'text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]'
-                                    : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                }
-                `}
-                        >
-                            {tab.icon}
-                            {tab.label}
-                            {activeTab === tab.key && (
-                                <motion.div
-                                    layoutId="activeTab"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500"
-                                />
-                            )}
-                        </button>
-                    ))}
-                </div>
-                <div className="flex gap-2 pr-2">
-                    <button className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-lg text-xs font-bold transition-colors border border-cyan-500/20 flex items-center gap-2">
-                        <ArrowUpRight size={14} /> Експорт Звіту
-                    </button>
-                    <button className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-lg text-xs font-bold transition-colors border border-indigo-500/20 flex items-center gap-2">
-                        <Radar size={14} /> AI Аналіз
-                    </button>
-                </div>
-            </div>
+  const statsSource = payload.overview?.stats;
+  const flatStats = payload as Partial<OverviewStats>;
+  const stats: OverviewStats = {
+    total_declarations: statsSource?.total_declarations ?? flatStats.total_declarations ?? 0,
+    declarations_change: statsSource?.declarations_change ?? 0,
+    total_value_usd: statsSource?.total_value_usd ?? flatStats.total_value_usd ?? 0,
+    value_change: statsSource?.value_change ?? 0,
+    active_companies: statsSource?.active_companies ?? (payload as unknown as { total_companies?: number }).total_companies ?? 0,
+    companies_change: statsSource?.companies_change ?? 0,
+    total_products: statsSource?.total_products ?? 0,
+    products_change: statsSource?.products_change ?? 0,
+  };
 
-            {/* Tab Content */}
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                >
-                    {activeTab === 'overview' && <MarketOverview data={overviewData} loading={loading} />}
-                    {activeTab === 'declarations' && <DeclarationsTab />}
-                    {activeTab === 'competitors' && <CompetitorsTab />}
-                    {activeTab === 'customs' && <CustomsTab />}
-                </motion.div>
-            </AnimatePresence>
-        </div>
-    );
-}
+  const topProductsSource =
+    payload.overview?.top_products ??
+    payload.top_products?.map((product: TopProduct) => ({
+      product_code: product.code,
+      product_name: product.name,
+      total_value_usd: product.value_usd,
+      growth_rate: product.change_percent,
+    })) ??
+    [];
 
+  return {
+    cards: [
+      {
+        title: 'Митні декларації',
+        value: stats.total_declarations.toLocaleString('uk-UA'),
+        change: `${stats.declarations_change >= 0 ? '+' : ''}${stats.declarations_change}%`,
+        positive: stats.declarations_change >= 0,
+        icon: FileText,
+      },
+      {
+        title: 'Обсяг ринку (USD)',
+        value: formatCurrencyCompact(stats.total_value_usd),
+        change: `${stats.value_change >= 0 ? '+' : ''}${stats.value_change}%`,
+        positive: stats.value_change >= 0,
+        icon: TrendingUp,
+      },
+      {
+        title: 'Активні компанії',
+        value: stats.active_companies.toLocaleString('uk-UA'),
+        change: `${stats.companies_change >= 0 ? '+' : ''}${stats.companies_change}%`,
+        positive: stats.companies_change >= 0,
+        icon: Building2,
+      },
+      {
+        title: 'Номенклатура (SKU)',
+        value: stats.total_products.toLocaleString('uk-UA'),
+        change: `${stats.products_change >= 0 ? '+' : ''}${stats.products_change}%`,
+        positive: stats.products_change >= 0,
+        icon: Package,
+      },
+    ],
+    topProducts: topProductsSource.map((product) => ({
+      code: product.product_code ?? '—',
+      name: product.product_name ?? 'Невизначена категорія',
+      value: formatCurrencyCompact(product.total_value_usd ?? 0),
+      change: product.growth_rate ?? 0,
+    })),
+  };
+};
 
-interface MarketOverviewProps {
-    data: any;
-    loading: boolean;
-}
+const buildCustomsChartOption = (declarations: DeclarationResponse[]) => {
+  const buckets = declarations.reduce<Record<string, { count: number; value: number }>>((accumulator, declaration) => {
+    const monthKey = declaration.declaration_date?.slice(0, 7) ?? 'Невідомо';
+    const current = accumulator[monthKey] ?? { count: 0, value: 0 };
 
-function MarketOverview({ data, loading }: MarketOverviewProps) {
-    // Відображаємо реальні дані або порожній стан
-    const displayCards = data?.overview?.stats ? [
-        { title: 'Митні декларації', value: data.overview.stats.total_declarations?.toLocaleString() || '0', change: `${data.overview.stats.declarations_change >= 0 ? '+' : ''}${data.overview.stats.declarations_change || 0}%`, positive: (data.overview.stats.declarations_change || 0) >= 0, icon: FileText },
-        { title: 'Обсяг ринку (USD)', value: data.overview.stats.total_value_usd ? `$${(data.overview.stats.total_value_usd / 1000000).toFixed(1)}M` : '$0', change: `${data.overview.stats.value_change >= 0 ? '+' : ''}${data.overview.stats.value_change || 0}%`, positive: (data.overview.stats.value_change || 0) >= 0, icon: TrendingUp },
-        { title: 'Активні компанії', value: data.overview.stats.active_companies?.toLocaleString() || '0', change: `${data.overview.stats.companies_change >= 0 ? '+' : ''}${data.overview.stats.companies_change || 0}%`, positive: (data.overview.stats.companies_change || 0) >= 0, icon: Building2 },
-        { title: 'Номенклатура (SKU)', value: data.overview.stats.total_products?.toLocaleString() || '0', change: `${data.overview.stats.products_change >= 0 ? '+' : ''}${data.overview.stats.products_change || 0}%`, positive: (data.overview.stats.products_change || 0) >= 0, icon: Package },
-    ] : [];
-
-    const displayProducts = data?.overview?.top_products?.map((p: any) => ({
-        code: p.product_code,
-        name: p.product_name,
-        value: p.total_value_usd ? `$${(p.total_value_usd / 1000000).toFixed(1)}M` : '$0',
-        change: p.growth_rate || 0
-    })) || [];
-
-    return (
-        <div className="space-y-6">
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {displayCards.map((card, i) => (
-                    <motion.div
-                        key={card.title}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-gray-900/60 backdrop-blur-xl rounded-2xl p-6 border border-white/5 
-                       hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-all duration-500 group relative overflow-hidden"
-                    >
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <card.icon size={64} />
-                        </div>
-                        <div className="flex items-center justify-between mb-4 relative z-10">
-                            <div className="p-2 bg-gray-800/80 rounded-lg group-hover:bg-cyan-500/10 transition-colors">
-                                <card.icon size={20} className="text-gray-300 group-hover:text-cyan-400" />
-                            </div>
-                            <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full
-                                ${card.positive ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'}`}>
-                                {card.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                                {card.change}
-                            </span>
-                        </div>
-                        <div className="relative z-10">
-                            <div className="text-3xl font-black text-white tracking-tight group-hover:text-cyan-100 transition-colors">
-                                {loading ? (
-                                    <div className="h-8 w-24 bg-gray-800 animate-pulse rounded" />
-                                ) : card.value}
-                            </div>
-                            <div className="text-xs font-semibold text-gray-300 uppercase tracking-widest mt-2 group-hover:text-gray-200 transition-colors">
-                                {card.title}
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Top Products Table */}
-            <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                <div className="px-6 py-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                    <div>
-                        <h3 className="text-lg font-bold text-white tracking-tight">ТОП-5 товарних категорій</h3>
-                        <p className="text-xs text-gray-300 mt-0.5">Аналіз за обсягом імпорту (USD)</p>
-                    </div>
-                    <button className="text-xs font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest flex items-center gap-1">
-                        Повний звіт <ArrowUpRight size={14} />
-                    </button>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
-                                <th className="px-6 py-4 font-bold">Код УКТЗЕД</th>
-                                <th className="px-6 py-4 font-bold">Опис категорії</th>
-                                <th className="px-6 py-4 font-bold text-right">Обсяг транзакцій</th>
-                                <th className="px-6 py-4 font-bold text-right">Динаміка</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {(loading ? Array(5).fill({}) : displayProducts).map((product: any, i: number) => (
-                                <motion.tr
-                                    key={product.code || i}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.1 + i * 0.05 }}
-                                    className="hover:bg-cyan-500/[0.03] transition-colors cursor-pointer group"
-                                >
-                                    <td className="px-6 py-4 font-mono text-cyan-400 text-sm font-bold">
-                                        {loading ? <div className="h-4 w-16 bg-gray-800 animate-pulse rounded" /> : product.code}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {loading ? (
-                                            <div className="h-4 w-48 bg-gray-800 animate-pulse rounded" />
-                                        ) : (
-                                            <div className="text-gray-200 text-sm font-medium line-clamp-1 group-hover:text-white transition-colors">
-                                                {product.name}
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        {loading ? (
-                                            <div className="h-4 w-20 bg-gray-800 animate-pulse rounded ml-auto" />
-                                        ) : (
-                                            <div className="text-white font-black text-sm">{product.value}</div>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        {loading ? (
-                                            <div className="h-4 w-12 bg-gray-800 animate-pulse rounded ml-auto" />
-                                        ) : (
-                                            <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-md
-                                                ${product.change >= 0 ? 'text-emerald-400 bg-emerald-400/10' : 'text-red-400 bg-red-400/10'}`}>
-                                                {product.change >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                                                {Math.abs(product.change)}%
-                                            </span>
-                                        )}
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-
-function DeclarationsTab() {
-    const [declarations, setDeclarations] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchDeclarations = async () => {
-            try {
-                setLoading(true);
-                const data = await marketApi.getDeclarations(1, 15);
-                setDeclarations(data.items || []);
-            } catch (error) {
-                console.error('Failed to fetch declarations:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDeclarations();
-    }, []);
-
-    return (
-        <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-            <div className="px-6 py-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
-                <div>
-                    <h3 className="text-lg font-bold text-white tracking-tight">Реєстр митних декларацій</h3>
-                    <p className="text-xs text-gray-300 mt-0.5">Останні транзакції в режимі реального часу</p>
-                </div>
-                <div className="flex gap-2">
-                    <button className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-bold text-gray-300 transition-colors border border-white/5">
-                        Фільтри
-                    </button>
-                    <button className="px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded-lg text-xs font-bold transition-colors border border-cyan-500/20">
-                        Експорт CSV
-                    </button>
-                </div>
-            </div>
-            <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead>
-                        <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
-                            <th className="px-6 py-4 font-bold">Дата / Номер</th>
-                            <th className="px-6 py-4 font-bold">Компанія</th>
-                            <th className="px-6 py-4 font-bold">Товар (УКТЗЕД)</th>
-                            <th className="px-6 py-4 font-bold text-right">Вартість (USD)</th>
-                            <th className="px-6 py-4 font-bold text-center">Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                        {loading ? (
-                            Array(10).fill(0).map((_, i) => (
-                                <tr key={i} className="animate-pulse">
-                                    <td className="px-6 py-4"><div className="h-4 w-24 bg-gray-800 rounded" /></td>
-                                    <td className="px-6 py-4"><div className="h-4 w-40 bg-gray-800 rounded" /></td>
-                                    <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-800 rounded" /></td>
-                                    <td className="px-6 py-4"><div className="h-4 w-20 bg-gray-800 rounded ml-auto" /></td>
-                                    <td className="px-6 py-4"><div className="h-6 w-16 bg-gray-800 rounded mx-auto" /></td>
-                                </tr>
-                            ))
-                        ) : declarations.map((decl: any) => (
-                            <tr key={decl.id} className="hover:bg-white/[0.02] transition-colors cursor-pointer text-sm">
-                                <td className="px-6 py-4">
-                                    <div className="text-gray-200 font-medium">{decl.declaration_date?.split('T')[0]}</div>
-                                    <div className="text-[10px] text-gray-300 font-mono mt-0.5">{decl.declaration_number}</div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="text-gray-300 font-semibold">{decl.company_name}</div>
-                                    <div className="text-[10px] text-gray-300 mt-0.5">{decl.company_edrpou || '—'}</div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="text-cyan-400 font-mono font-bold">{decl.product_code}</div>
-                                    <div className="text-[10px] text-gray-300 mt-0.5 line-clamp-1">{decl.product_name || decl.description}</div>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <div className="text-white font-black">${decl.value_usd?.toLocaleString()}</div>
-                                    <div className="text-[10px] text-gray-300 mt-0.5">{decl.weight_kg} кг</div>
-                                </td>
-                                <td className="px-6 py-4 text-center">
-                                    <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded uppercase border border-emerald-500/20">
-                                        Оброблено
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {!loading && declarations.length === 0 && (
-                <div className="py-20 text-center">
-                    <FileText size={48} className="text-gray-700 mx-auto mb-4" />
-                    <p className="text-gray-300">Декларацій не знайдено</p>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function CompetitorsTab() {
-    const [competitors, setCompetitors] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCompetitors = async () => {
-            try {
-                setLoading(true);
-                const data = await competitorsApi.getActive(10);
-                setCompetitors(data || []);
-            } catch (error) {
-                console.error('Failed to fetch competitors:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchCompetitors();
-    }, []);
-
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                <div className="px-6 py-5 border-b border-white/5 bg-white/5">
-                    <h3 className="text-lg font-bold text-white tracking-tight">Топ конкурентів на ринку</h3>
-                    <p className="text-xs text-gray-300 mt-0.5">Рейтинг за обсягом операцій та частотою поставок</p>
-                </div>
-                <div className="divide-y divide-white/5">
-                    {loading ? (
-                        Array(5).fill(0).map((_, i) => (
-                            <div key={i} className="p-6 animate-pulse flex items-center justify-between">
-                                <div className="space-y-2">
-                                    <div className="h-4 w-48 bg-gray-800 rounded" />
-                                    <div className="h-3 w-32 bg-gray-800 rounded" />
-                                </div>
-                                <div className="h-8 w-24 bg-gray-800 rounded" />
-                            </div>
-                        ))
-                    ) : competitors.map((comp: any) => (
-                        <div key={comp.edrpou} className="p-6 hover:bg-white/[0.02] transition-all group flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/10 transition-colors border border-white/5">
-                                    <Building2 size={20} />
-                                </div>
-                                <div>
-                                    <div className="text-gray-200 font-bold group-hover:text-white transition-colors">{comp.name}</div>
-                                    <div className="text-xs text-gray-300 mt-1">ЄДРПОУ: {comp.edrpou} • Декларацій: {comp.declaration_count}</div>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                                <div className="text-white font-black text-lg">${(comp.total_value_usd / 1000000).toFixed(1)}M</div>
-                                <div className="text-[10px] text-gray-300 uppercase tracking-wider font-bold mt-0.5">Сумарний обсяг</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="space-y-6">
-                <div className="bg-gradient-to-br from-cyan-600/20 to-blue-600/20 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-                    <Radar className="text-cyan-400 mb-4" size={32} />
-                    <h4 className="text-white font-bold mb-2">CERS Intelligence</h4>
-                    <p className="text-sm text-gray-300 leading-relaxed">
-                        Автоматизований аналіз конкурентів на основі алгоритмів штучного інтелекту.
-                        Визначення стратегій закупівлі та цінового демпінгу.
-                    </p>
-                    <button className="w-full mt-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        Активувати Радар
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function CustomsTab() {
-    const chartOption = {
-        backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'cross' },
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(34, 211, 238, 0.3)',
-            textStyle: { color: '#fff', fontSize: 12 },
-            padding: [8, 12]
-        },
-        legend: {
-            data: ['Імпорт', 'Експорт'],
-            textStyle: { color: '#94a3b8', fontSize: 12 },
-            top: 20
-        },
-        grid: {
-            left: '5%',
-            right: '5%',
-            bottom: '10%',
-            top: '15%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип'],
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 },
-            splitLine: { show: false }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'Млн USD',
-            nameTextStyle: { color: '#94a3b8', fontSize: 11 },
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 }
-        },
-        series: [
-            {
-                name: 'Імпорт',
-                type: 'bar',
-                itemStyle: {
-                    color: {
-                        type: 'linear',
-                        x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [
-                            { offset: 0, color: '#06b6d4' },
-                            { offset: 1, color: 'rgba(6, 182, 212, 0.3)' }
-                        ]
-                    },
-                    borderRadius: [6, 6, 0, 0],
-                    borderColor: 'rgba(6, 182, 212, 0.5)',
-                    borderWidth: 1
-                },
-                data: [120, 132, 101, 134, 90, 230, 210],
-                smooth: false
-            },
-            {
-                name: 'Експорт',
-                type: 'line',
-                smooth: true,
-                symbol: 'circle',
-                symbolSize: 6,
-                itemStyle: { color: '#3b82f6', borderWidth: 2, borderColor: '#1e40af' },
-                lineStyle: { color: '#3b82f6', width: 2.5 },
-                areaStyle: {
-                    color: {
-                        type: 'linear',
-                        x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [
-                            { offset: 0, color: 'rgba(59, 130, 246, 0.4)' },
-                            { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
-                        ]
-                    }
-                },
-                data: [220, 182, 191, 234, 290, 330, 310]
-            }
-        ]
+    accumulator[monthKey] = {
+      count: current.count + 1,
+      value: current.value + (declaration.value_usd ?? 0),
     };
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl hover:border-cyan-500/20 transition-all duration-300 group">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="flex items-center justify-between mb-6 relative z-10">
-                    <div>
-                        <h3 className="text-lg font-bold text-white tracking-tight">Динаміка ЗЕД</h3>
-                        <p className="text-xs text-gray-300 mt-1">Експорт vs Імпорт (Млн USD) за останні 7 місяців</p>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs">
-                        <span className="flex items-center gap-1.5 text-gray-300">
-                            <span className="w-2 h-2 rounded-full bg-cyan-500"></span> Імпорт
-                        </span>
-                        <span className="flex items-center gap-1.5 text-gray-300">
-                            <span className="w-2 h-2 rounded-full bg-blue-500"></span> Експорт
-                        </span>
-                    </div>
-                </div>
-                <div className="h-[320px] w-full relative">
-                    <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
-                </div>
-            </div>
+    return accumulator;
+  }, {});
 
-            <div className="space-y-6">
-                <div className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-cyan-500/20 p-6 relative overflow-hidden group shadow-lg">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-500/10 blur-3xl rounded-full group-hover:bg-cyan-500/20 transition-all duration-500" />
-                    <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-500/5 blur-2xl rounded-full" />
-                    
-                    <Globe2 className="text-cyan-400 mb-4 relative z-10" size={36} />
-                    <h4 className="text-xl font-bold text-white mb-2 relative z-10">Митний Інтелект</h4>
-                    <p className="text-sm text-gray-300 leading-relaxed mb-6 relative z-10">
-                        Поглиблена аналітика митних операцій: виявлення аномальних цін, аналіз ризикових вантажів та перевірка відповідності УКТЗЕД.
-                    </p>
-                    
-                    <div className="space-y-3 mb-8 relative z-10">
-                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-cyan-500/20 hover:border-cyan-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-300">Перевірено декларацій</span>
-                            <span className="text-sm font-black text-cyan-400 group-hover/stat:text-cyan-300">1.2M+</span>
-                        </div>
-                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-amber-500/20 hover:border-amber-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-300">Виявлено аномалій</span>
-                            <span className="text-sm font-black text-amber-400 group-hover/stat:text-amber-300">3,492</span>
-                        </div>
-                        <div className="flex items-center justify-between bg-black/40 p-3.5 rounded-xl border border-rose-500/20 hover:border-rose-500/40 transition-all group/stat">
-                            <span className="text-xs text-gray-300">Ризик-фактор</span>
-                            <span className="text-sm font-black text-rose-400 group-hover/stat:text-rose-300">Високий (84%)</span>
-                        </div>
-                    </div>
-                    
-                    <button className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] relative z-10 group/btn">
-                        <span className="flex items-center justify-center gap-2">
-                            Запустити ML Детекцію
-                            <ArrowUpRight size={16} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                        </span>
-                    </button>
-                </div>
+  const months = Object.keys(buckets).sort();
+  const monthLabels = months.map((month) => {
+    const [, monthNumber] = month.split('-');
+    return monthNumber ? `Місяць ${monthNumber}` : month;
+  });
+
+  return {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'cross' },
+      backgroundColor: 'rgba(7, 15, 28, 0.96)',
+      borderColor: 'rgba(34, 211, 238, 0.24)',
+      textStyle: { color: '#fff', fontSize: 12 },
+      padding: [8, 12],
+    },
+    legend: {
+      data: ['Операції', 'Вартість (USD)'],
+      textStyle: { color: '#94a3b8', fontSize: 12 },
+      top: 16,
+    },
+    grid: {
+      left: '5%',
+      right: '5%',
+      bottom: '8%',
+      top: '18%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      data: monthLabels,
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
+      axisLabel: { color: '#94a3b8', fontSize: 11 },
+    },
+    yAxis: [
+      {
+        type: 'value',
+        name: 'Операції',
+        axisLabel: { color: '#94a3b8', fontSize: 11 },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      },
+      {
+        type: 'value',
+        name: 'USD',
+        axisLabel: { color: '#94a3b8', fontSize: 11 },
+        splitLine: { show: false },
+      },
+    ],
+    series: [
+      {
+        name: 'Операції',
+        type: 'bar',
+        itemStyle: {
+          color: '#22c55e',
+          borderRadius: [8, 8, 0, 0],
+        },
+        data: months.map((month) => buckets[month].count),
+      },
+      {
+        name: 'Вартість (USD)',
+        type: 'line',
+        yAxisIndex: 1,
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: { color: '#22d3ee' },
+        lineStyle: { color: '#22d3ee', width: 3 },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(34,211,238,0.32)' },
+              { offset: 1, color: 'rgba(34,211,238,0.04)' },
+            ],
+          },
+        },
+        data: months.map((month) => Number(buckets[month].value.toFixed(2))),
+      },
+    ],
+  };
+};
+
+export default function MarketPage() {
+  const backendStatus = useBackendStatus();
+  const [activeTab, setActiveTab] = useState<MarketTab>('overview');
+  const [overviewData, setOverviewData] = useState<MarketOverviewPayload | null>(null);
+  const [declarations, setDeclarations] = useState<DeclarationResponse[]>([]);
+  const [competitors, setCompetitors] = useState<Competitor[]>([]);
+  const [loadingOverview, setLoadingOverview] = useState(true);
+  const [loadingDeclarations, setLoadingDeclarations] = useState(false);
+  const [loadingCompetitors, setLoadingCompetitors] = useState(false);
+  const [overviewError, setOverviewError] = useState<string | null>(null);
+  const [declarationsError, setDeclarationsError] = useState<string | null>(null);
+  const [competitorsError, setCompetitorsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOverview = async () => {
+      try {
+        setLoadingOverview(true);
+        setOverviewError(null);
+        const data = await dashboardApi.getOverview();
+        setOverviewData(data as unknown as MarketOverviewPayload);
+      } catch (error) {
+        console.error('Не вдалося завантажити огляд ринку:', error);
+        setOverviewError('Огляд ринку не отримано. Перевірте доступність Core API.');
+      } finally {
+        setLoadingOverview(false);
+      }
+    };
+
+    fetchOverview();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'declarations' && activeTab !== 'customs') {
+      return;
+    }
+
+    if (declarations.length > 0 || loadingDeclarations) {
+      return;
+    }
+
+    const fetchDeclarations = async () => {
+      try {
+        setLoadingDeclarations(true);
+        setDeclarationsError(null);
+        const response: DeclarationsListResponse = await marketApi.getDeclarations(1, 15);
+        setDeclarations(response.items ?? []);
+      } catch (error) {
+        console.error('Не вдалося завантажити декларації:', error);
+        setDeclarationsError('Перелік декларацій недоступний. Немає підтверджених даних для вкладки.');
+      } finally {
+        setLoadingDeclarations(false);
+      }
+    };
+
+    fetchDeclarations();
+  }, [activeTab, declarations.length, loadingDeclarations]);
+
+  useEffect(() => {
+    if (activeTab !== 'competitors') {
+      return;
+    }
+
+    if (competitors.length > 0 || loadingCompetitors) {
+      return;
+    }
+
+    const fetchCompetitors = async () => {
+      try {
+        setLoadingCompetitors(true);
+        setCompetitorsError(null);
+        const response = await competitorsApi.getActive(10);
+        setCompetitors(response ?? []);
+      } catch (error) {
+        console.error('Не вдалося завантажити конкурентів:', error);
+        setCompetitorsError('Список конкурентів недоступний. Потрібно перевірити бекенд.');
+      } finally {
+        setLoadingCompetitors(false);
+      }
+    };
+
+    fetchCompetitors();
+  }, [activeTab, competitors.length, loadingCompetitors]);
+
+  const normalizedOverview = useMemo(() => normalizeOverview(overviewData), [overviewData]);
+  const customsChartOption = useMemo(() => buildCustomsChartOption(declarations), [declarations]);
+
+  return (
+    <div className="space-y-6">
+      <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(9,18,32,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-3xl">
+            <div className="mb-3 flex flex-wrap gap-2">
+              <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-cyan-200">
+                Ринкова аналітика
+              </span>
+              <span
+                className={cn(
+                  'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
+                  backendStatus.isOffline
+                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                    : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                )}
+              >
+                {backendStatus.statusLabel}
+              </span>
             </div>
+            <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+              <BarChart3 className="text-cyan-300" size={30} />
+              Ринок
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+              Кожна вкладка показує або живі дані з ендпоїнтів, або чіткий стан недоступності.
+              Жодних намальованих графіків чи демо-карток для митниці та конкурентів.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[520px]">
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+              <div className="mt-2 text-sm font-semibold text-white">{backendStatus.sourceLabel}</div>
+            </div>
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Вкладка</div>
+              <div className="mt-2 text-sm font-semibold text-white">
+                {tabs.find((tab) => tab.key === activeTab)?.label}
+              </div>
+            </div>
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Період</div>
+              <div className="mt-2 text-sm font-semibold text-white">Останні доступні записи</div>
+            </div>
+          </div>
         </div>
-    );
+      </section>
+
+      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
+        <div className="flex flex-wrap gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={cn(
+                'flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all',
+                activeTab === tab.key
+                  ? 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200'
+                  : 'border-transparent text-slate-300 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+              )}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.2 }}
+        >
+          {activeTab === 'overview' && (
+            <MarketOverview
+              data={normalizedOverview}
+              loading={loadingOverview}
+              error={overviewError}
+            />
+          )}
+          {activeTab === 'declarations' && (
+            <DeclarationsTab
+              declarations={declarations}
+              error={declarationsError}
+              loading={loadingDeclarations}
+            />
+          )}
+          {activeTab === 'competitors' && (
+            <CompetitorsTab
+              competitors={competitors}
+              error={competitorsError}
+              loading={loadingCompetitors}
+            />
+          )}
+          {activeTab === 'customs' && (
+            <CustomsTab
+              chartOption={customsChartOption}
+              declarations={declarations}
+              error={declarationsError}
+              loading={loadingDeclarations}
+            />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function MarketOverview({
+  data,
+  loading,
+  error,
+}: {
+  data: NormalizedMarketOverview;
+  loading: boolean;
+  error: string | null;
+}) {
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="rounded-[24px] border border-rose-400/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {(loading ? Array.from({ length: 4 }).map((_, index) => ({ title: `loading-${index}` })) : data.cards).map((card, index) => (
+          <div
+            key={card.title}
+            className="rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.28)]"
+          >
+            {loading ? (
+              <div className="space-y-3">
+                <div className="h-10 w-10 animate-pulse rounded-2xl bg-white/[0.06]" />
+                <div className="h-8 w-24 animate-pulse rounded-xl bg-white/[0.06]" />
+                <div className="h-4 w-32 animate-pulse rounded-xl bg-white/[0.06]" />
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10">
+                    <card.icon className="h-5 w-5 text-cyan-200" />
+                  </div>
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold',
+                      card.positive
+                        ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                        : 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+                    )}
+                  >
+                    {card.positive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+                    {card.change}
+                  </span>
+                </div>
+                <div className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{card.title}</div>
+                <div className="mt-2 text-3xl font-black tracking-tight text-white">{card.value}</div>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
+        <div className="flex flex-col gap-3 border-b border-white/[0.06] px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-lg font-black tracking-tight text-white">ТОП-5 товарних категорій</h3>
+            <p className="mt-1 text-sm text-slate-400">
+              Категорії з найбільшим підтвердженим обсягом операцій.
+            </p>
+          </div>
+          <div className="text-xs text-slate-500">Дані з агрегації ринкового огляду</div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+                <th className="px-6 py-4">Код УКТЗЕД</th>
+                <th className="px-6 py-4">Категорія</th>
+                <th className="px-6 py-4 text-right">Обсяг</th>
+                <th className="px-6 py-4 text-right">Динаміка</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06]">
+              {(loading ? Array.from({ length: 5 }).map((_, index) => ({ code: `loading-${index}` })) : data.topProducts).map((product, index) => (
+                <motion.tr
+                  key={product.code}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className="text-sm transition-colors hover:bg-white/[0.03]"
+                >
+                  <td className="px-6 py-4 font-mono font-bold text-cyan-200">
+                    {loading ? <div className="h-4 w-16 animate-pulse rounded bg-white/[0.06]" /> : product.code}
+                  </td>
+                  <td className="px-6 py-4 text-slate-200">
+                    {loading ? <div className="h-4 w-48 animate-pulse rounded bg-white/[0.06]" /> : product.name}
+                  </td>
+                  <td className="px-6 py-4 text-right font-semibold text-white">
+                    {loading ? <div className="ml-auto h-4 w-20 animate-pulse rounded bg-white/[0.06]" /> : product.value}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {loading ? (
+                      <div className="ml-auto h-4 w-14 animate-pulse rounded bg-white/[0.06]" />
+                    ) : (
+                      <span
+                        className={cn(
+                          'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold',
+                          product.change >= 0
+                            ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                            : 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+                        )}
+                      >
+                        {product.change >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+                        {Math.abs(product.change)}%
+                      </span>
+                    )}
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DeclarationsTab({
+  declarations,
+  error,
+  loading,
+}: {
+  declarations: DeclarationResponse[];
+  error: string | null;
+  loading: boolean;
+}) {
+  return (
+    <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
+      <div className="flex flex-col gap-3 border-b border-white/[0.06] px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h3 className="text-lg font-black tracking-tight text-white">Реєстр митних декларацій</h3>
+          <p className="mt-1 text-sm text-slate-400">Останні фактичні транзакції з ринкового API.</p>
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-xs text-slate-400">
+          <Activity className="h-3.5 w-3.5" />
+          {loading ? 'Оновлення переліку...' : `${declarations.length} записів у поточній вибірці`}
+        </div>
+      </div>
+
+      {error && <div className="border-b border-white/[0.06] px-6 py-4 text-sm text-rose-100">{error}</div>}
+
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+              <th className="px-6 py-4">Дата / номер</th>
+              <th className="px-6 py-4">Компанія</th>
+              <th className="px-6 py-4">Товар (УКТЗЕД)</th>
+              <th className="px-6 py-4 text-right">Вартість (USD)</th>
+              <th className="px-6 py-4 text-center">Статус</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/[0.06]">
+            {loading
+              ? Array.from({ length: 8 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4"><div className="h-4 w-24 animate-pulse rounded bg-white/[0.06]" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-40 animate-pulse rounded bg-white/[0.06]" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-36 animate-pulse rounded bg-white/[0.06]" /></td>
+                    <td className="px-6 py-4"><div className="ml-auto h-4 w-20 animate-pulse rounded bg-white/[0.06]" /></td>
+                    <td className="px-6 py-4"><div className="mx-auto h-6 w-16 animate-pulse rounded-full bg-white/[0.06]" /></td>
+                  </tr>
+                ))
+              : declarations.map((declaration) => (
+                  <tr key={declaration.id} className="text-sm transition-colors hover:bg-white/[0.03]">
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-slate-200">{formatDateOnly(declaration.declaration_date)}</div>
+                      <div className="mt-1 text-xs font-mono text-slate-500">{declaration.declaration_number}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-white">{declaration.company_name}</div>
+                      <div className="mt-1 text-xs text-slate-500">{declaration.company_edrpou || '—'}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-mono font-bold text-cyan-200">{declaration.product_code}</div>
+                      <div className="mt-1 text-xs text-slate-500">
+                        {declaration.product_name || 'Назва товару відсутня'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="font-black text-white">${(declaration.value_usd ?? 0).toLocaleString('uk-UA')}</div>
+                      <div className="mt-1 text-xs text-slate-500">{declaration.weight_kg ?? 0} кг</div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-200">
+                        Оброблено
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+          </tbody>
+        </table>
+      </div>
+
+      {!loading && declarations.length === 0 && (
+        <div className="px-6 py-16 text-center text-sm text-slate-400">
+          Підтверджених декларацій у поточній вибірці не знайдено.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CompetitorsTab({
+  competitors,
+  error,
+  loading,
+}: {
+  competitors: Competitor[];
+  error: string | null;
+  loading: boolean;
+}) {
+  return (
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
+      <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
+        <div className="border-b border-white/[0.06] px-6 py-5">
+          <h3 className="text-lg font-black tracking-tight text-white">Топ конкурентів на ринку</h3>
+          <p className="mt-1 text-sm text-slate-400">
+            Список формується з ендпоїнту активних конкурентів, без ручних вставок.
+          </p>
+        </div>
+
+        {error && <div className="border-b border-white/[0.06] px-6 py-4 text-sm text-rose-100">{error}</div>}
+
+        <div className="divide-y divide-white/[0.06]">
+          {loading
+            ? Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="flex items-center justify-between px-6 py-5">
+                  <div className="space-y-2">
+                    <div className="h-4 w-40 animate-pulse rounded bg-white/[0.06]" />
+                    <div className="h-4 w-28 animate-pulse rounded bg-white/[0.06]" />
+                  </div>
+                  <div className="h-6 w-20 animate-pulse rounded bg-white/[0.06]" />
+                </div>
+              ))
+            : competitors.map((competitor) => (
+                <div key={competitor.edrpou} className="flex items-center justify-between gap-4 px-6 py-5">
+                  <div className="min-w-0">
+                    <div className="truncate text-base font-semibold text-white">{competitor.name}</div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      ЄДРПОУ: {competitor.edrpou} • Декларацій: {competitor.declaration_count}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-black text-cyan-200">
+                      {(competitor.total_value_usd / 1_000_000).toFixed(1)}M
+                    </div>
+                    <div className="mt-1 text-[11px] text-slate-500">
+                      Середній чек: {formatCurrencyCompact(competitor.avg_value_usd ?? 0)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+        </div>
+
+        {!loading && competitors.length === 0 && (
+          <div className="px-6 py-16 text-center text-sm text-slate-400">
+            Немає підтверджених конкурентів у поточній вибірці.
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-4">
+        <div className="rounded-[28px] border border-cyan-400/14 bg-cyan-500/8 p-5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10">
+            <Radar className="h-5 w-5 text-cyan-200" />
+          </div>
+          <h4 className="mt-4 text-lg font-black text-white">Що корисного на вкладці</h4>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Тут немає декоративного «радару». Замість цього показано фактичних конкурентів із
+            їхнім сумарним обсягом і середнім чеком, щоб аналітик бачив реальну концентрацію ринку.
+          </p>
+        </div>
+
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Покриття</div>
+          <div className="mt-2 text-3xl font-black text-white">{competitors.length}</div>
+          <div className="mt-1 text-sm text-slate-400">Компаній у поточному рейтингу</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CustomsTab({
+  chartOption,
+  declarations,
+  error,
+  loading,
+}: {
+  chartOption: Record<string, unknown>;
+  declarations: DeclarationResponse[];
+  error: string | null;
+  loading: boolean;
+}) {
+  return (
+    <div className="space-y-6">
+      <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+        <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-lg font-black tracking-tight text-white">Динаміка ЗЕД</h3>
+            <p className="mt-1 text-sm text-slate-400">
+              Графік рахується з фактичних декларацій: кількість операцій та підтверджена вартість.
+            </p>
+          </div>
+          <div className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-xs text-slate-400">
+            {loading ? 'Підготовка графіка...' : `${declarations.length} декларацій у моделі`}
+          </div>
+        </div>
+
+        {error && <div className="mt-4 text-sm text-rose-100">{error}</div>}
+
+        <div className="mt-5 h-[360px] w-full">
+          {loading ? (
+            <div className="flex h-full items-center justify-center gap-3 text-slate-400">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Формуємо митну динаміку з реальних записів...
+            </div>
+          ) : declarations.length === 0 ? (
+            <div className="flex h-full items-center justify-center text-sm text-slate-400">
+              Немає достатніх даних для побудови митного графіка.
+            </div>
+          ) : (
+            <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Записів</div>
+          <div className="mt-2 text-3xl font-black text-white">{declarations.length}</div>
+          <div className="mt-1 text-sm text-slate-400">У використаній вибірці</div>
+        </div>
+        <div className="rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Сумарна вартість</div>
+          <div className="mt-2 text-3xl font-black text-white">
+            {formatCurrencyCompact(
+              declarations.reduce((total, declaration) => total + (declaration.value_usd ?? 0), 0),
+            )}
+          </div>
+          <div className="mt-1 text-sm text-slate-400">За поточну митну вибірку</div>
+        </div>
+        <div className="rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Середня вага</div>
+          <div className="mt-2 text-3xl font-black text-white">
+            {declarations.length > 0
+              ? `${Math.round(
+                  declarations.reduce((total, declaration) => total + (declaration.weight_kg ?? 0), 0) / declarations.length,
+                )} кг`
+              : '—'}
+          </div>
+          <div className="mt-1 text-sm text-slate-400">Середнє навантаження на партію</div>
+        </div>
+      </div>
+    </div>
+  );
 }

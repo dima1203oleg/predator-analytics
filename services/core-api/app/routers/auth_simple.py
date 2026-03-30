@@ -1,6 +1,22 @@
-"""Simple Auth Router - PREDATOR Analytics v55.2-SM-EXTENDED.
+"""⚠️ DEPRECATED: Simple Auth Router - PREDATOR Analytics v55.2.
 
-Spimplified auth without SQLAlchemy ORM issues.
+🔴 ЭТОТ ФАЙЛ ЯВЛЯЕТСЯ LEGACY И НЕ ИСПОЛЬЗУЕТСЯ.
+📌 Используется auth.py вместо этого файла.
+
+Причины деактивации:
+- Дублирует логику auth.py
+- Не импортируется в __init__.py
+- Использует прямые DB соединения вместо ORM (SQLAlchemy)
+- Отсутствуют type hints для Mypy strict mode
+
+Для удаления: rm /Users/dima-mac/Documents/Predator_21/services/core-api/app/routers/auth_simple.py
+
+---
+
+Сохранено для истории, но НЕ должно использоваться в production.
+Все аутентификационные операции должны идти через auth.py.
+
+Разработчикам: если нужна упрощенная версия без SQLAlchemy, обновите auth.py или создайте новый файл с явным именованием.
 """
 from datetime import UTC, datetime, timedelta
 

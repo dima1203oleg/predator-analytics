@@ -1,5 +1,0 @@
-apiVersion: v2
-name: frontend
-description: Frontend (Vite) service
-type: application
-version: 0.1.0

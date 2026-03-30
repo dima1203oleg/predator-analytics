@@ -83,7 +83,7 @@ describe('ForecastPage Component', () => {
 
         // Перевірка метрик
         expect(await screen.findByText('12.0%')).toBeInTheDocument(); // MAPE
-        expect(await screen.findByText('+13%')).toBeInTheDocument(); // Прогнозний ріст
+        expect(await screen.findByText('+10%')).toBeInTheDocument(); // Прогнозний ріст
         expect(await screen.findByText('85%')).toBeInTheDocument(); // Впевненість
 
         // Перевірка графіка
@@ -101,7 +101,7 @@ describe('ForecastPage Component', () => {
         renderWithClient(<ForecastPage />);
 
         // Клікаємо на вкладку "ML Моделі"
-        fireEvent.click(screen.getByText('ML Моделі'));
+        fireEvent.click(screen.getByText(/ML моделі/i));
 
         await waitFor(() => {
             expect(forecastApi.getModels).toHaveBeenCalled();
@@ -121,9 +121,9 @@ describe('ForecastPage Component', () => {
         fireEvent.click(screen.getByText('Сценарії'));
 
         // Перевірка контенту вкладки сценаріїв
-        expect(await screen.findByText('What-If Симулятор')).toBeInTheDocument();
-        expect(await screen.findByText(/Моделювання впливу зовнішніх факторів/i)).toBeInTheDocument();
-        expect(await screen.findByText('Phase 2: Modeling Engine')).toBeInTheDocument();
+        expect(await screen.findByText('Сценарний простір')).toBeInTheDocument();
+        expect(await screen.findByText(/Сценарії будуються на базі останнього отриманого прогнозу/i)).toBeInTheDocument();
+        expect(await screen.findByText('Консервативний')).toBeInTheDocument();
     });
 
     it('displays error when forecast API fails', async () => {
@@ -162,7 +162,7 @@ describe('ForecastPage Component', () => {
         (forecastApi.getModels as any).mockResolvedValue({ models: [] });
         renderWithClient(<ForecastPage />);
 
-        fireEvent.click(screen.getByText('ML Моделі'));
+        fireEvent.click(screen.getByText(/ML моделі/i));
 
         await waitFor(() => {
             expect(screen.getByText('Немає доступних моделей. Запустіть тренування або перевірте конфігурацію бекенду.')).toBeInTheDocument();
@@ -173,7 +173,7 @@ describe('ForecastPage Component', () => {
         (forecastApi.getModels as any).mockRejectedValue(new Error('API error'));
         renderWithClient(<ForecastPage />);
 
-        fireEvent.click(screen.getByText('ML Моделі'));
+        fireEvent.click(screen.getByText(/ML моделі/i));
 
         await waitFor(() => {
             expect(screen.getByText('Не вдалося завантажити перелік моделей. Перевірте бекенд.')).toBeInTheDocument();

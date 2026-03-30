@@ -1,72 +1,369 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
-import {
-    TrendingUp,
-    Brain,
-    Settings2,
-    Calendar,
-    ArrowUpRight,
-    Loader2,
-    Zap,
-    Target,
-    AlertCircle,
-} from 'lucide-react';
 import { forecastApi } from '@/features/forecast/api/forecast';
-import { ForecastResponse, ForecastModel } from '@/features/forecast/types';
+import type {
+    ForecastDemandRequest,
+    ForecastModel,
+    ForecastPoint,
+    ForecastResponse,
+} from '@/features/forecast/types';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { cn } from '@/lib/utils';
+import {
+    AlertCircle,
+    ArrowUpRight,
+    Brain,
+    Loader2,
+    RefreshCw,
+    Settings2,
+    Target,
+    TrendingUp,
+    Zap,
+} from 'lucide-react';
 
 type ForecastTab = 'demand' | 'models' | 'scenarios';
 
-const tabs: { key: ForecastTab; label: string; icon: React.ReactNode }[] = [
+const tabs: Array<{ key: ForecastTab; label: string; icon: JSX.Element }> = [
     { key: 'demand', label: 'Прогноз попиту', icon: <TrendingUp size={18} /> },
-    { key: 'models', label: 'ML Моделі', icon: <Brain size={18} /> },
+    { key: 'models', label: 'ML моделі', icon: <Brain size={18} /> },
     { key: 'scenarios', label: 'Сценарії', icon: <Settings2 size={18} /> },
 ];
 
+const defaultRequest: ForecastDemandRequest = {
+    product_code: '84713000',
+    months_ahead: 6,
+    model: 'prophet',
+};
+
+const buildChartOption = (forecast: ForecastResponse) => ({
+    backgroundColor: 'transparent',
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'cross' },
+        backgroundColor: 'rgba(7, 15, 28, 0.96)',
+        borderColor: 'rgba(16,185,129,0.24)',
+        textStyle: { color: '#fff', fontSize: 12 },
+        padding: [8, 12],
+    },
+    legend: {
+        data: ['Прогноз', 'Нижня межа', 'Верхня межа'],
+        textStyle: { color: '#cbd5e1', fontSize: 12 },
+        top: 20,
+    },
+    grid: {
+        left: '5%',
+        right: '5%',
+        bottom: '10%',
+        top: '16%',
+        containLabel: true,
+    },
+    xAxis: {
+        type: 'category',
+        data: forecast.forecast.map((point) => point.date),
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
+        axisLabel: { color: '#cbd5e1', fontSize: 11 },
+        splitLine: { show: false },
+    },
+    yAxis: {
+        type: 'value',
+        name: 'Обсяг',
+        nameTextStyle: { color: '#cbd5e1', fontSize: 11 },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+        axisLabel: { color: '#cbd5e1', fontSize: 11 },
+    },
+    series: [
+        {
+            name: 'Прогноз',
+            type: 'line',
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 8,
+            itemStyle: { color: '#10b981', borderWidth: 2, borderColor: '#059669' },
+            lineStyle: { color: '#10b981', width: 3 },
+            areaStyle: {
+                color: {
+                    type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [
+                        { offset: 0, color: 'rgba(16, 185, 129, 0.35)' },
+                        { offset: 1, color: 'rgba(16, 185, 129, 0.04)' },
+                    ],
+                },
+            },
+            data: forecast.forecast.map((point) => point.predicted_volume),
+        },
+        {
+            name: 'Нижня межа',
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            lineStyle: { color: 'rgba(148, 163, 184, 0.6)', width: 1, type: 'dashed' },
+            data: forecast.forecast.map((point) => point.confidence_lower),
+        },
+        {
+            name: 'Верхня межа',
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            lineStyle: { color: 'rgba(148, 163, 184, 0.6)', width: 1, type: 'dashed' },
+            data: forecast.forecast.map((point) => point.confidence_upper),
+        },
+    ],
+});
+
+const calculateGrowth = (forecast: ForecastResponse): number => {
+    const firstPoint = forecast.forecast[0];
+    const lastPoint = forecast.forecast[forecast.forecast.length - 1];
+
+    if (!firstPoint || !lastPoint || firstPoint.predicted_volume === 0) {
+        return 0;
+    }
+
+    return ((lastPoint.predicted_volume - firstPoint.predicted_volume) / firstPoint.predicted_volume) * 100;
+};
+
+const createScenarioPoints = (points: ForecastPoint[], multiplier: number): ForecastPoint[] =>
+    points.map((point) => ({
+        ...point,
+        predicted_volume: Math.round(point.predicted_volume * multiplier),
+        confidence_lower: Math.round(point.confidence_lower * multiplier),
+        confidence_upper: Math.round(point.confidence_upper * multiplier),
+    }));
+
 export default function ForecastPage() {
+    const backendStatus = useBackendStatus();
     const [activeTab, setActiveTab] = useState<ForecastTab>('demand');
+    const [request, setRequest] = useState<ForecastDemandRequest>(defaultRequest);
+    const [draftProductCode, setDraftProductCode] = useState(defaultRequest.product_code);
+    const [forecast, setForecast] = useState<ForecastResponse | null>(null);
+    const [models, setModels] = useState<ForecastModel[]>([]);
+    const [forecastLoading, setForecastLoading] = useState(true);
+    const [modelsLoading, setModelsLoading] = useState(false);
+    const [forecastError, setForecastError] = useState<string | null>(null);
+    const [modelsError, setModelsError] = useState<string | null>(null);
+
+    const fetchForecast = useCallback(async (params: ForecastDemandRequest) => {
+        try {
+            setForecastLoading(true);
+            setForecastError(null);
+            const data = await forecastApi.getDemandForecast(params);
+            setForecast(data);
+        } catch (error) {
+            console.error('Не вдалося отримати прогноз:', error);
+            setForecastError('Не вдалося отримати прогноз. Спробуйте ще раз або перевірте бекенд.');
+        } finally {
+            setForecastLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchForecast(defaultRequest);
+    }, [fetchForecast]);
+
+    useEffect(() => {
+        if (activeTab !== 'models' || models.length > 0 || modelsLoading) {
+            return;
+        }
+
+        const fetchModels = async () => {
+            try {
+                setModelsLoading(true);
+                setModelsError(null);
+                const data = await forecastApi.getModels();
+                setModels(data.models || []);
+            } catch (error) {
+                console.error('Не вдалося завантажити перелік моделей:', error);
+                setModelsError('Не вдалося завантажити перелік моделей. Перевірте бекенд.');
+            } finally {
+                setModelsLoading(false);
+            }
+        };
+
+        fetchModels();
+    }, [activeTab, models.length, modelsLoading]);
+
+    const chartOption = useMemo(
+        () => (forecast ? buildChartOption(forecast) : null),
+        [forecast],
+    );
+
+    const growth = useMemo(
+        () => (forecast ? calculateGrowth(forecast) : 0),
+        [forecast],
+    );
+
+    const scenarioGroups = useMemo(() => {
+        if (!forecast) {
+            return [];
+        }
+
+        return [
+            {
+                id: 'conservative',
+                title: 'Консервативний',
+                description: 'Пониження попиту на 10% відносно базового прогнозу.',
+                tone: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
+                points: createScenarioPoints(forecast.forecast, 0.9),
+            },
+            {
+                id: 'base',
+                title: 'Базовий',
+                description: 'Поточний прогноз, отриманий із фактичного ендпоїнту.',
+                tone: 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                points: forecast.forecast,
+            },
+            {
+                id: 'accelerated',
+                title: 'Прискорений',
+                description: 'Зростання попиту на 12% поверх базового сценарію.',
+                tone: 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
+                points: createScenarioPoints(forecast.forecast, 1.12),
+            },
+        ];
+    }, [forecast]);
 
     return (
         <div className="space-y-6">
-            {/* Page Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <TrendingUp className="text-emerald-400" size={28} />
-                        Прогнозування
-                    </h1>
-                    <p className="text-gray-300 mt-1">
-                        ML-прогнози попиту, цін та обсягів імпорту
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-300">
-                    <Calendar size={16} />
-                    Горизонт: <span className="text-emerald-400 font-medium">6 місяців</span>
-                </div>
-            </div>
+            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(10,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+                    <div className="max-w-3xl">
+                        <div className="mb-3 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
+                                ML-аналітика
+                            </span>
+                            <span
+                                className={cn(
+                                    'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
+                                    backendStatus.isOffline
+                                        ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                                        : 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
+                                )}
+                            >
+                                {backendStatus.statusLabel}
+                            </span>
+                        </div>
+                        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
+                            <TrendingUp className="text-emerald-300" size={30} />
+                            Прогнозування
+                        </h1>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+                            Керуйте товарним кодом, горизонтом і моделлю, а вкладка сценаріїв
+                            відштовхується від фактичного прогнозу замість декоративного плейсхолдера.
+                        </p>
+                    </div>
 
-            {/* Tab Navigation */}
-            <div className="flex gap-1 bg-gray-800/50 rounded-xl p-1 border border-gray-700/50">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setActiveTab(tab.key)}
-                        className={`
-              flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
-              transition-all duration-200
-              ${activeTab === tab.key
-                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                    <div className="grid gap-3 sm:grid-cols-2 xl:min-w-[520px]">
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{backendStatus.sourceLabel}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Активна модель</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.model}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Код товару</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.product_code}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Горизонт</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.months_ahead} місяців</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="grid gap-4 rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+                <div className="grid gap-3 md:grid-cols-3">
+                    <label className="rounded-[24px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                        <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Код товару</div>
+                        <input
+                            value={draftProductCode}
+                            onChange={(event) => setDraftProductCode(event.target.value)}
+                            className="mt-2 w-full bg-transparent text-sm font-semibold text-white outline-none"
+                        />
+                    </label>
+
+                    <label className="rounded-[24px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                        <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Горизонт</div>
+                        <select
+                            value={request.months_ahead}
+                            onChange={(event) =>
+                                setRequest((current) => ({
+                                    ...current,
+                                    months_ahead: Number(event.target.value),
+                                }))
                             }
-            `}
-                    >
-                        {tab.icon}
-                        {tab.label}
-                    </button>
-                ))}
+                            className="mt-2 w-full bg-transparent text-sm font-semibold text-white outline-none"
+                        >
+                            <option value={3}>3 місяці</option>
+                            <option value={6}>6 місяців</option>
+                            <option value={9}>9 місяців</option>
+                            <option value={12}>12 місяців</option>
+                        </select>
+                    </label>
+
+                    <label className="rounded-[24px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                        <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Модель</div>
+                        <select
+                            value={request.model}
+                            onChange={(event) =>
+                                setRequest((current) => ({
+                                    ...current,
+                                    model: event.target.value,
+                                }))
+                            }
+                            className="mt-2 w-full bg-transparent text-sm font-semibold text-white outline-none"
+                        >
+                            <option value="prophet">prophet</option>
+                            <option value="arima">arima</option>
+                            <option value="lstm">lstm</option>
+                        </select>
+                    </label>
+                </div>
+
+                <button
+                    onClick={() => {
+                        const nextRequest = {
+                            ...request,
+                            product_code: draftProductCode.trim() || defaultRequest.product_code,
+                        };
+
+                        setRequest(nextRequest);
+                        fetchForecast(nextRequest);
+                    }}
+                    className="inline-flex items-center justify-center gap-2 rounded-[24px] border border-emerald-400/20 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/18"
+                >
+                    <RefreshCw size={16} className={cn(forecastLoading && 'animate-spin')} />
+                    Оновити прогноз
+                </button>
+            </section>
+
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
+                <div className="flex flex-wrap gap-2">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setActiveTab(tab.key)}
+                            className={cn(
+                                'flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all',
+                                activeTab === tab.key
+                                    ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                                    : 'border-transparent text-slate-300 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+                            )}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Tab Content */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={activeTab}
@@ -75,238 +372,162 @@ export default function ForecastPage() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
                 >
-                    {activeTab === 'demand' && <DemandForecastTab />}
-                    {activeTab === 'models' && <ModelsTab />}
-                    {activeTab === 'scenarios' && <ScenariosTab />}
+                    {activeTab === 'demand' && (
+                        <DemandForecastTab
+                            chartOption={chartOption}
+                            forecast={forecast}
+                            growth={growth}
+                            loading={forecastLoading}
+                            error={forecastError}
+                        />
+                    )}
+                    {activeTab === 'models' && (
+                        <ModelsTab
+                            models={models}
+                            loading={modelsLoading}
+                            error={modelsError}
+                        />
+                    )}
+                    {activeTab === 'scenarios' && (
+                        <ScenariosTab
+                            forecast={forecast}
+                            loading={forecastLoading}
+                            scenarioGroups={scenarioGroups}
+                        />
+                    )}
                 </motion.div>
             </AnimatePresence>
         </div>
     );
 }
 
-function DemandForecastTab() {
-    const [forecast, setForecast] = useState<ForecastResponse | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchForecast = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const data = await forecastApi.getDemandForecast({
-                    product_code: '84713000',
-                    months_ahead: 6,
-                    model: 'prophet'
-                });
-                setForecast(data);
-            } catch (error) {
-                console.error('Failed to fetch forecast:', error);
-                setError('Не вдалося отримати прогноз. Спробуйте ще раз або перевірте бекенд.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchForecast();
-    }, []);
-
+function DemandForecastTab({
+    chartOption,
+    forecast,
+    growth,
+    loading,
+    error,
+}: {
+    chartOption: Record<string, unknown> | null;
+    forecast: ForecastResponse | null;
+    growth: number;
+    loading: boolean;
+    error: string | null;
+}) {
     if (loading) {
         return (
-            <div className="h-64 flex flex-col items-center justify-center text-gray-300 gap-4">
-                <Loader2 className="animate-spin text-emerald-500" size={32} />
-                <p className="animate-pulse">Розрахунок ML прогнозу...</p>
+            <div className="flex h-64 flex-col items-center justify-center gap-4 text-slate-400">
+                <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
+                <p className="animate-pulse">Розрахунок ML-прогнозу...</p>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-200 rounded-xl p-4">
+            <div className="rounded-[24px] border border-rose-400/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
                 {error}
             </div>
         );
     }
 
-    if (!forecast) return null;
-
-    const chartOption = {
-        backgroundColor: 'transparent',
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'cross' },
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(16, 185, 129, 0.3)',
-            textStyle: { color: '#fff', fontSize: 12 },
-            padding: [8, 12]
-        },
-        legend: {
-            data: ['Прогноз', 'Нижня межа', 'Верхня межа'],
-            textStyle: { color: '#cbd5e1', fontSize: 12 },
-            top: 20
-        },
-        grid: {
-            left: '5%',
-            right: '5%',
-            bottom: '10%',
-            top: '15%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: forecast.forecast.map(p => p.date),
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            axisLabel: { color: '#cbd5e1', fontSize: 11 },
-            splitLine: { show: false }
-        },
-        yAxis: {
-            type: 'value',
-            name: 'Обсяг (шт)',
-            nameTextStyle: { color: '#cbd5e1', fontSize: 11 },
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-            axisLabel: { color: '#cbd5e1', fontSize: 11 }
-        },
-        series: [
-            {
-                name: 'Прогноз',
-                type: 'line',
-                smooth: true,
-                symbol: 'circle',
-                symbolSize: 8,
-                itemStyle: { color: '#10b981', borderWidth: 2, borderColor: '#059669' },
-                lineStyle: { color: '#10b981', width: 3 },
-                areaStyle: {
-                    color: {
-                        type: 'linear',
-                        x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [
-                            { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
-                            { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
-                        ]
-                    }
-                },
-                data: forecast.forecast.map(p => p.predicted_volume),
-                z: 3
-            },
-            {
-                name: 'Нижня межа',
-                type: 'line',
-                smooth: true,
-                symbol: 'none',
-                lineStyle: { color: 'rgba(107, 114, 128, 0.5)', width: 1, type: 'dashed' },
-                data: forecast.forecast.map(p => p.confidence_lower),
-                z: 1
-            },
-            {
-                name: 'Верхня межа',
-                type: 'line',
-                smooth: true,
-                symbol: 'none',
-                lineStyle: { color: 'rgba(107, 114, 128, 0.5)', width: 1, type: 'dashed' },
-                data: forecast.forecast.map(p => p.confidence_upper),
-                z: 1
-            }
-        ]
-    };
+    if (!forecast || !chartOption) {
+        return null;
+    }
 
     return (
         <div className="space-y-6">
-            {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gradient-to-br from-emerald-900/30 to-green-900/20 backdrop-blur-xl rounded-2xl border border-emerald-500/20 p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all" />
-                    <TrendingUp className="text-emerald-400 mb-3 relative z-10" size={28} />
-                    <div className="text-3xl font-black text-emerald-400 relative z-10">+{(forecast.confidence_score * 15).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">Прогнозний ріст</div>
-                </div>
-
-                <div className="bg-gradient-to-br from-cyan-900/30 to-blue-900/20 backdrop-blur-xl rounded-2xl border border-cyan-500/20 p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full group-hover:bg-cyan-500/20 transition-all" />
-                    <Target className="text-cyan-400 mb-3 relative z-10" size={28} />
-                    <div className="text-3xl font-black text-cyan-400 relative z-10">{(forecast.confidence_score * 100).toFixed(0)}%</div>
-                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">Впевненість</div>
-                </div>
-
-                <div className="bg-gradient-to-br from-amber-900/30 to-orange-900/20 backdrop-blur-xl rounded-2xl border border-amber-500/20 p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-3xl rounded-full group-hover:bg-amber-500/20 transition-all" />
-                    <Zap className="text-amber-400 mb-3 relative z-10" size={28} />
-                    <div className="text-3xl font-black text-amber-400 relative z-10">{(forecast.mape * 100).toFixed(1)}%</div>
-                    <div className="text-xs text-gray-300 uppercase tracking-widest font-bold mt-2 relative z-10">MAPE (похибка)</div>
-                </div>
+            <div className="grid gap-4 md:grid-cols-3">
+                <SummaryCard
+                    icon={<TrendingUp className="text-emerald-300" />}
+                    label="Прогнозний ріст"
+                    tone="border-emerald-400/20 bg-emerald-500/10 text-emerald-200"
+                    value={`${growth >= 0 ? '+' : ''}${growth.toFixed(0)}%`}
+                />
+                <SummaryCard
+                    icon={<Target className="text-cyan-300" />}
+                    label="Впевненість"
+                    tone="border-cyan-400/20 bg-cyan-500/10 text-cyan-200"
+                    value={`${(forecast.confidence_score * 100).toFixed(0)}%`}
+                />
+                <SummaryCard
+                    icon={<Zap className="text-amber-300" />}
+                    label="MAPE (похибка)"
+                    tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
+                    value={`${(forecast.mape * 100).toFixed(1)}%`}
+                />
             </div>
 
-            {/* Chart */}
-            <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl hover:border-emerald-500/20 transition-all duration-300 group">
-                <div className="flex items-center justify-between mb-6">
+            <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+                <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <h3 className="text-lg font-bold text-white tracking-tight">Графік прогнозу</h3>
-                        <p className="text-xs text-gray-300 mt-1">{forecast.product_name} ({forecast.product_code})</p>
+                        <h3 className="text-lg font-black tracking-tight text-white">Графік прогнозу</h3>
+                        <p className="mt-1 text-sm text-slate-400">
+                            {forecast.product_name} ({forecast.product_code})
+                        </p>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-300 font-mono">
-                        <span className="px-2 py-1 rounded-full border border-white/10 bg-white/5 uppercase tracking-wide">{forecast.model_used}</span>
-                        <span className={
-                            `px-2 py-1 rounded-full border uppercase tracking-wide ${forecast.source === 'real'
-                                ? 'border-emerald-500/50 text-emerald-300 bg-emerald-500/10'
-                                : 'border-amber-500/50 text-amber-300 bg-amber-500/10'}`
-                        }>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-slate-300">
+                            {forecast.model_used}
+                        </span>
+                        <span
+                            className={cn(
+                                'rounded-full border px-3 py-1.5 font-semibold',
+                                forecast.source === 'real'
+                                    ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                                    : 'border-amber-400/20 bg-amber-500/10 text-amber-200',
+                            )}
+                        >
                             {forecast.source === 'real' ? 'Реальні дані' : 'Синтетичні'}
                         </span>
                     </div>
                 </div>
-                <div className="h-[350px] w-full">
+
+                <div className="mt-5 h-[350px] w-full">
                     <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
                 </div>
             </div>
 
-            {/* AI Interpretation */}
-            <div className="bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 rounded-xl border border-emerald-500/20 p-6 shadow-lg shadow-emerald-500/5">
+            <div className="rounded-[28px] border border-emerald-400/16 bg-emerald-500/8 p-6">
                 <div className="flex items-start gap-4">
-                    <AlertCircle className="text-emerald-400 mt-1 flex-shrink-0" size={24} />
+                    <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-emerald-300" />
                     <div>
-                        <h4 className="text-white font-bold mb-2">AI Інтерпретація</h4>
-                        <p className="text-gray-300 text-sm leading-relaxed">{forecast.interpretation_uk}</p>
+                        <h4 className="text-lg font-black text-white">AI-інтерпретація</h4>
+                        <p className="mt-2 text-sm leading-7 text-slate-300">{forecast.interpretation_uk}</p>
                     </div>
                 </div>
             </div>
 
-            {/* Forecast Table */}
-            <div className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                <div className="px-6 py-5 border-b border-white/5 bg-white/5">
-                    <h3 className="text-lg font-bold text-white tracking-tight">Детальні прогнозні точки</h3>
+            <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
+                <div className="border-b border-white/[0.06] px-6 py-5">
+                    <h3 className="text-lg font-black tracking-tight text-white">Детальні прогнозні точки</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="text-left text-[10px] uppercase tracking-[0.2em] text-gray-300 bg-black/20">
-                                <th className="px-6 py-4 font-bold">Місяць</th>
-                                <th className="px-6 py-4 font-bold text-right">Прогноз (шт)</th>
-                                <th className="px-6 py-4 font-bold text-right">Нижня межа</th>
-                                <th className="px-6 py-4 font-bold text-right">Верхня межа</th>
-                                <th className="px-6 py-4 font-bold text-right">Довірчий інтервал</th>
+                            <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+                                <th className="px-6 py-4">Місяць</th>
+                                <th className="px-6 py-4 text-right">Прогноз</th>
+                                <th className="px-6 py-4 text-right">Нижня межа</th>
+                                <th className="px-6 py-4 text-right">Верхня межа</th>
+                                <th className="px-6 py-4 text-right">Інтервал</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-white/[0.06]">
                             {forecast.forecast.map((point) => (
-                                <tr key={point.date} className="hover:bg-white/[0.02] transition-colors text-sm">
-                                    <td className="px-6 py-4 text-gray-300 font-bold">{point.date}</td>
-                                    <td className="px-6 py-4 text-right text-emerald-400 font-black font-mono">
-                                        {point.predicted_volume.toLocaleString()}
+                                <tr key={point.date} className="text-sm transition-colors hover:bg-white/[0.03]">
+                                    <td className="px-6 py-4 font-semibold text-slate-200">{point.date}</td>
+                                    <td className="px-6 py-4 text-right font-black text-emerald-200">
+                                        {point.predicted_volume.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-300 font-mono">
-                                        {point.confidence_lower.toLocaleString()}
+                                    <td className="px-6 py-4 text-right font-mono text-slate-300">
+                                        {point.confidence_lower.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-300 font-mono">
-                                        {point.confidence_upper.toLocaleString()}
+                                    <td className="px-6 py-4 text-right font-mono text-slate-300">
+                                        {point.confidence_upper.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <div className="w-24 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full bg-gradient-to-r from-emerald-600 to-cyan-400 rounded-full"
-                                                    style={{ width: `${(1 - (point.confidence_upper - point.confidence_lower) / point.predicted_volume) * 100}%` }}
-                                                />
-                                            </div>
-                                        </div>
+                                    <td className="px-6 py-4 text-right text-slate-400">
+                                        {Math.max(0, point.confidence_upper - point.confidence_lower).toLocaleString('uk-UA')}
                                     </td>
                                 </tr>
                             ))}
@@ -318,94 +539,178 @@ function DemandForecastTab() {
     );
 }
 
-function ModelsTab() {
-    const [models, setModels] = useState<ForecastModel[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchModels = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-                const data = await forecastApi.getModels();
-                setModels(data.models || []);
-            } catch (error) {
-                console.error('Failed to fetch models:', error);
-                setError('Не вдалося завантажити перелік моделей. Перевірте бекенд.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchModels();
-    }, []);
-
+function ModelsTab({
+    models,
+    loading,
+    error,
+}: {
+    models: ForecastModel[];
+    loading: boolean;
+    error: string | null;
+}) {
     return (
         <div className="space-y-6">
-            <h3 className="text-lg font-bold text-white tracking-tight">Доступні алгоритми прогнозування</h3>
+            <div>
+                <h3 className="text-lg font-black tracking-tight text-white">Доступні алгоритми прогнозування</h3>
+                <p className="mt-1 text-sm text-slate-400">
+                    Жодних вигаданих показників точності. Показуємо лише назву та опис, які реально віддав бекенд.
+                </p>
+            </div>
+
             {error && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-200 rounded-xl p-4">
+                <div className="rounded-[24px] border border-rose-400/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
                     {error}
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {loading ? (
-                    Array(3).fill(0).map((_, i) => (
-                        <div key={i} className="h-40 bg-gray-900/60 rounded-2xl border border-white/5 animate-pulse" />
+                    Array.from({ length: 3 }).map((_, index) => (
+                        <div key={index} className="h-44 rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+                            <div className="h-full animate-pulse rounded-[24px] bg-white/[0.05]" />
+                        </div>
                     ))
                 ) : models.length === 0 ? (
-                    <div className="col-span-full text-gray-300 text-sm bg-gray-900/60 border border-white/5 rounded-xl p-4">
+                    <div className="col-span-full rounded-[24px] border border-white/[0.08] bg-white/[0.03] px-5 py-4 text-sm text-slate-300">
                         Немає доступних моделей. Запустіть тренування або перевірте конфігурацію бекенду.
                     </div>
-                ) : models.map((model, i) => (
-                    <motion.div
-                        key={model.key}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6
-                       hover:border-emerald-500/30 transition-all duration-300 group relative overflow-hidden shadow-xl"
-                    >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 -mr-12 -mt-12 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
-
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                                <Brain size={24} />
+                ) : (
+                    models.map((model) => (
+                        <div
+                            key={model.key}
+                            className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5 transition-all hover:border-emerald-400/18 hover:bg-white/[0.04]"
+                        >
+                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10">
+                                <Brain className="h-5 w-5 text-emerald-200" />
                             </div>
-                            <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-bold rounded uppercase border border-emerald-500/20">
-                                Ready
-                            </span>
+                            <div className="mt-4 flex items-center justify-between gap-3">
+                                <h4 className="text-lg font-black text-white">{model.name_uk}</h4>
+                                <span className="rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1 text-[11px] text-slate-300">
+                                    {model.key}
+                                </span>
+                            </div>
+                            <p className="mt-3 text-sm leading-7 text-slate-400">{model.description_uk}</p>
                         </div>
-                        <h4 className="text-white font-black text-lg mb-2">{model.name_uk}</h4>
-                        <p className="text-xs text-gray-300 leading-relaxed line-clamp-2">{model.description_uk}</p>
-
-                        <div className="mt-6 flex items-center justify-between">
-                            <span className="text-[10px] text-gray-300 font-bold uppercase tracking-wider">Precision</span>
-                            <span className="text-emerald-400 font-mono font-bold">0.{(85 + i * 4).toFixed(0)}+</span>
-                        </div>
-                    </motion.div>
-                ))}
+                    ))
+                )}
             </div>
         </div>
     );
 }
 
-function ScenariosTab() {
-    return (
-        <div className="relative overflow-hidden bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-16 text-center shadow-2xl">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
-            <Settings2 size={64} className="text-emerald-500/30 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-2xl font-black text-white mb-4 tracking-tight uppercase">What-If Симулятор</h3>
-            <p className="text-gray-300 max-w-lg mx-auto leading-relaxed">
-                Моделювання впливу зовнішніх факторів: зміна курсу валют, санкції,
-                нові торгові угоди. Інтерактивна пісочниця для стратегічного планування.
-            </p>
-            <div className="mt-8 flex items-center justify-center gap-4">
-                <span className="px-4 py-2 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/20">
-                    Phase 2: Modeling Engine
-                </span>
+function ScenariosTab({
+    forecast,
+    loading,
+    scenarioGroups,
+}: {
+    forecast: ForecastResponse | null;
+    loading: boolean;
+    scenarioGroups: Array<{
+        id: string;
+        title: string;
+        description: string;
+        tone: string;
+        points: ForecastPoint[];
+    }>;
+}) {
+    if (loading) {
+        return (
+            <div className="flex h-56 items-center justify-center gap-4 text-slate-400">
+                <Loader2 className="h-7 w-7 animate-spin text-emerald-400" />
+                Підготовка сценарного простору...
             </div>
+        );
+    }
+
+    if (!forecast) {
+        return (
+            <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.03] px-5 py-4 text-sm text-slate-300">
+                Сценарії недоступні, доки не буде отримано базовий прогноз.
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+                <h3 className="text-lg font-black tracking-tight text-white">Сценарний простір</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-400">
+                    Сценарії будуються на базі останнього отриманого прогнозу та одразу показують,
+                    як зміниться сумарний обсяг по кожному варіанту.
+                </p>
+            </div>
+
+            <div className="grid gap-4 xl:grid-cols-3">
+                {scenarioGroups.map((scenario) => {
+                    const totalVolume = scenario.points.reduce(
+                        (sum, point) => sum + point.predicted_volume,
+                        0,
+                    );
+                    const peakPoint = scenario.points.reduce<ForecastPoint | null>(
+                        (peak, point) =>
+                            !peak || point.predicted_volume > peak.predicted_volume ? point : peak,
+                        null,
+                    );
+
+                    return (
+                        <div
+                            key={scenario.id}
+                            className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5"
+                        >
+                            <span className={cn('inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold', scenario.tone)}>
+                                {scenario.title}
+                            </span>
+                            <p className="mt-4 text-sm leading-7 text-slate-400">{scenario.description}</p>
+
+                            <div className="mt-5 space-y-3">
+                                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Сумарний обсяг</div>
+                                    <div className="mt-2 text-2xl font-black text-white">{totalVolume.toLocaleString('uk-UA')}</div>
+                                </div>
+                                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Пікова точка</div>
+                                    <div className="mt-2 text-sm font-semibold text-white">
+                                        {peakPoint?.date || '—'}
+                                    </div>
+                                    <div className="mt-1 text-xs text-slate-400">
+                                        {peakPoint?.predicted_volume.toLocaleString('uk-UA') || '—'} одиниць
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className="rounded-[28px] border border-cyan-400/16 bg-cyan-500/8 p-6">
+                <h4 className="text-lg font-black text-white">Робоча примітка</h4>
+                <p className="mt-2 text-sm leading-7 text-slate-300">
+                    Це не окремий сценарний API, а прозорий розрахунок поверх поточного прогнозу.
+                    Такий підхід корисний уже зараз і не вводить користувача в оману фіктивним модулем.
+                </p>
+            </div>
+        </div>
+    );
+}
+
+function SummaryCard({
+    icon,
+    label,
+    tone,
+    value,
+}: {
+    icon: JSX.Element;
+    label: string;
+    tone: string;
+    value: string;
+}) {
+    return (
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+            <div className={cn('flex h-11 w-11 items-center justify-center rounded-2xl border', tone)}>
+                {icon}
+            </div>
+            <div className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{label}</div>
+            <div className="mt-2 text-3xl font-black tracking-tight text-white">{value}</div>
         </div>
     );
 }

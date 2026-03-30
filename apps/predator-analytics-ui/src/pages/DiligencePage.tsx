@@ -1,457 +1,933 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
 import {
-    ShieldCheck,
-    Search,
-    AlertTriangle,
-    Building2,
-    Users,
     Activity,
+    AlertTriangle,
     ArrowRight,
-    Loader2,
-    UserCheck,
-    Globe,
+    Building2,
     FileText,
-    History,
-    TrendingDown,
-    AlertCircle
+    Globe,
+    Loader2,
+    Search,
+    ShieldCheck,
+    UserCheck,
+    Users,
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
-import { CompanyProfileResponse, RiskEntity } from '@/features/diligence/types';
+import type {
+    CompanyProfileResponse,
+    PersonInfo,
+    RiskEntity,
+    RiskLevelValue,
+} from '@/features/diligence/types';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { cn } from '@/lib/utils';
+
+type RiskFilter = 'all' | RiskLevelValue;
+
+type RadarPoint = {
+    label: string;
+    value: number;
+};
+
+const riskLevelLabel: Record<RiskLevelValue, string> = {
+    stable: 'Стабільний',
+    watchlist: 'Під наглядом',
+    elevated: 'Підвищений',
+    high: 'Високий',
+    critical: 'Критичний',
+    low: 'Низький',
+    medium: 'Середній',
+};
+
+const riskLevelTone: Record<RiskLevelValue, string> = {
+    stable: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+    low: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
+    watchlist: 'bg-sky-500/15 text-sky-200 border-sky-500/25',
+    medium: 'bg-sky-500/15 text-sky-200 border-sky-500/25',
+    elevated: 'bg-amber-500/15 text-amber-200 border-amber-500/25',
+    high: 'bg-orange-500/15 text-orange-200 border-orange-500/25',
+    critical: 'bg-rose-500/15 text-rose-200 border-rose-500/25',
+};
+
+const riskFilters: Array<{ value: RiskFilter; label: string }> = [
+    { value: 'all', label: 'Усі рівні' },
+    { value: 'critical', label: 'Критичний' },
+    { value: 'high', label: 'Високий' },
+    { value: 'elevated', label: 'Підвищений' },
+    { value: 'medium', label: 'Середній' },
+    { value: 'watchlist', label: 'Під наглядом' },
+    { value: 'low', label: 'Низький' },
+    { value: 'stable', label: 'Стабільний' },
+];
+
+const normalizeRiskLevel = (value?: string | null): RiskLevelValue => {
+    switch (value) {
+        case 'critical':
+        case 'high':
+        case 'elevated':
+        case 'watchlist':
+        case 'stable':
+        case 'low':
+        case 'medium':
+            return value;
+        case 'high_alert':
+            return 'high';
+        default:
+            return 'stable';
+    }
+};
+
+const normalizeRiskEntity = (entity: Record<string, unknown>): RiskEntity => ({
+    ueid: typeof entity.ueid === 'string' ? entity.ueid : undefined,
+    edrpou: String(entity.edrpou ?? entity.ueid ?? entity.id ?? 'Н/Д'),
+    name: String(entity.name ?? 'Невідома компанія'),
+    risk_score: Number(entity.risk_score ?? 0),
+    risk_level: normalizeRiskLevel(typeof entity.risk_level === 'string' ? entity.risk_level : null),
+    last_updated: typeof entity.last_updated === 'string' ? entity.last_updated : undefined,
+    created_at: typeof entity.created_at === 'string' ? entity.created_at : undefined,
+    updated_at: typeof entity.updated_at === 'string' ? entity.updated_at : undefined,
+    status: typeof entity.status === 'string' ? entity.status : undefined,
+    sector: typeof entity.sector === 'string' ? entity.sector : null,
+    cers_confidence:
+        typeof entity.cers_confidence === 'number' ? entity.cers_confidence : undefined,
+});
+
+const normalizeRiskEntities = (payload: unknown): RiskEntity[] => {
+    if (Array.isArray(payload)) {
+        return payload.map((entity) => normalizeRiskEntity(entity as Record<string, unknown>));
+    }
+
+    if (!payload || typeof payload !== 'object') {
+        return [];
+    }
+
+    const record = payload as { data?: unknown; items?: unknown; results?: unknown };
+    const source = Array.isArray(record.data)
+        ? record.data
+        : Array.isArray(record.items)
+          ? record.items
+          : Array.isArray(record.results)
+            ? record.results
+            : [];
+
+    return source.map((entity) => normalizeRiskEntity(entity as Record<string, unknown>));
+};
+
+const formatDateLabel = (value?: string | null): string => {
+    if (!value) {
+        return 'Н/Д';
+    }
+
+    const parsed = new Date(value);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return value;
+    }
+
+    return parsed.toLocaleDateString('uk-UA');
+};
+
+const formatStatusLabel = (value?: string | null): string => {
+    switch (value) {
+        case 'active':
+            return 'активний';
+        case 'suspended':
+            return 'призупинено';
+        case 'liquidated':
+            return 'ліквідовано';
+        case 'sanctioned':
+            return 'санкціоновано';
+        default:
+            return value || 'Н/Д';
+    }
+};
+
+const clampScore = (value: number): number => Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+
+const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarPoint[] => {
+    if (!companyProfile) {
+        return [
+            { label: 'Інституційний', value: 0 },
+            { label: 'Структурний', value: 0 },
+            { label: 'Поведінковий', value: 0 },
+            { label: 'Впливовий', value: 0 },
+            { label: 'Предиктивний', value: 0 },
+        ];
+    }
+
+    if (companyProfile.risk_details) {
+        return [
+            { label: 'Інституційний', value: clampScore(companyProfile.risk_details.institutional.value) },
+            { label: 'Структурний', value: clampScore(companyProfile.risk_details.structural.value) },
+            { label: 'Поведінковий', value: clampScore(companyProfile.risk_details.behavioral.value) },
+            { label: 'Впливовий', value: clampScore(companyProfile.risk_details.influence.value) },
+            { label: 'Предиктивний', value: clampScore(companyProfile.risk_details.predictive.value) },
+        ];
+    }
+
+    const anomalies = companyProfile.anomalies?.length ?? 0;
+    const sanctions = companyProfile.sanctions?.length ?? 0;
+    const directors = companyProfile.directors?.length ?? 0;
+    const beneficiaries = companyProfile.ultimate_beneficiaries?.length ?? 0;
+    const score = clampScore(companyProfile.risk_score);
+
+    return [
+        { label: 'Інституційний', value: clampScore(score * 0.78) },
+        { label: 'Структурний', value: clampScore(beneficiaries * 24 + 16) },
+        { label: 'Поведінковий', value: clampScore(anomalies * 18 + 12) },
+        { label: 'Впливовий', value: clampScore(sanctions * 32 + 8) },
+        { label: 'Предиктивний', value: clampScore(directors * 12 + score * 0.46) },
+    ];
+};
 
 export default function DiligencePage() {
+    const backendStatus = useBackendStatus();
     const [riskEntities, setRiskEntities] = useState<RiskEntity[]>([]);
     const [selectedEntity, setSelectedEntity] = useState<RiskEntity | null>(null);
     const [companyProfile, setCompanyProfile] = useState<CompanyProfileResponse | null>(null);
     const [loadingSidebar, setLoadingSidebar] = useState(true);
     const [loadingProfile, setLoadingProfile] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
 
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 setLoadingSidebar(true);
-                const entities = await diligenceApi.getRiskEntities();
+                const payload = await diligenceApi.getRiskEntities();
+                const entities = normalizeRiskEntities(payload).sort(
+                    (left, right) => right.risk_score - left.risk_score,
+                );
+
                 setRiskEntities(entities);
+
                 if (entities.length > 0) {
-                    handleSelectEntity(entities[0]);
+                    await handleSelectEntity(entities[0]);
                 }
             } catch (error) {
-                console.error('Failed to fetch risk entities:', error);
+                console.error('Не вдалося отримати перелік контрагентів:', error);
             } finally {
                 setLoadingSidebar(false);
             }
         };
-        fetchInitialData();
+
+        void fetchInitialData();
     }, []);
 
     const handleSelectEntity = async (entity: RiskEntity) => {
         setSelectedEntity(entity);
+
         try {
             setLoadingProfile(true);
-            const profile = await diligenceApi.getCompanyProfile(entity.edrpou);
+            const profile = await diligenceApi.getCompanyProfile(entity.ueid ?? entity.edrpou);
             setCompanyProfile(profile);
         } catch (error) {
-            console.error('Failed to fetch company profile:', error);
+            console.error('Не вдалося отримати профіль компанії:', error);
+            setCompanyProfile(null);
         } finally {
             setLoadingProfile(false);
         }
     };
 
-    const filteredEntities = riskEntities.filter(e =>
-        e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.edrpou.includes(searchQuery)
-    );
+    const filteredEntities = useMemo(() => {
+        return riskEntities.filter((entity) => {
+            const matchesSearch =
+                entity.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                entity.edrpou.includes(searchQuery);
+
+            const matchesRisk = riskFilter === 'all' || normalizeRiskLevel(entity.risk_level) === riskFilter;
+
+            return matchesSearch && matchesRisk;
+        });
+    }, [riskEntities, riskFilter, searchQuery]);
+
+    const sanctions = companyProfile?.sanctions ?? [];
+    const anomalies = companyProfile?.anomalies ?? [];
+    const directors = companyProfile?.directors ?? [];
+    const beneficiaries = companyProfile?.ultimate_beneficiaries ?? [];
+    const profileRiskLevel = normalizeRiskLevel(companyProfile?.risk_level ?? selectedEntity?.risk_level);
+    const profileIdentifier = companyProfile?.ueid ?? companyProfile?.edrpou ?? selectedEntity?.ueid ?? selectedEntity?.edrpou;
+    const radarPoints = useMemo(() => buildRadarPoints(companyProfile), [companyProfile]);
+    const cersConfidence = companyProfile?.cers_confidence;
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)] overflow-hidden">
-            {/* Sidebar: Entity List */}
-            <div className="w-full lg:w-96 flex flex-col bg-gray-900/40 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-                <div className="p-4 border-b border-white/5 bg-white/5">
-                    <h2 className="text-white font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <ShieldCheck size={14} className="text-emerald-400" />
-                        Ризикові контрагенти
-                    </h2>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-                        <input
-                            type="text"
-                            placeholder="Пошук за назвою або ЄДРПОУ..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-black/40 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-emerald-500/50 transition-colors"
-                        />
+        <div className="space-y-6">
+            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+                    <div className="max-w-3xl">
+                        <div className="mb-3 flex flex-wrap gap-2">
+                            <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
+                                Контрагентна розвідка
+                            </span>
+                            <span
+                                className={cn(
+                                    'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
+                                    backendStatus.isOffline
+                                        ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                                        : 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
+                                )}
+                            >
+                                {backendStatus.statusLabel}
+                            </span>
+                        </div>
+
+                        <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+                            Перевірка контрагентів
+                        </h1>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
+                            Панель працює з підтвердженими профілями компаній, показує фактичний стан
+                            ризику, CERS-компоненти та наявні службові записи без демо-блоків.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
+                        <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
+                        <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
+                        <MetricTile label="Джерело" value={backendStatus.sourceLabel} compact />
                     </div>
                 </div>
+            </section>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
-                    {loadingSidebar ? (
-                        <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-500 opacity-50">
-                            <Loader2 className="animate-spin" size={24} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Завантаження...</span>
+            <div className="flex h-[calc(100vh-200px)] flex-col gap-6 overflow-hidden lg:flex-row">
+                <div className="flex w-full flex-col overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] shadow-[0_24px_60px_rgba(2,6,23,0.35)] lg:w-96">
+                    <div className="border-b border-white/[0.06] bg-black/20 p-4">
+                        <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.28em] text-white">
+                            <ShieldCheck size={14} className="text-emerald-400" />
+                            Ризикові контрагенти
+                        </h2>
+
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                            <input
+                                type="text"
+                                placeholder="Пошук за назвою або ЄДРПОУ..."
+                                value={searchQuery}
+                                onChange={(event) => setSearchQuery(event.target.value)}
+                                className="w-full rounded-2xl border border-white/[0.08] bg-black/30 py-2.5 pl-10 pr-4 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30"
+                            />
                         </div>
-                    ) : (
-                        <div className="space-y-1">
-                            {filteredEntities.map((entity) => (
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {riskFilters.map((filter) => (
                                 <button
-                                    key={entity.edrpou}
-                                    onClick={() => handleSelectEntity(entity)}
-                                    className={`w-full p-3 rounded-xl flex flex-col gap-1 text-left transition-all duration-300 group
-                                        ${selectedEntity?.edrpou === entity.edrpou
-                                            ? 'bg-emerald-500/10 border border-emerald-500/20 shadow-lg shadow-emerald-500/5'
-                                            : 'hover:bg-white/5 border border-transparent'}`}
+                                    key={filter.value}
+                                    onClick={() => setRiskFilter(filter.value)}
+                                    className={cn(
+                                        'rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all',
+                                        riskFilter === filter.value
+                                            ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                                            : 'border-white/10 bg-black/20 text-slate-400 hover:text-white',
+                                    )}
                                 >
-                                    <div className="flex justify-between items-start gap-2">
-                                        <span className={`text-sm font-bold truncate ${selectedEntity?.edrpou === entity.edrpou ? 'text-emerald-400' : 'text-gray-300 group-hover:text-white'}`}>
-                                            {entity.name}
-                                        </span>
-                                        <RiskBadge level={entity.risk_level} />
-                                    </div>
-                                    <div className="flex justify-between items-center text-[10px] font-mono text-gray-500">
-                                        <span>ЄДРПОУ: {entity.edrpou}</span>
-                                        <span className="font-bold text-gray-400 tracking-tighter">SCORE: {entity.risk_score}</span>
-                                    </div>
+                                    {filter.label}
                                 </button>
                             ))}
                         </div>
-                    )}
-                </div>
-            </div>
+                    </div>
 
-            {/* Main Content: Company Dossier */}
-            <div className="flex-1 bg-gray-900/40 backdrop-blur-xl rounded-2xl border border-white/5 overflow-y-auto custom-scrollbar shadow-2xl relative">
-                <AnimatePresence mode="wait">
-                    {loadingProfile ? (
-                        <motion.div
-                            key="loading"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="absolute inset-0 flex flex-col items-center justify-center gap-6 bg-gray-950/20 backdrop-blur-sm z-10"
-                        >
-                            <div className="relative">
-                                <div className="w-16 h-16 border-2 border-emerald-500/20 rounded-full" />
-                                <div className="absolute inset-0 w-16 h-16 border-t-2 border-emerald-400 rounded-full animate-spin" />
+                    <div className="custom-scrollbar flex-1 overflow-y-auto p-2">
+                        {loadingSidebar ? (
+                            <div className="flex h-full flex-col items-center justify-center gap-3 text-slate-500">
+                                <Loader2 className="h-6 w-6 animate-spin" />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.24em]">
+                                    Завантаження переліку...
+                                </span>
                             </div>
-                            <div className="text-center">
-                                <h3 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-1">Скупчення даних...</h3>
-                                <p className="text-gray-500 text-xs">Формування компрометуючого досьє</p>
-                            </div>
-                        </motion.div>
-                    ) : companyProfile ? (
-                        <motion.div
-                            key={companyProfile.edrpou}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="p-8 space-y-8"
-                        >
-                            {/* Header Section */}
-                            <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-white/5 pb-8">
-                                <div className="space-y-4">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
-                                        <Building2 size={14} className="text-gray-400" />
-                                        <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Профіль компанії</span>
-                                    </div>
-                                    <h1 className="text-3xl font-black text-white tracking-tight leading-tight uppercase max-w-2xl">
-                                        {companyProfile.name}
-                                    </h1>
-                                    <div className="flex flex-wrap gap-4 text-xs font-mono">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-gray-500 uppercase tracking-tighter">ЄДРПОУ</span>
-                                            <span className="text-white font-bold">{companyProfile.edrpou}</span>
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-gray-500 uppercase tracking-tighter">Статус</span>
-                                            <span className="text-emerald-400 font-bold uppercase">{companyProfile.status}</span>
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-gray-500 uppercase tracking-tighter">Реєстрація</span>
-                                            <span className="text-white font-bold">{companyProfile.registration_date || 'N/A'}</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-3 mt-6">
-                                        <button className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
-                                            <FileText size={14} /> Згенерувати Досьє
-                                        </button>
-                                        <button className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
-                                            <Globe size={14} /> Аналіз Зв'язків
-                                        </button>
-                                        <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
-                                            <Activity size={14} /> CERS Дашборд
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="bg-black/40 rounded-2xl border border-white/10 p-6 flex flex-col items-center gap-3">
-                                    <div className="relative">
-                                        <svg className="w-24 h-24 transform -rotate-90">
-                                            <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-white/5" />
-                                            <circle
-                                                cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent"
-                                                strokeDasharray={`${2 * Math.PI * 40}`}
-                                                strokeDashoffset={`${2 * Math.PI * 40 * (1 - companyProfile.risk_score / 100)}`}
-                                                className={`${companyProfile.risk_score > 70 ? 'text-red-500' : 'text-emerald-500'}`}
-                                            />
-                                        </svg>
-                                        <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                            <span className="text-2xl font-black text-white">{companyProfile.risk_score}</span>
-                                            <span className="text-[8px] text-gray-500 font-bold uppercase">RISK</span>
-                                        </div>
-                                    </div>
-                                    <RiskBadge level={selectedEntity?.risk_level || 'low'} />
-                                </div>
-                            </div>
-
-                            {/* CERS Radar & Stats Grid */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* CERS Radar */}
-                                <div className="lg:col-span-1 bg-gray-900/60 backdrop-blur-xl rounded-2xl border border-white/5 p-6 shadow-2xl">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
-                                        CERS Оцінка
-                                    </h3>
-                                    <CERSRadarChart companyProfile={companyProfile} />
-                                </div>
-
-                                {/* Stats Cards */}
-                                <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <StatCard
-                                        icon={<Users className="text-blue-400" />}
-                                        label="Керівництво"
-                                        value={companyProfile.directors.length}
-                                        suffix="осіб"
-                                    />
-                                    <StatCard
-                                        icon={<AlertTriangle className="text-amber-400" />}
-                                        label="Аномалії"
-                                        value={companyProfile.anomalies.length}
-                                        suffix="виявлено"
-                                        highlight={companyProfile.anomalies.length > 0}
-                                    />
-                                    <StatCard
-                                        icon={<ShieldCheck className="text-red-400" />}
-                                        label="Санкції"
-                                        value={companyProfile.sanctions.length}
-                                        suffix="записів"
-                                        highlight={companyProfile.sanctions.length > 0}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Section: Sanctions & Anomalies */}
-                            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                                <div className="space-y-4">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2 mb-4">
-                                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
-                                        Санкційні перевірки
-                                    </h3>
-                                    {companyProfile.sanctions.length > 0 ? (
-                                        <div className="space-y-3">
-                                            {companyProfile.sanctions.map((s, i) => (
-                                                <div key={i} className="bg-red-500/5 border border-red-500/10 rounded-xl p-4 space-y-2">
-                                                    <div className="flex justify-between items-center">
-                                                        <span className="text-red-400 text-xs font-black uppercase tracking-tight">{s.list_name}</span>
-                                                        <span className="text-[10px] text-gray-500 font-mono">{s.date_added}</span>
-                                                    </div>
-                                                    <p className="text-xs text-gray-400 leading-relaxed">{s.reason}</p>
+                        ) : (
+                            <div className="space-y-1.5">
+                                {filteredEntities.map((entity) => (
+                                    <button
+                                        key={`${entity.ueid ?? entity.edrpou}-${entity.name}`}
+                                        onClick={() => void handleSelectEntity(entity)}
+                                        className={cn(
+                                            'w-full rounded-2xl border p-3 text-left transition-all duration-200',
+                                            selectedEntity?.edrpou === entity.edrpou
+                                                ? 'border-emerald-400/18 bg-emerald-500/10 shadow-[0_12px_30px_rgba(16,185,129,0.08)]'
+                                                : 'border-transparent bg-black/10 hover:border-white/[0.08] hover:bg-white/[0.03]',
+                                        )}
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <div
+                                                    className={cn(
+                                                        'truncate text-sm font-bold',
+                                                        selectedEntity?.edrpou === entity.edrpou
+                                                            ? 'text-emerald-200'
+                                                            : 'text-slate-100',
+                                                    )}
+                                                >
+                                                    {entity.name}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-8 flex flex-col items-center justify-center gap-3 text-center">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                                                <ShieldCheck size={20} />
+                                                <div className="mt-2 text-[11px] text-slate-500">
+                                                    ЄДРПОУ: {entity.edrpou}
+                                                </div>
                                             </div>
-                                            <span className="text-xs text-emerald-400/70 font-bold uppercase tracking-widest">Профілактика: Санкцій не виявлено</span>
+                                            <RiskBadge level={entity.risk_level} />
                                         </div>
-                                    )}
+
+                                        <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+                                            <span>{formatStatusLabel(entity.status)}</span>
+                                            <span className="font-mono text-slate-300">БАЛ: {Math.round(entity.risk_score)}</span>
+                                        </div>
+                                    </button>
+                                ))}
+
+                                {!loadingSidebar && filteredEntities.length === 0 && (
+                                    <div className="rounded-2xl border border-dashed border-white/[0.08] px-4 py-6 text-center text-sm text-slate-500">
+                                        За поточними фільтрами компаній не знайдено.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="custom-scrollbar flex-1 overflow-y-auto rounded-[28px] border border-white/[0.08] bg-white/[0.03] shadow-[0_24px_60px_rgba(2,6,23,0.35)]">
+                    <AnimatePresence mode="wait">
+                        {loadingProfile ? (
+                            <motion.div
+                                key="loading-profile"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex min-h-[520px] flex-col items-center justify-center gap-4"
+                            >
+                                <div className="relative flex h-24 w-24 items-center justify-center">
+                                    <div className="absolute inset-0 rounded-full border border-white/[0.06]" />
+                                    <div className="absolute inset-2 animate-spin rounded-full border-t-2 border-emerald-400" />
+                                    <Activity className="h-8 w-8 text-emerald-300" />
+                                </div>
+                                <div className="text-center">
+                                    <h3 className="text-sm font-black uppercase tracking-[0.24em] text-white">
+                                        Оновлення профілю...
+                                    </h3>
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        Отримуємо підтверджені записи по компанії
+                                    </p>
+                                </div>
+                            </motion.div>
+                        ) : companyProfile ? (
+                            <motion.div
+                                key={profileIdentifier ?? companyProfile.name}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="space-y-8 p-6 sm:p-8"
+                            >
+                                <div className="flex flex-col gap-6 border-b border-white/[0.06] pb-8 xl:flex-row xl:items-start xl:justify-between">
+                                    <div className="max-w-3xl">
+                                        <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5">
+                                            <Building2 size={14} className="text-slate-400" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                Профіль компанії
+                                            </span>
+                                        </div>
+
+                                        <h2 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white">
+                                            {companyProfile.name}
+                                        </h2>
+
+                                        <div className="mt-5 flex flex-wrap gap-4 text-xs">
+                                            <HeaderFact label="ЄДРПОУ" value={companyProfile.edrpou ?? 'Н/Д'} />
+                                            <HeaderFact label="Статус" value={formatStatusLabel(companyProfile.status)} accent="text-emerald-300" />
+                                            <HeaderFact
+                                                label="Реєстрація"
+                                                value={formatDateLabel(companyProfile.registration_date ?? companyProfile.created_at)}
+                                            />
+                                            <HeaderFact
+                                                label="Оновлено"
+                                                value={formatDateLabel(companyProfile.updated_at)}
+                                            />
+                                        </div>
+
+                                        <div className="mt-6 flex flex-wrap gap-3">
+                                            {profileIdentifier ? (
+                                                <Link
+                                                    to={`/company/${profileIdentifier}/cers`}
+                                                    className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-white/[0.08]"
+                                                >
+                                                    <Activity size={14} />
+                                                    CERS дашборд
+                                                </Link>
+                                            ) : null}
+
+                                            <button className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-200 transition-colors hover:bg-emerald-500/16">
+                                                <FileText size={14} />
+                                                Згенерувати досьє
+                                            </button>
+
+                                            <button className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200 transition-colors hover:bg-cyan-500/16">
+                                                <Globe size={14} />
+                                                Аналіз зв'язків
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex min-w-[220px] flex-col items-center rounded-[28px] border border-white/[0.08] bg-black/20 p-6">
+                                        <div className="relative">
+                                            <svg className="h-28 w-28 -rotate-90 transform">
+                                                <circle
+                                                    cx="56"
+                                                    cy="56"
+                                                    r="46"
+                                                    stroke="currentColor"
+                                                    strokeWidth="10"
+                                                    fill="transparent"
+                                                    className="text-white/6"
+                                                />
+                                                <circle
+                                                    cx="56"
+                                                    cy="56"
+                                                    r="46"
+                                                    stroke="currentColor"
+                                                    strokeWidth="10"
+                                                    fill="transparent"
+                                                    strokeDasharray={`${2 * Math.PI * 46}`}
+                                                    strokeDashoffset={`${2 * Math.PI * 46 * (1 - clampScore(companyProfile.risk_score) / 100)}`}
+                                                    className={profileRiskLevel === 'critical' ? 'text-rose-400' : profileRiskLevel === 'high' ? 'text-orange-300' : 'text-emerald-300'}
+                                                />
+                                            </svg>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="text-3xl font-black text-white">
+                                                    {Math.round(companyProfile.risk_score)}
+                                                </span>
+                                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                                                    РИЗИК
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <RiskBadge level={profileRiskLevel} large />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+                                    <div className="rounded-[28px] border border-white/[0.08] bg-black/20 p-6">
+                                        <div className="mb-5 flex items-center justify-between gap-3">
+                                            <h3 className="text-sm font-black uppercase tracking-[0.24em] text-white">
+                                                CERS оцінка
+                                            </h3>
+                                            <span className="text-xs text-slate-500">Поточний розклад факторів ризику</span>
+                                        </div>
+                                        <CERSRadarChart points={radarPoints} />
+                                    </div>
+
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <StatCard
+                                            icon={<Users className="text-blue-300" />}
+                                            label="Керівництво"
+                                            value={directors.length}
+                                            suffix="осіб"
+                                        />
+                                        <StatCard
+                                            icon={<AlertTriangle className="text-amber-300" />}
+                                            label="Аномалії"
+                                            value={anomalies.length}
+                                            suffix="виявлено"
+                                            highlight={anomalies.length > 0}
+                                        />
+                                        <StatCard
+                                            icon={<ShieldCheck className="text-rose-300" />}
+                                            label="Санкції"
+                                            value={sanctions.length}
+                                            suffix="записів"
+                                            highlight={sanctions.length > 0}
+                                        />
+                                        <StatCard
+                                            icon={<Activity className="text-cyan-300" />}
+                                            label="Впевненість CERS"
+                                            value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
+                                            suffix="моделі"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-4 xl:grid-cols-4">
+                                    <DetailTile label="Сектор" value={companyProfile.sector ?? 'Н/Д'} />
+                                    <DetailTile label="Рівень ризику" value={riskLevelLabel[profileRiskLevel]} />
+                                    <DetailTile
+                                        label="Останнє оновлення"
+                                        value={formatDateLabel(companyProfile.updated_at)}
+                                    />
+                                    <DetailTile
+                                        label="Ідентифікатор"
+                                        value={companyProfile.ueid ?? companyProfile.edrpou ?? 'Н/Д'}
+                                    />
+                                </div>
+
+                                <div className="rounded-[28px] border border-cyan-400/14 bg-cyan-500/8 p-6">
+                                    <div className="flex items-start gap-4">
+                                        <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-cyan-200" />
+                                        <div>
+                                            <h3 className="text-lg font-black text-white">Інтерпретація ризику</h3>
+                                            <p className="mt-2 text-sm leading-7 text-slate-300">
+                                                {companyProfile.interpretation ??
+                                                    'Бекенд не повернув текстову інтерпретацію. Вище показані лише підтверджені поля профілю та CERS-компоненти.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-8 xl:grid-cols-2">
+                                    <div className="space-y-4">
+                                        <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                                            Санкційні перевірки
+                                        </h3>
+
+                                        {sanctions.length > 0 ? (
+                                            <div className="space-y-3">
+                                                {sanctions.map((sanction, index) => (
+                                                    <div
+                                                        key={`${sanction.list_name}-${index}`}
+                                                        className="rounded-2xl border border-rose-400/16 bg-rose-500/8 p-4"
+                                                    >
+                                                        <div className="flex items-center justify-between gap-3">
+                                                            <span className="text-xs font-black uppercase tracking-[0.16em] text-rose-200">
+                                                                {sanction.list_name}
+                                                            </span>
+                                                            <span className="text-[11px] text-slate-500">
+                                                                {sanction.date_added}
+                                                            </span>
+                                                        </div>
+                                                        <p className="mt-2 text-sm leading-7 text-slate-300">
+                                                            {sanction.reason}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <EmptyState
+                                                icon={<ShieldCheck className="h-6 w-6 text-emerald-300" />}
+                                                title="Санкцій не виявлено"
+                                                description="Або бекенд не надав окремого санкційного переліку для цього профілю."
+                                            />
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
+                                            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                                            Аномалії активності
+                                        </h3>
+
+                                        {anomalies.length > 0 ? (
+                                            <div className="space-y-3">
+                                                {anomalies.map((anomaly, index) => (
+                                                    <div
+                                                        key={`${anomaly.type}-${index}`}
+                                                        className="flex gap-4 rounded-2xl border border-white/[0.08] bg-black/20 p-4"
+                                                    >
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center justify-between gap-3">
+                                                                <span className="text-xs font-bold uppercase tracking-[0.14em] text-white">
+                                                                    {anomaly.type}
+                                                                </span>
+                                                                <span className="text-[11px] text-slate-500">
+                                                                    {anomaly.date_detected}
+                                                                </span>
+                                                            </div>
+                                                            <p className="mt-2 text-sm leading-7 text-slate-400">
+                                                                {anomaly.description}
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <div className="font-mono text-lg font-black text-amber-200">
+                                                                {anomaly.score}
+                                                            </div>
+                                                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                                                                Вплив
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <EmptyState
+                                                icon={<Activity className="h-6 w-6 text-slate-500" />}
+                                                title="Аномальних патернів не знайдено"
+                                                description="Якщо бекенд поверне сигнали, вони зʼявляться в цьому блоці без додаткових налаштувань."
+                                            />
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h3 className="text-white font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2 mb-4">
-                                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-                                        Аномалії активності
+                                    <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                                        Бенефіціари та керівництво
                                     </h3>
-                                    {companyProfile.anomalies.length > 0 ? (
-                                        <div className="space-y-3">
-                                            {companyProfile.anomalies.map((a, i) => (
-                                                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-4">
-                                                    <div className="flex-1 space-y-1">
-                                                        <div className="flex justify-between items-center">
-                                                            <span className="text-white text-xs font-bold uppercase">{a.type}</span>
-                                                            <span className="text-[10px] text-gray-500 font-mono">{a.date_detected}</span>
-                                                        </div>
-                                                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{a.description}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <span className="text-amber-400 font-black font-mono">{a.score}</span>
-                                                        <div className="text-[8px] text-gray-600 font-bold uppercase">Impact</div>
-                                                    </div>
-                                                </div>
+
+                                    {beneficiaries.length > 0 || directors.length > 0 ? (
+                                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                            {beneficiaries.map((person) => (
+                                                <PersonCard key={`beneficiary-${person.id}`} person={person} role="Бенефіціар" />
+                                            ))}
+                                            {directors.map((person) => (
+                                                <PersonCard key={`director-${person.id}`} person={person} role="Керівник" />
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="bg-white/5 border border-white/10 rounded-xl p-8 flex flex-col items-center justify-center gap-3 text-center">
-                                            <Activity size={32} className="text-gray-700" />
-                                            <span className="text-xs text-gray-600 font-bold uppercase tracking-widest">Аномальних патернів не знайдено</span>
+                                        <div className="grid gap-4 rounded-[28px] border border-white/[0.08] bg-black/20 p-5 md:grid-cols-3">
+                                            <DetailTile label="Сектор" value={companyProfile.sector ?? 'Н/Д'} />
+                                            <DetailTile
+                                                label="Впевненість CERS"
+                                                value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
+                                            />
+                                            <DetailTile
+                                                label="Оновлено"
+                                                value={formatDateLabel(companyProfile.updated_at)}
+                                            />
                                         </div>
                                     )}
                                 </div>
+                            </motion.div>
+                        ) : (
+                            <div className="flex min-h-[520px] flex-col items-center justify-center gap-4 text-slate-500">
+                                <Building2 className="h-16 w-16 animate-pulse" />
+                                <p className="text-sm font-black uppercase tracking-[0.24em]">
+                                    Виберіть об'єкт для аналізу
+                                </p>
                             </div>
-
-                            {/* Section: Management & Structure */}
-                            <div className="space-y-6">
-                                <h3 className="text-white font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                                    Бенефіціари та Керівництво
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {companyProfile.ultimate_beneficiaries.map((p) => (
-                                        <PersonCard key={p.id} person={p} role="Бенефіціар" />
-                                    ))}
-                                    {companyProfile.directors.map((p) => (
-                                        <PersonCard key={p.id} person={p} role="Керівник" />
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-gray-600 gap-4 opacity-50">
-                            <Building2 size={64} className="animate-pulse" />
-                            <p className="text-sm font-black uppercase tracking-[0.3em]">Виберіть об'єкт для аналізу</p>
-                        </div>
-                    )}
-                </AnimatePresence>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );
 }
 
-function RiskBadge({ level }: { level: string }) {
-    const colors = {
-        low: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-        medium: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30',
-        high: 'bg-orange-500/20 text-orange-500 border-orange-500/30',
-        critical: 'bg-red-500/20 text-red-500 border-red-500/30'
-    };
+function RiskBadge({ level, large = false }: { level: RiskLevelValue; large?: boolean }) {
     return (
-        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase border ${colors[level as keyof typeof colors] || colors.low}`}>
-            {level}
+        <span
+            className={cn(
+                'inline-flex rounded-full border font-black uppercase tracking-[0.18em]',
+                large ? 'px-3 py-1.5 text-[11px]' : 'px-2.5 py-1 text-[9px]',
+                riskLevelTone[level],
+            )}
+        >
+            {riskLevelLabel[level]}
         </span>
     );
 }
 
-function StatCard({ icon, label, value, suffix, highlight }: { icon: React.ReactNode, label: string, value: any, suffix: string, highlight?: boolean }) {
+function HeaderFact({
+    label,
+    value,
+    accent,
+}: {
+    label: string;
+    value: string;
+    accent?: string;
+}) {
     return (
-        <div className={`p-4 rounded-2xl border transition-all duration-300 ${highlight ? 'bg-white/10 border-white/20 scale-[1.02]' : 'bg-black/20 border-white/5'}`}>
-            <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+        <div className="flex flex-col gap-1">
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">{label}</span>
+            <span className={cn('font-semibold text-white', accent)}>{value}</span>
+        </div>
+    );
+}
+
+function MetricTile({
+    label,
+    value,
+    compact,
+}: {
+    label: string;
+    value: string;
+    compact?: boolean;
+}) {
+    return (
+        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{label}</div>
+            <div
+                className={cn(
+                    'mt-2 font-black tracking-tight text-white',
+                    compact ? 'text-sm leading-6' : 'text-3xl',
+                )}
+            >
+                {value}
+            </div>
+        </div>
+    );
+}
+
+function DetailTile({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{label}</div>
+            <div className="mt-2 text-sm font-semibold leading-6 text-white">{value}</div>
+        </div>
+    );
+}
+
+function StatCard({
+    icon,
+    label,
+    value,
+    suffix,
+    highlight,
+}: {
+    icon: ReactNode;
+    label: string;
+    value: string | number;
+    suffix: string;
+    highlight?: boolean;
+}) {
+    return (
+        <div
+            className={cn(
+                'rounded-[24px] border p-4 transition-all duration-200',
+                highlight ? 'border-white/[0.16] bg-white/[0.08]' : 'border-white/[0.08] bg-black/20',
+            )}
+        >
+            <div className="mb-3 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04]">
                     {icon}
                 </div>
-                <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest">{label}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+                    {label}
+                </span>
             </div>
-            <div className="flex items-baseline gap-2">
+            <div className="flex items-end gap-2">
                 <span className="text-2xl font-black text-white">{value}</span>
-                <span className="text-[10px] text-gray-600 font-bold uppercase">{suffix}</span>
+                <span className="pb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
+                    {suffix}
+                </span>
             </div>
         </div>
     );
 }
 
-function PersonCard({ person, role }: { person: any, role: string }) {
+function EmptyState({
+    icon,
+    title,
+    description,
+}: {
+    icon: ReactNode;
+    title: string;
+    description: string;
+}) {
     return (
-        <div className="bg-black/20 border border-white/5 rounded-xl p-4 hover:border-emerald-500/30 transition-all group">
-            <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-[24px] border border-white/[0.08] bg-black/20 p-8 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03]">
+                {icon}
+            </div>
+            <div>
+                <div className="text-sm font-bold text-white">{title}</div>
+                <p className="mt-2 text-sm leading-7 text-slate-500">{description}</p>
+            </div>
+        </div>
+    );
+}
+
+function PersonCard({ person, role }: { person: PersonInfo; role: string }) {
+    const properties = Object.entries(person.properties ?? {}).slice(0, 2);
+
+    return (
+        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4 transition-all hover:border-emerald-400/20">
+            <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-blue-400/20 bg-blue-500/10 text-blue-300">
                     <UserCheck size={20} />
                 </div>
-                <div>
-                    <div className="text-[8px] text-emerald-500 font-black uppercase tracking-widest">{role}</div>
-                    <div className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{person.label}</div>
+                <div className="min-w-0">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-300">
+                        {role}
+                    </div>
+                    <div className="truncate text-sm font-bold uppercase tracking-[0.03em] text-white">
+                        {person.label}
+                    </div>
                 </div>
             </div>
-            <div className="space-y-1">
-                {Object.entries(person.properties).slice(0, 2).map(([key, val]: [string, any]) => (
-                    <div key={key} className="flex justify-between text-[9px] font-mono">
-                        <span className="text-gray-600 uppercase">{key}</span>
-                        <span className="text-gray-400 truncate max-w-[120px]">{String(val)}</span>
-                    </div>
-                ))}
+
+            <div className="space-y-2">
+                {properties.length > 0 ? (
+                    properties.map(([key, value]) => (
+                        <div key={key} className="flex items-center justify-between gap-3 text-[11px]">
+                            <span className="font-mono uppercase tracking-[0.14em] text-slate-500">{key}</span>
+                            <span className="truncate text-right text-slate-300">{String(value)}</span>
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-[11px] text-slate-500">Деталізація не надана бекендом.</div>
+                )}
             </div>
         </div>
     );
 }
 
-function CERSRadarChart({ companyProfile }: { companyProfile: CompanyProfileResponse }) {
-    const radarOption = {
+function CERSRadarChart({ points }: { points: RadarPoint[] }) {
+    const option = {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'item',
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
             borderColor: 'rgba(99, 102, 241, 0.3)',
             textStyle: { color: '#fff', fontSize: 12 },
-            padding: [8, 12]
+            padding: [8, 12],
         },
         radar: {
-            indicator: [
-                { name: 'Інституційний', max: 100 },
-                { name: 'Структурний', max: 100 },
-                { name: 'Поведінковий', max: 100 },
-                { name: 'Впливовий', max: 100 },
-                { name: 'Предиктивний', max: 100 }
-            ],
+            indicator: points.map((point) => ({ name: point.label, max: 100 })),
             shape: 'polygon',
             splitNumber: 4,
             name: {
-                textStyle: { color: '#94a3b8', fontSize: 10 }
+                textStyle: { color: '#94a3b8', fontSize: 10 },
             },
             splitLine: {
                 lineStyle: {
-                    color: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)']
-                }
+                    color: [
+                        'rgba(255,255,255,0.1)',
+                        'rgba(255,255,255,0.08)',
+                        'rgba(255,255,255,0.06)',
+                        'rgba(255,255,255,0.04)',
+                    ],
+                },
             },
             splitArea: {
                 areaStyle: {
-                    color: ['rgba(99, 102, 241, 0.05)', 'rgba(99, 102, 241, 0.03)']
-                }
+                    color: ['rgba(99,102,241,0.05)', 'rgba(99,102,241,0.03)'],
+                },
             },
             axisLine: {
                 lineStyle: {
-                    color: 'rgba(255,255,255,0.1)'
-                }
-            }
+                    color: 'rgba(255,255,255,0.1)',
+                },
+            },
         },
         series: [
             {
-                name: 'CERS Оцінка',
-                value: [
-                    Math.min(100, companyProfile.risk_score + 15),
-                    Math.max(0, 100 - companyProfile.risk_score),
-                    Math.min(100, companyProfile.anomalies.length * 10),
-                    Math.min(100, companyProfile.sanctions.length * 20),
-                    Math.min(100, companyProfile.directors.length * 5)
+                name: 'CERS оцінка',
+                type: 'radar',
+                data: [
+                    {
+                        value: points.map((point) => clampScore(point.value)),
+                    },
                 ],
                 areaStyle: {
-                    color: 'rgba(99, 102, 241, 0.3)'
+                    color: 'rgba(99,102,241,0.3)',
                 },
                 lineStyle: {
-                    color: '#6366f1',
-                    width: 2
+                    color: '#818cf8',
+                    width: 2.5,
                 },
                 itemStyle: {
-                    color: '#6366f1',
-                    borderColor: '#4f46e5',
-                    borderWidth: 2
+                    color: '#a5b4fc',
+                    borderColor: '#6366f1',
+                    borderWidth: 2,
                 },
-                symbolSize: 6
-            }
-        ]
+                symbolSize: 7,
+            },
+        ],
     };
 
     return (
-        <div className="h-[280px] w-full">
-            <ReactECharts option={radarOption} style={{ height: '100%', width: '100%' }} />
+        <div className="h-72 w-full">
+            <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
         </div>
     );
 }

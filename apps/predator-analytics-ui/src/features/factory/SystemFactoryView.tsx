@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Factory, Zap, GitBranch, Cpu, Activity, Database, CheckCircle2,
   Terminal, Play, RotateCcw, Box, Network, Send, Loader2, Bot, Sliders,
   Server, Shield, Power, ActivitySquare, AlertTriangle, Layers, RefreshCw, AlignLeft, X, XCircle, Plus, Minus, Key, HardDrive, Wifi, Sparkles, BarChart, Cog, Wrench, ChevronRight,
   Bug, HeartPulse, Flame, Eye, Infinity, Repeat,
-  Cloud, Globe, Share2, FileText, BarChart3, Binary, BrainCircuit, 
+  Cloud, Share2, FileText, BarChart3, Binary, BrainCircuit, 
   CircleDot, Fingerprint, Microscope, Scan, ShieldCheck, History as HistoryIcon,
   ServerCrash, ShieldAlert
 } from 'lucide-react';
@@ -18,7 +17,19 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { factoryApi, monitoringApi, apiClient, api } from '@/services/api';
+import { systemApi } from '@/services/api/system';
 import { RegistryStats } from './components/RegistryStats';
+import {
+  createEmptyRegistryStats,
+  deriveImprovementProgress,
+  normalizeClusterPods,
+  normalizeHealthChecks,
+  normalizePodLogs,
+  normalizeRegistryStats,
+  type FactoryHealthCheckRecord,
+  type FactoryPodRecord,
+  type FactoryRegistryStatsSnapshot,
+} from './systemFactoryView.utils';
 
 const graphApi = api.graph;
 
@@ -31,29 +42,6 @@ interface FactoryMessage {
   text: string;
   timestamp: Date;
   action?: 'build' | 'test' | 'deploy' | 'analyze' | 'kubectl';
-}
-
-interface K8sPod {
-  id: string;
-  name: string;
-  status: 'Running' | 'Pending' | 'Terminating' | 'Restarting';
-  restarts: number;
-  replicas: number;
-  cpu: string;
-  mem: string;
-  uptime: string;
-}
-
-type HealthStatus = 'healthy' | 'degraded' | 'down' | 'recovering';
-
-interface HealthCheck {
-  id: string;
-  service: string;
-  endpoint: string;
-  status: HealthStatus;
-  latency: number;
-  uptime: string;
-  lastCheck: Date;
 }
 
 export default function SystemFactoryView() {
@@ -71,7 +59,11 @@ export default function SystemFactoryView() {
 
   // Stats
   const [pipelineProgress, setPipelineProgress] = useState(100);
-  const [systemScore, setSystemScore] = useState({ quality: 98, coverage: 94, security: 100 });
+  const [systemScore, setSystemScore] = useState<{ quality: number | null; coverage: number | null; security: number | null }>({
+    quality: null,
+    coverage: null,
+    security: null,
+  });
   const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health'>('infinite');
 
 
@@ -109,6 +101,9 @@ export default function SystemFactoryView() {
   const [isBackendOffline, setIsBackendOffline] = useState(false);
   const [goldPatterns, setGoldPatterns] = useState<any[]>([]);
   const [factoryStats, setFactoryStats] = useState<any>(null);
+  const [registryStats, setRegistryStats] = useState<FactoryRegistryStatsSnapshot>(createEmptyRegistryStats());
+  const [pods, setPods] = useState<FactoryPodRecord[]>([]);
+  const [healthChecks, setHealthChecks] = useState<FactoryHealthCheckRecord[]>([]);
 
   const applyInfiniteStatus = useCallback((status: InfiniteStatusPayload) => {
     setInfiniteRunning(status.is_running);
@@ -157,16 +152,6 @@ export default function SystemFactoryView() {
     }
   }, [applyInfiniteStatus]);
 
-  // ═══ Registry Stats State ═══
-  const [registryStats, setRegistryStats] = useState({
-    postgres: { rows: 1245000, size: '4.2GB', status: 'online' as const },
-    neo4j: { nodes: 842000, edges: 2154000, status: 'online' as const },
-    opensearch: { docs: 5120000, indices: 124, status: 'online' as const },
-    qdrant: { points: 850000, collections: 12, status: 'online' as const },
-    redis: { keys: 45200, memory: '1.2GB', status: 'online' as const },
-    kafka: { topics: 42, messages_sec: 2450, status: 'online' as const }
-  });
-
   // ═══ Real Data Loading ═══
   const refreshData = useCallback(async () => {
     try {
@@ -182,58 +167,29 @@ export default function SystemFactoryView() {
       if (statsData) {
         setFactoryStats(statsData);
         setSystemScore({
-          quality: Math.round(statsData.avg_score) || 98,
-          coverage: 94,
-          security: 100
+          quality: Number.isFinite(Number(statsData.avg_score)) ? Math.round(Number(statsData.avg_score)) : null,
+          coverage: null,
+          security: null,
         });
+      } else {
+        setSystemScore({ quality: null, coverage: null, security: null });
       }
 
       if (patternsData) setGoldPatterns(patternsData);
-      
-      if (bugsData && bugsData.length > 0) {
-        setBugs(bugsData);
-      } else {
-        if (bugs.length === 0) {
-          setBugs([
-            { id: 'BUG-001', description: 'Memory leak у graph-service при batch запитах', severity: 'critical', component: 'graph-service', file: 'services/graph-service/batch.py:142', status: 'detected' as const, fixProgress: 0 },
-            { id: 'BUG-002', description: 'N+1 query у /risk/company endpoint', severity: 'high', component: 'core-api', file: 'services/core-api/routers/risk.py:87', status: 'detected' as const, fixProgress: 0 },
-            { id: 'BUG-005', description: 'Застарілі залежності в Docker шарах (HR-14)', severity: 'medium', component: 'infra', file: 'deploy/Dockerfile', status: 'detected' as const, fixProgress: 0 },
-            { id: 'BUG-006', description: 'Відсутність лімітів CPU для worker поду (HR-08)', severity: 'high', component: 'infra', file: 'deploy/helm/values.yaml', status: 'detected' as const, fixProgress: 0 },
-          ]);
-        }
-      }
-
-      if (graphSummary) {
-        setRegistryStats(prev => ({
-          ...prev,
-          neo4j: {
-            nodes: graphSummary.node_count || prev.neo4j.nodes,
-            edges: graphSummary.relationship_count || prev.neo4j.edges,
-            status: 'online'
-          }
-        }));
-      }
+      setBugs(Array.isArray(bugsData) ? bugsData : []);
+      setRegistryStats(normalizeRegistryStats(graphSummary));
 
       if (infiniteStatus) {
         applyInfiniteStatus(infiniteStatus as InfiniteStatusPayload);
       }
 
-      if (clusterData && clusterData.pods) {
-        setPods(clusterData.pods.map((p: any) => ({
-          id: p.name,
-          name: p.name,
-          status: p.status,
-          restarts: p.restarts || 0,
-          replicas: 1,
-          cpu: p.cpu || '120m',
-          mem: p.memory || '256Mi',
-          uptime: p.age || '4d 12h'
-        })));
-      }
+      setPods(normalizeClusterPods(clusterData));
     } catch (error) {
       console.error('Error fetching factory data:', error);
+      setRegistryStats(createEmptyRegistryStats());
+      setPods([]);
     }
-  }, [applyInfiniteStatus, bugs.length]);
+  }, [applyInfiniteStatus]);
 
   useEffect(() => {
     refreshData();
@@ -246,111 +202,30 @@ export default function SystemFactoryView() {
       await factoryApi.fixBug(bugId);
       setBugs(prev => prev.map(b => b.id === bugId ? { ...b, status: 'fixing', fixProgress: 10 } : b));
       pushSystemMessage(`🐛 АВТОФІКС: Запит на виправлення [${bugId}] відправлено на сервер.`, 'analyze');
-      
-      // Ми не імітуємо прогрес інтервалом, а чекаємо наступного циклу refreshData або події
-      // Але для UI залишимо невелику імітацію руху, щоб юзер бачив активність
-      let progress = 10;
-      const interval = setInterval(() => {
-        progress += 5;
-        if (progress >= 95) {
-          clearInterval(interval);
-          refreshData(); // Реальне оновлення з бекенду
-        } else {
-          setBugs(prev => prev.map(b => b.id === bugId && b.status === 'fixing' ? { ...b, fixProgress: progress } : b));
-        }
-      }, 1000);
+      await refreshData();
     } catch (e) {
       pushSystemMessage(`❌ Помилка при виклику автофіксу: ${e}`, 'analyze');
     }
   };
 
-  // ═══ Health Check State ═══
-  const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([]);
-
   const refreshHealth = async () => {
     try {
-      // Core API Health Check
-      const res = await apiClient.get('/health');
-      const data = res.data;
-      
-      const newChecks: HealthCheck[] = [
-        { 
-          id: 'hc-1', 
-          service: 'Core API Gateway', 
-          endpoint: '/api/v1/health', 
-          status: (data.status === 'ok' ? 'healthy' : 'degraded') as HealthStatus, 
-          latency: Math.floor(Math.random() * 8) + 4, 
-          uptime: '99.99%', 
-          lastCheck: new Date() 
-        },
-        { 
-          id: 'hc-2', 
-          service: 'PostgreSQL (Facts)', 
-          endpoint: 'Internal (Port 5432)', 
-          status: (data.services?.postgresql?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-          latency: Math.floor((data.services?.postgresql?.duration_seconds || 0) * 1000), 
-          uptime: '99.99%', 
-          lastCheck: new Date() 
-        },
-        { 
-          id: 'hc-3', 
-          service: 'Neo4j (Knowledge Graph)', 
-          endpoint: 'Internal (Port 7687)', 
-          status: (data.services?.neo4j?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-          latency: Math.floor((data.services?.neo4j?.duration_seconds || 0) * 1000), 
-          uptime: '99.95%', 
-          lastCheck: new Date() 
-        },
-        { 
-          id: 'hc-4', 
-          service: 'Redis (Tactical Cache)', 
-          endpoint: 'Internal (Port 6379)', 
-          status: (data.services?.redis?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-          latency: Math.floor((data.services?.redis?.duration_seconds || 0) * 1000), 
-          uptime: '100%', 
-          lastCheck: new Date() 
-        },
-        { 
-           id: 'hc-5', 
-           service: 'Kafka (Ingestion Bus)', 
-           endpoint: 'Internal (Port 9092)', 
-           status: (data.services?.kafka?.status === 'ok' ? 'healthy' : 'degraded') as HealthStatus, 
-           latency: Math.floor((data.services?.kafka?.duration_seconds || 0) * 1000), 
-           uptime: '99.87%', 
-           lastCheck: new Date() 
-        },
-        { 
-           id: 'hc-6', 
-           service: 'OpenSearch (Vector Search)', 
-           endpoint: 'Internal (Port 9200)', 
-           status: (data.services?.opensearch?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-           latency: Math.floor((data.services?.opensearch?.duration_seconds || 0) * 1000), 
-           uptime: '99.98%', 
-           lastCheck: new Date() 
-        },
-        { 
-           id: 'hc-7', 
-           service: 'Qdrant (Neural Store)', 
-           endpoint: 'Internal (Port 6333)', 
-           status: (data.services?.qdrant?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-           latency: Math.floor((data.services?.qdrant?.duration_seconds || 0) * 1000), 
-           uptime: '99.99%', 
-           lastCheck: new Date() 
-        },
-        { 
-           id: 'hc-8', 
-           service: 'MinIO (File Storage)', 
-           endpoint: 'Internal (Port 9000)', 
-           status: (data.services?.minio?.status === 'ok' ? 'healthy' : 'down') as HealthStatus, 
-           latency: Math.floor((data.services?.minio?.duration_seconds || 0) * 1000), 
-           uptime: '99.99%', 
-           lastCheck: new Date() 
-        },
-      ];
-      setHealthChecks(newChecks);
+      const [statusData, fallbackHealth] = await Promise.allSettled([
+        systemApi.getStatus(),
+        apiClient.get('/health').then((res) => res.data),
+      ]);
+
+      const primaryPayload =
+        statusData.status === 'fulfilled'
+          ? statusData.value
+          : fallbackHealth.status === 'fulfilled'
+            ? fallbackHealth.value
+            : null;
+
+      setHealthChecks(normalizeHealthChecks(primaryPayload));
     } catch (e) {
       console.error("Health refresh failed:", e);
-      setHealthChecks(prev => prev.map(hc => ({ ...hc, status: 'down' as HealthStatus })));
+      setHealthChecks([]);
     }
   };
 
@@ -364,17 +239,8 @@ export default function SystemFactoryView() {
   const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
   const [techComponents, setTechComponents] = useState<string[]>([]);
   const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
-  const [googleIntegrality, setGoogleIntegrality] = useState(false);
   const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
   const [improvementProgress, setImprovementProgress] = useState(0);
-
-  // Google Ecosystem State
-  const [googleStatus, setGoogleStatus] = useState({
-    drive: 'connected',
-    gemini: 'active',
-    analytics: 'syncing',
-    workspace: 'ready'
-  });
 
   const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
 
@@ -402,7 +268,6 @@ export default function SystemFactoryView() {
   const handleStartImprovement = async () => {
     try {
       setImprovementStatus('running');
-      setImprovementProgress(10);
       setInfiniteRunning(true);
       
       const time = new Date().toLocaleTimeString('uk-UA');
@@ -415,15 +280,6 @@ export default function SystemFactoryView() {
       
       pushSystemMessage('✅ Сервер підтвердив запуск циклу вдосконалення (OODA).', 'build');
       
-      // Відображаємо прогрес відповідно до фаз OODA (імітація для візуалізації всередині таби)
-      const phasesMap: Record<InfinitePhase, number> = {
-        'observe': 25,
-        'orient': 50,
-        'decide': 75,
-        'act': 100
-      };
-      
-      setImprovementProgress(phasesMap[infinitePhase] || 10);
     } catch (e) {
       console.warn("Бекенд недоступний при старті OODA. Входимо в режим очікування.", e);
       const time = new Date().toLocaleTimeString('uk-UA');
@@ -431,15 +287,6 @@ export default function SystemFactoryView() {
       pushSystemMessage('📡 Сервер недоступний. Цикл залишається активним і продовжить роботу, щойно система підніметься у мережі (auto-reconnect).', 'analyze');
     }
   };
-
-
-  // K8s Pods State
-  const [pods, setPods] = useState<K8sPod[]>([
-    { id: 'core-api-8f4b', name: 'predator-core-api', status: 'Running', restarts: 0, replicas: 2, cpu: '112m', mem: '450Mi', uptime: '4d 12h' },
-    { id: 'graph-worker-2d1', name: 'predator-graph-worker', status: 'Running', restarts: 1, replicas: 1, cpu: '8m', mem: '210Mi', uptime: '1d 4h' },
-    { id: 'ingest-5c9a', name: 'predator-ingestion', status: 'Running', restarts: 0, replicas: 3, cpu: '340m', mem: '1.2Gi', uptime: '4d 12h' },
-    { id: 'ui-front-v55', name: 'predator-ui-frontend', status: 'Running', restarts: 0, replicas: 1, cpu: '12m', mem: '80Mi', uptime: '8h' },
-  ]);
 
   const [logsPodId, setLogsPodId] = useState<string | null>(null);
   const [liveLogs, setLiveLogs] = useState<string[]>([]);
@@ -466,25 +313,43 @@ export default function SystemFactoryView() {
   useEffect(() => {
     if (!logsPodId) return;
     const pod = pods.find(p => p.id === logsPodId);
-    
-    setLiveLogs([
-      `[PREDATOR K8S] Initiating tail for pod ${pod?.name} (${pod?.id})`,
-      `[PREDATOR K8S] Connecting to container runtime... OK`,
-    ]);
+    if (!pod) {
+      setLiveLogs([]);
+      return;
+    }
 
+    let active = true;
+
+    const refreshPodLogs = async () => {
+      try {
+        const logs = await monitoringApi.streamSystemLogs(100);
+        if (!active) {
+          return;
+        }
+
+        setLiveLogs(normalizePodLogs(logs, pod));
+      } catch (error) {
+        console.error('Не вдалося завантажити системні логи:', error);
+        if (active) {
+          setLiveLogs([]);
+        }
+      }
+    };
+
+    void refreshPodLogs();
     const interval = setInterval(() => {
-      setLiveLogs(prev => {
-        const newLog = `[${new Date().toISOString().split('T')[1].slice(0, -1)}] INFO: Streaming live metrics and trace logs [TraceID: ${Math.random().toString(36).substr(2, 6)}]`;
-        return [...prev, newLog].slice(-50); // Keep last 50
-      });
-    }, 800);
+      void refreshPodLogs();
+    }, 10000);
 
-    return () => clearInterval(interval);
-  }, [logsPodId]);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [logsPodId, pods]);
 
-  const pushSystemMessage = (text: string, action?: any) => {
+  const pushSystemMessage = (text: string, action?: FactoryMessage['action']) => {
     setMessages(prev => [...prev, {
-      id: `sys-action-${Date.now()}-${Math.random()}`,
+      id: `sys-action-${Date.now()}-${prev.length}`,
       sender: 'system',
       text,
       timestamp: new Date(),
@@ -493,8 +358,7 @@ export default function SystemFactoryView() {
   };
 
   const handleCheckReliability = () => {
-    setSystemScore(prev => ({ ...prev, security: Math.min(100, prev.security + 5) }));
-    pushSystemMessage('Ініційовано стрес-тестування технологічної вертикалі (Chaos Engineering). Виявлено та виправлено 3 потенційні вразливості.', 'analyze');
+    pushSystemMessage('Chaos Engineering не підключено до окремого бекенд-ендпоїнта. Розділ показує лише підтверджену телеметрію без локального моделювання вразливостей.', 'analyze');
   };
 
   const handleUpdateKnowledgeMap = () => {
@@ -503,27 +367,11 @@ export default function SystemFactoryView() {
 
 
   const handleScalePod = (podId: string) => {
-    setPods(pds => pds.map(p => p.id === podId ? { ...p, replicas: p.replicas + 1 } : p));
-    const sysMsg: FactoryMessage = {
-      id: `sys-pod-scale-${Date.now()}`,
-      sender: 'system',
-      text: `Збільшую кількість реплік (Scale Up) для поду [${podId}]. HPA контролер оновлено.`,
-      timestamp: new Date(),
-      action: 'kubectl'
-    };
-    setMessages(prev => [...prev, sysMsg]);
+    pushSystemMessage(`Оркестраційний виклик для [${podId}] не підключено. Інтерфейс не змінює кількість реплік без підтвердженого API.`, 'kubectl');
   };
 
   const handleScaleDownPod = (podId: string) => {
-    setPods(pds => pds.map(p => p.id === podId && p.replicas > 0 ? { ...p, replicas: p.replicas - 1 } : p));
-    const sysMsg: FactoryMessage = {
-      id: `sys-pod-scaledown-${Date.now()}`,
-      sender: 'system',
-      text: `Зменшую кількість реплік (Scale Down) для поду [${podId}]. HPA контролер оновлено.`,
-      timestamp: new Date(),
-      action: 'kubectl'
-    };
-    setMessages(prev => [...prev, sysMsg]);
+    pushSystemMessage(`Оркестраційний виклик для [${podId}] не підключено. Scale down блокується до появи серверного endpoint.`, 'kubectl');
   };
 
   const handleShowLogs = (podId: string) => {
@@ -531,26 +379,7 @@ export default function SystemFactoryView() {
   };
 
   const handlePodRestart = (podId: string) => {
-    setPods(pds => pds.map(p => p.id === podId ? { ...p, status: 'Restarting' } : p));
-    
-    const sysMsg: FactoryMessage = {
-      id: `sys-pod-${Date.now()}`,
-      sender: 'system',
-      text: `Ініційовано перезапуск поду [${podId}]. Відправляю SIGTERM...`,
-      timestamp: new Date(),
-      action: 'kubectl'
-    };
-    setMessages(prev => [...prev, sysMsg]);
-
-    setTimeout(() => {
-      setPods(pds => pds.map(p => p.id === podId ? { ...p, status: 'Running', restarts: p.restarts + 1, uptime: '0m' } : p));
-      setMessages(prev => [...prev, {
-        id: `sys-pod-done-${Date.now()}`,
-        sender: 'system',
-        text: `Под [${podId}] успішно перезапущено (Running). Ресурси перерозподілено.`,
-        timestamp: new Date()
-      }]);
-    }, 4000);
+    pushSystemMessage(`Рестарт для [${podId}] недоступний з UI без окремого backend orchestration endpoint. Стан pod лишається тільки читальним.`, 'kubectl');
   };
 
   const parseNaturalCommand = (text: string) => {
@@ -602,16 +431,23 @@ export default function SystemFactoryView() {
     }
 
     if (lower.includes('лог') || lower.includes('logs')) {
-       if (lower.includes('api') || lower.includes('core')) { handleShowLogs('core-api-8f4b'); return 'Підключаю WebSocket до stdout поду API...'; }
+       if (lower.includes('api') || lower.includes('core')) {
+         const apiPod = pods.find((pod) => pod.name.toLowerCase().includes('api'));
+         if (apiPod) {
+           handleShowLogs(apiPod.id);
+           return 'Відкриваю підтверджені системні логи для pod API.';
+         }
+         return 'Pod API не підтверджено у відповіді `/system/cluster`.';
+       }
        return 'Вкажіть підсистему для перегляду логів (напр. "покажи логи API").';
     }
 
     if (lower.includes('кеш') || lower.includes('cache')) {
-       return { action: 'deploy', reply: 'ВІДПРАВЛЕНО КОМАНДУ `FLUSHALL` НА REDIS КЛАСТЕР. Кеш очищено.' };
+       return { action: 'deploy', reply: 'Операція очищення кешу не підключена до окремого backend endpoint. UI не виконує `FLUSHALL` локально.' };
     }
     
     if (lower.includes('секрет') || lower.includes('secret')) {
-       return { action: 'analyze', reply: 'Ініційовано ротацію Kubernetes Secrets. Застосовано новий TLS сертифікат.' };
+       return { action: 'analyze', reply: 'Ротація секретів не підключена до окремого backend endpoint. Розділ не симулює зміну TLS або Kubernetes Secrets.' };
     }
 
     // Pipeline commands
@@ -654,7 +490,7 @@ export default function SystemFactoryView() {
     if (lower.includes('деплой') || lower.includes('запусти') || lower.includes('пуск') || lower.includes('start')) {
       if (lower.includes('все') || lower.includes('всі') || lower.includes('систем')) {
         setTimeout(() => startEveryFunction(), 0);
-        return 'Зрозумів. Master Start ініційовано: запускаю OODA Loop, Health Checks та чергу автофіксу.';
+        return 'Запускаю серверний OODA цикл і оновлюю телеметрію. Локальні оркестраційні сценарії не симулюються.';
       }
       if (lower.includes('ooda') || lower.includes('цикл')) {
         if (!infiniteRunning) {
@@ -815,6 +651,10 @@ export default function SystemFactoryView() {
     };
   }, [infiniteRunning, refreshInfiniteStatus]);
 
+  useEffect(() => {
+    setImprovementProgress(deriveImprovementProgress(infiniteRunning, infinitePhase));
+  }, [infinitePhase, infiniteRunning]);
+
   const startEveryFunction = async () => {
     if (isProcessing) return;
     setIsProcessing(true);
@@ -824,7 +664,6 @@ export default function SystemFactoryView() {
       
       // 1. Початок вдосконалення (UI стан)
       setImprovementStatus('running');
-      setImprovementProgress(10);
       
       // 2. Запуск OODA на бекенді через handleInfiniteCycle або напряму
       if (!infiniteRunning) {
@@ -839,9 +678,6 @@ export default function SystemFactoryView() {
            pushSystemMessage('📡 MASTER START: Сервер недоступний, але OODA Loop у режимі очікування.', 'analyze');
         }
       }
-      
-      setGoogleIntegrality(true);
-      
       // 3. Авто-фікс багів
       const detectedBugs = bugs.filter(b => b.status === 'detected');
       if (detectedBugs.length > 0) {
@@ -881,9 +717,24 @@ export default function SystemFactoryView() {
         icon={<Factory size={24} className="text-violet-400" />}
         breadcrumbs={['ПРЕДАТОР', 'АДМІНІСТРУВАННЯ', 'ЗАВОД']}
         stats={[
-          { label: 'Кластер', value: pods.some(p => p.status !== 'Running') ? 'DEGRAD' : 'HEALTHY', icon: <Server size={14} />, color: pods.some(p => p.status !== 'Running') ? 'warning' : 'success' },
-          { label: 'Code Quality', value: `${systemScore.quality}%`, icon: <CheckCircle2 size={14}/>, color: 'primary' },
-          { label: 'OODA Цикл', value: infiniteRunning ? 'ACTIVE' : 'IDLE', icon: <Infinity size={14}/>, color: infiniteRunning ? 'success' : 'danger' }
+          {
+            label: 'Кластер',
+            value: pods.length === 0 ? 'Н/д' : pods.some(p => p.status !== 'Running') ? 'Деградація' : 'Справно',
+            icon: <Server size={14} />,
+            color: pods.length === 0 ? 'default' : pods.some(p => p.status !== 'Running') ? 'warning' : 'success',
+          },
+          {
+            label: 'Якість коду',
+            value: systemScore.quality == null ? 'Н/д' : `${systemScore.quality}%`,
+            icon: <CheckCircle2 size={14}/>,
+            color: 'primary',
+          },
+          {
+            label: 'OODA цикл',
+            value: infiniteRunning ? 'Активний' : 'Очікування',
+            icon: <Infinity size={14}/>,
+            color: infiniteRunning ? 'success' : 'warning',
+          }
         ]}
       />
 
@@ -902,9 +753,9 @@ export default function SystemFactoryView() {
             </div>
             <div className="text-[9px] text-slate-500 font-mono">
               {infiniteRunning ? (
-                <span className="text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />OODA ACTIVE</span>
+                <span className="text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />OODA активний</span>
               ) : (
-                <span className="text-slate-500">OODA IDLE</span>
+                <span className="text-slate-500">OODA в очікуванні</span>
               )}
             </div>
           </div>
@@ -1142,51 +993,45 @@ export default function SystemFactoryView() {
                       </TacticalCard>
                     )}
 
-                    {/* Google Integrality Vertical */}
-                    <TacticalCard title="GOOGLE INTEGRALITY" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+                    <TacticalCard title="СУВЕРЕННІ ІНТЕГРАЦІЇ" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
                       <div className="p-4 space-y-4">
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                             <Cloud size={20} />
+                             <ShieldCheck size={20} />
                            </div>
                            <div className="flex-1">
-                             <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
-                             <div className="text-[8px] text-emerald-500 font-mono">Синхронізація: Drive, Docs, Sheets</div>
+                             <div className="text-[11px] font-black uppercase text-white">Зовнішні SaaS</div>
+                             <div className="text-[8px] text-emerald-500 font-mono">Політика платформи: HR-15 забороняє зовнішні SaaS інтеграції</div>
                            </div>
-                           <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase()}</Badge>
+                           <Badge variant="cyber" className="bg-slate-500/20 text-slate-300 text-[8px]">ВИМКНЕНО</Badge>
                         </div>
 
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
                            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                             <Scan size={20} />
+                             <Server size={20} />
                            </div>
                            <div className="flex-1">
-                             <div className="text-[11px] font-black uppercase text-white">Gemini OSINT Agent</div>
-                             <div className="text-[8px] text-indigo-400 font-mono">Рівень API Pro v1.5</div>
+                             <div className="text-[11px] font-black uppercase text-white">Серверні інтеграції</div>
+                             <div className="text-[8px] text-indigo-400 font-mono">Показуються лише підтверджені внутрішні сервіси з health telemetry</div>
                            </div>
-                           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase()}</Badge>
+                           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-300 text-[8px]">{healthChecks.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</Badge>
                         </div>
 
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
-                             <BarChart3 size={20} />
+                             <Cloud size={20} />
                            </div>
                            <div className="flex-1">
-                             <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
-                             <div className="text-[8px] text-amber-400 font-mono">Аналіз трафіку та конверсії</div>
+                             <div className="text-[11px] font-black uppercase text-white">Хмарні конектори</div>
+                             <div className="text-[8px] text-amber-400 font-mono">Окремий бекенд-контракт для сторонніх конекторів не наданий</div>
                            </div>
-                           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase()}</Badge>
+                           <Badge variant="neon" className="bg-amber-500/20 text-amber-300 text-[8px]">НЕ ПІДКЛЮЧЕНО</Badge>
                         </div>
 
                         <div className="pt-4 border-t border-white/10">
-                           <Button 
-                             onClick={() => setGoogleIntegrality(!googleIntegrality)}
-                             variant={googleIntegrality ? "neon" : "cyber"}
-                             className={cn("w-full h-11 text-[10px] font-black uppercase tracking-widest transition-all", 
-                               googleIntegrality ? "bg-emerald-600 text-white" : "text-emerald-400")}
-                           >
-                             <Globe size={14} className="mr-2" /> {googleIntegrality ? "ВІДКЛЮЧИТИ ЕКОСИСТЕМУ" : "АКТИВУВАТИ GOOGLE CLOUD"}
-                           </Button>
+                          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[10px] font-mono leading-5 text-slate-300">
+                            Інтерфейс не вмикає сторонні екосистеми локальним перемикачем. Для нових інтеграцій потрібен окремий серверний контракт і підтверджений канал синхронізації.
+                          </div>
                         </div>
                       </div>
                     </TacticalCard>
@@ -1219,15 +1064,21 @@ export default function SystemFactoryView() {
                           </div>
 
                           <div className="bg-slate-950/80 rounded-2xl p-4 border border-fuchsia-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner">
-                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ ЛОГ_ДЕМОНА_ВДОСКОНАЛЕННЯ ]</div>
-                             <div className="space-y-1">
-                                <div className="text-slate-500">СИНХ: Запуск вертикального розподілу...</div>
-                                <div className="text-indigo-400 animate-pulse">ТЕХ: Оптимізація кластерів Core API...</div>
-                                {improvementProgress > 30 && <div className="text-amber-400">АНАЛІТИКА: Інгестія дельти Карти Знань...</div>}
-                                {improvementProgress > 60 && <div className="text-emerald-400">GOOGLE: Зв'язування документів Workspace...</div>}
-                                {improvementProgress > 80 && <div className="text-fuchsia-400">ГОТОВО: Всі модулі синтезовано.</div>}
-                                {improvementStatus === 'running' && <div className="text-white flex items-center gap-2 mt-2"><RotateCcw size={10} className="animate-spin" /> Обробка артефактів...</div>}
-                             </div>
+                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
+                             {infiniteLogs.length > 0 ? (
+                               <div className="space-y-1">
+                                 {infiniteLogs.slice(-8).map((log, index) => (
+                                   <div key={`${index}-${log}`} className={cn(
+                                     'break-words',
+                                     log.includes('ERROR') ? 'text-rose-300' : log.includes('SYSTEM') ? 'text-indigo-300' : 'text-slate-300',
+                                   )}>
+                                     {log}
+                                   </div>
+                                 ))}
+                               </div>
+                             ) : (
+                               <div className="text-slate-500">Бекенд не повернув журнал OODA. Блок не генерує локальні події.</div>
+                             )}
                           </div>
                         </div>
 
@@ -1239,7 +1090,7 @@ export default function SystemFactoryView() {
                                </div>
                                <div>
                                  <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
-                                 <p className="text-[9px] text-emerald-500/70 font-mono uppercase">Цілісність Системи: 100% | Квантова Консистентність: Досягнута</p>
+                                 <p className="text-[9px] text-emerald-500/70 font-mono uppercase">Звіт формується лише з підтверджених server-side станів OODA та Factory API</p>
                                </div>
                              </div>
 
@@ -1255,21 +1106,14 @@ export default function SystemFactoryView() {
                                  <tbody>
                                    <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                                      <td className="p-3 text-indigo-400 font-bold border-l-2 border-indigo-500">Технологічна</td>
-                                     <td className="p-3 text-slate-200">Рефакторинг API</td>
-                                     <td className="p-3 text-emerald-400 font-bold">СТАБІЛЬНО</td>
+                                     <td className="p-3 text-slate-200">Стан за OODA та telemetry</td>
+                                     <td className="p-3 text-emerald-400 font-bold">{infiniteRunning ? 'АКТИВНО' : 'ОЧІКУВАННЯ'}</td>
                                    </tr>
                                    <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                                      <td className="p-3 text-amber-400 font-bold border-l-2 border-amber-500">Аналітична</td>
-                                     <td className="p-3 text-slate-200">Оновлення патерну</td>
-                                     <td className="p-3 text-emerald-400 font-bold">ГОТОВО</td>
+                                     <td className="p-3 text-slate-200">Gold patterns і bug queue</td>
+                                     <td className="p-3 text-emerald-400 font-bold">{goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</td>
                                    </tr>
-                                   {googleIntegrality && (
-                                     <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
-                                       <td className="p-3 text-emerald-400 font-bold border-l-2 border-emerald-500">Google Integrality</td>
-                                       <td className="p-3 text-slate-200">GCP Cloud, Gemini v1.5 Pro, OSINT Layers</td>
-                                       <td className="p-3 text-emerald-400 font-bold">ІНТЕГРОВАНО</td>
-                                     </tr>
-                                   )}
                                  </tbody>
                                </table>
                              </div>
@@ -1301,7 +1145,7 @@ export default function SystemFactoryView() {
                              </tr>
                            </thead>
                            <tbody className="divide-y divide-white/5">
-                             {pods.map(pod => (
+                             {pods.length > 0 ? pods.map(pod => (
                                <tr key={pod.id} className="hover:bg-white/5 transition-colors group">
                                   <td className="p-4">
                                      <div className="flex items-center gap-3">
@@ -1332,28 +1176,29 @@ export default function SystemFactoryView() {
                                      <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
                                         <Button 
                                           onClick={() => handlePodRestart(pod.id)}
-                                          disabled={pod.status !== 'Running'}
+                                          disabled
                                           variant="ghost"
                                           size="icon"
-                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-50" title="Надіслати SIGTERM (Перезапуск)"
+                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                         >
                                            <Power size={14} />
                                         </Button>
                                         <div className="flex bg-slate-800 rounded-lg overflow-hidden border border-transparent">
                                           <Button 
                                             onClick={() => handleScalePod(pod.id)}
+                                            disabled
                                             variant="ghost"
                                             size="icon"
-                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5" title="Масштабувати (Scale Up)"
+                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5 disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                           >
                                              <Plus size={14} />
                                           </Button>
                                           <Button 
                                             onClick={() => handleScaleDownPod(pod.id)}
-                                            disabled={pod.replicas <= 1}
+                                            disabled
                                             variant="ghost"
                                             size="icon"
-                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all" title="Зменшити (Scale Down)"
+                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                           >
                                              <Minus size={14} />
                                           </Button>
@@ -1369,7 +1214,13 @@ export default function SystemFactoryView() {
                                      </div>
                                   </td>
                                </tr>
-                             ))}
+                             )) : (
+                               <tr>
+                                 <td colSpan={4} className="p-8 text-center text-sm leading-6 text-slate-400">
+                                   `/system/cluster` не повернув pod-обʼєкти. Таблиця лишається порожньою, а керування pod-ами заблоковане до появи оркестраційного API.
+                                 </td>
+                               </tr>
+                             )}
                            </tbody>
                         </table>
                      </div>
@@ -1394,12 +1245,16 @@ export default function SystemFactoryView() {
                               </Button>
                            </div>
                            <div className="flex-1 p-4 font-mono text-[11px] text-emerald-400/80 overflow-y-auto custom-scrollbar">
-                              {liveLogs.map((log, index) => (
+                              {liveLogs.length > 0 ? liveLogs.map((log, index) => (
                                  <div key={index} className="mb-0.5 break-all">
                                     {log.includes('INFO') ? <span className="text-blue-400">{log.substring(0, 15)}</span> : <span className="text-slate-500">{log.substring(0, 15)}</span>}
                                     {log.substring(15)}
                                  </div>
-                              ))}
+                              )) : (
+                                <div className="text-slate-500">
+                                  Для вибраного pod не знайдено підтверджених рядків у `/system/logs/stream`. Оверлей не домальовує stdout локально.
+                                </div>
+                              )}
                               <div ref={logsEndRef} />
                            </div>
                         </motion.div>
@@ -1470,17 +1325,17 @@ export default function SystemFactoryView() {
                         <div className="flex flex-col gap-1 items-center border-r border-white/5">
                            <Key size={14} className="text-amber-400 mb-1" />
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Секрети K8s</span>
-                           <span className="text-xs font-mono text-white">АКТИВНО (Синхронізовано)</span>
+                           <span className="text-xs font-mono text-white">Н/д</span>
                         </div>
                         <div className="flex flex-col gap-1 items-center border-r border-white/5">
                            <HardDrive size={14} className="text-violet-400 mb-1" />
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Постійні Томи (Vol)</span>
-                           <span className="text-xs font-mono text-white">4 / 4 Змонтовано</span>
+                           <span className="text-xs font-mono text-white">Потрібен endpoint</span>
                         </div>
                         <div className="flex flex-col gap-1 items-center">
                            <Shield size={14} className="text-emerald-400 mb-1" />
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Мережеві Політики</span>
-                           <span className="text-xs font-mono text-white">Суворі (Заборона)</span>
+                           <span className="text-xs font-mono text-white">Непідтверджено</span>
                         </div>
                      </div>
                   </TacticalCard>
@@ -1522,19 +1377,19 @@ export default function SystemFactoryView() {
                        
                        <div className="mt-8 grid grid-cols-3 gap-4">
                           <div className="bg-slate-900/50 p-4 border border-indigo-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-1000" style={{ width: `${systemScore.quality}%` }} />
+                             <div className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-1000" style={{ width: `${systemScore.quality ?? 0}%` }} />
                              <div className="text-[10px] text-slate-500 uppercase font-black">Якість Коду (Sonar)</div>
-                             <div className="text-2xl font-black text-indigo-400 mt-1">{systemScore.quality}%</div>
+                             <div className="text-2xl font-black text-indigo-400 mt-1">{systemScore.quality == null ? 'Н/д' : `${systemScore.quality}%`}</div>
                           </div>
                           <div className="bg-slate-900/50 p-4 border border-violet-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-violet-500 transition-all duration-1000" style={{ width: `${systemScore.coverage}%` }} />
-                             <div className="text-[10px] text-slate-500 uppercase font-black">Тестове Покриття</div>
-                             <div className="text-2xl font-black text-violet-400 mt-1">{systemScore.coverage}%</div>
+                             <div className="absolute bottom-0 left-0 h-1 bg-violet-500 transition-all duration-1000" style={{ width: `${systemScore.coverage ?? 0}%` }} />
+                             <div className="text-[10px] text-slate-500 uppercase font-black">Тестове покриття</div>
+                             <div className="text-2xl font-black text-violet-400 mt-1">{systemScore.coverage == null ? 'Н/д' : `${systemScore.coverage}%`}</div>
                           </div>
                           <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security}%` }} />
+                             <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security ?? 0}%` }} />
                              <div className="text-[10px] text-slate-500 uppercase font-black">Безпека (Trivy + OPA)</div>
-                             <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security}%</div>
+                             <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security == null ? 'Н/д' : `${systemScore.security}%`}</div>
                           </div>
                        </div>
                     </div>
@@ -1647,16 +1502,16 @@ export default function SystemFactoryView() {
                     </div>
                     <div className={cn(
                       "px-6 py-2 rounded-xl border text-sm font-black uppercase",
-                      healthChecks.every(h => h.status === 'healthy')
+                      healthChecks.length > 0 && healthChecks.every(h => h.status === 'healthy')
                         ? "bg-emerald-500/20 border-emerald-400/50 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                         : "bg-amber-500/20 border-amber-400/50 text-amber-400"
                     )}>
-                      {healthChecks.every(h => h.status === 'healthy') ? '✅ ВСЕ ЗДОРОВО' : '⚠️ Є ДЕГРАДАЦІЇ'}
+                      {healthChecks.length === 0 ? 'Н/Д' : healthChecks.every(h => h.status === 'healthy') ? '✅ ВСЕ ЗДОРОВО' : '⚠️ Є ДЕГРАДАЦІЇ'}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {healthChecks.map(hc => (
+                    {healthChecks.length > 0 ? healthChecks.map(hc => (
                       <motion.div key={hc.id} layout className={cn(
                         "p-4 rounded-xl border backdrop-blur-md flex items-center gap-4 transition-all",
                         hc.status === 'healthy' && "bg-emerald-950/10 border-emerald-500/20",
@@ -1678,10 +1533,10 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="flex items-center gap-4 text-[10px] font-mono">
                             <span className={cn(
-                              hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-red-400'
-                            )}>⚡ {hc.latency}ms</span>
+                              hc.latency == null ? 'text-slate-500' : hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-red-400'
+                            )}>⚡ {hc.latency == null ? 'Н/д' : `${hc.latency}ms`}</span>
                             <span className="text-slate-500">Uptime: {hc.uptime}</span>
-                            <span className="text-slate-600">{hc.lastCheck.toLocaleTimeString('uk-UA', { hour12: false })}</span>
+                            <span className="text-slate-600">{hc.lastCheckLabel}</span>
                           </div>
                         </div>
                         <div className={cn(
@@ -1693,7 +1548,11 @@ export default function SystemFactoryView() {
                           {hc.status === 'healthy' ? 'ЗДОРОВИЙ' : hc.status === 'degraded' ? 'ДЕГРАДАЦІЯ' : 'НЕДОСТУПНИЙ'}
                         </div>
                       </motion.div>
-                    ))}
+                    )) : (
+                      <div className="col-span-full rounded-2xl border border-dashed border-white/10 bg-black/20 px-6 py-8 text-center text-sm leading-6 text-slate-400">
+                        `/system/status` або `/health` не повернули структуру сервісів. Health Check лишається порожнім замість локально вигаданих аптаймів і latency.
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}

@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Predator v55 | Економічний Радар",
+    "title": "Predator v55 | Neural Analytics",
     "subtitle": "Система раннього попередження, аналізу ризиків та інформаційної переваги",
     "loading": "Завантаження системи...",
     "access_denied": "Доступ заборонено",
     "not_found": "Сторінку не знайдено",
-    "version": "v55.0"
+    "version": "v55.2.5-SM"
   },
   "auth": {
     "login": "Увійти",
@@ -28,7 +28,11 @@
     "signals": "Сигнали",
     "analytics": "Аналітика",
     "cers": "CERS Рейтинг",
-    "graph": "Граф зв'язків",
+    "graph": "Економічний Граф",
+    "market_pulse": "Пульс Ринку",
+    "forecast": "Прогнозування",
+    "opportunities": "Можливості",
+    "radar": "Радар Конкурентів",
     "ingestion": "Завантаження даних",
     "reports": "Звіти",
     "decisions": "Реєстр рішень",
@@ -176,14 +180,59 @@
     "records_processed": "Оброблено"
   },
   "graph": {
-    "title": "Граф зв'язків",
+    "title": "Економічний Граф Знань",
     "nodes": "Вузли",
     "edges": "Зв'язки",
     "centrality": "Центральність",
     "communities": "Спільноти",
     "expand": "Розгорнути",
     "collapse": "Згорнути",
-    "search_entity": "Пошук суб'єкта у графі"
+    "search_entity": "Пошук суб'єкта у графі",
+    "pathfinding": "Пошук прихованих зв'язків",
+    "ubo_chain": "Ланцюг кінцевих бенефіціарів",
+    "node_type_company": "Компанія",
+    "node_type_person": "Фізична особа"
+  },
+  "market": {
+    "title": "Аналітика Ринку",
+    "competitor_activity": "Активність Конкурентів",
+    "price_anomalies": "Цінові Аномалії",
+    "market_share": "Частка Ринку",
+    "simulator_title": "Симулятор Ринку (Що-якщо)",
+    "run_simulation": "Запустити моделювання сценарію",
+    "sim_param_currency": "Курс валют (USD/UAH)",
+    "sim_param_logistics": "Логістичні витрати (%)",
+    "sim_param_duty": "Митні збори",
+    "sim_result_margin": "Прогнозована маржа",
+    "sim_result_risk": "Рівень ризику сценарію",
+    "sim_impact_high": "Критичний вплив",
+    "sim_impact_low": "Мінімальний вплив",
+    "sim_run_ai": "Запустити ML-аналіз сценарію"
+  },
+  "radar": {
+    "title": "Радар Конкурентів (Live)",
+    "activity_feed": "Стрічка активності",
+    "new_import": "Новий імпорт виявлено",
+    "route_change": "Зміна логістичного маршруту",
+    "price_alert": "Цінова аномалія (демпінг)",
+    "scan_running": "AI-сканування ринку...",
+    "no_activity": "Активності не виявлено"
+  },
+  "predictions": {
+    "title": "Машина Передбачення",
+    "demand_forecast": "Прогноз Попиту",
+    "price_trend": "Тренд Цін",
+    "risk_probability": "Ймовірність Регуляторного Ризику",
+    "early_warning": "Система Раннього Попередження",
+    "ews_title": "Система Раннього Попередження (EWS)",
+    "ews_desc": "Автоматичне виявлення передсхемних сигналів та аномалій",
+    "ews_investigate": "Розслідувати",
+    "ews_dismiss": "Ігнорувати",
+    "confidence_high": "Висока впевненість",
+    "confidence_medium": "Середня впевненість",
+    "confidence_low": "Потребує верифікації",
+    "bvi_index": "Поведінкова волатильність (BVI)",
+    "cp_index": "Ймовірність колапсу (CP)"
   },
   "dashboard": {
     "title": "Панель управління",

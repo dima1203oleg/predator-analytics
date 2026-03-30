@@ -1,27 +1,28 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useCallback, useMemo, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Shield, 
-  ChevronRight, 
-  ChevronLeft, 
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   ChevronDown,
-  LogOut, 
-  User, 
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
   Search,
+  Shield,
+  User,
   X,
 } from 'lucide-react';
-import { 
-  themeAtom, 
-  isSidebarOpenAtom, 
-  sidebarSearchAtom 
-} from '../../store/atoms';
+import { isSidebarOpenAtom, sidebarSearchAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
-import { navigationConfig } from '../../config/navigation';
+import {
+  getNavigationTotals,
+  getVisibleNavigation,
+  navAccentStyles,
+  type NavSection,
+} from '../../config/navigation';
+import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { cn } from '../../lib/utils';
 
-/** Стан колапсу секцій — зберігається в localStorage */
 const getInitialCollapsed = (): Record<string, boolean> => {
   try {
     const stored = localStorage.getItem('predator-nav-collapsed');
@@ -31,126 +32,187 @@ const getInitialCollapsed = (): Record<string, boolean> => {
   }
 };
 
-export const Sidebar: React.FC = () => {
+const Sidebar: React.FC = () => {
   const { user, logout } = useUser();
   const userRole = user?.role || 'viewer';
+  const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
-  const location = useLocation();
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(getInitialCollapsed);
 
+  const visibleSections = useMemo(() => getVisibleNavigation(userRole), [userRole]);
+  const totals = useMemo(() => getNavigationTotals(userRole), [userRole]);
+
   const toggleSection = useCallback((sectionId: string) => {
-    setCollapsedSections(prev => {
+    setCollapsedSections((prev) => {
       const next = { ...prev, [sectionId]: !prev[sectionId] };
       localStorage.setItem('predator-nav-collapsed', JSON.stringify(next));
       return next;
     });
   }, []);
 
-  const filteredSections = useMemo(() => {
-    return navigationConfig
-      .map(section => ({
-        ...section,
-        items: section.items.filter(item => {
-          const roleMatch = !item.roles || item.roles.includes(userRole);
-          const searchMatch = !search || 
-            item.label.toLowerCase().includes(search.toLowerCase()) || 
-            section.label.toLowerCase().includes(search.toLowerCase());
-          return roleMatch && searchMatch;
-        })
-      }))
-      .filter(section => section.items.length > 0);
-  }, [userRole, search]);
+  const filteredSections = useMemo<NavSection[]>(() => {
+    const query = search.trim().toLowerCase();
 
-  /** Визначаємо активну секцію для підсвічування */
-  const activeSectionId = useMemo(() => {
-    for (const section of navigationConfig) {
-      if (section.items.some(item => item.path === location.pathname)) {
-        return section.id;
-      }
+    if (!query) {
+      return visibleSections;
     }
-    return null;
-  }, [location.pathname]);
+
+    return visibleSections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter(
+          (item) =>
+            item.label.toLowerCase().includes(query) ||
+            item.description.toLowerCase().includes(query) ||
+            section.label.toLowerCase().includes(query) ||
+            section.description.toLowerCase().includes(query),
+        ),
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [search, visibleSections]);
 
   return (
     <motion.aside
+      data-testid="sidebar"
       initial={false}
-      animate={{ width: isOpen ? 300 : 76 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="relative h-screen flex flex-col border-r bg-[#020617]/95 backdrop-blur-2xl border-white/[0.04] shadow-2xl z-50 shrink-0"
+      animate={{ width: isOpen ? 332 : 88 }}
+      transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+      className="relative z-20 flex h-screen shrink-0 flex-col border-r border-white/[0.06] bg-[#04111d]/92 backdrop-blur-2xl"
     >
-      {/* Лого */}
-      <div className="px-5 flex items-center gap-3.5 border-b border-white/[0.04] h-[72px] shrink-0">
-        <div className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center bg-gradient-to-br from-amber-500 to-rose-600 shadow-lg shadow-amber-500/20">
-          <Shield className="w-5 h-5 text-white" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.1),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.08),transparent_28%)]" />
+      <div className="relative border-b border-white/[0.06] px-4 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-500/20 via-amber-400/10 to-rose-500/10 shadow-[0_12px_32px_rgba(245,158,11,0.12)]">
+            <Shield className="h-5 w-5 text-amber-300" />
+          </div>
+
+          <AnimatePresence initial={false}>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                className="min-w-0 overflow-hidden"
+              >
+                <div className="text-lg font-black tracking-tight text-white">PREDATOR</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-amber-300/70">
+                  Операційна навігація
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              className="flex flex-col overflow-hidden whitespace-nowrap"
-            >
-              <span className="font-black text-[17px] tracking-tight text-white leading-none">PREDATOR</span>
-              <span className="text-amber-500/70 text-[9px] font-bold uppercase tracking-[0.25em] mt-0.5">NEXUS v56.1</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+        {isOpen && (
+          <div className="mt-4 rounded-3xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-[0_18px_40px_rgba(2,6,23,0.28)]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+                  Режим даних
+                </div>
+                <div
+                  className={cn(
+                    'mt-1 text-sm font-black',
+                    backendStatus.isOffline ? 'text-rose-200' : 'text-emerald-200',
+                  )}
+                >
+                  {backendStatus.statusLabel}
+                </div>
+              </div>
+              <span
+                className={cn(
+                  'rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]',
+                  backendStatus.isOffline
+                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                    : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                )}
+              >
+                {backendStatus.isTruthOnly ? 'Правда' : 'Проксі'}
+              </span>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
+                <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Секції</div>
+                <div className="mt-1 text-lg font-black text-white">{totals.sections}</div>
+              </div>
+              <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
+                <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Модулі</div>
+                <div className="mt-1 text-lg font-black text-white">{totals.items}</div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+              <div className="mt-1 text-sm font-semibold text-slate-200">{backendStatus.sourceLabel}</div>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Пошук */}
       {isOpen && (
-        <div className="px-4 py-3 shrink-0">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-600 group-focus-within:text-amber-500 transition-colors" />
+        <div className="relative px-4 py-3">
+          <div className="group relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-emerald-300" />
             <input
-              type="text"
-              placeholder="Пошук модулів..."
+              type="search"
+              placeholder="Знайти розділ або підрозділ..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/[0.03] border border-white/[0.06] rounded-xl pl-10 pr-8 py-2.5 text-[13px] text-white focus:outline-none focus:border-amber-500/30 transition-all placeholder:text-slate-600"
+              onChange={(event) => setSearch(event.target.value)}
+              className="h-11 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-10 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30 focus:bg-white/[0.06]"
             />
             {search && (
-              <button 
+              <button
+                title="Очистити пошук"
                 onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-white"
               >
-                <X size={13} />
+                <X size={14} />
               </button>
             )}
           </div>
         </div>
       )}
 
-      {/* Навігація */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-2">
+      <nav className="relative flex-1 overflow-y-auto overflow-x-hidden px-3 pb-4 custom-scrollbar">
         {filteredSections.map((section) => {
+          const accent = navAccentStyles[section.accent];
           const isCollapsed = collapsedSections[section.id] && !search;
-          const hasActiveItem = section.items.some(item => item.path === location.pathname);
 
           return (
-            <div key={section.id} className="mb-1">
-              {/* Заголовок секції */}
+            <div
+              key={section.id}
+              className={cn(
+                'mb-3 overflow-hidden rounded-3xl border bg-white/[0.02]',
+                accent.sectionBorder,
+                !isOpen && 'border-transparent bg-transparent',
+              )}
+            >
               {isOpen ? (
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className={cn(
-                    "w-full flex items-center justify-between px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors",
-                    hasActiveItem ? "text-amber-500/80" : "text-slate-500/60 hover:text-slate-400"
-                  )}
+                  className="w-full px-4 py-3 text-left transition-colors hover:bg-white/[0.03]"
                 >
-                  <span>{section.label}</span>
-                  <ChevronDown size={12} className={cn(
-                    "transition-transform duration-200",
-                    isCollapsed && "rotate-[-90deg]"
-                  )} />
+                  <div className="flex items-center gap-2">
+                    <span className={cn('h-2.5 w-2.5 rounded-full', accent.dot)} />
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-white">
+                      {section.label}
+                    </span>
+                    <span className="ml-auto rounded-full border border-white/[0.08] bg-black/20 px-2 py-0.5 text-[10px] font-semibold text-slate-400">
+                      {section.items.length}
+                    </span>
+                    <ChevronDown
+                      size={14}
+                      className={cn('text-slate-500 transition-transform', isCollapsed && '-rotate-90')}
+                    />
+                  </div>
+                  <p className="mt-2 pr-6 text-[11px] leading-5 text-slate-500">{section.description}</p>
                 </button>
               ) : (
-                <div className="h-px bg-white/[0.04] mx-3 my-3" />
+                <div className="mx-auto my-3 h-10 w-10 rounded-2xl border border-white/[0.06] bg-white/[0.04]" />
               )}
 
-              {/* Пункти навігації */}
               <AnimatePresence initial={false}>
                 {(!isCollapsed || !isOpen) && (
                   <motion.div
@@ -160,51 +222,63 @@ export const Sidebar: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-3 space-y-0.5">
+                    <div className={cn('space-y-1 px-2 pb-2', !isOpen && 'px-0 pb-0')}>
                       {section.items.map((item) => (
                         <NavLink
                           key={item.id}
                           to={item.path}
                           title={!isOpen ? item.label : undefined}
-                          className={({ isActive }) => cn(
-                            "flex items-center gap-3 rounded-xl transition-all duration-200 group relative",
-                            isOpen ? "px-3 py-2.5" : "px-0 py-2.5 justify-center",
-                            isActive 
-                              ? "bg-amber-500/10 text-white" 
-                              : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
-                          )}
+                          className={({ isActive }) =>
+                            cn(
+                              'group relative flex items-center gap-3 rounded-2xl border border-transparent transition-all duration-200',
+                              isOpen ? 'px-3 py-3' : 'mx-auto h-12 w-12 justify-center',
+                              isActive
+                                ? 'bg-white/[0.08] text-white shadow-[0_12px_30px_rgba(2,6,23,0.28)]'
+                                : 'text-slate-400 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+                            )
+                          }
                         >
                           {({ isActive }) => (
                             <>
-                              {/* Активний індикатор зліва */}
-                              {isActive && (
-                                <motion.div
-                                  layoutId="nav-active-bar"
-                                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-amber-500 rounded-r-full shadow-[0_0_8px_rgba(245,158,11,0.5)]"
-                                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                              <div
+                                className={cn(
+                                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors',
+                                  isActive ? accent.iconBorder : 'border-white/[0.06] bg-black/20',
+                                )}
+                              >
+                                <item.icon
+                                  className={cn(
+                                    'h-[18px] w-[18px] transition-colors',
+                                    isActive ? accent.icon : 'text-slate-400 group-hover:text-white',
+                                  )}
                                 />
-                              )}
-                              <item.icon className={cn(
-                                "shrink-0 transition-colors",
-                                isOpen ? "w-[18px] h-[18px]" : "w-5 h-5",
-                                isActive ? "text-amber-500" : "group-hover:text-amber-400/70"
-                              )} />
+                              </div>
+
                               {isOpen && (
-                                <span className="text-[13px] font-semibold truncate">
-                                  {item.label}
-                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="truncate text-sm font-semibold">{item.label}</span>
+                                    {item.badge && (
+                                      <span
+                                        className={cn(
+                                          'rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em]',
+                                          accent.badge,
+                                        )}
+                                      >
+                                        {item.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {(search || isActive) && (
+                                    <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-slate-500">
+                                      {item.description}
+                                    </p>
+                                  )}
+                                </div>
                               )}
-                              {isOpen && item.badge && (
-                                <span className={cn(
-                                  "ml-auto px-1.5 py-0.5 text-[9px] font-black rounded uppercase tracking-wider",
-                                  item.badge === 'LIVE' 
-                                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20" 
-                                    : item.badge === 'PRO'
-                                    ? "bg-violet-500/15 text-violet-400 border border-violet-500/20"
-                                    : "bg-amber-500/15 text-amber-400 border border-amber-500/20"
-                                )}>
-                                  {item.badge}
-                                </span>
+
+                              {isOpen && isActive && (
+                                <div className={cn('absolute inset-y-3 right-2 w-1 rounded-full bg-gradient-to-b', accent.glow)} />
                               )}
                             </>
                           )}
@@ -219,41 +293,40 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
 
-      {/* Футер — Профіль */}
-      <div className="px-3 py-3 border-t border-white/[0.04] shrink-0">
-        <div className={cn(
-          "flex items-center gap-3 p-2.5 rounded-xl transition-all",
-          isOpen ? "bg-white/[0.03]" : "justify-center"
-        )}>
-          <div className="w-9 h-9 rounded-lg bg-indigo-500/15 flex items-center justify-center border border-indigo-500/20 shrink-0">
-            <User className="w-4 h-4 text-indigo-400" />
+      <div className="relative border-t border-white/[0.06] px-3 py-3">
+        <div
+          className={cn(
+            'flex items-center gap-3 rounded-3xl border border-white/[0.08] bg-white/[0.04] p-3',
+            !isOpen && 'justify-center px-0',
+          )}
+        >
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
+            <User className="h-4.5 w-4.5 text-indigo-300" />
           </div>
           {isOpen && (
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="text-[13px] font-bold text-white leading-none truncate">
-                {user?.name || 'Адміністратор'}
-              </span>
-              <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-1">
-                {userRole === 'admin' ? 'Повний доступ' : userRole}
-              </span>
-            </div>
-          )}
-          {isOpen && (
-            <button 
-              onClick={logout}
-              className="p-1.5 text-slate-600 hover:text-rose-400 transition-colors shrink-0"
-              title="Вийти з системи"
-            >
-              <LogOut size={15} />
-            </button>
+            <>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-bold text-white">{user?.name || 'Адміністратор'}</div>
+                <div className="mt-1 truncate text-[11px] text-slate-500">
+                  {backendStatus.isOffline ? 'Працює без підтвердженого бекенду' : backendStatus.modeLabel}
+                </div>
+              </div>
+              <button
+                onClick={logout}
+                className="flex h-9 w-9 items-center justify-center rounded-2xl text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-200"
+                title="Вийти з системи"
+              >
+                <LogOut size={16} />
+              </button>
+            </>
           )}
         </div>
       </div>
 
-      {/* Кнопка згортання */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-amber-500 flex items-center justify-center shadow-lg border border-white/10 hover:border-amber-400/50 transition-all z-10"
+        className="absolute -right-3 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-slate-900 text-slate-300 shadow-xl transition-all hover:border-emerald-400/30 hover:bg-emerald-500 hover:text-slate-950"
+        title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
         {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
       </button>

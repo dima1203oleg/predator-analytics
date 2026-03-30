@@ -1,100 +1,122 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
-import { 
-  Bell, 
-  Search, 
-  UserCircle,
+import {
+  Bell,
   Calendar,
-  LayoutGrid,
   Command,
+  Layers3,
+  Radio,
+  Search,
+  ShieldCheck,
+  UserCircle,
 } from 'lucide-react';
-import { navigationConfig } from '../../config/navigation';
+import { getNavigationContext, navAccentStyles } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
-
-/**
- * Визначає назву поточного розділу за шляхом.
- */
-const getPageTitle = (pathname: string): string => {
-  // exact match first
-  for (const section of navigationConfig) {
-    for (const item of section.items) {
-      if (item.path === pathname) return item.label;
-    }
-  }
-  // partial match for subroutes
-  for (const section of navigationConfig) {
-    for (const item of section.items) {
-      if (pathname.startsWith(item.path) && item.path !== '/') return item.label;
-    }
-  }
-  return 'Панель управління';
-};
+import { useBackendStatus } from '../../hooks/useBackendStatus';
+import { cn } from '../../lib/utils';
 
 const Header: React.FC = () => {
   const { user } = useUser();
-  const { t } = useTranslation();
   const location = useLocation();
   const currentDate = format(new Date(), "d MMMM yyyy 'р.'", { locale: uk });
-  const pageTitle = getPageTitle(location.pathname);
+  const backendStatus = useBackendStatus();
+  const currentRole = user?.role ?? 'viewer';
+  const { item, section } = getNavigationContext(location.pathname, currentRole);
+  const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
 
   return (
-    <header className="h-16 border-b border-white/[0.04] bg-[#020617]/70 backdrop-blur-xl px-8 flex items-center justify-between sticky top-0 z-40 shrink-0">
-      {/* Ліва: Заголовок сторінки + дата */}
-      <div className="flex items-center gap-6">
-        <div className="flex flex-col">
-          <h1 className="text-[15px] font-bold text-white leading-none">
-            {pageTitle}
-          </h1>
-          <div className="flex items-center gap-1.5 text-slate-500 text-[11px] font-medium mt-1">
-            <Calendar className="w-3 h-3" />
-            <span>{currentDate}</span>
+    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#06111d]/72 backdrop-blur-2xl">
+      <div className="mx-auto flex max-w-[1660px] flex-col gap-4 px-5 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="min-w-0">
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            <span className={cn('rounded-full border px-2.5 py-1', accent.badge)}>
+              {section?.label ?? 'Робочий простір'}
+            </span>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300">{item?.label ?? 'Огляд'}</span>
           </div>
-        </div>
-      </div>
 
-      {/* Права: Пошук + Дії */}
-      <div className="flex items-center gap-5">
-        {/* Швидкий пошук */}
-        <div className="relative group hidden lg:block">
-          <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-600 group-focus-within:text-amber-500 transition-colors">
-            <Search className="w-3.5 h-3.5" />
-          </div>
-          <input 
-            type="text" 
-            placeholder="Швидкий пошук..." 
-            className="h-9 bg-white/[0.03] border border-white/[0.06] rounded-lg pl-10 pr-16 text-[13px] text-white focus:outline-none focus:border-amber-500/30 transition-all w-64 placeholder:text-slate-600"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-40 group-focus-within:opacity-80 transition-opacity">
-            <kbd className="px-1 py-0.5 rounded border border-white/10 text-[9px] text-slate-400 font-mono bg-white/[0.04]">⌘</kbd>
-            <kbd className="px-1 py-0.5 rounded border border-white/10 text-[9px] text-slate-400 font-mono bg-white/[0.04]">K</kbd>
-          </div>
-        </div>
-
-        {/* Сповіщення */}
-        <button className="relative w-9 h-9 flex items-center justify-center bg-white/[0.03] border border-white/[0.06] rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-all">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full" />
-        </button>
-
-        {/* Розділювач */}
-        <div className="h-6 w-px bg-white/[0.06]" />
-
-        {/* Профіль */}
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-[13px] font-bold text-white leading-none">
-              {user?.name || 'Адміністратор'}
+          <div className="flex items-start gap-3">
+            <div className={cn('mt-1 hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl border lg:flex', accent.iconBorder)}>
+              {section ? (
+                <Layers3 className={cn('h-5 w-5', accent.icon)} />
+              ) : (
+                <ShieldCheck className={cn('h-5 w-5', accent.icon)} />
+              )}
             </div>
-            <div className="flex items-center gap-1 mt-0.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-[10px] text-slate-500 font-medium tracking-tight">Активний</span>
+
+            <div className="min-w-0">
+              <h1 className="truncate text-xl font-black tracking-tight text-white sm:text-2xl">
+                {item?.label ?? 'Панель управління'}
+              </h1>
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+                {item?.description ?? section?.description ?? 'Операційний контекст не визначено для поточного маршруту.'}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                  <Calendar className="h-3.5 w-3.5 text-slate-500" />
+                  {currentDate}
+                </span>
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-2 rounded-full border px-3 py-1.5',
+                    backendStatus.isOffline
+                      ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                      : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                  )}
+                >
+                  <Radio className="h-3.5 w-3.5" />
+                  {backendStatus.statusLabel}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                  <Command className="h-3.5 w-3.5 text-slate-500" />
+                  {backendStatus.modeLabel}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/20 flex items-center justify-center">
-            <UserCircle className="w-5 h-5 text-indigo-400" />
+        </div>
+
+        <div className="flex flex-col gap-3 lg:min-w-[520px] lg:items-end">
+          <div className="flex w-full flex-wrap items-center gap-3 lg:justify-end">
+            <div className="relative min-w-[240px] flex-1 lg:max-w-[360px] lg:flex-none">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <input
+                type="search"
+                placeholder="Пошук маршруту, сутності або коду..."
+                className="h-11 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-16 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30 focus:bg-white/[0.06]"
+              />
+              <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1 text-[10px] text-slate-500">
+                <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">⌘</kbd>
+                <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">K</kbd>
+              </div>
+            </div>
+
+            <button
+              title="Сповіщення"
+              className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
+            >
+              <Bell className="h-4 w-4" />
+              <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-rose-400" />
+            </button>
+          </div>
+
+          <div className="flex w-full flex-wrap items-center gap-3 lg:justify-end">
+            <div className="flex min-w-[220px] flex-1 items-center justify-between rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 lg:max-w-[300px] lg:flex-none">
+              <div className="min-w-0">
+                <div className="truncate text-sm font-bold text-white">
+                  {user?.name || 'Адміністратор'}
+                </div>
+                <div className="mt-1 truncate text-[11px] text-slate-400">
+                  {backendStatus.sourceLabel}
+                </div>
+              </div>
+              <div className="ml-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
+                <UserCircle className="h-5 w-5 text-indigo-300" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

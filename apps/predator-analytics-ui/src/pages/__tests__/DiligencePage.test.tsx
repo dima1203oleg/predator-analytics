@@ -1,9 +1,10 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import DiligencePage from '../DiligencePage';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 
-// Mock API
+// Мок API
 vi.mock('@/features/diligence/api/diligence', () => ({
     diligenceApi: {
         getRiskEntities: vi.fn(),
@@ -11,7 +12,7 @@ vi.mock('@/features/diligence/api/diligence', () => ({
     }
 }));
 
-// Mock framer-motion
+// Мок framer-motion
 vi.mock('framer-motion', async () => {
     const actual = await vi.importActual('framer-motion');
     return {
@@ -25,7 +26,7 @@ vi.mock('framer-motion', async () => {
     };
 });
 
-// Mock echarts
+// Мок echarts
 vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock">Chart Mock</div>
 }));
@@ -54,8 +55,15 @@ describe('DiligencePage Component', () => {
         (diligenceApi.getCompanyProfile as any).mockResolvedValue(mockProfile);
     });
 
+    const renderPage = () =>
+        render(
+            <MemoryRouter>
+                <DiligencePage />
+            </MemoryRouter>,
+        );
+
     it('повинен рендерити заголовок і завантажувати дані', async () => {
-        render(<DiligencePage />);
+        renderPage();
         
         expect(screen.getByText('Ризикові контрагенти')).toBeInTheDocument();
         
@@ -64,7 +72,7 @@ describe('DiligencePage Component', () => {
     });
 
     it('повинен відображати профіль першої компанії після завантаження', async () => {
-        render(<DiligencePage />);
+        renderPage();
         
         expect(await screen.findByText('Профіль компанії')).toBeInTheDocument();
         expect(screen.getAllByText(/зареєстровано/i).length).toBeGreaterThan(0);
@@ -75,14 +83,15 @@ describe('DiligencePage Component', () => {
     });
 
     it('повинен дозволяти шукати компанії за назвою', async () => {
-        render(<DiligencePage />);
+        renderPage();
         
         await screen.findAllByText('ТОВ "ТЕСТ 1"');
 
         const searchInput = screen.getByPlaceholderText('Пошук за назвою або ЄДРПОУ...');
         fireEvent.change(searchInput, { target: { value: 'ТЕСТ 2' } });
 
-        // After search, 'ТОВ "ТЕСТ 1"' still in main view because it's selected, but we should definitely find 'ТОВ "ТЕСТ 2"'
+        // Після фільтрації вибрана компанія ще може лишатися у головній панелі,
+        // але в списку має бути знайдений другий контрагент.
         await screen.findAllByText('ТОВ "ТЕСТ 2"');
     });
 });
