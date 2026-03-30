@@ -5,18 +5,23 @@
 # ================================================================
 
 model_list:
-  # ── CHAT (Gemini — стабільний для укр)
+  # ── CHAT (Gemini першочергово, Groq як резерв)
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
 
-  # ── FAST (3 Groq від різних акаунтів — незалежні rate-limit)
-  - model_name: ultra-router-fast
+  - model_name: ultra-router-chat
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
+      api_key: os.environ/GROQ_API_KEY_2
 
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_3
+
+  # ── FAST (6 Groq від різних акаунтів — незалежні rate-limit)
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
@@ -73,11 +78,6 @@ model_list:
     litellm_params:
       model: mistral/codestral-latest
       api_key: os.environ/MISTRAL_API_KEY_2
-
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_1
 
   - model_name: ultra-router-auto
     litellm_params:
