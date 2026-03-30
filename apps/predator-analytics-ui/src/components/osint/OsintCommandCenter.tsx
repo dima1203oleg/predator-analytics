@@ -17,7 +17,7 @@ import { RadarBackground, RiskHeatmapBar, FeedItemRow } from './sub/OsintVisuals
 import { CATEGORY_ICONS } from './sub/OsintTypes';
 import { cn } from '@/utils/cn';
 
-const OsintCommandCenter: React.FC = () => {
+export const OsintCommandCenter: React.FC = () => {
     const { 
         stats, feed, tools, registryCategories, 
         globalRiskScore, isScanning, activeTarget,
@@ -99,15 +99,22 @@ const OsintCommandCenter: React.FC = () => {
                             Мережа реєстрів
                         </h3>
                         <div className="grid grid-cols-2 gap-3">
-                            {registryCategories.map((cat) => (
-                                <div key={cat.id} className="p-3 bg-slate-950/50 rounded-xl border border-slate-800/50 hover:border-cyan-500/30 transition-all cursor-pointer group">
-                                    <div className={cn("mb-2 flex items-center justify-between", cat.color)}>
-                                        {CATEGORY_ICONS[cat.id] || < Globe size={14} />}
-                                        <span className="text-[10px] font-mono opacity-50 group-hover:opacity-100 transition-opacity">{cat.count}</span>
+                            {registryCategories.map((cat) => {
+                                const CategoryIcon = CATEGORY_ICONS[cat.id] ?? Globe;
+
+                                return (
+                                    <div
+                                        key={cat.id}
+                                        className="p-3 bg-slate-950/50 rounded-xl border border-slate-800/50 hover:border-cyan-500/30 transition-all cursor-pointer group"
+                                    >
+                                        <div className={cn("mb-2 flex items-center justify-between", cat.color)}>
+                                            <CategoryIcon size={14} />
+                                            <span className="text-[10px] font-mono opacity-50 group-hover:opacity-100 transition-opacity">{cat.count}</span>
+                                        </div>
+                                        <div className="text-[10px] font-bold text-white group-hover:text-cyan-400 transition-colors truncate">{cat.name}</div>
                                     </div>
-                                    <div className="text-[10px] font-bold text-white group-hover:text-cyan-400 transition-colors truncate">{cat.name}</div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </aside>

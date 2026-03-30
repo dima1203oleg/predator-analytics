@@ -1,13 +1,13 @@
 /**
- * 🛰️ OSINT COMMAND CENTER TYPES & CONFIG
+ * Конфігурація й типи командного OSINT-центру.
  * Усі тексти — українською (HR-03/HR-04).
  */
 
-import React from 'react';
 import { 
-    Building2, Receipt, Shield, Scale, Ban, 
-    ShoppingCart, Home, Banknote, Skull, Bot 
+    Building2, Receipt, Shield, Scale, Ban,
+    ShoppingCart, Home, Banknote, Skull, Bot,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export interface OsintTool {
     id: string;
@@ -61,17 +61,17 @@ export interface OsintStats {
     timeline: { hour: string; findings: number; critical: number }[];
 }
 
-export const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-    EDR: <Building2 size={16} />,
-    TAX: <Receipt size={16} />,
-    CUSTOMS: <Shield size={16} />,
-    COURT: <Scale size={16} />,
-    SANCTIONS: <Ban size={16} />,
-    PROCUREMENT: <ShoppingCart size={16} />,
-    PROPERTY: <Home size={16} />,
-    FINANCIAL: <Banknote size={16} />,
-    DARKWEB: <Skull size={16} />,
-    OPENDATABOT: <Bot size={16} />,
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
+    EDR: Building2,
+    TAX: Receipt,
+    CUSTOMS: Shield,
+    COURT: Scale,
+    SANCTIONS: Ban,
+    PROCUREMENT: ShoppingCart,
+    PROPERTY: Home,
+    FINANCIAL: Banknote,
+    DARKWEB: Skull,
+    OPENDATABOT: Bot,
 };
 
 export const SEVERITY_CONFIG: Record<string, { bg: string; border: string; text: string; glow: string }> = {

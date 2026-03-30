@@ -1,195 +1,222 @@
-import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import SanctionsScreening from '../SanctionsScreening';
 import React from 'react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import SanctionsScreening from '../SanctionsScreening';
 
-// Mock dependencies
+const { post } = vi.hoisted(() => ({
+    post: vi.fn(),
+}));
+
 vi.mock('framer-motion', () => {
     const React = require('react');
+
     return {
         motion: {
             div: React.forwardRef(({ children, ...props }: any, ref: any) => <div {...props} ref={ref}>{children}</div>),
             button: React.forwardRef(({ children, ...props }: any, ref: any) => <button {...props} ref={ref}>{children}</button>),
-            h1: React.forwardRef(({ children, ...props }: any, ref: any) => <h1 {...props} ref={ref}>{children}</h1>),
-            h2: React.forwardRef(({ children, ...props }: any, ref: any) => <h2 {...props} ref={ref}>{children}</h2>),
-            h3: React.forwardRef(({ children, ...props }: any, ref: any) => <h3 {...props} ref={ref}>{children}</h3>),
-            p: React.forwardRef(({ children, ...props }: any, ref: any) => <p {...props} ref={ref}>{children}</p>),
         },
-        AnimatePresence: ({ children }: any) => <>{children}</>,
+        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     };
 });
 
-vi.mock('lucide-react', async () => {
+vi.mock('lucide-react', () => {
     const React = require('react');
+    const icon = (name: string) => (props: any) => <span data-testid={name} {...props} />;
+
     return {
-        Shield: (props: any) => <span data-testid="icon-shield" {...props} />,
-        Search: (props: any) => <span data-testid="icon-search" {...props} />,
-        AlertTriangle: (props: any) => <span data-testid="icon-alerttriangle" {...props} />,
-        CheckCircle: (props: any) => <span data-testid="icon-checkcircle" {...props} />,
-        XCircle: (props: any) => <span data-testid="icon-xcircle" {...props} />,
-        Globe: (props: any) => <span data-testid="icon-globe" {...props} />,
-        FileText: (props: any) => <span data-testid="icon-filetext" {...props} />,
-        Download: (props: any) => <span data-testid="icon-download" {...props} />,
-        RefreshCw: (props: any) => <span data-testid="icon-refreshcw" {...props} />,
-        Building2: (props: any) => <span data-testid="icon-building2" {...props} />,
-        User: (props: any) => <span data-testid="icon-user" {...props} />,
-        AlertOctagon: (props: any) => <span data-testid="icon-alertoctagon" {...props} />,
-        ChevronRight: (props: any) => <span data-testid="icon-chevronright" {...props} />,
-        History: (props: any) => <span data-testid="icon-history" {...props} />,
-        ExternalLink: (props: any) => <span data-testid="icon-externallink" {...props} />,
-        Zap: (props: any) => <span data-testid="icon-zap" {...props} />,
-        Database: (props: any) => <span data-testid="icon-database" {...props} />,
-        Lock: (props: any) => <span data-testid="icon-lock" {...props} />,
-        Radio: (props: any) => <span data-testid="icon-radio" {...props} />,
-        Target: (props: any) => <span data-testid="icon-target" {...props} />,
-        Radar: (props: any) => <span data-testid="icon-radar" {...props} />,
-        ShieldAlert: (props: any) => <span data-testid="icon-shieldalert" {...props} />,
-        ShieldCheck: (props: any) => <span data-testid="icon-shieldcheck" {...props} />,
-        ScanLine: (props: any) => <span data-testid="icon-scanline" {...props} />,
-        Crown: (props: any) => <span data-testid="icon-crown" {...props} />,
-        Clock: (props: any) => <span data-testid="icon-clock" {...props} />,
-        Flag: (props: any) => <span data-testid="icon-flag" {...props} />,
-        BarChart3: (props: any) => <span data-testid="icon-barchart3" {...props} />,
-        Fingerprint: (props: any) => <span data-testid="icon-fingerprint" {...props} />,
-        Activity: (props: any) => <span data-testid="icon-activity" {...props} />,
-        Eye: (props: any) => <span data-testid="icon-eye" {...props} />,
-        Star: (props: any) => <span data-testid="icon-star" {...props} />,
+        AlertCircle: icon('icon-alert-circle'),
+        AlertOctagon: icon('icon-alert-octagon'),
+        AlertTriangle: icon('icon-alert-triangle'),
+        Building2: icon('icon-building-2'),
+        Crown: icon('icon-crown'),
+        Database: icon('icon-database'),
+        History: icon('icon-history'),
+        Radio: icon('icon-radio'),
+        RefreshCw: icon('icon-refresh'),
+        ScanLine: icon('icon-scan-line'),
+        Search: icon('icon-search'),
+        Shield: icon('icon-shield'),
+        ShieldAlert: icon('icon-shield-alert'),
+        ShieldCheck: icon('icon-shield-check'),
+        User: icon('icon-user'),
+        Zap: icon('icon-zap'),
     };
 });
 
 vi.mock('@/components/layout/PageTransition', () => ({
-    PageTransition: ({ children }: any) => <div data-testid="page-transition">{children}</div>,
+    PageTransition: ({ children }: { children: React.ReactNode }) => <div data-testid="page-transition">{children}</div>,
 }));
 
 vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-bg" />,
-}));
-
-vi.mock('@/components/ViewHeader', () => {
-    const React = require('react');
-    return {
-        ViewHeader: ({ title, stats }: any) => (
-            <div data-testid="view-header">
-                <h1>{title}</h1>
-                {stats?.map((s: any, i: number) => <div key={i} data-testid="header-stat">{s.label}: {s.value}</div>)}
-            </div>
-        ),
-    };
-});
-
-vi.mock('@/components/TacticalCard', () => {
-    const React = require('react');
-    return {
-        TacticalCard: ({ title, children, onClick, className }: any) => (
-            <div data-testid="tactical-card" className={className} onClick={onClick}>
-                {title && <h4>{title}</h4>}
-                {children}
-            </div>
-        ),
-    };
-});
-
-
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: ({ size, color }: any) => <div data-testid="cyber-orb" data-size={size} data-color={color} />,
+    AdvancedBackground: () => <div data-testid="advanced-background" />,
 }));
 
 vi.mock('@/components/CyberGrid', () => ({
     CyberGrid: () => <div data-testid="cyber-grid" />,
 }));
 
+vi.mock('@/components/CyberOrb', () => ({
+    CyberOrb: () => <div data-testid="cyber-orb" />,
+}));
+
+vi.mock('@/components/TacticalCard', () => ({
+    TacticalCard: ({ children, title, className }: { children: React.ReactNode; title?: string; className?: string }) => (
+        <div data-testid="tactical-card" className={className}>
+            {title ? <div>{title}</div> : null}
+            {children}
+        </div>
+    ),
+}));
+
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats }: { title: React.ReactNode; stats?: Array<{ label: string; value: string }> }) => (
+        <div data-testid="view-header">
+            <h1>{title}</h1>
+            {stats?.map((stat) => (
+                <div key={stat.label}>
+                    <span>{stat.label}</span>
+                    <span>{stat.value}</span>
+                </div>
+            ))}
+        </div>
+    ),
+}));
+
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        isTruthOnly: true,
+        modeLabel: 'Режим правдивих даних',
+        sourceLabel: 'localhost:9080/api/v1',
+        sourceType: 'local',
+        statusLabel: 'Зʼєднання активне',
+    }),
+}));
+
+vi.mock('@/services/api/config', () => ({
+    apiClient: {
+        post,
+    },
+}));
+
 describe('SanctionsScreening', () => {
     beforeEach(() => {
-        vi.clearAllMocks();
+        post.mockReset();
+        vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
-    it('повинен відмальовувати основні компоненти', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('рендерить базову структуру і правдивий порожній журнал', () => {
         render(<SanctionsScreening />);
+
         expect(screen.getByText(/САНКЦІЙНА МАТРИЦЯ/i)).toBeInTheDocument();
-        expect(screen.getByTestId('advanced-bg')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/Введіть назву компанії/i)).toBeInTheDocument();
+        expect(screen.getByTestId('advanced-background')).toBeInTheDocument();
+        expect(screen.getByText(/Сесійний журнал поки порожній/i)).toBeInTheDocument();
+        expect(screen.getByText('Джерело: /sanctions/screen')).toBeInTheDocument();
     });
 
-    it('повинен відображати початкову історію скринінгу', () => {
+    it('дозволяє перемикати тип сутності та перелік реєстрів', () => {
         render(<SanctionsScreening />);
-        expect(screen.getAllByText('ГАЗПРОМ АТ').length).toBeGreaterThan(0);
-        expect(screen.getAllByText('Владімір Путін').length).toBeGreaterThan(0);
-        expect(screen.getByText(/Maritime Nexus Ltd/i)).toBeInTheDocument();
+
+        const personButton = screen.getByRole('button', { name: /ОСОБА/i });
+        const ofacButton = screen.getByRole('button', { name: /🇺🇸 OFAC/i });
+
+        fireEvent.click(personButton);
+        fireEvent.click(ofacButton);
+
+        expect(personButton.className).toContain('bg-rose-500/20');
+        expect(ofacButton.className).not.toContain('text-blue-300');
     });
 
-    it('повинен перемикати типи сутностей', async () => {
-        render(<SanctionsScreening />);
-        const personBtn = screen.getByRole('button', { name: /ОСОБА/i });
-        
-        await act(async () => {
-            fireEvent.click(personBtn);
+    it('додає до журналу лише підтверджений результат `/sanctions/screen`', async () => {
+        post.mockResolvedValue({
+            data: {
+                id: 'scr-1',
+                entityName: 'ГАЗПРОМ',
+                entityType: 'company',
+                status: 'blocked',
+                timestamp: '2026-03-30T12:00:00Z',
+                searchId: 'AX-1001',
+                riskScore: 99,
+                listsChecked: ['OFAC', 'EU', 'РНБО'],
+                matches: [
+                    {
+                        id: 'match-1',
+                        list: 'OFAC',
+                        program: 'Санкційна програма',
+                        target: 'ГАЗПРОМ',
+                        details: 'Субʼєкт під міжнародними санкціями.',
+                        severity: 'high',
+                        score: 99,
+                        allLists: ['OFAC', 'EU', 'РНБО'],
+                    },
+                ],
+            },
         });
 
-        expect(personBtn).toHaveClass('bg-rose-500/20');
-    });
-
-    it('повинен виконувати пошук та додавати результат до історії', async () => {
-        // Use fake timers to speed up the 1800ms delay in component
-        vi.useFakeTimers();
-        
         render(<SanctionsScreening />);
-        const input = screen.getByPlaceholderText(/Введіть назву компанії/i);
-        const searchBtn = screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i });
 
-        fireEvent.change(input, { target: { value: 'TEST ENTITY' } });
-        fireEvent.click(searchBtn);
-
-        // Advance timers to trigger the promised result
-        act(() => {
-            vi.advanceTimersByTime(2000);
+        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
+            target: { value: 'ГАЗПРОМ' },
         });
-
-        // Use real timers for waitFor
-        vi.useRealTimers();
+        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
 
         await waitFor(() => {
-            expect(screen.getAllByText('TEST ENTITY').length).toBeGreaterThan(0);
+            expect(post).toHaveBeenCalledWith('/sanctions/screen', {
+                query: 'ГАЗПРОМ',
+                entity_type: 'company',
+                lists: ['OFAC', 'EU', 'UN', 'UK', 'РНБО', 'PEP'],
+            });
         });
 
-        expect(screen.getByText(/Автоматичний OSINT-скрінінг/i)).toBeInTheDocument();
+        expect(await screen.findAllByText('ГАЗПРОМ')).not.toHaveLength(0);
+        expect(screen.getByText(/Субʼєкт під міжнародними санкціями\./i)).toBeInTheDocument();
+        expect(screen.getByText(/ПЕРЕВІРЕНІ РЕЄСТРИ/i)).toBeInTheDocument();
     });
 
-    it('повинен перемикати вибрані списки санкцій', async () => {
-        render(<SanctionsScreening />);
-        const ofacBtn = screen.getByRole('button', { name: /🇺🇸 OFAC/i });
-        
-        // Initial state is active
-        expect(ofacBtn).toHaveClass('text-blue-300');
-
-        await act(async () => {
-            fireEvent.click(ofacBtn);
+    it('показує чистий стан без локально вигаданих збігів', async () => {
+        post.mockResolvedValue({
+            data: {
+                id: 'scr-2',
+                entityName: 'ТОВ "ЧИСТИЙ ІМПОРТ"',
+                entityType: 'company',
+                status: 'clean',
+                timestamp: '2026-03-30T12:10:00Z',
+                searchId: 'AX-1002',
+                riskScore: 0,
+                listsChecked: ['OFAC', 'EU'],
+                matches: [],
+            },
         });
 
-        // Should become inactive
-        expect(ofacBtn).not.toHaveClass('text-blue-300');
-    });
-
-    it('повинен відображати деталі при виборі сутності з історії', async () => {
         render(<SanctionsScreening />);
-        const vesselItem = screen.getByText('Maritime Nexus Ltd');
 
-        await act(async () => {
-            fireEvent.click(vesselItem);
+        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
+            target: { value: 'ТОВ "ЧИСТИЙ ІМПОРТ"' },
         });
-
-        expect(await screen.findByText(/Maritime Nexus Ltd/i, { selector: 'h2' })).toBeInTheDocument();
-        expect(screen.getByText(/Підозра у перевезенні підсанкційних вантажів/i)).toBeInTheDocument();
-    });
-
-    it('повинен відображати статус "ЧИСТО", якщо немає збігів', async () => {
-        render(<SanctionsScreening />);
-        const cleanEntity = screen.getByText(/ТОВ "ЗЕРНОТРЕЙД"/i);
-
-        await act(async () => {
-            fireEvent.click(cleanEntity);
-        });
+        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
 
         expect(await screen.findByText(/ЗБІГІВ НЕ ЗНАЙДЕНО/i)).toBeInTheDocument();
         expect(screen.getByText(/Статус —/i)).toHaveTextContent(/ЧИСТО/i);
+    });
+
+    it('показує помилку і не повертається до демо-історії при збої API', async () => {
+        post.mockRejectedValue(new Error('network error'));
+
+        render(<SanctionsScreening />);
+
+        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
+            target: { value: 'ГАЗПРОМ' },
+        });
+        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
+
+        expect(
+            await screen.findByText(/Не вдалося виконати підтверджений скринінг через `\/sanctions\/screen`/i),
+        ).toBeInTheDocument();
+        expect(screen.queryByText(/Владімір Путін/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Maritime Nexus Ltd/i)).not.toBeInTheDocument();
     });
 });
