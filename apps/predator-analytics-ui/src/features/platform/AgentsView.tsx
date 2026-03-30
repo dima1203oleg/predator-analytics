@@ -1,51 +1,47 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
-    Bot, Activity, Server, Zap, Database, Network, Cpu, HardDrive,
-    AlertCircle, Eye, Shield, Target, Crosshair, Radio, Radar,
-    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock
+    Bot, Activity, Server, Zap, Network, Cpu, HardDrive,
+    AlertCircle, Eye, Shield, Target, Radar,
+    ScanLine, BrainCircuit, GitBranch, Terminal, Globe, Lock, Loader2, RefreshCw
 } from 'lucide-react';
 import { useAgents } from '@/context/AgentContext';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadialBarChart, RadialBar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence, useAnimationFrame } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { useUser, UserRole } from '@/context/UserContext';
+import { UserRole } from '@/context/UserContext';
 import { useShell, UIShell } from '@/context/ShellContext';
 import { NeutralizedContent } from '@/components/NeutralizedContent';
-import { api } from '@/services/api';
+import { Badge } from '@/components/ui/badge';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { dashboardApi } from '@/services/api/dashboard';
+import { osintService } from '@/services/unified/osint.service';
+import { systemApi } from '@/services/api/system';
 import AgentCascadeManager from './components/AgentCascadeManager';
 import WorkflowControlPanel from '@/components/ai/WorkflowControlPanel';
 import { premiumLocales } from '@/locales/uk/premium';
-
-// ──────────────────────────────────────────────
-// ТИПИ OSINT-ІНСТРУМЕНТІВ
-// ──────────────────────────────────────────────
-interface OSINTTool {
-    id: string;
-    name: string;
-    category: 'РОЗВІДКА' | 'МЕРЕЖА' | 'ДОКУМЕНТИ' | 'СОЦМЕРЕЖІ';
-    status: 'ОНЛАЙН' | 'СКАНУЄ' | 'ОФЛАЙН';
-    findings: number;
-    lastScan: string;
-    icon: React.ReactNode;
-    color: string;
-}
-
-const OSINT_TOOLS: OSINTTool[] = [
-    { id: 'sherlock', name: 'Sherlock', category: 'СОЦМЕРЕЖІ', status: 'ОНЛАЙН', findings: 142, lastScan: '2хв тому', icon: <Eye size={14} />, color: '#a855f7' },
-    { id: 'amass', name: 'Amass', category: 'МЕРЕЖА', status: 'СКАНУЄ', findings: 87, lastScan: 'Зараз', icon: <Globe size={14} />, color: '#3b82f6' },
-    { id: 'spiderfoot', name: 'SpiderFoot', category: 'РОЗВІДКА', status: 'ОНЛАЙН', findings: 241, lastScan: '5хв тому', icon: <Radar size={14} />, color: '#10b981' },
-    { id: 'theharvester', name: 'theHarvester', category: 'РОЗВІДКА', status: 'ОНЛАЙН', findings: 68, lastScan: '12хв тому', icon: <ScanLine size={14} />, color: '#f59e0b' },
-    { id: 'maigret', name: 'Maigret', category: 'СОЦМЕРЕЖІ', status: 'ОФЛАЙН', findings: 39, lastScan: '1г тому', icon: <Target size={14} />, color: '#ef4444' },
-    { id: 'maltego', name: 'Maltego UA', category: 'ДОКУМЕНТИ', status: 'ОНЛАЙН', findings: 315, lastScan: '3хв тому', icon: <GitBranch size={14} />, color: '#06b6d4' },
-];
+import type { Agent } from '@/types';
+import {
+    appendResourcePoint,
+    buildOsintSummary,
+    buildResourceSnapshot,
+    formatAgentHealth,
+    formatAgentStatus,
+    getAgentHealthProgress,
+    normalizeFleetAlerts,
+    normalizeOsintTools,
+    type AgentResourcePoint,
+    type FleetAlertRecord,
+    type FleetOsintToolRecord,
+    type OsintToolIconKey,
+} from './agentsView.utils';
 
 // ──────────────────────────────────────────────
 // АНІМОВАНИЙ NEURAL CANVAS — зв'язки між агентами
 // ──────────────────────────────────────────────
-const NeuralCanvas: React.FC<{ agentCount: number; activeId: string | null }> = ({ agentCount, activeId }) => {
+const NeuralCanvas: React.FC<{ agentCount: number; activeId: string | null }> = ({ agentCount, activeId: _activeId }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const tickRef = useRef(0);
 
@@ -143,7 +139,7 @@ const NeuralCanvas: React.FC<{ agentCount: number; activeId: string | null }> = 
 // ГЕКСАГОНАЛЬНА КАРТА АГЕНТА
 // ──────────────────────────────────────────────
 const AgentHexCard: React.FC<{
-    agent: any;
+    agent: Agent;
     index: number;
     isSelected: boolean;
     onClick: () => void;
@@ -151,10 +147,12 @@ const AgentHexCard: React.FC<{
     accentBg: string;
     isCommanderShell: boolean;
     isOperatorShell: boolean;
-}> = ({ agent, index, isSelected, onClick, themeColor, accentBg, isCommanderShell, isOperatorShell }) => {
+}> = ({ agent, index, isSelected, onClick, themeColor: _themeColor, accentBg: _accentBg, isCommanderShell, isOperatorShell }) => {
     const statusColor = agent.status === 'WORKING'
         ? (isCommanderShell ? '#f59e0b' : isOperatorShell ? '#10b981' : '#3b82f6')
         : agent.status === 'ERROR' ? '#ef4444' : '#475569';
+    const healthLabel = formatAgentHealth(agent.efficiency);
+    const healthProgress = getAgentHealthProgress(agent.efficiency);
 
     const statusLabel = agent.status === 'WORKING' ? 'АНАЛІЗ' : agent.status === 'ERROR' ? 'ПОМИЛКА' : 'ОЧІКУВАННЯ';
 
@@ -240,12 +238,12 @@ const AgentHexCard: React.FC<{
                 <div className="space-y-2 mb-3">
                     <div className="flex justify-between text-[8px] font-bold uppercase tracking-widest">
                         <span className="text-slate-600">ІНДЕКС ЗДОРОВ'Я</span>
-                        <span className="font-mono" style={{ color: statusColor }}>{agent.efficiency}%</span>
+                        <span className="font-mono" style={{ color: statusColor }}>{healthLabel}</span>
                     </div>
                     <div className="h-1 bg-slate-950 rounded-full overflow-hidden border border-white/5">
                         <motion.div
                             initial={{ width: 0 }}
-                            animate={{ width: `${agent.efficiency}%` }}
+                            animate={{ width: `${healthProgress}%` }}
                             transition={{ duration: 1.2, ease: 'easeOut', delay: index * 0.05 }}
                             className="h-full rounded-full"
                             style={{ background: `linear-gradient(90deg, ${statusColor}99, ${statusColor})` }}
@@ -278,15 +276,24 @@ const AgentHexCard: React.FC<{
 // ──────────────────────────────────────────────
 // OSINT TOOL РЯДОК
 // ──────────────────────────────────────────────
-const OSINTToolRow: React.FC<{ tool: OSINTTool; index: number }> = ({ tool, index }) => {
-    const [isScanning, setIsScanning] = useState(false);
+const osintIcons: Record<OsintToolIconKey, React.ReactNode> = {
+    eye: <Eye size={14} />,
+    globe: <Globe size={14} />,
+    radar: <Radar size={14} />,
+    scan: <ScanLine size={14} />,
+    target: <Target size={14} />,
+    branch: <GitBranch size={14} />,
+    terminal: <Terminal size={14} />,
+};
 
-    const handleScan = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (tool.status === 'ОФЛАЙН') return;
-        setIsScanning(true);
-        setTimeout(() => setIsScanning(false), 3000);
-    };
+const OSINTToolRow: React.FC<{
+    tool: FleetOsintToolRecord;
+    index: number;
+    onOpen: (route: string) => void;
+}> = ({ tool, index, onOpen }) => {
+    const findingsSummary = tool.findingsCount == null
+        ? 'Знахідки не повернуті'
+        : `${tool.findingsLabel} знахідок`;
 
     const statusColor = tool.status === 'СКАНУЄ' || tool.status === 'ОНЛАЙН'
         ? (tool.status === 'СКАНУЄ' ? '#f59e0b' : '#10b981')
@@ -304,7 +311,7 @@ const OSINTToolRow: React.FC<{ tool: OSINTTool; index: number }> = ({ tool, inde
                 className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border"
                 style={{ background: `${tool.color}15`, borderColor: `${tool.color}30`, color: tool.color }}
             >
-                {tool.icon}
+                {osintIcons[tool.iconKey]}
             </div>
 
             {/* Інфо */}
@@ -319,8 +326,11 @@ const OSINTToolRow: React.FC<{ tool: OSINTTool; index: number }> = ({ tool, inde
                     </span>
                 </div>
                 <div className="text-[8px] text-slate-600 font-mono mt-0.5">
-                    {tool.findings} знахідок · {tool.lastScan}
+                    {findingsSummary} · {tool.lastScanLabel}
                 </div>
+                {tool.description && (
+                    <div className="text-[8px] text-slate-500 mt-1 line-clamp-1">{tool.description}</div>
+                )}
             </div>
 
             {/* Статус dot */}
@@ -341,26 +351,16 @@ const OSINTToolRow: React.FC<{ tool: OSINTTool; index: number }> = ({ tool, inde
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={handleScan}
-                    disabled={tool.status === 'ОФЛАЙН'}
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        onOpen(tool.route);
+                    }}
                     className={`
                         px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all
-                        ${tool.status === 'ОФЛАЙН'
-                            ? 'opacity-30 cursor-not-allowed border-white/5 text-slate-600'
-                            : isScanning
-                                ? 'border-amber-500/40 bg-amber-500/10 text-amber-400'
-                                : 'border-white/10 bg-white/5 text-slate-400 hover:border-blue-500/40 hover:text-blue-400 hover:bg-blue-500/10'
-                        }
+                        border-white/10 bg-white/5 text-slate-400 hover:border-blue-500/40 hover:text-blue-400 hover:bg-blue-500/10
                     `}
                 >
-                    {isScanning ? (
-                        <motion.span
-                            animate={{ opacity: [1, 0.5, 1] }}
-                            transition={{ duration: 0.5, repeat: Infinity }}
-                        >
-                            СКАН...
-                        </motion.span>
-                    ) : 'ЗАПУСК'}
+                    ВІДКРИТИ
                 </motion.button>
             </div>
         </motion.div>
@@ -371,9 +371,10 @@ const OSINTToolRow: React.FC<{ tool: OSINTTool; index: number }> = ({ tool, inde
 // ГОЛОВНИЙ КОМПОНЕНТ
 // ──────────────────────────────────────────────
 const AgentsView: React.FC = () => {
-    const { user } = useUser();
+    const navigate = useNavigate();
+    const backendStatus = useBackendStatus();
     const { currentShell } = useShell();
-    const { agents } = useAgents();
+    const { agents, refreshData } = useAgents();
 
     const isCommanderShell = currentShell === UIShell.COMMANDER;
     const isOperatorShell = currentShell === UIShell.OPERATOR;
@@ -383,57 +384,122 @@ const AgentsView: React.FC = () => {
 
     const [activeTab, setActiveTab] = useState<'telemetry' | 'cascades' | 'workflow' | 'osint'>('telemetry');
     const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
-    const [resourceData, setResourceData] = useState<any[]>([]);
-    const [realAlerts, setRealAlerts] = useState<any[]>([]);
-    const [systemCpu, setSystemCpu] = useState<number>(0);
-    const [systemMem, setSystemMem] = useState<number>(0);
+    const [resourceData, setResourceData] = useState<AgentResourcePoint[]>([]);
+    const [resourceSnapshot, setResourceSnapshot] = useState(() => buildResourceSnapshot(null));
+    const [realAlerts, setRealAlerts] = useState<FleetAlertRecord[]>([]);
+    const [alertsUnavailable, setAlertsUnavailable] = useState(false);
+    const [osintTools, setOsintTools] = useState<FleetOsintToolRecord[]>([]);
+    const [osintUnavailable, setOsintUnavailable] = useState(false);
+    const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const formatInterfaceTime = useCallback((value: Date) => (
+        value.toLocaleString('uk-UA', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        })
+    ), []);
 
     // Встановлюємо перший агент після завантаження
     useEffect(() => {
-        if (!selectedAgentId && agents.length > 0) {
+        if (agents.length === 0) {
+            setSelectedAgentId(null);
+            return;
+        }
+
+        if (!selectedAgentId || !agents.some((agent) => agent.id === selectedAgentId)) {
             setSelectedAgentId(agents[0].id);
         }
     }, [agents, selectedAgentId]);
 
-    // Алерти флоту
-    useEffect(() => {
-        const fetchAlerts = async () => {
-            try {
-                const alerts = await api.v45.getLiveAlerts();
-                setRealAlerts(Array.isArray(alerts) ? alerts : (Array.isArray(alerts?.items) ? alerts.items : []));
-            } catch (e) { /* не критично */ }
-        };
-        fetchAlerts();
-        const interval = setInterval(fetchAlerts, 5000);
-        return () => clearInterval(interval);
-    }, []);
+    const loadOperationalData = useCallback(async () => {
+        const [systemResult, liveAlertsResult, dashboardAlertsResult, toolsResult] = await Promise.allSettled([
+            systemApi.getStats(),
+            dashboardApi.getAlerts(6),
+            dashboardApi.getOverview(),
+            osintService.getTools(),
+        ]);
 
-    // Реальні метрики системи
-    useEffect(() => {
-        const fetchMetrics = async () => {
-            try {
-                const response = await fetch('/api/v1/stats/system');
-                if (response.ok) {
-                    const data = await response.json();
-                    const cpu = data.cpu_usage ?? data.cpu ?? Math.random() * 40 + 20;
-                    const mem = data.memory_usage ?? data.memory ?? Math.random() * 30 + 40;
-                    setSystemCpu(Math.round(cpu));
-                    setSystemMem(Math.round(mem));
-                    setResourceData(prev => {
-                        const updated = [...prev, { time: Date.now(), cpu, mem }];
-                        return updated.slice(-20);
-                    });
-                }
-            } catch { /* fallback до попередніх значень */ }
-        };
+        let hadSuccessfulSync = false;
 
-        fetchMetrics();
-        const interval = setInterval(fetchMetrics, 3000);
-        return () => clearInterval(interval);
-    }, []);
+        if (systemResult.status === 'fulfilled') {
+            setResourceSnapshot(buildResourceSnapshot(systemResult.value));
+            setResourceData((previous) => appendResourcePoint(previous, systemResult.value));
+            hadSuccessfulSync = true;
+        } else {
+            setResourceSnapshot(buildResourceSnapshot(null));
+        }
+
+        const dashboardAlerts =
+            dashboardAlertsResult.status === 'fulfilled'
+                ? dashboardAlertsResult.value.alerts
+                : [];
+        const alertItems =
+            liveAlertsResult.status === 'fulfilled'
+                ? liveAlertsResult.value.items
+                : [];
+        const normalizedAlerts = normalizeFleetAlerts(alertItems, dashboardAlerts);
+
+        setRealAlerts(normalizedAlerts);
+        setAlertsUnavailable(
+            liveAlertsResult.status === 'rejected' && dashboardAlertsResult.status === 'rejected',
+        );
+
+        if (liveAlertsResult.status === 'fulfilled' || dashboardAlertsResult.status === 'fulfilled') {
+            hadSuccessfulSync = true;
+        }
+
+        if (toolsResult.status === 'fulfilled') {
+            setOsintTools(normalizeOsintTools(toolsResult.value));
+            setOsintUnavailable(false);
+            hadSuccessfulSync = true;
+        } else {
+            setOsintTools([]);
+            setOsintUnavailable(true);
+        }
+
+        if (hadSuccessfulSync) {
+            setLastSyncedAt(formatInterfaceTime(new Date()));
+        }
+    }, [formatInterfaceTime]);
+
+    useEffect(() => {
+        void loadOperationalData();
+
+        const interval = window.setInterval(() => {
+            void loadOperationalData();
+        }, 30000);
+
+        return () => window.clearInterval(interval);
+    }, [loadOperationalData]);
+
+    const handleRefresh = useCallback(async () => {
+        setRefreshing(true);
+
+        try {
+            await Promise.allSettled([
+                loadOperationalData(),
+                refreshData(),
+            ]);
+        } finally {
+            setRefreshing(false);
+        }
+    }, [loadOperationalData, refreshData]);
 
     const selectedAgent = agents.find(a => a.id === selectedAgentId);
     const workingCount = agents.filter(a => a.status === 'WORKING').length;
+    const osintSummary = buildOsintSummary(osintTools);
+    const systemCpuLabel = resourceSnapshot.cpuPercent == null ? 'Н/д' : `${resourceSnapshot.cpuPercent}%`;
+    const systemMemLabel = resourceSnapshot.memoryPercent == null ? 'Н/д' : `${resourceSnapshot.memoryPercent}%`;
+    const syncLabel = lastSyncedAt ?? resourceSnapshot.timestampLabel ?? 'Немає підтвердженої синхронізації';
+    const osintStatusLabel = osintUnavailable
+        ? 'Недоступно'
+        : osintSummary.totalTools > 0
+            ? 'Підтверджено'
+            : 'Порожньо';
 
     const tabs = [
         { id: 'telemetry', label: premiumLocales.agentsView.tabs.telemetry, icon: <Activity size={13} /> },
@@ -454,17 +520,40 @@ const AgentsView: React.FC = () => {
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },
-                    { label: 'ЦП', value: `${systemCpu}%`, icon: <Cpu size={14} />, color: 'purple' },
-                    { label: 'ОЗП', value: `${systemMem}%`, icon: <HardDrive size={14} />, color: 'warning' },
+                    { label: 'ЦП', value: systemCpuLabel, icon: <Cpu size={14} />, color: 'purple' },
+                    { label: 'ОЗП', value: systemMemLabel, icon: <HardDrive size={14} />, color: 'warning' },
                 ]}
             />
+
+            <div className="flex flex-wrap items-center gap-3">
+                <Badge className={`border px-4 py-2 text-[11px] font-bold ${backendStatus.isOffline ? 'border-rose-500/30 bg-rose-500/10 text-rose-200' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200'}`}>
+                    {backendStatus.statusLabel}
+                </Badge>
+                <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                    Джерело: {backendStatus.sourceLabel}
+                </Badge>
+                <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                    Синхронізовано: {syncLabel}
+                </Badge>
+                <button
+                    type="button"
+                    onClick={() => {
+                        void handleRefresh();
+                    }}
+                    disabled={refreshing}
+                    className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-200 transition hover:bg-white/10 disabled:opacity-60"
+                >
+                    {refreshing ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                    Оновити дані
+                </button>
+            </div>
 
             {/* ── TABS ── */}
             <div className="flex gap-2 p-1.5 bg-slate-900/70 backdrop-blur-md rounded-2xl border border-white/[0.06] w-fit">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id as 'telemetry' | 'cascades' | 'workflow' | 'osint')}
                         className={`
                             flex items-center gap-2 px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-300
                             ${activeTab === tab.id
@@ -483,7 +572,7 @@ const AgentsView: React.FC = () => {
                         {tab.label}
                         {tab.id === 'osint' && (
                             <span className="ml-1 px-1.5 py-0.5 bg-purple-500/30 text-purple-300 text-[7px] rounded-md border border-purple-500/30">
-                                {OSINT_TOOLS.filter(t => t.status !== 'ОФЛАЙН').length}
+                                {osintUnavailable ? 'Н/д' : String(osintSummary.onlineTools)}
                             </span>
                         )}
                     </button>
@@ -589,21 +678,36 @@ const AgentsView: React.FC = () => {
                                             </div>
                                             <div>
                                                 <h3 className="text-xs font-black text-white uppercase tracking-widest">OSINT ЕКОСИСТЕМА</h3>
-                                                <p className="text-[9px] text-slate-500 font-mono">6 інструментів · {OSINT_TOOLS.filter(t => t.status !== 'ОФЛАЙН').length} онлайн</p>
+                                                <p className="text-[9px] text-slate-500 font-mono">
+                                                    {osintUnavailable
+                                                        ? 'Бекенд не повернув перелік інструментів'
+                                                        : `${osintSummary.totalTools} інструментів · ${osintSummary.onlineTools} онлайн`}
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                            <span className="text-[9px] text-green-400 font-bold uppercase tracking-widest">АКТИВНА</span>
+                                            <div className={`w-2 h-2 rounded-full ${osintUnavailable ? 'bg-rose-500' : osintSummary.totalTools > 0 ? 'bg-green-500 animate-pulse' : 'bg-slate-500'}`} />
+                                            <span className={`text-[9px] font-bold uppercase tracking-widest ${osintUnavailable ? 'text-rose-300' : osintSummary.totalTools > 0 ? 'text-green-400' : 'text-slate-400'}`}>
+                                                {osintStatusLabel}
+                                            </span>
                                         </div>
+                                    </div>
+
+                                    <div className="mb-4 flex flex-wrap gap-2">
+                                        <Badge className="border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-[10px] font-bold text-purple-100">
+                                            Джерело: /osint/tools
+                                        </Badge>
+                                        <Badge className="border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold text-slate-200">
+                                            Остання синхронізація: {syncLabel}
+                                        </Badge>
                                     </div>
 
                                     {/* Загальна статистика */}
                                     <div className="grid grid-cols-3 gap-3">
                                         {[
-                                            { label: 'Всього знахідок', value: OSINT_TOOLS.reduce((acc, t) => acc + t.findings, 0).toLocaleString(), color: '#a855f7' },
-                                            { label: 'Активних сканів', value: OSINT_TOOLS.filter(t => t.status === 'СКАНУЄ').length, color: '#f59e0b' },
-                                            { label: 'Покриття джерел', value: '94%', color: '#10b981' },
+                                            { label: 'Всього знахідок', value: osintSummary.totalFindingsLabel, color: '#a855f7' },
+                                            { label: 'Активних сканів', value: String(osintSummary.activeScans), color: '#f59e0b' },
+                                            { label: 'Покриття джерел', value: osintSummary.coverageLabel, color: '#10b981' },
                                         ].map((stat, i) => (
                                             <div key={i} className="p-3 rounded-2xl bg-slate-950/40 border border-white/5 text-center">
                                                 <div className="text-base font-black font-mono" style={{ color: stat.color }}>{stat.value}</div>
@@ -615,9 +719,28 @@ const AgentsView: React.FC = () => {
 
                                 {/* Список OSINT-інструментів */}
                                 <div className="space-y-2">
-                                    {OSINT_TOOLS.map((tool, i) => (
-                                        <OSINTToolRow key={tool.id} tool={tool} index={i} />
-                                    ))}
+                                    {osintTools.length > 0 ? (
+                                        osintTools.map((tool, i) => (
+                                            <OSINTToolRow
+                                                key={tool.id}
+                                                tool={tool}
+                                                index={i}
+                                                onOpen={(route) => {
+                                                    navigate(route);
+                                                }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className={`rounded-3xl border px-5 py-6 text-sm ${
+                                            osintUnavailable
+                                                ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+                                                : 'border-white/10 bg-slate-950/40 text-slate-300'
+                                        }`}>
+                                            {osintUnavailable
+                                                ? 'Перелік інструментів OSINT тимчасово недоступний. Екран не показує жодних замінених або вигаданих даних.'
+                                                : 'Бекенд відповів без активних інструментів OSINT. Список буде заповнений після появи даних у /osint/tools.'}
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         )}
@@ -650,12 +773,12 @@ const AgentsView: React.FC = () => {
                                                     {premiumLocales.agentsView.panels.healthIndex}
                                                 </div>
                                                 <div className="text-[9px] text-slate-500 font-mono">
-                                                    {premiumLocales.agentsView.panels.uptime}: онлайн
+                                                    Статус: {formatAgentStatus(selectedAgent.status)}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="text-emerald-400 font-mono font-black text-lg">
-                                            {selectedAgent.efficiency}%
+                                            {formatAgentHealth(selectedAgent.efficiency)}
                                         </div>
                                     </div>
 
@@ -678,7 +801,7 @@ const AgentsView: React.FC = () => {
                                                 {premiumLocales.agentsView.panels.resourceUsage}
                                             </span>
                                             <span className="text-[9px] text-slate-600 font-mono">
-                                                ЦП: <span className="text-blue-400">{systemCpu}%</span> · ОЗП: <span className="text-purple-400">{systemMem}%</span>
+                                                ЦП: <span className="text-blue-400">{systemCpuLabel}</span> · ОЗП: <span className="text-purple-400">{systemMemLabel}</span>
                                             </span>
                                         </div>
                                         <div className="h-[100px]">
@@ -695,7 +818,7 @@ const AgentsView: React.FC = () => {
                                                     <YAxis domain={[0, 100]} hide />
                                                     <Tooltip
                                                         contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '10px', fontSize: '9px' }}
-                                                        formatter={(v: any) => [`${Math.round(v)}%`]}
+                                                        formatter={(value: number | string) => [`${Math.round(Number(value))}%`]}
                                                     />
                                                     <Area type="monotone" dataKey="cpu" stroke="#3b82f6" fill="url(#cpuGrad)" strokeWidth={1.5} name="ЦП" />
                                                     <Area type="monotone" dataKey="mem" stroke="#a855f7" fill="transparent" strokeWidth={1.5} name="ОЗП" />
@@ -707,8 +830,8 @@ const AgentsView: React.FC = () => {
                                     {/* Resource limits */}
                                     <div className="grid grid-cols-2 gap-3">
                                         {[
-                                            { icon: <Cpu size={14} />, label: 'Ліміт ЦП', value: '2000m', color: 'text-blue-400', border: 'hover:border-blue-500/30' },
-                                            { icon: <HardDrive size={14} />, label: "Ліміт ПАМ'ЯТІ", value: '4Gi', color: 'text-purple-400', border: 'hover:border-purple-500/30' },
+                                            { icon: <Cpu size={14} />, label: 'Потужність ЦП', value: resourceSnapshot.cpuCapacityLabel, color: 'text-blue-400', border: 'hover:border-blue-500/30' },
+                                            { icon: <HardDrive size={14} />, label: "Загальна ПАМ'ЯТЬ", value: resourceSnapshot.memoryCapacityLabel, color: 'text-purple-400', border: 'hover:border-purple-500/30' },
                                         ].map((item, i) => (
                                             <div key={i} className={`p-3 bg-slate-950/50 rounded-2xl border border-white/5 ${item.border} transition-colors text-center group`}>
                                                 <div className={`${item.color} mx-auto mb-1.5 opacity-50 group-hover:opacity-100 transition-opacity flex justify-center`}>
@@ -748,9 +871,9 @@ const AgentsView: React.FC = () => {
                     >
                         <div className="space-y-3">
                             {realAlerts.length > 0 ? (
-                                realAlerts.slice(0, 4).map((alert: any, idx: number) => (
+                                realAlerts.slice(0, 4).map((alert, idx: number) => (
                                     <motion.div
-                                        key={idx}
+                                        key={alert.id}
                                         initial={{ opacity: 0, x: 10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.05 }}
@@ -761,16 +884,29 @@ const AgentsView: React.FC = () => {
                                             }`}
                                     >
                                         <AlertCircle size={14} className="shrink-0 mt-0.5" />
-                                        <span className="leading-relaxed">{alert.summary || alert.message}</span>
+                                        <div className="space-y-1">
+                                            <div className="leading-relaxed text-slate-100">{alert.message}</div>
+                                            <div className="text-[9px] font-mono text-slate-500">
+                                                {alert.sourceLabel} · {alert.timestampLabel}
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 ))
+                            ) : alertsUnavailable ? (
+                                <motion.div
+                                    whileHover={{ x: 4 }}
+                                    className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-rose-100"
+                                >
+                                    <AlertCircle size={16} className="shrink-0" />
+                                    <span className="leading-relaxed">Бекенд тимчасово не повернув сповіщення флоту. Екран не підміняє це повідомлення фразою про штатний стан.</span>
+                                </motion.div>
                             ) : (
                                 <motion.div
                                     whileHover={{ x: 4 }}
-                                    className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-emerald-400"
+                                    className="p-4 bg-slate-500/5 border border-slate-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-slate-300"
                                 >
                                     <Activity size={16} className="shrink-0" />
-                                    <span className="leading-relaxed">Всі агенти функціонують штатно. Аномалій не виявлено.</span>
+                                    <span className="leading-relaxed">Активних сповіщень флоту від підтверджених ендпоїнтів не отримано.</span>
                                 </motion.div>
                             )}
                         </div>
