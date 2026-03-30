@@ -1,64 +1,84 @@
 model_list:
-  # 🟢 API Group: CHAT (Gemini Base)
+  # API
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: ${GEMINI_API_KEY}
       api_base: https://generativelanguage.googleapis.com/v1beta
-      timeout: 10
 
-  # 🟠 API Group: FAST (Gemini Flash #2)
   - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-2.5-flash
-      api_key: ${GEMINI_API_KEY_2}
-      api_base: https://generativelanguage.googleapis.com/v1beta
-      timeout: 10
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_1}
+      api_base: https://api.groq.com/openai/v1
 
-  # 🔴 API Group: REASONING (Gemini Pro)
-  - model_name: ultra-router-reasoning
+  - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-2.5-pro
-      api_key: ${GEMINI_API_KEY_3}
-      api_base: https://generativelanguage.googleapis.com/v1beta
-      timeout: 30
+      model: groq/llama-3.3-70b-versatile
+      api_key: ${GROQ_API_KEY_2}
+      api_base: https://api.groq.com/openai/v1
 
-  # 🔵 API Group: CODING (Mistral)
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY}
+      api_key: ${MISTRAL_API_KEY_1}
       api_base: https://api.mistral.ai/v1
-      timeout: 15
 
-  # 🟣 LOCAL Group: Fallback (Ollama Mac)
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: ${MISTRAL_API_KEY_2}
+      api_base: https://api.mistral.ai/v1
+
+  # Локальний безлімітний режим (Ollama NVIDIA 194.177.1.240)
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: http://194.177.1.240:11434
+      timeout: 45
+
   - model_name: ultra-router-local
     litellm_params:
       model: ollama/deepseek-r1:7b
-      api_base: http://host.docker.internal:11434
-      timeout: 15
+      api_base: http://194.177.1.240:11434
+      timeout: 45
 
-  # 🤖 AUTO: Complexity Router
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/gemma3:4b
+      api_base: http://194.177.1.240:11434
+      timeout: 45
+
+  # Auto
   - model_name: ultra-router-auto
     litellm_params:
-      model: router
-
-router_settings:
-  routing_strategy: latency-based-routing
+      model: complexity-router
 
 litellm_settings:
-  master_key: ${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}
-  routing_strategy: least-busy
-  num_retries: 2
+  routing_strategy: "least-busy"
+  num_retries: 5
   request_timeout: 30
-  fallback_strategy: "exponential_backoff"
-  
   fallbacks:
     - {"ultra-router-chat": ["ultra-router-local"]}
     - {"ultra-router-fast": ["ultra-router-local"]}
     - {"ultra-router-coding": ["ultra-router-local"]}
-    - {"ultra-router-reasoning": ["ultra-router-local"]}
-    - {"ultra-router-auto": ["ultra-router-local"]}
-  
-  default_fallbacks:
-    - ultra-router-local
+  default_fallbacks: ultra-router-local
+
+complexity_router_config:
+  tiers:
+    SIMPLE: ultra-router-chat
+    MEDIUM: ultra-router-coding
+    COMPLEX: ultra-router-fast
+    REASONING: ultra-router-fast
+  custom_markers:
+    - "покроково"
+    - "розбери"
+    - "аналізуй"
+    - "що буде якщо"
+    - "напиши код"
+    - "рефактори"
+  default_model: ultra-router-chat
+
+general_settings:
+  master_key: ${LITELLM_MASTER_KEY}
+  enable_health_check: true
