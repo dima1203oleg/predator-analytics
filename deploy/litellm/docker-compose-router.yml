@@ -10,10 +10,9 @@ services:
     environment:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
-      GROQ_API_KEY_1: ${GROQ_API_KEY_1}
-      GROQ_API_KEY_2: ${GROQ_API_KEY_2}
-      MISTRAL_API_KEY_1: ${MISTRAL_API_KEY_1}
-      MISTRAL_API_KEY_2: ${MISTRAL_API_KEY_2}
+      GEMINI_API_KEY_2: ${GEMINI_API_KEY_2}
+      GEMINI_API_KEY_3: ${GEMINI_API_KEY_3}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       LOG_LEVEL: "INFO"
     volumes:
       - ./config-antigravity.yaml:/app/config.yaml:ro
