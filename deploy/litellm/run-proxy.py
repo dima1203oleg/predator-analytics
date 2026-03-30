@@ -1,31 +1,22 @@
 #!/usr/bin/env python3
 """
-🚀 ULTRA-ROUTER v55.3 — Запуск LiteLLM Proxy (STATELESS)
-Pass-through режим — пропускає невідомі моделі напряму до провайдерів
+🚀 ULTRA-ROUTER v55.3 — Запуск LiteLLM Proxy з конфігом
 """
-import sys
 import os
-
-# Додати поточну директорію до path
-sys.path.insert(0, '/app')
+import sys
+import uvicorn
+from litellm.proxy.proxy_server import app
 
 if __name__ == '__main__':
-    # Встановити оточення для LiteLLM
-    os.environ.setdefault('GROQ_API_KEY', 'gsk_test_1')
-    
-    # Запустити через litellm proxy
-    from litellm.proxy.proxy_server import app
-    import uvicorn
+    os.environ["LITELLM_CONFIG"] = "/app/config.yaml"
     
     print("🚀 Запуск ULTRA-ROUTER v55.3 на порті 4000...")
-    print("📊 STATELESS MODE (Pass-through)")
-    print("💰 Провайдери: Groq + HF + Together + Ollama")
+    print("📋 Конфіг: /app/config.yaml (через LITELLM_CONFIG)")
     print("═══════════════════════════════════════════════════════════════")
     
     uvicorn.run(
         app,
         host="0.0.0.0",
         port=4000,
-        log_level="info",
-        access_log=True,
+        log_level="info"
     )

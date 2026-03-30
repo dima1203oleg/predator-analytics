@@ -1,71 +1,29 @@
+version: "3.9"
+
+services:
   ultra-router:
-    image: ghcr.io/berriai/litellm:main-stable
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ultra-router:v55.3
     container_name: ultra-router-v55.3
     ports:
       - "4000:4000"
     environment:
-      # Master key для Antigravity / Ultra-Router
       LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}"
-
-      # Провайдери (безплатні моделі 2026)
-      MISTRAL_API_KEY: "${MISTRAL_API_KEY:-mistral_YOUR_KEY}"
-      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-deepseek_YOUR_KEY}"
-      GEMINI_API_KEY: "${GEMINI_API_KEY:-gemini_YOUR_KEY}"
-      GROQ_API_KEY: "${GROQ_API_KEY:-groq_YOUR_KEY}"
-
-      # Збережені ключі
-      HF_API_KEY: "${HF_API_KEY:-hf_test_key}"
-      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-together_test_key}"
-
-      # Logging
+      MISTRAL_API_KEY: "${MISTRAL_API_KEY:-mistral_TEST_KEY}"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-deepseek_TEST_KEY}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-gemini_TEST_KEY}"
+      GROQ_API_KEY: "${GROQ_API_KEY:-groq_TEST_KEY}"
+      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-together_TEST_KEY}"
       LOG_LEVEL: "INFO"
-      PYTHONUNBUFFERED: "1"
-
     volumes:
-      - ./logs:/app/logs
       - ./config-antigravity.yaml:/app/config.yaml:ro
-
+      - ./logs:/app/logs
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
       interval: 10s
       timeout: 5s
       retries: 3
-      ultra-router:
-        image: ghcr.io/berriai/litellm:main-stable
-        container_name: ultra-router-v55.3
-        ports:
-          - "4000:4000"
-        environment:
-          # Master key для Antigravity / Ultra-Router
-          LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}"
-
-          # Провайдери (безплатні моделі 2026)
-          MISTRAL_API_KEY: "${MISTRAL_API_KEY:-mistral_YOUR_KEY}"
-          DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-deepseek_YOUR_KEY}"
-          GEMINI_API_KEY: "${GEMINI_API_KEY:-gemini_YOUR_KEY}"
-          GROQ_API_KEY: "${GROQ_API_KEY:-groq_YOUR_KEY}"
-
-          # Збережені ключі
-          HF_API_KEY: "${HF_API_KEY:-hf_test_key}"
-          TOGETHER_API_KEY: "${TOGETHER_API_KEY:-together_test_key}"
-
-          # Logging
-          LOG_LEVEL: "INFO"
-          PYTHONUNBUFFERED: "1"
-
-        volumes:
-          - ./logs:/app/logs
-          - ./config-antigravity.yaml:/app/config.yaml:ro
-
-        restart: unless-stopped
-        healthcheck:
-          test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
-          interval: 10s
-          timeout: 5s
-          retries: 3
-          start_period: 15s
-
-        networks:
-          - predator-network
-    driver: bridge
+      start_period: 15s

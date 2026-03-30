@@ -62,4 +62,5 @@ EXPOSE 4000
 USER predator
 
 # CMD — запуск LiteLLM Proxy
-CMD ["python", "/app/run-proxy.py"]
+ENV LITELLM_PROXY_ADMIN_KEY="sk-antigravity-master-2026"
+CMD ["python", "-m", "litellm.proxy.proxy_server", "--model", "gpt-3.5-turbo", "--model", "gpt-4"]
