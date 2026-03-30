@@ -10,6 +10,8 @@ NGROK_API_KEY="3Bfn7Zik2Gs41xIiNLZHcIxKBdi_4x1tUpeVMrUMJpQ4a17Gu"
 SSH_CONFIG="$HOME/.ssh/config"
 TUNNEL_INFO="/tmp/ngrok-predator-tunnel.info"
 POLL_INTERVAL="${1:-15}"  # секунди між перевірками (default: 15)
+TELEMETRY_LOG="/tmp/ngrok-telemetry.log"
+MEMORY_FILE="/tmp/ngrok-memory.json"
 
 # ─── Кольори ───
 RED='\033[0;31m'
@@ -19,10 +21,34 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-log_info()    { echo -e "${BLUE}ℹ️  $1${NC}"; }
-log_success() { echo -e "${GREEN}✅ $1${NC}"; }
-log_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
-log_error()   { echo -e "${RED}❌ $1${NC}"; }
+log_info()    { echo -e "${BLUE}ℹ️  $1${NC}"; echo "[$(date '+%Y-%m-%d %H:%M:%S')] INFO: $1" >> "$TELEMETRY_LOG"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}"; echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $1" >> "$TELEMETRY_LOG"; }
+log_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARNING: $1" >> "$TELEMETRY_LOG"; }
+log_error()   { echo -e "${RED}❌ $1${NC}"; echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1" >> "$TELEMETRY_LOG"; }
+
+# ─── BMO Memory (Proactive Skills) ───
+save_memory() {
+    local host="$1"
+    local port="$2"
+    echo "{\"last_host\": \"$host\", \"last_port\": \"$port\", \"last_seen\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > "$MEMORY_FILE"
+}
+
+try_legacy_recon() {
+    if [ -f "$MEMORY_FILE" ]; then
+        local lh lp
+        lh=$(jq -r '.last_host' "$MEMORY_FILE")
+        lp=$(jq -r '.last_port' "$MEMORY_FILE")
+        if [ "$lh" != "null" ] && [ -n "$lh" ]; then
+            log_info "BMO Recall: Пробую старий хост $lh:$lp..."
+            if test_ssh "$lh" "$lp"; then
+                log_success "🔥 Знайшов! Старий тунель все ще активний."
+                update_ssh_config "$lh" "$lp"
+                return 0
+            fi
+        fi
+    fi
+    return 1
+}
 
 # ─── Отримати активні тунелі через ngrok API ───
 get_tunnels() {
@@ -165,6 +191,7 @@ check_once() {
             log_info "Знайдено $agent_count активних ngrok agent(ів) — тунелі ще не створені"
         else
             log_warning "Немає активних ngrok agent sessions"
+            try_legacy_recon || true
         fi
         return 1
     fi
@@ -191,6 +218,9 @@ check_once() {
         
         # Зберегти info
         save_tunnel_info "$tcp_url" "$https_url" "$host" "$port"
+        
+        # BMO Memory
+        save_memory "$host" "$port"
         
         # Тестувати SSH
         if test_ssh "$host" "$port"; then

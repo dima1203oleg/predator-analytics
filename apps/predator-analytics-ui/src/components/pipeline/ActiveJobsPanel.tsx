@@ -1,418 +1,422 @@
-/**
- * ActiveJobsPanel - Панель моніторингу всіх активних процесів у реальному часі
- * Показує: індексацію, парсинг, заливку, трансформацію
- */
-import React, { useEffect, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Activity, RefreshCw, CheckCircle, XCircle, AlertTriangle,
-  Clock, FileText, Database, HardDrive, Search, Brain,
-  Upload, Download, Zap, Loader2, ChevronRight, BarChart3,
-  Radio, Camera, FileSpreadsheet, Globe, MessageSquare, Rss
+    Activity,
+    AlertTriangle,
+    BarChart3,
+    Camera,
+    CheckCircle,
+    ChevronRight,
+    Clock,
+    Database,
+    FileSpreadsheet,
+    FileText,
+    Globe,
+    Loader2,
+    MessageSquare,
+    Radio,
+    RefreshCw,
+    Rss,
+    Search,
+    Upload,
+    Video,
+    XCircle,
+    Zap,
+    type LucideIcon,
 } from 'lucide-react';
-import { api } from '../../services/api';
-
-interface ActiveJob {
-  id: string;
-  name: string;
-  type: 'excel' | 'csv' | 'pdf' | 'image' | 'audio' | 'video' | 'telegram' | 'website' | 'api' | 'rss';
-  status: 'pending' | 'processing' | 'indexing' | 'vectorizing' | 'completed' | 'failed';
-  progress: number;
-  stage: string;
-  startedAt: string;
-  eta?: string;
-  itemsProcessed?: number;
-  itemsTotal?: number;
-  error?: string;
-}
-
-const TYPE_ICONS: Record<string, any> = {
-  customs: FileSpreadsheet,
-  excel: FileSpreadsheet,
-  csv: FileSpreadsheet,
-  pdf: FileText,
-  image: Camera,
-  audio: Radio,
-  video: Camera,
-  telegram: MessageSquare,
-  website: Globe,
-  api: Zap,
-  rss: Rss,
-};
-
-const TYPE_COLORS: Record<string, string> = {
-  customs: 'emerald',
-  excel: 'emerald',
-  csv: 'emerald',
-  pdf: 'rose',
-  image: 'amber',
-  audio: 'pink',
-  video: 'red',
-  telegram: 'blue',
-  website: 'purple',
-  api: 'orange',
-  rss: 'lime',
-};
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { label: 'Очікування', color: 'slate', icon: Clock },
-  processing: { label: 'Обробка', color: 'blue', icon: RefreshCw },
-  indexing: { label: 'Індексація', color: 'orange', icon: Search },
-  vectorizing: { label: 'Векторизація', color: 'indigo', icon: Brain },
-  completed: { label: 'Завершено', color: 'emerald', icon: CheckCircle },
-  failed: { label: 'Помилка', color: 'rose', icon: XCircle },
-};
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { ingestionApi } from '@/services/api/ingestion';
+import {
+    normalizeActiveJobsPayload,
+    summarizeActiveJobs,
+    type ActiveJobStatus,
+    type ActiveJobType,
+    type ActiveJobViewModel,
+} from './activeJobsPanel.utils';
 
 interface ActiveJobsPanelProps {
-  maxJobs?: number;
-  className?: string;
-  showHeader?: boolean;
-  onJobClick?: (job: ActiveJob) => void;
+    maxJobs?: number;
+    className?: string;
+    showHeader?: boolean;
+    onJobClick?: (job: ActiveJobViewModel) => void;
 }
 
-export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
-  maxJobs = 10,
-  className = '',
-  showHeader = true,
-  onJobClick,
-}) => {
-  const [jobs, setJobs] = useState<ActiveJob[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const buildDisplayName = (job: any): string => {
-    const pipelineType = job?.pipeline_type || job?.source_type || '';
-    const rawFile = job?.source_file || job?.name || '';
-
-    // Telegram: extract @username
-    if (pipelineType === 'telegram' || rawFile.startsWith('telegram_')) {
-      const channelName = rawFile.replace(/^telegram_/, '');
-      return `Telegram: @${channelName}`;
-    }
-    // Website
-    if (pipelineType === 'website') {
-      return `🌐 Веб-сайт: ${rawFile}`;
-    }
-    // RSS
-    if (pipelineType === 'rss') {
-      return `📡 RSS: ${rawFile}`;
-    }
-    // API
-    if (pipelineType === 'api') {
-      return `🔌 API: ${rawFile}`;
-    }
-    // Audio/Video/Image
-    if (pipelineType === 'audio') return `🎙️ Аудіо: ${rawFile}`;
-    if (pipelineType === 'video') return `🎥 Відео: ${rawFile}`;
-    if (pipelineType === 'image') return `🖼️ Зображення: ${rawFile}`;
-    if (pipelineType === 'pdf') return `📄 PDF: ${rawFile}`;
-    if (pipelineType === 'word') return `📝 Документ: ${rawFile}`;
-    // Excel/CSV/Customs — just show filename
-    if (rawFile) return rawFile;
-    // Fallback: never show raw ID
-    const jobIdRaw = job?.id || job?.job_id || '';
-    if (jobIdRaw.startsWith('tg-')) return `Telegram-канал`;
-    if (jobIdRaw.startsWith('web-')) return `Веб-джерело`;
-    if (jobIdRaw.startsWith('rss-')) return `RSS-стрічка`;
-    if (jobIdRaw.startsWith('api-')) return `API-інтеграція`;
-    if (jobIdRaw.startsWith('file-') || jobIdRaw.startsWith('etl-')) return `Файл — обробка`;
-    return `Завдання — обробка`;
-  };
-
-  const fetchJobs = useCallback(async () => {
-    try {
-      const data = await api.getETLJobs(maxJobs);
-      // Transform API response to ActiveJob format
-      const transformedJobs: ActiveJob[] = (data || []).filter(Boolean).map((job: any) => ({
-        id: job?.id || job?.job_id || Math.random().toString(),
-        name: buildDisplayName(job),
-        type: job?.pipeline_type || job?.source_type || 'excel',
-        status: mapStatus(job?.status || job?.state),
-        progress: job?.progress?.percent || 0,
-        stage: job?.progress?.stage || job?.status || 'Ініціалізація',
-        startedAt: job?.created_at || job?.started_at || job?.timestamps?.created_at || new Date().toISOString(),
-        eta: job?.progress?.eta,
-        itemsProcessed: job?.progress?.records_processed || job?.progress?.items_processed || job?.metadata?.parser_stats?.success,
-        itemsTotal: job?.progress?.records_total || job?.progress?.items_total || job?.metadata?.parser_stats?.total_rows,
-        error: job?.error,
-      }));
-      setJobs(transformedJobs);
-      setError(null);
-    } catch (e: any) {
-      console.error('Failed to fetch jobs:', e);
-      // Demo mode - show sample jobs if backend is offline
-      setJobs(getDemoJobs());
-    } finally {
-      setLoading(false);
-    }
-  }, [maxJobs]);
-
-  useEffect(() => {
-    fetchJobs();
-    const interval = setInterval(fetchJobs, 3000);
-    return () => clearInterval(interval);
-  }, [fetchJobs]);
-
-  const mapStatus = (status: string): ActiveJob['status'] => {
-    const statusMap: Record<string, ActiveJob['status']> = {
-      'CREATED': 'pending',
-      'UPLOAD': 'pending',
-      'SOURCE_CHECKED': 'processing',
-      'INGESTED': 'processing',
-      'INGEST_MINIO': 'processing',
-      'DECODE': 'processing',
-      'PARSE': 'processing',
-      'PARSED': 'processing',
-      'VALIDATE': 'processing',
-      'VALIDATED': 'processing',
-      'NORMALIZE': 'processing',
-      'NORMALIZED': 'processing',
-      'TRANSFORM': 'processing',
-      'TRANSFORMED': 'processing',
-      'EXTRACT_CONTENT': 'processing',
-      'EXTRACTING': 'processing',
-      'CHUNK': 'processing',
-      'CHUNKED': 'processing',
-      'RESOLVE_ENTITIES': 'processing',
-      'ENTITIES_RESOLVED': 'processing',
-      'NLP_EXTRACTION': 'processing',
-      'LOAD_SQL': 'indexing',
-      'ROUTING_SQL': 'indexing',
-      'ROUTING_GRAPH': 'indexing',
-      'ROUTING_SEARCH': 'indexing',
-      'ROUTING_VECTOR': 'indexing',
-      'BUILD_GRAPH': 'indexing',
-      'GRAPH_BUILT': 'indexing',
-      'INDEX_SEARCH': 'indexing',
-      'INDEXED': 'indexing',
-      'VECTORIZE': 'vectorizing',
-      'VECTORIZED': 'vectorizing',
-      'ARCHIVING': 'processing',
-      'STAGING': 'processing',
-      'PROCESSING': 'processing',
-      'INDEXING': 'indexing',
-      'PROMOTING': 'processing',
-      'READY': 'completed',
-      'COMPLETED': 'completed',
-      'SUCCESS': 'completed',
-      'FAILED': 'failed',
-      'ERROR': 'failed',
-      'RUNNING': 'processing',
-      'QUEUED': 'pending',
-      'processing': 'processing',
-      'completed': 'completed',
-      'failed': 'failed',
-    };
-    return statusMap[status] || 'processing';
-  };
-
-  const getDemoJobs = (): ActiveJob[] => [
-    {
-      id: 'demo-1',
-      name: 'Митний реєстр 2024',
-      type: 'excel',
-      status: 'processing',
-      progress: 67,
-      stage: 'TRANSFORMED',
-      startedAt: new Date(Date.now() - 120000).toISOString(),
-      eta: '00:45',
-      itemsProcessed: 15420,
-      itemsTotal: 23000,
+const TYPE_CONFIG: Record<ActiveJobType, { icon: LucideIcon; panelClass: string; iconClass: string; progressClass: string }> = {
+    customs: {
+        icon: FileSpreadsheet,
+        panelClass: 'border-emerald-500/20 bg-emerald-500/10',
+        iconClass: 'text-emerald-300',
+        progressClass: 'bg-emerald-500',
     },
-    {
-      id: 'demo-2',
-      name: 'Telegram: @customs_ua',
-      type: 'telegram',
-      status: 'indexing',
-      progress: 89,
-      stage: 'INDEXED',
-      startedAt: new Date(Date.now() - 300000).toISOString(),
-      itemsProcessed: 4521,
-      itemsTotal: 5100,
+    excel: {
+        icon: FileSpreadsheet,
+        panelClass: 'border-emerald-500/20 bg-emerald-500/10',
+        iconClass: 'text-emerald-300',
+        progressClass: 'bg-emerald-500',
     },
-    {
-      id: 'demo-3',
-      name: 'Відео-запис засідання',
-      type: 'video',
-      status: 'processing',
-      progress: 23,
-      stage: 'TRANSCRIBING',
-      startedAt: new Date(Date.now() - 60000).toISOString(),
-      eta: '04:30',
+    csv: {
+        icon: FileSpreadsheet,
+        panelClass: 'border-lime-500/20 bg-lime-500/10',
+        iconClass: 'text-lime-300',
+        progressClass: 'bg-lime-500',
     },
-    {
-      id: 'demo-4',
-      name: 'Аудіо-допит свідка.mp3',
-      type: 'audio',
-      status: 'vectorizing',
-      progress: 92,
-      stage: 'VECTORIZED',
-      startedAt: new Date(Date.now() - 180000).toISOString(),
-      eta: '00:15',
+    pdf: {
+        icon: FileText,
+        panelClass: 'border-rose-500/20 bg-rose-500/10',
+        iconClass: 'text-rose-300',
+        progressClass: 'bg-rose-500',
     },
-    {
-      id: 'demo-5',
-      name: 'Скани документів (PDF)',
-      type: 'pdf',
-      status: 'completed',
-      progress: 100,
-      stage: 'READY',
-      startedAt: new Date(Date.now() - 600000).toISOString(),
-      itemsProcessed: 234,
-      itemsTotal: 234,
+    image: {
+        icon: Camera,
+        panelClass: 'border-amber-500/20 bg-amber-500/10',
+        iconClass: 'text-amber-300',
+        progressClass: 'bg-amber-500',
     },
-  ];
+    audio: {
+        icon: Radio,
+        panelClass: 'border-fuchsia-500/20 bg-fuchsia-500/10',
+        iconClass: 'text-fuchsia-300',
+        progressClass: 'bg-fuchsia-500',
+    },
+    video: {
+        icon: Video,
+        panelClass: 'border-orange-500/20 bg-orange-500/10',
+        iconClass: 'text-orange-300',
+        progressClass: 'bg-orange-500',
+    },
+    telegram: {
+        icon: MessageSquare,
+        panelClass: 'border-sky-500/20 bg-sky-500/10',
+        iconClass: 'text-sky-300',
+        progressClass: 'bg-sky-500',
+    },
+    website: {
+        icon: Globe,
+        panelClass: 'border-cyan-500/20 bg-cyan-500/10',
+        iconClass: 'text-cyan-300',
+        progressClass: 'bg-cyan-500',
+    },
+    api: {
+        icon: Zap,
+        panelClass: 'border-violet-500/20 bg-violet-500/10',
+        iconClass: 'text-violet-300',
+        progressClass: 'bg-violet-500',
+    },
+    rss: {
+        icon: Rss,
+        panelClass: 'border-yellow-500/20 bg-yellow-500/10',
+        iconClass: 'text-yellow-300',
+        progressClass: 'bg-yellow-500',
+    },
+    word: {
+        icon: FileText,
+        panelClass: 'border-indigo-500/20 bg-indigo-500/10',
+        iconClass: 'text-indigo-300',
+        progressClass: 'bg-indigo-500',
+    },
+    unknown: {
+        icon: Upload,
+        panelClass: 'border-white/10 bg-white/5',
+        iconClass: 'text-slate-300',
+        progressClass: 'bg-slate-500',
+    },
+};
 
-  const activeCount = jobs.filter(j => !['completed', 'failed'].includes(j.status)).length;
+const STATUS_CONFIG: Record<ActiveJobStatus, { label: string; icon: LucideIcon; badgeClass: string; iconClass: string }> = {
+    pending: {
+        label: 'Очікування',
+        icon: Clock,
+        badgeClass: 'border-slate-500/20 bg-slate-500/10 text-slate-200',
+        iconClass: 'text-slate-300',
+    },
+    processing: {
+        label: 'Обробка',
+        icon: RefreshCw,
+        badgeClass: 'border-blue-500/20 bg-blue-500/10 text-blue-200',
+        iconClass: 'text-blue-300',
+    },
+    indexing: {
+        label: 'Індексація',
+        icon: Search,
+        badgeClass: 'border-amber-500/20 bg-amber-500/10 text-amber-200',
+        iconClass: 'text-amber-300',
+    },
+    vectorizing: {
+        label: 'Векторизація',
+        icon: BarChart3,
+        badgeClass: 'border-violet-500/20 bg-violet-500/10 text-violet-200',
+        iconClass: 'text-violet-300',
+    },
+    completed: {
+        label: 'Завершено',
+        icon: CheckCircle,
+        badgeClass: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200',
+        iconClass: 'text-emerald-300',
+    },
+    failed: {
+        label: 'Помилка',
+        icon: XCircle,
+        badgeClass: 'border-rose-500/20 bg-rose-500/10 text-rose-200',
+        iconClass: 'text-rose-300',
+    },
+};
 
-  return (
-    <div className={`bg-slate-900/80 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-hidden ${className}`}>
-      {/* Header */}
-      {showHeader && (
-        <div className="flex items-center justify-between p-4 border-b border-slate-800/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500/10 rounded-xl">
-              <Activity className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                Активні Процеси
-              </h3>
-              <p className="text-xs text-slate-500">
-                {activeCount} активних • {jobs.length} всього
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={fetchJobs}
-            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
-            title="Оновити"
-          >
-            <RefreshCw className={`w-4 h-4 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
-      )}
+const formatDateTime = (value: string | null): string => {
+    if (!value) {
+        return 'Н/д';
+    }
 
-      {/* Jobs List */}
-      <div className="max-h-[400px] overflow-y-auto">
-        <AnimatePresence mode="popLayout">
-          {jobs.length === 0 && !loading ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-12 text-slate-500"
-            >
-              <Database className="w-10 h-10 mb-3 opacity-30" />
-              <p className="text-sm">Немає активних завдань</p>
-            </motion.div>
-          ) : (
-            jobs.map((job, index) => {
-              const TypeIcon = TYPE_ICONS[job.type] || FileText;
-              const statusConfig = STATUS_CONFIG[job.status] || STATUS_CONFIG.processing;
-              const StatusIcon = statusConfig.icon;
-              const typeColor = TYPE_COLORS[job.type] || 'slate';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+        return 'Н/д';
+    }
 
-              return (
-                <motion.div
-                  key={job.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ delay: index * 0.05 }}
-                  onClick={() => onJobClick?.(job)}
-                  className={`p-4 border-b border-slate-800/30 hover:bg-slate-800/30 transition-colors ${onJobClick ? 'cursor-pointer' : ''}`}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Type Icon */}
-                    <div className={`p-2 rounded-xl bg-${typeColor}-500/10`}>
-                      <TypeIcon className={`w-4 h-4 text-${typeColor}-400`} />
-                    </div>
+    return parsed.toLocaleString('uk-UA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
 
-                    {/* Job Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <h4 className="text-sm font-medium text-white truncate">
-                          {job.name}
-                        </h4>
-                        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-${statusConfig.color}-500/10`}>
-                          <StatusIcon className={`w-3 h-3 text-${statusConfig.color}-400 ${job.status === 'processing' ? 'animate-spin' : ''}`} />
-                          <span className={`text-[10px] font-bold text-${statusConfig.color}-400 uppercase`}>
-                            {statusConfig.label}
-                          </span>
-                        </div>
-                      </div>
+const formatNumber = (value: number | null): string =>
+    value == null || !Number.isFinite(value) ? 'Н/д' : Math.round(value).toLocaleString('uk-UA');
 
-                      {/* Progress Bar */}
-                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${job.progress}%` }}
-                          className={`h-full rounded-full ${job.status === 'failed' ? 'bg-rose-500' :
-                            job.status === 'completed' ? 'bg-emerald-500' :
-                              `bg-${typeColor}-500`
-                            }`}
-                        />
-                      </div>
-
-                      {/* Stats Row */}
-                      <div className="flex items-center gap-4 text-[10px] text-slate-500">
-                        <span className="font-mono">{job.progress}%</span>
-                        {job.stage && (
-                          <span className="uppercase tracking-wider">{job.stage}</span>
-                        )}
-                        {job.itemsProcessed !== undefined && job.itemsTotal !== undefined && (
-                          <span className="font-mono">
-                            {job.itemsProcessed.toLocaleString()} / {job.itemsTotal.toLocaleString()}
-                          </span>
-                        )}
-                        {job.eta && (
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {job.eta}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Error */}
-                      {job.error && (
-                        <div className="mt-2 text-xs text-rose-400 font-mono truncate">
-                          {job.error}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Arrow */}
-                    {onJobClick && (
-                      <ChevronRight className="w-4 h-4 text-slate-600 mt-1" />
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Footer Stats */}
-      <div className="flex items-center justify-between p-3 border-t border-slate-800/50 bg-slate-950/50">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] text-slate-400 font-mono">LIVE</span>
-          </div>
-          <span className="text-[10px] text-slate-500">
-            Оновлення кожні 3 сек
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <BarChart3 className="w-3 h-3 text-slate-500" />
-          <span className="text-[10px] text-slate-400 font-mono">
-            {jobs.filter(j => j.status === 'completed').length} виконано
-          </span>
-        </div>
-      </div>
+const EmptyState = ({ title, description }: { title: string; description: string }) => (
+    <div className="flex min-h-[260px] flex-col items-center justify-center px-6 py-12 text-center">
+        <Database className="mb-4 h-10 w-10 text-slate-600" />
+        <div className="text-sm font-black uppercase tracking-[0.22em] text-slate-300">{title}</div>
+        <p className="mt-3 max-w-lg text-sm leading-6 text-slate-500">{description}</p>
     </div>
-  );
+);
+
+export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
+    maxJobs = 10,
+    className = '',
+    showHeader = true,
+    onJobClick,
+}) => {
+    const backendStatus = useBackendStatus();
+    const [jobs, setJobs] = useState<ActiveJobViewModel[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+
+    const fetchJobs = useCallback(async (silent: boolean = false) => {
+        if (silent) {
+            setRefreshing(true);
+        } else {
+            setLoading(true);
+        }
+
+        try {
+            const response = await ingestionApi.getJobs(maxJobs);
+            setJobs(normalizeActiveJobsPayload(response));
+            setError(null);
+            setLastSyncedAt(new Date().toISOString());
+        } catch (fetchError) {
+            console.error('Failed to fetch active ingestion jobs:', fetchError);
+            setJobs([]);
+            setError('Ендпоїнт /ingestion/jobs тимчасово недоступний. Панель не підставляє demo-завдання.');
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, [maxJobs]);
+
+    useEffect(() => {
+        void fetchJobs();
+
+        const interval = window.setInterval(() => {
+            void fetchJobs(true);
+        }, 5000);
+
+        return () => window.clearInterval(interval);
+    }, [fetchJobs]);
+
+    const summary = useMemo(() => summarizeActiveJobs(jobs), [jobs]);
+
+    return (
+        <div className={`overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-900/80 backdrop-blur-xl ${className}`}>
+            {showHeader ? (
+                <div className="border-b border-slate-800/50 p-4">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                                <div className="rounded-xl bg-blue-500/10 p-2">
+                                    <Activity className="h-5 w-5 text-blue-400" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-black uppercase tracking-[0.22em] text-white">
+                                        Активні процеси
+                                    </h3>
+                                    <p className="mt-1 text-xs text-slate-400">
+                                        Підтверджені ingestion jobs з /ingestion/jobs без локальних підстановок.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
+                                    Активних: {summary.activeCount}
+                                </span>
+                                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
+                                    Підтверджено: {jobs.length}
+                                </span>
+                                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1">
+                                    Бекенд: {backendStatus.statusLabel}
+                                </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
+                                <span>Джерело: /ingestion/jobs</span>
+                                <span>API: {backendStatus.sourceLabel}</span>
+                                <span>Синхронізація: {formatDateTime(lastSyncedAt)}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => void fetchJobs(true)}
+                            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-200 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                            aria-label="Оновити активні процеси"
+                            disabled={loading || refreshing}
+                        >
+                            <RefreshCw className={`h-4 w-4 ${loading || refreshing ? 'animate-spin' : ''}`} />
+                            Оновити
+                        </button>
+                    </div>
+
+                    {error ? (
+                        <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-100">
+                            {error}
+                        </div>
+                    ) : null}
+                </div>
+            ) : null}
+
+            <div className="max-h-[440px] overflow-y-auto">
+                {loading ? (
+                    <div className="flex min-h-[260px] items-center justify-center gap-3 text-sm text-slate-400">
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Синхронізую підтверджені ingestion jobs...
+                    </div>
+                ) : jobs.length === 0 ? (
+                    <EmptyState
+                        title="Немає підтверджених ingestion jobs"
+                        description={
+                            error
+                                ? 'Панель дочекається відновлення каналу і не покаже штучні demo-процеси.'
+                                : 'Ендпоїнт /ingestion/jobs повернув порожній список. До появи реальних jobs тут лишається чесний порожній стан.'
+                        }
+                    />
+                ) : (
+                    <AnimatePresence initial={false} mode="popLayout">
+                        {jobs.map((job, index) => {
+                            const typeConfig = TYPE_CONFIG[job.type];
+                            const statusConfig = STATUS_CONFIG[job.status];
+                            const TypeIcon = typeConfig.icon;
+                            const StatusIcon = statusConfig.icon;
+                            const progressValue = job.progressPct ?? 0;
+
+                            return (
+                                <motion.div
+                                    key={job.id}
+                                    initial={{ opacity: 0, x: -16 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 16 }}
+                                    transition={{ delay: index * 0.03 }}
+                                    onClick={() => onJobClick?.(job)}
+                                    className={`border-b border-slate-800/30 p-4 transition-colors hover:bg-slate-800/30 ${onJobClick ? 'cursor-pointer' : ''}`}
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <div className={`rounded-xl border p-2 ${typeConfig.panelClass}`}>
+                                            <TypeIcon className={`h-4 w-4 ${typeConfig.iconClass}`} />
+                                        </div>
+
+                                        <div className="min-w-0 flex-1">
+                                            <div className="mb-2 flex items-start justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <h4 className="truncate text-sm font-black text-white">
+                                                        {job.name}
+                                                    </h4>
+                                                    <div className="mt-1 text-[11px] text-slate-500">
+                                                        ID: <span className="font-mono text-slate-400">{job.id}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase ${statusConfig.badgeClass}`}>
+                                                    <StatusIcon className={`h-3.5 w-3.5 ${statusConfig.iconClass} ${job.status === 'processing' ? 'animate-spin' : ''}`} />
+                                                    {statusConfig.label}
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${progressValue}%` }}
+                                                    className={`h-full rounded-full ${typeConfig.progressClass}`}
+                                                />
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[10px] text-slate-400">
+                                                <span className="font-mono">
+                                                    Прогрес: {job.progressPct == null ? 'Н/д' : `${job.progressPct}%`}
+                                                </span>
+                                                <span>{job.stageLabel}</span>
+                                                {job.itemsProcessed != null && job.itemsTotal != null ? (
+                                                    <span className="font-mono">
+                                                        {formatNumber(job.itemsProcessed)} / {formatNumber(job.itemsTotal)}
+                                                    </span>
+                                                ) : null}
+                                                <span>Старт: {formatDateTime(job.startedAt)}</span>
+                                                {job.completedAt ? (
+                                                    <span>Завершено: {formatDateTime(job.completedAt)}</span>
+                                                ) : null}
+                                            </div>
+
+                                            {job.error ? (
+                                                <div className="mt-3 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs leading-5 text-rose-200">
+                                                    {job.error}
+                                                </div>
+                                            ) : null}
+                                        </div>
+
+                                        {onJobClick ? (
+                                            <ChevronRight className="mt-1 h-4 w-4 text-slate-600" />
+                                        ) : null}
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
+                )}
+            </div>
+
+            <div className="flex flex-col gap-3 border-t border-slate-800/50 bg-slate-950/50 p-3 text-[11px] text-slate-500 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-wrap items-center gap-3">
+                    <span>Статус каналу: {backendStatus.statusLabel}</span>
+                    <span>Остання синхронізація: {formatDateTime(lastSyncedAt)}</span>
+                    <span>Оновлення: кожні 5 сек</span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                    <span>Завершено: {summary.completedCount}</span>
+                    <span>Помилки: {summary.failedCount}</span>
+                    <span className="inline-flex items-center gap-1.5 text-slate-400">
+                        {backendStatus.isOffline ? (
+                            <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />
+                        ) : (
+                            <CheckCircle className="h-3.5 w-3.5 text-emerald-300" />
+                        )}
+                        {backendStatus.modeLabel}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default ActiveJobsPanel;

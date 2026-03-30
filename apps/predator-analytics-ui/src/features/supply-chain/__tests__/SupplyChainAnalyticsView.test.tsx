@@ -184,8 +184,10 @@ describe('SupplyChainAnalyticsView', () => {
         expect(await screen.findByText(/Картка події/i)).toBeInTheDocument();
         expect(screen.getAllByText(/Контейнер прибув до терміналу\./i).length).toBeGreaterThan(0);
         expect(
-            screen.getByText((_, element) => element?.textContent?.replace(/\s/g, '').includes('$120000') ?? false),
-        ).toBeInTheDocument();
+            screen.getAllByText((_, element) =>
+                element?.tagName === 'DIV' && element.textContent?.replace(/\s/g, '') === '$120000',
+            ).length,
+        ).toBeGreaterThan(0);
     });
 
     it('показує часткову відмову і не підставляє defaultStats', async () => {

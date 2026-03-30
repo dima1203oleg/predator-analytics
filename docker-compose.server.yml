@@ -173,7 +173,7 @@ services:
     networks: [predator-server-net]
 
   redpanda:
-    image: docker.redpanda.com/vectorized/redpanda:v24.2.19
+    image: docker.io/vectorized/redpanda:v24.2.19
     container_name: predator_redpanda
     command:
       - redpanda start

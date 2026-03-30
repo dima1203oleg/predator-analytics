@@ -1,24 +1,85 @@
-general_settings:
-  litellm_settings:
-    master_key: "sk-antigravity-master-2026"
+# ================================================================
+# Ultra-Router v4.4 — Antigravity / Cline
+# PREDATOR Analytics v55.3 — 2×Mistral + 2×Groq + 1×Gemini
+# Mistral = глобальний fallback ("останній рятівник")
+# ================================================================
 
 model_list:
-  - model_name: "ultra-router-coding"
+  # ── CHAT (один Gemini — стабільний для укр)
+  - model_name: ultra-router-chat
     litellm_params:
-      model: "gpt-3.5-turbo"
-      api_key: "sk-test"
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
 
-  - model_name: "ultra-router-fast"
+  # ── FAST = VIBE CODING (два Groq — load-balance + auto failover між ключами)
+  - model_name: ultra-router-fast
     litellm_params:
-      model: "gpt-3.5-turbo"
-      api_key: "sk-test"
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
 
-  - model_name: "ultra-router-reasoning"
+  - model_name: ultra-router-fast
     litellm_params:
-      model: "gpt-3.5-turbo"
-      api_key: "sk-test"
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_2
 
-  - model_name: "ultra-router-chat"
+  # ── CODING (два Mistral — load-balance + fallback; також глобальний рятівник)
+  - model_name: ultra-router-coding
     litellm_params:
-      model: "gpt-3.5-turbo"
-      api_key: "sk-test"
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_2
+
+  # ── AUTO: complexity-based routing (порядок = тір складності)
+  #   SIMPLE  (<500 токенів)  → Gemini  ("привіт", "поясни")
+  #   MEDIUM  (500–2000)      → Mistral ("напиши функцію", код)
+  #   COMPLEX (>2000)         → Groq    ("покроково", "аналізуй")
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
+
+litellm_settings:
+  routing_strategy: "least-busy"
+  num_retries: 5
+  request_timeout: 25
+  allowed_fails: 4
+  cooldown_time: 60
+  success_callback: []
+  failure_callback: []
+  fallbacks:
+    - {"ultra-router-chat": ["ultra-router-coding"]}
+    - {"ultra-router-fast": ["ultra-router-coding"]}
+    - {"ultra-router-auto": ["ultra-router-coding"]}
+  default_fallbacks: ["ultra-router-coding"]
+
+router_settings:
+  routing_strategy: "least-busy"
+  num_retries: 5
+  timeout: 25
+  retry_after: 3
+  cooldown_time: 60
+
+# ── Маркери складності (документація / майбутнє middleware)
+# COMPLEX/REASONING: покроково, розбери, аналізуй, що буде якщо
+# MEDIUM/CODING:     напиши код, рефактори
+# SIMPLE:            привіт, поясни, що таке
+# default_model: ultra-router-chat
+
+general_settings:
+  store_model_in_db: false
+  disable_spend_logs: true
+  disable_reset_budget: true
+  # master_key не потрібен для локального запуску без БД
+  # Cline / Antigravity: використовуй будь-який ключ, наприклад sk-antigravity-master-2026

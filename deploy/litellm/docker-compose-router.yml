@@ -1,21 +1,16 @@
-version: "3.9"
-
 services:
   ultra-router:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ultra-router:v55.3
-    container_name: ultra-router-v55.3
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: ultra-router-v4.4
     ports:
       - "4000:4000"
     environment:
-      LITELLM_MASTER_KEY: "${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}"
-      MISTRAL_API_KEY: "${MISTRAL_API_KEY:-mistral_TEST_KEY}"
-      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-deepseek_TEST_KEY}"
-      GEMINI_API_KEY: "${GEMINI_API_KEY:-gemini_TEST_KEY}"
-      GROQ_API_KEY: "${GROQ_API_KEY:-groq_TEST_KEY}"
-      TOGETHER_API_KEY: "${TOGETHER_API_KEY:-together_TEST_KEY}"
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GROQ_API_KEY_1: ${GROQ_API_KEY_1}
+      GROQ_API_KEY_2: ${GROQ_API_KEY_2}
+      MISTRAL_API_KEY_1: ${MISTRAL_API_KEY_1}
+      MISTRAL_API_KEY_2: ${MISTRAL_API_KEY_2}
       LOG_LEVEL: "INFO"
     volumes:
       - ./config-antigravity.yaml:/app/config.yaml:ro
