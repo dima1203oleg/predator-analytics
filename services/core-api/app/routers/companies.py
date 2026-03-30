@@ -68,7 +68,17 @@ async def list_companies(
     """
     start_time = time.time()
 
-    query = select(Company).where(Company.tenant_id == tenant_id)
+    query = select(
+        Company.ueid,
+        Company.name,
+        Company.edrpou,
+        Company.status,
+        Company.sector,
+        Company.cers_score,
+        Company.cers_confidence,
+        Company.created_at,
+        Company.updated_at,
+    ).where(Company.tenant_id == tenant_id)
 
     if search:
         search_pattern = f"%{search}%"
@@ -98,23 +108,25 @@ async def list_companies(
     # Results
     query = query.order_by(Company.cers_score.desc()).offset(offset).limit(limit)
     result = await db.execute(query)
-    companies = result.scalars().all()
+    companies = result.all()
 
     data = []
     for c in companies:
-        level = determine_risk_level(c.risk_score)
-        data.append(CompanyResponse(
-            ueid=c.ueid,
-            name=c.name,
-            edrpou=c.edrpou,
-            status=EntityStatus(c.status),
-            sector=c.sector,
-            risk_level=level,
-            risk_score=c.risk_score,
-            cers_confidence=c.cers_confidence,
-            created_at=c.created_at,
-            updated_at=c.updated_at
-        ))
+        level = determine_risk_level(c.cers_score)
+        data.append(
+            CompanyResponse(
+                ueid=c.ueid,
+                name=c.name,
+                edrpou=c.edrpou,
+                status=EntityStatus(c.status),
+                sector=c.sector,
+                risk_level=level,
+                risk_score=c.cers_score,
+                cers_confidence=c.cers_confidence,
+                created_at=c.created_at,
+                updated_at=c.updated_at,
+            )
+        )
 
     execution_time = int((time.time() - start_time) * 1000)
 
@@ -142,45 +154,61 @@ async def get_company(
 ) -> CompanyResponse:
     """Повне досьє компанії з 5-шаровим розбором ризику.
     """
-    query = select(Company).where(Company.ueid == ueid, Company.tenant_id == tenant_id)
+    query = select(
+        Company.ueid,
+        Company.name,
+        Company.edrpou,
+        Company.status,
+        Company.sector,
+        Company.cers_score,
+        Company.cers_confidence,
+        Company.created_at,
+        Company.updated_at,
+    ).where(Company.ueid == ueid, Company.tenant_id == tenant_id)
     result = await db.execute(query)
-    company = result.scalar_one_or_none()
+    company_data = result.first()
 
-    if not company:
+    if not company_data:
         raise HTTPException(status_code=404, detail="Компанію не знайдено")
 
     # Отримуємо останній детальний RiskScore (5 шарів)
-    score_query = select(RiskScore).where(
+    score_query = select(
+        RiskScore.behavioral_score,
+        RiskScore.institutional_score,
+        RiskScore.influence_score,
+        RiskScore.structural_score,
+        RiskScore.predictive_score,
+    ).where(
         RiskScore.entity_ueid == ueid,
-        RiskScore.tenant_id == tenant_id
+        RiskScore.tenant_id == tenant_id,
     ).order_by(RiskScore.score_date.desc()).limit(1)
 
     score_res = await db.execute(score_query)
-    last_score = score_res.scalar_one_or_none()
+    last_score_data = score_res.first()
 
     risk_details = None
-    if last_score:
+    if last_score_data:
         risk_details = CersComponents(
-            behavioral=ComponentDetail(value=last_score.behavioral_score or 0, weight=0.25),
-            institutional=ComponentDetail(value=last_score.institutional_score or 0, weight=0.20),
-            influence=ComponentDetail(value=last_score.influence_score or 0, weight=0.20),
-            structural=ComponentDetail(value=last_score.structural_score or 0, weight=0.15),
-            predictive=ComponentDetail(value=last_score.predictive_score or 0, weight=0.20)
+            behavioral=ComponentDetail(value=last_score_data.behavioral_score or 0, weight=0.25),
+            institutional=ComponentDetail(value=last_score_data.institutional_score or 0, weight=0.20),
+            influence=ComponentDetail(value=last_score_data.influence_score or 0, weight=0.20),
+            structural=ComponentDetail(value=last_score_data.structural_score or 0, weight=0.15),
+            predictive=ComponentDetail(value=last_score_data.predictive_score or 0, weight=0.20),
         )
 
-    level = determine_risk_level(company.risk_score)
+    level = determine_risk_level(company_data.cers_score)
 
     return CompanyResponse(
-        ueid=company.ueid,
-        name=company.name,
-        edrpou=company.edrpou,
-        status=EntityStatus(company.status),
-        sector=company.sector,
+        ueid=company_data.ueid,
+        name=company_data.name,
+        edrpou=company_data.edrpou,
+        status=EntityStatus(company_data.status),
+        sector=company_data.sector,
         risk_level=level,
-        risk_score=company.risk_score,
-        cers_confidence=company.cers_confidence,
+        risk_score=company_data.cers_score,
+        cers_confidence=company_data.cers_confidence,
         risk_details=risk_details,
         interpretation=map_interpretation(level),
-        created_at=company.created_at,
-        updated_at=company.updated_at
+        created_at=company_data.created_at,
+        updated_at=company_data.updated_at,
     )

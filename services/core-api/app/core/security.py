@@ -85,13 +85,13 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
         ) from e
 
 
-def verify_token(token: str) -> dict:
+def verify_token(token: str) -> dict[str, Any]:
     """Перевіряє JWT token."""
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        payload: dict[str, Any] = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         return payload
     except PyJWTError as e:
-        logger.warning(f"JWT verification failed: {e}")
+        logger.warning("JWT verification failed: %s", e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",

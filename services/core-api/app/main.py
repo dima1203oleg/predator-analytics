@@ -1,10 +1,11 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
-from typing import Any
+from typing import Type
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from starlette.responses import Response
 
 from app.config import get_settings
 
@@ -305,9 +306,8 @@ async def liveness_check() -> JSONResponse:
 
 
 @app.get("/metrics", tags=["system"])
-async def metrics() -> Any:
+async def metrics() -> Response:
     """Експозиція Prometheus метрик (§2.7)."""
     from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
-    from starlette.responses import Response
 
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
