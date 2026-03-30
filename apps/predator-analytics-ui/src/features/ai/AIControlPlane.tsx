@@ -1,287 +1,479 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Zap, Brain, Cpu, Activity, ShieldAlert, RefreshCw, 
-  Key, Sliders, Target, BarChart3, Server, Cloud,
-  AlertTriangle, CheckCircle2, XCircle, Gauge, 
-  Thermometer, HardDrive, Network, Settings,
-  ChevronDown, ChevronRight, Power, ToggleLeft, ToggleRight,
+import React, { useCallback, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Activity,
+  AlertCircle,
+  BarChart3,
+  ChevronDown,
+  ChevronRight,
+  Cpu,
+  Gauge,
+  Loader2,
+  Radio,
+  RefreshCw,
+  Server,
+  ShieldAlert,
+  Sparkles,
+  Terminal,
+  Zap,
 } from 'lucide-react';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { Badge } from '@/components/ui/badge';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
+import { cn } from '@/utils/cn';
+import {
+  normalizeAIControlPlaneSnapshot,
+  type AIControlEngineRecord,
+  type AIControlLogRecord,
+  type AIControlMetricCard,
+  type AIControlTone,
+} from './aiControlPlane.utils';
 
-/* ─────── Типи ─────── */
-interface AIService {
-  id: string;
-  name: string;
-  status: 'active' | 'degraded' | 'offline';
-  provider: string;
-  latencyMs: number;
-  requestsPerMin: number;
-  tokensUsed: number;
-  maxTokens: number;
-  model: string;
-  temperature: number;
-  enabled: boolean;
-}
+type TabId = 'engines' | 'governance' | 'logs';
 
-interface SystemMetric {
-  label: string;
-  value: string;
-  change: number;
-  icon: React.ElementType;
-  color: string;
-}
-
-/* ─────── Mock-дані ─────── */
-const mockServices: AIService[] = [
-  { id: 'llm-main', name: 'LLM Primary', status: 'active', provider: 'LiteLLM → Ollama', latencyMs: 245, requestsPerMin: 42, tokensUsed: 1_840_000, maxTokens: 10_000_000, model: 'llama3.1:70b', temperature: 0.3, enabled: true },
-  { id: 'llm-fast', name: 'LLM Fast', status: 'active', provider: 'LiteLLM → Ollama', latencyMs: 89, requestsPerMin: 128, tokensUsed: 3_200_000, maxTokens: 10_000_000, model: 'llama3.1:8b', temperature: 0.1, enabled: true },
-  { id: 'embedding', name: 'Ембедінги', status: 'active', provider: 'Qdrant + BGE-M3', latencyMs: 12, requestsPerMin: 340, tokensUsed: 890_000, maxTokens: 5_000_000, model: 'bge-m3', temperature: 0, enabled: true },
-  { id: 'ner', name: 'NER / Витяг сутностей', status: 'degraded', provider: 'SpaCy + Custom', latencyMs: 156, requestsPerMin: 67, tokensUsed: 420_000, maxTokens: 2_000_000, model: 'uk_core_news_lg', temperature: 0, enabled: true },
-  { id: 'classification', name: 'Класифікація ризиків', status: 'active', provider: 'Custom PyTorch', latencyMs: 34, requestsPerMin: 89, tokensUsed: 0, maxTokens: 0, model: 'risk-classifier-v3', temperature: 0, enabled: true },
-  { id: 'graph-ai', name: 'Graph AI / GDS', status: 'offline', provider: 'Neo4j GDS 2.6', latencyMs: 0, requestsPerMin: 0, tokensUsed: 0, maxTokens: 0, model: 'node2vec + pagerank', temperature: 0, enabled: false },
-];
-
-const mockMetrics: SystemMetric[] = [
-  { label: 'Загальна латентність', value: '127 мс', change: -12, icon: Gauge, color: 'emerald' },
-  { label: 'AI запитів / хв', value: '666', change: 8, icon: Activity, color: 'cyan' },
-  { label: 'Вартість токенів', value: '₴ 0', change: 0, icon: BarChart3, color: 'amber' },
-  { label: 'Температура GPU', value: '62°C', change: 3, icon: Thermometer, color: 'rose' },
-];
-
-/* ─────── Утиліти ─────── */
-const statusConfig = {
-  active: { label: 'Активний', color: 'emerald', icon: CheckCircle2 },
-  degraded: { label: 'Деградація', color: 'amber', icon: AlertTriangle },
-  offline: { label: 'Відключений', color: 'red', icon: XCircle },
-} as const;
-
-const formatNumber = (n: number): string => {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
-  return String(n);
+const toneClasses: Record<AIControlTone, { border: string; panel: string; text: string; badge: string }> = {
+  emerald: {
+    border: 'border-emerald-500/20',
+    panel: 'bg-emerald-500/10',
+    text: 'text-emerald-200',
+    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
+  },
+  amber: {
+    border: 'border-amber-500/20',
+    panel: 'bg-amber-500/10',
+    text: 'text-amber-200',
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
+  },
+  rose: {
+    border: 'border-rose-500/20',
+    panel: 'bg-rose-500/10',
+    text: 'text-rose-200',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+  },
+  sky: {
+    border: 'border-sky-500/20',
+    panel: 'bg-sky-500/10',
+    text: 'text-sky-200',
+    badge: 'border-sky-500/20 bg-sky-500/10 text-sky-100',
+  },
+  slate: {
+    border: 'border-white/10',
+    panel: 'bg-white/5',
+    text: 'text-slate-200',
+    badge: 'border-white/10 bg-white/5 text-slate-200',
+  },
 };
 
-/* ─────── Компоненти ─────── */
-const MetricCard: React.FC<{ metric: SystemMetric }> = ({ metric }) => (
-  <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-5 hover:bg-white/[0.05] transition-all group">
-    <div className="flex items-center justify-between mb-3">
-      <div className={`w-9 h-9 rounded-lg bg-${metric.color}-500/10 border border-${metric.color}-500/20 flex items-center justify-center`}>
-        <metric.icon className={`w-4 h-4 text-${metric.color}-400`} />
-      </div>
-      <span className={`text-xs font-bold ${metric.change > 0 ? 'text-emerald-400' : metric.change < 0 ? 'text-rose-400' : 'text-slate-500'}`}>
-        {metric.change > 0 ? '+' : ''}{metric.change}%
-      </span>
-    </div>
-    <div className="text-2xl font-black text-white mb-1">{metric.value}</div>
-    <div className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">{metric.label}</div>
+const metricIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  engines: Server,
+  score: BarChart3,
+  latency: Gauge,
+  throughput: Activity,
+  services: Radio,
+};
+
+const governanceCards = [
+  {
+    id: 'contract',
+    title: 'Контракт даних',
+    detail: 'Панель використовує лише `/system/engines`, `/system/status`, `/system/stats` і `/system/logs/stream`.',
+  },
+  {
+    id: 'control',
+    title: 'Керування рушіями',
+    detail: 'Підтверджених керувальних маршрутів для локального вмикання, вимикання чи переналаштування рушіїв у цьому контурі немає.',
+  },
+  {
+    id: 'limits',
+    title: 'Межі телеметрії',
+    detail: 'Якщо бекенд не повертає модель, провайдера, токенний бюджет чи температуру, інтерфейс не вигадує ці поля.',
+  },
+];
+
+const EmptyState = ({ title, description }: { title: string; description: string }) => (
+  <div className="flex min-h-[260px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-black/20 px-8 text-center">
+    <AlertCircle className="mb-4 h-10 w-10 text-amber-300" />
+    <div className="text-lg font-black text-white">{title}</div>
+    <div className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">{description}</div>
   </div>
 );
 
-const ServiceCard: React.FC<{ service: AIService; onToggle: (id: string) => void }> = ({ service, onToggle }) => {
-  const [expanded, setExpanded] = useState(false);
-  const status = statusConfig[service.status];
-  const StatusIcon = status.icon;
-  const tokenPercent = service.maxTokens > 0 ? (service.tokensUsed / service.maxTokens) * 100 : 0;
+const MetricCard = ({ metric }: { metric: AIControlMetricCard }) => {
+  const tone = toneClasses[metric.tone];
+  const Icon = metricIcons[metric.id] ?? Activity;
 
   return (
-    <motion.div 
-      layout
-      className="bg-white/[0.03] border border-white/[0.06] rounded-xl overflow-hidden hover:border-white/[0.1] transition-all"
-    >
-      {/* Заголовок сервісу */}
-      <div className="p-4 flex items-center gap-4">
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="text-slate-500 hover:text-white transition-colors"
-        >
-          {expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-        </button>
-
-        <div className={`w-2 h-2 rounded-full bg-${status.color}-500 shadow-[0_0_6px] shadow-${status.color}-500/50`} />
-        
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-white">{service.name}</span>
-            <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded bg-${status.color}-500/10 text-${status.color}-400 border border-${status.color}-500/20 uppercase`}>
-              {status.label}
-            </span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-0.5">{service.provider} · {service.model}</div>
+    <TacticalCard variant="holographic" className={cn('rounded-[30px] border bg-slate-950/50 p-6', tone.border)}>
+      <div className="flex items-start justify-between gap-4">
+        <div className={cn('rounded-[18px] border p-3', tone.border, tone.panel)}>
+          <Icon className={cn('h-5 w-5', tone.text)} />
         </div>
-
-        <div className="flex items-center gap-6 text-right">
-          <div>
-            <div className="text-sm font-bold text-white">{service.latencyMs > 0 ? `${service.latencyMs} мс` : '—'}</div>
-            <div className="text-[10px] text-slate-500 uppercase">Латентність</div>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-white">{service.requestsPerMin > 0 ? `${service.requestsPerMin}/хв` : '—'}</div>
-            <div className="text-[10px] text-slate-500 uppercase">Запитів</div>
-          </div>
-          <button
-            onClick={() => onToggle(service.id)}
-            className={`p-1 transition-colors ${service.enabled ? 'text-emerald-400' : 'text-slate-600'}`}
-            title={service.enabled ? 'Вимкнути' : 'Увімкнути'}
-          >
-            {service.enabled ? <ToggleRight size={24} /> : <ToggleLeft size={24} />}
-          </button>
-        </div>
+        <Badge className={cn('border px-3 py-1 text-[10px] font-black uppercase tracking-widest', tone.badge)}>
+          {metric.label}
+        </Badge>
       </div>
 
-      {/* Розгорнуті деталі */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 pt-0 border-t border-white/[0.04]">
-              <div className="grid grid-cols-4 gap-4 pt-4">
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase block mb-1">Температура</span>
-                  <span className="text-sm font-bold text-white">{service.temperature}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase block mb-1">Модель</span>
-                  <span className="text-sm font-mono text-cyan-400">{service.model}</span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-[10px] text-slate-500 uppercase block mb-1">
-                    Токени: {formatNumber(service.tokensUsed)} / {formatNumber(service.maxTokens)}
-                  </span>
-                  <div className="h-2 bg-white/[0.05] rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full rounded-full transition-all ${tokenPercent > 80 ? 'bg-rose-500' : tokenPercent > 50 ? 'bg-amber-500' : 'bg-emerald-500'}`}
-                      style={{ width: `${Math.min(tokenPercent, 100)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+      <div className="mt-6 space-y-3">
+        <div className={cn('text-4xl font-black tracking-tight', tone.text)}>{metric.value}</div>
+        <div className="text-sm leading-6 text-slate-400">{metric.hint}</div>
+      </div>
+    </TacticalCard>
   );
 };
 
-/* ─────── Головний компонент ─────── */
-const AIControlPlane: React.FC = () => {
-  const [services, setServices] = useState<AIService[]>(mockServices);
-  const [activeTab, setActiveTab] = useState<'services' | 'policies' | 'logs'>('services');
-
-  const handleToggle = (id: string) => {
-    setServices(prev => prev.map(s => 
-      s.id === id ? { ...s, enabled: !s.enabled, status: !s.enabled ? 'active' as const : 'offline' as const } : s
-    ));
-  };
-
-  const activeCount = services.filter(s => s.status === 'active').length;
-  const degradedCount = services.filter(s => s.status === 'degraded').length;
+const EngineCard = ({ engine }: { engine: AIControlEngineRecord }) => {
+  const [expanded, setExpanded] = useState(false);
+  const tone = toneClasses[engine.tone];
 
   return (
-    <div className="space-y-6">
-      {/* Заголовок */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-white flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/20 border border-violet-500/20 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-violet-400" />
-            </div>
-            AI Control Plane
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Центральне управління всіма AI-сервісами платформи PREDATOR
-          </p>
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn('overflow-hidden rounded-[30px] border bg-slate-950/55', tone.border)}
+    >
+      <button
+        type="button"
+        onClick={() => setExpanded((value) => !value)}
+        className="flex w-full items-start gap-4 px-5 py-5 text-left transition hover:bg-white/[0.02]"
+      >
+        <div className={cn('mt-1 rounded-full p-1', tone.panel)}>
+          {expanded ? <ChevronDown className={cn('h-4 w-4', tone.text)} /> : <ChevronRight className={cn('h-4 w-4', tone.text)} />}
         </div>
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            {activeCount} активних
-          </span>
-          {degradedCount > 0 && (
-            <span className="px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              {degradedCount} деградація
-            </span>
-          )}
-        </div>
-      </div>
 
-      {/* Метрики */}
-      <div className="grid grid-cols-4 gap-4">
-        {mockMetrics.map((metric, i) => (
-          <MetricCard key={i} metric={metric} />
-        ))}
-      </div>
-
-      {/* Табки */}
-      <div className="flex items-center gap-1 border-b border-white/[0.06] pb-px">
-        {[
-          { id: 'services' as const, label: 'Сервіси', icon: Server },
-          { id: 'policies' as const, label: 'Політики', icon: ShieldAlert },
-          { id: 'logs' as const, label: 'Журнал', icon: Activity },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all border-b-2 -mb-px ${
-              activeTab === tab.id 
-                ? 'text-white border-amber-500' 
-                : 'text-slate-500 border-transparent hover:text-white'
-            }`}
-          >
-            <tab.icon size={15} />
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Контент */}
-      {activeTab === 'services' && (
-        <div className="space-y-3">
-          {services.map(service => (
-            <ServiceCard key={service.id} service={service} onToggle={handleToggle} />
-          ))}
-        </div>
-      )}
-
-      {activeTab === 'policies' && (
-        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-8 text-center">
-          <ShieldAlert className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-white mb-2">Політики доступу AI</h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
-            Налаштування rate-limit, контексних вікон, фільтрації контенту та бюджетів токенів для кожної ролі.
-          </p>
-        </div>
-      )}
-
-      {activeTab === 'logs' && (
-        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-6">
-          <div className="space-y-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="text-sm font-black uppercase tracking-[0.18em] text-white">{engine.title}</div>
+            <Badge className={cn('border px-3 py-1 text-[10px] font-black uppercase tracking-widest', tone.badge)}>
+              {engine.statusLabel}
+            </Badge>
+          </div>
+          <div className="mt-2 text-xs font-mono uppercase tracking-[0.18em] text-slate-500">{engine.keyLabel}</div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-4">
             {[
-              { time: '14:32:18', level: 'INFO', msg: 'LLM Primary: запит класифікації ризику завершено за 234мс' },
-              { time: '14:31:45', level: 'WARN', msg: 'NER Service: збільшена латентність (156мс → 312мс)' },
-              { time: '14:30:12', level: 'INFO', msg: 'Embedding: пакетна індексація 1,240 документів завершена' },
-              { time: '14:28:55', level: 'ERROR', msg: 'Graph AI: Neo4j GDS 2.6 — з\'єднання втрачено, спроба перепідключення...' },
-              { time: '14:27:30', level: 'INFO', msg: 'LLM Fast: аналіз 48 митних декларацій завершено' },
-            ].map((log, i) => (
-              <div key={i} className="flex items-start gap-3 py-2 border-b border-white/[0.03] last:border-0">
-                <span className="text-[11px] text-slate-600 font-mono shrink-0">{log.time}</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                  log.level === 'ERROR' ? 'bg-rose-500/10 text-rose-400' :
-                  log.level === 'WARN' ? 'bg-amber-500/10 text-amber-400' :
-                  'bg-slate-500/10 text-slate-400'
-                }`}>{log.level}</span>
-                <span className="text-[13px] text-slate-300">{log.msg}</span>
+              { label: 'Бал', value: engine.scoreLabel },
+              { label: 'Потік', value: engine.throughputLabel },
+              { label: 'Затримка', value: engine.latencyLabel },
+              { label: 'Навантаження', value: engine.loadLabel },
+            ].map((item) => (
+              <div key={item.label} className="rounded-[20px] border border-white/5 bg-black/25 px-3 py-3">
+                <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">{item.label}</div>
+                <div className="mt-2 text-sm font-black text-white">{item.value}</div>
               </div>
             ))}
           </div>
         </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-white/5 px-5 py-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-[22px] border border-white/5 bg-black/20 px-4 py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Тренд</div>
+              <div className="mt-2 text-lg font-black text-white">{engine.trendLabel}</div>
+            </div>
+            <div className="rounded-[22px] border border-white/5 bg-black/20 px-4 py-4">
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Примітка</div>
+              <div className="mt-2 text-sm leading-6 text-slate-300">{engine.detailLabel}</div>
+            </div>
+          </div>
+        </div>
       )}
+    </motion.div>
+  );
+};
+
+const LogRow = ({ log }: { log: AIControlLogRecord }) => {
+  const tone = toneClasses[log.tone];
+
+  return (
+    <div className="grid grid-cols-[150px_110px_120px_1fr] gap-4 rounded-[20px] border border-white/5 bg-black/20 px-4 py-3 text-sm">
+      <div className="font-mono text-slate-500">{log.timestampLabel}</div>
+      <div className={cn('font-black uppercase tracking-[0.18em]', tone.text)}>{log.levelLabel}</div>
+      <div className="font-mono text-slate-400">{log.serviceLabel}</div>
+      <div className="leading-6 text-slate-200">{log.message}</div>
     </div>
   );
 };
 
-export default AIControlPlane;
+export default function AIControlPlane() {
+  const backendStatus = useBackendStatus();
+  const [activeTab, setActiveTab] = useState<TabId>('engines');
+  const [enginesPayload, setEnginesPayload] = useState<unknown>(null);
+  const [systemStatus, setSystemStatus] = useState<SystemStatusResponse | null>(null);
+  const [systemStats, setSystemStats] = useState<SystemStatsResponse | null>(null);
+  const [logsPayload, setLogsPayload] = useState<unknown>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const loadData = useCallback(async (silent: boolean = false) => {
+    if (silent) {
+      setRefreshing(true);
+    }
+
+    try {
+      const [enginesResult, statusResult, statsResult, logsResult] = await Promise.allSettled([
+        systemApi.getEngines(),
+        systemApi.getStatus(),
+        systemApi.getStats(),
+        systemApi.getLogs(24),
+      ]);
+
+      setEnginesPayload(enginesResult.status === 'fulfilled' ? enginesResult.value : null);
+      setSystemStatus(statusResult.status === 'fulfilled' ? statusResult.value : null);
+      setSystemStats(statsResult.status === 'fulfilled' ? statsResult.value : null);
+      setLogsPayload(logsResult.status === 'fulfilled' ? logsResult.value : []);
+
+      const failures = [enginesResult, statusResult, statsResult, logsResult].filter((result) => result.status === 'rejected').length;
+
+      if (failures === 4) {
+        setFeedback('Контур керування ШІ не отримав підтверджених даних від системних маршрутів.');
+      } else if (!silent) {
+        setFeedback(null);
+      }
+    } catch (error) {
+      console.error('[AIControlPlane] Не вдалося завантажити дані:', error);
+      setFeedback('Контур керування ШІ не зміг синхронізувати реальні дані з бекендом.');
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadData();
+
+    const interval = window.setInterval(() => {
+      void loadData(true);
+    }, 30000);
+
+    return () => window.clearInterval(interval);
+  }, [loadData]);
+
+  const snapshot = normalizeAIControlPlaneSnapshot(enginesPayload, systemStatus, systemStats, logsPayload);
+
+  return (
+    <PageTransition>
+      <div className="relative min-h-screen overflow-hidden bg-[#030712] pb-20 text-slate-100">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(56,189,248,0.05)" />
+
+        <div className="relative z-10 mx-auto max-w-[1760px] space-y-8 px-4 py-8 sm:px-8 lg:px-12">
+          <ViewHeader
+            title={(
+              <div className="flex items-center gap-5">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-sky-500/20 blur-[48px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-sky-500/20 bg-slate-950/90 shadow-2xl">
+                    <Sparkles className="h-8 w-8 text-sky-300" />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
+                    Контур керування <span className="text-sky-300">ШІ</span>
+                  </div>
+                  <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-sky-200/70">
+                    <Zap size={12} className="animate-pulse" />
+                    Рушії та телеметрія без локальної імітації
+                  </div>
+                </div>
+              </div>
+            )}
+            icon={<Sparkles className="h-5 w-5 text-sky-300" />}
+            breadcrumbs={['PREDATOR', 'ШІ', 'Контур керування']}
+            stats={[
+              {
+                label: 'Рушії',
+                value: snapshot.metrics[0]?.value ?? 'Н/д',
+                icon: <Server size={14} />,
+                color: 'primary',
+              },
+              {
+                label: 'Затримка',
+                value: snapshot.metrics[2]?.value ?? 'Н/д',
+                icon: <Gauge size={14} />,
+                color: 'warning',
+              },
+              {
+                label: 'Сервіси',
+                value: snapshot.metrics[4]?.value ?? 'Н/д',
+                icon: <Radio size={14} />,
+                color: backendStatus.isOffline ? 'danger' : 'success',
+                animate: !backendStatus.isOffline,
+              },
+            ]}
+            actions={(
+              <button
+                type="button"
+                onClick={() => {
+                  void loadData(true);
+                }}
+                disabled={refreshing}
+                className={cn(
+                  'inline-flex items-center justify-center gap-3 rounded-[22px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white/10',
+                  refreshing && 'cursor-not-allowed opacity-60',
+                )}
+              >
+                {refreshing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+                Оновити дані
+              </button>
+            )}
+          />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+              {backendStatus.statusLabel}
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Джерела: /system/engines, /system/status, /system/stats, /system/logs/stream
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Оновлено: {snapshot.lastUpdatedLabel ?? 'Немає підтвердженої синхронізації'}
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Керування рушіями: підтверджених керувальних маршрутів немає
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Джерело бекенду: {backendStatus.sourceLabel}
+            </Badge>
+          </div>
+
+          {feedback && (
+            <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+              {feedback}
+            </div>
+          )}
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
+            {snapshot.metrics.map((metric) => (
+              <MetricCard key={metric.id} metric={metric} />
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-3 rounded-[28px] border border-white/10 bg-slate-950/50 p-3">
+            {[
+              { id: 'engines' as const, label: 'Рушії', icon: Server },
+              { id: 'governance' as const, label: 'Політики', icon: ShieldAlert },
+              { id: 'logs' as const, label: 'Журнал', icon: Terminal },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={cn(
+                  'inline-flex items-center gap-3 rounded-[22px] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] transition',
+                  activeTab === item.id
+                    ? 'bg-sky-400 text-slate-950 shadow-[0_18px_36px_rgba(56,189,248,0.24)]'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                )}
+              >
+                <item.icon size={14} />
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'engines' && (
+            <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
+              <TacticalCard variant="holographic" title="Реєстр рушіїв" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+                {snapshot.engines.length > 0 ? (
+                  <div className="space-y-4">
+                    {snapshot.engines.map((engine) => (
+                      <EngineCard key={engine.id} engine={engine} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    title="Рушії не підтверджені"
+                    description="`/system/engines` не повернув елементів. Панель не домальовує локальний список мовних, векторних чи графових модулів."
+                  />
+                )}
+              </TacticalCard>
+
+              <div className="space-y-6">
+                <TacticalCard variant="holographic" title="Стан контуру" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+                  <div className="space-y-4">
+                    {[
+                      { label: 'Оптимальні', value: String(snapshot.activeCount), tone: 'emerald' as const },
+                      { label: 'Калібрування', value: String(snapshot.degradedCount), tone: 'amber' as const },
+                      { label: 'Недоступні', value: String(snapshot.offlineCount), tone: 'rose' as const },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-[24px] border border-white/10 bg-black/20 px-4 py-4">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{item.label}</div>
+                          <div className={cn('text-2xl font-black', toneClasses[item.tone].text)}>{item.value}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TacticalCard>
+
+                <TacticalCard variant="holographic" title="Висновок" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+                  <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(14,116,144,0.18),rgba(2,6,23,0.92))] p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="rounded-[20px] border border-sky-500/20 bg-sky-500/10 p-3 text-sky-200">
+                        <Cpu className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-lg font-black text-white">
+                          {snapshot.hasAnyData
+                            ? 'Панель показує лише підтверджену телеметрію рушіїв і системи.'
+                            : 'Підтверджених даних для контуру керування зараз немає.'}
+                        </div>
+                        <div className="mt-3 text-sm leading-6 text-slate-300">
+                          Якщо контракт не повертає температуру графічного процесора, токенний бюджет або операційні перемикачі, ці блоки відсутні замість декоративних цифр і локальних тумблерів.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TacticalCard>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'governance' && (
+            <div className="grid gap-6 lg:grid-cols-3">
+              {governanceCards.map((card) => (
+                <TacticalCard key={card.id} variant="holographic" className="rounded-[36px] border-sky-500/20 bg-slate-950/50 p-8">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-[22px] border border-sky-500/20 bg-sky-500/10 p-3 text-sky-200">
+                      <ShieldAlert className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-black uppercase tracking-[0.14em] text-white">{card.title}</div>
+                      <div className="mt-3 text-sm leading-6 text-slate-300">{card.detail}</div>
+                    </div>
+                  </div>
+                </TacticalCard>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'logs' && (
+            <TacticalCard variant="holographic" title="Журнал системного контуру" className="rounded-[40px] border-sky-500/20 bg-slate-950/75 p-0 overflow-hidden">
+              <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
+                Потік підтверджених подій `/system/logs/stream`
+              </div>
+              <div className="max-h-[760px] space-y-3 overflow-y-auto p-6 font-mono">
+                {snapshot.logs.length > 0 ? (
+                  snapshot.logs.map((log) => (
+                    <LogRow key={log.id} log={log} />
+                  ))
+                ) : (
+                  <EmptyState
+                    title="Журнал порожній"
+                    description="`/system/logs/stream` не повернув записів. Панель не генерує локальні INFO, WARN чи ERROR рядки."
+                  />
+                )}
+              </div>
+            </TacticalCard>
+          )}
+        </div>
+      </div>
+    </PageTransition>
+  );
+}

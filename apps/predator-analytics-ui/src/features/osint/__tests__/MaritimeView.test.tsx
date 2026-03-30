@@ -11,6 +11,17 @@ vi.mock('@/services/api/config', () => ({
     },
 }));
 
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        isTruthOnly: true,
+        modeLabel: 'Режим правдивих даних',
+        sourceLabel: 'localhost:9080/api/v1',
+        sourceType: 'local',
+        statusLabel: 'Зʼєднання активне',
+    }),
+}));
+
 vi.mock('@/components/ECharts', () => ({
     default: () => <div data-testid="echarts-mock" />,
 }));
@@ -41,7 +52,7 @@ vi.mock('framer-motion', async () => {
     return {
         ...actual,
         motion: {
-            div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+            div: ({ children, layout, ...props }: any) => <div {...props}>{children}</div>,
             span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
         },
         AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -51,6 +62,7 @@ vi.mock('framer-motion', async () => {
 describe('MaritimeView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        (apiClient.get as any).mockImplementation(() => new Promise(() => {}));
     });
 
     it('повинен рендерити базові елементи інтерфейсу', () => {
@@ -75,7 +87,13 @@ describe('MaritimeView', () => {
     });
 
     it('повинен завантажувати дані при монтуванні', async () => {
-        (apiClient.get as any).mockResolvedValue({ data: { vessels: [], ports: [] } });
+        (apiClient.get as any).mockImplementation((url: string) => {
+            if (url.includes('/vessels')) {
+                return Promise.resolve({ data: { vessels: [] } });
+            }
+
+            return Promise.resolve({ data: { ports: [] } });
+        });
         render(<MaritimeView />);
         
         await waitFor(() => {
@@ -89,7 +107,13 @@ describe('MaritimeView', () => {
             { id: 'v1', name: 'TITANIC', flag: 'UK', type: 'Liner', location: { lat: 0, lon: 0 }, risk_score: 10 },
             { id: 'v2', name: 'AURORA', flag: 'RU', type: 'Cruiser', location: { lat: 0, lon: 0 }, risk_score: 20 }
         ];
-        (apiClient.get as any).mockResolvedValue({ data: { vessels: mockVessels, ports: [] } });
+        (apiClient.get as any).mockImplementation((url: string) => {
+            if (url.includes('/vessels')) {
+                return Promise.resolve({ data: { vessels: mockVessels } });
+            }
+
+            return Promise.resolve({ data: { ports: [] } });
+        });
 
         render(<MaritimeView />);
         
@@ -111,7 +135,13 @@ describe('MaritimeView', () => {
             { id: 'v1', name: 'SAFE SHIP', flag: 'UK', type: 'Cargo', location: { lat: 0, lon: 0 }, risk_score: 10 },
             { id: 'v2', name: 'RISKY SHIP', flag: 'PA', type: 'Tanker', location: { lat: 0, lon: 0 }, risk_score: 95 }
         ];
-        (apiClient.get as any).mockResolvedValue({ data: { vessels: mockVessels, ports: [] } });
+        (apiClient.get as any).mockImplementation((url: string) => {
+            if (url.includes('/vessels')) {
+                return Promise.resolve({ data: { vessels: mockVessels } });
+            }
+
+            return Promise.resolve({ data: { ports: [] } });
+        });
 
         render(<MaritimeView />);
         
@@ -134,7 +164,13 @@ describe('MaritimeView', () => {
                 mmsi: '123456789', imo: 'IMO1234567', speed: 12, destination: 'ODESSA'
             }
         ];
-        (apiClient.get as any).mockResolvedValue({ data: { vessels: mockVessels, ports: [] } });
+        (apiClient.get as any).mockImplementation((url: string) => {
+            if (url.includes('/vessels')) {
+                return Promise.resolve({ data: { vessels: mockVessels } });
+            }
+
+            return Promise.resolve({ data: { ports: [] } });
+        });
 
         render(<MaritimeView />);
         
@@ -153,7 +189,13 @@ describe('MaritimeView', () => {
     });
 
     it('повинен виконувати ручне оновлення даних', async () => {
-        (apiClient.get as any).mockResolvedValue({ data: { vessels: [], ports: [] } });
+        (apiClient.get as any).mockImplementation((url: string) => {
+            if (url.includes('/vessels')) {
+                return Promise.resolve({ data: { vessels: [] } });
+            }
+
+            return Promise.resolve({ data: { ports: [] } });
+        });
         render(<MaritimeView />);
 
         // Find the refresh button - it's the one with the RefreshCw icon (SVG)
@@ -169,5 +211,19 @@ describe('MaritimeView', () => {
             // Should have been called at least once on refresh (total >= 4 because mount calls it twice)
             expect(apiClient.get).toHaveBeenCalledTimes(4);
         });
+    });
+
+    it('не підмінює дані локальним флотом, якщо обидва маршрути недоступні', async () => {
+        (apiClient.get as any).mockRejectedValue(new Error('network error'));
+
+        render(<MaritimeView />);
+
+        expect(await screen.findByText('НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ')).toBeInTheDocument();
+        expect(
+            screen.getByText('Маршрути морського контуру не повернули підтверджених даних. Екран не підмінює їх локальним флотом або портами.'),
+        ).toBeInTheDocument();
+        expect(screen.getByText(/Екран не підставляє локальний флот або порти/i)).toBeInTheDocument();
+        expect(screen.queryByText('SPIRIT OF ODESSA')).not.toBeInTheDocument();
+        expect(screen.queryByText('PHANTOM TRADER')).not.toBeInTheDocument();
     });
 });

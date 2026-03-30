@@ -1,13 +1,13 @@
 /**
- * PREDATOR v55.5 | Prozorro Sovereign Nexus — РЕЄСТР ДЕРЖАВНИХ ЗАКУПІВЕЛЬ
+ * PREDATOR v55.5 | Контур Prozorro — РЕЄСТР ДЕРЖАВНИХ ЗАКУПІВЕЛЬ
  *
  * Антикорупційний моніторинг публічних закупівель у реальному часі.
- * - Prozorro API інтеграція (глибокий OSINT-аналіз)
+ * - Інтеграція з Prozorro API для глибокого ОСІНТ-аналізу
  * - CERS-скорингова оцінка ризику кожного лота
  * - Виявлення підозрілих схем та змов замовників
  * - Трендова аналітика ринку держзакупівель
  *
- * © 2026 PREDATOR Analytics | Anti-Corruption Intelligence Engine
+ * © 2026 PREDATOR Analytics | Антикорупційний аналітичний контур
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -33,66 +33,16 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/lib/utils';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import {
+    normalizeTenderAnalytics,
+    normalizeTendersPayload,
+    type Analytics,
+    type Tender,
+} from './tendersView.utils';
 
 // ========================
-// Types
-// ========================
-interface Tender {
-    id: string;
-    title: string;
-    value: number;
-    currency: string;
-    status: string;
-    procuringEntity: string;
-    date: string;
-    risk_score?: number;
-    category?: string;
-    bids_count?: number;
-}
-
-interface Analytics {
-    total_value: number;
-    avg_risk: number;
-    critical_tenders: number;
-    categories: { name: string; value: number; color: string }[];
-    trends: { date: string; value: number }[];
-}
-
-// ========================
-// Mock fallback
-// ========================
-const MOCK_TENDERS: Tender[] = [
-    { id: 'UA-2024-01-15-000001-a', title: 'Придбання паливно-мастильних матеріалів для потреб Міністерства оборони', value: 18_800_000, currency: 'UAH', status: 'active', procuringEntity: 'Міністерство оборони України', date: '2024-01-15', risk_score: 73, category: 'ПММ', bids_count: 2 },
-    { id: 'UA-2024-01-14-000042-a', title: 'Ремонт автомобільних доріг загального користування', value: 142_600_000, currency: 'UAH', status: 'complete', procuringEntity: 'Держдорслужба Одеської обл.', date: '2024-01-14', risk_score: 88, category: 'Дороги', bids_count: 1 },
-    { id: 'UA-2024-01-13-000078-b', title: 'Медичні вироби та обладнання для закладів охорони здоров\'я', value: 7_200_000, currency: 'UAH', status: 'active', procuringEntity: 'КМДА Департамент охорони здоров\'я', date: '2024-01-13', risk_score: 34, category: 'Медицина', bids_count: 4 },
-    { id: 'UA-2024-01-12-000101-c', title: 'Послуги зв\'язку та телекомунікацій для державних органів', value: 3_500_000, currency: 'UAH', status: 'active', procuringEntity: 'Адміністрація Президента', date: '2024-01-12', risk_score: 56, category: 'ІТ', bids_count: 3 },
-    { id: 'UA-2024-01-10-000089-a', title: 'Будівельні роботи — реконструкція навчального закладу', value: 22_400_000, currency: 'UAH', status: 'unsuccessful', procuringEntity: 'Департамент освіти Харківської ОДА', date: '2024-01-10', risk_score: 91, category: 'Будівництво', bids_count: 1 },
-    { id: 'UA-2024-01-09-000205-a', title: 'Продукти харчування для установ пенітенціарної служби', value: 5_100_000, currency: 'UAH', status: 'active', procuringEntity: 'ДКВС України', date: '2024-01-09', risk_score: 62, category: 'Харчування', bids_count: 2 },
-    { id: 'UA-2024-01-08-000310-b', title: 'Комп\'ютерне обладнання та програмне забезпечення', value: 11_700_000, currency: 'UAH', status: 'active', procuringEntity: 'Мінцифра України', date: '2024-01-08', risk_score: 28, category: 'ІТ', bids_count: 6 },
-    { id: 'UA-2024-01-06-000417-a', title: 'Охоронні послуги державних об\'єктів стратегічного значення', value: 9_300_000, currency: 'UAH', status: 'active', procuringEntity: 'Служба охорони МВС', date: '2024-01-06', risk_score: 45, category: 'Охорона', bids_count: 3 },
-];
-
-const MOCK_ANALYTICS: Analytics = {
-    total_value: 2_870_000_000,
-    avg_risk: 61,
-    critical_tenders: 147,
-    categories: [
-        { name: 'Будівництво', value: 1_200_000_000, color: '#f59e0b' },
-        { name: 'ПММ', value: 680_000_000, color: '#10b981' },
-        { name: 'Медицина', value: 420_000_000, color: '#6366f1' },
-        { name: 'ІТ', value: 320_000_000, color: '#0ea5e9' },
-        { name: 'Дороги', value: 250_000_000, color: '#ec4899' },
-    ],
-    trends: [
-        { date: '01.01', value: 82_000_000 }, { date: '05.01', value: 145_000_000 },
-        { date: '10.01', value: 98_000_000 },  { date: '15.01', value: 220_000_000 },
-        { date: '20.01', value: 170_000_000 }, { date: '25.01', value: 310_000_000 },
-        { date: '30.01', value: 260_000_000 },
-    ],
-};
-
-// ========================
-// Sub-components
+// Допоміжні компоненти
 // ========================
 const RiskBadge: React.FC<{ score: number }> = ({ score }) => {
     const cfg = score >= 80
@@ -137,12 +87,12 @@ const TenderCard: React.FC<{ tender: Tender; idx: number }> = ({ tender, idx }) 
                     isHighRisk && 'border-rose-500/20 hover:border-rose-500/40'
                 )}
             >
-                {/* Corner glow for high risk */}
+                {/* Підсвічування для критичного ризику */}
                 {isHighRisk && (
                     <div className="absolute -top-8 -right-8 w-24 h-24 bg-rose-500/20 rounded-full blur-2xl"/>
                 )}
 
-                {/* Header */}
+                {/* Заголовок картки */}
                 <div className="flex items-start justify-between mb-4 gap-3">
                     <div className={cn(
                         'p-2.5 rounded-xl border transition-all shrink-0 group-hover:scale-110',
@@ -163,12 +113,12 @@ const TenderCard: React.FC<{ tender: Tender; idx: number }> = ({ tender, idx }) 
                     </div>
                 </div>
 
-                {/* Title */}
+                {/* Назва закупівлі */}
                 <h3 className="text-sm font-black text-white uppercase leading-tight mb-3 flex-1 line-clamp-3 group-hover:text-emerald-400 transition-colors">
                     {tender.title}
                 </h3>
 
-                {/* Meta */}
+                {/* Метадані */}
                 <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2">
                         <Building2 size={10} className="text-slate-600 shrink-0"/>
@@ -188,7 +138,7 @@ const TenderCard: React.FC<{ tender: Tender; idx: number }> = ({ tender, idx }) 
                     </div>
                 </div>
 
-                {/* Risk + Value */}
+                {/* Сума та ризик */}
                 <div className="mt-auto pt-4 border-t border-white/5">
                     <div className="flex items-end justify-between mb-3">
                         <div>
@@ -201,7 +151,7 @@ const TenderCard: React.FC<{ tender: Tender; idx: number }> = ({ tender, idx }) 
                         {tender.risk_score !== undefined && <RiskBadge score={tender.risk_score}/>}
                     </div>
 
-                    {/* Risk bar */}
+                    {/* Шкала ризику */}
                     {tender.risk_score !== undefined && (
                         <div className="w-full h-1 bg-slate-900 rounded-full overflow-hidden mb-4">
                             <motion.div
@@ -232,9 +182,10 @@ const TenderCard: React.FC<{ tender: Tender; idx: number }> = ({ tender, idx }) 
 };
 
 // ========================
-// Main Component
+// Основний компонент
 // ========================
 const TendersView: React.FC = () => {
+    const backendStatus = useBackendStatus();
     const [tenders, setTenders]       = useState<Tender[]>([]);
     const [analytics, setAnalytics]   = useState<Analytics | null>(null);
     const [loading, setLoading]       = useState(true);
@@ -242,6 +193,8 @@ const TendersView: React.FC = () => {
     const [search, setSearch]         = useState('');
     const [filterRisk, setFilterRisk] = useState<'all' | 'high' | 'critical'>('all');
     const [liveTime, setLiveTime]     = useState(new Date().toLocaleTimeString('uk'));
+    const [feedback, setFeedback]     = useState<string | null>(null);
+    const [hasConfirmedData, setHasConfirmedData] = useState(false);
 
     useEffect(() => {
         const t = setInterval(() => setLiveTime(new Date().toLocaleTimeString('uk')), 1000);
@@ -251,19 +204,45 @@ const TendersView: React.FC = () => {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const [tendersRes, statsRes] = await Promise.all([
+            const [tendersRes, statsRes] = await Promise.allSettled([
                 apiClient.get('/osint_ua/prozorro/tenders?limit=24'),
                 apiClient.get('/osint_ua/prozorro/stats'),
             ]);
-            if (tendersRes.data?.tenders) {
-                setTenders(tendersRes.data.tenders);
+
+            if (tendersRes.status === 'fulfilled') {
+                setTenders(normalizeTendersPayload(tendersRes.value.data));
+            } else {
+                setTenders([]);
+            }
+
+            if (statsRes.status === 'fulfilled') {
+                setAnalytics(normalizeTenderAnalytics(statsRes.value.data));
+            } else {
+                setAnalytics(null);
+            }
+
+            const failures = [tendersRes, statsRes].filter((result) => result.status === 'rejected').length;
+
+            if (failures === 2) {
+                setFeedback('Маршрути Prozorro не повернули підтверджених даних. Екран не підмінює їх локальними тендерами.');
+                setHasConfirmedData(false);
+                setLastUpdate('');
+            } else if (failures === 1) {
+                setFeedback('Один із маршрутів Prozorro тимчасово не відповів. Показано лише підтверджені дані, які вдалося отримати.');
+                setHasConfirmedData(true);
+                setLastUpdate(new Date().toLocaleTimeString('uk'));
+            } else {
+                setFeedback(null);
+                setHasConfirmedData(true);
                 setLastUpdate(new Date().toLocaleTimeString('uk'));
             }
-            if (statsRes.data?.analytics) setAnalytics(statsRes.data.analytics);
-        } catch {
-            setTenders(MOCK_TENDERS);
-            setAnalytics(MOCK_ANALYTICS);
-            setLastUpdate(new Date().toLocaleTimeString('uk'));
+        } catch (error) {
+            console.error('[TendersView] Не вдалося завантажити дані Prozorro:', error);
+            setFeedback('Під час синхронізації з Prozorro сталася помилка. Демонстраційний фолбек вимкнено.');
+            setTenders([]);
+            setAnalytics(null);
+            setHasConfirmedData(false);
+            setLastUpdate('');
         } finally {
             setLoading(false);
         }
@@ -280,7 +259,6 @@ const TendersView: React.FC = () => {
         return matchSearch && matchRisk;
     }), [tenders, search, filterRisk]);
 
-    const totalValue = useMemo(() => tenders.reduce((s, t) => s + t.value, 0), [tenders]);
     const criticalCount = useMemo(() => tenders.filter(t => (t.risk_score ?? 0) >= 80).length, [tenders]);
     const singleBidCount = useMemo(() => tenders.filter(t => (t.bids_count ?? 0) <= 1).length, [tenders]);
 
@@ -292,23 +270,32 @@ const TendersView: React.FC = () => {
                 <CyberOrb color="cyan" size="xl" intensity="low" className="top-1/3 right-0 opacity-8"/>
                 <CyberOrb color="purple" size="lg" intensity="low" className="bottom-1/4 left-0 opacity-6"/>
 
-                {/* Header — v55.5 */}
+                {/* Заголовок контуру */}
                 <div className="relative mb-10">
                     <ViewHeader
                         title="РЕЄСТР ЗАКУПІВЕЛЬ"
                         icon={<Landmark className="text-emerald-400"/>}
                         breadcrumbs={['ОСІНТ', 'PROZORRO', 'АНТИКОРУПЦІЙНИЙ МОНІТОРИНГ']}
                         stats={[
-                            { label: 'Лотів у базі', value: `${tenders.length}`, icon: <Database/>, color: 'primary' },
-                            { label: 'Критичних', value: `${criticalCount}`, icon: <ShieldAlert/>, color: 'danger' },
-                            { label: 'Один учасник', value: `${singleBidCount}`, icon: <Flag/>, color: 'warning' },
+                            { label: 'Лотів у видачі', value: hasConfirmedData ? `${tenders.length}` : 'Н/д', icon: <Database/>, color: 'primary' },
+                            { label: 'Критичних', value: analytics ? `${analytics.critical_tenders}` : hasConfirmedData ? `${criticalCount}` : 'Н/д', icon: <ShieldAlert/>, color: 'danger' },
+                            { label: 'Один учасник', value: hasConfirmedData ? `${singleBidCount}` : 'Н/д', icon: <Flag/>, color: 'warning' },
                         ]}
                     />
                     <div className="mt-4 flex items-center gap-3 px-2">
+                        <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? 'border-rose-500/20 bg-rose-500/10 text-rose-100' : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100')}>
+                            {backendStatus.statusLabel}
+                        </Badge>
+                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                            Джерела: /osint_ua/prozorro/tenders, /osint_ua/prozorro/stats
+                        </Badge>
+                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                            Джерело бекенду: {backendStatus.sourceLabel}
+                        </Badge>
                         <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-full border border-slate-800">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"/>
                             <span className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
-                                PROZORRO_INTEL_ONLINE // ОНОВЛЕНО: {lastUpdate || '...'} // {liveTime}
+                                КОНТУР PROZORRO // ПІДТВЕРДЖЕНО: {lastUpdate || 'Н/Д'} // {liveTime}
                             </span>
                         </div>
                         <button
@@ -321,7 +308,13 @@ const TendersView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Analytics cockpit */}
+                {feedback && (
+                    <div className="mb-8 rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+                        {feedback}
+                    </div>
+                )}
+
+                {/* Аналітична панель */}
                 <AnimatePresence>
                     {analytics && (
                         <motion.div
@@ -329,12 +322,12 @@ const TendersView: React.FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="grid grid-cols-12 gap-6 mb-10"
                         >
-                            {/* KPI row */}
+                            {/* Ряд ключових показників */}
                             {[
-                                { label: 'ЗАГАЛЬНИЙ ОБСЯГ', value: `${(totalValue / 1_000_000_000).toFixed(1)} млрд ₴`, icon: DollarSign, cls: 'text-emerald-400', border: 'border-emerald-500/20' },
+                                { label: 'ЗАГАЛЬНИЙ ОБСЯГ', value: `${(analytics.total_value / 1_000_000_000).toFixed(1)} млрд ₴`, icon: DollarSign, cls: 'text-emerald-400', border: 'border-emerald-500/20' },
                                 { label: 'СЕРЕДНІЙ РИЗИК', value: `${analytics.avg_risk}%`, icon: ShieldAlert, cls: 'text-rose-400', border: 'border-rose-500/20' },
                                 { label: 'КРИТИЧНИХ ЛОТІВ', value: analytics.critical_tenders, icon: AlertTriangle, cls: 'text-amber-400', border: 'border-amber-500/20' },
-                                { label: 'ТЕНДЕРІВ ЗАГАЛОМ', value: tenders.length, icon: FileText, cls: 'text-sky-400', border: 'border-sky-500/20' },
+                                { label: 'ЗАПИСІВ У ВИДАЧІ', value: tenders.length, icon: FileText, cls: 'text-sky-400', border: 'border-sky-500/20' },
                             ].map((kpi, i) => (
                                 <motion.div key={kpi.label} className="col-span-6 md:col-span-3"
                                     initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.07 }}>
@@ -348,7 +341,7 @@ const TendersView: React.FC = () => {
                                 </motion.div>
                             ))}
 
-                            {/* Trend chart */}
+                            {/* Динаміка обсягів */}
                             <div className="col-span-12 lg:col-span-8">
                                 <TacticalCard variant="holographic" className="p-6 h-full">
                                     <div className="flex items-center gap-3 mb-5">
@@ -382,7 +375,7 @@ const TendersView: React.FC = () => {
                                 </TacticalCard>
                             </div>
 
-                            {/* Category breakdown */}
+                            {/* Розподіл за категоріями */}
                             <div className="col-span-12 lg:col-span-4">
                                 <TacticalCard variant="cyber" className="p-6 h-full border-white/5">
                                     <div className="flex items-center gap-3 mb-5">
@@ -390,9 +383,9 @@ const TendersView: React.FC = () => {
                                         <h4 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">КАТЕГОРІЇ</h4>
                                     </div>
                                     <div className="space-y-4">
-                                        {analytics.categories.map(cat => {
-                                            const max = analytics.categories[0].value;
-                                            const pct = Math.round((cat.value / max) * 100);
+                                        {analytics.categories.map((cat) => {
+                                            const max = analytics.categories[0]?.value ?? 0;
+                                            const pct = max > 0 ? Math.round((cat.value / max) * 100) : 0;
                                             return (
                                                 <div key={cat.name} className="flex flex-col gap-1">
                                                     <div className="flex justify-between text-[9px] font-black uppercase">
@@ -418,7 +411,7 @@ const TendersView: React.FC = () => {
                     )}
                 </AnimatePresence>
 
-                {/* Filters */}
+                {/* Фільтри */}
                 <div className="z-10 flex items-center gap-4 flex-wrap mb-8">
                     <div className="relative flex-1 min-w-48 group">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within:text-emerald-400 transition-colors"/>
@@ -455,7 +448,7 @@ const TendersView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Tender Cards */}
+                {/* Картки тендерів */}
                 <div>
                     {loading && tenders.length === 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -466,7 +459,14 @@ const TendersView: React.FC = () => {
                     ) : filtered.length === 0 ? (
                         <div className="py-20 flex flex-col items-center text-center">
                             <Search size={48} className="text-slate-700 mb-4"/>
-                            <p className="text-slate-600 font-black uppercase tracking-widest">РЕЗУЛЬТАТІВ НЕ ЗНАЙДЕНО</p>
+                            <p className="text-slate-600 font-black uppercase tracking-widest">
+                                {hasConfirmedData ? 'РЕЗУЛЬТАТІВ НЕ ЗНАЙДЕНО' : 'НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ'}
+                            </p>
+                            {!hasConfirmedData && (
+                                <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500">
+                                    Екран не підставляє локальні лоти або аналітику, якщо бекенд не повернув відповіді з Prozorro.
+                                </p>
+                            )}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

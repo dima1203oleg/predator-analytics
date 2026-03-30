@@ -1,613 +1,672 @@
 /**
- * PREDATOR v55.5 | Industrial Sovereign Nexus — ЗАВОД: Когнітивна Система Самовдосконалення
- * 
- * Потужний центр автономного синтезу, де дані перетворюються на код.
- * - Інтеграція з AZR Cortex для автоматичного виправлення багів
- * - Візуалізація циклу OODA (Observe, Orient, Decide, Act)
- * - Матриця тактичних патчів та згода Ради Арбітражу
- * - Живий потік ядра системи (Kernel live stream)
- * 
- * © 2026 PREDATOR Analytics | Autonomous Self-Improvement
+ * Робочий центр автономного вдосконалення.
+ *
+ * Екран більше не симулює OODA-цикл локально:
+ * - /api/v1/factory/infinite/status
+ * - /api/v1/factory/bugs
+ * - /api/v1/factory/patterns/gold
+ * - /api/v1/factory/stats
+ * - /api/v1/factory/logs
+ * - /api/v1/system/status
+ * - /api/v1/system/stats
  */
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Factory, Activity, Brain, CheckCircle, ChevronRight, 
-    Clock, Code2, Cpu, Flame, GitMerge, HardDrive, 
-    Layers, Lock, Play, RefreshCw, Scale, Shield, 
-    Sparkles, Terminal, TrendingUp, Wrench, XCircle, 
-    Zap, ShieldCheck, Dna, Network, Database, Binary, Search,
-    Pause, AlertTriangle, Eye, Target, Star, BrainCircuit, PowerOff
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  Activity,
+  AlertCircle,
+  Binary,
+  BrainCircuit,
+  CheckCircle2,
+  Factory,
+  Loader2,
+  Pause,
+  Play,
+  RefreshCw,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  Terminal,
+  TrendingUp,
+  Wrench,
+  Zap,
 } from 'lucide-react';
-import { api } from '@/services/api';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { CyberOrb } from '@/components/CyberOrb';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { factoryApi } from '@/services/api/factory';
+import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
 import { cn } from '@/utils/cn';
-
-// ========================
-// Mock Data & Templates
-// ========================
-
-const LOG_TEMPLATES = [
-    { level: 'INFO', text: 'AZR CORTEX → Ініціалізація когнітивного циклу OODA v55.5' },
-    { level: 'INFO', text: 'AUTO-AGENT → Сканування системної архітектури на дефекти...' },
-    { level: 'OK', text: 'SSH → Захищений тунель активовано (194.177.1.240:6666)' },
-    { level: 'INFO', text: 'Docker → Синхронізація мікросервісів (Core, Ingestion, Analytics)...' },
-    { level: 'OK', text: 'API → Стан здоров\'я вузлів: 100% (200 OK)' },
-    { level: 'INFO', text: 'TECH_SPEC → Завантаження пріоритетів v55.5: Neural Synthesis & Speed' },
-    { level: 'WARN', text: 'Latency P99 = 242ms (Поріг < 200ms) → Запуск автономного виправлення' },
-    { level: 'INFO', text: 'Гіпотеза Г08: Асинхронне кешування результатів семантичного пошуку' },
-    { level: 'OK', text: 'Рада Безпеки → Консенсус досягнуто (4/5). Схвалено: Security, Perf, Stability.' },
-    { level: 'INFO', text: 'Синтезований патч розгортається на кластері NVIDIA H100...' },
-    { level: 'OK', text: 'Деплой завершено. Нова затримка P99 = 176ms. Результат стабільний.' },
-    { level: 'INFO', text: 'Merkle Truth Ledger → Блок #91,482 запечатано (hash: a3f8d...)' },
-    { level: 'OK', text: 'Цикл OODA #1,542 завершено. Нове покоління: v56.0-alpha' },
-    { level: 'INFO', text: 'Наступна системна оцінка через 1г 45хв...' },
-];
+import {
+  normalizeAutoFactorySnapshot,
+  type AutoFactoryBugRecord,
+  type AutoFactoryEngineRecord,
+  type AutoFactoryLogRecord,
+  type AutoFactoryMetricCard,
+  type AutoFactoryReliabilityBar,
+  type AutoFactoryTone,
+} from './autoFactoryView.utils';
 
 const AXIOMS = [
-    { code: 'AX-09', name: 'Контрольована Еволюція', detail: 'Обмеження швидкості змін та багаторівневе схвалення' },
-    { code: 'AX-10', name: 'Незмінність Ядра', detail: 'Критичні стани системи захищені від автоматичних змін' },
-    { code: 'AX-11', name: 'Криптографічний Слід', detail: 'Merkle Truth Ledger фіксує кожен крок автономного агента' },
-    { code: 'AX-12', name: 'Колективний Розум', detail: 'Обов\'язковий консенсус Ради Безпеки (мінімум 3/5)' },
-    { code: 'AX-15', name: 'Цифровий Суверенітет', detail: 'Локальне виконання, Python 3.12, повна українізація' },
-    { code: 'AX-16', name: 'Рефлексивне Навчання', detail: 'Кожна помилка стає основою для нових правил безпеки' },
+  {
+    code: 'AX-09',
+    title: 'Контрольована еволюція',
+    detail: 'Будь-який автономний цикл повинен мати підтверджений серверний стан і бути відтворюваним у журналах.',
+  },
+  {
+    code: 'AX-10',
+    title: 'Незмінність ядра',
+    detail: 'Критичні компоненти не змінюються локальним інтерфейсом без окремого керувального маршруту.',
+  },
+  {
+    code: 'AX-12',
+    title: 'Колективний розум',
+    detail: 'Рішення про виправлення спирається на реальну телеметрію, чергу багів і підтверджені сервером артефакти узгодження.',
+  },
+  {
+    code: 'AX-15',
+    title: 'Цифровий суверенітет',
+    detail: 'Контур не використовує вигадані SaaS або фальшиві хмарні інтеграції замість реального контракту.',
+  },
 ];
 
-const AGENTS = [
-    { name: 'Страж П', label: 'security_expert', icon: ShieldCheck, color: 'rose', active: true },
-    { name: 'Інженер Т', label: 'perf_engineer', icon: Cpu, color: 'sky', active: true },
-    { name: 'Арбітр Е', label: 'ethics_compliance', icon: Scale, color: 'indigo', active: true },
-    { name: 'Сенсор С', label: 'stability_analyst', icon: Activity, color: 'emerald', active: true },
-    { name: 'Юрист К', label: 'constitutional_lawyer', icon: Lock, color: 'amber', active: false },
-];
-
-// ========================
-// Main Component
-// ========================
-
-const AutoFactoryView: React.FC = () => {
-    const [tab, setTab] = useState<'pipeline' | 'fixes' | 'axioms' | 'terminal'>('pipeline');
-    const [logs, setLogs] = useState<any[]>([]);
-    const [isRunning, setIsRunning] = useState(true);
-    const [generation, setGeneration] = useState(55);
-    const [cycle, setCycle] = useState(1542);
-    const [successRate, setSuccessRate] = useState(94.2);
-    const logIndexRef = useRef(0);
-    const logsEndRef = useRef<HTMLDivElement>(null);
-
-    const [pipeline, setPipeline] = useState<any[]>([
-        { id: 'observe', label: 'Спостереження', status: 'done', icon: Search, color: 'slate', detail: 'Метрики зібрано' },
-        { id: 'orient', label: 'Орієнтація', status: 'done', icon: Brain, color: 'sky', detail: 'Аналіз контексту' },
-        { id: 'decide', label: 'Дизайн Рішення', status: 'active', icon: Zap, color: 'amber', detail: 'Синтез патчу...' },
-        { id: 'act', label: 'Впровадження', status: 'pending', icon: Wrench, color: 'emerald', detail: '' },
-        { id: 'reflect', label: 'Рефлексія', status: 'pending', icon: TrendingUp, color: 'indigo', detail: '' },
-    ]);
-
-    const [fixes, setFixes] = useState<any[]>([
-        { id: 'f1', title: 'Оптимізація кешування API Gateway', component: 'api_gateway', type: 'performance', impact: '35% зниження латентності', risk: 'low', status: 'done', council: 5, progress: 100 },
-        { id: 'f2', title: 'Гібридний індекс HNSW+IVF', component: 'vector_db', type: 'algorithmic', impact: '25% прискорення пошуку', risk: 'medium', status: 'running', council: 4, progress: 68 },
-        { id: 'f3', title: 'Рефакторинг ETL-запитів PostgreSQL', component: 'etl_pipeline', type: 'code_quality', impact: '18% менше CPU', risk: 'low', status: 'queued', council: 0 },
-        { id: 'f4', title: 'Система динамічного Rate-limiting', component: 'auth_service', type: 'security', impact: 'Захист від DDoS-атак', risk: 'high', status: 'queued', council: 0 },
-    ]);
-
-    useEffect(() => {
-        if (!isRunning) return;
-        const interval = setInterval(() => {
-            const template = LOG_TEMPLATES[logIndexRef.current % LOG_TEMPLATES.length];
-            logIndexRef.current++;
-            setLogs(prev => [...prev.slice(-80), {
-                id: `${Date.now()}-${Math.random()}`,
-                ts: new Date().toLocaleTimeString('uk-UA', { hour12: false }),
-                level: template.level,
-                text: template.text,
-            }]);
-        }, 2000);
-        return () => clearInterval(interval);
-    }, [isRunning]);
-
-    useEffect(() => {
-        if (!isRunning) return;
-        const interval = setInterval(() => {
-            setPipeline(prev => {
-                const active = prev.findIndex(p => p.status === 'active');
-                if (active === -1 || active === prev.length - 1) {
-                    setCycle(c => c + 1);
-                    setGeneration(g => g + (Math.random() > 0.9 ? 1 : 0));
-                    setSuccessRate(r => Math.min(99.8, r + (Math.random() > 0.8 ? 0.1 : 0)));
-                    return prev.map((p, i) => ({
-                        ...p,
-                        status: i === 0 ? 'active' : 'pending',
-                        detail: i === 0 ? 'Спостереження активовано' : ''
-                    }));
-                }
-                return prev.map((p, i) => ({
-                    ...p,
-                    status: i < active ? 'done' : i === active + 1 ? 'active' : i > active + 1 ? 'pending' : 'done',
-                    detail: i === active + 1 ? 'Обробка на етапі ' + p.label : p.detail
-                }));
-            });
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [isRunning]);
-
-    useEffect(() => {
-        if (!isRunning) return;
-        const interval = setInterval(() => {
-            setFixes(prev => prev.map(f => {
-                if (f.status === 'running') {
-                    const newProg = Math.min(100, (f.progress || 0) + Math.floor(Math.random() * 5 + 1));
-                    return { ...f, progress: newProg, status: newProg >= 100 ? 'done' : 'running', council: newProg >= 100 ? 5 : f.council };
-                }
-                return f;
-            }));
-        }, 1500);
-        return () => clearInterval(interval);
-    }, [isRunning]);
-
-    useEffect(() => {
-        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [logs]);
-
-    const triggerManualCycle = useCallback(() => {
-        setLogs(prev => [...prev, { id: `${Date.now()}`, ts: new Date().toLocaleTimeString(), level: 'INFO', text: '⚡ Ручний запуск когнітивного циклу OODA — Примусово... ' }]);
-    }, []);
-
-    return (
-        <PageTransition>
-            <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-32">
-                <AdvancedBackground />
-                <CyberGrid color="rgba(249, 115, 22, 0.05)" />
-
-                <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
-                    
-                    {/* View Header v55.5 */}
-                    <ViewHeader
-                        title={
-                            <div className="flex items-center gap-8">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-orange-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
-                                    <div className="relative w-16 h-16 bg-slate-900 border border-orange-500/20 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Factory size={32} className="text-orange-400 drop-shadow-[0_0_15px_rgba(249, 115, 22, 0.8)]" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        INDUSTRIAL <span className="text-orange-400">NEXUS</span>
-                                    </h1>
-                                    <p className="text-[10px] font-mono font-black text-orange-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                        <Sparkles size={12} className="animate-pulse" /> 
-                                        SELF_EVOLUTION_ENGINE_v55.5
-                                    </p>
-                                </div>
-                            </div>
-                        }
-                        icon={<Factory size={22} className="text-orange-400" />}
-                        breadcrumbs={['ЦИТАДЕЛЬ', 'АВТОНОМНИЙ_ЗАВОД', 'СИНТЕЗ']}
-                        stats={[
-                            { label: 'СТАТУС_ЯДРА', value: isRunning ? 'АКТИВНИЙ' : 'ПАУЗА', color: isRunning ? 'success' : 'warning', icon: <Activity size={14} />, animate: isRunning },
-                            { label: 'ПОКОЛІННЯ', value: `v${generation}.5`, color: 'primary', icon: <GitMerge size={14} /> },
-                            { label: 'ЦИКЛ_OODA', value: `#${cycle}`, color: 'primary', icon: <RefreshCw size={14} /> }
-                        ]}
-                    />
-
-                    {/* KPI Matrix */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                        {[
-                            { label: 'ЕВОЛЮЦІЙНИЙ СТАРТ', value: cycle, sub: 'Циклів OODA', icon: GitMerge, color: 'indigo' },
-                            { label: 'КОЕФІЦІЄНТ УСПІХУ', value: `${successRate}%`, sub: 'Адаптивність', icon: CheckCircle, color: 'emerald' },
-                            { label: 'КРИТИЧНІ ПАТЧІ', value: fixes.filter(f => f.status === 'running').length, sub: 'Обробка зараз', icon: Wrench, color: 'orange' },
-                            { label: 'БАЗА ЗНАНЬ', value: '1,42к', sub: 'Записів у Ledger', icon: Database, color: 'sky' },
-                            { label: 'АКСІОМИ', value: '12/12', sub: 'Дотримано', icon: ShieldCheck, color: 'rose' },
-                        ].map((m, idx) => (
-                            <TacticalCard key={idx} variant="holographic" className="p-8 panel-3d border-white/5 bg-slate-900/40 relative group overflow-hidden">
-                                <div className={cn(`absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity text-${m.color}-500`)}>
-                                    <m.icon size={100} />
-                                </div>
-                                <div className="space-y-4 relative z-10">
-                                    <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase">{m.label}</p>
-                                    <h3 className="text-4xl font-black tracking-tighter text-white italic">{m.value}</h3>
-                                    <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">{m.sub}</p>
-                                </div>
-                                <div className={cn(`absolute bottom-0 left-0 w-full h-1 bg-${m.color}-500/20`)} />
-                            </TacticalCard>
-                        ))}
-                    </div>
-
-                    {/* Navigation Tabs */}
-                    <div className="flex flex-wrap gap-4 p-2 bg-slate-900/60 backdrop-blur-3xl rounded-[32px] border border-white/5 w-fit">
-                        {[
-                            { id: 'pipeline', label: 'НЕЙРОННИЙ КОНВЕЄР', icon: Network },
-                            { id: 'fixes', label: 'МАТРИЦЯ ПАТЧІВ', icon: Binary },
-                            { id: 'axioms', label: 'КОНСТИТУЦІЯ AZR', icon: Shield },
-                            { id: 'terminal', label: 'ПОТІК ЯДРА', icon: Terminal },
-                        ].map(t => (
-                            <button
-                                key={t.id}
-                                onClick={() => setTab(t.id as any)}
-                                className={cn(
-                                    "flex items-center gap-4 px-8 py-4 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] transition-all",
-                                    tab === t.id ? "bg-orange-500 text-white shadow-2xl shadow-orange-900/40" : "text-slate-500 hover:text-white hover:bg-white/5"
-                                )}
-                            >
-                                <t.icon size={16} /> {t.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Content Area */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                        <div className="lg:col-span-8 space-y-12">
-                            <AnimatePresence mode="wait">
-                                {tab === 'pipeline' && (
-                                    <motion.div key="pipeline" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="space-y-12">
-                                        <TacticalCard variant="holographic" title="АРХІТЕКТУРА КОГНІТИВНОГО ЦИКЛУ" className="p-16 bg-orange-500/[0.01] border-orange-500/20 rounded-[60px] panel-3d">
-                                            <div className="py-12 relative flex items-center justify-between gap-4">
-                                                <div className="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-orange-500/0 via-orange-500/20 to-orange-500/0 -translate-y-1/2" />
-
-                                                {pipeline.map((stage, i) => {
-                                                    const Icon = stage.icon;
-                                                    const isActive = stage.status === 'active';
-                                                    const isDone = stage.status === 'done';
-
-                                                    return (
-                                                        <div key={stage.id} className="relative z-10 flex flex-col items-center gap-6 flex-1">
-                                                            <motion.div
-                                                                className={cn(
-                                                                    "w-24 h-24 rounded-[32px] flex items-center justify-center border-2 transition-all relative overflow-hidden panel-3d",
-                                                                    isActive ? "bg-orange-950/40 border-orange-500 shadow-[0_0_40px_rgba(249,115,22,0.4)] scale-125" :
-                                                                        isDone ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" : "bg-slate-900 border-white/5 opacity-30"
-                                                                )}
-                                                                animate={isActive ? { scale: [1.25, 1.35, 1.25] } : {}}
-                                                                transition={{ repeat: Infinity, duration: 2 }}
-                                                            >
-                                                                <Icon size={36} className={isActive ? "text-orange-400" : isDone ? "text-emerald-400" : "text-slate-500"} />
-                                                                {isDone && (
-                                                                    <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-black p-1.5 rounded-full shadow-2xl border-4 border-slate-900">
-                                                                        <CheckCircle size={14} />
-                                                                    </div>
-                                                                )}
-                                                            </motion.div>
-                                                            <div className="text-center">
-                                                                <p className={cn("text-[11px] font-black uppercase tracking-[0.3em] italic", isActive ? "text-orange-400" : isDone ? "text-emerald-400" : "text-slate-600")}>
-                                                                    {stage.label}
-                                                                </p>
-                                                                <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">{stage.detail}</p>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        </TacticalCard>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                            <TacticalCard variant="holographic" title="РАДА АРБІТРАЖУ AZR" className="p-10 panel-3d border-white/5 bg-slate-950/40 rounded-[60px]">
-                                                <div className="space-y-6">
-                                                    {AGENTS.map((agent, i) => (
-                                                        <div key={i} className="flex items-center gap-6 p-5 bg-white/5 rounded-[32px] border border-white/5 hover:border-orange-500/20 transition-all panel-3d group">
-                                                            <div className={cn(`p-4 rounded-2xl bg-slate-900 border border-white/10 group-hover:border-${agent.color}-500/30`, `text-${agent.color}-400`)}>
-                                                                <agent.icon size={24} />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                <p className="text-sm font-black text-white uppercase tracking-tighter italic">{agent.name}</p>
-                                                                <p className="text-[10px] text-slate-500 font-mono tracking-widest mt-1 uppercase">AGENT_PROV_{agent.label}</p>
-                                                            </div>
-                                                            <div className="flex items-center gap-4">
-                                                                <motion.div
-                                                                    className={cn("w-3 h-3 rounded-full", agent.active ? "bg-emerald-500 shadow-[0_0_15px_#10b981]" : "bg-slate-700")}
-                                                                    animate={agent.active ? { scale: [1, 1.4, 1] } : {}}
-                                                                    transition={{ repeat: Infinity, duration: 2 }}
-                                                                />
-                                                                <span className={cn("text-[9px] font-black uppercase tracking-widest opacity-60", agent.active ? "text-emerald-400" : "text-slate-600")}>
-                                                                    {agent.active ? 'ACTIVE' : 'IDLE'}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </TacticalCard>
-
-                                            <TacticalCard variant="holographic" title="НЕЙРОННЕ ЯДРО СИНТЕЗУ" className="p-0 panel-3d flex items-center justify-center overflow-hidden relative min-h-[400px] border-orange-500/20 bg-slate-950/40 rounded-[60px]">
-                                                <CyberOrb
-                                                    size={280}
-                                                    color="#f97316"
-                                                    intensity={0.8}
-                                                    pulse={isRunning}
-                                                />
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                                    <div className="text-[10px] font-black text-orange-500/40 uppercase tracking-[0.6em] mb-4">SYNTHESIS_FLUX</div>
-                                                    <div className="text-4xl font-black text-white font-mono italic tracking-tighter opacity-80">{generation}.{cycle % 100}</div>
-                                                </div>
-                                                <div className="absolute bottom-8 text-[9px] font-black text-slate-600 uppercase tracking-[0.4em]">PREDATOR_CORE_V55.5</div>
-                                            </TacticalCard>
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {tab === 'fixes' && (
-                                    <motion.div key="fixes" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} className="space-y-8">
-                                        <div className="grid grid-cols-1 gap-8">
-                                            {fixes.map((fix, i) => (
-                                                <TacticalCard key={i} variant="holographic" className="p-10 panel-3d group border-white/5 bg-slate-900/40 rounded-[48px]">
-                                                    <div className="flex flex-col md:flex-row items-center gap-10">
-                                                        <div className={cn(
-                                                            "w-20 h-20 rounded-[32px] flex items-center justify-center border-2 shrink-0 transition-all group-hover:scale-110 shadow-2xl",
-                                                            fix.status === 'done' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" :
-                                                                fix.status === 'running' ? "bg-sky-500/10 border-sky-500/30 text-sky-400" : "bg-slate-800 border-white/10 text-slate-500"
-                                                        )}>
-                                                            {fix.type === 'performance' ? <Zap size={32} /> : fix.type === 'algorithmic' ? <Dna size={32} /> : <Code2 size={32} />}
-                                                        </div>
-                                                        <div className="flex-1 space-y-4">
-                                                            <div className="flex items-center gap-6">
-                                                                <h4 className="text-2xl font-black text-white uppercase tracking-tight italic">{fix.title}</h4>
-                                                                <Badge className={cn(
-                                                                    "font-black text-[10px] px-4 py-1 italic border-none",
-                                                                    fix.status === 'done' ? "bg-emerald-600 text-black" :
-                                                                        fix.status === 'running' ? "bg-sky-600 text-black animate-pulse" : "bg-slate-700 text-slate-400"
-                                                                )}>
-                                                                    {fix.status.toUpperCase()}
-                                                                </Badge>
-                                                            </div>
-                                                            <div className="flex flex-wrap gap-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic">
-                                                                <span className="flex items-center gap-2"><Target size={12} /> ЦІЛЬ: <span className="text-white">{fix.component}</span></span>
-                                                                <span className="flex items-center gap-2"><TrendingUp size={12} /> ВПЛИВ: <span className="text-emerald-400">{fix.impact}</span></span>
-                                                                <span className="flex items-center gap-2"> РИЗИК: <span className={cn(fix.risk === 'high' ? "text-rose-500" : fix.risk === 'medium' ? "text-amber-500" : "text-emerald-500")}>{fix.risk.toUpperCase()}</span></span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-right shrink-0">
-                                                            <div className="text-4xl font-black text-orange-500 tracking-tighter italic leading-none">{fix.council}/5</div>
-                                                            <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-2 italic">CONCENSUS</div>
-                                                        </div>
-                                                    </div>
-                                                    {fix.status === 'running' && (
-                                                        <div className="mt-10 space-y-4">
-                                                            <div className="flex justify-between text-[11px] font-black text-slate-500 tracking-[0.4em] uppercase">
-                                                                <span>СИНТЕЗ ПАТЧУ...</span>
-                                                                <span className="text-sky-400">{fix.progress}%</span>
-                                                            </div>
-                                                            <div className="h-2 bg-slate-950 rounded-full overflow-hidden border border-white/5 relative">
-                                                                <motion.div
-                                                                    className="h-full bg-gradient-to-r from-sky-600 to-indigo-600 rounded-full shadow-[0_0_20px_rgba(14,165,233,0.5)]"
-                                                                    initial={{ width: 0 }}
-                                                                    animate={{ width: `${fix.progress}%` }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </TacticalCard>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {tab === 'axioms' && (
-                                    <motion.div key="axioms" initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="space-y-12">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                            {AXIOMS.map((ax, i) => (
-                                                <TacticalCard key={i} variant="holographic" className="p-10 panel-3d group border-white/10 bg-slate-900/40 rounded-[48px] overflow-hidden relative">
-                                                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform">
-                                                        <Shield size={120} className="text-orange-500" />
-                                                    </div>
-                                                    <div className="flex gap-8 relative z-10">
-                                                        <div className="shrink-0 w-16 h-16 bg-slate-950 rounded-2xl flex items-center justify-center border border-white/10 group-hover:border-orange-500/50 transition-all shadow-2xl">
-                                                            <span className="text-orange-500 font-black text-base font-mono italic">{ax.code}</span>
-                                                        </div>
-                                                        <div className="space-y-3">
-                                                            <h4 className="text-xl font-black text-white uppercase tracking-tighter italic">{ax.name}</h4>
-                                                            <p className="text-sm text-slate-500 leading-relaxed font-bold italic">{ax.detail}</p>
-                                                        </div>
-                                                        <div className="ml-auto flex items-center">
-                                                            <ShieldCheck className="text-emerald-500/40" size={32} />
-                                                        </div>
-                                                    </div>
-                                                </TacticalCard>
-                                            ))}
-                                        </div>
-
-                                        <TacticalCard variant="holographic" className="p-0 overflow-hidden border-orange-500/30 rounded-[60px] bg-slate-950/60 shadow-2xl">
-                                            <div className="bg-gradient-to-r from-orange-500/20 via-transparent to-transparent p-12 flex flex-col md:flex-row items-center gap-10">
-                                                <div className="p-6 bg-orange-600/20 rounded-3xl border border-orange-600/30 shadow-2xl animate-pulse">
-                                                    <HardDrive size={48} className="text-orange-400" />
-                                                </div>
-                                                <div className="flex-1 space-y-3">
-                                                    <h4 className="text-3xl font-black text-white uppercase tracking-tighter italic">MERKLE TRUTH LEDGER</h4>
-                                                    <p className="text-base text-slate-500 font-bold italic">"Кожна системна зміна закарбована в часі та захищена криптографічним консенсусом Чотирьох Арбітрів."</p>
-                                                </div>
-                                                <div className="flex items-center gap-6 px-10 py-5 bg-emerald-500/10 border border-emerald-500/20 rounded-[32px] shadow-2xl">
-                                                    <motion.div className="w-4 h-4 bg-emerald-500 rounded-full" animate={{ scale: [1, 1.4, 1] }} transition={{ repeat: Infinity, duration: 2 }} />
-                                                    <span className="text-xl font-black text-emerald-400 uppercase tracking-[0.2em] italic font-mono">INTEGRITY_100%</span>
-                                                </div>
-                                            </div>
-                                        </TacticalCard>
-                                    </motion.div>
-                                )}
-
-                                {tab === 'terminal' && (
-                                    <motion.div key="terminal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-full">
-                                        <TacticalCard variant="holographic" className="p-0 border-none h-[800px] flex flex-col overflow-hidden bg-black/80 backdrop-blur-3xl rounded-[60px] border border-white/5 shadow-2xl">
-                                            <div className="flex items-center justify-between px-10 py-6 bg-slate-900/80 border-b border-white/5">
-                                                <div className="flex gap-4">
-                                                    <div className="w-4 h-4 rounded-full bg-[#ff5f56]" />
-                                                    <div className="w-4 h-4 rounded-full bg-[#ffbd2e]" />
-                                                    <div className="w-4 h-4 rounded-full bg-[#27c93f]" />
-                                                </div>
-                                                <div className="flex items-center gap-4">
-                                                    <Terminal size={18} className="text-slate-500" />
-                                                    <span className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] font-mono">AZR_KERNEL_OODA · LIVE_STREAM_v55.5</span>
-                                                </div>
-                                                <div className="w-20 h-1 flex justify-end">
-                                                    {isRunning && <motion.div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" animate={{ opacity: [1, 0, 1] }} transition={{ repeat: Infinity, duration: 1 }} />}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex-1 overflow-y-auto p-12 font-mono text-xs leading-relaxed custom-scrollbar bg-[rgba(2,4,10,0.4)]">
-                                                <div className="text-orange-500/80 mb-12 font-black leading-none opacity-90 scale-125 origin-left">
-                                                    <pre>{`
-    █▀▀█ █▀▀█ █▀▀ █▀▀▄ █▀▀█ ▀▀█▀▀ █▀▀█ █▀▀█
-    █  █ █▄▄▀ █▀▀ █  █ █▄▄█   █   █  █ █▄▄▀
-    █▀▀▀ ▀ ▀▀ ▀▀▀ ▀▀▀  ▀  ▀   ▀   ▀▀▀▀ ▀ ▀▀
-    SYSTEM AUTONOMOUS FIX FACTORY v55.5.4
-    ──────────────────────────────────────`}</pre>
-                                                </div>
-
-                                                <div className="space-y-3 pr-4">
-                                                    {logs.map(log => (
-                                                        <div key={log.id} className="flex gap-6 group hover:bg-white/5 p-2 rounded-lg transition-colors">
-                                                            <span className="text-slate-700 shrink-0 font-bold">{log.ts}</span>
-                                                            <span className={cn(
-                                                                "shrink-0 font-black px-3 py-0.5 rounded-md text-[10px]",
-                                                                log.level === 'OK' ? "bg-emerald-500/20 text-emerald-400" :
-                                                                    log.level === 'WARN' ? "bg-amber-500/20 text-amber-400" :
-                                                                        log.level === 'ERROR' ? "bg-rose-500/20 text-rose-400" : "bg-sky-500/20 text-sky-400"
-                                                            )}>
-                                                                [{log.level}]
-                                                            </span>
-                                                            <span className={cn(
-                                                                "group-hover:text-white transition-colors font-bold tracking-tight italic",
-                                                                log.level === 'INFO' ? "text-slate-500" :
-                                                                    log.level === 'OK' ? "text-emerald-300" :
-                                                                        log.level === 'WARN' ? "text-amber-300" : "text-rose-300"
-                                                            )}>
-                                                                {log.text}
-                                                            </span>
-                                                        </div>
-                                                    ))}
-                                                    {isRunning && (
-                                                        <div className="flex gap-6 animate-pulse p-2">
-                                                            <span className="text-slate-700 font-bold">{new Date().toLocaleTimeString()}</span>
-                                                            <span className="text-sky-500 font-black px-3 py-0.5 rounded-md text-[10px] bg-sky-500/20">[KERN]</span>
-                                                            <div className="flex items-center gap-3">
-                                                                <span className="text-white font-black italic">СИНХРОНІЗАЦІЯ НЕЙРОННИХ ВАГ...</span>
-                                                                <motion.div
-                                                                    className="w-2 h-5 bg-orange-500"
-                                                                    animate={{ opacity: [1, 0, 1] }}
-                                                                    transition={{ repeat: Infinity, duration: 0.8 }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    <div ref={logsEndRef} />
-                                                </div>
-                                            </div>
-                                        </TacticalCard>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-
-                        {/* RIGHT SIDEBAR - Activity & Insights */}
-                        <div className="lg:col-span-4 space-y-12">
-                            <TacticalCard variant="holographic" title="НЕЙРОННА АКТИВНІСТЬ" className="p-10 panel-3d border-white/5 bg-slate-900/40 rounded-[60px]">
-                                <div className="h-[250px] w-full flex items-center justify-center relative bg-slate-950/40 rounded-[40px] border border-white/5 overflow-hidden group/viz">
-                                    <div className="absolute inset-0 opacity-20">
-                                        <div className="w-full h-full bg-[linear-gradient(90deg,transparent_0%,rgba(249,115,22,0.4)_50%,transparent_100%)] bg-[length:200%_100%] animate-scan" style={{ animation: 'scan 2.5s linear infinite' }} />
-                                    </div>
-                                    <div className="flex flex-col items-center gap-6 relative z-10">
-                                        <div className="relative">
-                                            <div className="absolute inset-0 bg-orange-500/20 blur-3xl scale-150 rounded-full animate-pulse" />
-                                            <Brain size={64} className="text-orange-400 drop-shadow-[0_0_20px_rgba(249,115,22,0.6)]" />
-                                        </div>
-                                        <div className="text-center">
-                                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mb-2">INTELLIGENCE_STATUS</p>
-                                            <p className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none">CORTEX_ACTIVE</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </TacticalCard>
-
-                            <TacticalCard variant="holographic" title="ДВИГУНИ АВТОНОМІЇ" className="p-10 panel-3d border-white/5 bg-slate-900/40 rounded-[60px]">
-                                <div className="space-y-6">
-                                    {[
-                                        { icon: BrainCircuit, label: 'Auto-Completer', status: 'Optimal', val: '99.8%', color: 'sky' },
-                                        { icon: Binary, label: 'Neural Fixer', status: 'Active', val: 'v55.5', color: 'orange' },
-                                        { icon: Terminal, label: 'CLI Watchdog', status: 'Secure', val: 'LOCKED', color: 'rose' },
-                                    ].map((item, i) => (
-                                        <div key={i} className="flex items-center justify-between p-5 bg-black/40 rounded-[32px] border border-white/5 hover:border-white/20 transition-all panel-3d group">
-                                            <div className="flex items-center gap-5">
-                                                <div className={cn(`p-3 rounded-2xl bg-slate-900 border border-white/5 group-hover:border-${item.color}-500/40`, `text-${item.color}-400`)}>
-                                                    <item.icon size={20} />
-                                                </div>
-                                                <span className="text-sm font-black text-white uppercase tracking-tight italic">{item.label}</span>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className={cn(`text-[10px] font-black uppercase tracking-widest`, `text-${item.color}-400`)}>{item.status}</div>
-                                                <div className="text-[9px] text-slate-600 font-mono font-bold mt-1 tracking-widest">{item.val}</div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </TacticalCard>
-
-                            <TacticalCard variant="holographic" title="ЕФЕКТИВНІСТЬ СИНТЕЗУ" className="p-10 panel-3d border-white/5 bg-slate-900/40 rounded-[60px] h-[400px]">
-                                <div className="h-full w-full flex items-end gap-3 px-4 pb-10">
-                                    {[72, 88, 64, 98, 82, 91, 85, 96, 89].map((h, i) => (
-                                        <div key={i} className="flex-1 flex flex-col items-center gap-4">
-                                            <motion.div
-                                                className="w-full bg-gradient-to-t from-orange-600/30 via-orange-500/60 to-orange-400 rounded-[12px] relative group cursor-help shadow-2xl"
-                                                initial={{ height: 0 }}
-                                                animate={{ height: `${h}%` }}
-                                                transition={{ delay: i * 0.1, type: 'spring', damping: 10 }}
-                                            >
-                                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-[10px] font-black text-white bg-orange-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all scale-0 group-hover:scale-100 italic">{h}%</div>
-                                            </motion.div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="absolute bottom-6 left-0 w-full text-center text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic leading-none px-10">
-                                    HISTORICAL_RELIABILITY_INDEX_SIGNAL_v55.5
-                                </div>
-                            </TacticalCard>
-
-                            {/* Self-Destruct / Panic Button (Just for aesthetics) */}
-                            <button className="w-full py-6 bg-rose-600/20 border-2 border-rose-600/40 rounded-[32px] text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] hover:bg-rose-600 hover:text-white transition-all italic shadow-2xl group overflow-hidden relative">
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-rose-500/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                <span className="relative z-10 flex items-center justify-center gap-4">
-                                    <PowerOff size={18} /> ПРИМУСОВЕ ПРИПИНЕННЯ ЯДРА
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <style dangerouslySetInnerHTML={{ __html: `
-                    @keyframes scan {
-                        from { transform: translateX(-100%); }
-                        to { transform: translateX(100%); }
-                    }
-                    .custom-scrollbar::-webkit-scrollbar {
-                        width: 4px;
-                        height: 4px;
-                    }
-                    .custom-scrollbar::-webkit-scrollbar-track {
-                        background: transparent;
-                    }
-                    .custom-scrollbar::-webkit-scrollbar-thumb {
-                        background: rgba(249, 115, 22, 0.2);
-                        border-radius: 20px;
-                    }
-                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                        background: rgba(249, 115, 22, 0.4);
-                    }
-                    .panel-3d {
-                        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    }
-                    .panel-3d:hover {
-                        transform: translateY(-8px) rotateX(1deg) rotateY(-1deg);
-                        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8), 0 0 40px rgba(249, 115, 22, 0.05);
-                    }
-                    .no-scrollbar::-webkit-scrollbar {
-                        display: none;
-                    }
-                `}} />
-            </div>
-        </PageTransition>
-    );
+const toneClasses: Record<AutoFactoryTone, { border: string; panel: string; text: string; badge: string; dot: string }> = {
+  emerald: {
+    border: 'border-emerald-500/20',
+    panel: 'bg-emerald-500/10',
+    text: 'text-emerald-300',
+    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200',
+    dot: 'bg-emerald-300',
+  },
+  amber: {
+    border: 'border-amber-500/20',
+    panel: 'bg-amber-500/10',
+    text: 'text-amber-300',
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-200',
+    dot: 'bg-amber-300',
+  },
+  rose: {
+    border: 'border-rose-500/20',
+    panel: 'bg-rose-500/10',
+    text: 'text-rose-300',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-200',
+    dot: 'bg-rose-300',
+  },
+  sky: {
+    border: 'border-sky-500/20',
+    panel: 'bg-sky-500/10',
+    text: 'text-sky-300',
+    badge: 'border-sky-500/20 bg-sky-500/10 text-sky-200',
+    dot: 'bg-sky-300',
+  },
+  slate: {
+    border: 'border-slate-500/20',
+    panel: 'bg-slate-500/10',
+    text: 'text-slate-300',
+    badge: 'border-slate-500/20 bg-slate-500/10 text-slate-200',
+    dot: 'bg-slate-300',
+  },
 };
 
-export default AutoFactoryView;
+const EmptyState = ({ title, description }: { title: string; description: string }) => (
+  <div className="flex min-h-[280px] flex-col items-center justify-center rounded-[36px] border border-dashed border-white/10 bg-black/20 px-8 text-center">
+    <AlertCircle className="mb-4 h-10 w-10 text-amber-300" />
+    <div className="text-lg font-black text-white">{title}</div>
+    <div className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">{description}</div>
+  </div>
+);
+
+const MetricCard = ({ card }: { card: AutoFactoryMetricCard }) => {
+  const tone = toneClasses[card.tone];
+
+  return (
+    <TacticalCard variant="holographic" className={cn('rounded-[32px] border bg-slate-950/50 p-6', tone.border)}>
+      <div className="space-y-3">
+        <div className="text-[10px] font-black uppercase tracking-[0.26em] text-slate-500">{card.label}</div>
+        <div className={cn('text-4xl font-black tracking-tight', tone.text)}>{card.value}</div>
+        <div className="text-sm leading-6 text-slate-400">{card.hint}</div>
+      </div>
+    </TacticalCard>
+  );
+};
+
+const BugCard = ({ bug }: { bug: AutoFactoryBugRecord }) => {
+  const tone = toneClasses[bug.tone];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn('rounded-[32px] border bg-slate-950/50 p-6 shadow-[0_24px_60px_rgba(2,6,23,0.25)]', tone.border)}
+    >
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="text-sm font-black uppercase tracking-[0.2em] text-white">{bug.title}</div>
+            <Badge className={cn('border px-3 py-1 text-[10px] font-black uppercase tracking-widest', tone.badge)}>
+              {bug.statusLabel}
+            </Badge>
+          </div>
+          <div className="flex flex-wrap gap-6 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+            <span>Компонент: <span className="text-slate-200">{bug.componentLabel}</span></span>
+            <span>Ризик: <span className={tone.text}>{bug.riskLabel}</span></span>
+            <span>Погодження: <span className="text-slate-200">{bug.councilLabel}</span></span>
+          </div>
+          <div className="text-sm leading-6 text-slate-400">{bug.detailLabel}</div>
+        </div>
+
+        <div className="min-w-[180px] rounded-[24px] border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Прогрес</div>
+          <div className={cn('mt-2 text-3xl font-black', tone.text)}>{bug.progressLabel}</div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full border border-white/5 bg-slate-950">
+            <div
+              className={cn('h-full rounded-full transition-all', tone.panel)}
+              style={{ width: `${bug.progress ?? 0}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const EngineCard = ({ engine }: { engine: AutoFactoryEngineRecord }) => {
+  const tone = toneClasses[engine.tone];
+
+  return (
+    <div className={cn('rounded-[28px] border p-5', tone.border, tone.panel)}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">{engine.title}</div>
+          <div className={cn('mt-2 text-lg font-black', tone.text)}>{engine.statusLabel}</div>
+        </div>
+        <div className={cn('h-3 w-3 rounded-full', tone.dot)} />
+      </div>
+      <div className="mt-3 text-sm leading-6 text-slate-300">{engine.detailLabel}</div>
+    </div>
+  );
+};
+
+const ReliabilityCard = ({ bar }: { bar: AutoFactoryReliabilityBar }) => {
+  const tone = toneClasses[bar.tone];
+
+  return (
+    <div className="rounded-[24px] border border-white/10 bg-black/20 p-4">
+      <div className="flex items-center justify-between gap-4">
+        <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">{bar.label}</div>
+        <div className={cn('text-sm font-black', tone.text)}>{bar.valueLabel}</div>
+      </div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full border border-white/5 bg-slate-950">
+        <div
+          className={cn('h-full rounded-full transition-all', tone.panel)}
+          style={{ width: `${bar.value ?? 0}%` }}
+        />
+      </div>
+      <div className="mt-3 text-xs leading-5 text-slate-400">{bar.hint}</div>
+    </div>
+  );
+};
+
+const LogRow = ({ log }: { log: AutoFactoryLogRecord }) => {
+  const tone = toneClasses[log.tone];
+
+  return (
+    <div className="grid grid-cols-[120px_90px_1fr] gap-4 rounded-2xl border border-white/5 bg-black/20 px-4 py-3 text-sm">
+      <div className="font-mono text-slate-500">{log.timestampLabel}</div>
+      <div className={cn('font-black uppercase tracking-[0.18em]', tone.text)}>{log.levelLabel}</div>
+      <div className="leading-6 text-slate-200">{log.message}</div>
+    </div>
+  );
+};
+
+export default function AutoFactoryView() {
+  const backendStatus = useBackendStatus();
+  const [tab, setTab] = useState<'pipeline' | 'fixes' | 'axioms' | 'terminal'>('pipeline');
+  const [statusPayload, setStatusPayload] = useState<unknown>(null);
+  const [bugsPayload, setBugsPayload] = useState<unknown>([]);
+  const [goldPatternsPayload, setGoldPatternsPayload] = useState<unknown>([]);
+  const [statsPayload, setStatsPayload] = useState<unknown>(null);
+  const [logsPayload, setLogsPayload] = useState<unknown>([]);
+  const [systemStats, setSystemStats] = useState<SystemStatsResponse | null>(null);
+  const [systemStatus, setSystemStatus] = useState<SystemStatusResponse | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState<{ tone: 'emerald' | 'rose'; message: string } | null>(null);
+  const logsEndRef = useRef<HTMLDivElement | null>(null);
+
+  const loadData = useCallback(async (silent: boolean = false) => {
+    if (silent) {
+      setRefreshing(true);
+    }
+
+    try {
+      const [statusResult, bugsResult, goldPatternsResult, statsResult, logsResult, systemStatsResult, systemStatusResult] = await Promise.allSettled([
+        factoryApi.getInfiniteStatus(),
+        factoryApi.getBugs(),
+        factoryApi.getGoldPatterns(),
+        factoryApi.getStats(),
+        factoryApi.getLogs(),
+        systemApi.getStats(),
+        systemApi.getStatus(),
+      ]);
+
+      setStatusPayload(statusResult.status === 'fulfilled' ? statusResult.value : null);
+      setBugsPayload(bugsResult.status === 'fulfilled' ? bugsResult.value : []);
+      setGoldPatternsPayload(goldPatternsResult.status === 'fulfilled' ? goldPatternsResult.value : []);
+      setStatsPayload(statsResult.status === 'fulfilled' ? statsResult.value : null);
+      setLogsPayload(logsResult.status === 'fulfilled' ? logsResult.value : []);
+      setSystemStats(systemStatsResult.status === 'fulfilled' ? systemStatsResult.value : null);
+      setSystemStatus(systemStatusResult.status === 'fulfilled' ? systemStatusResult.value : null);
+
+      const failures = [
+        statusResult,
+        bugsResult,
+        goldPatternsResult,
+        statsResult,
+        logsResult,
+        systemStatsResult,
+        systemStatusResult,
+      ].filter((result) => result.status === 'rejected').length;
+
+      if (failures === 7) {
+        setFeedback({
+          tone: 'rose',
+          message: 'Автозавод не отримав підтверджених даних від Factory API та System API.',
+        });
+      } else if (!silent) {
+        setFeedback(null);
+      }
+    } catch (error) {
+      console.error('[AutoFactoryView] Не вдалося завантажити дані:', error);
+      setFeedback({
+        tone: 'rose',
+        message: 'Автозавод не зміг синхронізувати реальні дані з бекендом.',
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadData();
+
+    const interval = window.setInterval(() => {
+      void loadData(true);
+    }, 30000);
+
+    return () => window.clearInterval(interval);
+  }, [loadData]);
+
+  const snapshot = useMemo(
+    () => normalizeAutoFactorySnapshot(
+      statusPayload,
+      bugsPayload,
+      goldPatternsPayload,
+      statsPayload,
+      logsPayload,
+      systemStats,
+      systemStatus,
+    ),
+    [statusPayload, bugsPayload, goldPatternsPayload, logsPayload, statsPayload, systemStats, systemStatus],
+  );
+
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [snapshot.logs]);
+
+  const handleToggleCycle = useCallback(async () => {
+    setBusy(true);
+    setFeedback(null);
+
+    try {
+      if (snapshot.isRunning) {
+        await factoryApi.stopInfinite();
+        setFeedback({
+          tone: 'emerald',
+          message: 'Запит на зупинку OODA-циклу передано бекенду. Стан буде оновлено після підтвердження.',
+        });
+      } else {
+        await factoryApi.startInfinite();
+        setFeedback({
+          tone: 'emerald',
+          message: 'Запит на запуск OODA-циклу передано бекенду. Локальна симуляція не використовується.',
+        });
+      }
+
+      await loadData(true);
+    } catch (error) {
+      console.error('[AutoFactoryView] Не вдалося змінити стан OODA:', error);
+      setFeedback({
+        tone: 'rose',
+        message: 'Бекенд не підтвердив зміну стану OODA-циклу.',
+      });
+    } finally {
+      setBusy(false);
+    }
+  }, [loadData, snapshot.isRunning]);
+
+  const feedbackTone = feedback?.tone === 'rose'
+    ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+    : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100';
+
+  return (
+    <PageTransition>
+      <div className="relative min-h-screen overflow-hidden bg-[#02040a] pb-24 text-slate-200">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(249,115,22,0.06)" />
+
+        <div className="relative z-10 mx-auto max-w-[1760px] space-y-8 px-4 py-8 sm:px-8 lg:px-12">
+          <ViewHeader
+            title={(
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="absolute inset-0 scale-150 rounded-full bg-orange-500/20 blur-[60px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-orange-500/20 bg-slate-950/90 shadow-2xl">
+                    <Factory size={30} className="text-orange-300 drop-shadow-[0_0_14px_rgba(249,115,22,0.75)]" />
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
+                    Автономний <span className="text-orange-400">завод</span>
+                  </h1>
+                  <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-orange-300/75">
+                    <Sparkles size={12} className="animate-pulse" />
+                    Factory API без локальної імітації OODA
+                  </p>
+                </div>
+              </div>
+            )}
+            icon={<Factory size={20} className="text-orange-400" />}
+            breadcrumbs={['PREDATOR', 'ШІ', 'Автозавод']}
+            stats={[
+              {
+                label: 'Статус',
+                value: snapshot.statusLabel,
+                icon: <Activity size={14} />,
+                color: snapshot.isRunning ? 'warning' : 'default',
+                animate: snapshot.isRunning,
+              },
+              {
+                label: 'Цикли',
+                value: snapshot.cycleLabel,
+                icon: <RefreshCw size={14} />,
+                color: 'primary',
+              },
+              {
+                label: 'Середній бал',
+                value: snapshot.avgScoreLabel,
+                icon: <TrendingUp size={14} />,
+                color: 'success',
+              },
+            ]}
+          />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+              {backendStatus.statusLabel}
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Джерела: /factory/infinite/status, /factory/bugs, /factory/patterns/gold, /factory/stats, /factory/logs, /system/status, /system/stats
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Оновлено: {snapshot.lastUpdatedLabel ?? 'Немає підтвердженої синхронізації'}
+            </Badge>
+            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+              Джерело бекенду: {backendStatus.sourceLabel}
+            </Badge>
+          </div>
+
+          {feedback && (
+            <div className={cn('rounded-[24px] border px-5 py-4 text-sm leading-6', feedbackTone)}>
+              {feedback.message}
+            </div>
+          )}
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
+            {snapshot.metrics.map((metric) => (
+              <MetricCard key={metric.label} card={metric} />
+            ))}
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-[1.35fr_0.95fr]">
+            <div className="space-y-6">
+              <div className="flex flex-wrap gap-3 rounded-[28px] border border-white/10 bg-slate-950/50 p-3">
+                {[
+                  { id: 'pipeline', label: 'OODA контур', icon: Activity },
+                  { id: 'fixes', label: 'Черга виправлень', icon: Wrench },
+                  { id: 'axioms', label: 'Аксіоми', icon: Shield },
+                  { id: 'terminal', label: 'Журнал ядра', icon: Terminal },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setTab(item.id as typeof tab)}
+                    className={cn(
+                      'inline-flex items-center gap-3 rounded-[22px] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] transition',
+                      tab === item.id
+                        ? 'bg-orange-500 text-slate-950 shadow-[0_18px_36px_rgba(249,115,22,0.3)]'
+                        : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                    )}
+                  >
+                    <item.icon size={14} />
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              {tab === 'pipeline' && (
+                <TacticalCard variant="holographic" title="Поточний цикл OODA" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                  {snapshot.hasAnyData ? (
+                    <div className="space-y-8">
+                      <div className="grid gap-4 lg:grid-cols-5">
+                        {snapshot.pipeline.map((stage) => {
+                          const tone = toneClasses[stage.tone];
+
+                          return (
+                            <div
+                              key={stage.id}
+                              className={cn(
+                                'rounded-[28px] border p-5 text-center shadow-[0_16px_40px_rgba(2,6,23,0.18)]',
+                                tone.border,
+                                stage.status === 'active' ? tone.panel : 'bg-black/20',
+                              )}
+                            >
+                              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">{stage.label}</div>
+                              <div className={cn('mt-3 text-sm font-black uppercase tracking-[0.18em]', tone.text)}>
+                                {stage.status === 'done' ? 'Завершено' : stage.status === 'active' ? 'Активно' : 'Очікує'}
+                              </div>
+                              <div className="mt-4 text-sm leading-6 text-slate-300">{stage.detail}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="rounded-[32px] border border-white/10 bg-black/20 p-6">
+                        <div className="flex items-center gap-3">
+                          <BrainCircuit size={18} className="text-orange-300" />
+                          <div className="text-sm font-black uppercase tracking-[0.22em] text-white">Поточний стан рішення</div>
+                        </div>
+                        <div className="mt-4 text-base leading-7 text-slate-300">
+                          Автозавод показує лише серверний стан циклу. Якщо бекенд не повернув фазу, прогрес або журнал, відповідні блоки лишаються порожніми без домальованих етапів.
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <EmptyState
+                      title="OODA-цикл не підтверджений"
+                      description="Factory API не повернув статус автономного циклу. Візуалізація етапів не генерується локально."
+                    />
+                  )}
+                </TacticalCard>
+              )}
+
+              {tab === 'fixes' && (
+                <TacticalCard variant="holographic" title="Черга виправлень" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                  {snapshot.bugs.length > 0 ? (
+                    <div className="space-y-5">
+                      {snapshot.bugs.map((bug) => (
+                        <BugCard key={bug.id} bug={bug} />
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyState
+                      title="Черга виправлень порожня"
+                      description="`/factory/bugs` не повернув елементів. Матриця патчів не заповнюється демо-багами."
+                    />
+                  )}
+                </TacticalCard>
+              )}
+
+              {tab === 'axioms' && (
+                <div className="space-y-6">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {AXIOMS.map((axiom) => (
+                      <TacticalCard key={axiom.code} variant="holographic" className="rounded-[36px] border-white/10 bg-slate-950/50 p-8">
+                        <div className="flex items-start gap-5">
+                          <div className="rounded-[24px] border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm font-black text-orange-300">
+                            {axiom.code}
+                          </div>
+                          <div>
+                            <div className="text-lg font-black uppercase tracking-[0.16em] text-white">{axiom.title}</div>
+                            <div className="mt-3 text-sm leading-6 text-slate-400">{axiom.detail}</div>
+                          </div>
+                        </div>
+                      </TacticalCard>
+                    ))}
+                  </div>
+
+                  <TacticalCard variant="holographic" title="Суверенний контур" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {snapshot.engines.map((engine) => (
+                        <EngineCard key={engine.id} engine={engine} />
+                      ))}
+                    </div>
+                  </TacticalCard>
+                </div>
+              )}
+
+              {tab === 'terminal' && (
+                <TacticalCard variant="holographic" title="Журнал ядра" className="rounded-[40px] border-orange-500/20 bg-slate-950/80 p-0 overflow-hidden">
+                  <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
+                    Потік підтверджених подій Factory API
+                  </div>
+                  <div className="max-h-[720px] space-y-3 overflow-y-auto p-6 font-mono">
+                    {snapshot.logs.length > 0 ? (
+                      <>
+                        {snapshot.logs.map((log) => (
+                          <LogRow key={log.id} log={log} />
+                        ))}
+                        <div ref={logsEndRef} />
+                      </>
+                    ) : (
+                      <EmptyState
+                        title="Журнал ядра порожній"
+                        description="`/factory/logs` і поточний OODA статус не повернули повідомлень. Консоль не генерує локальні рядки."
+                      />
+                    )}
+                  </div>
+                </TacticalCard>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              <TacticalCard variant="holographic" title="Керування контуром" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                <div className="space-y-6">
+                  <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
+                    <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Стан бекенду</div>
+                    <div className="mt-2 text-2xl font-black text-white">{snapshot.statusLabel}</div>
+                    <div className="mt-3 text-sm leading-6 text-slate-300">
+                      Запуск і зупинка OODA відбуваються тільки через реальні `POST /factory/infinite/start` та `POST /factory/infinite/stop`.
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void handleToggleCycle();
+                      }}
+                      disabled={busy}
+                      className={cn(
+                        'inline-flex items-center justify-center gap-3 rounded-[24px] px-5 py-4 text-[11px] font-black uppercase tracking-[0.24em] transition',
+                        snapshot.isRunning
+                          ? 'border border-rose-500/20 bg-rose-500/10 text-rose-100 hover:bg-rose-500/15'
+                          : 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15',
+                        busy && 'cursor-not-allowed opacity-60',
+                      )}
+                    >
+                      {busy ? <Loader2 size={16} className="animate-spin" /> : snapshot.isRunning ? <Pause size={16} /> : <Play size={16} />}
+                      {snapshot.isRunning ? 'Зупинити цикл' : 'Запустити цикл'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void loadData(true);
+                      }}
+                      disabled={refreshing}
+                      className={cn(
+                        'inline-flex items-center justify-center gap-3 rounded-[24px] border border-white/10 bg-white/5 px-5 py-4 text-[11px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white/10',
+                        refreshing && 'cursor-not-allowed opacity-60',
+                      )}
+                    >
+                      {refreshing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                      Оновити дані
+                    </button>
+                  </div>
+                </div>
+              </TacticalCard>
+
+              <TacticalCard variant="holographic" title="Контурні сигнали" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                <div className="space-y-4">
+                  {snapshot.engines.map((engine) => (
+                    <EngineCard key={engine.id} engine={engine} />
+                  ))}
+                </div>
+              </TacticalCard>
+
+              <TacticalCard variant="holographic" title="Надійність контуру" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                {snapshot.reliability.some((bar) => bar.value != null) ? (
+                  <div className="space-y-4">
+                    {snapshot.reliability.map((bar) => (
+                      <ReliabilityCard key={bar.id} bar={bar} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    title="Немає підтверджених агрегатів"
+                      description="Factory API і System API не повернули достатньо даних для побудови індикаторів надійності."
+                  />
+                )}
+              </TacticalCard>
+
+              <div className="rounded-[36px] border border-orange-500/20 bg-[linear-gradient(135deg,rgba(124,45,18,0.35),rgba(15,23,42,0.92))] p-6 shadow-[0_22px_60px_rgba(120,53,15,0.28)]">
+                <div className="flex items-start gap-4">
+                  <div className="rounded-[24px] border border-orange-500/20 bg-orange-500/10 p-3 text-orange-300">
+                    {snapshot.isRunning ? <Zap size={22} /> : <ShieldCheck size={22} />}
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Висновок</div>
+                    <div className="mt-2 text-lg font-black text-white">
+                      {snapshot.isRunning
+                        ? 'Автозавод працює у підтвердженому серверному циклі.'
+                        : 'Активний цикл не підтверджено, контур у режимі очікування.'}
+                    </div>
+                    <div className="mt-3 text-sm leading-6 text-slate-300">
+                      Екран більше не домальовує покоління, успішність або синтетичні патчі. Кожен блок або привʼязаний до реального Factory/System API, або показує чесний порожній стан.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
+  );
+}

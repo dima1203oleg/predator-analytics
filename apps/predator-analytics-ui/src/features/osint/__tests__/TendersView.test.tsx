@@ -11,6 +11,17 @@ vi.mock('@/services/api/config', () => ({
     },
 }));
 
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        isTruthOnly: true,
+        modeLabel: 'Режим правдивих даних',
+        sourceLabel: 'localhost:9080/api/v1',
+        sourceType: 'local',
+        statusLabel: 'Зʼєднання активне',
+    }),
+}));
+
 vi.mock('@/components/layout/PageTransition', () => ({
     PageTransition: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -29,6 +40,20 @@ vi.mock('@/components/CyberGrid', () => ({
 
 vi.mock('@/components/CyberOrb', () => ({
     CyberOrb: () => <div data-testid="cyber-orb" />,
+}));
+
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats }: { title: React.ReactNode; stats?: Array<{ label: string; value: string }> }) => (
+        <div>
+            <h1>{title}</h1>
+            {stats?.map((stat) => (
+                <div key={stat.label}>
+                    <span>{stat.label}</span>
+                    <span>{stat.value}</span>
+                </div>
+            ))}
+        </div>
+    ),
 }));
 
 // Mock framer-motion
@@ -61,6 +86,7 @@ vi.mock('recharts', () => ({
 describe('TendersView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        (apiClient.get as any).mockImplementation(() => new Promise(() => {}));
     });
 
     afterEach(() => {
@@ -100,7 +126,7 @@ describe('TendersView', () => {
         vi.useFakeTimers();
         render(<TendersView />);
         
-        const statusElement = screen.getByText(/PROZORRO_INTEL_ONLINE/i);
+        const statusElement = screen.getByText(/КОНТУР PROZORRO/i);
         const initialText = statusElement.textContent;
 
         act(() => {
@@ -129,6 +155,20 @@ describe('TendersView', () => {
 
         expect(await screen.findByText('Tender 1')).toBeInTheDocument();
         expect(await screen.findByText('Tender 2')).toBeInTheDocument();
+    });
+
+    it('не підмінює дані локальним демо-набором, якщо обидва маршрути недоступні', async () => {
+        (apiClient.get as any).mockRejectedValue(new Error('network error'));
+
+        render(<TendersView />);
+
+        expect(await screen.findByText('НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ')).toBeInTheDocument();
+        expect(
+            screen.getByText('Маршрути Prozorro не повернули підтверджених даних. Екран не підмінює їх локальними тендерами.'),
+        ).toBeInTheDocument();
+        expect(screen.getByText(/Екран не підставляє локальні лоти або аналітику/i)).toBeInTheDocument();
+        expect(screen.queryByText('Tender 1')).not.toBeInTheDocument();
+        expect(screen.queryByText('Tender 2')).not.toBeInTheDocument();
     });
 
     it('повинен фільтрувати за пошуковим запитом', async () => {

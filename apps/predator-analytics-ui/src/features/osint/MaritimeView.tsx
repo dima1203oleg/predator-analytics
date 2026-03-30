@@ -1,13 +1,13 @@
 /**
- * PREDATOR v55.5 | Maritime Sovereign Nexus — Морський Розвідувальний Суверен
+ * PREDATOR v55.5 | Морський контур — Морський розвідувальний суверен
  *
  * Система глобального моніторингу морського трафіку та оцінки ризиків.
  * - AIS трекінг суден у реальному часі з алгоритмами CERS
  * - Виявлення суден-фантомів та аномальних маршрутів
- * - Метеорологічний аналіз та геозонування портів
+ * - Оперативні морські показники та геозонування портів
  * - Матриця санкційного скринінгу флоту
  *
- * © 2026 PREDATOR Analytics | Maximum Value Extraction
+ * © 2026 PREDATOR Analytics | Контур морського моніторингу
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -29,41 +29,16 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { HoloContainer } from '@/components/HoloContainer';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import {
+    normalizePortsPayload,
+    normalizeVesselsPayload,
+    type Port,
+    type Vessel,
+} from './maritimeView.utils';
 
 // ========================
-// Types & Interfaces
-// ========================
-
-interface Vessel {
-    id: string;
-    name: string;
-    flag: string;
-    type: string;
-    location: { lat: number; lon: number };
-    status: string;
-    destination: string;
-    risk_score: number;
-    speed?: number;
-    heading?: number;
-    imo?: string;
-    mmsi?: string;
-    draught?: number;
-    last_seen?: string;
-}
-
-interface Port {
-    id: string;
-    name: string;
-    country: string;
-    location: { lat: number; lon: number };
-    vessel_count: number;
-    capacity: number;
-    risk_level: string;
-    status?: string;
-}
-
-// ========================
-// Sub-Components
+// Допоміжні компоненти
 // ========================
 
 const RiskMeter: React.FC<{ score: number; size?: 'sm' | 'md' }> = ({ score, size = 'md' }) => {
@@ -106,7 +81,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                     : "bg-[#040810]/60 border-white/5 hover:border-white/20 hover:bg-slate-900/40"
             )}
         >
-            {/* Background accent */}
+            {/* Фоновий акцент */}
             <div className={cn(
                 "absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-700",
                 `bg-${riskColor}-500/5`
@@ -177,10 +152,11 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
 };
 
 // ========================
-// Main Component
+// Основний компонент
 // ========================
 
 const MaritimeView: React.FC = () => {
+    const backendStatus = useBackendStatus();
     const [vessels, setVessels] = useState<Vessel[]>([]);
     const [ports, setPorts] = useState<Port[]>([]);
     const [loading, setLoading] = useState(true);
@@ -189,6 +165,8 @@ const MaritimeView: React.FC = () => {
     const [filterMode, setFilterMode] = useState<'all' | 'high_risk' | 'phantom'>('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [time, setTime] = useState(new Date());
+    const [feedback, setFeedback] = useState<string | null>(null);
+    const [hasConfirmedData, setHasConfirmedData] = useState(false);
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
@@ -198,17 +176,45 @@ const MaritimeView: React.FC = () => {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const [vesselsRes, portsRes] = await Promise.all([
-                apiClient.get('/maritime/vessels').catch(() => ({ data: null })),
-                apiClient.get('/maritime/ports').catch(() => ({ data: null })),
+            const [vesselsRes, portsRes] = await Promise.allSettled([
+                apiClient.get('/maritime/vessels'),
+                apiClient.get('/maritime/ports'),
             ]);
-            setVessels(vesselsRes.data?.vessels || MOCK_VESSELS);
-            setPorts(portsRes.data?.ports || MOCK_PORTS);
-            setLastUpdate(new Date().toLocaleTimeString('uk-UA'));
+
+            if (vesselsRes.status === 'fulfilled') {
+                setVessels(normalizeVesselsPayload(vesselsRes.value.data));
+            } else {
+                setVessels([]);
+            }
+
+            if (portsRes.status === 'fulfilled') {
+                setPorts(normalizePortsPayload(portsRes.value.data));
+            } else {
+                setPorts([]);
+            }
+
+            const failures = [vesselsRes, portsRes].filter((result) => result.status === 'rejected').length;
+
+            if (failures === 2) {
+                setFeedback('Маршрути морського контуру не повернули підтверджених даних. Екран не підмінює їх локальним флотом або портами.');
+                setHasConfirmedData(false);
+                setLastUpdate('');
+            } else if (failures === 1) {
+                setFeedback('Один із морських маршрутів тимчасово не відповів. Показано лише підтверджені записи, які вдалося отримати.');
+                setHasConfirmedData(true);
+                setLastUpdate(new Date().toLocaleTimeString('uk-UA'));
+            } else {
+                setFeedback(null);
+                setHasConfirmedData(true);
+                setLastUpdate(new Date().toLocaleTimeString('uk-UA'));
+            }
         } catch (err) {
             console.error('Помилка завантаження морських даних:', err);
-            setVessels(MOCK_VESSELS);
-            setPorts(MOCK_PORTS);
+            setVessels([]);
+            setPorts([]);
+            setFeedback('Під час синхронізації морського контуру сталася помилка. Демонстраційний резервний флот вимкнено.');
+            setHasConfirmedData(false);
+            setLastUpdate('');
         } finally {
             setLoading(false);
         }
@@ -220,7 +226,17 @@ const MaritimeView: React.FC = () => {
         return () => clearInterval(interval);
     }, [fetchData]);
 
-    // Filtered vessels
+    useEffect(() => {
+        setSelectedVessel((current) => {
+            if (!current) {
+                return null;
+            }
+
+            return vessels.find((vessel) => vessel.id === current.id) ?? null;
+        });
+    }, [vessels]);
+
+    // Відфільтрований флот
     const filteredVessels = useMemo(() => {
         let list = vessels;
         if (filterMode === 'high_risk') list = list.filter(v => v.risk_score > 70);
@@ -233,7 +249,7 @@ const MaritimeView: React.FC = () => {
         return list.sort((a, b) => b.risk_score - a.risk_score);
     }, [vessels, filterMode, searchQuery]);
 
-    // Stats
+    // Підтверджені показники
     const stats = useMemo(() => ({
         total: vessels.length,
         critical: vessels.filter(v => v.risk_score > 80).length,
@@ -241,7 +257,40 @@ const MaritimeView: React.FC = () => {
         ports: ports.length,
     }), [vessels, ports]);
 
-    // Map Options
+    const operationalMetrics = useMemo(() => {
+        const averageRisk = vessels.length > 0
+            ? Math.round(vessels.reduce((sum, vessel) => sum + vessel.risk_score, 0) / vessels.length)
+            : null;
+
+        return [
+            {
+                label: 'СЕРЕДНІЙ РИЗИК',
+                value: averageRisk != null ? `${averageRisk}%` : 'Н/д',
+                color: 'text-rose-400',
+                icon: ShieldAlert,
+            },
+            {
+                label: 'БЕЗ IMO',
+                value: hasConfirmedData ? `${vessels.filter((vessel) => !vessel.imo).length}` : 'Н/д',
+                color: 'text-amber-400',
+                icon: Eye,
+            },
+            {
+                label: 'КРИТИЧНІ ПОРТИ',
+                value: hasConfirmedData ? `${ports.filter((port) => port.risk_level.toLowerCase().includes('critical')).length}` : 'Н/д',
+                color: 'text-indigo-400',
+                icon: Anchor,
+            },
+            {
+                label: 'ВИДИМІ МАРШРУТИ',
+                value: hasConfirmedData ? `${vessels.filter((vessel) => vessel.destination && vessel.destination !== 'Н/д').length}` : 'Н/д',
+                color: 'text-blue-400',
+                icon: Navigation,
+            },
+        ];
+    }, [hasConfirmedData, ports, vessels]);
+
+    // Параметри карти
     const mapOptions = useMemo(() => ({
         backgroundColor: 'transparent',
         geo: {
@@ -355,7 +404,7 @@ const MaritimeView: React.FC = () => {
 
                 <div className="relative z-10 max-w-[1800px] mx-auto p-4 sm:p-8 lg:p-12 space-y-10">
 
-                    {/* ── HEADER ── */}
+                    {/* ── ЗАГОЛОВОК ── */}
                     <motion.div
                         initial={{ opacity: 0, y: -30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -378,33 +427,42 @@ const MaritimeView: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-2.5 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.4em]">AIS_GLOBAL_STREAM_v55.5</span>
+                                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.4em]">МОРСЬКИЙ_КОНТУР_v55.5</span>
                                         </div>
-                                        <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[8px] font-black animate-pulse">LIVE</Badge>
+                                        <Badge className={cn(
+                                            'border text-[8px] font-black',
+                                            hasConfirmedData
+                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                : 'bg-slate-900/70 text-slate-300 border-white/10'
+                                        )}>
+                                            {hasConfirmedData ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}
+                                        </Badge>
                                     </div>
                                     <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-3deg]">
                                         МОРСЬКИЙ <span className="text-blue-400 drop-shadow-[0_0_20px_rgba(14,165,233,0.5)]">СУВЕРЕН</span>
                                     </h1>
                                     <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.3em]">
-                                        MARITIME_SOVEREIGNTY_NEXUS · PRED-NAV-v55.5
+                                        КОНТУР МОРСЬКОГО МОНІТОРИНГУ · PRED-NAV-v55.5
                                     </p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-6">
-                                {/* Clock */}
+                                {/* Годинник */}
                                 <div className="text-right space-y-1">
                                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">ОПЕРАТИВНИЙ_ЧАС</p>
                                     <p className="text-2xl font-black font-mono text-blue-400 tracking-tight">{time.toLocaleTimeString('uk-UA')}</p>
                                     <p className="text-[9px] font-mono text-slate-400">{time.toLocaleDateString('uk-UA', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
                                 </div>
                                 <div className="w-px h-16 bg-white/10" />
-                                {/* Sync stat */}
+                                {/* Стан синхронізації */}
                                 <div className="text-right space-y-1">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">CИНХРОНІЗАЦІЯ</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">СИНХРОНІЗАЦІЯ</p>
                                     <div className="flex items-center gap-2 justify-end">
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                                        <span className="text-sm font-black text-emerald-400 font-mono">{lastUpdate || '—'}</span>
+                                        <div className={cn('w-2 h-2 rounded-full', hasConfirmedData ? 'bg-emerald-500 animate-ping' : 'bg-slate-600')} />
+                                        <span className={cn('text-sm font-black font-mono', hasConfirmedData ? 'text-emerald-400' : 'text-slate-400')}>
+                                            {lastUpdate || 'Н/д'}
+                                        </span>
                                     </div>
                                 </div>
                                 <button
@@ -417,13 +475,36 @@ const MaritimeView: React.FC = () => {
                         </div>
                     </motion.div>
 
-                    {/* ── KPI STATS ── */}
+                    <div className="flex flex-wrap items-center gap-3 px-2">
+                        <Badge className={cn(
+                            'border px-4 py-2 text-[11px] font-bold',
+                            backendStatus.isOffline
+                                ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+                                : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100'
+                        )}>
+                            {backendStatus.statusLabel}
+                        </Badge>
+                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                            Джерела: /maritime/vessels, /maritime/ports
+                        </Badge>
+                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
+                            Джерело бекенду: {backendStatus.sourceLabel}
+                        </Badge>
+                    </div>
+
+                    {feedback && (
+                        <div className="rounded-[28px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+                            {feedback}
+                        </div>
+                    )}
+
+                    {/* ── КЛЮЧОВІ ПОКАЗНИКИ ── */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
-                            { label: 'АКТИВНІ_СУДНА', value: stats.total, sub: 'AIS живий трафік', icon: Ship, color: 'blue', glow: 'rgba(14,165,233,0.2)' },
-                            { label: 'КРИТИЧНИЙ_РИЗИК', value: stats.critical, sub: 'CERS > 80', icon: ShieldAlert, color: 'rose', glow: 'rgba(244,63,94,0.2)', alert: stats.critical > 0 },
-                            { label: 'СУДНА_ФАНТОМИ', value: stats.phantoms, sub: 'Без AIS передачі', icon: Eye, color: 'amber', glow: 'rgba(245,158,11,0.2)' },
-                            { label: 'ПОРТИ_МОНІТОРИНГ', value: stats.ports, sub: 'Активні вузли', icon: Anchor, color: 'emerald', glow: 'rgba(16,185,129,0.2)' },
+                            { label: 'АКТИВНІ_СУДНА', value: hasConfirmedData ? stats.total : 'Н/д', sub: hasConfirmedData ? 'Підтверджений AIS-потік' : 'Маршрут не підтверджено', icon: Ship, color: 'blue', glow: 'rgba(14,165,233,0.2)' },
+                            { label: 'КРИТИЧНИЙ_РИЗИК', value: hasConfirmedData ? stats.critical : 'Н/д', sub: hasConfirmedData ? 'CERS > 80' : 'Немає підтверджених суден', icon: ShieldAlert, color: 'rose', glow: 'rgba(244,63,94,0.2)', alert: hasConfirmedData && stats.critical > 0 },
+                            { label: 'СУДНА_ФАНТОМИ', value: hasConfirmedData ? stats.phantoms : 'Н/д', sub: hasConfirmedData ? 'Без IMO або з критичним ризиком' : 'Маршрут не підтверджено', icon: Eye, color: 'amber', glow: 'rgba(245,158,11,0.2)' },
+                            { label: 'ПОРТИ_МОНІТОРИНГ', value: hasConfirmedData ? stats.ports : 'Н/д', sub: hasConfirmedData ? 'Підтверджені вузли' : 'Маршрут не підтверджено', icon: Anchor, color: 'emerald', glow: 'rgba(16,185,129,0.2)' },
                         ].map((stat, i) => (
                             <motion.div
                                 key={i}
@@ -450,13 +531,13 @@ const MaritimeView: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* ── MAIN GRID ── */}
+                    {/* ── ОСНОВНА СІТКА ── */}
                     <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
 
-                        {/* LEFT — Vessels Panel */}
+                        {/* ЛІВА ПАНЕЛЬ — флот */}
                         <div className="xl:col-span-4 space-y-6">
 
-                            {/* Filter + Search bar */}
+                            {/* Фільтри та пошук */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     {(['all', 'high_risk', 'phantom'] as const).map((mode) => (
@@ -488,7 +569,7 @@ const MaritimeView: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Vessel list */}
+                            {/* Список суден */}
                             <div className="space-y-4 max-h-[700px] overflow-y-auto no-scrollbar pr-1">
                                 <AnimatePresence mode="popLayout">
                                     {loading ? (
@@ -498,7 +579,14 @@ const MaritimeView: React.FC = () => {
                                     ) : filteredVessels.length === 0 ? (
                                         <div className="py-20 text-center">
                                             <Ship size={40} className="text-slate-800 mx-auto mb-4" />
-                                            <p className="text-slate-400 font-black uppercase text-sm tracking-widest">СУДЕН НЕ ВИЯВЛЕНО</p>
+                                            <p className="text-slate-400 font-black uppercase text-sm tracking-widest">
+                                                {hasConfirmedData ? 'СУДЕН НЕ ВИЯВЛЕНО' : 'НЕМАЄ ПІДТВЕРДЖЕНИХ ДАНИХ'}
+                                            </p>
+                                            {!hasConfirmedData && (
+                                                <p className="mt-3 max-w-xl mx-auto text-sm leading-6 text-slate-500">
+                                                    Екран не підставляє локальний флот або порти, якщо морські маршрути не повернули відповіді.
+                                                </p>
+                                            )}
                                         </div>
                                     ) : (
                                         filteredVessels.map(vessel => (
@@ -514,19 +602,19 @@ const MaritimeView: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* RIGHT — Map + Details */}
+                        {/* ПРАВА ПАНЕЛЬ — карта і деталі */}
                         <div className="xl:col-span-8 space-y-8">
 
-                            {/* Map */}
+                            {/* Карта */}
                             <HoloContainer className="p-0 h-[520px] relative overflow-hidden">
-                                {/* Scanner overlay */}
+                                {/* Сканувальний шар */}
                                 <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
                                     <motion.div
                                         animate={{ top: ['0%', '100%', '0%'] }}
                                         transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
                                         className="absolute left-0 right-0 h-32 bg-gradient-to-b from-transparent via-blue-500/4 to-transparent"
                                     />
-                                    {/* Corner decorations */}
+                                    {/* Кутові маркери */}
                                     {[['top-0 left-0', 'top-6 left-6'], ['top-0 right-0', 'top-6 right-6'], ['bottom-0 left-0', 'bottom-6 left-6'], ['bottom-0 right-0', 'bottom-6 right-6']].map(([outer, inner], idx) => (
                                         <div key={idx} className={`absolute ${outer} w-10 h-10 pointer-events-none`}>
                                             <div className={`absolute ${inner.split(' ').slice(1).join(' ')} w-6 h-6 border-blue-500/40`}
@@ -541,24 +629,29 @@ const MaritimeView: React.FC = () => {
                                     ))}
                                 </div>
 
-                                {/* Map header bar */}
+                                {/* Шапка карти */}
                                 <div className="absolute top-0 inset-x-0 z-30 p-6 flex items-center justify-between">
                                     <div className="flex items-center gap-4 bg-black/60 backdrop-blur-xl rounded-2xl px-6 py-3 border border-white/5">
                                         <Radar size={18} className="text-blue-400 animate-spin-slow" />
                                         <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">ВЕКТОРНИЙ ПЛАН АКВАТОРІЙ</span>
-                                        <Badge className="bg-emerald-500 text-black font-black text-[8px] border-none animate-pulse">LIVE</Badge>
+                                        <Badge className={cn(
+                                            'font-black text-[8px] border-none',
+                                            hasConfirmedData ? 'bg-emerald-500 text-black' : 'bg-slate-800 text-slate-200'
+                                        )}>
+                                            {hasConfirmedData ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}
+                                        </Badge>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="bg-black/60 backdrop-blur-xl border border-white/5 rounded-2xl px-5 py-2.5 flex items-center gap-3">
-                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">ЗАТРИМКА</span>
-                                            <span className="text-[10px] font-mono text-blue-400 font-black">12ms</span>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">СУДЕН У ВИДАЧІ</span>
+                                            <span className="text-[10px] font-mono text-blue-400 font-black">{hasConfirmedData ? filteredVessels.length : 'Н/д'}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <ReactECharts option={mapOptions} style={{ height: '100%', width: '100%' }} />
 
-                                {/* Legend */}
+                                {/* Легенда */}
                                 <div className="absolute bottom-6 right-6 z-30 bg-black/70 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 space-y-2.5">
                                     {[
                                         { color: '#f43f5e', label: 'КРИТИЧНИЙ РИЗИК' },
@@ -574,7 +667,7 @@ const MaritimeView: React.FC = () => {
                                 </div>
                             </HoloContainer>
 
-                            {/* Vessel Detail Panel */}
+                            {/* Панель деталей судна */}
                             <AnimatePresence mode="wait">
                                 {selectedVessel ? (
                                     <motion.div
@@ -612,10 +705,10 @@ const MaritimeView: React.FC = () => {
                                                 { label: 'ТИП', value: selectedVessel.type, icon: Ship },
                                                 { label: 'ПРИЗНАЧЕННЯ', value: selectedVessel.destination || 'Невизначено', icon: Navigation },
                                                 { label: 'КООРДИНАТИ', value: `${selectedVessel.location.lat.toFixed(2)}°N`, icon: Compass },
-                                                { label: 'MMSI', value: selectedVessel.mmsi || 'N/A', icon: Signal },
+                                                { label: 'MMSI', value: selectedVessel.mmsi || 'Н/д', icon: Signal },
                                                 { label: 'IMO', value: selectedVessel.imo || '⚠ ВІДСУТНІЙ', icon: Database },
-                                                { label: 'ШВИДКІСТЬ', value: selectedVessel.speed ? `${selectedVessel.speed} кв.` : 'N/A', icon: TrendingUp },
-                                                { label: 'CERS_SCORE', value: `${selectedVessel.risk_score}%`, icon: Shield },
+                                                { label: 'ШВИДКІСТЬ', value: selectedVessel.speed ? `${selectedVessel.speed} кв.` : 'Н/д', icon: TrendingUp },
+                                                { label: 'CERS_ІНДЕКС', value: `${selectedVessel.risk_score}%`, icon: Shield },
                                             ].map(({ label, value, icon: Icon }, i) => (
                                                 <div key={i} className="p-5 bg-black/40 rounded-[24px] border border-white/5 space-y-2 panel-3d">
                                                     <div className="flex items-center gap-2">
@@ -624,7 +717,7 @@ const MaritimeView: React.FC = () => {
                                                     </div>
                                                     <p className={cn(
                                                         "text-sm font-black uppercase tracking-tight",
-                                                        label === 'CERS_SCORE' && selectedVessel.risk_score > 80 ? "text-rose-400" :
+                                                        label === 'CERS_ІНДЕКС' && selectedVessel.risk_score > 80 ? "text-rose-400" :
                                                             label === 'IMO' && value.includes('ВІДСУТНІЙ') ? "text-amber-400" : "text-white"
                                                     )}>{value}</p>
                                                 </div>
@@ -645,7 +738,7 @@ const MaritimeView: React.FC = () => {
                                         </div>
                                     </motion.div>
                                 ) : (
-                                    /* Port Grid */
+                                    /* Сітка портів */
                                     <motion.div
                                         key="ports"
                                         initial={{ opacity: 0 }}
@@ -681,7 +774,7 @@ const MaritimeView: React.FC = () => {
                                 )}
                             </AnimatePresence>
 
-                            {/* Meteo Row */}
+                            {/* Оперативні морські показники */}
                             <div className="p-8 bg-slate-900/20 border border-white/5 rounded-[40px] relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 transition-opacity">
                                     <Wind size={150} className="text-indigo-400" />
@@ -690,15 +783,10 @@ const MaritimeView: React.FC = () => {
                                     <div className="p-3 bg-indigo-500/10 rounded-xl">
                                         <Wind size={20} className="text-indigo-400" />
                                     </div>
-                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.4em]">МЕТЕО_АНАЛІТИКА_СТАН_АКВАТОРІЇ</h3>
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.4em]">ОПЕРАТИВНІ_МОРСЬКІ_ПОКАЗНИКИ</h3>
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
-                                    {[
-                                        { label: 'РІВЕНЬ МОРЯ', value: '+2.4м', color: 'text-indigo-400', icon: Waves },
-                                        { label: 'ШВИДКІСТЬ ВІТРУ', value: '18 ВУЗЛ.', color: 'text-amber-400', icon: Wind },
-                                        { label: 'ВИДИМІСТЬ', value: '12.4 КМ', color: 'text-emerald-400', icon: Eye },
-                                        { label: 'ТЕМПЕРАТУРА', value: '14.2°C', color: 'text-blue-400', icon: Droplets },
-                                    ].map(({ label, value, color, icon: Icon }) => (
+                                    {operationalMetrics.map(({ label, value, color, icon: Icon }) => (
                                         <div key={label} className="flex items-center gap-4 p-5 bg-black/30 rounded-[24px] border border-white/5 group/m hover:border-white/10 transition-all">
                                             <Icon size={18} className={cn(color, "opacity-60 group-hover/m:opacity-100 transition-opacity")} />
                                             <div>
@@ -725,24 +813,5 @@ const MaritimeView: React.FC = () => {
         </PageTransition>
     );
 };
-
-// ========================
-// Mock Data
-// ========================
-
-const MOCK_VESSELS: Vessel[] = [
-    { id: 'v1', name: 'SPIRIT OF ODESSA', flag: 'UA', type: 'Вантажне', location: { lat: 46.48, lon: 30.72 }, status: 'underway', destination: 'CONSTANTA', risk_score: 12, speed: 14, imo: 'IMO9123456', mmsi: '272012345' },
-    { id: 'v2', name: 'PHANTOM TRADER', flag: 'PA', type: 'Танкер', location: { lat: 44.1, lon: 28.9 }, status: 'underway', destination: 'UNKNOWN', risk_score: 94, speed: 8, mmsi: '352987654' },
-    { id: 'v3', name: 'BLACK SEA CARGO', flag: 'CY', type: 'Балкер', location: { lat: 43.2, lon: 31.5 }, status: 'anchored', destination: 'NOVOROSSIYSK', risk_score: 78, speed: 0, imo: 'IMO8876543', mmsi: '212543210' },
-    { id: 'v4', name: 'ANATOLIY VASILIEV', flag: 'MT', type: 'Ro-Ro', location: { lat: 42.7, lon: 27.8 }, status: 'underway', destination: 'ISTANBUL', risk_score: 45, speed: 17, imo: 'IMO7654321', mmsi: '248765432' },
-    { id: 'v5', name: 'GHOST MERIDIAN', flag: 'BZ', type: 'Танкер', location: { lat: 45.3, lon: 35.1 }, status: 'underway', destination: 'N/A', risk_score: 91, speed: 5 },
-];
-
-const MOCK_PORTS: Port[] = [
-    { id: 'p1', name: 'ОДЕСЬКИЙ ПОРТ', country: 'Україна', location: { lat: 46.48, lon: 30.72 }, vessel_count: 12, capacity: 40, risk_level: 'medium' },
-    { id: 'p2', name: 'КОНСТАНЦА', country: 'Румунія', location: { lat: 44.17, lon: 28.65 }, vessel_count: 28, capacity: 60, risk_level: 'low' },
-    { id: 'p3', name: 'ВАРНА', country: 'Болгарія', location: { lat: 43.18, lon: 27.93 }, vessel_count: 9, capacity: 30, risk_level: 'low' },
-    { id: 'p4', name: 'НОВОРОСІЙСЬК', country: 'РФ', location: { lat: 44.72, lon: 37.77 }, vessel_count: 41, capacity: 70, risk_level: 'high' },
-];
 
 export default MaritimeView;
