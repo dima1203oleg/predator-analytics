@@ -13,6 +13,7 @@ import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // Extracted Sub-views
 import { RelationalView } from '@/components/databases/RelationalView';
@@ -22,16 +23,34 @@ import { GraphDBView } from '@/components/databases/GraphDBView';
 import { CalibrationView } from '@/components/databases/CalibrationView';
 import { EtlProcessMonitor } from '@/components/etl/EtlProcessMonitor';
 
-const mockMinioBuckets = [
-    { name: 'evidence-vault', type: 'Private', status: 'Active', size: '4.2 TB', count: 125400 },
-    { name: 'osint-raw-shards', type: 'Public', status: 'Active', size: '8.1 TB', count: 850300 },
-    { name: 'medical-phi-encrypted', type: 'Restricted', status: 'Locked', size: '1.2 TB', count: 42000 },
-    { name: 'governance-archives', type: 'Private', status: 'Active', size: '4.9 TB', count: 210000 },
-];
-
 type DBTab = 'RELATIONAL' | 'OBJECT' | 'VECTOR' | 'GRAPH' | 'CALIBRATION' | 'ETL';
 
+type ObjectStorageBucket = {
+    name: string;
+    type: string;
+    status: string;
+    size: string;
+    count: number;
+};
+
+const normalizeBuckets = (value: unknown): ObjectStorageBucket[] => {
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
+        .map((item) => ({
+            name: typeof item.name === 'string' && item.name.trim().length > 0 ? item.name.trim() : 'Н/д',
+            type: typeof item.type === 'string' && item.type.trim().length > 0 ? item.type.trim() : 'Н/д',
+            status: typeof item.status === 'string' && item.status.trim().length > 0 ? item.status.trim() : 'Н/д',
+            size: typeof item.size === 'string' && item.size.trim().length > 0 ? item.size.trim() : 'Н/д',
+            count: typeof item.count === 'number' && Number.isFinite(item.count) ? item.count : 0,
+        }));
+};
+
 const DatabasesView: React.FC = () => {
+    const backendStatus = useBackendStatus();
     const metrics = useSystemMetrics();
     const [activeTab, setActiveTab] = useState<DBTab>('ETL');
     const [tables, setTables] = useState<DatabaseTable[]>([]);
@@ -43,9 +62,11 @@ const DatabasesView: React.FC = () => {
 
     const [selectedVector, setSelectedVector] = useState<any | null>(null);
     const [vectorData, setVectorData] = useState<any[]>([]);
-    const [buckets, setBuckets] = useState<any[]>([]);
+    const [buckets, setBuckets] = useState<ObjectStorageBucket[]>([]);
     const [trainingPairs, setTrainingPairs] = useState<SqlTrainingPair[]>([]);
     const [cypherQuery, setCypherQuery] = useState("MATCH (c:Company)-[:WON_TENDER]->(t:Tender)\nWHERE t.amount > 1000000\nRETURN c, t LIMIT 25");
+    const [feedback, setFeedback] = useState<string | null>(null);
+    const [lastSync, setLastSync] = useState('');
 
     const isMounted = useRef(false);
 
@@ -56,7 +77,14 @@ const DatabasesView: React.FC = () => {
             try {
                 const data = await api.getDatabases();
                 if (isMounted.current) setTables(Array.isArray(data) ? data : []);
-            } catch (e) { console.error("Failed to fetch tables", e); }
+                if (isMounted.current) {
+                    setFeedback(null);
+                    setLastSync(new Date().toLocaleTimeString('uk-UA'));
+                }
+            } catch (e) {
+                console.error("Failed to fetch tables", e);
+                if (isMounted.current) setFeedback('Маршрут `/databases` не повернув підтверджених таблиць.');
+            }
             finally { if (isMounted.current) setLoading(false); }
         };
         const fetchVectors = async () => {
@@ -64,15 +92,32 @@ const DatabasesView: React.FC = () => {
             try {
                 const data = await api.getVectors();
                 if (isMounted.current) setVectorData(Array.isArray(data) ? data : []);
-            } catch (e) { console.error("Failed to fetch vectors", e); }
+                if (isMounted.current) {
+                    setFeedback(null);
+                    setLastSync(new Date().toLocaleTimeString('uk-UA'));
+                }
+            } catch (e) {
+                console.error("Failed to fetch vectors", e);
+                if (isMounted.current) setFeedback('Маршрут `/vectors` не повернув підтверджених векторів.');
+            }
             finally { if (isMounted.current) setLoading(false); }
         };
         const fetchBuckets = async () => {
             setLoading(true);
             try {
                 const data = await api.getBuckets();
-                if (isMounted.current) setBuckets(Array.isArray(data) ? data : []);
-            } catch (e) { console.error("Failed to fetch buckets", e); }
+                if (isMounted.current) {
+                    setBuckets(normalizeBuckets(data));
+                    setFeedback(null);
+                    setLastSync(new Date().toLocaleTimeString('uk-UA'));
+                }
+            } catch (e) {
+                console.error("Failed to fetch buckets", e);
+                if (isMounted.current) {
+                    setBuckets([]);
+                    setFeedback('Маршрут `/buckets` не повернув підтверджених обʼєктних сховищ. Локальні bucket-и не підставляються.');
+                }
+            }
             finally { if (isMounted.current) setLoading(false); }
         };
         const fetchTrainingPairs = async () => {
@@ -80,7 +125,14 @@ const DatabasesView: React.FC = () => {
             try {
                 const data = await api.getTrainingPairs();
                 if (isMounted.current) setTrainingPairs(Array.isArray(data) ? data : []);
-            } catch (e) { console.error("Failed to fetch training pairs", e); }
+                if (isMounted.current) {
+                    setFeedback(null);
+                    setLastSync(new Date().toLocaleTimeString('uk-UA'));
+                }
+            } catch (e) {
+                console.error("Failed to fetch training pairs", e);
+                if (isMounted.current) setFeedback('Маршрут `/ml/training-pairs` не повернув підтверджених пар навчання.');
+            }
             finally { if (isMounted.current) setLoading(false); }
         };
 
@@ -132,29 +184,29 @@ const DatabasesView: React.FC = () => {
             <Modal
                 isOpen={queryModal.isOpen}
                 onClose={() => setQueryModal({ isOpen: false, table: null })}
-                title={`SQL Terminal Interface: ${queryModal.table}`}
+                title={`SQL контур: ${queryModal.table}`}
                 icon={<Terminal size={20} className="text-cyan-400" />}
                 size="xl"
             >
                 <div className="p-4 h-[550px] flex flex-col glass-morphism rounded-2xl border border-white/10 bg-black/60">
                     <div className="mb-4 flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Active Connection: POSTGRES_MASTER</span>
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Активний маршрут: /databases/query</span>
                     </div>
                     <textarea
                         value={sqlQuery}
                         onChange={(e) => setSqlQuery(e.target.value)}
                         className="w-full h-40 bg-slate-950 border border-white/5 rounded-2xl p-6 text-cyan-400 font-mono text-sm focus:border-cyan-500/50 outline-none resize-none mb-6 shadow-inner transition-all"
-                        placeholder="ENTER SQL COMMANDS..."
-                        title="SQL Query"
+                        placeholder="ВВЕДІТЬ SQL ЗАПИТ..."
+                        title="SQL запит"
                     />
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex gap-4">
-                            <span className="text-[10px] font-mono text-slate-300">Rows: {queryResult?.length || 0}</span>
-                            <span className="text-[10px] font-mono text-slate-300">Execution time: 14ms</span>
+                            <span className="text-[10px] font-mono text-slate-300">Рядки: {queryResult?.length || 0}</span>
+                            <span className="text-[10px] font-mono text-slate-300">Час виконання: Н/д</span>
                         </div>
                         <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 disabled:opacity-50">
-                            {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Execute Query
+                            {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Виконати запит
                         </button>
                     </div>
                     <div className="flex-1 bg-black/40 border border-white/5 rounded-2xl overflow-auto custom-scrollbar shadow-inner relative">
@@ -176,7 +228,7 @@ const DatabasesView: React.FC = () => {
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center opacity-20 transform scale-150">
                                 <Terminal size={48} className="text-slate-300 mb-4" />
-                                <span className="font-mono text-xs text-slate-300">TERMINAL_IDLE</span>
+                                <span className="font-mono text-xs text-slate-300">ТЕРМІНАЛ_ОЧІКУЄ</span>
                             </div>
                         )}
                     </div>
@@ -213,8 +265,13 @@ const DatabasesView: React.FC = () => {
 
                 <div className="flex gap-4 shrink-0 w-full lg:w-auto">
                     {[
-                        { label: 'ЄМНІСТЬ', val: '18.4 TB', color: 'text-cyan-400', icon: HardDrive },
-                        { label: 'СТАН СИСТЕМИ', val: '100%', color: 'text-emerald-400', icon: ShieldCheck }
+                        { label: 'S3 СХОВИЩА', val: buckets.length > 0 ? String(buckets.length) : 'Н/д', color: 'text-cyan-400', icon: HardDrive },
+                        {
+                            label: 'СТАН БЕКЕНДУ',
+                            val: backendStatus.isOffline ? 'НЕДОСТУПНИЙ' : metrics.isLive ? 'АКТИВНИЙ' : 'Н/д',
+                            color: backendStatus.isOffline ? 'text-rose-400' : metrics.isLive ? 'text-emerald-400' : 'text-slate-300',
+                            icon: ShieldCheck,
+                        }
                     ].map((s, idx) => (
                         <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-cyan-500/30">
                             <s.icon size={16} className={cn("mx-auto mb-3", s.color)} />
@@ -224,6 +281,32 @@ const DatabasesView: React.FC = () => {
                     ))}
                 </div>
             </div>
+
+            <div className="flex flex-wrap items-center gap-3 px-2">
+                <div className={cn(
+                    'border px-4 py-2 text-[11px] font-bold rounded-full',
+                    backendStatus.isOffline
+                        ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+                        : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100'
+                )}>
+                    {backendStatus.statusLabel}
+                </div>
+                <div className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200 rounded-full">
+                    Джерела: /databases, /vectors, /buckets, /ml/training-pairs
+                </div>
+                <div className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200 rounded-full">
+                    Джерело бекенду: {backendStatus.sourceLabel}
+                </div>
+                <div className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200 rounded-full">
+                    Синхронізація: {lastSync || 'Н/д'}
+                </div>
+            </div>
+
+            {feedback && (
+                <div className="rounded-[28px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+                    {feedback}
+                </div>
+            )}
 
             {/* Custom V55 Tab Selector */}
             <div className="sticky top-24 z-40 px-4">
@@ -279,7 +362,7 @@ const DatabasesView: React.FC = () => {
                     >
                         {activeTab === 'ETL' && <EtlProcessMonitor />}
                         {activeTab === 'RELATIONAL' && <RelationalView tables={tables} onOpenQuery={handleOpenQuery} />}
-                        {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets.length > 0 ? buckets : mockMinioBuckets} />}
+                        {activeTab === 'OBJECT' && <ObjectStorageView buckets={buckets} />}
                         {activeTab === 'VECTOR' && <VectorDBView vectorData={vectorData} selectedVector={selectedVector} onSelectVector={setSelectedVector} />}
                         {activeTab === 'GRAPH' && <GraphDBView cypherQuery={cypherQuery} onCypherQueryChange={setCypherQuery} onExecuteCypher={handleExecuteCypher} />}
                         {activeTab === 'CALIBRATION' && <CalibrationView trainingPairs={trainingPairs} onVerifySql={handleVerifySql} />}

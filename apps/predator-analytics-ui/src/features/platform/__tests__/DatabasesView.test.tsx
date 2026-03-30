@@ -1,9 +1,20 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import DatabasesView from '../DatabasesView';
 
 vi.mock('@/hooks/useSystemMetrics', () => ({
     useSystemMetrics: () => ({})
+}));
+
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        isTruthOnly: true,
+        modeLabel: 'Режим правдивих даних',
+        sourceLabel: 'localhost:9080/api/v1',
+        sourceType: 'local',
+        statusLabel: 'Зʼєднання активне',
+    }),
 }));
 
 vi.mock('@/services/api', () => ({
@@ -38,7 +49,7 @@ vi.mock('@/components/databases/RelationalView', () => ({
 }));
 
 vi.mock('@/components/databases/ObjectStorageView', () => ({
-    ObjectStorageView: () => <div data-testid="object-view" />
+    ObjectStorageView: ({ buckets }: any) => <div data-testid="object-view">BUCKETS:{buckets.length}</div>
 }));
 
 vi.mock('@/components/databases/VectorDBView', () => ({
@@ -58,11 +69,26 @@ vi.mock('@/components/etl/EtlProcessMonitor', () => ({
 }));
 
 describe('DatabasesView', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
     it('рендерить заголовок і базові блоки', () => {
         render(<DatabasesView />);
 
-        expect(screen.getByText(/НЕЙРОННА СІТКА/i)).toBeInTheDocument();
-        expect(screen.getByText(/СХОВИЩ/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /НЕЙРОННА СІТКА/i })).toBeInTheDocument();
+        expect(screen.getByText(/СИНХРОНІЗОВАНЕ ЯДРО ЗНАНЬ/i)).toBeInTheDocument();
         expect(screen.getByTestId('etl-monitor')).toBeInTheDocument();
+    });
+
+    it('не підставляє локальні bucket-и у вкладці OBJECT', async () => {
+        render(<DatabasesView />);
+
+        fireEvent.click(screen.getByRole('button', { name: /S3 Об'єкти/i }));
+
+        await waitFor(() => {
+            expect(screen.getByTestId('object-view')).toHaveTextContent('BUCKETS:0');
+        });
+        expect(screen.queryByText(/evidence-vault/i)).not.toBeInTheDocument();
     });
 });
