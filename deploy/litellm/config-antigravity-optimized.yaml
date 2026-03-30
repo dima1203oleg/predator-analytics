@@ -1,18 +1,20 @@
 # ================================================================
-# Ultra-Router v5.0 OPTIMIZED — Antigravity / Cline
-# 4 основні моделі (FAST, CHAT, CODING, AUTO)
-# + OLLAMA FALLBACK на NVIDIA сервері
+# Ultra-Router v5.0 OPTIMIZED
+# 💬 Copilot: ultra-router-chat (Gemini)
+# ⚡ Aider: ultra-router-fast (Groq x2)
+# 🎨 Vibe+Cline: ultra-router-coding (Mistral x2)
+# ∞ Ollama: ultra-router-local (fallback)
 # ================================================================
 
 model_list:
-  # 🟢 CHAT — Gemini Flash (простий чат)
+  # 💬 CHAT (Copilot) — Gemini Flash (українська, простий чат)
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
       timeout: 15
 
-  # 🟠 FAST — Groq 2 ключі (швидке вивірення, балансування)
+  # ⚡ FAST (Aider) — Groq 2 ключи (швидке вивірення)
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
@@ -25,7 +27,7 @@ model_list:
       api_key: os.environ/GROQ_API_KEY_2
       timeout: 12
 
-  # 🔵 CODING — Mistral 2 ключі (рефакторинг коду)
+  # 🎨 CODING (Vibe+Cline) — Mistral 2 ключи (рефакторинг коду)
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
@@ -38,7 +40,7 @@ model_list:
       api_key: os.environ/MISTRAL_API_KEY_2
       timeout: 20
 
-  # 🟣 LOCAL — Ollama NVIDIA Server (infinite fallback)
+  # ∞ LOCAL (Ollama NVIDIA 194.177.1.240) — infinite fallback
   - model_name: ultra-router-local
     litellm_params:
       model: ollama/deepseek-r1:7b
@@ -51,35 +53,33 @@ model_list:
       api_base: http://194.177.1.240:11434
       timeout: 45
 
-  # 🤖 AUTO — Universal Router (auto-select по складності)
+  # 🤖 AUTO — Universal Router (auto-select)
   - model_name: ultra-router-auto
     litellm_params:
       model: router
 
 litellm_settings:
-  master_key: ${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}
   routing_strategy: "least-busy"
-  num_retries: 3              # Менше ретраїв = швидше fallback
-  request_timeout: 25         # Менше timeout = не гальмує
-  allowed_fails: 1            # Одна помилка = fallback
-  cooldown_time: 5
-  fallback_strategy: "exponential_backoff"
-  
+  num_retries: 5
+  request_timeout: 60
+  allowed_fails: 2
+  cooldown_time: 10
+  success_callback: []
+  failure_callback: []
   fallbacks:
-    - {"ultra-router-chat": ["ultra-router-local"]}
-    - {"ultra-router-fast": ["ultra-router-local"]}
-    - {"ultra-router-coding": ["ultra-router-local"]}
-  
-  default_fallbacks: ["ultra-router-local"]
+    - {"ultra-router-chat": ["ultra-router-auto"]}
+    - {"ultra-router-fast": ["ultra-router-auto"]}
+    - {"ultra-router-coding": ["ultra-router-auto"]}
+  default_fallbacks: ["ultra-router-auto"]
 
 router_settings:
   routing_strategy: "least-busy"
-  num_retries: 2
-  timeout: 25
-  cooldown_time: 5
+  num_retries: 5
+  timeout: 60
+  retry_after: 5
+  cooldown_time: 10
 
 general_settings:
   store_model_in_db: false
   disable_spend_logs: true
   disable_reset_budget: true
-  log_level: "INFO"

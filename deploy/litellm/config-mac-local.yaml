@@ -1,0 +1,113 @@
+# ================================================================
+# Ultra-Router v5.0 — MAC LOCAL MODE
+# Використовується коли NVIDIA сервер (194.177.1.240) недоступний
+#
+# Тільки хмарні API: Gemini + Groq + Mistral
+# Ollama відсутній (NVIDIA недоступний)
+# ultra-router-local = хмарний пул без обмежень (безкоштовний резерв)
+# ================================================================
+
+model_list:
+
+  # ── CHAT — Gemini 2.5 Flash ──────────────────────────────────
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+      rpm: 15
+      timeout: 20
+
+  # ── FAST — Groq Llama 3.3 70B (2 ключі) ─────────────────────
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
+      rpm: 30
+      timeout: 12
+
+  - model_name: ultra-router-fast
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_2
+      rpm: 30
+      timeout: 12
+
+  # ── CODING — Mistral Codestral (2 ключі) ─────────────────────
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+      rpm: 20
+      timeout: 25
+
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_2
+      rpm: 20
+      timeout: 25
+
+  # ── AUTO — всі провайдери (least-busy) ───────────────────────
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+      rpm: 15
+      timeout: 20
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
+      rpm: 30
+      timeout: 12
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_2
+      rpm: 30
+      timeout: 12
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+      rpm: 20
+      timeout: 25
+
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_2
+      rpm: 20
+      timeout: 25
+
+litellm_settings:
+  routing_strategy: "least-busy"
+  num_retries: 5
+  request_timeout: 45
+  allowed_fails: 2
+  cooldown_time: 10
+  # MAC LOCAL: fallback на ultra-router-auto (усі провайдери)
+  fallbacks:
+    - {"ultra-router-chat": ["ultra-router-auto"]}
+    - {"ultra-router-fast": ["ultra-router-auto"]}
+    - {"ultra-router-coding": ["ultra-router-auto"]}
+  default_fallbacks: ["ultra-router-auto"]
+
+router_settings:
+  routing_strategy: "least-busy"
+  num_retries: 5
+  timeout: 45
+  retry_after: 3
+  cooldown_time: 10
+  # ultra-router-local = alias для ultra-router-auto в MAC LOCAL режимі
+  model_group_alias:
+    ultra-router-local: ultra-router-auto
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  enable_health_check: true
+  store_model_in_db: false
+  disable_spend_logs: true

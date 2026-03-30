@@ -1,0 +1,32 @@
+# ================================================================
+# Prometheus — конфігурація для Ultra-Router v5.0
+# Збирає метрики з LiteLLM /metrics endpoint
+# ================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    service: ultra-router
+    environment: production
+
+scrape_configs:
+  # LiteLLM Proxy метрики
+  - job_name: litellm
+    static_configs:
+      - targets:
+          - ultra-router:4000
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # Prometheus самомоніторинг
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
+
+alerting:
+  alertmanagers: []
+
+rule_files: []

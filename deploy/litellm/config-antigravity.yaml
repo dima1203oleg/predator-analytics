@@ -1,114 +1,129 @@
 # ================================================================
-# Ultra-Router v4.4 — Antigravity / Cline
-# PREDATOR Analytics — 2×Mistral + 2×Groq + 1×Gemini
-# Mistral = глобальний fallback ("останній рятівник")
+# Ultra-Router v5.0 — Universal Hybrid AI Router
+# PREDATOR Analytics — Єдина точка входу до всіх LLM
+#
+# Групи:
+#   ultra-router-chat    → Gemini 2.5 Flash (чат, українська)
+#   ultra-router-fast    → Groq Llama 3.3 70B x2 (швидкість, Vibe Coding)
+#   ultra-router-coding  → Mistral Codestral x2 (код, рефакторинг)
+#   ultra-router-local   → Ollama на NVIDIA (безлімітний резерв)
+#   ultra-router-auto    → Всі провайдери (least-busy, автовибір)
+#
+# Fallback-ланцюжок: хмара → ultra-router-local (Ollama)
 # ================================================================
 
 model_list:
-  # ── CHAT (Gemini першочергово, Groq як резерв)
+
+  # ═══════════════════════════════════════════════════════════
+  # CHAT — Gemini 2.5 Flash (чат, проста аналітика, українська)
+  # ═══════════════════════════════════════════════════════════
   - model_name: ultra-router-chat
     litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
+      rpm: 15
+      timeout: 20
 
-  - model_name: ultra-router-chat
+  # ═══════════════════════════════════════════════════════════
+  # FAST — Groq Llama 3.3 70B (2 ключі — незалежний rate-limit)
+  # Призначення: Vibe Coding, складний аналіз, швидкі відповіді
+  # ═══════════════════════════════════════════════════════════
+  - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_2
+      api_key: os.environ/GROQ_API_KEY_1
+      rpm: 30
+      timeout: 12
 
-  - model_name: ultra-router-chat
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_3
-
-  # ── FAST (6 Groq від різних акаунтів — незалежні rate-limit)
   - model_name: ultra-router-fast
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY_2
+      rpm: 30
+      timeout: 12
 
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_3
-
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_4
-
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_5
-
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_6
-
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_7
-
-  # ── CODING (два Mistral — load-balance + глобальний рятівник)
+  # ═══════════════════════════════════════════════════════════
+  # CODING — Mistral Codestral (2 ключі — load balance)
+  # Призначення: генерація коду, рефакторинг, технічні завдання
+  # ═══════════════════════════════════════════════════════════
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
       api_key: os.environ/MISTRAL_API_KEY_1
+      rpm: 20
+      timeout: 25
 
   - model_name: ultra-router-coding
     litellm_params:
       model: mistral/codestral-latest
       api_key: os.environ/MISTRAL_API_KEY_2
+      rpm: 20
+      timeout: 25
 
-  # ── AUTO (всі 5 ключів — Gemini + Mistral×2 + Groq×2, least-busy + авторотація)
+  # ═══════════════════════════════════════════════════════════
+  # LOCAL — Ollama на NVIDIA сервері 194.177.1.240
+  # Призначення: безлімітний резерв, OSINT-завдання, тривалі сесії
+  # ═══════════════════════════════════════════════════════════
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/qwen3:8b
+      api_base: http://194.177.1.240:11434
+      timeout: 60
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/deepseek-r1:7b
+      api_base: http://194.177.1.240:11434
+      timeout: 60
+
+  - model_name: ultra-router-local
+    litellm_params:
+      model: ollama/gemma3:4b
+      api_base: http://194.177.1.240:11434
+      timeout: 45
+
+  # ═══════════════════════════════════════════════════════════
+  # AUTO — Всі провайдери в одному пулі (least-busy автовибір)
+  # Призначення: universal entry point для скриптів та автоматизації
+  # ═══════════════════════════════════════════════════════════
   - model_name: ultra-router-auto
     litellm_params:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
+      rpm: 15
+      timeout: 20
 
   - model_name: ultra-router-auto
     litellm_params:
-      model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_1
-
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: os.environ/MISTRAL_API_KEY_2
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_1
+      rpm: 30
+      timeout: 12
 
   - model_name: ultra-router-auto
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY_2
+      rpm: 30
+      timeout: 12
 
   - model_name: ultra-router-auto
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_3
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_1
+      rpm: 20
+      timeout: 25
 
   - model_name: ultra-router-auto
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_4
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_2
+      rpm: 20
+      timeout: 25
 
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_5
-
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_6
-
-  - model_name: ultra-router-auto
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY_7
-
+# ================================================================
+# Глобальні налаштування LiteLLM
+# ================================================================
 litellm_settings:
   routing_strategy: "least-busy"
   num_retries: 5
@@ -117,20 +132,34 @@ litellm_settings:
   cooldown_time: 10
   success_callback: []
   failure_callback: []
+  # Fallback-ланцюжок: хмарні API → локальний Ollama (безлімітний)
   fallbacks:
-    - {"ultra-router-chat": ["ultra-router-auto"]}
-    - {"ultra-router-fast": ["ultra-router-auto"]}
-    - {"ultra-router-coding": ["ultra-router-auto"]}
-  default_fallbacks: ["ultra-router-auto"]
+    - {"ultra-router-chat": ["ultra-router-local"]}
+    - {"ultra-router-fast": ["ultra-router-local"]}
+    - {"ultra-router-coding": ["ultra-router-local"]}
+    - {"ultra-router-auto": ["ultra-router-local"]}
+  default_fallbacks: ["ultra-router-local"]
 
+# ================================================================
+# Налаштування маршрутизатора
+# ================================================================
 router_settings:
   routing_strategy: "least-busy"
   num_retries: 5
   timeout: 60
   retry_after: 5
   cooldown_time: 10
+  # Ключові слова для складних завдань (пріоритет на ultra-router-fast)
+  allowed_model_region: "eu"
 
+# ================================================================
+# Загальні налаштування (безпека + логування)
+# ================================================================
 general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  enable_health_check: true
   store_model_in_db: false
-  disable_spend_logs: true
-  disable_reset_budget: true
+  disable_spend_logs: false
+  database_url: os.environ/DATABASE_URL
+  # Prometheus метрики доступні на /metrics
+  prometheus_port: 4000

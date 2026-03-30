@@ -1,21 +1,158 @@
+# ================================================================
+# Ultra-Router v5.0 — Повний стек
+# LiteLLM + PostgreSQL + Prometheus + Grafana + Nginx
+# ================================================================
+
 services:
+
+  # ─────────────────────────────────────────────────────────────
+  # LiteLLM Router — єдина точка входу до всіх LLM (порт 4000)
+  # ─────────────────────────────────────────────────────────────
   ultra-router:
     image: ghcr.io/berriai/litellm:main-stable
     container_name: ultra-router-v5.0
     env_file:
-      - .env.ultra-router-optimized
+      - .env.ultra-router
     ports:
       - "4000:4000"
     environment:
       LOG_LEVEL: "INFO"
-    command: ["--config", "/app/config.yaml", "--port", "4000", "--detailed_debug"]
+      STORE_MODEL_IN_DB: "False"
+    command:
+      - --config
+      - /app/config.yaml
+      - --port
+      - "4000"
+      - --detailed_debug
     volumes:
-      - ./config-antigravity-optimized.yaml:/app/config.yaml:ro
+      - ./config-antigravity.yaml:/app/config.yaml:ro
       - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - ai-net
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')\" || exit 1"]
+      interval: 15s
+      timeout: 8s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+
+  # ─────────────────────────────────────────────────────────────
+  # PostgreSQL — зберігання логів запитів та метаданих
+  # ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: ultra-router-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-litellm}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-litellm_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-litellm}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - ai-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-litellm} -d ${POSTGRES_DB:-litellm}"]
       interval: 10s
       timeout: 5s
-      retries: 3
-      start_period: 20s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+
+  # ─────────────────────────────────────────────────────────────
+  # Prometheus — збір метрик з LiteLLM /metrics endpoint
+  # ─────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: ultra-router-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+      - --web.enable-lifecycle
+    networks:
+      - ai-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+
+  # ─────────────────────────────────────────────────────────────
+  # Grafana — дашборди для метрик LiteLLM
+  # ─────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: ultra-router-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-predator2026}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: "http://194.177.1.240:3001"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    networks:
+      - ai-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+
+  # ─────────────────────────────────────────────────────────────
+  # Nginx — безпечний проксі з rate limiting (порт 80/443)
+  # ─────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ultra-router-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      ultra-router:
+        condition: service_healthy
+    networks:
+      - ai-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.25"
+
+networks:
+  ai-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  prometheus_data:
+  grafana_data:

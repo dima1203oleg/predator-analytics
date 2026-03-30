@@ -1,0 +1,29 @@
+# ================================================================
+# Aider — конфігурація для PREDATOR Analytics
+# Ultra-Router v5.0: http://194.177.1.240:4000
+# ================================================================
+
+openai-api-base: http://194.177.1.240:4000
+openai-api-key: sk-antigravity-master-2026
+
+# Основна модель для складних завдань (аналіз + архітектура)
+model: ultra-router-fast
+
+# Модель для редагування коду (рефакторинг, генерація)
+editor-model: ultra-router-coding
+
+# Проста/швидка модель для субзавдань
+weak-model: ultra-router-chat
+
+# Налаштування поведінки
+auto-commits: false
+dirty-commits: true
+stream: true
+pretty: true
+
+# Git
+git: true
+gitignore: true
+
+# Мова для коментарів та git-повідомлень
+# (відповідно до HR-03: ТІЛЬКИ українська)

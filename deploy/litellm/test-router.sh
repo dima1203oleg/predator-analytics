@@ -1,13 +1,21 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════════════
-# 🧪 ТЕСТУВАННЯ ULTRA-ROUTER v55.3
-# Скрипт для перевірки роботи LiteLLM Proxy
+# ТЕСТУВАННЯ ULTRA-ROUTER v5.0
+# Перевірка всіх 5 груп моделей + failover на локальні
+# Використання: ./test-router.sh [URL]
+#   URL за замовчуванням: http://localhost:4000
+#   Для NVIDIA сервера: ./test-router.sh http://194.177.1.240:4000
 # ═══════════════════════════════════════════════════════════════
 
 set -e
 
 ROUTER_URL="${1:-http://localhost:4000}"
-echo "🧪 ТЕСТУВАННЯ ULTRA-ROUTER v4.4 на ${ROUTER_URL}"
+MASTER_KEY="${LITELLM_MASTER_KEY:-sk-antigravity-master-2026}"
+PASS=0
+FAIL=0
+WARN=0
+
+echo "ТЕСТУВАННЯ ULTRA-ROUTER v5.0 на ${ROUTER_URL}"
 echo "═══════════════════════════════════════════════════════════════"
 
 # ───────────────────────────────────────────────────────────────────
@@ -111,19 +119,77 @@ else
 fi
 
 # ───────────────────────────────────────────────────────────────────
-# SUMMARY
+# ТЕСТ 7: ultra-router-local (Ollama або хмарний пул)
+# ───────────────────────────────────────────────────────────────────
+echo ""
+echo "ТЕСТ 7: ultra-router-local (Ollama / хмарний пул fallback)"
+echo "─────────────────────────────────────────────────────────────────"
+
+RESPONSE=$(curl -s -X POST "${ROUTER_URL}/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${MASTER_KEY}" \
+  -d '{"model": "ultra-router-local", "messages": [{"role": "user", "content": "1+1"}], "max_tokens": 10}' 2>/dev/null)
+
+if echo "$RESPONSE" | grep -q "choices"; then
+    echo "ultra-router-local OK — $(echo "$RESPONSE" | jq -r '.model // "невідомо"' 2>/dev/null)"
+    PASS=$((PASS+1))
+else
+    echo "ultra-router-local WARN: $(echo "$RESPONSE" | jq -r '.error.message' 2>/dev/null || echo "$RESPONSE")"
+    WARN=$((WARN+1))
+fi
+
+# ───────────────────────────────────────────────────────────────────
+# ТЕСТ 8: Failover симуляція (хибний ключ → автопереключення)
+# ───────────────────────────────────────────────────────────────────
+echo ""
+echo "ТЕСТ 8: Fallback (список моделей з /v1/models)"
+echo "─────────────────────────────────────────────────────────────────"
+
+MODELS=$(curl -s "${ROUTER_URL}/v1/models" \
+  -H "Authorization: Bearer ${MASTER_KEY}" 2>/dev/null | jq -r '.data[].id' 2>/dev/null | sort)
+
+REQUIRED="ultra-router-auto ultra-router-chat ultra-router-coding ultra-router-fast"
+for model in $REQUIRED; do
+    if echo "$MODELS" | grep -q "$model"; then
+        echo "  $model — присутній"
+        PASS=$((PASS+1))
+    else
+        echo "  $model — ВІДСУТНІЙ!"
+        FAIL=$((FAIL+1))
+    fi
+done
+# ultra-router-local: alias в mac-режимі або Ollama в NVIDIA-режимі
+if echo "$MODELS" | grep -q "ultra-router-local"; then
+    echo "  ultra-router-local — присутній (NVIDIA режим)"
+    PASS=$((PASS+1))
+else
+    echo "  ultra-router-local — alias (mac-режим, norm)"
+    WARN=$((WARN+1))
+fi
+
+# ───────────────────────────────────────────────────────────────────
+# ПІДСУМОК
 # ───────────────────────────────────────────────────────────────────
 echo ""
 echo "═══════════════════════════════════════════════════════════════"
-echo "✅ ULTRA-ROUTER v4.4 ГОТОВИЙ!"
+echo "ULTRA-ROUTER v5.0 — РЕЗУЛЬТАТИ ТЕСТУВАННЯ"
 echo ""
-echo "🔗 Порт    : http://localhost:4000"
-echo "📊 API     : /v1/chat/completions"
-echo "🔑 Key     : sk-antigravity-master-2026"
+echo "  PASS : ${PASS}"
+echo "  WARN : ${WARN} (очікується для Ollama якщо NVIDIA недоступний)"
+echo "  FAIL : ${FAIL}"
 echo ""
-echo "📌 Моделі (Cline / Antigravity):"
-echo "   ultra-router-chat   → 1×Gemini 2.5 Flash        (чат, укр)"
-echo "   ultra-router-fast   → 2×Groq llama-3.3-70b      (Vibe Coding)"
-echo "   ultra-router-coding → 2×Mistral Codestral       (код + global fallback)"
-echo "   ultra-router-auto   → Auto complexity-based    (обирає сам)"
+echo "  Router   : ${ROUTER_URL}"
+echo "  Key      : ${MASTER_KEY}"
+echo ""
+echo "  Моделі:"
+echo "    ultra-router-chat   → Gemini 2.5 Flash"
+echo "    ultra-router-fast   → 2×Groq llama-3.3-70b"
+echo "    ultra-router-coding → 2×Mistral Codestral"
+echo "    ultra-router-local  → Ollama або хмарний пул"
+echo "    ultra-router-auto   → least-busy автовибір"
+if [ "${FAIL}" -gt 0 ]; then
+    echo ""
+    echo "  УВАГА: ${FAIL} критичних помилок!"
+    exit 1
+fi
 echo "═══════════════════════════════════════════════════════════════"

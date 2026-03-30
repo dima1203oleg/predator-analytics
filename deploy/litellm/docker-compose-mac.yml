@@ -1,0 +1,37 @@
+# ================================================================
+# Ultra-Router v5.0 — MAC LOCAL MODE
+# Запускається автоматично коли NVIDIA сервер недоступний
+# Тільки LiteLLM з хмарними API — без PostgreSQL/Prometheus/Grafana
+# ================================================================
+
+services:
+  ultra-router:
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: ultra-router-mac
+    env_file:
+      - .env.ultra-router
+    ports:
+      - "4000:4000"
+    environment:
+      LOG_LEVEL: "WARNING"
+      STORE_MODEL_IN_DB: "False"
+    command:
+      - --config
+      - /app/config.yaml
+      - --port
+      - "4000"
+    volumes:
+      - ./config-mac-local.yaml:/app/config.yaml:ro
+      - ./logs:/app/logs
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')\" || exit 1"]
+      interval: 15s
+      timeout: 8s
+      retries: 3
+      start_period: 20s
