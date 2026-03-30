@@ -33,7 +33,7 @@ model_list:
       model: mistral/codestral-latest
       api_key: os.environ/MISTRAL_API_KEY_2
 
-  # ── AUTO (Gemini → Mistral → Groq, least-busy)
+  # ── AUTO (всі 5 ключів — Gemini + Mistral×2 + Groq×2, least-busy + авторотація)
   - model_name: ultra-router-auto
     litellm_params:
       model: gemini/gemini-2.5-flash
@@ -46,29 +46,39 @@ model_list:
 
   - model_name: ultra-router-auto
     litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_API_KEY_2
+
+  - model_name: ultra-router-auto
+    litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY_1
 
+  - model_name: ultra-router-auto
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY_2
+
 litellm_settings:
   routing_strategy: "least-busy"
-  num_retries: 3
-  request_timeout: 25
-  allowed_fails: 3
-  cooldown_time: 30
+  num_retries: 5
+  request_timeout: 60
+  allowed_fails: 2
+  cooldown_time: 10
   success_callback: []
   failure_callback: []
   fallbacks:
-    - {"ultra-router-chat": ["ultra-router-coding"]}
-    - {"ultra-router-fast": ["ultra-router-coding"]}
-    - {"ultra-router-auto": ["ultra-router-coding"]}
-  default_fallbacks: ["ultra-router-coding"]
+    - {"ultra-router-chat": ["ultra-router-auto"]}
+    - {"ultra-router-fast": ["ultra-router-auto"]}
+    - {"ultra-router-coding": ["ultra-router-auto"]}
+  default_fallbacks: ["ultra-router-auto"]
 
 router_settings:
   routing_strategy: "least-busy"
-  num_retries: 3
-  timeout: 25
-  retry_after: 3
-  cooldown_time: 30
+  num_retries: 5
+  timeout: 60
+  retry_after: 5
+  cooldown_time: 10
 
 general_settings:
   store_model_in_db: false
