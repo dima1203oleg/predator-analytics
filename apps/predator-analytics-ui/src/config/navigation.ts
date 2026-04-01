@@ -245,7 +245,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
 ];
 
 /**
- * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v57.0.
+ * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v11.5 OSINT-HUB.
  * Шість верхніх блоків зберігають попередні модулі, але прибирають перевантаження на рівні головних секцій.
  */
 const baseNavigationConfig: NavSection[] = [

@@ -355,12 +355,18 @@ export default function DiligencePage() {
 
     return (
         <div className="space-y-6">
-            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+            <ConstitutionalShield />
+            
+            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8 relative">
+                <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+                    <Scale size={180} strokeWidth={0.5} className="text-emerald-500" />
+                </div>
+
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
-                                Контрагентна розвідка
+                                OSINT-HUB v11.5 | Контрагентна розвідка
                             </span>
                             <span
                                 className={cn(
@@ -372,6 +378,9 @@ export default function DiligencePage() {
                             >
                                 {backendStatus.statusLabel}
                             </span>
+                            <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-amber-200 select-none">
+                                CERTIFIED ANALYTICS
+                            </span>
                         </div>
 
                         <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
@@ -379,17 +388,19 @@ export default function DiligencePage() {
                         </h1>
                         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
                             Панель працює з підтвердженими профілями компаній, показує фактичний стан
-                            ризику, CERS-компоненти та наявні службові записи.
-                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                                <ShieldCheck size={10} /> v11.5 Актив
-                            </span>
+                            ризику, CERS-компоненти та наявні службові записи під захистом <span className="text-emerald-400 font-bold">Constitutional Shield</span>.
                         </p>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
                         <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
                         <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
-                        <MetricTile label="Джерело" value={backendStatus.sourceLabel} compact />
+                        <MetricTile 
+                            label="Статус" 
+                            value="v11.5 HUB" 
+                            accent="text-emerald-400"
+                            compact 
+                        />
                     </div>
                 </div>
             </section>

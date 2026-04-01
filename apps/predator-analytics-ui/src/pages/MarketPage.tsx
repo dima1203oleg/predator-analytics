@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   Activity,
+  AlertCircle,
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
@@ -25,9 +26,11 @@ import {
   Loader2,
   Package,
   Radar,
+  ShieldCheck,
   TrendingUp,
   Zap,
 } from 'lucide-react';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 import { ValueScreen, type ValueBreakdown } from '@/components/shared/ValueScreen';
 
 type MarketTab = 'overview' | 'declarations' | 'competitors' | 'customs';
@@ -132,7 +135,7 @@ const normalizeOverview = (payload: MarketOverviewPayload | null): NormalizedMar
         icon: FileText,
       },
       {
-        title: 'Обсяг ринку (USD)',
+        title: 'Обсяг ринку',
         value: formatCurrencyCompact(stats.total_value_usd),
         change: `${stats.value_change >= 0 ? '+' : ''}${stats.value_change}%`,
         positive: stats.value_change >= 0,
@@ -146,7 +149,7 @@ const normalizeOverview = (payload: MarketOverviewPayload | null): NormalizedMar
         icon: Building2,
       },
       {
-        title: 'Номенклатура (SKU)',
+        title: 'Номенклатура SKU',
         value: stats.total_products.toLocaleString('uk-UA'),
         change: `${stats.products_change >= 0 ? '+' : ''}${stats.products_change}%`,
         positive: stats.products_change >= 0,
@@ -439,48 +442,71 @@ export default function MarketPage() {
 
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(9,18,32,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-3xl">
-            <div className="mb-3 flex flex-wrap gap-2">
-              <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-cyan-200">
-                Ринкова аналітика
-              </span>
-              <span
-                className={cn(
-                  'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
-                  backendStatus.isOffline
-                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
-                    : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
-                )}
-              >
-                {backendStatus.statusLabel}
-              </span>
-            </div>
-            <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
-              <BarChart3 className="text-cyan-300" size={30} />
-              Ринок
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-              Кожна вкладка показує або живі дані з ендпоїнтів, або чіткий стан недоступності.
-              Жодних намальованих графіків чи демо-карток для митниці та конкурентів.
-            </p>
-          </div>
+      <ConstitutionalShield />
+      
+      <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
+        <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none transform rotate-12">
+          <Globe2 size={240} strokeWidth={0.5} className="text-cyan-400" />
+        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(34,211,238,0.08),transparent_50%)] pointer-events-none" />
 
-          <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[520px]">
-            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
-              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Джерело</div>
-              <div className="mt-2 text-sm font-semibold text-white">{backendStatus.sourceLabel}</div>
-            </div>
-            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
-              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Вкладка</div>
-              <div className="mt-2 text-sm font-semibold text-white">
-                {tabs.find((tab) => tab.key === activeTab)?.label}
+        <div className="flex flex-col gap-10 xl:flex-row xl:items-start xl:justify-between relative z-10">
+          <div className="flex-1 space-y-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="badge-v2 badge-v2-cyan">
+                <span className="relative z-10">PREDATOR v11.5 | OSINT-HUB</span>
+                <div className="badge-v2-glimmer" />
+              </div>
+              <div className={cn(
+                "badge-v2 px-4 font-black uppercase tracking-[0.15em]",
+                backendStatus.isOffline ? "badge-v2-rose" : "badge-v2-emerald"
+              )}>
+                {backendStatus.statusLabel}
               </div>
             </div>
-            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
-              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Період</div>
-              <div className="mt-2 text-sm font-semibold text-white">Останні доступні записи</div>
+
+            <div className="space-y-4">
+              <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+                <div className="relative">
+                  <BarChart3 className="text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" size={52} />
+                  <div className="absolute -inset-2 bg-cyan-400/20 blur-xl rounded-full animate-pulse" />
+                </div>
+                <span>Ринок</span>
+              </h1>
+              <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
+                Глобальний моніторинг митних декларацій, стратегічних конкурентів та товарної номенклатури під захистом <span className="text-cyan-400 font-bold border-b border-cyan-400/30">Constitutional Shield</span>.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
+            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Core Environment</span>
+              </div>
+              <div className="text-base font-bold text-white tracking-tight">Cybercore P-60</div>
+              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
+            </div>
+
+            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Intelligence Hub</span>
+              </div>
+              <div className="text-base font-bold text-white tracking-tight">
+                {tabs.find((tab) => tab.key === activeTab)?.label}
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Scenario {activeTab === 'overview' ? '01' : '02'}</div>
+            </div>
+
+            <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Verification</span>
+              </div>
+              <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Market Certified</div>
+              <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">TRUSTED NODE</div>
             </div>
           </div>
         </div>
@@ -611,43 +637,49 @@ function MarketOverview({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
         {(loading ? Array.from({ length: 4 }).map((_, index) => ({ title: `loading-${index}`, value: '', change: '', positive: true, icon: FileText })) : data.cards).map((card, index) => (
           <div
             key={card.title}
-            className="group relative overflow-hidden rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.28)] transition-all duration-500 hover:scale-[1.02] hover:border-cyan-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_40px_rgba(34,211,238,0.15)]"
+            className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500 hover:border-cyan-500/40"
           >
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-shimmer pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             {loading ? (
-              <div className="space-y-3 relative z-10">
-                <div className="h-10 w-10 animate-pulse rounded-2xl bg-white/[0.06]" />
-                <div className="h-8 w-24 animate-pulse rounded-xl bg-white/[0.06]" />
-                <div className="h-4 w-32 animate-pulse rounded-xl bg-white/[0.06]" />
+              <div className="space-y-4 relative z-10">
+                <div className="h-12 w-12 animate-pulse rounded-2xl bg-white/[0.06]" />
+                <div className="h-10 w-28 animate-pulse rounded-2xl bg-white/[0.06]" />
+                <div className="h-4 w-36 animate-pulse rounded-xl bg-white/[0.06]" />
               </div>
             ) : (
-              <div className="relative z-10">
+              <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10 transition-colors duration-500 group-hover:border-cyan-400/40 group-hover:bg-cyan-500/20">
-                    <card.icon className="h-5 w-5 text-cyan-200 transition-transform duration-500 group-hover:scale-110" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:scale-110 transition-transform duration-500">
+                    <card.icon className="h-6 w-6 text-cyan-300" />
                   </div>
-                  <span
+                  <div
                     className={cn(
-                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-colors duration-300',
+                      'flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-black tracking-wider uppercase transition-all duration-500',
                       card.positive
-                        ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20'
-                        : 'border-rose-400/20 bg-rose-500/10 text-rose-200 group-hover:border-rose-400/40 group-hover:bg-rose-500/20',
+                        ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+                        : 'border-rose-400/20 bg-rose-500/10 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]',
                     )}
                   >
-                    {card.positive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+                    {card.positive ? <ArrowUpRight size={14} strokeWidth={3} /> : <ArrowDownRight size={14} strokeWidth={3} />}
                     {card.change}
-                  </span>
+                  </div>
                 </div>
-                <div className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 transition-colors duration-300 group-hover:text-cyan-400/80">{card.title}</div>
-                <div className="mt-2 text-3xl font-black tracking-tight text-white transition-colors duration-300 group-hover:text-cyan-50">{card.value}</div>
+                
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 group-hover:text-cyan-400/60 transition-colors duration-300">{card.title}</div>
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-4xl font-black tracking-tight text-white drop-shadow-sm group-hover:text-cyan-50 transition-colors duration-300">{card.value}</div>
+                  </div>
+                </div>
               </div>
             )}
+            
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           </div>
         ))}
       </div>

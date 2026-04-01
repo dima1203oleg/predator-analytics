@@ -257,102 +257,125 @@ const PredatorV24 = () => {
          ══════════════════════════════════════════════════════════════ */}
       <motion.section
         variants={itemVariants}
-        className="relative overflow-hidden rounded-[32px] border border-white/[0.06]"
-        style={{
-          background: 'linear-gradient(135deg, rgba(8, 14, 30, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%)',
-          boxShadow: '0 32px 80px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04)',
-        }}
+        className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10"
       >
-        {/* Ambient mesh inside hero */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 left-0 w-[60%] h-[60%] bg-[radial-gradient(circle_at_0%_0%,rgba(16,185,129,0.15),transparent_50%)]" />
-          <div className="absolute bottom-0 right-0 w-[50%] h-[50%] bg-[radial-gradient(circle_at_100%_100%,rgba(14,165,233,0.12),transparent_50%)]" />
-          <div className="absolute top-[20%] right-[30%] w-[30%] h-[30%] bg-[radial-gradient(circle,rgba(99,102,241,0.08),transparent_60%)]" />
+        <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none transform -rotate-6">
+          <Brain size={240} strokeWidth={0.5} className="text-emerald-400" />
         </div>
-        {/* Верхня акцентна лінія */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(16,185,129,0.08),transparent_50%)] pointer-events-none" />
 
-        <div className="relative z-10 p-6 sm:p-8 lg:p-10">
-          <div className="grid gap-8 xl:grid-cols-[1fr_380px] xl:items-start">
-            <div className="max-w-4xl">
-              {/* Статус-бейджі */}
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span className="badge-v2 badge-emerald">
-                  <span className="live-dot" style={{ width: 6, height: 6 }} />
-                  Комерційний контур
-                </span>
-                <span className={cn(
-                  'badge-v2',
-                  backendStatus.isOffline ? 'badge-rose' : 'badge-cyan',
-                )}>
-                  {backendStatus.statusLabel}
-                </span>
-                <span className="badge-v2 badge-indigo">
-                  v56.0
-                </span>
+        <div className="flex flex-col gap-10 xl:flex-row xl:items-start xl:justify-between relative z-10">
+          <div className="flex-1 space-y-6">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="badge-v2 badge-v2-emerald text-[10px] font-black tracking-[0.2em]">
+                <span className="relative z-10">PREDATOR v11.5 | COMMAND CORE</span>
+                <div className="badge-v2-glimmer" />
               </div>
+              <div className={cn(
+                "badge-v2 px-4 font-black uppercase tracking-[0.15em]",
+                backendStatus.isOffline ? "badge-v2-rose" : "badge-v2-cyan"
+              )}>
+                {backendStatus.statusLabel}
+              </div>
+            </div>
 
-              {/* Заголовок */}
-              <h1 className="max-w-3xl text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-                Інтерфейс, який показує{' '}
-                <span className="gradient-text-cyan">де заробити</span>,{' '}
+            <div className="space-y-4">
+              <h1 className="max-w-4xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
+                Інтерфейс, який показує <span className="text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.4)]">де заробити</span>, 
                 що зекономити і який ризик зняти першим.
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300/80 sm:text-base">
-                Домашній екран зібраний навколо шести бізнес-блоків. Він відсікає технічний шум,
-                підсвічує ROI і веде до сценаріїв, які дають прибуток, економію або знімають ризик.
+              <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
+                Домашній екран зібраний навколо шести бізнес-блоків під захистом <span className="text-emerald-400 font-bold border-b border-emerald-400/30">Constitutional Shield</span>. 
+                Він відсікає технічний шум та підсвічує стратегічний ROI.
               </p>
+            </div>
+          </div>
 
-              {/* Системні мета-дані */}
-              <div className="mt-5 flex flex-wrap gap-2 text-xs">
-                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3.5 py-2 text-slate-300 backdrop-blur-sm">
-                  <Shield className="h-3.5 w-3.5 text-emerald-400" />
-                  {backendStatus.sourceLabel}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3.5 py-2 text-slate-300 backdrop-blur-sm">
-                  <Radio className="h-3.5 w-3.5 text-cyan-400" />
-                  {timeAgo(overview?.generated_at)}
-                </span>
-                <span className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.03] px-3.5 py-2 text-slate-300 backdrop-blur-sm">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                  {navigationSections.length} блоків / {navigationSections.reduce((t, s) => t + (s.items?.length || 0), 0)} модулів
-                </span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[620px]">
+            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-emerald-400/80 transition-colors">OSINT-HUB Node</span>
               </div>
+              <div className="text-base font-bold text-white tracking-tight">System v11.5 Apex</div>
+              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Full Sync Certified</div>
+            </div>
+
+            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Synchronization</span>
+              </div>
+              <div className="text-base font-bold text-white tracking-tight">{timeAgo(overview?.generated_at)}</div>
+              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">L4 Connection</div>
+            </div>
+
+            <div className="card-depth rounded-[28px] border border-amber-400/10 bg-amber-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(251,191,36,0.05)] col-span-2 sm:col-span-1">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldCheck className="h-3 w-3 text-amber-400" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/60">Verification</span>
+              </div>
+              <div className="text-base font-black text-amber-400 tracking-tighter uppercase leading-none">System Certified</div>
+              <div className="text-[10px] text-amber-500/40 mt-1 font-mono">PREDATOR MASTER</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 mt-8 grid gap-8 xl:grid-cols-[1fr_380px] xl:items-start">
+          <div className="max-w-4xl">
 
               {/* ── ROI KPI Картки ── */}
               <motion.div
-                className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+                className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
                 variants={containerVariants}
               >
                 {roiStats.map((stat, index) => {
                   const tone = toneStyles[stat.tone as keyof typeof toneStyles] ?? toneStyles.indigo;
+                  const isEmerald = stat.tone === 'emerald';
+                  const isCyan = stat.tone === 'cyan';
+                  const isAmber = stat.tone === 'amber';
+                  
                   return (
                     <motion.div
                       key={stat.label}
                       variants={cardVariants}
-                      className="group stat-card-v2"
-                      style={{
-                        ['--stat-accent' as string]: tone.glowColor,
-                      }}
-                      whileHover={{ y: -3 }}
+                      className="group stat-card-v2 relative overflow-hidden rounded-[32px] border border-white/[0.05] bg-[#050b14]/40 p-6 shadow-2xl transition-all duration-500 hover:border-white/20"
+                      whileHover={{ y: -5, scale: 1.02 }}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl border', tone.iconBg)}>
-                          <stat.icon className={cn('h-4.5 w-4.5', tone.iconColor)} />
-                        </div>
-                        {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
-                      </div>
-                      <div className="mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                        {stat.label}
-                      </div>
-                      <div className="mt-2 text-2xl font-black tracking-tight text-white">
-                        {stat.value}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-400/80">{stat.hint}</div>
-                      {/* Accent line на дні */}
                       <div className={cn(
-                        'absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100',
-                        tone.accentLine,
+                        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700",
+                        isEmerald && "bg-gradient-to-br from-emerald-500/[0.03] to-transparent",
+                        isCyan && "bg-gradient-to-br from-cyan-500/[0.03] to-transparent",
+                        isAmber && "bg-gradient-to-br from-amber-500/[0.03] to-transparent"
+                      )} />
+
+                      <div className="relative z-10 space-y-6">
+                        <div className="flex items-center justify-between">
+                          <div className={cn(
+                            'flex h-12 w-12 items-center justify-center rounded-2xl border transition-all duration-500 group-hover:scale-110 shadow-lg', 
+                            tone.iconBg
+                          )}>
+                            <stat.icon className={cn('h-5 w-5', tone.iconColor)} />
+                          </div>
+                          {loading && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+                        </div>
+                        
+                        <div className="space-y-1.5">
+                          <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 group-hover:text-white/60 transition-colors duration-300">
+                            {stat.label}
+                          </div>
+                          <div className="text-3xl font-black tracking-tight text-white drop-shadow-sm group-hover:scale-[1.02] transition-transform duration-500 origin-left">
+                            {stat.value}
+                          </div>
+                          <div className="text-[10px] font-medium text-slate-500/80 group-hover:text-slate-400 transition-colors uppercase tracking-wider">
+                            {stat.hint}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className={cn(
+                        "absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-r",
+                        tone.accentLine
                       )} />
                     </motion.div>
                   );
@@ -459,7 +482,6 @@ const PredatorV24 = () => {
                 </div>
               </div>
             </motion.div>
-          </div>
         </div>
 
         {/* Error banner */}

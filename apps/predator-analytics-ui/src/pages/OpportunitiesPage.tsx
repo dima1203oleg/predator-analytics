@@ -17,7 +17,8 @@ import {
     Zap,
     ShieldCheck,
     Scale,
-    ShieldAlert
+    ShieldAlert,
+    Brain,
 } from 'lucide-react';
 import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 
@@ -177,41 +178,70 @@ export default function OpportunitiesPage() {
 
     return (
         <div className="space-y-6">
-            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-                    <div className="max-w-3xl">
-                        <div className="mb-3 flex flex-wrap gap-2">
-                            <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-200">
-                                Ринкові сигнали
-                            </span>
-                            <span
-                                className={cn(
-                                    'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
-                                    backendStatus.isOffline
-                                        ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
-                                        : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
-                                )}
-                            >
+            <ConstitutionalShield />
+            
+            <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
+                <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none animate-pulse-slow">
+                    <Brain size={240} strokeWidth={0.5} className="text-amber-500" />
+                </div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(245,158,11,0.08),transparent_50%)] pointer-events-none" />
+
+                <div className="flex flex-col gap-10 xl:flex-row xl:items-start xl:justify-between relative z-10">
+                    <div className="flex-1 space-y-6">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="badge-v2 badge-v2-amber">
+                                <span className="relative z-10">PREDATOR v11.5 | OPPORTUNITIES</span>
+                                <div className="badge-v2-glimmer" />
+                            </div>
+                            <div className={cn(
+                                "badge-v2 px-4 font-black uppercase tracking-[0.15em]",
+                                backendStatus.isOffline ? "badge-v2-rose" : "badge-v2-emerald"
+                            )}>
                                 {backendStatus.statusLabel}
-                            </span>
+                            </div>
                         </div>
-                        <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
-                            <Lightbulb className="text-amber-300" size={30} />
-                            Можливості
-                        </h1>
-                        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-                            Сторінка агрегує реальні інсайти ринку, а вкладки рекомендацій та виконавчого
-                            огляду формуються з цього самого потоку.
-                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                                <ShieldCheck size={10} /> v11.5 Верифіковано
-                            </span>
-                        </p>
+
+                        <div className="space-y-4">
+                            <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+                                <div className="relative">
+                                    <Lightbulb className="text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" size={52} />
+                                    <div className="absolute -inset-2 bg-amber-400/20 blur-xl rounded-full animate-pulse" />
+                                </div>
+                                <span>Можливості</span>
+                            </h1>
+                            <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
+                                Агрегація реальних інсайтів ринку та стратегічні рекомендації під захистом <span className="text-amber-400 font-bold border-b border-amber-400/30">Constitutional Shield</span>. 
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
-                        <MetricTile label="Сигнали" value={insights.length.toString()} />
-                        <MetricTile label="Критичні" value={insightSummary.critical.toString()} />
-                        <MetricTile label="Середня впевненість" value={`${insightSummary.averageConfidence.toFixed(0)}%`} />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
+                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Strategic Node</span>
+                            </div>
+                            <div className="text-base font-bold text-white tracking-tight">Active Signals: {insights.length}</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v11.5 OSINT-HUB</div>
+                        </div>
+
+                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Intelligence Hub</span>
+                            </div>
+                            <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
+                        </div>
+
+                        <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
+                            <div className="flex items-center gap-2 mb-3">
+                                <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Verification</span>
+                            </div>
+                            <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Opportunity Core</div>
+                            <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">TRUSTED SECTOR</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -446,13 +476,14 @@ function ExecutiveTab({
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
-                <MetricTile label="Активні сигнали" value={executiveStats.signals.toString()} />
+            <div className="grid gap-5 md:grid-cols-3">
+                <MetricTile label="Активні сигнали" value={executiveStats.signals.toString()} tone="cyan" />
                 <MetricTile
-                    label="Оцінений грошовий вплив"
+                    label="Грошовий вплив"
+                    tone="emerald"
                     value={executiveStats.monetaryImpact > 0 ? formatMoney(executiveStats.monetaryImpact) : 'Н/Д'}
                 />
-                <MetricTile label="Середня впевненість" value={`${executiveStats.averageConfidence.toFixed(0)}%`} />
+                <MetricTile label="Середня впевненість" tone="amber" value={`${executiveStats.averageConfidence.toFixed(0)}%`} />
             </div>
 
             <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
@@ -488,11 +519,41 @@ function ExecutiveTab({
     );
 }
 
-function MetricTile({ label, value }: { label: string; value: string }) {
+function MetricTile({ label, value, tone }: { label: string; value: string; tone?: 'cyan' | 'emerald' | 'amber' }) {
+    const isEmerald = tone === 'emerald';
+    const isCyan = tone === 'cyan';
+    const isAmber = tone === 'amber';
+
     return (
-        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
-            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{label}</div>
-            <div className="mt-2 text-3xl font-black tracking-tight text-white">{value}</div>
+        <div className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500 hover:border-white/20">
+            <div className={cn(
+                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700",
+                isEmerald && "bg-gradient-to-br from-emerald-500/[0.03] to-transparent",
+                isCyan && "bg-gradient-to-br from-cyan-500/[0.03] to-transparent",
+                isAmber && "bg-gradient-to-br from-amber-500/[0.03] to-transparent"
+            )} />
+            
+            <div className="relative z-10 space-y-4">
+                <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 group-hover:text-white/60 transition-colors duration-300">
+                    {label}
+                </div>
+                <div className={cn(
+                    "text-4xl font-black tracking-tight drop-shadow-sm group-hover:scale-[1.02] transition-transform duration-500 origin-left",
+                    isCyan && "text-cyan-400 group-hover:text-cyan-50",
+                    isEmerald && "text-emerald-400 group-hover:text-emerald-50",
+                    isAmber && "text-amber-400 group-hover:text-amber-50",
+                    !tone && "text-white"
+                )}>
+                    {value}
+                </div>
+            </div>
+            
+            <div className={cn(
+                "absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700",
+                isEmerald && "bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent",
+                isCyan && "bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent",
+                isAmber && "bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"
+            )} />
         </div>
     );
 }

@@ -493,10 +493,41 @@
   border-color: var(--status-info-border);
   color: #67e8f9;
 }
-.badge-v2.badge-indigo {
+.badge-v2.badge-indigo, .badge-v2-indigo {
   background: rgba(99, 102, 241, 0.12);
   border-color: rgba(99, 102, 241, 0.25);
   color: #a5b4fc;
+}
+
+/* v11.5 Badge Color Variations — Sovereign Apex Hub */
+.badge-v2-emerald { background: var(--status-ok-bg); border-color: var(--status-ok-border); color: #6ee7b7; }
+.badge-v2-rose { background: var(--status-error-bg); border-color: var(--status-error-border); color: #fda4af; }
+.badge-v2-cyan { background: var(--status-info-bg); border-color: var(--status-info-border); color: #67e8f9; }
+.badge-v2-amber { background: var(--status-warn-bg); border-color: var(--status-warn-border); color: #fcd34d; }
+.badge-v2-indigo { background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.25); color: #a5b4fc; }
+
+/* Glimmer effect for v11.5 Sovereign badges */
+.badge-v2-glimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transform: skewX(-25deg);
+  animation: badge-glimmer-sweep 4s infinite;
+  pointer-events: none;
+}
+
+@keyframes badge-glimmer-sweep {
+  0% { left: -100%; }
+  25% { left: 200%; }
+  100% { left: 200%; }
 }
 
 /* ── CONTENT SECTION HEADER ── */
