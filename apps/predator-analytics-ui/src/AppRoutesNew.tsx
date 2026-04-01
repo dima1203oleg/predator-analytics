@@ -118,6 +118,12 @@ const AdvancedReportingView = lazy(() => import('./components/premium/AdvancedRe
 const IntegrationHubView = lazy(() => import('./components/premium/IntegrationHub'));
 const AdvancedSettingsView = lazy(() => import('./components/premium/AdvancedSettings'));
 
+// ТЗ 11.3 Phase 3.6 Ukrainian Localized Components
+const AnalyticsDashboardUkView = lazy(() => import('./components/premium/AnalyticsDashboard_Uk'));
+const AdvancedReportingUkView = lazy(() => import('./components/premium/AdvancedReporting_Uk'));
+const IntegrationHubUkView = lazy(() => import('./components/premium/IntegrationHub_Uk'));
+const AdvancedSettingsUkView = lazy(() => import('./components/premium/AdvancedSettings_Uk'));
+
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
@@ -525,6 +531,40 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/advanced-settings">
                   <AdvancedSettingsView />
+                </ProtectedNavigationRoute>
+              }
+            />
+
+            {/* ТЗ 11.3 Phase 3.6 Ukrainian Localized Routes */}
+            <Route
+              path="/analytics-dashboard-uk"
+              element={
+                <ProtectedNavigationRoute path="/analytics-dashboard-uk">
+                  <AnalyticsDashboardUkView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/advanced-reporting-uk"
+              element={
+                <ProtectedNavigationRoute path="/advanced-reporting-uk">
+                  <AdvancedReportingUkView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/integrations-uk"
+              element={
+                <ProtectedNavigationRoute path="/integrations-uk">
+                  <IntegrationHubUkView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/advanced-settings-uk"
+              element={
+                <ProtectedNavigationRoute path="/advanced-settings-uk">
+                  <AdvancedSettingsUkView />
                 </ProtectedNavigationRoute>
               }
             />
