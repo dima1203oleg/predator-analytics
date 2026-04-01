@@ -124,6 +124,11 @@ const AdvancedReportingUkView = lazy(() => import('./components/premium/Advanced
 const IntegrationHubUkView = lazy(() => import('./components/premium/IntegrationHub_Uk'));
 const AdvancedSettingsUkView = lazy(() => import('./components/premium/AdvancedSettings_Uk'));
 
+// ТЗ 11.3 Enhanced Premium Components (Phase 4)
+const RiskDashboardPremiumView = lazy(() => import('./components/premium/RiskDashboardPremium'));
+const SupplierDiscoveryPremiumV2View = lazy(() => import('./components/premium/SupplierDiscoveryPremium_V2'));
+const AIRecommendationHubPremiumView = lazy(() => import('./components/premium/AIRecommendationHub_Premium'));
+
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
@@ -565,6 +570,32 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/advanced-settings-uk">
                   <AdvancedSettingsUkView />
+                </ProtectedNavigationRoute>
+              }
+            />
+
+            {/* ТЗ 11.3 Phase 4 Enhanced Premium Routes */}
+            <Route
+              path="/risk-dashboard-premium"
+              element={
+                <ProtectedNavigationRoute path="/risk-dashboard-premium">
+                  <RiskDashboardPremiumView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/supplier-discovery-v2"
+              element={
+                <ProtectedNavigationRoute path="/supplier-discovery-v2">
+                  <SupplierDiscoveryPremiumV2View />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/ai-recommendations-premium"
+              element={
+                <ProtectedNavigationRoute path="/ai-recommendations-premium">
+                  <AIRecommendationHubPremiumView />
                 </ProtectedNavigationRoute>
               }
             />
