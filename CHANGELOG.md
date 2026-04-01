@@ -1,3 +1,23 @@
+# 🚀 CHANGELOG v11.5.0 - OSINT-HUB | Constitutional Shield
+> **Дата випуску:** 02.04.2026
+> **Build:** Sovereign Intelligence Hub Release
+> **Status:** CERTIFIED & LEGALLY PROTECTED
+
+---
+
+## 🏛️ OSINT-HUB v11.5 AUTHORITY DIRECTIVE
+
+**Sovereign Intelligence Hub (v11.5)** інтегрує посилену аналітичну сертифікацію та **Конституційний Щит** для захисту даних та легітимності аналітики.
+
+### Key Changes:
+- **Certified Analytical Suite:** Додано розпізнавальні знаки `OSINT_HUB_v11.5_CERTIFIED` до всіх ключових модулів.
+- **Constitutional Shield:** Впроваджено статус `CONSTITUTIONAL_SHIELD_ACTIVE` для правової анкерації OSINT-розслідувань.
+- **Unified Header Standard:** Оновлено `ViewHeader` для нативної підтримки v11.5 бейджів та розширеної статистики.
+- **Global Versioning:** Синхронізовано версію v11.5 у навігації, алертах Prometheus та заголовках інтерфейсу.
+- **Improved Monitoring:** Додано SLA-алерти для "Aha Moment" (Value Screen ROI) у Prometheus.
+
+---
+
 # 🚀 CHANGELOG v45.0.0 - Predator v45 | Neural Analytics> **Дата випуску:** 27.02.2026
 > **Build:** Canonical Authority Release
 > **Status:** ACTIVE & AUTHORITATIVE
