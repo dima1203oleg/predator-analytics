@@ -111,6 +111,13 @@ const BillingDashboardView = lazy(() => import('./components/premium/BillingDash
 const AIRecommendationHubView = lazy(() => import('./components/premium/AIRecommendationHub'));
 const DecisionFactoryView = lazy(() => import('./components/premium/DecisionFactory'));
 
+// ТЗ 11.3 Phase 3 Components
+const CustomerSuccessDashboardView = lazy(() => import('./components/premium/CustomerSuccessDashboard'));
+const AnalyticsDashboardView = lazy(() => import('./components/premium/AnalyticsDashboard'));
+const AdvancedReportingView = lazy(() => import('./components/premium/AdvancedReporting'));
+const IntegrationHubView = lazy(() => import('./components/premium/IntegrationHub'));
+const AdvancedSettingsView = lazy(() => import('./components/premium/AdvancedSettings'));
+
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
@@ -476,6 +483,48 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/decision-factory">
                   <DecisionFactoryView />
+                </ProtectedNavigationRoute>
+              }
+            />
+
+            {/* ТЗ 11.3 Phase 3 Routes */}
+            <Route
+              path="/customer-success"
+              element={
+                <ProtectedNavigationRoute path="/customer-success">
+                  <CustomerSuccessDashboardView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/analytics-dashboard"
+              element={
+                <ProtectedNavigationRoute path="/analytics-dashboard">
+                  <AnalyticsDashboardView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/advanced-reporting"
+              element={
+                <ProtectedNavigationRoute path="/advanced-reporting">
+                  <AdvancedReportingView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/integrations"
+              element={
+                <ProtectedNavigationRoute path="/integrations">
+                  <IntegrationHubView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/advanced-settings"
+              element={
+                <ProtectedNavigationRoute path="/advanced-settings">
+                  <AdvancedSettingsView />
                 </ProtectedNavigationRoute>
               }
             />

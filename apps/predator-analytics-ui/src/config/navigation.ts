@@ -30,6 +30,7 @@ import {
   Network,
   Newspaper,
   Package,
+  Plug,
   Puzzle,
   Radar,
   Scale,
@@ -538,6 +539,13 @@ export const navigationConfig: NavSection[] = [
       { id: 'ingestion', label: 'Завантаження', path: '/ingestion', icon: Upload, description: 'Джерела, потоки та конвеєри інгестії.', tiers: ['pro', 'enterprise'] },
       { id: 'data', label: 'Платформа даних', path: '/data', icon: Database, description: 'Структура даних, індекси й готовність сховища.', tiers: ['enterprise'] },
       { id: 'reports', label: 'Звіти', path: '/reports', icon: FileText, description: 'Конструктор звітів і експорт матеріалів.', tiers: ['basic', 'pro', 'enterprise'] },
+
+      // ТЗ 11.3 Phase 3 Advanced Features
+      { id: 'customer-success', label: '👥 Customer Success', path: '/customer-success', icon: Users, description: 'Здоровʼя клієнтів, прогноз відтоку, MRR-метрики.', tiers: ['pro', 'enterprise'] },
+      { id: 'analytics', label: '📊 Аналітика платформи', path: '/analytics-dashboard', icon: BarChart3, description: 'KPI метрики, глибока аналітика, кастомні показники.', tiers: ['pro', 'enterprise'] },
+      { id: 'advanced-reporting', label: '📄 Розширене звітування', path: '/advanced-reporting', icon: FileText, description: 'No-code конструктор звітів, розклад, дистрибуція.', tiers: ['basic', 'pro', 'enterprise'] },
+      { id: 'integrations-hub', label: '🔌 Центр інтеграцій', path: '/integrations', icon: Plug, description: 'Управління підключеннями, webhook логи, синхронізація.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'] },
+      { id: 'advanced-settings', label: '⚙️ Розширені налаштування', path: '/advanced-settings', icon: Settings, description: 'Управління організацією, командою, безпекою, аудитом.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'] },
     ],
     groups: [
       {
