@@ -107,6 +107,9 @@ const MarketIntelligencePremium = lazy(() => import('./components/premium/Market
 const SupplierDiscoveryPremiumView = lazy(() => import('./components/premium/SupplierDiscoveryPremium'));
 const ScenarioBuilderView = lazy(() => import('./components/premium/ScenarioBuilder'));
 const RiskDashboardView = lazy(() => import('./components/premium/RiskDashboard'));
+const BillingDashboardView = lazy(() => import('./components/premium/BillingDashboard'));
+const AIRecommendationHubView = lazy(() => import('./components/premium/AIRecommendationHub'));
+const DecisionFactoryView = lazy(() => import('./components/premium/DecisionFactory'));
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
@@ -449,6 +452,30 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/risk-dashboard">
                   <RiskDashboardView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/billing-dashboard"
+              element={
+                <ProtectedNavigationRoute path="/billing-dashboard">
+                  <BillingDashboardView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/ai-recommendations"
+              element={
+                <ProtectedNavigationRoute path="/ai-recommendations">
+                  <AIRecommendationHubView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/decision-factory"
+              element={
+                <ProtectedNavigationRoute path="/decision-factory">
+                  <DecisionFactoryView />
                 </ProtectedNavigationRoute>
               }
             />

@@ -515,6 +515,9 @@ export const navigationConfig: NavSection[] = [
         items: [
           { id: 'scenario-builder', label: 'Конструктор сценаріїв', path: '/scenario-builder', icon: Workflow, description: 'Drag-and-drop без коду: створюй, тестуй, запускай автоматизовані потоки.', badge: 'PRO', tiers: ['pro', 'enterprise'] },
           { id: 'risk-dashboard', label: '🚨 Дашборд ризиків', path: '/risk-dashboard', icon: AlertTriangle, description: 'Монітор ризиків: оцінки, алерти, рекомендації мітигації у реальному часі.', badge: 'ТЗ 11.1', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'ai-recommendations', label: '🤖 ШІ-рекомендації', path: '/ai-recommendations', icon: Sparkles, description: 'Персоналізовані інсайти на основі AI: можливості, ризики, тренди.', badge: 'AI', tiers: ['pro', 'enterprise'] },
+          { id: 'decision-factory', label: '⚙️ Фабрика рішень', path: '/decision-factory', icon: Workflow, description: 'Побудуй складні бізнес-процеси: тригери, умови, дії, інтеграції.', badge: 'BETA', tiers: ['pro', 'enterprise'] },
+          { id: 'billing-dashboard', label: '💰 Білінг & комісії', path: '/billing-dashboard', icon: CreditCard, description: 'Управління тарифами, відстеження економії і комісійних від результатів.', tiers: ['basic', 'pro', 'enterprise'] },
         ],
       },
     ],
