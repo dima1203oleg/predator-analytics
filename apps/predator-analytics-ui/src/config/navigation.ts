@@ -546,6 +546,12 @@ export const navigationConfig: NavSection[] = [
       { id: 'advanced-reporting', label: '📄 Розширене звітування', path: '/advanced-reporting', icon: FileText, description: 'No-code конструктор звітів, розклад, дистрибуція.', tiers: ['basic', 'pro', 'enterprise'] },
       { id: 'integrations-hub', label: '🔌 Центр інтеграцій', path: '/integrations', icon: Plug, description: 'Управління підключеннями, webhook логи, синхронізація.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'] },
       { id: 'advanced-settings', label: '⚙️ Розширені налаштування', path: '/advanced-settings', icon: Settings, description: 'Управління організацією, командою, безпекою, аудитом.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'] },
+
+      // ТЗ 11.3 Phase 3.6 Ukrainian Localized Variants (hidden from main nav)
+      { id: 'analytics-uk', label: '📊 Аналітика (УК)', path: '/analytics-dashboard-uk', icon: BarChart3, description: 'Українська версія аналітики платформи.', tiers: ['pro', 'enterprise'], hidden: true },
+      { id: 'advanced-reporting-uk', label: '📄 Звітування (УК)', path: '/advanced-reporting-uk', icon: FileText, description: 'Українська версія конструктора звітів.', tiers: ['basic', 'pro', 'enterprise'], hidden: true },
+      { id: 'integrations-hub-uk', label: '🔌 Інтеграції (УК)', path: '/integrations-uk', icon: Plug, description: 'Українська версія центру інтеграцій.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'], hidden: true },
+      { id: 'advanced-settings-uk', label: '⚙️ Налаштування (УК)', path: '/advanced-settings-uk', icon: Settings, description: 'Українська версія розширених налаштувань.', roles: ['admin'], tiers: ['basic', 'pro', 'enterprise'], hidden: true },
     ],
     groups: [
       {
