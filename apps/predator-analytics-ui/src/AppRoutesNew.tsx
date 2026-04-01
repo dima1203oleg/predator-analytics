@@ -101,6 +101,13 @@ const BillingManager = lazy(() => import('./components/billing/BillingManager'))
 const ExecutionCenter = lazy(() => import('./components/execution/ExecutionCenter'));
 const EmptyState = lazy(() => import('./components/empty-state/EmptyState'));
 
+// ТЗ 11.1 Premium Components - New imports
+const ExecutionCenterV2 = lazy(() => import('./components/execution/ExecutionCenterV2'));
+const MarketIntelligencePremium = lazy(() => import('./components/premium/MarketIntelligencePremium'));
+const SupplierDiscoveryPremiumView = lazy(() => import('./components/premium/SupplierDiscoveryPremium'));
+const ScenarioBuilderView = lazy(() => import('./components/premium/ScenarioBuilder'));
+const RiskDashboardView = lazy(() => import('./components/premium/RiskDashboard'));
+
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
 const ForecastPage = lazy(() => import('./pages/ForecastPage'));
@@ -400,6 +407,48 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/billing">
                   <BillingManager />
+                </ProtectedNavigationRoute>
+              }
+            />
+
+            {/* ТЗ 11.1 Premium Components - New Routes */}
+            <Route
+              path="/execution-center-v2"
+              element={
+                <ProtectedNavigationRoute path="/execution-center-v2">
+                  <ExecutionCenterV2 />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/market-intelligence"
+              element={
+                <ProtectedNavigationRoute path="/market-intelligence">
+                  <MarketIntelligencePremium />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/supplier-discovery-v2"
+              element={
+                <ProtectedNavigationRoute path="/supplier-discovery-v2">
+                  <SupplierDiscoveryPremiumView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario-builder"
+              element={
+                <ProtectedNavigationRoute path="/scenario-builder">
+                  <ScenarioBuilderView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/risk-dashboard"
+              element={
+                <ProtectedNavigationRoute path="/risk-dashboard">
+                  <RiskDashboardView />
                 </ProtectedNavigationRoute>
               }
             />

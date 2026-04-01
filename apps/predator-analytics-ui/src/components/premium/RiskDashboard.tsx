@@ -42,7 +42,7 @@ const MOCK_ALERTS: RiskAlert[] = [
   {
     id: 'risk-001',
     title: 'Постачальник на санкційному списку',
-    description: 'TechCorp Ltd з'явилася на ЄС санкційному списку',
+    description: 'TechCorp Ltd з явилася на ЄС санкційному списку',
     level: 'critical',
     category: 'Sanctions',
     affectedParties: 3,

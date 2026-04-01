@@ -503,6 +503,18 @@ export const navigationConfig: NavSection[] = [
           { id: 'counterparty-check', label: 'Перевірка контрагента', path: '/scenario/counterparty', icon: Search, description: 'Комплексна перевірка компанії перед угодою.', tiers: ['basic', 'pro', 'enterprise'] },
           { id: 'market-analysis', label: 'Аналіз ринку перед закупівлею', path: '/scenario/market', icon: TrendingUp, description: 'Оцінка ринку, цін, постачальників перед закупівлею.', tiers: ['basic', 'pro', 'enterprise'] },
           { id: 'scenario-progress', label: 'Відстеження сценаріїв', path: '/scenario-progress', icon: Activity, description: 'Статус, прогрес та результати запущених сценаріїв.', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'execution-center-v2', label: '⚡ Центр виконання PRO', path: '/execution-center-v2', icon: Zap, description: 'Моніторинг з бізнес-метриками: оцінена економія, статуси, прогресс.', badge: 'ТЗ 11.1', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'market-intelligence', label: '📈 Ринкова розвідка', path: '/market-intelligence', icon: Globe, description: 'Живі ринкові дані, 30-денні прогнози, insights та тренди.', badge: 'NEW', tiers: ['pro', 'enterprise'] },
+          { id: 'supplier-discovery-v2', label: '🤝 Пошук постачальників AI', path: '/supplier-discovery-v2', icon: Search, description: 'ШІ-пошук оптимальних постачальників з рейтингами та ризиками.', badge: 'AI', tiers: ['basic', 'pro', 'enterprise'] },
+        ],
+      },
+      {
+        id: 'automation-scenarios',
+        label: '⚙️ Автоматизація',
+        description: 'No-code сценарії та управління ризиками.',
+        items: [
+          { id: 'scenario-builder', label: 'Конструктор сценаріїв', path: '/scenario-builder', icon: Workflow, description: 'Drag-and-drop без коду: створюй, тестуй, запускай автоматизовані потоки.', badge: 'PRO', tiers: ['pro', 'enterprise'] },
+          { id: 'risk-dashboard', label: '🚨 Дашборд ризиків', path: '/risk-dashboard', icon: AlertTriangle, description: 'Монітор ризиків: оцінки, алерти, рекомендації мітигації у реальному часі.', badge: 'ТЗ 11.1', tiers: ['basic', 'pro', 'enterprise'] },
         ],
       },
     ],

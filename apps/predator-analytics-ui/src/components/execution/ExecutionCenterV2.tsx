@@ -23,10 +23,10 @@ import {
   Pause,
   Trash2,
   Edit2,
-  Repeating,
+  RefreshCw,
   Target,
   BarChart3,
-  Bolt,
+  Zap,
   CheckSquare2,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -364,7 +364,7 @@ export const ExecutionCenterV2: React.FC = () => {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
-                        <Repeating className="w-5 h-5 text-violet-400 mt-1" />
+                        <RefreshCw className="w-5 h-5 text-violet-400 mt-1" />
                         <div>
                           <h4 className="font-medium text-white">{execution.name}</h4>
                           <div className="flex items-center gap-2 mt-2">
