@@ -128,6 +128,8 @@ const AdvancedSettingsUkView = lazy(() => import('./components/premium/AdvancedS
 const RiskDashboardPremiumView = lazy(() => import('./components/premium/RiskDashboardPremium'));
 const SupplierDiscoveryPremiumV2View = lazy(() => import('./components/premium/SupplierDiscoveryPremium_V2'));
 const AIRecommendationHubPremiumView = lazy(() => import('./components/premium/AIRecommendationHub_Premium'));
+const ScenarioBuilderPremiumV2View = lazy(() => import('./components/premium/ScenarioBuilderPremium_V2'));
+const BillingDashboardPremiumV2View = lazy(() => import('./components/premium/BillingDashboardPremium_V2'));
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
@@ -596,6 +598,22 @@ export const AppRoutesNew = () => {
               element={
                 <ProtectedNavigationRoute path="/ai-recommendations-premium">
                   <AIRecommendationHubPremiumView />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario-builder-v2"
+              element={
+                <ProtectedNavigationRoute path="/scenario-builder-v2">
+                  <ScenarioBuilderPremiumV2View />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/billing-dashboard-v2"
+              element={
+                <ProtectedNavigationRoute path="/billing-dashboard-v2">
+                  <BillingDashboardPremiumV2View />
                 </ProtectedNavigationRoute>
               }
             />
