@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
-# Prometheus Alert Rules для Predator Analytics v45
+# Prometheus Alert Rules для Predator Analytics v11.5 OSINT-HUB
 # ═══════════════════════════════════════════════════════════════
 
 groups:
@@ -124,6 +124,22 @@ groups:
         annotations:
           summary: "ML inference дуже повільний (P95 >2s)"
           description: "Модель {{ $labels.model_name }} відповідає {{ $value | humanizeDuration }}"
+
+  # ═══════════════════════════════════════════════════════════════
+  # БІЗНЕС-МЕТРИКИ ТА UX (Value Screen & Aha Moment)
+  # ═══════════════════════════════════════════════════════════════
+  - name: predator_business_ux
+    interval: 1m
+    rules:
+      - alert: AhaMomentSlaViolation
+        expr: histogram_quantile(0.95, value_screen_generation_seconds_bucket) > 180
+        for: 5m
+        labels:
+          severity: warning
+          component: ux
+        annotations:
+          summary: "Порушення SLA 'Aha Moment' (> 3 хвилин)"
+          description: "Генерація Value Screen (економії) для Killer Use-Case займає {{ $value | humanizeDuration }} (P95). Бізнес-ціль: < 180 секунд."
 
   # ═══════════════════════════════════════════════════════════════
   # CELERY WORKERS
