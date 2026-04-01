@@ -190,7 +190,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
           <span className="text-[10px] text-rose-400 text-center">{data.error}</span>
           {onRefresh && (
             <button onClick={onRefresh} className="text-[9px] text-amber-500 hover:underline">
-              {premiumLocales.common.tryAgain}
+              {'Спробувати знову'}
             </button>
           )}
         </div>

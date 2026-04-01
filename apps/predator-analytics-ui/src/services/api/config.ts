@@ -10,20 +10,8 @@ const getMetaEnv = () => {
 
 const metaEnv = getMetaEnv();
 
-const isLocalBrowserDev = (): boolean => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    return ['localhost', '127.0.0.1'].includes(window.location.hostname);
-};
-
 // Determine API endpoint based on environment
 const getApiUrl = (): string => {
-    if (isLocalBrowserDev()) {
-        return '/api/v1';
-    }
-
     // Priority: env var > remote server > localhost mock
     if (metaEnv.VITE_API_URL && metaEnv.VITE_API_URL.includes('194.177')) {
         return metaEnv.VITE_API_URL; // Remote server
@@ -32,10 +20,6 @@ const getApiUrl = (): string => {
 };
 
 const getV45Url = (): string => {
-    if (isLocalBrowserDev()) {
-        return '/api/v45';
-    }
-
     if (metaEnv.VITE_V45_API_URL && metaEnv.VITE_V45_API_URL.includes('194.177')) {
         return metaEnv.VITE_V45_API_URL; // Remote server
     }
@@ -44,7 +28,6 @@ const getV45Url = (): string => {
 
 export const API_BASE_URL = getApiUrl();
 export const API_V45_URL = getV45Url();
-export const USE_LOCAL_DEV_PROXY = isLocalBrowserDev();
 
 /**
  * TRUTH-ONLY MODE — no mock fallbacks when using remote server.
@@ -52,7 +35,7 @@ export const USE_LOCAL_DEV_PROXY = isLocalBrowserDev();
  * 
  * v56.1: Added remote server support
  */
-export const IS_TRUTH_ONLY_MODE = !USE_LOCAL_DEV_PROXY && API_BASE_URL.includes('194.177') ? true : false;
+export const IS_TRUTH_ONLY_MODE = API_BASE_URL.includes('194.177') ? true : false;
 
 // Default timeout: 15 seconds
 const DEFAULT_TIMEOUT = 15_000;

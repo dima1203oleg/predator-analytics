@@ -119,4 +119,55 @@
   --sidebar-width-closed: 72px;
   --topbar-height: 56px;
   --statusbar-height: 24px;
+
+  /* ── AMBIENT GLOW BACKGROUNDS ── */
+  --ambient-emerald: radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.12), transparent 50%);
+  --ambient-cyan: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.12), transparent 50%);
+  --ambient-indigo: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12), transparent 60%);
+  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(245, 158, 11, 0.12), transparent 50%);
+  --ambient-rose: radial-gradient(circle at 90% 70%, rgba(244, 63, 94, 0.1), transparent 50%);
+  --ambient-violet: radial-gradient(circle at 60% 10%, rgba(139, 92, 246, 0.12), transparent 50%);
+
+  /* ── CARD SURFACE SYSTEM ── */
+  --surface-0: rgba(2, 6, 23, 0.95);
+  --surface-1: rgba(8, 14, 30, 0.88);
+  --surface-2: rgba(12, 20, 42, 0.80);
+  --surface-3: rgba(15, 23, 50, 0.70);
+  --surface-hover: rgba(255, 255, 255, 0.030);
+  --surface-active: rgba(255, 255, 255, 0.055);
+
+  /* ── PREMIUM GLASSMORPHISM ── */
+  --glass-bg: rgba(255, 255, 255, 0.025);
+  --glass-bg-strong: rgba(255, 255, 255, 0.05);
+  --glass-blur: blur(16px) saturate(180%);
+  --glass-blur-heavy: blur(32px) saturate(200%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* ── GRADIENT MESH ── */
+  --mesh-primary: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(6, 182, 212, 0.03) 50%, rgba(16, 185, 129, 0.04) 100%);
+  --mesh-warm: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(249, 115, 22, 0.04) 100%);
+  --mesh-cool: linear-gradient(135deg, rgba(6, 182, 212, 0.06) 0%, rgba(99, 102, 241, 0.04) 100%);
+  --mesh-threat: linear-gradient(135deg, rgba(244, 63, 94, 0.06) 0%, rgba(249, 115, 22, 0.03) 100%);
+
+  /* ── STATUS COLORS ── */
+  --status-ok: #10b981;
+  --status-ok-bg: rgba(16, 185, 129, 0.12);
+  --status-ok-border: rgba(16, 185, 129, 0.25);
+  --status-warn: #f59e0b;
+  --status-warn-bg: rgba(245, 158, 11, 0.12);
+  --status-warn-border: rgba(245, 158, 11, 0.25);
+  --status-error: #f43f5e;
+  --status-error-bg: rgba(244, 63, 94, 0.12);
+  --status-error-border: rgba(244, 63, 94, 0.25);
+  --status-info: #3b82f6;
+  --status-info-bg: rgba(59, 130, 246, 0.12);
+  --status-info-border: rgba(59, 130, 246, 0.25);
+  --status-neutral: #64748b;
+  --status-neutral-bg: rgba(100, 116, 139, 0.10);
+  --status-neutral-border: rgba(100, 116, 139, 0.20);
+
+  /* ── ANIMATED SHIMMER ── */
+  --shimmer-gradient: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.06) 50%, transparent 100%);
+  --shimmer-speed: 2s;
 }
+

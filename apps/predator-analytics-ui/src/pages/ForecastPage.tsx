@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import ReactECharts from '@/components/ECharts';
 import { forecastApi } from '@/features/forecast/api/forecast';
 import type {
@@ -13,30 +12,21 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/lib/utils';
 import {
     AlertCircle,
-    BadgeCheck,
+    ArrowUpRight,
     Brain,
     Loader2,
     RefreshCw,
     Settings2,
     Target,
     TrendingUp,
-    ArrowRight,
-    Sparkles,
     Zap,
 } from 'lucide-react';
 
 type ForecastTab = 'demand' | 'models' | 'scenarios';
 
-type ForecastFactor = {
-    sourceKey: string;
-    label: string;
-    weight: number;
-    note: string;
-};
-
 const tabs: Array<{ key: ForecastTab; label: string; icon: JSX.Element }> = [
-  { key: 'demand', label: 'Прогноз попиту', icon: <TrendingUp size={18} /> },
-    { key: 'models', label: 'Моделі прогнозування', icon: <Brain size={18} /> },
+    { key: 'demand', label: 'Прогноз попиту', icon: <TrendingUp size={18} /> },
+    { key: 'models', label: 'ML моделі', icon: <Brain size={18} /> },
     { key: 'scenarios', label: 'Сценарії', icon: <Settings2 size={18} /> },
 ];
 
@@ -44,59 +34,6 @@ const defaultRequest: ForecastDemandRequest = {
     product_code: '84713000',
     months_ahead: 6,
     model: 'prophet',
-};
-
-const featureLabelMap: Record<string, string> = {
-    seasonality: 'Сезонність',
-    trend: 'Тренд',
-    price: 'Ціна',
-    volume: 'Обсяг',
-    orders: 'Замовлення',
-    imports: 'Імпорт',
-    exports: 'Експорт',
-    exchange_rate: 'Курс валют',
-    lead_time: 'Час постачання',
-    month: 'Місяць',
-    quarter: 'Квартал',
-    demand: 'Попит',
-    stock: 'Запаси',
-};
-
-const formatFeatureLabel = (key: string): string => featureLabelMap[key.toLowerCase()] ?? 'Фактор моделі';
-
-const forecastModelLabelMap: Record<string, string> = {
-    prophet: 'Метод Prophet',
-    arima: 'Метод ARIMA',
-    lstm: 'Нейромережа LSTM',
-};
-
-const formatForecastModelLabel = (model?: string): string =>
-    model ? forecastModelLabelMap[model.toLowerCase()] ?? 'Модель прогнозування' : 'Модель прогнозування';
-
-const buildForecastFactors = (forecast: ForecastResponse | null): ForecastFactor[] => {
-    const entries = Object.entries(forecast?.feature_importance ?? {});
-
-    if (entries.length === 0) {
-        return [];
-    }
-
-    const sorted = entries
-        .map(([key, value]) => ({
-            sourceKey: key,
-            label: formatFeatureLabel(key),
-            rawValue: Math.abs(value),
-        }))
-        .sort((left, right) => right.rawValue - left.rawValue)
-        .slice(0, 3);
-
-    const maxValue = sorted[0]?.rawValue ?? 0;
-
-    return sorted.map((item, index) => ({
-        sourceKey: item.sourceKey,
-        label: item.label,
-        weight: maxValue > 0 ? Math.round((item.rawValue / maxValue) * 100) : 0,
-        note: index === 0 ? 'Найсильніший сигнал' : 'У трійці драйверів',
-    }));
 };
 
 const buildChartOption = (forecast: ForecastResponse) => ({
@@ -259,7 +196,6 @@ export default function ForecastPage() {
         () => (forecast ? calculateGrowth(forecast) : 0),
         [forecast],
     );
-    const forecastFactors = useMemo(() => buildForecastFactors(forecast), [forecast]);
 
     const scenarioGroups = useMemo(() => {
         if (!forecast) {
@@ -293,13 +229,12 @@ export default function ForecastPage() {
 
     return (
         <div className="space-y-6">
-            <section className="relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.98),rgba(10,18,31,0.95))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.12),transparent_28%)]" />
-                <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(360px,0.75fr)] xl:items-stretch">
+            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(10,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
-                                ШІ-аналітика
+                                ML-аналітика
                             </span>
                             <span
                                 className={cn(
@@ -311,116 +246,33 @@ export default function ForecastPage() {
                             >
                                 {backendStatus.statusLabel}
                             </span>
-                            <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-300">
-                                {forecast?.product_name ?? 'Керування попитом'}
-                            </span>
                         </div>
                         <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
                             <TrendingUp className="text-emerald-300" size={30} />
                             Прогнозування
                         </h1>
                         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-                            Керуйте товарним кодом, горизонтом і сценаріями, а блок пояснюваності показує, які
-                            фактори штовхають прогноз угору або вниз.
+                            Керуйте товарним кодом, горизонтом і моделлю, а вкладка сценаріїв
+                            відштовхується від фактичного прогнозу замість декоративного плейсхолдера.
                         </p>
-
-                        <div className="mt-6 flex flex-wrap gap-3">
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab('scenarios')}
-                                className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/16"
-                            >
-                                <Sparkles size={16} />
-                                Показати сценарії
-                            </button>
-                            <Link
-                                to="/procurement-optimizer"
-                                className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-all hover:bg-cyan-500/16"
-                            >
-                                <BadgeCheck size={16} />
-                                До закупівель
-                            </Link>
-                            <Link
-                                to="/scenario-progress"
-                                className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-white/[0.08]"
-                            >
-                                <ArrowRight size={16} />
-                                Центр виконання
-                            </Link>
-                        </div>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="rounded-[30px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.24)]">
-                            <div className="flex items-center justify-between gap-3">
-                                <div>
-                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                                        Поточний прогноз
-                                    </div>
-                                    <div className="mt-1 text-lg font-black text-white">
-                                        {forecast?.product_name ?? 'Очікуємо перший розрахунок'}
-                                    </div>
-                                </div>
-                                <div className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-200">
-                                    {backendStatus.sourceLabel}
-                                </div>
-                            </div>
-
-                            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                                {[
-                                    {
-                                        label: 'Довіра',
-                                        value: forecast ? `${Math.round(forecast.confidence_score * 100)}%` : '—',
-                                    },
-                                    {
-                                        label: 'Похибка',
-                                        value: forecast ? `${(forecast.mape * 100).toFixed(1)}%` : '—',
-                                    },
-                                    {
-                                        label: 'Точок даних',
-                                        value: forecast ? forecast.data_points_used.toLocaleString('uk-UA') : '—',
-                                    },
-                                    {
-                                        label: 'Горизонт',
-                                        value: `${request.months_ahead} міс.`,
-                                    },
-                                ].map((item) => (
-                                    <div key={item.label} className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
-                                        <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                                            {item.label}
-                                        </div>
-                                        <div className="mt-2 text-xl font-black text-white">{item.value}</div>
-                                    </div>
-                                ))}
-                            </div>
+                    <div className="grid gap-3 sm:grid-cols-2 xl:min-w-[520px]">
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{backendStatus.sourceLabel}</div>
                         </div>
-
-                        <div className="rounded-[30px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.22)]">
-                            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                                <Target className="h-3.5 w-3.5 text-cyan-200" />
-                                Пояснюваність моделі
-                            </div>
-                            <div className="mt-4 space-y-3">
-                                {forecastFactors.length > 0 ? (
-                                    forecastFactors.map((factor) => (
-                                        <div key={factor.sourceKey} className="rounded-[22px] border border-white/[0.08] bg-black/20 p-3">
-                                            <div className="flex items-center justify-between gap-3">
-                                                <div className="text-sm font-semibold text-white">{factor.label}</div>
-                                                <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                                                    {factor.note}
-                                                </div>
-                                            </div>
-                                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.06]">
-                                                <div className="h-full rounded-full bg-cyan-300" style={{ width: `${factor.weight}%` }} />
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3 text-sm leading-6 text-slate-300">
-                                        Пояснюваність з’явиться після отримання даних для прогнозу.
-                                    </div>
-                                )}
-                            </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Активна модель</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.model}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Код товару</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.product_code}</div>
+                        </div>
+                        <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Горизонт</div>
+                            <div className="mt-2 text-sm font-semibold text-white">{request.months_ahead} місяців</div>
                         </div>
                     </div>
                 </div>
@@ -468,9 +320,9 @@ export default function ForecastPage() {
                             }
                             className="mt-2 w-full bg-transparent text-sm font-semibold text-white outline-none"
                         >
-                            <option value="prophet">Метод Prophet</option>
-                            <option value="arima">Метод ARIMA</option>
-                            <option value="lstm">Нейромережа LSTM</option>
+                            <option value="prophet">prophet</option>
+                            <option value="arima">arima</option>
+                            <option value="lstm">lstm</option>
                         </select>
                     </label>
                 </div>
@@ -525,7 +377,6 @@ export default function ForecastPage() {
                             chartOption={chartOption}
                             forecast={forecast}
                             growth={growth}
-                            forecastFactors={forecastFactors}
                             loading={forecastLoading}
                             error={forecastError}
                         />
@@ -554,14 +405,12 @@ function DemandForecastTab({
     chartOption,
     forecast,
     growth,
-    forecastFactors,
     loading,
     error,
 }: {
     chartOption: Record<string, unknown> | null;
     forecast: ForecastResponse | null;
     growth: number;
-    forecastFactors: ForecastFactor[];
     loading: boolean;
     error: string | null;
 }) {
@@ -569,7 +418,7 @@ function DemandForecastTab({
         return (
             <div className="flex h-64 flex-col items-center justify-center gap-4 text-slate-400">
                 <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-                <p className="animate-pulse">Розрахунок прогнозу...</p>
+                <p className="animate-pulse">Розрахунок ML-прогнозу...</p>
             </div>
         );
     }
@@ -619,7 +468,7 @@ function DemandForecastTab({
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs">
                         <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-slate-300">
-                            {formatForecastModelLabel(forecast.model_used)}
+                            {forecast.model_used}
                         </span>
                         <span
                             className={cn(
@@ -643,36 +492,10 @@ function DemandForecastTab({
                 <div className="flex items-start gap-4">
                     <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-emerald-300" />
                     <div>
-                        <h4 className="text-lg font-black text-white">ШІ-інтерпретація</h4>
+                        <h4 className="text-lg font-black text-white">AI-інтерпретація</h4>
                         <p className="mt-2 text-sm leading-7 text-slate-300">{forecast.interpretation_uk}</p>
                     </div>
                 </div>
-            </div>
-
-            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    <Sparkles className="h-3.5 w-3.5 text-cyan-200" />
-                    Топ фактори прогнозу
-                </div>
-                {forecastFactors.length > 0 ? (
-                    <div className="mt-4 grid gap-3 md:grid-cols-3">
-                        {forecastFactors.map((factor) => (
-                            <div key={factor.sourceKey} className="rounded-[22px] border border-white/[0.08] bg-black/20 p-4">
-                                <div className="text-sm font-semibold text-white">{factor.label}</div>
-                                <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                                    {factor.note}
-                                </div>
-                                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.06]">
-                                    <div className="h-full rounded-full bg-cyan-300" style={{ width: `${factor.weight}%` }} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="mt-3 text-sm leading-7 text-slate-400">
-                        Фактори моделі з’являться після того, як бекенд поверне деталізацію важливості ознак.
-                    </p>
-                )}
             </div>
 
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">

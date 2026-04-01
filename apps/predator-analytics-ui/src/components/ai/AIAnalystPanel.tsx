@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// AI ANALYST PANEL - Інтелектуальний аналітичний інтерфейс
+// AI ANALYST PANEL - Predator v45 | Neural Analytics.0
 // Interactive AI-powered analysis with beautiful UX
 // ============================================================================
 
@@ -89,7 +89,7 @@ const MessageBubble = ({ message, onCopy }: { message: Message; onCopy: (text: s
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
               <Brain size={16} className="text-white" />
             </div>
-            <span className="text-sm font-semibold text-cyan-400">AI Аналітик</span>
+            <span className="text-sm font-semibold text-cyan-400">PREDATOR AI</span>
             {message.metadata?.confidence && (
               <ConfidenceBadge confidence={message.metadata.confidence} />
             )}
@@ -194,7 +194,7 @@ export const AIAnalystPanel: React.FC = () => {
     {
       id: '1',
       role: 'assistant',
-      content: 'Вітаю! Я AI Аналітик — ваш інтелектуальний помічник. Задайте питання про дані, аномалії або запросіть аналіз.',
+      content: 'Вітаю! Я PREDATOR AI — ваш інтелектуальний аналітик. Задайте питання про дані, аномалії або запросіть аналіз.',
       timestamp: new Date(),
       metadata: { confidence: 1, model: 'claude-3.5-sonnet' }
     }
@@ -218,7 +218,7 @@ export const AIAnalystPanel: React.FC = () => {
 
     try {
       const startTime = Date.now();
-      const res = await fetch('/api/v1/analyze', {
+      const res = await fetch('/api/v45/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, context: 'general' }),
@@ -271,10 +271,10 @@ export const AIAnalystPanel: React.FC = () => {
             </div>
             <div>
               <h2 className="font-bold text-white flex items-center gap-2">
-                AI Аналітик
+                PREDATOR AI
                 <Sparkles size={14} className="text-amber-400" />
               </h2>
-              <p className="text-xs text-slate-400">Інтелектуальний аналітик</p>
+              <p className="text-xs text-slate-400">Інтелектуальний аналітик v45.0</p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-emerald-400">

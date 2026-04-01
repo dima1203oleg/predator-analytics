@@ -246,7 +246,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                 // 0. Fetch Real Stage
                 try {
                     const status = await api.getStatus();
-                    setStage(status.stage || 'IDLE');
+                    setStage((status as any).stage || 'IDLE');
                 } catch (e) { }
 
                 // 1. Fetch Real Logs (Trinity)
@@ -309,7 +309,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                             avatar: p.name[0],
                             color: existing?.color || (p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7'),
                             status: 'IDLE',
-                            load: sysMetrics ? (idx === 0 ? sysMetrics.cpu_usage : Math.max(10, sysMetrics.cpu_usage - 15)) : 0
+                            load: sysMetrics ? (idx === 0 ? (sysMetrics as any).cpu_usage || 0 : Math.max(10, ((sysMetrics as any).cpu_usage || 20) - 15)) : 0
                         };
                     });
                     setBrainNodes(realBrainNodes);

@@ -6,6 +6,8 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
+import { useContextRail } from '@/hooks/useContextRail';
 import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -362,6 +364,64 @@ const SupplierDiscoveryPremium: React.FC = () => {
       s.id === id ? { ...s, isFavorite: !s.isFavorite } : s
     ));
   };
+  const focusSupplier = filteredSuppliers.find((supplier) => supplier.id === expandedId) ?? filteredSuppliers[0] ?? null;
+  const suppliersRailPayload = useMemo(() => {
+    if (!focusSupplier) {
+      return null;
+    }
+
+    return {
+      entityId: focusSupplier.id,
+      entityType: 'постачальник',
+      title: focusSupplier.name,
+      subtitle: `${focusSupplier.country} • ${focusSupplier.city} • ${focusSupplier.products.slice(0, 2).join(', ')}`,
+      status: {
+        label: focusSupplier.verified ? 'Верифікований постачальник' : 'Потребує перевірки',
+        tone: focusSupplier.verified ? 'success' : 'warning',
+      },
+      actions: createStandardContextActions({
+        auditPath: '/diligence',
+        documentsPath: '/documents',
+        agentPath: '/agents',
+      }),
+      insights: [
+        createMetric('price', 'Цінова перевага', `${focusSupplier.priceCompetitiveness}%`, 'Позиція відносно ринку', focusSupplier.priceCompetitiveness >= 90 ? 'success' : 'info'),
+        createMetric('reliability', 'Надійність', `${focusSupplier.reliability}%`, 'Своєчасність і якість поставок', focusSupplier.reliability >= 90 ? 'success' : 'warning'),
+        createMetric('delivery', 'Час доставки', `${focusSupplier.leadTime} дн`, 'Середній цикл виконання замовлення'),
+      ],
+      relations: [
+        createMetric('country', 'Країна', focusSupplier.country, 'Основний регіон поставки'),
+        createMetric('clients', 'UA клієнти', `${focusSupplier.ukraineClients}`, 'Підтверджені українські покупці'),
+      ],
+      documents: [
+        {
+          id: 'supplier-card',
+          label: 'Картка постачальника',
+          detail: `Остання поставка: ${focusSupplier.lastShipment}`,
+          path: '/suppliers',
+        },
+        {
+          id: 'supplier-products',
+          label: 'Профіль номенклатури',
+          detail: focusSupplier.products.join(', '),
+          path: '/price-compare',
+        },
+      ],
+      risks: [
+        createRisk(
+          'supplier-risk',
+          'Ризик виконання',
+          focusSupplier.reliability < 70
+            ? 'Надійність нижча за поріг для довгострокового контракту.'
+            : 'Рівень виконання придатний для швидкого запуску.',
+          focusSupplier.reliability < 70 ? 'danger' : 'success',
+        ),
+      ],
+      sourcePath: '/suppliers',
+    };
+  }, [focusSupplier]);
+
+  useContextRail(suppliersRailPayload);
 
   return (
     <div className="min-h-screen bg-slate-950 p-6">

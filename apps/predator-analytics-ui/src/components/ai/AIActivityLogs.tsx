@@ -1,5 +1,5 @@
 /**
- * AI Activity Logs Component v4.0
+ * AI Activity Logs Component v45.0
  *
  * Real-time AI activity and system logs display.
  * Features:
@@ -44,7 +44,7 @@ export const AIActivityLogs: React.FC<AIActivityLogsProps> = ({
     if (isPaused) return;
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/v1/ws/ai/stream`;
+    const wsUrl = `${protocol}//${window.location.host}/api/v45/ws/ai/stream`;
 
     try {
       wsRef.current = new WebSocket(wsUrl);

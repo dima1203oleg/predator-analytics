@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
-import { useSidebarStore } from '../store/sidebarStore';
 
 let mockedRole = 'admin';
 
@@ -36,6 +35,9 @@ vi.mock('../store/atoms', async () => {
   return {
     isSidebarOpenAtom: atom(true),
     sidebarSearchAtom: atom(''),
+    navFavoritesAtom: atom<string[]>([]),
+    navRecentAtom: atom<string[]>([]),
+    shellCommandPaletteOpenAtom: atom(false),
   };
 });
 
@@ -62,7 +64,9 @@ vi.mock('../hooks/useBackendStatus', () => ({
 
 describe('Sidebar', () => {
   beforeEach(() => {
-    useSidebarStore.getState().reset();
+    if (typeof localStorage?.removeItem === 'function') {
+      localStorage.removeItem('predator-nav-collapsed');
+    }
   });
 
   it('показує адміністративні секції для адміністратора', () => {
@@ -74,12 +78,14 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByText('6 бізнес-блоків')).toBeInTheDocument();
+    expect(screen.getByText('ШІ-рекомендації')).toBeInTheDocument();
+    expect(screen.getByText('ШІ-асистент')).toBeInTheDocument();
+    expect(screen.getByText('Оперативний огляд')).toBeInTheDocument();
+    expect(screen.getByText('LLM-студія')).toBeInTheDocument();
     expect(screen.getByText('Системна фабрика')).toBeInTheDocument();
     expect(screen.getByText('Центр керування ШІ')).toBeInTheDocument();
     expect(screen.getByText('Суверенне врядування')).toBeInTheDocument();
-    expect(screen.getByText('Глобальний шар')).toBeInTheDocument();
-    expect(screen.getByText('Ринки та стратегія')).toBeInTheDocument();
-    expect(screen.getByText('Ризики та комплаєнс')).toBeInTheDocument();
   });
 
   it('не показує адміністративні пункти для не-адміністратора', () => {
@@ -91,9 +97,10 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByText('Розвідка')).toBeInTheDocument();
+    expect(screen.getByText('OSINT та розслідування')).toBeInTheDocument();
+    expect(screen.queryByText('LLM-студія')).toBeNull();
     expect(screen.queryByText('Центр керування ШІ')).toBeNull();
     expect(screen.queryByText('Суверенне врядування')).toBeNull();
-    expect(screen.getByText('Глобальний шар')).toBeInTheDocument();
-    expect(screen.queryByText('Ринки та стратегія')).toBeNull();
   });
 });

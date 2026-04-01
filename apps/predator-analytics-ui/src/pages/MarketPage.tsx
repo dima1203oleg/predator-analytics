@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import ReactECharts from '@/components/ECharts';
 import { dashboardApi, marketApi, competitorsApi } from '@/services/api';
 import type { Competitor } from '@/features/competitors/api/competitors';
@@ -10,6 +9,8 @@ import type {
   MarketOverviewResponse,
   TopProduct,
 } from '@/features/market/types';
+import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
+import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/lib/utils';
 import {
@@ -17,16 +18,12 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
-  BadgeCheck,
   Building2,
-  Clock3,
   FileText,
   Globe2,
   Loader2,
   Package,
   Radar,
-  ShieldCheck,
-  Sparkles,
   TrendingUp,
 } from 'lucide-react';
 
@@ -58,7 +55,6 @@ interface OverviewEnvelope {
 type MarketOverviewPayload = MarketOverviewResponse & OverviewEnvelope;
 
 interface NormalizedMarketOverview {
-  period: string | undefined;
   cards: Array<{
     title: string;
     value: string;
@@ -95,22 +91,9 @@ const formatCurrencyCompact = (value: number): string => {
 
 const formatDateOnly = (value?: string): string => value?.split('T')[0] ?? '—';
 
-const formatMarketPeriod = (period?: string): string => {
-  switch (period) {
-    case 'last_7_days':
-      return 'Останні 7 днів';
-    case 'last_30_days':
-      return 'Останні 30 днів';
-    case 'last_90_days':
-      return 'Останні 90 днів';
-    default:
-      return period ? `Період: ${period}` : 'Період не визначено';
-  }
-};
-
 const normalizeOverview = (payload: MarketOverviewPayload | null): NormalizedMarketOverview => {
   if (!payload) {
-    return { period: undefined, cards: [], topProducts: [] };
+    return { cards: [], topProducts: [] };
   }
 
   const statsSource = payload.overview?.stats;
@@ -137,7 +120,6 @@ const normalizeOverview = (payload: MarketOverviewPayload | null): NormalizedMar
     [];
 
   return {
-    period: payload.period,
     cards: [
       {
         title: 'Митні декларації',
@@ -362,19 +344,62 @@ export default function MarketPage() {
   const normalizedOverview = useMemo(() => normalizeOverview(overviewData), [overviewData]);
   const customsChartOption = useMemo(() => buildCustomsChartOption(declarations), [declarations]);
   const activeTabLabel = tabs.find((tab) => tab.key === activeTab)?.label ?? 'Огляд ринку';
-  const topProduct = normalizedOverview.topProducts[0] ?? null;
-  const totalDeclarations =
-    overviewData?.overview?.stats?.total_declarations ?? overviewData?.total_declarations ?? 0;
-  const totalValueUsd =
-    overviewData?.overview?.stats?.total_value_usd ?? overviewData?.total_value_usd ?? 0;
-  const activeCompanies =
-    overviewData?.overview?.stats?.active_companies ?? overviewData?.total_companies ?? 0;
+  const marketRailPayload = useMemo(
+    () => ({
+      entityId: 'market',
+      entityType: 'ринковий контур',
+      title: 'Ринок',
+      subtitle: `${activeTabLabel} • ${backendStatus.sourceLabel}`,
+      status: {
+        label: loadingOverview ? 'Оновлення ринку' : 'Ринковий контур активний',
+        tone: loadingOverview ? ('warning' as const) : ('info' as const),
+      },
+      actions: createStandardContextActions({
+        auditPath: '/diligence',
+        documentsPath: '/documents',
+        agentPath: '/agents',
+      }),
+      insights: normalizedOverview.cards.slice(0, 3).map((card) =>
+        createMetric(`market-${card.title}`, card.title, card.value, `Динаміка: ${card.change}`, card.positive ? 'success' : 'warning'),
+      ),
+      relations: [
+        createMetric('market-tab', 'Активна вкладка', activeTabLabel, 'Поточний ринковий сценарій'),
+        createMetric('market-competitors', 'Конкуренти', `${competitors.length}`, 'Завантажені профілі конкурентів'),
+        createMetric('market-declarations', 'Декларації', `${declarations.length}`, 'Підтверджені записи для ринку'),
+      ],
+      documents: normalizedOverview.topProducts.slice(0, 2).map((product) => ({
+        id: `product-${product.code}`,
+        label: product.name,
+        detail: `${product.code} • ${product.value}`,
+        path: '/market',
+      })),
+      risks: [
+        ...(overviewError ? [createRisk('market-overview-error', 'Огляд недоступний', overviewError, 'warning')] : []),
+        ...(declarationsError ? [createRisk('market-declarations-error', 'Проблема з деклараціями', declarationsError, 'warning')] : []),
+        ...(competitorsError ? [createRisk('market-competitors-error', 'Проблема з конкурентами', competitorsError, 'warning')] : []),
+      ],
+      sourcePath: '/market',
+    }),
+    [
+      activeTabLabel,
+      backendStatus.sourceLabel,
+      competitors.length,
+      competitorsError,
+      declarations.length,
+      declarationsError,
+      loadingOverview,
+      normalizedOverview.cards,
+      normalizedOverview.topProducts,
+      overviewError,
+    ],
+  );
+
+  useContextRail(marketRailPayload);
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.98),rgba(9,18,32,0.95))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(34,197,94,0.16),transparent_28%)]" />
-        <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)] xl:items-stretch">
+      <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(9,18,32,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <div className="mb-3 flex flex-wrap gap-2">
               <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-cyan-200">
@@ -390,138 +415,31 @@ export default function MarketPage() {
               >
                 {backendStatus.statusLabel}
               </span>
-              <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-300">
-                {activeTabLabel}
-              </span>
             </div>
             <h1 className="flex items-center gap-3 text-3xl font-black tracking-tight text-white sm:text-4xl">
               <BarChart3 className="text-cyan-300" size={30} />
-              Командний центр ринку
+              Ринок
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-              Тут видно підтверджені декларації, активних конкурентів і митну динаміку без декоративних
-              блоків. Сторінка підводить до рішення: що купувати, де перевіряти і де шукати економію.
+              Кожна вкладка показує або живі дані з ендпоїнтів, або чіткий стан недоступності.
+              Жодних намальованих графіків чи демо-карток для митниці та конкурентів.
             </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                to="/procurement-optimizer"
-                className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/16"
-              >
-                <BadgeCheck size={16} />
-                Оптимізувати закупівлю
-              </Link>
-              <button
-                type="button"
-                onClick={() => setActiveTab('customs')}
-                className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-all hover:bg-cyan-500/16"
-              >
-                <Globe2 size={16} />
-                Відкрити митну динаміку
-              </button>
-              <Link
-                to="/scenario-progress"
-                className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-white/[0.08]"
-              >
-                <ArrowUpRight size={16} />
-                Центр виконання
-              </Link>
-            </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {[
-                { label: 'Декларацій', value: totalDeclarations.toLocaleString('uk-UA'), icon: FileText },
-                { label: 'Обсяг ринку', value: formatCurrencyCompact(totalValueUsd), icon: TrendingUp },
-                { label: 'Компаній', value: activeCompanies.toLocaleString('uk-UA'), icon: Building2 },
-                { label: 'Період', value: formatMarketPeriod(overviewData?.period), icon: Clock3 },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-4 shadow-[0_18px_45px_rgba(2,6,23,0.22)]"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/20">
-                      <item.icon className="h-4 w-4 text-cyan-200" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                      Live
-                    </span>
-                  </div>
-                  <div className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    {item.label}
-                  </div>
-                  <div className="mt-2 text-lg font-black leading-tight text-white">{item.value}</div>
-                </div>
-              ))}
-            </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.24)]">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    Підсумок ринку
-                  </div>
-                  <div className="mt-1 text-lg font-black text-white">
-                    {topProduct ? topProduct.name : 'Немає підтвердженого топу'}
-                  </div>
-                </div>
-                <div className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-200">
-                  {backendStatus.sourceLabel}
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                      Головна категорія
-                    </span>
-                    <span className="text-xs text-slate-400">{topProduct ? topProduct.code : '—'}</span>
-                  </div>
-                  <div className="mt-2 text-sm font-semibold text-white">
-                    {topProduct ? topProduct.value : 'Немає даних'}
-                  </div>
-                  <div className="mt-1 text-xs text-slate-400">
-                    {topProduct
-                      ? `${topProduct.change >= 0 ? '+' : ''}${topProduct.change}% динаміки`
-                      : 'Очікує підтверджених записів'}
-                  </div>
-                </div>
-
-                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
-                  <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    Що робити далі
-                  </div>
-                  <div className="mt-2 text-sm leading-6 text-slate-300">
-                    Перевірити товар у сценарії закупівель, а потім відкрити економію, постачальників і митний код.
-                  </div>
-                </div>
+          <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[520px]">
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+              <div className="mt-2 text-sm font-semibold text-white">{backendStatus.sourceLabel}</div>
+            </div>
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Вкладка</div>
+              <div className="mt-2 text-sm font-semibold text-white">
+                {tabs.find((tab) => tab.key === activeTab)?.label}
               </div>
             </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[24px] border border-emerald-400/14 bg-emerald-500/8 p-4">
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-200">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Візуальна підказка
-                </div>
-                <div className="mt-2 text-sm leading-6 text-slate-300">
-                  Вкладки пов’язані з реальними джерелами і не ховають недоступність даних.
-                </div>
-              </div>
-              <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                  <ShieldCheck className="h-3.5 w-3.5 text-cyan-200" />
-                  Стан даних
-                </div>
-                <div className="mt-2 text-sm leading-6 text-white">
-                  {overviewError
-                    ? 'Огляд ринку потребує перевірки.'
-                    : 'Огляд ринку синхронізовано з поточним бекендом.'}
-                </div>
-              </div>
+            <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-4">
+              <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Період</div>
+              <div className="mt-2 text-sm font-semibold text-white">Останні доступні записи</div>
             </div>
           </div>
         </div>
@@ -599,8 +517,6 @@ function MarketOverview({
   loading: boolean;
   error: string | null;
 }) {
-  const topProduct = data.topProducts[0] ?? null;
-
   return (
     <div className="space-y-6">
       {error && (
@@ -610,135 +526,106 @@ function MarketOverview({
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {(loading ? Array.from({ length: 4 }).map((_, index) => ({ title: `loading-${index}` })) : data.cards).map((card, index) => (
+        {(loading ? Array.from({ length: 4 }).map((_, index) => ({ title: `loading-${index}`, value: '', change: '', positive: true, icon: FileText })) : data.cards).map((card, index) => (
           <div
             key={card.title}
-            className="rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.28)]"
+            className="group relative overflow-hidden rounded-[26px] border border-white/[0.08] bg-white/[0.03] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.28)] transition-all duration-500 hover:scale-[1.02] hover:border-cyan-500/30 hover:bg-white/[0.06] hover:shadow-[0_0_40px_rgba(34,211,238,0.15)]"
           >
+            {/* Shimmer Effect */}
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-shimmer pointer-events-none" />
+            
             {loading ? (
-              <div className="space-y-3">
+              <div className="space-y-3 relative z-10">
                 <div className="h-10 w-10 animate-pulse rounded-2xl bg-white/[0.06]" />
                 <div className="h-8 w-24 animate-pulse rounded-xl bg-white/[0.06]" />
                 <div className="h-4 w-32 animate-pulse rounded-xl bg-white/[0.06]" />
               </div>
             ) : (
-              <>
+              <div className="relative z-10">
                 <div className="flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10">
-                    <card.icon className="h-5 w-5 text-cyan-200" />
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10 transition-colors duration-500 group-hover:border-cyan-400/40 group-hover:bg-cyan-500/20">
+                    <card.icon className="h-5 w-5 text-cyan-200 transition-transform duration-500 group-hover:scale-110" />
                   </div>
                   <span
                     className={cn(
-                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold',
+                      'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-colors duration-300',
                       card.positive
-                        ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
-                        : 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+                        ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20'
+                        : 'border-rose-400/20 bg-rose-500/10 text-rose-200 group-hover:border-rose-400/40 group-hover:bg-rose-500/20',
                     )}
                   >
                     {card.positive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
                     {card.change}
                   </span>
                 </div>
-                <div className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">{card.title}</div>
-                <div className="mt-2 text-3xl font-black tracking-tight text-white">{card.value}</div>
-              </>
+                <div className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 transition-colors duration-300 group-hover:text-cyan-400/80">{card.title}</div>
+                <div className="mt-2 text-3xl font-black tracking-tight text-white transition-colors duration-300 group-hover:text-cyan-50">{card.value}</div>
+              </div>
             )}
           </div>
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-        <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
-          <div className="flex flex-col gap-3 border-b border-white/[0.06] px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-white">ТОП-5 товарних категорій</h3>
-              <p className="mt-1 text-sm text-slate-400">
-                Категорії з найбільшим підтвердженим обсягом операцій.
-              </p>
-            </div>
-            <div className="text-xs text-slate-500">Дані з агрегації ринкового огляду</div>
+      <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
+        <div className="flex flex-col gap-3 border-b border-white/[0.06] px-6 py-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-lg font-black tracking-tight text-white">ТОП-5 товарних категорій</h3>
+            <p className="mt-1 text-sm text-slate-400">
+              Категорії з найбільшим підтвердженим обсягом операцій.
+            </p>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
-                  <th className="px-6 py-4">Код УКТЗЕД</th>
-                  <th className="px-6 py-4">Категорія</th>
-                  <th className="px-6 py-4 text-right">Обсяг</th>
-                  <th className="px-6 py-4 text-right">Динаміка</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.06]">
-                {(loading ? Array.from({ length: 5 }).map((_, index) => ({ code: `loading-${index}` })) : data.topProducts).map((product, index) => (
-                  <motion.tr
-                    key={product.code}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.04 }}
-                    className="text-sm transition-colors hover:bg-white/[0.03]"
-                  >
-                    <td className="px-6 py-4 font-mono font-bold text-cyan-200">
-                      {loading ? <div className="h-4 w-16 animate-pulse rounded bg-white/[0.06]" /> : product.code}
-                    </td>
-                    <td className="px-6 py-4 text-slate-200">
-                      {loading ? <div className="h-4 w-48 animate-pulse rounded bg-white/[0.06]" /> : product.name}
-                    </td>
-                    <td className="px-6 py-4 text-right font-semibold text-white">
-                      {loading ? <div className="ml-auto h-4 w-20 animate-pulse rounded bg-white/[0.06]" /> : product.value}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {loading ? (
-                        <div className="ml-auto h-4 w-14 animate-pulse rounded bg-white/[0.06]" />
-                      ) : (
-                        <span
-                          className={cn(
-                            'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold',
-                            product.change >= 0
-                              ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
-                              : 'border-rose-400/20 bg-rose-500/10 text-rose-200',
-                          )}
-                        >
-                          {product.change >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
-                          {Math.abs(product.change)}%
-                        </span>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <div className="text-xs text-slate-500">Дані з агрегації ринкового огляду</div>
         </div>
 
-        <div className="space-y-4">
-          <div className="rounded-[28px] border border-cyan-400/14 bg-cyan-500/8 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10">
-              <Sparkles className="h-5 w-5 text-cyan-200" />
-            </div>
-            <h4 className="mt-4 text-lg font-black text-white">Що це означає для закупівель</h4>
-            <p className="mt-2 text-sm leading-7 text-slate-300">
-              Найбільша категорія на ринку підкаже, де шукати постачальників, як обрати код і який обсяг
-              варто закладати у сценарій оптимізації.
-            </p>
-            <Link
-              to="/procurement-optimizer"
-              className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-2.5 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/16"
-            >
-              <BadgeCheck size={16} />
-              Перевірити цю категорію
-            </Link>
-          </div>
-
-          <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
-          <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Поточний період</div>
-            <div className="mt-2 text-3xl font-black text-white">{formatMarketPeriod(data.period)}</div>
-            <div className="mt-2 text-sm leading-6 text-slate-400">
-              {topProduct
-                ? `У фокусі ${topProduct.name} з динамікою ${topProduct.change >= 0 ? '+' : ''}${topProduct.change}%.`
-                : 'Поки що немає достатньо даних для глибокого зрізу.'}
-            </div>
-          </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
+                <th className="px-6 py-4">Код УКТЗЕД</th>
+                <th className="px-6 py-4">Категорія</th>
+                <th className="px-6 py-4 text-right">Обсяг</th>
+                <th className="px-6 py-4 text-right">Динаміка</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06]">
+              {(loading ? Array.from({ length: 5 }).map((_, index) => ({ code: `loading-${index}`, name: '', value: '', change: 0 })) : data.topProducts).map((product, index) => (
+                <motion.tr
+                  key={product.code}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className="text-sm transition-colors hover:bg-white/[0.03]"
+                >
+                  <td className="px-6 py-4 font-mono font-bold text-cyan-200">
+                    {loading ? <div className="h-4 w-16 animate-pulse rounded bg-white/[0.06]" /> : product.code}
+                  </td>
+                  <td className="px-6 py-4 text-slate-200">
+                    {loading ? <div className="h-4 w-48 animate-pulse rounded bg-white/[0.06]" /> : product.name}
+                  </td>
+                  <td className="px-6 py-4 text-right font-semibold text-white">
+                    {loading ? <div className="ml-auto h-4 w-20 animate-pulse rounded bg-white/[0.06]" /> : product.value}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {loading ? (
+                      <div className="ml-auto h-4 w-14 animate-pulse rounded bg-white/[0.06]" />
+                    ) : (
+                      <span
+                        className={cn(
+                          'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold',
+                          product.change >= 0
+                            ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                            : 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+                        )}
+                      >
+                        {product.change >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+                        {Math.abs(product.change)}%
+                      </span>
+                    )}
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

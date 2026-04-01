@@ -199,7 +199,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
 
   const fetchPipelines = useCallback(async () => {
     try {
-      const response = await fetch('/api/v1/monitoring/sagas');
+      const response = await fetch('/api/v45/monitoring/sagas');
       if (response.ok) {
         const sagas = await response.json();
         const transformed: Pipeline[] = sagas.slice(0, 5).map((saga: any) => ({

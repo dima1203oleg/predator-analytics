@@ -1,23 +1,23 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-// Контексти
+// Contexts
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
 import { UserProvider } from './context/UserContext';
-// Сховища стану
+// Stores
 import { useAppStore } from './store/useAppStore';
 
-// Решта провайдерів
+// Remaining Providers
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
 import { ShellProvider } from './context/ShellContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
 
 
-// Компоненти
+// Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
 import BootScreen from './components/BootScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -31,23 +31,21 @@ import { CyberTerminal } from './components/ui/CyberTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 
-// Налаштування Query Client з оптимізованими параметрами
+// Setup Query Client with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 хвилин
-      gcTime: 10 * 60 * 1000, // 10 хвилин (раніше cacheTime)
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
     },
   },
 });
 
 function App() {
-  // Звичайний життєвий цикл: boot → login → ready
-  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>(() => {
-    return sessionStorage.getItem('predator_auth_token') ? 'READY' : 'BOOTING';
-  });
+  // SOVEREIGN NEXUS EXPERIENCE: Start with cinematic BootScreen
+  const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
   const highVisibility = useAppStore((state) => state.highVisibility);
 
   useEffect(() => {
@@ -55,19 +53,19 @@ function App() {
     document.documentElement.classList.toggle('high-visibility', highVisibility);
   }, [highVisibility]);
 
-  // Глобальне перехоплення runtime-помилок з оверлеєм для діагностики
+  // Global error capture for runtime issues (shows overlay with details)
   const [globalError, setGlobalError] = useState<{ message: string; stack?: string } | null>(null);
 
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       try {
-        // У деяких браузерах event.error може бути відсутнім
+        // event.error may be undefined in some browsers
         const msg = event.message || (event.error && event.error.message) || String(event.error || 'Unknown error');
         const stack = event.error && event.error.stack ? event.error.stack : undefined;
         console.error('Global error captured', msg, event.error);
         setGlobalError({ message: msg, stack });
       } catch (e) {
-        // Ігноруємо другорядні помилки самого обробника
+        // swallow
       }
     };
 
@@ -80,7 +78,7 @@ function App() {
         console.error('Unhandled promise rejection captured', reason);
         setGlobalError({ message: msg, stack });
       } catch (e) {
-        // Ігноруємо другорядні помилки самого обробника
+        // swallow
       }
     };
 
@@ -92,14 +90,17 @@ function App() {
       window.removeEventListener('unhandledrejection', onRejection as EventListener);
     };
   }, []);
-
-  const handleBootComplete = () => {
+  const handleBootComplete = useCallback(() => {
     setAppState('LOGIN');
-  };
+  }, []);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     setAppState('READY');
-  };
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setAppState('LOGIN');
+  }, []);
 
   return (
     <ErrorBoundary>
@@ -145,7 +146,7 @@ function App() {
           </UserProvider>
         </BrowserRouter>
       </QueryClientProvider>
-      {/* Глобальний оверлей помилки для швидкого виявлення падінь під час взаємодії */}
+      {/* Global runtime error overlay (helps capture crashes during user actions) */}
       {globalError && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
           <div className="bg-rose-900/95 text-white p-6 rounded-lg max-w-3xl w-full">

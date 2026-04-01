@@ -9,32 +9,29 @@ export * from './EnhancedButton';
 
 // Advanced Monitoring Components
 export { RealTimeSystemMetrics } from './RealTimeSystemMetrics';
+export { JobQueueMonitor } from './JobQueueMonitor';
 export { LLMHealthMonitor } from './LLMHealthMonitor';
 export { StorageAnalytics } from './StorageAnalytics';
 export { AnalyticsDashboard } from './AnalyticsDashboard';
+export { ETLPipelineVisualizer } from './ETLPipelineVisualizer';
 
-// v4.0 Enhanced Components
+// v45.0 Enhanced Components
+export { SystemHealthDashboard } from './dashboard/SystemHealthDashboard';
 export { AIAnalystPanel } from './ai/AIAnalystPanel';
 export { EnhancedDataUpload } from './upload/EnhancedDataUpload';
 export { SmartCaseBrowser } from './cases/SmartCaseBrowser';
 
-// v4.0 Lazy Loading Components (Performance Optimized)
-export * from './lazy';
+// v45.0 SuperIntelligence Components
+export { SuperIntelligenceDashboard } from './ai/SuperIntelligenceDashboard';
+export { SelfHealingStatus } from './ai/SelfHealingStatus';
+export { AIActivityLogs } from './ai/AIActivityLogs';
+export { WorkflowControlPanel } from './ai/WorkflowControlPanel';
 
-// v11.1 Integration Plan Components
-export { ProcurementOptimizer } from './business/ProcurementOptimizer';
-export { SolutionHub } from './business/SolutionHub';
-export { UnitEconomics } from './business/UnitEconomics';
-export { BusinessScenarios } from './business/BusinessScenarios';
-export { FlowBuilder } from './business/FlowBuilder';
+// v45.0 AZR Constitutional Framework
+export { AZRConstitutionalDashboard } from './AZRConstitutionalDashboard';
+export { ETLTruthDashboard } from './ETLTruthDashboard';
+export { TruthLedgerSection } from './TruthLedgerSection';
 
-export { OnboardingFlow } from './onboarding/OnboardingFlow';
-export { EmptyState } from './empty-state/EmptyState';
-
-export { BillingManager } from './billing/BillingManager';
-export { StripeIntegration } from './billing/StripeIntegration';
-
-export { ExecutionCenter } from './execution/ExecutionCenter';
-
-export { DataStrategy } from './data/DataStrategy';
-export { RedisPerformance } from './performance/RedisPerformance';
+// v45.0 Pipeline Monitoring
+export { PipelineMonitor } from './pipeline/PipelineMonitor';
+export { ActiveJobsPanel } from './pipeline/ActiveJobsPanel';

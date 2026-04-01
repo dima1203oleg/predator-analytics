@@ -246,9 +246,9 @@ export const StorageAnalytics: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       const [bucketsRes, dbRes, indicesRes] = await Promise.all([
-        fetch('/api/v1/storage/buckets').catch(() => null),
-        fetch('/api/v1/storage/databases').catch(() => null),
-        fetch('/api/v1/storage/indices').catch(() => null)
+        fetch('/api/v45/storage/buckets').catch(() => null),
+        fetch('/api/v45/storage/databases').catch(() => null),
+        fetch('/api/v45/storage/indices').catch(() => null)
       ]);
 
       if (bucketsRes?.ok) {

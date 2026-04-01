@@ -1,7 +1,6 @@
 /**
  * Constitutional Framework Components
- * PREDATOR Analytics
- */
+ * Predator v45 | Neural Analytics*/
 
 export { RedButton } from './RedButton';
 export { SOMDashboard } from './SOMDashboard';

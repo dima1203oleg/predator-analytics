@@ -17,9 +17,11 @@ import {
     Layers, Cpu, ShieldAlert, ZapOff, Clock, TrendingUp,
     Send, Info, AlertTriangle, CheckCircle2, Share2, Eye
 } from 'lucide-react';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 import { PipelineMonitor } from '@/components/pipeline/PipelineMonitor';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useContextRail } from '@/hooks/useContextRail';
 import { api } from '@/services/api';
 import { useIngestionStore } from '@/store/useIngestionStore';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -73,6 +75,50 @@ const CustomsIntelligenceView = () => {
         const interval = setInterval(loadData, 10000);
         return () => clearInterval(interval);
     }, []);
+    const leadChannel = channels[0] ?? null;
+    const customsRailPayload = useMemo(() => ({
+        entityId: activeJobId ?? leadChannel?.id ?? 'customs-intel',
+        entityType: 'митний сигнал',
+        title: leadChannel?.name ?? 'Митна аналітика',
+        subtitle: leadChannel ? `${leadChannel.url} • ${channels.length} цілей моніторингу` : 'Контур моніторингу митних і логістичних сигналів',
+        status: {
+            label: activeJobId ? 'Йде активний цикл' : 'Моніторинг готовий',
+            tone: activeJobId ? 'warning' : 'info',
+        },
+        actions: createStandardContextActions({
+            auditPath: '/diligence',
+            documentsPath: '/documents',
+            agentPath: '/agents',
+        }),
+        insights: [
+            createMetric('customs-targets', 'Цілі моніторингу', `${channels.length}`, 'Активні Telegram-джерела'),
+            createMetric('customs-traffic', 'Трафік 24h', '1.2M', 'Оцінка потоку повідомлень', 'info'),
+            createMetric('customs-nlp', 'Точність NLP', '98.2%', 'Якість розбору сигналів', 'success'),
+        ],
+        relations: channels.slice(0, 3).map((channel) =>
+            createMetric(`channel-${channel.id}`, channel.name, channel.status, channel.url, channel.status === 'error' ? 'danger' : 'neutral'),
+        ),
+        documents: [
+            {
+                id: 'customs-monitor',
+                label: 'Моніторинг сигналів',
+                detail: leadChannel?.last_sync ? `Останній sync: ${new Date(leadChannel.last_sync).toLocaleString('uk-UA')}` : 'Ще немає завершеного sync',
+                path: '/customs-intel',
+            },
+            {
+                id: 'customs-documents',
+                label: 'Документальний контур',
+                detail: 'Швидкий перехід до матеріалів та реєстрових підтверджень',
+                path: '/documents',
+            },
+        ],
+        risks: channels.some((channel) => channel.status === 'error')
+            ? [createRisk('customs-errors', 'Є проблемні канали', 'Частина джерел повертає помилки або потребує перевірки.', 'danger')]
+            : [createRisk('customs-stable', 'Канал стабільний', 'Поточний пул моніторингу працює без критичних збоїв.', 'success')],
+        sourcePath: '/customs-intel',
+    }), [activeJobId, channels, leadChannel]);
+
+    useContextRail(customsRailPayload);
 
     const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();

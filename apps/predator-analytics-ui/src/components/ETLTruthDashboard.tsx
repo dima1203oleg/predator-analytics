@@ -1,6 +1,6 @@
 /**
  * 📊 ETL Truth Dashboard
- * 
+ * Predator v45 | Neural Analytics*
  * ПРИНЦИП: ETL ГОВОРИТЬ ПРАВДУ
  * - Реальні стани (не симуляція)
  * - Реальний прогрес (похідний від даних)
@@ -406,7 +406,7 @@ export const ETLTruthDashboard: React.FC = () => {
 
   const fetchJobs = useCallback(async () => {
     try {
-      const response = await fetch('/api/v1/etl/jobs?limit=20');
+      const response = await fetch('/api/v45/etl/jobs?limit=20');
       if (response.ok) {
         const data = await response.json();
         setJobs(data.jobs || data || []);

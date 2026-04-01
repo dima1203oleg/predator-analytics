@@ -8,9 +8,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-        display: ['Orbitron', 'sans-serif'],
+        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
+        display: ['Orbitron', 'Space Grotesk', 'sans-serif'],
       },
       colors: {
         background: '#020617',

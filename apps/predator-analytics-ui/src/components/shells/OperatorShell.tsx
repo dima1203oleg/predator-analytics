@@ -31,7 +31,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
           setMetrics({
             cpu: data.cpu_usage || 0,
             ram: data.memory_usage || 0,
-            temp: data.temperature || 0
+            temp: (data as any).temperature || 0
           });
         }
       } catch (e) {

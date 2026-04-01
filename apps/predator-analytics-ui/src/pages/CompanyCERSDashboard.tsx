@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
-import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award, BrainCircuit } from 'lucide-react';
+import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
-import { Link } from 'react-router-dom';
 
 const normalizeRiskLevel = (value?: string): string => {
     switch (value) {
@@ -359,15 +358,6 @@ export function CompanyCERSDashboard() {
                                         </span>
                                     </div>
                                 </div>
-
-                                {/* Decision Intelligence Button */}
-                                <Link 
-                                    to={`/decision-intelligence?edrpou=${companyCode}&company=${encodeURIComponent(companyName)}`}
-                                    className="mt-4 flex items-center justify-center gap-2 w-full py-3 px-4 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-emerald-400 transition-all group"
-                                >
-                                    <BrainCircuit className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium text-sm">AI-аналіз компанії в Decision Intelligence</span>
-                                </Link>
                             </motion.div>
 
                             {/* CERS Score Radial Control */}

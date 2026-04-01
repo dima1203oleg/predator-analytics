@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import { USE_LOCAL_DEV_PROXY } from '@/services/api/config';
 
 export interface SystemEvent {
   type: string;
@@ -23,9 +22,7 @@ export const useSystemEvents = () => {
     const metaEnv = (import.meta as any).env || {};
     const envApiUrl = metaEnv.VITE_API_URL || metaEnv.REACT_APP_API_URL;
 
-    const baseUrl = USE_LOCAL_DEV_PROXY
-      ? `${protocol}//${window.location.host}/api/v1`
-      : envApiUrl
+    const baseUrl = envApiUrl
       ? envApiUrl.replace(/^http/, 'ws')
       : `${protocol}//${window.location.host}/api/v1`;
 

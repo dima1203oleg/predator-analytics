@@ -287,7 +287,7 @@ const buildRunRecord = (record: UnknownRecord, index: number): (TrainingRunRecor
     };
 };
 
-const extractLogs = (status: unknown, jobs: unknown[], history: unknown[]): string[] => {
+const extractLogs = (status: unknown, jobs: UnknownRecord[], history: UnknownRecord[]): string[] => {
     const statusRecord = isRecord(status) ? status : null;
 
     if (statusRecord) {
@@ -451,8 +451,8 @@ export const normalizeModelTrainingSnapshot = (
         resources: {
             cpuLabel: formatPercent(systemStats?.cpu_percent ?? null),
             memoryLabel: formatPercent(systemStats?.memory_percent ?? null),
-            taskLabel: readNumber(systemStats?.active_tasks) == null ? 'Н/д' : `${Math.round(systemStats.active_tasks)} активних`,
-            latencyLabel: readNumber(systemStats?.avg_latency) == null ? 'Н/д' : `${Math.round(systemStats.avg_latency)} мс`,
+            taskLabel: readNumber(systemStats?.active_tasks) == null ? 'Н/д' : `${Math.round(systemStats!.active_tasks)} активних`,
+            latencyLabel: readNumber(systemStats?.avg_latency) == null ? 'Н/д' : `${Math.round(systemStats!.avg_latency)} мс`,
         },
         metrics: metricPoints,
         runs,

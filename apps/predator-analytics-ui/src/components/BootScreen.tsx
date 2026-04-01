@@ -4,12 +4,22 @@
  * Технологічна домінація, швидкість, майбутнє.
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Logo } from './Logo';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type Phase = 0 | 1 | 2 | 3;
 // 0: КВАНТОВИЙ ПЕРЕХОПЛЕННЯ (Мережа даних)
 // 1: ФОРМУВАННЯ ЯДРА NEXUS
 // 2: СИНХРОНІЗАЦІЯ (Пошук патернів, неонові спалахи)
 // 3: NEXUS ONLINE (Суверенний лог-ін, готовність системи)
+
+// Constants
+const PHASE_DURATIONS: Record<Phase, number> = {
+  0: 800,  // Грід даних (Швидке сканування)
+  1: 500,  // Формування ядра (Стягування)
+  2: 700,  // Нейронна реконструкція (Neural Sync)
+  3: 3500, // PREDATOR ONLINE (Raptor Reveal)
+};
 
 const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -23,14 +33,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   // HUD Data Generators
   const [threatCount, setThreatCount] = useState(0);
   const [interceptCount, setInterceptCount] = useState(0);
-
-  // Constants
-  const PHASE_DURATIONS: Record<Phase, number> = {
-    0: 2000, // Грід даних
-    1: 1200, // Стягування ядра
-    2: 2500, // Синхронізація
-    3: 1200, // NEXUS NEON ONLINE
-  };
 
   /* ─ HUD Лічильники ─ */
   useEffect(() => {
@@ -82,84 +84,65 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
              // Координати
              ctx.fillStyle = 'rgba(34, 211, 238, 0.4)';
              ctx.font = '8px monospace';
-             ctx.fillText(`GEO:${Math.floor(Math.random()*99)}.${Math.floor(Math.random()*99)}`, x + 5, y + gridSize - 10);
+             ctx.fillText(`GEO:${Math.floor(Math.random()*99)}.${Math.floor(Math.random()*99)}`, x + 2, y + gridSize - 10);
           }
         }
       }
-      
-      // Гігантський скануючий промінь
-      const scanY = (elapsed / PHASE_DURATIONS[0]) * h;
-      ctx.fillStyle = 'rgba(34, 211, 238, 0.2)'; // Nexus Cyan scan
-      ctx.fillRect(0, scanY, w, 4);
-      ctx.fillStyle = 'rgba(34, 211, 238, 0.05)';
-      ctx.fillRect(0, scanY - 40, w, 40);
     }
 
-    /* ФАЗА 1: ФОРМУВАННЯ ОКА */
-    if (currentPhase === 1 || currentPhase === 2 || currentPhase === 3) {
-      let eyeRadius = 0;
-      let openRatio = 0; // 0 (закрите) -> 1 (відкрите)
+    /* ФАЗА 1: ФОРМУВАННЯ ЯДРА */
+    if (currentPhase === 1) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
+      // Центральне ядро стягується
+      ctx.strokeStyle = `rgba(34, 211, 238, ${0.3 + p * 0.5})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 150 * (1 - p * 0.5), 0, Math.PI * 2);
+      ctx.stroke();
 
-      if (currentPhase === 1) {
-        const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
-        const ease = 1 - Math.pow(1 - p, 3);
-        openRatio = ease;
-        eyeRadius = 150 * ease;
-      } else {
-        openRatio = 1;
-        eyeRadius = 150 + Math.sin(now * 0.002) * 5; // пульсування
-      }
+      // Внутрішній пульс
+      ctx.beginPath();
+      ctx.arc(cx, cy, 50 + Math.sin(now * 0.005) * 20, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(34, 211, 238, ${0.2 + Math.sin(now * 0.01) * 0.1})`;
+      ctx.stroke();
+    }
 
-      // Малюємо зіницю та райдужку, якщо око "відкривається"
-      if (openRatio > 0.1) {
-        const pupilX = currentPhase === 2 ? cx + Math.sin(now * 0.003) * 30 * Math.cos(now * 0.001) : cx;
-        const pupilY = currentPhase === 2 ? cy + Math.cos(now * 0.0025) * 15 : cy;
+    /* ФАЗА 2: ПІДГОТОВКА СИНХРОНІЗАЦІЇ */
+    if (currentPhase === 2) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[2]);
+      ctx.strokeStyle = `rgba(34, 211, 238, ${0.4 + Math.sin(now * 0.01) * 0.2})`;
+      ctx.lineWidth = 1;
 
-        const eyeGradient = ctx.createRadialGradient(pupilX, pupilY, eyeRadius * 0.1, pupilX, pupilY, eyeRadius);
-        eyeGradient.addColorStop(0, '#010409'); // чорна зіниця
-        // Nexus Cyan райдужка
-        eyeGradient.addColorStop(0.3, currentPhase === 3 ? '#22d3ee' : '#0ea5e9'); 
-        eyeGradient.addColorStop(0.7, currentPhase === 3 ? '#0369a1' : '#1e3a8a');
-        eyeGradient.addColorStop(1, '#010409');
+      // Замість кілець — енергетичне напруження
+      ctx.beginPath();
+      ctx.arc(cx, cy, 100 * p, 0, Math.PI * 2);
+      ctx.setLineDash([5, 15]);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, eyeRadius * 1.5, eyeRadius * openRatio, 0, 0, Math.PI * 2);
-        ctx.fillStyle = eyeGradient;
-        ctx.fill();
+      // Нейронні спалахи (аналіз ДНК)
+      for(let i = 0; i < 15; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * 150;
+        const x = cx + Math.cos(angle) * dist;
+        const y = cy + Math.sin(angle) * dist;
         
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = currentPhase === 3 ? 'rgba(34, 211, 238, 0.8)' : 'rgba(34, 211, 238, 0.5)';
-        ctx.stroke();
-
-        // Світлові спалахи від зіниці (шукає жертву)
-        if (currentPhase === 2 && Math.random() > 0.9) {
-           ctx.beginPath();
-           ctx.arc(pupilX, pupilY, eyeRadius * 1.8, 0, Math.PI * 2);
-           ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
-           ctx.fill();
-        }
-
-        // Кровоносні/Нейронні судини навколо ока
-        ctx.strokeStyle = currentPhase === 3 ? 'rgba(34, 211, 238, 0.3)' : 'rgba(14, 165, 233, 0.2)';
-        ctx.lineWidth = 1;
-        for(let i=0; i<30; i++) {
-           const angle = (Math.PI * 2 / 30) * i + now * 0.0001;
-           const startR = eyeRadius * 1.1;
-           const len = 50 + Math.random() * 150;
-           ctx.beginPath();
-           ctx.moveTo(cx + Math.cos(angle)*startR, cy + Math.sin(angle)*startR);
-           // zigzag
-           ctx.lineTo(cx + Math.cos(angle+0.1)*(startR+len/2), cy + Math.sin(angle+0.1)*(startR+len/2));
-           ctx.lineTo(cx + Math.cos(angle)*(startR+len), cy + Math.sin(angle)*(startR+len));
-           ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(34, 211, 238, ${Math.random()})`;
+        ctx.fill();
       }
     }
 
-    /* ФАЗА 3: PREDATOR ONLINE (Кривава заливка) */
+    /* ФАЗА 3: СИНХРОНІЗАЦІЯ ЗАВЕРШЕНА */
     if (currentPhase === 3) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
-      ctx.fillStyle = `rgba(34, 211, 238, ${p * 0.2})`;
+      // Легкий спалах на початку (удар)
+      if (p < 0.1) {
+        ctx.fillStyle = `rgba(34, 211, 238, ${(0.1 - p) * 5})`;
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.fillStyle = `rgba(34, 211, 238, ${p * 0.1})`;
       ctx.fillRect(0, 0, w, h);
     }
 
@@ -182,7 +165,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     }, dur);
 
     return () => clearTimeout(timer);
-  }, [phase, onComplete, PHASE_DURATIONS]);
+  }, [phase, onComplete]);
 
   /* ─ Canvas Init ─ */
   useEffect(() => {
@@ -201,7 +184,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     };
   }, [render]);
 
+  const [skipAllowed, setSkipAllowed] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setSkipAllowed(true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   const handleSkip = () => {
+    if (!skipAllowed) return;
     skipRef.current = true;
     onComplete();
   };
@@ -209,7 +200,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   return (
     <div 
        ref={containerRef}
-       className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none"
+       className="fixed inset-0 z-[999] bg-black overflow-hidden font-mono select-none flex items-center justify-center"
        onClick={handleSkip}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
@@ -221,53 +212,104 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       {/* HUD (З'являється зФази 1) */}
       <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${phase >= 1 ? 'opacity-100' : 'opacity-0'}`}>
         {/* Верхній лівий: Статуси */}
-        <div className="absolute top-8 left-8 text-cyan-500 space-y-1">
+        <div className="absolute top-6 left-6 text-cyan-500 space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-cyan-600 animate-pulse shadow-[0_0_10px_#22d3ee]" />
-            <span className="text-xs font-bold tracking-widest uppercase">SOVEREIGN NEXUS CORE v56.1</span>
+            <div className="w-2 h-2 bg-cyan-600 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+            <span className="text-[10px] font-bold tracking-widest uppercase">SOVEREIGN NEXUS CORE v56.1</span>
           </div>
-          <p className="text-[10px] text-cyan-400/70">AUTORIZATION LEVEL: OVERLORD</p>
-          <p className="text-[10px] text-cyan-400/70 mt-4">КВАНТОВА СИНХРОНІЗАЦІЯ ЯДРА</p>
-          <div className="font-mono text-xl text-cyan-500 font-bold mt-2">
-            NEXUS-[{Math.floor(Math.random() * 9999).toString().padStart(4, '0')}] SYNC_OK
-          </div>
+          <p className="text-[8px] text-cyan-400/50 uppercase">Auth: Overlord</p>
         </div>
 
         {/* Верхній правий: Загрози */}
-        <div className="absolute top-8 right-8 text-right space-y-2">
-          <div className="text-[10px] text-emerald-500 tracking-widest uppercase mb-1 border-b border-emerald-900/50 pb-1">
-            Моніторинг Глобальної Мережі
-          </div>
-          <div className="text-xs text-slate-400 uppercase">Дані оброблено:</div>
-          <div className="text-2xl font-black text-cyan-400 font-mono tracking-tighter">
+        <div className="absolute top-6 right-6 text-right space-y-1">
+          <div className="text-[8px] text-slate-500 uppercase">Traffic Processed:</div>
+          <div className="text-sm font-black text-cyan-400 font-mono">
             {interceptCount.toLocaleString()} PB
-          </div>
-          <div className="text-xs text-slate-400 uppercase mt-2">Патернів виявлено:</div>
-          <div className="text-3xl font-black text-white font-mono tracking-tighter shadow-cyan-500/50 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
-            {threatCount.toLocaleString()}
           </div>
         </div>
       </div>
 
-      {/* PREDATOR TEXT (Фаза 3) */}
-      <div className={`absolute inset-0 pointer-events-none flex flex-col items-center justify-center transition-opacity duration-500 ${phase === 3 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
-         <h1 className="text-7xl md:text-9xl font-black tracking-[0.2em] text-transparent bg-clip-text"
-             style={{
-               backgroundImage: 'linear-gradient(to bottom, #22d3ee, #0369a1)',
-               WebkitTextStroke: '2px #0ea5e9',
-               filter: 'drop-shadow(0 0 30px rgba(34, 211, 238, 0.8))'
-             }}>
-           NEXUS
-         </h1>
-         <p className="mt-4 text-sm md:text-lg text-cyan-500 font-bold tracking-[0.5em] uppercase"
-            style={{ textShadow: '0 0 10px rgba(34, 211, 238, 0.5)' }}>
-           СТРАТЕГІЧНЕ ЯДРО v56.1. МАЙБУТНЄ ТУТ.
-         </p>
-      </div>
+      {/* PREDATOR RECONSTRUCTION (Фаза 3) */}
+      <AnimatePresence>
+        {phase === 3 && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="relative z-20 flex flex-col items-center justify-center"
+          >
+            {/* Impact Shockwave */}
+            <motion.div 
+               initial={{ scale: 0, opacity: 1 }}
+               animate={{ scale: 4, opacity: 0 }}
+               transition={{ duration: 0.8, ease: "easeOut" }}
+               className="absolute w-40 h-40 border border-cyan-400 rounded-full"
+            />
+            
+            {/* Falling & Spinning Coin Dinosaur */}
+            <motion.div 
+               initial={{ 
+                 scale: 15, 
+                 y: -200, 
+                 opacity: 0,
+                 rotateY: 90,
+                 filter: 'blur(20px)' 
+               }}
+               animate={{ 
+                 scale: 2.8, 
+                 y: 0, 
+                 opacity: 1,
+                 rotateY: [90, 0, 360, 720], // Falling rotate then coin spin
+                 filter: 'blur(0px)' 
+               }}
+               transition={{ 
+                 duration: 1.2, 
+                 times: [0, 0.4, 0.7, 1],
+                 ease: "circOut" 
+               }}
+               className="relative mb-8"
+            >
+               {/* Inner Coin Glow */}
+               <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-2xl animate-pulse" />
+               <Logo size="lg" animated={true} />
+               
+               {/* Metal Sparks on impact (Simplified) */}
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: [0, 1, 0] }}
+                 transition={{ duration: 0.2, delay: 0.4 }}
+                 className="absolute inset-0 bg-white mix-blend-overlay rounded-full"
+               />
+            </motion.div>
+
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-center space-y-4"
+            >
+              <h1 className="text-4xl md:text-6xl font-black tracking-[0.4em] text-white drop-shadow-[0_0_20px_rgba(34,211,238,0.6)]">
+                PREDATOR
+              </h1>
+              <p className="text-[10px] text-cyan-400 font-bold tracking-[1em] uppercase">
+                Sovereign Nexus v56.1
+              </p>
+              
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0, 1] }}
+                transition={{ delay: 1.5, duration: 2 }}
+                className="pt-6 text-[9px] text-emerald-500/80 font-bold tracking-[0.6em] uppercase"
+              >
+                — СИСТЕМА ГОТОВА —
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Підказка (клік) */}
-      <div className="absolute bottom-6 w-full text-center text-[10px] text-slate-600 tracking-widest animate-pulse">
-         AUTH OVERRIDE: CLICK TO BYPASS
+      <div className="absolute bottom-6 w-full text-center text-[8px] text-slate-700 tracking-widest animate-pulse uppercase">
+         Click to skip initialization
       </div>
     </div>
   );

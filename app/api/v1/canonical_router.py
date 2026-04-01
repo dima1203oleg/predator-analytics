@@ -118,6 +118,3 @@ api_v1_router.include_router(ai_advanced_router, tags=["Advanced AI/ML (Topic, B
 # --- Phase 12 SM: Command Center ---
 from app.api.v1.warroom_v2 import router as warroom_router
 api_v1_router.include_router(warroom_router, tags=["Command Center & Shadow Cartography"])
-# --- Phase 13: Decision Intelligence Engine ---
-from app.api.v1.decision import router as decision_router
-api_v1_router.include_router(decision_router, tags=["🧠 Decision Intelligence"])

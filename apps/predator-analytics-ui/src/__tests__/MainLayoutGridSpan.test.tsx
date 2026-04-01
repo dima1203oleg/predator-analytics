@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MainLayout } from '../components/layout/MainLayout';
 
+let mockIsMobile = false;
+
 vi.mock('framer-motion', async () => {
   const actual = await vi.importActual('framer-motion');
   return {
@@ -24,13 +26,19 @@ vi.mock('../store/useAppStore', () => ({
   }),
 }));
 
-vi.mock('../components/layout/Sidebar', () => ({ Sidebar: () => null, default: () => null }));
-vi.mock('../components/layout/Header', () => ({ default: () => null }));
+vi.mock('../components/layout/Sidebar', () => ({
+  Sidebar: () => <div data-testid="sidebar-mock">SIDEBAR</div>,
+  default: () => <div data-testid="sidebar-mock">SIDEBAR</div>,
+}));
+vi.mock('../components/layout/Header', () => ({ default: () => <div data-testid="header-mock">HEADER</div> }));
+vi.mock('../components/layout/ContextRail', () => ({ default: () => <div data-testid="context-rail-mock">CONTEXT</div> }));
+vi.mock('../components/layout/ShellCommandPalette', () => ({ default: () => <div data-testid="palette-mock">PALETTE</div> }));
 vi.mock('../components/ai/ChatBot', () => ({ default: () => null }));
-vi.mock('../hooks/useMediaQuery', () => ({ useMediaQuery: () => false }));
+vi.mock('../hooks/useMediaQuery', () => ({ useMediaQuery: () => mockIsMobile }));
 
 describe('MainLayout', () => {
   beforeEach(() => {
+    mockIsMobile = false;
     const storage = new Map<string, string>();
     Object.defineProperty(window, 'localStorage', {
       configurable: true,
@@ -62,15 +70,18 @@ describe('MainLayout', () => {
       </MainLayout>
     );
 
+    expect(screen.getByTestId('header-mock')).toBeInTheDocument();
+    expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
+    expect(screen.getByTestId('context-rail-mock')).toBeInTheDocument();
+    expect(screen.getByTestId('palette-mock')).toBeInTheDocument();
     expect(screen.getByText('ТЕСТОВИЙ КОНТЕНТ')).toBeInTheDocument();
-    const gridSpan = document.querySelector('.col-span-12');
-    expect(gridSpan).not.toBeNull();
-    expect(gridSpan?.textContent).toContain('ТЕСТОВИЙ КОНТЕНТ');
-    expect(screen.getByTestId('main-layout-shell').className).toContain('ml-[332px]');
+    expect(document.querySelector('.grid-cols-12')).not.toBeNull();
+    expect(document.querySelector('.col-span-12')?.textContent).toContain('ТЕСТОВИЙ КОНТЕНТ');
+    expect(screen.getByTestId('main-layout-shell')).toHaveClass('h-screen');
   });
 
-  it('підтягує відступ під згорнутий сайдбар', () => {
-    window.localStorage.setItem('predator-sidebar-open', 'false');
+  it('показує мобільну кнопку відкриття меню на вузькому екрані', () => {
+    mockIsMobile = true;
 
     render(
       <MainLayout>
@@ -78,6 +89,6 @@ describe('MainLayout', () => {
       </MainLayout>
     );
 
-    expect(screen.getByTestId('main-layout-shell').className).toContain('ml-[88px]');
+    expect(screen.getByRole('button', { name: 'Відкрити меню' })).toBeInTheDocument();
   });
 });

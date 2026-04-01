@@ -148,7 +148,7 @@ export const CommandPalette: React.FC = () => {
             <div className="max-h-[60vh] overflow-y-auto p-2 space-y-1 custom-scrollbar">
               {filteredCommands.length > 0 ? (
                 filteredCommands.map((cmd, index) => (
-                  <motion.button
+                    <motion.button
                     key={cmd.id}
                     onClick={() => {
                         cmd.action();
@@ -156,17 +156,17 @@ export const CommandPalette: React.FC = () => {
                     }}
                     onMouseEnter={() => setSelectedIndex(index)}
                     className={`w-full flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 group ${
-                      selectedIndex === index
+                        selectedIndex === index
                         ? cmd.danger
                             ? 'bg-rose-500/10 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]'
-                            : 'bg-blue-600/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]'
+                            : 'bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]'
                         : 'border border-transparent hover:bg-white/5'
                     }`}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`p-2 rounded-lg transition-colors ${
                         selectedIndex === index
-                            ? cmd.danger ? 'bg-rose-500 text-white' : 'bg-blue-600 text-white'
+                            ? cmd.danger ? 'bg-rose-500 text-white' : 'bg-cyan-500 text-black'
                             : 'bg-white/5 text-slate-400 group-hover:text-slate-200'
                       }`}>
                         {cmd.icon}
@@ -207,7 +207,7 @@ export const CommandPalette: React.FC = () => {
                     <span><span className="text-slate-400">↵</span> виконати</span>
                     <span><span className="text-slate-400">⌘K</span> відкрити</span>
                 </div>
-                <div className="font-mono opacity-50">Predator v45 | Neural Analytics.0</div>
+                <div className="font-mono opacity-50 font-bold">Predator v56.1 | Neural Analytics</div>
             </div>
           </motion.div>
         </div>

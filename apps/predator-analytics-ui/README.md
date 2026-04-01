@@ -1,88 +1,23 @@
-# PREDATOR Analytics v4.0 - "Навігатор Прибутку"
+# 🦅 PREDATOR Analytics UI v55.1.0
 
-> 🎯 **Enterprise-level OSINT платформа для митної аналітики України**
+> Преміальний OSINT-інтерфейс для митної аналітики України
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)
-![Status](https://img.shields.io/badge/status-production--ready-green.svg)
-![License](https://img.shields.io/badge/license-proprietary-red.svg)
-![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
-![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
-![TypeScript](https://img.shields.io/badge/typescript-5.2.2-blue.svg)
-
----
-
-## 🎯 Проект
-
-**PREDATOR Analytics v4.0** - це сучасна бізнес-аналітична платформа, розроблена для митної аналітики України. Платформа надає інструменти для збору, аналізу та візуалізації даних про зовнішньоекономічну діяльність, митні ризики та торговельні потоки.
-
-### 🚀 Ключові можливості v4.0
-
-- **🧠 AI-асистент** - інтелектуальна підтримка прийняття рішень
-- **📊 Real-time аналітика** - митні потоки та ризики в реальному часі
-- **🗺️ Геовізуалізація** - інтерактивні карти торговельних маршрутів
-- **🔍 OSINT інструменти** - відкрита розвідка та моніторинг
-- **📈 ROI аналітика** - оцінка ефективності та прибутковості
-- **🔐 Enterprise security** - захищена обробка даних
-
-### 📊 Метрики продуктивності
-
-| Метрика | Результат | Покращення |
-|---------|-----------|------------|
-| Bundle Size | 3.2MB | -40% |
-| Time to Interactive | 1.2s | -60% |
-| First Contentful Paint | 0.8s | -50% |
-| Test Coverage | 85%+ | ✅ |
-| Performance Score | 95/100 | ✅ |
-| Accessibility Score | 100/100 | ✅ |
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff.svg)](https://vitejs.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ed.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
 
 ---
 
-## 🏗️ Архітектура v4.0
+## 📋 Зміст
 
-### 🎨 Навігаційна система "Навігатор Прибутку"
-
-Новий 6-блоковий дизайн, оптимізований для бізнес-користувачів:
-
-1. **Командний центр** - головна панель з ROI віджетами
-2. **Розвідка** - OSINT інструменти та аналітика
-3. **Торгівля та логістика** - митні потоки та маршрути
-4. **Контрагенти** - моніторинг компаній та ризиків
-5. **AI та автоматизація** - інтелектуальні інструменти
-6. **Система** - адміністрування та налаштування
-
-### 🚀 Продуктивність
-
-- **Lazy Loading** - завантаження компонентів за потребою
-- **Virtualization** - ефективний рендеринг великих датасетів
-- **Canvas Rendering** - оптимізована візуалізація графів
-- **Bundle Splitting** - оптимізація розміру бандлу
-- **Service Worker** - PWA підтримка та кешування
-
----
-
-## 🛠️ Технології
-
-### Frontend
-- **React 18.2.0** - UI фреймворк
-- **TypeScript 5.2.2** - типізація
-- **Vite 5.0** - бандлер та dev сервер
-- **Tailwind CSS 3.4** - стилізація
-- **Framer Motion 11.0** - анімації
-- **Zustand 4.5** - state management
-- **TanStack Query 5.17** - server state
-- **Three.js + React Three Fiber** - 3D візуалізація
-
-### Інфраструктура
-- **Docker** - контейнеризація
-- **Kubernetes** - оркестрація
-- **Nginx** - reverse proxy
-- **Prometheus + Grafana** - моніторинг
-- **GitHub Actions** - CI/CD
-
-### Тестування
-- **Vitest** - unit тести
-- **Playwright** - E2E тести
-- **Testing Library** - компонентні тести
+- [Про проект](#про-проект)
+- [Технології](#технології)
+- [Швидкий старт](#швидкий-старт)
+- [Розробка](#розробка)
+- [Production Deployment](#production-deployment)
+- [Структура проекту](#структура-проекту)
 - [Документація](#документація)
 
 ---

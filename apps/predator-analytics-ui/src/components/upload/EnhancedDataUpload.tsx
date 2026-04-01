@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// ENHANCED DATA UPLOAD - PREDATOR Analytics
+// ENHANCED DATA UPLOAD - Predator v45 | Neural Analytics.0
 // Drag-and-drop file upload with progress tracking
 // ============================================================================
 

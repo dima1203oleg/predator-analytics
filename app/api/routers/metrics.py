@@ -192,40 +192,6 @@ STAGING_RECORDS_UNPROCESSED = _get_or_create_metric(
 )
 
 # ============================================================================
-# DECISION INTELLIGENCE METRICS
-# ============================================================================
-
-DECISION_REQUESTS_TOTAL = _get_or_create_metric(
-    Counter,
-    "predator_decision_requests_total",
-    "Total Decision Intelligence API requests",
-    ["endpoint", "status"]
-)
-
-DECISION_LATENCY_SECONDS = _get_or_create_metric(
-    Histogram,
-    "predator_decision_latency_seconds",
-    "Decision Intelligence API latency",
-    ["endpoint"],
-    buckets=[0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0]
-)
-
-DECISION_CACHE_HITS = _get_or_create_metric(
-    Counter,
-    "predator_decision_cache_hits_total",
-    "Decision Intelligence cache hits",
-    ["endpoint"]
-)
-
-DECISION_RISK_SCORES = _get_or_create_metric(
-    Histogram,
-    "predator_decision_risk_scores",
-    "Distribution of CERS risk scores",
-    ["analysis_type"],
-    buckets=[0, 25, 50, 75, 100]
-)
-
-# ============================================================================
 # ENDPOINTS
 # ============================================================================
 
@@ -311,17 +277,6 @@ class MetricsHelper:
             CACHE_HITS_TOTAL.labels(cache_type=cache_type).inc()
         else:
             CACHE_MISSES_TOTAL.labels(cache_type=cache_type).inc()
-
-    @staticmethod
-    def track_decision_request(endpoint: str, duration: float, success: bool = True, cached: bool = False, risk_score: int | None = None):
-        """Track Decision Intelligence API request metrics."""
-        status = "success" if success else "error"
-        DECISION_REQUESTS_TOTAL.labels(endpoint=endpoint, status=status).inc()
-        DECISION_LATENCY_SECONDS.labels(endpoint=endpoint).observe(duration)
-        if cached:
-            DECISION_CACHE_HITS.labels(endpoint=endpoint).inc()
-        if risk_score is not None:
-            DECISION_RISK_SCORES.labels(analysis_type=endpoint).observe(risk_score)
 
 
 # Shared singleton for backend-wide use

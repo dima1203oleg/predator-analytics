@@ -1,13 +1,6 @@
 import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { useUser } from './UserContext';
-import {
-  UserRole,
-  RoleCapabilities,
-  getRoleCapabilities,
-  getRoleDescription,
-  getRoleDisplayName,
-  normalizeUserRole,
-} from '../config/roles';
+import { UserRole, RoleCapabilities, ROLE_CAPABILITIES, ROLE_DISPLAY_NAMES, ROLE_DESCRIPTIONS } from '../config/roles';
 
 interface RoleContextType {
   role: UserRole;
@@ -25,19 +18,21 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const { user } = useUser();
 
   const role = useMemo((): UserRole => {
-    return normalizeUserRole(user?.role) as UserRole;
+    // If no user set loop, default to Basic (or specific logic)
+    // Actually, Layout is usually protected, so user should exist.
+    return user?.role || UserRole.CLIENT_BASIC;
   }, [user]);
 
-  const capabilities = useMemo(() => getRoleCapabilities(role), [role]);
+  const capabilities = useMemo(() => ROLE_CAPABILITIES[role], [role]);
 
   const value = useMemo(() => ({
     role,
     capabilities,
-    displayName: getRoleDisplayName(role),
-    description: getRoleDescription(role),
+    displayName: ROLE_DISPLAY_NAMES[role],
+    description: ROLE_DESCRIPTIONS[role],
     isAdmin: role === UserRole.ADMIN,
-    isPremium: role === UserRole.ANALYST || role === UserRole.BUSINESS,
-    isBasic: role === UserRole.VIEWER || role === UserRole.SUPPLY_CHAIN,
+    isPremium: role === UserRole.CLIENT_PREMIUM,
+    isBasic: role === UserRole.CLIENT_BASIC,
   }), [role, capabilities]);
 
   return (
@@ -50,12 +45,12 @@ export const RoleProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useRole = (): RoleContextType => {
   const context = useContext(RoleContext);
   if (!context) {
-    console.warn('useRole викликано поза RoleProvider - повертаємо значення за замовчуванням');
+    console.warn('useRole used outside of RoleProvider - returning defaults');
     return {
-      role: UserRole.VIEWER,
-      capabilities: getRoleCapabilities(UserRole.VIEWER),
-      displayName: getRoleDisplayName(UserRole.VIEWER),
-      description: getRoleDescription(UserRole.VIEWER),
+      role: UserRole.CLIENT_BASIC,
+      capabilities: ROLE_CAPABILITIES[UserRole.CLIENT_BASIC],
+      displayName: ROLE_DISPLAY_NAMES[UserRole.CLIENT_BASIC],
+      description: ROLE_DESCRIPTIONS[UserRole.CLIENT_BASIC],
       isAdmin: false,
       isPremium: false,
       isBasic: true,

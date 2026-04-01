@@ -1,17 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Suspense, lazy, type ReactNode } from 'react';
-import { CreditCard, Lock, ShieldAlert } from 'lucide-react';
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
+import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
-import { getRoleDisplayName, UserRole } from './config/roles';
-import { getNavigationAccessState } from './config/navigation';
+import { UserRole } from './config/roles';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import ActivityView from './features/dashboard/ActivityView';
 import DashboardView from './features/dashboard/DashboardView';
 import IntelligenceView from './features/intelligence/IntelligenceView';
-import MvpCommandCenter from './pages/MvpCommandCenter';
+import OmniscienceView from './features/dashboard/OmniscienceView';
+import PredatorV24 from './pages/PredatorV24';
 
 // Lazy loaded views - Named exports need .then() mapping
 const SearchView = lazy(() => import('./features/osint/SearchView').then(m => ({ default: m.SearchView })));
@@ -23,7 +23,6 @@ const AnalyticsView = lazy(() => import('./features/intelligence/AnalyticsView')
 const CasesView = lazy(() => import('./features/intelligence/CasesView'));
 const DatabasesView = lazy(() => import('./features/platform/DatabasesView'));
 const MonitoringView = lazy(() => import('./features/dashboard/MonitoringView'));
-const OmniscienceView = lazy(() => import('./features/dashboard/OmniscienceView'));
 const SecurityView = lazy(() => import('./features/platform/SecurityView'));
 const LLMView = lazy(() => import('./features/ai/LLMView'));
 const DataView = lazy(() => import('./features/platform/DataView'));
@@ -48,7 +47,6 @@ const ExecutiveBriefView = lazy(() => import('./features/dashboard/ExecutiveBrie
 const EntityGraphView = lazy(() => import('./features/intelligence/EntityGraphView'));
 const PremiumHubView = lazy(() => import('./features/intelligence/PremiumHubView'));
 const KnowledgeEngineeringView = lazy(() => import('./features/ai/KnowledgeEngineeringView'));
-const DecisionIntelligenceView = lazy(() => import('./features/decision').then(m => ({ default: m.DecisionIntelligenceView })));
 const AutonomyDashboard = lazy(() => import('./features/platform/AutonomyDashboard'));
 const ComponentsRegistryView = lazy(() => import('./features/platform/ComponentsRegistryView'));
 const PipelineManagerView = lazy(() => import('./features/platform/PipelineManagerView'));
@@ -96,40 +94,6 @@ const ComprompatPersonView = lazy(() => import('./features/newspaper/ComprompatP
 const FirmDossierView = lazy(() => import('./features/newspaper/FirmDossierView'));
 const PowerStructureView = lazy(() => import('./features/newspaper/PowerStructureView'));
 const SupplyChainAnalyticsView = lazy(() => import('./features/supply-chain/SupplyChainAnalyticsView'));
-const ProcurementOptimizer = lazy(() => import('./components/business/ProcurementOptimizer'));
-const BillingManager = lazy(() => import('./components/billing/BillingManager'));
-const ExecutionCenter = lazy(() => import('./components/execution/ExecutionCenter'));
-const EmptyState = lazy(() => import('./components/empty-state/EmptyState'));
-
-// ТЗ 11.1 Premium Components - New imports
-const ExecutionCenterV2 = lazy(() => import('./components/execution/ExecutionCenterV2'));
-const MarketIntelligencePremium = lazy(() => import('./components/premium/MarketIntelligencePremium'));
-const SupplierDiscoveryPremiumView = lazy(() => import('./components/premium/SupplierDiscoveryPremium'));
-const ScenarioBuilderView = lazy(() => import('./components/premium/ScenarioBuilder'));
-const RiskDashboardView = lazy(() => import('./components/premium/RiskDashboard'));
-const BillingDashboardView = lazy(() => import('./components/premium/BillingDashboard'));
-const AIRecommendationHubView = lazy(() => import('./components/premium/AIRecommendationHub'));
-const DecisionFactoryView = lazy(() => import('./components/premium/DecisionFactory'));
-
-// ТЗ 11.3 Phase 3 Components
-const CustomerSuccessDashboardView = lazy(() => import('./components/premium/CustomerSuccessDashboard'));
-const AnalyticsDashboardView = lazy(() => import('./components/premium/AnalyticsDashboard'));
-const AdvancedReportingView = lazy(() => import('./components/premium/AdvancedReporting'));
-const IntegrationHubView = lazy(() => import('./components/premium/IntegrationHub'));
-const AdvancedSettingsView = lazy(() => import('./components/premium/AdvancedSettings'));
-
-// ТЗ 11.3 Phase 3.6 Ukrainian Localized Components
-const AnalyticsDashboardUkView = lazy(() => import('./components/premium/AnalyticsDashboard_Uk'));
-const AdvancedReportingUkView = lazy(() => import('./components/premium/AdvancedReporting_Uk'));
-const IntegrationHubUkView = lazy(() => import('./components/premium/IntegrationHub_Uk'));
-const AdvancedSettingsUkView = lazy(() => import('./components/premium/AdvancedSettings_Uk'));
-
-// ТЗ 11.3 Enhanced Premium Components (Phase 4)
-const RiskDashboardPremiumView = lazy(() => import('./components/premium/RiskDashboardPremium'));
-const SupplierDiscoveryPremiumV2View = lazy(() => import('./components/premium/SupplierDiscoveryPremium_V2'));
-const AIRecommendationHubPremiumView = lazy(() => import('./components/premium/AIRecommendationHub_Premium'));
-const ScenarioBuilderPremiumV2View = lazy(() => import('./components/premium/ScenarioBuilderPremium_V2'));
-const BillingDashboardPremiumV2View = lazy(() => import('./components/premium/BillingDashboardPremium_V2'));
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
@@ -184,80 +148,10 @@ const LoadingFallback = () => (
 
 export const AppRoutesNew = () => {
   const location = useLocation();
-  const { canonicalRole, canonicalTier } = useUser();
-  const effectiveRole = canonicalRole || UserRole.VIEWER;
-  const tierLabel = canonicalTier === 'enterprise' ? 'Корпоративний' : canonicalTier === 'pro' ? 'Про' : 'Базовий';
-
-  const AccessFallback = ({ state }: { state: 'upgrade' | 'forbidden' }) => (
-    <div className="mx-auto max-w-3xl">
-      <div className="overflow-hidden rounded-[32px] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(6,17,29,0.96),rgba(5,13,23,0.96))] p-8 shadow-[0_28px_80px_rgba(2,6,23,0.38)]">
-        <div className="flex h-16 w-16 items-center justify-center rounded-[22px] border border-white/[0.08] bg-white/[0.04]">
-          {state === 'upgrade' ? (
-            <CreditCard className="h-7 w-7 text-cyan-300" />
-          ) : (
-            <ShieldAlert className="h-7 w-7 text-rose-300" />
-          )}
-        </div>
-
-        <h2 className="mt-6 text-3xl font-black text-white">
-          {state === 'upgrade'
-            ? 'Цей сценарій недоступний на поточному тарифі'
-            : 'Поточна роль не має доступу до цього сценарію'}
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
-          {state === 'upgrade'
-            ? `Ваша роль "${getRoleDisplayName(canonicalRole)}" підтримує цей напрямок, але тариф "${tierLabel}" не включає потрібні можливості.`
-            : `Роль "${getRoleDisplayName(canonicalRole)}" не входить до контуру доступу для цього маршруту.`}
-        </p>
-
-        <div className="mt-6 rounded-[24px] border border-white/[0.08] bg-black/20 p-4 text-sm leading-6 text-slate-300">
-          Доступ у Predator Analytics визначається як <span className="font-bold text-white">Роль ∩ тариф</span>.
-          Це означає, що маршрут має бути дозволений і роллю, і тарифом одночасно.
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          {state === 'upgrade' && (
-            <Link
-              to="/billing"
-              className="inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-400"
-            >
-              <CreditCard className="h-4 w-4" />
-              Перейти до тарифів
-            </Link>
-          )}
-          <Link
-            to="/getting-started"
-            className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.12] bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08]"
-          >
-            <Lock className="h-4 w-4" />
-            Відкрити швидкий старт
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/15"
-          >
-            Повернутись до командного центру
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-
-  const ProtectedNavigationRoute = ({
-    path,
-    children,
-  }: {
-    path: string;
-    children: ReactNode;
-  }) => {
-    const accessState = getNavigationAccessState(path, canonicalRole, canonicalTier);
-
-    if (accessState === 'upgrade' || accessState === 'forbidden') {
-      return <AccessFallback state={accessState} />;
-    }
-
-    return <>{children}</>;
-  };
+  const { user } = useUser();
+  const effectiveRole = user?.role || UserRole.CLIENT_BASIC;
+  const isAdmin = effectiveRole === UserRole.ADMIN;
+  const onlyAdmin = (element: JSX.Element) => (isAdmin ? element : <Navigate to="/" replace />);
 
   return (
     <MainLayout>
@@ -265,37 +159,16 @@ export const AppRoutesNew = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* 🎯 CANONICAL v4.2.0 MODES */}
-            <Route path="/" element={<MvpCommandCenter />} />
-            <Route path="/predator-v24" element={<MvpCommandCenter />} />
+            <Route path="/" element={<PredatorV24 />} />
+            <Route path="/predator-v24" element={<PredatorV24 />} />
             <Route path="/overview" element={<DashboardView />} />
-            <Route path="/market" element={<ProtectedNavigationRoute path="/market"><MarketPage /></ProtectedNavigationRoute>} />
-            <Route path="/forecast" element={<ProtectedNavigationRoute path="/forecast"><ForecastPage /></ProtectedNavigationRoute>} />
-            <Route path="/diligence" element={<ProtectedNavigationRoute path="/diligence"><DiligencePage /></ProtectedNavigationRoute>} />
+            <Route path="/market" element={<MarketPage />} />
+            <Route path="/forecast" element={<ForecastPage />} />
+            <Route path="/diligence" element={<DiligencePage />} />
             <Route path="/opportunities" element={<OpportunitiesPage />} />
             <Route path="/company/:id/cers" element={<CompanyCERSDashboard />} />
             <Route path="/clients" element={<ClientsHubView />} />
             <Route path="/clients/:segment" element={<ClientSegmentView />} />
-            <Route
-              path="/getting-started"
-              element={
-                <EmptyState
-                  type="no-data"
-                  onStartDemo={() => (window.location.href = '/procurement-optimizer')}
-                  onUploadData={() => (window.location.href = '/billing')}
-                  onConnectAPI={() => (window.location.href = '/billing')}
-                />
-              }
-            />
-            <Route
-              path="/demo-completed"
-              element={
-                <EmptyState
-                  type="demo-completed"
-                  onStartDemo={() => (window.location.href = '/procurement-optimizer')}
-                  onUploadData={() => (window.location.href = '/billing')}
-                />
-              }
-            />
 
             {/* Legacy Dashboard Routes */}
             <Route path="/omni" element={<OmniscienceView />} />
@@ -314,34 +187,33 @@ export const AppRoutesNew = () => {
             <Route path="/registries" element={<RegistriesView />} />
 
             {/* Data Management */}
-            <Route path="/parsers" element={<ParsersView />} />
-            <Route path="/ingestion" element={<DataIngestionHub />} />
-            <Route path="/data-hub" element={<DataIngestionHub />} />
-            <Route path="/data" element={<DataView />} />
-            <Route path="/databases" element={<DatabasesView />} />
-            <Route path="/datasets" element={<DatasetStudio />} />
+            <Route path="/parsers" element={onlyAdmin(<ParsersView />)} />
+            <Route path="/ingestion" element={onlyAdmin(<DataIngestionHub />)} />
+            <Route path="/data-hub" element={onlyAdmin(<DataIngestionHub />)} />
+            <Route path="/data" element={onlyAdmin(<DataView />)} />
+            <Route path="/databases" element={onlyAdmin(<DatabasesView />)} />
+            <Route path="/datasets" element={onlyAdmin(<DatasetStudio />)} />
             <Route path="/sr" element={effectiveRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
             <Route path="/azr" element={effectiveRole === UserRole.ADMIN ? <SRView /> : <Navigate to="/overview" replace />} />
 
-            <Route path="/datasets-manager" element={<DatasetsPage />} />
+            <Route path="/datasets-manager" element={onlyAdmin(<DatasetsPage />)} />
 
 
             {/* Analytics & Intelligence */}
             <Route path="/analytics" element={<AnalyticsView />} />
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
-            <Route path="/decision-intelligence" element={<DecisionIntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
             <Route path="/forecast-view" element={<ForecastView />} />
             <Route path="/aml" element={<AMLScoringView />} />
-            <Route path="/llm" element={<LLMView />} />
-            <Route path="/llm/nas" element={<NasView />} />
+            <Route path="/llm" element={onlyAdmin(<LLMView />)} />
+            <Route path="/llm/nas" element={onlyAdmin(<NasView />)} />
             <Route path="/agents" element={<AgentsView />} />
-            <Route path="/pipeline" element={<PipelineManagerView />} />
-            <Route path="/training" element={<ModelTrainingView />} />
-            <Route path="/engines" element={<EnginesView />} />
-            <Route path="/llm/prompts" element={<SystemPromptsView />} />
-            <Route path="/super" element={<SuperIntelligenceView />} />
+            <Route path="/pipeline" element={onlyAdmin(<PipelineManagerView />)} />
+            <Route path="/training" element={onlyAdmin(<ModelTrainingView />)} />
+            <Route path="/engines" element={onlyAdmin(<EnginesView />)} />
+            <Route path="/llm/prompts" element={onlyAdmin(<SystemPromptsView />)} />
+            <Route path="/super" element={onlyAdmin(<SuperIntelligenceView />)} />
             <Route path="/evolution" element={<EvolutionView />} />
 
             {/* Premium Routes */}
@@ -356,9 +228,9 @@ export const AppRoutesNew = () => {
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
             <Route path="/autonomy" element={effectiveRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
             <Route path="/factory" element={<FactorsView />} />
-            <Route path="/factory-studio" element={<FactoryStudio />} />
-            <Route path="/system-factory" element={<SystemFactoryView />} />
-            <Route path="/components" element={<ComponentsRegistryView />} />
+            <Route path="/factory-studio" element={onlyAdmin(<FactoryStudio />)} />
+            <Route path="/system-factory" element={onlyAdmin(<SystemFactoryView />)} />
+            <Route path="/components" element={onlyAdmin(<ComponentsRegistryView />)} />
 
             {/* Premium Commercial Intelligence */}
             <Route path="/customs-premium" element={<CustomsIntelligencePremium />} />
@@ -384,250 +256,17 @@ export const AppRoutesNew = () => {
             <Route path="/user-analytics" element={<UserAnalyticsDashboard />} />
             <Route path="/verify-system" element={<SystemVerificationSuite />} />
             <Route path="/modeling" element={<ScenarioModeling />} />
-            <Route
-              path="/procurement-optimizer"
-              element={
-                <ProtectedNavigationRoute path="/procurement-optimizer">
-                  <ProcurementOptimizer />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario/import"
-              element={
-                <ProtectedNavigationRoute path="/scenario/import">
-                  <ProcurementOptimizer />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario/counterparty"
-              element={
-                <ProtectedNavigationRoute path="/scenario/counterparty">
-                  <DiligencePage />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario/market"
-              element={
-                <ProtectedNavigationRoute path="/scenario/market">
-                  <MarketPage />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario-progress"
-              element={
-                <ProtectedNavigationRoute path="/scenario-progress">
-                  <ExecutionCenter />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route path="/execution-center" element={<Navigate to="/scenario-progress" replace />} />
-            <Route
-              path="/billing"
-              element={
-                <ProtectedNavigationRoute path="/billing">
-                  <BillingManager />
-                </ProtectedNavigationRoute>
-              }
-            />
-
-            {/* ТЗ 11.1 Premium Components - New Routes */}
-            <Route
-              path="/execution-center-v2"
-              element={
-                <ProtectedNavigationRoute path="/execution-center-v2">
-                  <ExecutionCenterV2 />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/market-intelligence"
-              element={
-                <ProtectedNavigationRoute path="/market-intelligence">
-                  <MarketIntelligencePremium />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/supplier-discovery-v2"
-              element={
-                <ProtectedNavigationRoute path="/supplier-discovery-v2">
-                  <SupplierDiscoveryPremiumView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario-builder"
-              element={
-                <ProtectedNavigationRoute path="/scenario-builder">
-                  <ScenarioBuilderView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/risk-dashboard"
-              element={
-                <ProtectedNavigationRoute path="/risk-dashboard">
-                  <RiskDashboardView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/billing-dashboard"
-              element={
-                <ProtectedNavigationRoute path="/billing-dashboard">
-                  <BillingDashboardView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/ai-recommendations"
-              element={
-                <ProtectedNavigationRoute path="/ai-recommendations">
-                  <AIRecommendationHubView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/decision-factory"
-              element={
-                <ProtectedNavigationRoute path="/decision-factory">
-                  <DecisionFactoryView />
-                </ProtectedNavigationRoute>
-              }
-            />
-
-            {/* ТЗ 11.3 Phase 3 Routes */}
-            <Route
-              path="/customer-success"
-              element={
-                <ProtectedNavigationRoute path="/customer-success">
-                  <CustomerSuccessDashboardView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/analytics-dashboard"
-              element={
-                <ProtectedNavigationRoute path="/analytics-dashboard">
-                  <AnalyticsDashboardView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/advanced-reporting"
-              element={
-                <ProtectedNavigationRoute path="/advanced-reporting">
-                  <AdvancedReportingView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/integrations"
-              element={
-                <ProtectedNavigationRoute path="/integrations">
-                  <IntegrationHubView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/advanced-settings"
-              element={
-                <ProtectedNavigationRoute path="/advanced-settings">
-                  <AdvancedSettingsView />
-                </ProtectedNavigationRoute>
-              }
-            />
-
-            {/* ТЗ 11.3 Phase 3.6 Ukrainian Localized Routes */}
-            <Route
-              path="/analytics-dashboard-uk"
-              element={
-                <ProtectedNavigationRoute path="/analytics-dashboard-uk">
-                  <AnalyticsDashboardUkView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/advanced-reporting-uk"
-              element={
-                <ProtectedNavigationRoute path="/advanced-reporting-uk">
-                  <AdvancedReportingUkView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/integrations-uk"
-              element={
-                <ProtectedNavigationRoute path="/integrations-uk">
-                  <IntegrationHubUkView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/advanced-settings-uk"
-              element={
-                <ProtectedNavigationRoute path="/advanced-settings-uk">
-                  <AdvancedSettingsUkView />
-                </ProtectedNavigationRoute>
-              }
-            />
-
-            {/* ТЗ 11.3 Phase 4 Enhanced Premium Routes */}
-            <Route
-              path="/risk-dashboard-premium"
-              element={
-                <ProtectedNavigationRoute path="/risk-dashboard-premium">
-                  <RiskDashboardPremiumView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/supplier-discovery-v2"
-              element={
-                <ProtectedNavigationRoute path="/supplier-discovery-v2">
-                  <SupplierDiscoveryPremiumV2View />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/ai-recommendations-premium"
-              element={
-                <ProtectedNavigationRoute path="/ai-recommendations-premium">
-                  <AIRecommendationHubPremiumView />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/scenario-builder-v2"
-              element={
-                <ProtectedNavigationRoute path="/scenario-builder-v2">
-                  <ScenarioBuilderPremiumV2View />
-                </ProtectedNavigationRoute>
-              }
-            />
-            <Route
-              path="/billing-dashboard-v2"
-              element={
-                <ProtectedNavigationRoute path="/billing-dashboard-v2">
-                  <BillingDashboardPremiumV2View />
-                </ProtectedNavigationRoute>
-              }
-            />
 
             {/* Admin & System */}
             <Route path="/admin" element={<MonitoringView />} />
             <Route path="/compliance" element={<ComplianceView />} />
             <Route path="/monitoring" element={<MonitoringView />} />
             <Route path="/referral-control" element={<ReferralControlView />} />
-            <Route path="/admin/ai-control" element={<AIControlPlane />} />
+            <Route path="/admin/ai-control" element={onlyAdmin(<AIControlPlane />)} />
             <Route path="/admin/security" element={<SovereignGovernanceDashboard />} />
-            <Route path="/governance" element={<SovereignGovernanceDashboard />} />
+            <Route path="/governance" element={onlyAdmin(<SovereignGovernanceDashboard />)} />
             <Route path="/security" element={<SecurityView />} />
-            <Route path="/deployment" element={<DeploymentView />} />
+            <Route path="/deployment" element={onlyAdmin(<DeploymentView />)} />
             <Route path="/settings" element={<SettingsView />} />
 
             {/* Клієнтський арсенал — нові маршрути v55.1 */}

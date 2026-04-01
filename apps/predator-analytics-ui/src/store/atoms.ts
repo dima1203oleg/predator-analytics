@@ -1,6 +1,11 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { Theme, Sale, ChatMessage } from '../types/index';
+import type { ContextRailPayload } from '../types/shell';
+import {
+  NAV_FAVORITES_STORAGE_KEY,
+  NAV_RECENT_STORAGE_KEY,
+} from '../services/shell/userWorkspace';
 
 // Theme state
 export const themeAtom = atomWithStorage<Theme>('predator-theme', 'dark');
@@ -24,3 +29,8 @@ export const userRoleAtom = atomWithStorage<'admin' | 'analyst' | 'operator' | '
 // UI state
 export const isSidebarOpenAtom = atomWithStorage<boolean>('predator-sidebar-open', true);
 export const sidebarSearchAtom = atom<string>('');
+export const navFavoritesAtom = atomWithStorage<string[]>(NAV_FAVORITES_STORAGE_KEY, []);
+export const navRecentAtom = atomWithStorage<string[]>(NAV_RECENT_STORAGE_KEY, []);
+export const shellCommandPaletteOpenAtom = atom<boolean>(false);
+export const shellContextRailOpenAtom = atom<boolean>(true);
+export const shellContextRailPayloadAtom = atom<ContextRailPayload | null>(null);

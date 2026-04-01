@@ -7,36 +7,57 @@ import {
   Calendar,
   Command,
   Layers3,
+  PanelRight,
+  PanelRightClose,
   Radio,
   Search,
   ShieldCheck,
-  Sparkles,
   UserCircle,
-  Target,
-  CreditCard,
 } from 'lucide-react';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
-import { getRoleDisplayName, getRoleDescription } from '../../config/roles';
 import { useUser } from '../../context/UserContext';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { cn } from '../../lib/utils';
-import { FigmaDesignBridge } from '../design/FigmaDesignBridge';
+import { ROLE_DISPLAY_NAMES, UserRole } from '../../config/roles';
+import { useAtom } from 'jotai';
+import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
+import { isShellV2Enabled } from '../../services/shell/userWorkspace';
+
+const getRoleLabel = (role: string): string => {
+  if (role === UserRole.ADMIN) {
+    return ROLE_DISPLAY_NAMES[UserRole.ADMIN];
+  }
+
+  if (role === UserRole.CLIENT_PREMIUM) {
+    return ROLE_DISPLAY_NAMES[UserRole.CLIENT_PREMIUM];
+  }
+
+  if (role === UserRole.CLIENT_BASIC) {
+    return 'Бізнес-контур';
+  }
+
+  return 'Режим перегляду';
+};
 
 const Header: React.FC = () => {
-  const { user, canonicalRole, canonicalTier } = useUser();
+  const { user } = useUser();
   const location = useLocation();
   const currentDate = format(new Date(), "d MMMM yyyy 'р.'", { locale: uk });
   const backendStatus = useBackendStatus();
-  const { item, section } = getNavigationContext(location.pathname, canonicalRole, canonicalTier);
+  const currentRole = user?.role ?? 'viewer';
+  const { item, section } = getNavigationContext(location.pathname, currentRole);
   const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
-  const roleLabel = getRoleDisplayName(canonicalRole);
-  const roleDescription = getRoleDescription(canonicalRole);
+  const roleLabel = getRoleLabel(currentRole);
+  const [isPaletteOpen, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
+  const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
+  const shellV2Enabled = isShellV2Enabled();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[linear-gradient(180deg,rgba(8,18,30,0.88),rgba(6,15,26,0.78))] backdrop-blur-2xl">
-      <div className="mx-auto flex max-w-[1660px] flex-col gap-4 px-5 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+    <header className="sticky top-0 z-40 border-b border-cyan-500/10 bg-slate-950/40 backdrop-blur-2xl shadow-[0_32px_64px_-12px_rgba(2,6,23,0.8)]">
+      <div className="mx-auto grid max-w-[1920px] gap-6 px-2 sm:px-4 lg:px-6 py-4 xl:grid-cols-[1fr_340px] items-start">
+        <div className="surface-panel-strong rounded-[28px] px-6 py-6 border border-cyan-500/10 relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,0.05),transparent)]" />
+          <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
             <span className={cn('rounded-full border px-2.5 py-1', accent.badge)}>
               {section?.label ?? 'Робочий простір'}
             </span>
@@ -44,30 +65,38 @@ const Header: React.FC = () => {
             <span className="text-slate-300">{item?.label ?? 'Огляд'}</span>
           </div>
 
-          <div className="flex items-start gap-3">
-            <div className={cn('mt-1 hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl border lg:flex', accent.iconBorder)}>
+          <div className="mt-4 flex items-start gap-4">
+            <div
+              className={cn(
+                'mt-1 hidden h-12 w-12 shrink-0 items-center justify-center rounded-[18px] border shadow-[0_12px_32px_rgba(2,6,23,0.28)] lg:flex bg-cyan-950/20 backdrop-blur-md',
+                accent.iconBorder,
+              )}
+            >
               {section ? (
-                <Layers3 className={cn('h-5 w-5', accent.icon)} />
+                <Layers3 className={cn('h-5 w-5 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]', accent.icon)} />
               ) : (
-                <ShieldCheck className={cn('h-5 w-5', accent.icon)} />
+                <ShieldCheck className={cn('h-5 w-5 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]', accent.icon)} />
               )}
             </div>
 
-              <div className="min-w-0">
-                <h1 className="truncate text-xl font-black tracking-tight text-white sm:text-2xl">
-                  {item?.label ?? 'Панель управління'}
-                </h1>
-                <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
-                  {item?.description ?? section?.description ?? 'Операційний контекст не визначено для поточного маршруту.'}
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-400">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+            <div className="min-w-0">
+              <h1 className="truncate text-2xl font-black tracking-tight text-white sm:text-[2rem]">
+                {item?.label ?? 'Панель управління'}
+              </h1>
+              <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300 sm:text-[15px]">
+                {item?.description ??
+                  section?.description ??
+                  'Операційний контекст не визначено для поточного маршруту.'}
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-300">
+                <span className="status-pill">
                   <Calendar className="h-3.5 w-3.5 text-slate-500" />
                   {currentDate}
                 </span>
                 <span
                   className={cn(
-                    'inline-flex items-center gap-2 rounded-full border px-3 py-1.5',
+                    'status-pill',
                     backendStatus.isOffline
                       ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
                       : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
@@ -76,68 +105,81 @@ const Header: React.FC = () => {
                   <Radio className="h-3.5 w-3.5" />
                   {backendStatus.statusLabel}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                <span className="status-pill">
                   <Command className="h-3.5 w-3.5 text-slate-500" />
                   {backendStatus.modeLabel}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-                  {roleLabel}
-                </span>
-                <FigmaDesignBridge variant="chip" className="shrink-0" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:min-w-[520px] lg:items-end">
-          <div className="flex w-full flex-wrap items-center gap-3 lg:justify-end">
-            <div className="relative min-w-[240px] flex-1 lg:max-w-[360px] lg:flex-none">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-              <input
-                type="search"
-                placeholder="Пошук маршруту, сутності або коду..."
-                className="h-11 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-16 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30 focus:bg-white/[0.06]"
-              />
-              <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1 text-[10px] text-slate-500">
-                <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">⌘</kbd>
-                <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">K</kbd>
+        <div className="grid gap-4">
+          <div className="surface-panel rounded-[28px] p-4">
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="search"
+                  readOnly
+                  value=""
+                  onFocus={() => setIsPaletteOpen(true)}
+                  onClick={() => setIsPaletteOpen(true)}
+                  placeholder="Командний пошук: модуль, сутність або дія..."
+                  aria-label="Відкрити командний пошук"
+                  className="h-12 w-full cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-16 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-cyan-400/30 focus:bg-white/[0.06]"
+                />
+                <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1 text-[10px] text-slate-500">
+                  <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">⌘</kbd>
+                  <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">K</kbd>
+                </div>
               </div>
+
+              {shellV2Enabled && (
+                <button
+                  title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
+                  onClick={() => setIsContextRailOpen((current) => !current)}
+                  className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
+                >
+                  {isContextRailOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
+                </button>
+              )}
+
+              <button
+                title="Сповіщення"
+                className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-rose-400" />
+              </button>
             </div>
 
-            <button
-              title="Сповіщення"
-              className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-rose-400" />
-            </button>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+              <span>{isPaletteOpen ? 'Командний пошук відкритий' : 'Швидка навігація через командний пошук'}</span>
+              <span className="font-mono uppercase tracking-[0.22em] text-slate-400">{shellV2Enabled ? 'Shell v2' : 'Ready'}</span>
+            </div>
           </div>
 
-          <div className="flex w-full flex-wrap items-center gap-3 lg:justify-end">
-            <div className="flex min-w-[220px] flex-1 items-center justify-between rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 lg:max-w-[300px] lg:flex-none">
-              <div className="min-w-0">
-                <div className="truncate text-sm font-bold text-white">
-                  {user?.name || 'Адміністратор'}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="surface-panel flex flex-col justify-between rounded-[24px] px-4 py-4 min-h-[96px]">
+              <div className="tactical-label">Поточний профіль</div>
+              <div className="mt-auto flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
+                  <UserCircle className="h-5 w-5 text-indigo-300" />
                 </div>
-                <div className="mt-1 truncate text-[11px] text-slate-400">
-                  {roleDescription}
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-bold text-white">{user?.name || 'Адміністратор'}</div>
+                  <div className="mt-1 truncate text-[11px] text-slate-400">{roleLabel}</div>
                 </div>
-              </div>
-              <div className="ml-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
-                <UserCircle className="h-5 w-5 text-indigo-300" />
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs font-bold text-emerald-100">
-                <Target className="h-4 w-4" />
-                Швидкий сценарій
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-xs font-bold text-cyan-100">
-                <CreditCard className="h-4 w-4" />
-                {canonicalTier}
-              </span>
+            <div className="surface-panel flex flex-col justify-between rounded-[24px] px-4 py-4 min-h-[96px]">
+              <div className="tactical-label">Джерело даних</div>
+              <div className="mt-auto">
+                <div className="text-sm font-semibold text-white truncate">{backendStatus.sourceLabel}</div>
+                <div className="mt-1 text-[11px] text-slate-400 truncate">{backendStatus.modeLabel}</div>
+              </div>
             </div>
           </div>
         </div>

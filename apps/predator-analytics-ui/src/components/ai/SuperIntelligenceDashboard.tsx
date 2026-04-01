@@ -1,5 +1,5 @@
 /**
- * SuperIntelligence Dashboard
+ * SuperIntelligence Dashboard v45.0
  *
  * Main dashboard for AI orchestration monitoring and control.
  * Features:
@@ -209,7 +209,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
               🧠 SuperIntelligence Orchestrator
             </h1>
-            <p className="text-slate-400 mt-1">AI Command Center — центр керування штучним інтелектом</p>
+            <p className="text-slate-400 mt-1">Predator v45 | Neural Analytics— AI Command Center</p>
           </div>
 
           {/* Health Status Badge */}
@@ -529,7 +529,7 @@ export const SuperIntelligenceDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="mt-4 text-xs text-slate-500">
-                Metrics available at: <code className="bg-slate-900 px-2 py-1 rounded">/api/v1/metrics</code>
+                Metrics available at: <code className="bg-slate-900 px-2 py-1 rounded">/api/v45/metrics</code>
               </div>
             </div>
           </motion.div>

@@ -33,95 +33,6 @@ app.use(express.json({ limit: '100mb' }));
 // Multer for audio uploads
 const upload = multer({ dest: 'uploads/' });
 
-const FIGMA_API_BASE = 'https://api.figma.com/v1';
-const FIGMA_BRIDGE_CACHE_TTL_MS = 5 * 60 * 1000;
-
-let cachedFigmaBridgeSnapshot = null;
-let cachedFigmaBridgeSignature = '';
-let cachedFigmaBridgeExpiresAt = 0;
-let figmaBridgeRuntimeConfig = {
-  fileUrl: null,
-  fileKey: null,
-  fileName: null,
-  syncedAt: null,
-};
-
-function normalizeText(value) {
-  if (typeof value !== 'string') {
-    return null;
-  }
-
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-}
-
-function extractFigmaFileKey(value) {
-  const normalized = normalizeText(value);
-  if (!normalized) {
-    return null;
-  }
-
-  const match = normalized.match(/figma\.com\/(?:file|design|proto)\/([A-Za-z0-9_-]+)/i);
-  return match ? match[1] : null;
-}
-
-function buildFigmaFileUrl(fileKey) {
-  return `https://www.figma.com/file/${encodeURIComponent(fileKey)}`;
-}
-
-function invalidateFigmaBridgeCache() {
-  cachedFigmaBridgeSnapshot = null;
-  cachedFigmaBridgeSignature = '';
-  cachedFigmaBridgeExpiresAt = 0;
-}
-
-function summarizeFigmaPages(filePayload) {
-  const pages = Array.isArray(filePayload?.document?.children) ? filePayload.document.children : [];
-
-  return pages.slice(0, 6).map((page, index) => {
-    const children = Array.isArray(page?.children) ? page.children : [];
-    const frameCount = children.filter((child) =>
-      ['FRAME', 'GROUP', 'COMPONENT', 'COMPONENT_SET', 'INSTANCE'].includes(child?.type)
-    ).length;
-    const sectionCount = children.filter((child) => child?.type === 'SECTION').length;
-
-    return {
-      id: page?.id || `page-${index + 1}`,
-      name: page?.name || 'Без назви',
-      frameCount,
-      sectionCount,
-    };
-  });
-}
-
-async function fetchFigmaApi(pathname, token) {
-  const response = await fetch(`${FIGMA_API_BASE}${pathname}`, {
-    headers: {
-      'X-Figma-Token': token,
-    },
-  });
-
-  const rawText = await response.text();
-  let payload = null;
-
-  if (rawText) {
-    try {
-      payload = JSON.parse(rawText);
-    } catch {
-      payload = { raw: rawText };
-    }
-  }
-
-  if (!response.ok) {
-    const error = new Error(`Figma API request failed for ${pathname}`);
-    error.status = response.status;
-    error.payload = payload;
-    throw error;
-  }
-
-  return payload;
-}
-
 // Google Cloud Clients - Using the correct TTS key from Predator_50 or GOOGLE_CLOUD_API_KEY
 const GOOGLE_KEY_PATH = './Predator_50/secrets/google-tts-key.json';
 const googleOptions = process.env.GOOGLE_CLOUD_API_KEY
@@ -1587,7 +1498,24 @@ app.get(['/api/v1/osint_ua/prozorro/tenders', '/v1/osint_ua/prozorro/tenders'], 
       expected_value: 600000, risk_score: 91
     }
   ];
-  res.json({ tenders });
+  res.json(tenders);
+});
+
+// Documents List
+app.get(['/api/v1/documents', '/v1/documents'], (req, res) => {
+  res.json(DB_FILES);
+});
+
+// System Stats Integration
+app.get(['/api/v1/system/stats', '/v1/system/stats'], (req, res) => {
+  res.json({
+    total_declarations: DB_FACTS.length,
+    total_entities: DB_GRAPH.nodes.length,
+    total_docs: DB_SEARCH_INDEX.length,
+    active_pipelines: etlJobs.filter(j => j.state !== 'READY').length,
+    risk_alerts: DB_FACTS.filter(d => d.risk_score > 80).length,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // 📊 Prozorro Analytics Endpoints
@@ -2446,155 +2374,6 @@ app.get('/api/v1/system/infrastructure', (req, res) => {
       redis: { status: 'UP', version: '7.2', latency_ms: 1, keys: Object.keys(DB_PIPELINE_STATE).length }
     }
   });
-});
-
-function resolveFigmaSourceConfig() {
-  const fileUrlFromRuntime = normalizeText(figmaBridgeRuntimeConfig.fileUrl);
-  const fileKeyFromRuntime = normalizeText(figmaBridgeRuntimeConfig.fileKey);
-  const fileNameFromRuntime = normalizeText(figmaBridgeRuntimeConfig.fileName);
-  const syncedAtFromRuntime = normalizeText(figmaBridgeRuntimeConfig.syncedAt);
-  const fileUrlFromEnv = normalizeText(process.env.FIGMA_FILE_URL);
-  const fileKeyFromEnv = normalizeText(process.env.FIGMA_FILE_KEY);
-  const fileNameFromEnv = normalizeText(process.env.FIGMA_FILE_NAME);
-  const syncedAtFromEnv = normalizeText(process.env.FIGMA_SYNCED_AT);
-
-  const fileUrl = fileUrlFromRuntime || fileUrlFromEnv;
-  const fileKey = fileKeyFromRuntime || fileKeyFromEnv || extractFigmaFileKey(fileUrl);
-
-  return {
-    fileKey,
-    fileUrl: fileUrl || (fileKey ? buildFigmaFileUrl(fileKey) : null),
-    fileName: fileNameFromRuntime || fileNameFromEnv || 'Figma-макет Predator Analytics',
-    syncedAt: syncedAtFromRuntime || syncedAtFromEnv || null,
-  };
-}
-
-app.get(['/api/v1/design/figma', '/v1/design/figma'], async (req, res) => {
-  const accessToken = normalizeText(process.env.FIGMA_ACCESS_TOKEN);
-  const sourceConfig = resolveFigmaSourceConfig();
-  const signature = [
-    accessToken || '',
-    sourceConfig.fileKey || '',
-    sourceConfig.fileUrl || '',
-    sourceConfig.fileName,
-    sourceConfig.syncedAt || '',
-  ].join('|');
-
-  if (
-    cachedFigmaBridgeSnapshot &&
-    cachedFigmaBridgeSignature === signature &&
-    cachedFigmaBridgeExpiresAt > Date.now()
-  ) {
-    res.json(cachedFigmaBridgeSnapshot);
-    return;
-  }
-
-  const snapshot = {
-    status: 'disconnected',
-    statusLabel: 'Figma не підключено',
-    message: 'Додайте лінк на Figma-макет у локальному середовищі.',
-    tokenValidated: false,
-    account: null,
-    file: null,
-    syncedAt: sourceConfig.syncedAt,
-  };
-
-  if (!accessToken) {
-    cachedFigmaBridgeSnapshot = snapshot;
-    cachedFigmaBridgeSignature = signature;
-    cachedFigmaBridgeExpiresAt = Date.now() + FIGMA_BRIDGE_CACHE_TTL_MS;
-    res.json(snapshot);
-    return;
-  }
-
-  try {
-    const account = await fetchFigmaApi('/me', accessToken);
-    snapshot.tokenValidated = true;
-    snapshot.account = {
-      handle: account.handle || 'Підтверджено',
-      email: account.email || null,
-      imgUrl: account.img_url || null,
-    };
-    snapshot.status = sourceConfig.fileKey ? 'connected' : 'partial';
-    snapshot.statusLabel = sourceConfig.fileKey ? 'Figma підключено' : 'Потрібне завершення прив’язки';
-    snapshot.message = sourceConfig.fileKey
-      ? 'Токен підтверджено, а макет синхронізовано через серверний проксі.'
-      : 'Токен Figma підтверджено, але файл ще не прив’язано до дизайну.';
-  } catch (error) {
-    snapshot.status = 'error';
-    snapshot.statusLabel = 'Потрібна увага';
-    snapshot.message = error.status === 401 || error.status === 403
-      ? 'Токен Figma недійсний або не має потрібних прав.'
-      : 'Не вдалося перевірити Figma-токен.';
-
-    cachedFigmaBridgeSnapshot = snapshot;
-    cachedFigmaBridgeSignature = signature;
-    cachedFigmaBridgeExpiresAt = Date.now() + FIGMA_BRIDGE_CACHE_TTL_MS;
-    res.json(snapshot);
-    return;
-  }
-
-  if (sourceConfig.fileKey) {
-    try {
-      const file = await fetchFigmaApi(`/files/${sourceConfig.fileKey}`, accessToken);
-      snapshot.status = 'connected';
-      snapshot.statusLabel = 'Figma підключено';
-      snapshot.message = `Макет ${file.name || sourceConfig.fileName} синхронізовано через Figma.`;
-      snapshot.file = {
-        key: sourceConfig.fileKey,
-        name: file.name || sourceConfig.fileName,
-        url: sourceConfig.fileUrl,
-        lastModified: file.lastModified || sourceConfig.syncedAt || null,
-        pageCount: Array.isArray(file?.document?.children) ? file.document.children.length : 0,
-        pages: summarizeFigmaPages(file),
-      };
-      snapshot.syncedAt = file.lastModified || sourceConfig.syncedAt || null;
-    } catch (error) {
-      snapshot.status = 'partial';
-      snapshot.statusLabel = 'Потрібне завершення прив’язки';
-      snapshot.message = error.status === 404
-        ? 'Ключ Figma-файлу не знайдено або файл недоступний.'
-        : 'Токен Figma підтверджено, але файл наразі недоступний.';
-    }
-  }
-
-  cachedFigmaBridgeSnapshot = snapshot;
-  cachedFigmaBridgeSignature = signature;
-  cachedFigmaBridgeExpiresAt = Date.now() + FIGMA_BRIDGE_CACHE_TTL_MS;
-  res.json(snapshot);
-});
-
-app.post(['/api/v1/design/figma/config', '/v1/design/figma/config'], (req, res) => {
-  const shouldClear = Boolean(req.body?.clear);
-  const fileUrl = normalizeText(req.body?.fileUrl);
-  const fileKey = normalizeText(req.body?.fileKey) || extractFigmaFileKey(fileUrl);
-  const fileName = normalizeText(req.body?.fileName);
-
-  if (!shouldClear && !fileUrl && !fileKey) {
-    res.status(400).json({
-      message: 'Потрібно передати Figma URL або ключ файлу.',
-    });
-    return;
-  }
-
-  if (shouldClear) {
-    figmaBridgeRuntimeConfig = {
-      fileUrl: null,
-      fileKey: null,
-      fileName: null,
-      syncedAt: null,
-    };
-  } else {
-    figmaBridgeRuntimeConfig = {
-      fileUrl: fileUrl || (fileKey ? buildFigmaFileUrl(fileKey) : null),
-      fileKey: fileKey || null,
-      fileName: fileName || null,
-      syncedAt: new Date().toISOString(),
-    };
-  }
-
-  invalidateFigmaBridgeCache();
-  res.status(204).end();
 });
 
 // Premium

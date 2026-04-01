@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 
 /* Канонічні дизайн-токени — єдине джерело істини */
 @import './styles/tokens.css';
@@ -57,6 +57,16 @@
     --glow-neon-magenta: rgba(255, 0, 255, 0.4);
     --glow-neon-green: rgba(57, 255, 20, 0.4);
     --glow-nato-red: rgba(255, 51, 51, 0.5);
+
+    --shell-bg: #040816;
+    --shell-panel: rgba(8, 15, 28, 0.76);
+    --shell-panel-strong: rgba(7, 13, 24, 0.92);
+    --shell-panel-soft: rgba(255, 255, 255, 0.035);
+    --shell-border: rgba(148, 163, 184, 0.14);
+    --shell-border-strong: rgba(148, 163, 184, 0.28);
+    --shell-text-soft: #d7e0ee;
+    --shell-text-muted: #8fa0b8;
+    --shell-glow: rgba(34, 211, 238, 0.14);
 }
 
 /* THEME MODES */
@@ -122,12 +132,13 @@
 
 body {
     color-scheme: dark;
-    background-color: #020617;
-    color: #e2e8f0;
+    background-color: var(--shell-bg);
+    color: var(--shell-text-soft);
     background-image:
-        radial-gradient(circle at 50% 0%, #0f172a 0%, transparent 80%),
-        radial-gradient(circle at 0% 0%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+        radial-gradient(circle at 14% 14%, rgba(245, 158, 11, 0.08), transparent 28%),
+        radial-gradient(circle at 85% 8%, rgba(34, 211, 238, 0.08), transparent 26%),
+        radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.08), transparent 34%),
+        linear-gradient(180deg, #08111f 0%, #050a14 52%, #03060d 100%);
     min-height: 100dvh;
     margin: 0;
     padding: 0;
@@ -135,7 +146,8 @@ body {
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-attachment: fixed;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 #root {
@@ -244,6 +256,62 @@ textarea:focus-visible,
     box-shadow: 
         0 8px 32px 0 rgba(0, 0, 0, 0.8),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.font-display {
+    font-family: 'Orbitron', 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.surface-panel {
+    background:
+        linear-gradient(180deg, rgba(12, 20, 35, 0.92), rgba(6, 12, 24, 0.86));
+    border: 1px solid var(--shell-border);
+    box-shadow:
+        0 18px 48px rgba(2, 6, 23, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.surface-panel-strong {
+    background:
+        linear-gradient(180deg, rgba(10, 18, 32, 0.98), rgba(4, 9, 18, 0.94));
+    border: 1px solid var(--shell-border-strong);
+    box-shadow:
+        0 28px 72px rgba(2, 6, 23, 0.48),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+.surface-panel-soft {
+    background: var(--shell-panel-soft);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.surface-divider {
+    border-color: rgba(148, 163, 184, 0.12);
+}
+
+.tactical-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #8fa0b8;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.55rem 0.85rem;
 }
 
 .glass-tactical {
@@ -527,17 +595,31 @@ tbody tr:hover {
 }
 
 @keyframes scanline-move {
-    0% {
-        transform: translateY(-100%);
-    }
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
 
-    100% {
-        transform: translateY(100%);
-    }
+.animate-scanline {
+    animation: scanline-move 8s linear infinite;
 }
 
 .animate-scanline-fast {
     animation: scanline-move 2s linear infinite;
+}
+
+@keyframes raptor-pulse {
+    0%, 100% { 
+        filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.3)) brightness(1); 
+        transform: scale(1); 
+    }
+    50% { 
+        filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.5)) brightness(1.2); 
+        transform: scale(1.02); 
+    }
+}
+
+.animate-raptor-pulse {
+    animation: raptor-pulse 4s ease-in-out infinite;
 }
 
 /* Fix for DNA Bars and dynamic widths */

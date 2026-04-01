@@ -1,320 +1,282 @@
-import { motion } from 'framer-motion';
-import {
-  ArrowRight,
-  BadgePercent,
-  Building2,
-  CheckCircle2,
-  CreditCard,
-  Radar,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  Users,
-  Workflow,
-} from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Fingerprint, Monitor, Radar, ShieldAlert, Terminal, Zap, ShieldCheck, Activity, Globe, Lock, ScanLine, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { UserRole } from '../config/roles';
 import { SubscriptionTier, useUser } from '../context/UserContext';
+import { GeometricRaptor } from './Logo';
+import { CyberGrid } from './CyberGrid';
 
 interface LoginScreenProps {
-  onLogin: () => void;
-  isLocked?: boolean;
+    onLogin: () => void;
+    isLocked?: boolean;
 }
 
-interface DemoPreset {
-  role: UserRole;
-  title: string;
-  persona: string;
-  description: string;
-  tier: SubscriptionTier;
-  icon: React.ElementType;
-  benefits: string[];
-}
+const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
+    const { setUser } = useUser();
+    const [step, setStep] = useState<'initial' | 'scanning' | 'roles'>('initial');
+    const [scanProgress, setScanProgress] = useState(0);
 
-const rolePresets: DemoPreset[] = [
-  {
-    role: UserRole.SUPPLY_CHAIN,
-    title: 'Закупівлі та логістика',
-    persona: 'Менеджер із закупівель',
-    description: 'Швидкий старт для оптимізації імпорту, вибору постачальника та зниження логістичних витрат.',
-    tier: SubscriptionTier.BASIC,
-    icon: Target,
-    benefits: ['Ключовий сценарій закупівель', 'Демо-режим за 2 хвилини', 'Бізнес-представлення центру виконання'],
-  },
-  {
-    role: UserRole.BUSINESS,
-    title: 'Бізнес-керівник',
-    persona: 'Власник або операційний керівник',
-    description: 'Контроль економії, сценаріїв масштабування та прозора монетизація через тариф і % від результату.',
-    tier: SubscriptionTier.PRO,
-    icon: Building2,
-    benefits: ['Value screen і ROI', 'Збереження сценаріїв', 'Billing і підтвердження економії'],
-  },
-  {
-    role: UserRole.ANALYST,
-    title: 'Аналітик',
-    persona: 'Дослідник ринку та ризиків',
-    description: 'Розвідка, верифікація контрагентів, пояснюваність AI та розширені сценарії аналізу.',
-    tier: SubscriptionTier.PRO,
-    icon: Radar,
-    benefits: ['Розвідка і diligence', 'Пояснення рекомендацій', 'Ринкові сценарії та сигнали'],
-  },
-  {
-    role: UserRole.ADMIN,
-    title: 'Адміністратор',
-    persona: 'Технічний власник платформи',
-    description: 'Керування системним контуром, інтеграціями, ролями та enterprise-функціями.',
-    tier: SubscriptionTier.ENTERPRISE,
-    icon: ShieldCheck,
-    benefits: ['Системний контур', 'Розширені інтеграції', 'Повний доступ до enterprise-модулів'],
-  },
-];
+    // DEV MODE: skip scanning
+    useEffect(() => {
+        if (step === 'scanning') {
+            const interval = setInterval(() => {
+                setScanProgress(prev => {
+                    if (prev >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => setStep('roles'), 500);
+                        return 100;
+                    }
+                    return prev + 5;
+                });
+            }, 50);
+            return () => clearInterval(interval);
+        }
+    }, [step]);
 
-const tierLabels: Record<SubscriptionTier, string> = {
-  [SubscriptionTier.FREE]: 'Базовий',
-  [SubscriptionTier.BASIC]: 'Базовий',
-  [SubscriptionTier.PRO]: 'Про',
-  [SubscriptionTier.ENTERPRISE]: 'Корпоративний',
-};
+    const handleDemoLogin = (role: UserRole) => {
+        let tier = SubscriptionTier.FREE;
+        if (role === UserRole.CLIENT_PREMIUM) tier = SubscriptionTier.PRO;
+        if (role === UserRole.ADMIN) tier = SubscriptionTier.ENTERPRISE;
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, isLocked = false }) => {
-  const { setUser } = useUser();
-  const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.SUPPLY_CHAIN);
+        flushSync(() => {
+            setUser({
+                id: role === UserRole.ADMIN ? 'admin-1' : 'client-1',
+                name: role === UserRole.ADMIN ? 'Командир' : role === UserRole.CLIENT_PREMIUM ? 'Старший Аналітик' : 'Оператор',
+                email: role === UserRole.ADMIN ? 'admin@predator.ai' : 'user@client.com',
+                role: role,
+                tier: tier,
+                tenant_id: 'demo-tenant',
+                tenant_name: 'PREDATOR_CORP',
+                last_login: new Date().toISOString(),
+                data_sectors: ['ALPHA', 'GAMMA', 'DELTA-9']
+            });
+        });
 
-  const selectedPreset = useMemo(
-    () => rolePresets.find((preset) => preset.role === selectedRole) ?? rolePresets[0],
-    [selectedRole],
-  );
+        onLogin();
+    };
 
-  const handleDemoLogin = (preset: DemoPreset) => {
-    flushSync(() => {
-      setUser({
-        id: `${preset.role}-demo-user`,
-        name:
-          preset.role === UserRole.SUPPLY_CHAIN
-            ? 'Олена Коваль'
-            : preset.role === UserRole.BUSINESS
-            ? 'Ігор Мельник'
-            : preset.role === UserRole.ANALYST
-            ? 'Марія Данилюк'
-            : 'Адміністратор PREDATOR',
-        email: `${preset.role}@predator.demo`,
-        role: preset.role,
-        tier: preset.tier,
-        tenant_id: 'demo-tenant',
-        tenant_name: 'Predator Analytics Demo',
-        last_login: new Date().toISOString(),
-        data_sectors: ['customs', 'sanctions', 'market', 'logistics'],
-      });
-    });
+    // Agency logos for the background grid
+    const agencies = [
+        { name: 'СБУ', icon: '🔱' }, { name: 'МВС', icon: '🛡️' }, { name: 'ЗСУ', icon: '⚔️' },
+        { name: 'ГУР', icon: '🦉' }, { name: 'НГУ', icon: '🔰' }, { name: 'ДПС', icon: '⚓' },
+        { name: 'ДБР', icon: '🏢' }, { name: 'ДМС', icon: '🛂' }, { name: 'СЗРУ', icon: '🌍' }
+    ];
 
-    onLogin();
-  };
-
-  return (
-    <div className="relative min-h-screen overflow-hidden bg-[#030b15] px-6 py-10 text-slate-100">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_28%),radial-gradient(circle_at_top_right,rgba(14,165,233,0.16),transparent_24%),linear-gradient(180deg,rgba(2,6,23,0.95),rgba(3,10,18,0.98))]" />
-      <div className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] [background-size:68px_68px]" />
-
-      <div className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl gap-8 xl:grid-cols-[minmax(0,1.1fr)_480px]">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="flex flex-col justify-between rounded-[36px] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(6,18,30,0.92),rgba(4,13,22,0.92))] p-8 shadow-[0_28px_90px_rgba(2,6,23,0.4)]"
-        >
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-emerald-200">
-                Predator Analytics
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                ТЗ 11.1
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-300">
-                UX від результату
-              </span>
-            </div>
-
-            <h1 className="mt-6 max-w-3xl text-4xl font-black tracking-tight text-white sm:text-5xl">
-              Платформа для оптимізації закупівель імпортера, перевірки контрагентів і керування економією.
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
-              Новий стартовий контур побудований навколо результату: демо-режим, екран цінності,
-              execution center, рольовий доступ і прозора модель монетизації.
-            </p>
-
-            {isLocked && (
-              <div className="mt-6 rounded-[24px] border border-rose-400/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
-                Поточну сесію заблоковано. Повторно оберіть роль демо-користувача для входу.
-              </div>
-            )}
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10">
-                    <Sparkles className="h-5 w-5 text-emerald-300" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">Aha moment до 3 хвилин</div>
-                    <div className="mt-1 text-sm text-slate-400">Швидкий старт без довгого онбордингу.</div>
-                  </div>
+    return (
+        <div className="h-screen bg-[#020617] flex flex-col items-center justify-center p-4 relative overflow-hidden font-mono text-slate-200">
+            {/* Background Agency Grid */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-x-20 gap-y-10 p-10">
+                    {Array.from({ length: 24 }).map((_, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0.05 }}
+                            animate={{ opacity: [0.05, 0.15, 0.05] }}
+                            transition={{ duration: 5, repeat: Infinity, delay: i * 0.1 }}
+                            className="flex flex-col items-center gap-1 grayscale opacity-30"
+                        >
+                            <span className="text-2xl">{agencies[i % agencies.length].icon}</span>
+                            <span className="text-[8px] tracking-widest text-cyan-500/30">{agencies[i % agencies.length].name}</span>
+                        </motion.div>
+                    ))}
                 </div>
-              </div>
-              <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10">
-                    <BadgePercent className="h-5 w-5 text-cyan-300" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">% від економії</div>
-                    <div className="mt-1 text-sm text-slate-400">Верифікація через інвойси або ERP.</div>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-violet-400/20 bg-violet-500/10">
-                    <Workflow className="h-5 w-5 text-violet-300" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">Job-based виконання</div>
-                    <div className="mt-1 text-sm text-slate-400">queued → running → success / failed / partial.</div>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-[24px] border border-white/[0.08] bg-black/20 p-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-400/20 bg-amber-500/10">
-                    <CreditCard className="h-5 w-5 text-amber-300" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white">Роль ∩ тариф</div>
-                    <div className="mt-1 text-sm text-slate-400">Доступ формується перетином ролі та тарифу.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 rounded-[28px] border border-white/[0.08] bg-black/20 p-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10">
-                <Users className="h-5 w-5 text-cyan-300" />
-              </div>
-              <div>
-                <div className="text-lg font-black text-white">Що доступно після входу</div>
-                <div className="mt-1 text-sm text-slate-400">Командний центр, demo-сценарії, центр виконання, білінг і нова навігація з 6 секцій.</div>
-              </div>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Ключовий сценарій</div>
-                <div className="mt-2 text-base font-bold text-white">Оптимізація закупівель</div>
-              </div>
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Value screen</div>
-                <div className="mt-2 text-base font-bold text-white">250 000 ₴ потенційної економії</div>
-              </div>
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
-                <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Explainability</div>
-                <div className="mt-2 text-base font-bold text-white">Топ-3 фактори рекомендації</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+            {/* Vinette Overlay */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.95)_100%)] pointer-events-none z-[1]" />
 
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.05 }}
-          className="rounded-[36px] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(6,17,29,0.96),rgba(5,13,23,0.96))] p-6 shadow-[0_26px_80px_rgba(2,6,23,0.34)]"
-        >
-          <div className="rounded-[28px] border border-emerald-400/18 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
-            Демо-вхід не використовує реальні дані клієнта. Ви заходите в ізольований MVP-контур для перевірки UX і сценаріїв.
-          </div>
+            <AnimatePresence mode="wait">
+                {step === 'initial' && (
+                    <motion.div
+                        key="initial"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                        className="text-center z-10 flex flex-col items-center space-y-6 max-w-lg w-full"
+                    >
+                        {/* Central Logo Node - COMPACT */}
+                        <div className="relative group cursor-pointer" onClick={() => setStep('scanning')}>
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                                className="absolute -inset-6 border border-cyan-500/10 rounded-full"
+                            />
+                            
+                            {/* Main Raptor Container - SHRUNK */}
+                            <div 
+                                className="w-40 h-40 rounded-full bg-black/40 border-2 border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.2)] flex items-center justify-center relative overflow-hidden transition-all duration-700"
+                                style={{ perspective: '1000px' }}
+                            >
+                                <motion.div
+                                    animate={{ 
+                                        y: [0, -4, 0],
+                                        rotateY: [0, 360],
+                                        filter: ['drop-shadow(0 0 5px rgba(34,211,238,0.3))', 'drop-shadow(0 0 15px rgba(34,211,238,0.6))', 'drop-shadow(0 0 5px rgba(34,211,238,0.3))']
+                                    }}
+                                    transition={{ 
+                                        y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                                        rotateY: { duration: 6, repeat: Infinity, ease: "linear" },
+                                        filter: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                                    }}
+                                    className="w-[75%] h-[75%] text-cyan-500 flex items-center justify-center"
+                                >
+                                    <GeometricRaptor className="w-full h-full object-contain" />
+                                </motion.div>
+                                
+                                <motion.div 
+                                    animate={{ top: ['0%', '100%', '0%'] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                    className="absolute left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)] z-20 opacity-20"
+                                />
+                            </div>
+                        </div>
 
-          <div className="mt-5">
-            <div className="text-[11px] font-black uppercase tracking-[0.22em] text-cyan-300/80">
-              Оберіть роль
-            </div>
-            <h2 className="mt-2 text-3xl font-black text-white">Вхід у демо-контур</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-400">
-              Оберіть роль, щоб одразу потрапити у відповідний сценарний контекст без старих технодемок і зайвого шуму.
-            </p>
-          </div>
+                        <div className="space-y-1">
+                            <h1 className="text-4xl md:text-5xl font-black tracking-[0.2em] text-white drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]">
+                                PREDATOR
+                            </h1>
+                            <div className="flex flex-col items-center">
+                                <h2 className="text-sm font-bold tracking-[0.6em] text-cyan-600 uppercase">
+                                    Strategic Analysis Unit
+                                </h2>
+                            </div>
+                        </div>
 
-          <div className="mt-6 space-y-3">
-            {rolePresets.map((preset) => {
-              const isActive = preset.role === selectedRole;
+                        {/* Sign In Fields - COMPACT */}
+                        <div className="w-72 space-y-3">
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-600/60">
+                                    <User size={16} />
+                                </div>
+                                <input 
+                                    readOnly
+                                    placeholder="LOGIN_ID" 
+                                    className="w-full bg-cyan-950/20 border border-cyan-500/20 rounded-lg py-3 pl-10 pr-4 text-[10px] tracking-[0.2em] font-bold text-cyan-100 placeholder:text-cyan-800 focus:border-cyan-400/50 outline-none transition-all"
+                                />
+                            </div>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-600/60">
+                                    <Lock size={16} />
+                                </div>
+                                <input 
+                                    readOnly
+                                    type="password"
+                                    placeholder="ACCESS_KEY" 
+                                    className="w-full bg-cyan-950/20 border border-cyan-500/20 rounded-lg py-3 pl-10 pr-4 text-[10px] tracking-[0.2em] font-bold text-cyan-100 placeholder:text-cyan-800 focus:border-cyan-400/50 outline-none transition-all"
+                                />
+                            </div>
+                            
+                            <motion.button 
+                                whileHover={{ scale: 1.01, backgroundColor: 'rgba(34,211,238,1)', color: 'black' }}
+                                whileTap={{ scale: 0.99 }}
+                                onClick={() => setStep('scanning')}
+                                className="w-full bg-transparent border border-cyan-500/30 text-cyan-400 font-bold py-3.5 rounded-lg tracking-[0.4em] text-xs transition-all shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+                            >
+                                AUTHORIZE MISSION
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                )}
 
-              return (
-                <button
-                  key={preset.role}
-                  type="button"
-                  onClick={() => setSelectedRole(preset.role)}
-                  className={`
-                    w-full rounded-[24px] border p-4 text-left transition-all duration-200
-                    ${isActive ? 'border-cyan-400/30 bg-cyan-500/10 shadow-[0_18px_40px_rgba(14,165,233,0.08)]' : 'border-white/[0.08] bg-black/20 hover:border-white/[0.14] hover:bg-white/[0.04]'}
-                  `}
+                {step === 'scanning' && (
+                    <motion.div
+                        key="scanning"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="text-center z-10 space-y-6"
+                    >
+                        <CyberGrid color="#22d3ee" opacity={0.1} className="z-0" />
+                        <div className="relative w-48 h-48 mx-auto flex items-center justify-center">
+                            <motion.div 
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 border-t-2 border-cyan-400 rounded-full"
+                            />
+                            <div className="flex flex-col items-center">
+                                <div className="text-2xl font-black text-cyan-400 tracking-[0.2em]">
+                                    {scanProgress}%
+                                </div>
+                                <div className="text-[8px] font-black text-cyan-600 tracking-[0.3em] uppercase">
+                                    SCANNING BIO-HASH
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+
+                {step === 'roles' && (
+                    <motion.div
+                        key="roles"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col md:flex-row gap-4 z-10 max-w-5xl w-full px-4"
+                    >
+                        {[
+                            { role: UserRole.ADMIN, label: 'COMMANDER', desc: 'Full System Sovereignty', icon: ShieldAlert, color: 'cyan', level: 'V' },
+                            { role: UserRole.CLIENT_PREMIUM, label: 'SR. ANALYST', desc: 'Global Intelligence Access', icon: Activity, color: 'blue', level: 'IV' },
+                            { role: UserRole.CLIENT_BASIC, label: 'OPERATOR', desc: 'Standard Data Streams', icon: Terminal, color: 'slate', level: 'III' }
+                        ].map((item, idx) => (
+                            <motion.button
+                                key={item.role}
+                                whileHover={{ scale: 1.02, borderColor: 'rgba(34,211,238,0.8)', backgroundColor: 'rgba(34,211,238,0.05)' }}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                                onClick={() => handleDemoLogin(item.role)}
+                                className="group flex-1 p-6 bg-black/40 border border-cyan-900/30 rounded-2xl text-left space-y-3 backdrop-blur-md relative overflow-hidden transition-all duration-300"
+                            >
+                                {/* Scan Line Animation on card */}
+                                <motion.div 
+                                    animate={{ left: ['-100%', '200%'] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: idx * 0.5 }}
+                                    className="absolute inset-y-0 w-20 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent skew-x-12 pointer-events-none"
+                                />
+
+                                <div className="flex justify-between items-start">
+                                    <motion.div 
+                                        animate={{ rotateY: [0, 360] }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                        style={{ transformStyle: "preserve-3d" }}
+                                        className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                                    >
+                                        <item.icon size={20} />
+                                    </motion.div>
+                                    <span className="text-[10px] font-black text-cyan-900 px-2 py-0.5 border border-cyan-900/40 rounded italic group-hover:text-cyan-400 transition-colors">
+                                        LVL_{item.level}
+                                    </span>
+                                </div>
+                                <div className="space-y-1">
+                                    <div className="text-[8px] font-bold text-cyan-700 tracking-widest uppercase">Personnel Class</div>
+                                    <div className="text-xl font-black text-white tracking-widest group-hover:text-cyan-400 transition-colors">{item.label}</div>
+                                    <p className="text-[9px] text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                                </div>
+                                <div className="pt-2 flex items-center gap-2 text-[8px] font-black text-cyan-400 opacity-40 group-hover:opacity-100 transition-all uppercase">
+                                    Link established <Zap size={8} />
+                                </div>
+                            </motion.button>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Bottom Status Bar - COMPACT */}
+            <div className="absolute bottom-6 left-0 right-0 px-10 flex justify-center text-[8px] font-black text-cyan-950/40 tracking-[0.4em] z-10 pointer-events-none text-center">
+                <motion.div
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 4, repeat: Infinity }}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${isActive ? 'border-cyan-400/20 bg-cyan-500/10' : 'border-white/[0.08] bg-white/[0.04]'}`}>
-                      <preset.icon className={`h-5 w-5 ${isActive ? 'text-cyan-300' : 'text-slate-300'}`} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <div className="text-base font-black text-white">{preset.title}</div>
-                        <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">
-                          {tierLabels[preset.tier]}
-                        </span>
-                      </div>
-                      <div className="mt-1 text-sm font-medium text-slate-300">{preset.persona}</div>
-                      <div className="mt-2 text-sm leading-6 text-slate-400">{preset.description}</div>
-                    </div>
-                    {isActive && <CheckCircle2 className="mt-1 h-5 w-5 text-cyan-300" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-6 rounded-[28px] border border-white/[0.08] bg-black/20 p-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Обраний контур</div>
-                <div className="mt-2 text-xl font-black text-white">{selectedPreset.persona}</div>
-              </div>
-              <span className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-100">
-                {tierLabels[selectedPreset.tier]}
-              </span>
+                    SECURE_NODE_01 // ENCRYPTION_ACTIVE // NEXUS_LINK_OK // VERSION_56.1.4_STABLE
+                </motion.div>
             </div>
 
-            <div className="mt-4 space-y-2">
-              {selectedPreset.benefits.map((benefit) => (
-                <div key={benefit} className="flex items-start gap-2 text-sm text-slate-300">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-300" />
-                  <span>{benefit}</span>
-                </div>
-              ))}
+            {/* Version Tag */}
+            <div className="absolute bottom-6 right-10 text-[10px] font-black text-white/5 tracking-[1em] uppercase z-10">
+                PREDATOR v56.1.4
             </div>
-
-            <button
-              type="button"
-              onClick={() => handleDemoLogin(selectedPreset)}
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-emerald-400"
-            >
-              Увійти як демо-користувач
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default LoginScreen;

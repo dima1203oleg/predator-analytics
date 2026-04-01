@@ -22,8 +22,10 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
+import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
+import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
 import { useAppStore } from '@/store/useAppStore';
@@ -281,6 +283,60 @@ export default function ClientsHubView() {
     () => normalizeClientsHubSnapshot(overview, systemStatus, systemStats),
     [overview, systemStatus, systemStats],
   );
+  const activeSegment = useMemo(
+    () => SEGMENTS.find((segment) => segment.persona === persona) ?? SEGMENTS[0],
+    [persona],
+  );
+  const clientsRailPayload = useMemo(
+    () => ({
+      entityId: 'clients',
+      entityType: 'клієнтський контур',
+      title: activeSegment.title,
+      subtitle: activeSegment.subtitle,
+      status: {
+        label: `Режим: ${personaLabel(persona)}`,
+        tone: backendStatus.isOffline ? 'warning' : 'info',
+      },
+      actions: createStandardContextActions({
+        auditPath: '/diligence',
+        documentsPath: '/documents',
+        agentPath: '/agents',
+      }),
+      insights: snapshot.summary.slice(0, 3).map((card) =>
+        createMetric(card.id, card.label, card.value, card.hint, card.tone === 'rose' ? 'danger' : 'info'),
+      ),
+      relations: SEGMENTS.slice(0, 3).map((segment) =>
+        createMetric(
+          `segment-${segment.key}`,
+          segment.title,
+          snapshot.segments[segment.key].statusLabel,
+          snapshot.segments[segment.key].note,
+          segment.persona === persona ? 'success' : 'neutral',
+        ),
+      ),
+      documents: [
+        {
+          id: 'clients-hub',
+          label: 'Клієнтський хаб',
+          detail: `Оновлено: ${snapshot.lastUpdatedLabel ?? 'очікує синхронізацію'}`,
+          path: '/clients',
+        },
+        {
+          id: 'clients-segment',
+          label: 'Активний сегмент',
+          detail: activeSegment.title,
+          path: `/clients/${activeSegment.key}`,
+        },
+      ],
+      risks: feedback
+        ? [createRisk('clients-feedback', 'Потрібна перевірка API', feedback, 'warning')]
+        : [createRisk('clients-fallback', 'Контур стабільний', 'Підтверджені агрегати доступні в клієнтському хабі.', 'success')],
+      sourcePath: '/clients',
+    }),
+    [activeSegment, backendStatus.isOffline, feedback, persona, snapshot],
+  );
+
+  useContextRail(clientsRailPayload);
 
   return (
     <PageTransition>

@@ -80,20 +80,26 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   return (
     <motion.div
-      className={`${containerClass} rounded-xl border border-cyan-500/30 bg-gradient-to-br from-slate-900 to-slate-800`}
+      className={`${containerClass} overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-900/40 backdrop-blur-md shadow-2xl shadow-cyan-900/20`}
       layout
       transition={{ duration: 0.3 }}
     >
+      {/* Cinematic HUD Overlay */}
+      <div className="pointer-events-none absolute inset-0 z-10 opacity-[0.03]">
+        <div className="h-full w-full bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] animate-scanline" />
+      </div>
+
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(34,211,238,0.1),transparent)]" />
       {/* Header */}
       {showHeader && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-cyan-500/30 bg-slate-900/50 backdrop-blur-xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-cyan-500/10 bg-slate-900/30 backdrop-blur-xl relative z-20">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+              <BarChart3 className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">{title}</h3>
-              <p className="text-xs text-gray-400">Real-time метрики</p>
+              <h3 className="text-sm font-black uppercase tracking-widest text-white/90">{title}</h3>
+              <p className="text-[10px] uppercase font-bold tracking-tighter text-cyan-500/60">Predator Nexus Live Sync</p>
             </div>
           </div>
 

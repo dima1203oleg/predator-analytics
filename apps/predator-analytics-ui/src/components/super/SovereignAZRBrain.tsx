@@ -43,7 +43,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
       }
 
       if (sys) {
-        setMetrics({ load: sys.cpu_load || sys.cpu_percent || 0 });
+        setMetrics({ load: (sys as any).cpu_load || sys.cpu_percent || 0 });
       }
 
       const decisionsData = await api.azr.getDecisions(10);

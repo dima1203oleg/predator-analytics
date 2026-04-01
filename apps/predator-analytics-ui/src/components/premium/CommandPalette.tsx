@@ -1,28 +1,14 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Command,
-  Figma,
-  Search,
-  FileText,
-  Brain,
-  Settings,
-  Users,
-  BarChart3,
-  Shield,
-  Zap,
-  Database,
-  ChevronRight,
-  Sparkles,
-  X,
+  Command, Search, FileText, Brain, Settings, Users,
+  BarChart3, Shield, Zap, Database, ChevronRight,
+  Sparkles, X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
-import { getVisibleNavigation } from '../../config/navigation';
-import { useUser } from '../../context/UserContext';
-import { useFigmaBridge } from '@/hooks/useFigmaBridge';
 
 interface QuickAction {
   id: string;
@@ -35,42 +21,6 @@ interface QuickAction {
   action?: () => void;
 }
 
-const normalizeText = (value: string): string =>
-  value
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-const buildNlpKeywords = (query: string): string[] => {
-  const normalized = normalizeText(query);
-  const keywords: string[] = [];
-
-  if (normalized.includes('імпорт')) keywords.push('import');
-  if (normalized.includes('експорт')) keywords.push('export');
-  if (normalized.includes('туреч')) keywords.push('trade-map', 'market');
-  if (normalized.includes('китай')) keywords.push('trade-map', 'price-compare');
-  if (normalized.includes('ризик')) keywords.push('risk', 'diligence', 'sanctions');
-  if (normalized.includes('контрагент')) keywords.push('diligence', 'clients');
-  if (normalized.includes('судн')) keywords.push('maritime', 'supply-chain');
-
-  return keywords;
-};
-
-const iconById: Record<string, React.ReactNode> = {
-  dashboard: <BarChart3 size={18} />,
-  documents: <FileText size={18} />,
-  analytics: <Brain size={18} />,
-  search: <Search size={18} />,
-  security: <Shield size={18} />,
-  monitoring: <Zap size={18} />,
-  databases: <Database size={18} />,
-  settings: <Settings size={18} />,
-  agents: <Users size={18} />,
-  aiInsights: <Sparkles size={18} />,
-};
-
 export const CommandPalette: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -78,49 +28,12 @@ export const CommandPalette: React.FC = () => {
   const [recentActions, setRecentActions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { user } = useUser();
-  const role = user?.role ?? 'supply_chain';
-  const tier = user?.tier ?? 'basic';
-  const figmaBridge = useFigmaBridge();
 
-  // Використовуємо доступ до локалі через типізований запасний шлях
+  // Cast to any for locale access
   const locales = premiumLocales as any;
-
-  const navigationActions = useMemo<QuickAction[]>(() => {
-    const sections = getVisibleNavigation(role, tier);
-
-    const sectionActions = sections.flatMap((section) => section.items.map((item) => ({
-      id: item.id,
-      icon: iconById[item.id] ?? <Sparkles size={18} />,
-      label: item.label,
-      description: item.description,
-      shortcut: undefined,
-      category: 'navigation' as const,
-      path: item.path,
-    })));
-
-    const groupActions = sections.flatMap((section) =>
-      (section.groups ?? []).flatMap((group) =>
-        group.items.map((item) => ({
-          id: item.id,
-          icon: iconById[item.id] ?? <Sparkles size={18} />,
-          label: item.label,
-          description: item.description,
-          shortcut: undefined,
-          category: 'navigation' as const,
-          path: item.path,
-        })),
-      ),
-    );
-
-    return [...sectionActions, ...groupActions];
-  }, [role, tier]);
 
   const quickActions: QuickAction[] = [
     { id: 'dashboard', icon: <BarChart3 size={18} />, label: locales.commandPalette.actions.dashboard.label, description: locales.commandPalette.actions.dashboard.desc, shortcut: 'D', category: 'navigation', path: '/' },
-    { id: 'procurement-optimizer', icon: <Sparkles size={18} />, label: 'Оптимізація закупівель', description: 'Швидкий запуск сценарію економії для імпортера.', shortcut: 'P', category: 'navigation', path: '/procurement-optimizer' },
-    { id: 'execution-center', icon: <Zap size={18} />, label: 'Центр виконання', description: 'Переглянути активні job-based сценарії.', shortcut: 'E', category: 'navigation', path: '/scenario-progress' },
-    { id: 'billing', icon: <Settings size={18} />, label: 'Білінг і тариф', description: 'Перевірити ліміти, комісію та модель монетизації.', shortcut: 'B', category: 'navigation', path: '/billing' },
     { id: 'documents', icon: <FileText size={18} />, label: locales.commandPalette.actions.documents.label, description: locales.commandPalette.actions.documents.desc, shortcut: 'O', category: 'navigation', path: '/documents' },
     { id: 'analytics', icon: <Brain size={18} />, label: locales.commandPalette.actions.analytics.label, description: locales.commandPalette.actions.analytics.desc, shortcut: 'A', category: 'navigation', path: '/analytics' },
     { id: 'search', icon: <Search size={18} />, label: locales.commandPalette.actions.search.label, description: locales.commandPalette.actions.search.desc, shortcut: 'S', category: 'navigation', path: '/search' },
@@ -129,26 +42,9 @@ export const CommandPalette: React.FC = () => {
     { id: 'databases', icon: <Database size={18} />, label: locales.commandPalette.actions.databases.label, description: locales.commandPalette.actions.databases.desc, category: 'navigation', path: '/databases' },
     { id: 'settings', icon: <Settings size={18} />, label: locales.commandPalette.actions.settings.label, description: locales.commandPalette.actions.settings.desc, shortcut: ',', category: 'navigation', path: '/settings' },
     { id: 'agents', icon: <Users size={18} />, label: locales.commandPalette.actions.agents.label, description: locales.commandPalette.actions.agents.desc, category: 'navigation', path: '/agents' },
-    ...(figmaBridge.fileUrl
-      ? [{
-        id: 'figma-design-bridge',
-        icon: <Figma size={18} />,
-        label: 'Відкрити Figma-макет',
-        description: `Канонічний макет: ${figmaBridge.fileName}`,
-        shortcut: 'F',
-        category: 'navigation' as const,
-        action: () => {
-          window.open(figmaBridge.fileUrl ?? '', '_blank', 'noopener,noreferrer');
-        },
-      }]
-      : []),
   ];
 
-  const allActions = [...navigationActions, ...quickActions].filter(
-    (action, index, list) => list.findIndex((current) => current.id === action.id) === index,
-  );
-
-  // Завантажуємо нещодавні дії з localStorage
+  // Load recent actions from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('predator_recent_actions');
     if (stored) {
@@ -158,7 +54,7 @@ export const CommandPalette: React.FC = () => {
     }
   }, []);
 
-  // Гаряча клавіша для відкриття (Cmd/Ctrl + K)
+  // Keyboard shortcut to open (Cmd/Ctrl + K)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -174,7 +70,7 @@ export const CommandPalette: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Фокусуємо поле після відкриття
+  // Focus input when opened
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
@@ -183,44 +79,14 @@ export const CommandPalette: React.FC = () => {
     }
   }, [isOpen]);
 
-  const filteredActions = useMemo(() => {
-    if (!query.trim()) {
-      return allActions;
-    }
+  // Filter actions based on query
+  const filteredActions = quickActions.filter(action => {
+    if (!query) return true;
+    const searchString = `${action.label} ${action.description || ''}`.toLowerCase();
+    return searchString.includes(query.toLowerCase());
+  });
 
-    const normalizedQuery = normalizeText(query);
-    const nlpKeywords = buildNlpKeywords(query);
-
-    return [...allActions]
-      .map((action) => {
-        const haystack = normalizeText(`${action.label} ${action.description || ''} ${action.id}`);
-        let score = 0;
-
-        if (haystack.includes(normalizedQuery)) {
-          score += 100;
-        }
-
-        const queryTokens = normalizedQuery.split(' ').filter(Boolean);
-        for (const token of queryTokens) {
-          if (haystack.includes(token)) {
-            score += 10;
-          }
-        }
-
-        for (const keyword of nlpKeywords) {
-          if (haystack.includes(keyword)) {
-            score += 25;
-          }
-        }
-
-        return { action, score };
-      })
-      .filter(({ score }) => score > 0)
-      .sort((left, right) => right.score - left.score)
-      .map(({ action }) => action);
-  }, [allActions, query]);
-
-  // Обробка запуску дії
+  // Handle action execution
   const executeAction = useCallback((action: QuickAction) => {
     const newRecent = [action.id, ...recentActions.filter(id => id !== action.id)].slice(0, 5);
     setRecentActions(newRecent);
@@ -234,26 +100,7 @@ export const CommandPalette: React.FC = () => {
     setIsOpen(false);
   }, [navigate, recentActions]);
 
-  const helperLabel = useMemo(() => {
-    if (!query.trim()) {
-      return 'Шукайте маршрут, розділ або бізнес-запит';
-    }
-
-    const keywords = buildNlpKeywords(query);
-    if (keywords.includes('trade-map')) {
-      return 'Схоже, ви шукаєте торговельний маршрут або логістичний сценарій';
-    }
-    if (keywords.includes('diligence')) {
-      return 'Схоже, ви хочете перевірити контрагента або ризики угоди';
-    }
-    if (keywords.includes('maritime')) {
-      return 'Схоже, вам потрібен морський трафік або ланцюг постачання';
-    }
-
-    return 'Працює швидкий бізнес-пошук по меню та сутностях';
-  }, [query]);
-
-  // Навігація з клавіатури
+  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
 
@@ -339,10 +186,6 @@ export const CommandPalette: React.FC = () => {
                   >
                     <X size={16} className="text-slate-500" />
                   </button>
-                </div>
-
-                <div className="px-5 pt-3 pb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500">
-                  {helperLabel}
                 </div>
 
                 <div className="max-h-[400px] overflow-y-auto p-2">
