@@ -12,16 +12,20 @@ import {
     Loader2,
     Search,
     ShieldCheck,
-    UserCheck,
     Users,
+    ShieldAlert,
+    Scale,
+    Fingerprint,
+    Gavel
 } from 'lucide-react';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import type {
-    CompanyProfileResponse,
-    PersonInfo,
     RiskEntity,
     RiskLevelValue,
+    CompanyProfileResponse
 } from '@/features/diligence/types';
+import type { ContextRailPayload, ContextTone } from '@/types/shell';
 import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -266,12 +270,11 @@ export default function DiligencePage() {
             subtitle: `ЄДРПОУ ${profileIdentifier ?? 'Н/Д'} • ${riskLevelLabel[profileRiskLevel]}`,
             status: {
                 label: `Ризик: ${riskLevelLabel[profileRiskLevel]}`,
-                tone:
-                    profileRiskLevel === 'critical' || profileRiskLevel === 'high'
-                        ? 'danger'
-                        : profileRiskLevel === 'elevated' || profileRiskLevel === 'watchlist'
-                          ? 'warning'
-                          : 'success',
+                tone: (profileRiskLevel === 'critical' || profileRiskLevel === 'high'
+                    ? 'danger'
+                    : profileRiskLevel === 'elevated' || profileRiskLevel === 'watchlist'
+                        ? 'warning'
+                        : 'success') as ContextTone,
             },
             actions: createStandardContextActions({
                 auditPath: '/diligence',
@@ -376,7 +379,10 @@ export default function DiligencePage() {
                         </h1>
                         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
                             Панель працює з підтвердженими профілями компаній, показує фактичний стан
-                            ризику, CERS-компоненти та наявні службові записи без демо-блоків.
+                            ризику, CERS-компоненти та наявні службові записи.
+                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-black text-emerald-400 uppercase tracking-wider bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                                <ShieldCheck size={10} /> v11.5 Актив
+                            </span>
                         </p>
                     </div>
 
@@ -795,6 +801,8 @@ export default function DiligencePage() {
                     </AnimatePresence>
                 </div>
             </div>
+
+            <ConstitutionalShield />
         </div>
     );
 }

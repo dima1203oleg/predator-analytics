@@ -20,6 +20,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
+import { MorningBriefing, type BriefingItem } from '@/components/shared/MorningBriefing';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 import {
   getRecommendedNavigation,
   getVisibleNavigation,
@@ -141,6 +143,33 @@ const PredatorV24 = () => {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showBriefing, setShowBriefing] = useState(true);
+
+  const briefingItems: BriefingItem[] = [
+    {
+      id: 'b1',
+      type: 'market',
+      title: 'Різке зростання імпорту у секторі Consumer Tech',
+      description: 'Виявлено 14 нових контрагентів з аномальним обсягом поставок за останні 48 годин. Прогнозований вплив на ринок: +14%.',
+      impact: '2.4м',
+      trend: 'up'
+    },
+    {
+      id: 'b2',
+      type: 'risk',
+      title: 'Критична зміна структури власності ТОВ «МегаЛайн»',
+      description: 'Система зафіксувала появу підсанкційної особи у ланцюгу бенефіціарів. Рекомендується негайний аудит зв’язків.',
+      trend: 'down'
+    },
+    {
+      id: 'b3',
+      type: 'insight',
+      title: 'Оптимізація митних платежів через "Зелений Коридор"',
+      description: 'Новий алгоритм AI виявив потенціал економії на митних зборах для вантажів типу "Електроніка" через зміну класифікації коду УКТЗЕД.',
+      impact: '650к',
+      trend: 'up'
+    }
+  ];
 
   useEffect(() => {
     let isMounted = true;
@@ -215,6 +244,14 @@ const PredatorV24 = () => {
       initial="hidden"
       animate="visible"
     >
+      {showBriefing && (
+        <MorningBriefing
+          userName={user?.name?.split(' ')[0]}
+          items={briefingItems}
+          onAction={(id) => console.log('Briefing action:', id)}
+        />
+      )}
+
       {/* ══════════════════════════════════════════════════════════════
          СЕКЦІЯ 1: HERO — Головний банер з KPI та ambient glow
          ══════════════════════════════════════════════════════════════ */}
@@ -630,6 +667,8 @@ const PredatorV24 = () => {
           </div>
         </motion.div>
       </motion.section>
+
+      <ConstitutionalShield />
     </motion.div>
   );
 };

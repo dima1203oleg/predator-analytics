@@ -379,7 +379,11 @@ const AnalyticsView: React.FC = () => {
             <ViewHeader
                 title="СЕМАНТИЧНИЙ РАДАР"
                 icon={<Network className="text-blue-400" />}
-                breadcrumbs={['ОСІНТ', 'АНАЛІТИКА', 'ГРАФ ЗВ\'ЯЗКІВ']}
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v11.5']}
+                badges={[
+                    { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
+                    { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                ]}
                 stats={[
                     { label: 'Вузлів у графі', value: summary?.total_nodes ? String(summary.total_nodes) : '...', icon: <Network />, color: 'primary' },
                     { label: 'Зв\'язків', value: summary?.total_edges ? String(summary.total_edges) : '...', icon: <Share2 />, color: 'warning' },

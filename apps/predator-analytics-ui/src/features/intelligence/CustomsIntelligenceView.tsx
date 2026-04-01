@@ -243,13 +243,17 @@ const CustomsIntelligenceView = () => {
                                 </h1>
                                 <p className="text-[10px] font-mono font-black text-emerald-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                     <Database size={12} className="animate-pulse" /> 
-                                    NEURAL_SIGNAL_MONITOR_v55.5
+                                    NEURAL_SIGNAL_MONITOR_v11.5
                                 </p>
                             </div>
                         </div>
                     }
                     icon={<Shield size={22} className="text-emerald-400" />}
-                    breadcrumbs={['РОЗВІДКА', 'СИГНАЛИ', 'TELEGRAM']}
+                    breadcrumbs={['OSINT-HUB', 'МИТНИЦЯ', 'DEEP_DIVE v11.5']}
+                    badges={[
+                        { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
+                        { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                    ]}
                     stats={[
                         { label: 'ЦІЛЕЙ_МОНІТОРУ', value: channels.length.toString(), color: 'primary', icon: <Target size={14} />, animate: true },
                         { label: 'СТАТУС_КАНАЛУ', value: 'ACTIVE', color: 'success', icon: <Activity size={14} /> },

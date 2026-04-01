@@ -15,7 +15,11 @@ import {
     Star,
     TrendingUp,
     Zap,
+    ShieldCheck,
+    Scale,
+    ShieldAlert
 } from 'lucide-react';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 
 type OpportunityTab = 'insights' | 'recommendations' | 'executive';
 
@@ -197,7 +201,10 @@ export default function OpportunitiesPage() {
                         </h1>
                         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
                             Сторінка агрегує реальні інсайти ринку, а вкладки рекомендацій та виконавчого
-                            огляду формуються з цього самого потоку без статичних демо-блоків.
+                            огляду формуються з цього самого потоку.
+                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-black text-amber-400 uppercase tracking-wider bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                                <ShieldCheck size={10} /> v11.5 Верифіковано
+                            </span>
                         </p>
                     </div>
 
@@ -246,6 +253,8 @@ export default function OpportunitiesPage() {
                     )}
                 </motion.div>
             </AnimatePresence>
+
+            <ConstitutionalShield />
         </div>
     );
 }

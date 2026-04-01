@@ -16,6 +16,11 @@ interface ViewHeaderProps {
     animate?: boolean;
   }[];
   actions?: React.ReactNode;
+  badges?: {
+    label: string;
+    icon?: React.ReactNode;
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'cyan' | 'secondary' | 'emerald' | 'amber' | 'rose';
+  }[];
   className?: string;
 }
 
@@ -26,6 +31,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
   breadcrumbs = [],
   stats,
   actions,
+  badges = [],
   className = ''
 }) => {
   return (
@@ -71,7 +77,34 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
               ))}
               </div>
             )}
-            <h2 className="text-2xl font-bold text-iridescent leading-none truncate tracking-tight font-display drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{title}</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-iridescent leading-none truncate tracking-tight font-display drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{title}</h2>
+              {badges.length > 0 && (
+                <div className="flex items-center gap-2">
+                  {badges.map((badge, bIdx) => (
+                    <motion.div
+                      key={bIdx}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.2 + (bIdx * 0.1) }}
+                      className={`
+                        flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-tight
+                        ${badge.color === 'success' || badge.color === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]' :
+                          badge.color === 'primary' || badge.color === 'cyan' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]' :
+                          badge.color === 'danger' || badge.color === 'rose' ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
+                          badge.color === 'warning' || badge.color === 'amber' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.15)]' :
+                          badge.color === 'purple' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.15)]' :
+                          'bg-slate-800/40 border-slate-700/50 text-slate-300'
+                        }
+                      `}
+                    >
+                      {badge.icon && <span className="opacity-80">{badge.icon}</span>}
+                      {badge.label}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
             {subtitle && <p className="text-sm mt-1.5 text-slate-400">{subtitle}</p>}
           </div>
         </div>

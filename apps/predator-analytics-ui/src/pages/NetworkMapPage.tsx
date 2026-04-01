@@ -12,9 +12,11 @@ import {
     RefreshCw,
     Share2,
     ShieldAlert,
-    Info
+    Info,
+    Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 
 const NetworkMapPage: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
@@ -240,11 +242,18 @@ const NetworkMapPage: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">ID Вузла</label>
-                                        <p className="font-mono text-xs">{selectedNode.id}</p>
-                                    </div>
-                                    {/* Additional node properties could go here */}
+                                    {/* Additional node properties */}
+                                    {selectedNode.primary_risk === 'high' && (
+                                        <div className="mt-4 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+                                            <div className="flex items-center gap-2 text-rose-400 mb-1">
+                                                <Shield size={14} />
+                                                <span className="text-[10px] font-black uppercase tracking-wider">OSINT Alert</span>
+                                            </div>
+                                            <p className="text-xs text-slate-300 leading-5">
+                                                Вузол ідентифіковано як критичний елемент у ланцюгу ризику. Рекомендується перевірка через «Конституційний Щит».
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -255,6 +264,8 @@ const NetworkMapPage: React.FC = () => {
                     )}
                 </AnimatePresence>
             </div>
+
+            <ConstitutionalShield />
         </div>
     );
 };

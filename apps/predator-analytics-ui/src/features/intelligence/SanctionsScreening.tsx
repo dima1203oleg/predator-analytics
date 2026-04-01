@@ -356,7 +356,11 @@ const SanctionsScreening: React.FC = () => {
                     <ViewHeader
                         title="САНКЦІЙНА МАТРИЦЯ"
                         icon={<ShieldAlert className="text-rose-400" />}
-                        breadcrumbs={['КОМПЛАЄНС', 'СКРИНІНГ', 'МАТРИЦЯ БЛОКУВАННЯ']}
+                        breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'МАТРИЦЯ v11.5']}
+                        badges={[
+                            { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'rose', icon: <Zap size={10} /> },
+                            { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                        ]}
                         stats={[
                             { label: 'Підтверджені перевірки', value: String(history.length), icon: <Database />, color: 'primary' },
                             { label: 'Активні реєстри', value: String(selectedLists.length), icon: <Shield />, color: 'danger' },

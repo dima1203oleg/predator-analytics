@@ -24,10 +24,14 @@ import {
   Truck,
   UserX,
   Zap,
+  ShieldCheck,
+  Scale,
+  ShieldAlert
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { cn } from '../../utils/cn';
 import { newspaperApi } from '../../services/api/newspaper';
+import { ConstitutionalShield } from '../../components/shared/ConstitutionalShield';
 import type {
   NewspaperData,
   ComprommatItem,
@@ -699,6 +703,8 @@ export default function NewspaperView() {
           </button>
         </div>
       </motion.footer>
+
+      <ConstitutionalShield />
     </motion.div>
   );
 }

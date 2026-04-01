@@ -384,7 +384,11 @@ const AMLScoringView: React.FC = () => {
                 <ViewHeader
                     title="AML АНАЛІЗАТОР"
                     icon={<ShieldAlert className="text-rose-400" />}
-                    breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML СКОРІНГ v55.5']}
+                    breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML СКОРІНГ v11.5']}
+                    badges={[
+                        { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'rose', icon: <Zap size={10} /> },
+                        { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                    ]}
                     stats={[
                         { label: 'Факторів ризику',  value: '10',      icon: <AlertTriangle />, color: 'danger'  },
                         { label: 'Рівнів небезпеки', value: '5',       icon: <BarChart3 />,     color: 'warning' },

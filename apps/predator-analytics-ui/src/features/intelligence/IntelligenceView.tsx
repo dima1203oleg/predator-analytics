@@ -1,9 +1,9 @@
 /**
- * 🧠 Sovereign Intelligence Nexus | v55.2 Premium Matrix
+ * 🧠 Sovereign Intelligence Nexus | v11.5 Premium Matrix
  * PREDATOR Когнітивне Святилище
  * 
  * Централізація семантичного графу, нейро-інсайтів та глибинної аналітики.
- * © 2026 PREDATOR Analytics - Повна українізація v55.2
+ * © 2026 PREDATOR Analytics - Повна українізація v11.5 OSINT-HUB
  */
 
 import React, { useState, useEffect } from 'react';
@@ -59,9 +59,10 @@ const IntelligenceView: React.FC = () => {
                                 </h1>
                                 <div className="flex items-center gap-3 mt-4">
                                     <span className="text-[10px] font-mono font-black text-indigo-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                        СУВЕРЕННЕ_КОГНІТИВНЕ_ЯДРО // v55.2
+                                        СУВЕРЕННЕ_КОГНІТИВНЕ_ЯДРО // v11.5
                                     </span>
-                                    <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 text-[8px] tracking-widest bg-indigo-500/5">NEURAL_READY</Badge>
+                                    <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 text-[8px] tracking-widest bg-indigo-500/5">OSINT_HUB_v11.5_CERTIFIED</Badge>
+                                    <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-[8px] tracking-widest bg-emerald-500/5">CONSTITUTIONAL_SHIELD_ACTIVE</Badge>
                                 </div>
                             </div>
                         </div>

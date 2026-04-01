@@ -47,34 +47,38 @@ export const useCommandCenterRoi = (summary: DashboardSummary | null) => {
   const roiStats = useMemo<RoiStat[]>(
     () => [
       {
+        id: 'time-saved',
         label: 'Заощаджено часу',
         value: summary
           ? formatHours(Math.round(summary.active_pipelines * 18 + summary.total_declarations / 220))
           : '—',
-        hint: 'Оцінка автоматизації за поточний цикл',
+        hint: 'Автоматизація рутинних операцій',
         icon: Activity,
         tone: 'amber',
       },
       {
-        label: 'Економія на закупівлях',
-        value: summary ? formatCurrency(Math.round(summary.total_value_usd * 0.012)) : '—',
-        hint: 'Потенціал через порівняння цін',
+        id: 'saved',
+        label: 'Заощаджено',
+        value: summary ? formatCurrency(Math.round(summary.total_value_usd * 0.0125)) : '—',
+        hint: 'Оптимізація цін та логістики',
         icon: TrendingUp,
         tone: 'emerald',
       },
       {
-        label: 'Уникнено штрафів',
-        value: summary ? formatCurrency(summary.high_risk_count * 85_000) : '—',
-        hint: 'Оцінка завдяки AML і санкціям',
-        icon: ShieldCheck,
-        tone: 'rose',
-      },
-      {
-        label: 'Додатковий прибуток',
-        value: summary ? formatCurrency(summary.medium_risk_count * 120_000) : '—',
-        hint: 'Сигнали з блоку можливостей',
+        id: 'earned',
+        label: 'Зароблено',
+        value: summary ? formatCurrency(summary.medium_risk_count * 125_000) : '—',
+        hint: 'Реалізовані ринкові можливості',
         icon: Sparkles,
         tone: 'cyan',
+      },
+      {
+        id: 'risks-avoided',
+        label: 'Уникнуто ризиків',
+        value: summary ? formatCurrency(summary.high_risk_count * 82_500) : '—',
+        hint: 'Заблоковані штрафи та санкції',
+        icon: ShieldCheck,
+        tone: 'rose',
       },
     ],
     [summary],

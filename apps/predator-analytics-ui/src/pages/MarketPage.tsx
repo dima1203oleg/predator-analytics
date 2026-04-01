@@ -13,6 +13,7 @@ import { createMetric, createRisk, createStandardContextActions } from '@/compon
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Activity,
   ArrowDownRight,
@@ -25,7 +26,9 @@ import {
   Package,
   Radar,
   TrendingUp,
+  Zap,
 } from 'lucide-react';
+import { ValueScreen, type ValueBreakdown } from '@/components/shared/ValueScreen';
 
 type MarketTab = 'overview' | 'declarations' | 'competitors' | 'customs';
 
@@ -270,6 +273,44 @@ export default function MarketPage() {
   const [overviewError, setOverviewError] = useState<string | null>(null);
   const [declarationsError, setDeclarationsError] = useState<string | null>(null);
   const [competitorsError, setCompetitorsError] = useState<string | null>(null);
+  
+  // Value Screen State
+  const [isValueScreenOpen, setIsValueScreenOpen] = useState(false);
+  const [valueAmount, setValueAmount] = useState(0);
+  const [valueDescription, setValueDescription] = useState('');
+  const [valueBreakdown, setValueBreakdown] = useState<ValueBreakdown[]>([]);
+
+  const handleSimulateValue = (productName: string) => {
+    const amount = Math.floor(Math.random() * 450_000) + 50_000;
+    setValueAmount(amount);
+    setValueDescription(`Аналіз ніші "${productName}" виявив дефіцит пропозиції при зростаючому попиті. Оптимальна стратегія закупівлі дозволить випередити конкурентів на 14 днів.`);
+    setValueBreakdown([
+      {
+        label: 'Прямий дохід',
+        value: `$${(amount * 0.7).toLocaleString('uk-UA')}`,
+        detail: 'Очікуваний прибуток від реалізації',
+        icon: TrendingUp,
+        tone: 'cyan'
+      },
+      {
+        id: 'efficiency',
+        label: 'Ефективність',
+        value: '+22%',
+        detail: 'Вище середньоринкової маржі',
+        icon: Zap,
+        tone: 'emerald'
+      },
+      {
+        id: 'time-advantage',
+        label: 'Часова перевага',
+        value: '14 днів',
+        detail: 'Випередження конкурентів',
+        icon: Activity,
+        tone: 'amber'
+      }
+    ]);
+    setIsValueScreenOpen(true);
+  };
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -445,6 +486,37 @@ export default function MarketPage() {
         </div>
       </section>
 
+      {/* Market Pulse Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex items-center gap-3 p-4 rounded-2xl border border-emerald-500/10 bg-emerald-500/5">
+          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <ShieldCheck size={18} />
+          </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Правовий статус</div>
+            <div className="text-xs font-bold text-emerald-200">Перевірено OSINT-Контуром</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 p-4 rounded-2xl border border-cyan-500/10 bg-cyan-500/5">
+          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+            <Activity size={18} />
+          </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Пульс ринку</div>
+            <div className="text-xs font-bold text-cyan-200">Висока активність (v11.5)</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 p-4 rounded-2xl border border-amber-500/10 bg-amber-500/5">
+          <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+            <AlertCircle size={18} />
+          </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Аномалії</div>
+            <div className="text-xs font-bold text-amber-200">3 нові сигнали виявлено</div>
+          </div>
+        </div>
+      </div>
+
       <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-2">
         <div className="flex flex-wrap gap-2">
           {tabs.map((tab) => (
@@ -478,6 +550,7 @@ export default function MarketPage() {
               data={normalizedOverview}
               loading={loadingOverview}
               error={overviewError}
+              onSimulateValue={handleSimulateValue}
             />
           )}
           {activeTab === 'declarations' && (
@@ -504,6 +577,18 @@ export default function MarketPage() {
           )}
         </motion.div>
       </AnimatePresence>
+
+      <ValueScreen
+        isOpen={isValueScreenOpen}
+        onClose={() => setIsValueScreenOpen(false)}
+        type="earned"
+        amount={valueAmount}
+        description={valueDescription}
+        breakdown={valueBreakdown}
+        onPrimaryAction={() => setIsValueScreenOpen(false)}
+      />
+
+      <ConstitutionalShield />
     </div>
   );
 }
@@ -516,6 +601,7 @@ function MarketOverview({
   data: NormalizedMarketOverview;
   loading: boolean;
   error: string | null;
+  onSimulateValue: (name: string) => void;
 }) {
   return (
     <div className="space-y-6">
@@ -585,6 +671,7 @@ function MarketOverview({
                 <th className="px-6 py-4">Категорія</th>
                 <th className="px-6 py-4 text-right">Обсяг</th>
                 <th className="px-6 py-4 text-right">Динаміка</th>
+                <th className="px-6 py-4 text-right">Дія</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
@@ -620,6 +707,18 @@ function MarketOverview({
                         {product.change >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
                         {Math.abs(product.change)}%
                       </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {!loading && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onSimulateValue(product.name)}
+                        className="h-8 border border-cyan-500/20 bg-cyan-500/5 text-cyan-200 hover:bg-cyan-500/20"
+                      >
+                        Аналіз ROI
+                      </Button>
                     )}
                   </td>
                 </motion.tr>

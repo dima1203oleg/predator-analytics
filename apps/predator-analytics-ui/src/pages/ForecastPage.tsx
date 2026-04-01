@@ -20,7 +20,10 @@ import {
     Target,
     TrendingUp,
     Zap,
+    ShieldCheck,
+    AlertTriangle
 } from 'lucide-react';
+import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 
 type ForecastTab = 'demand' | 'models' | 'scenarios';
 
@@ -254,6 +257,9 @@ export default function ForecastPage() {
                         <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
                             Керуйте товарним кодом, горизонтом і моделлю, а вкладка сценаріїв
                             відштовхується від фактичного прогнозу замість декоративного плейсхолдера.
+                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-black text-cyan-400 uppercase tracking-wider">
+                                <ShieldCheck size={10} /> v11.5 Посилено
+                            </span>
                         </p>
                     </div>
 
@@ -397,6 +403,8 @@ export default function ForecastPage() {
                     )}
                 </motion.div>
             </AnimatePresence>
+
+            <ConstitutionalShield />
         </div>
     );
 }
