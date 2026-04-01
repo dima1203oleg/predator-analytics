@@ -8,8 +8,8 @@ interface HoloContainerProps {
 }
 
 /**
- * 🔗 HoloContainer v45 Premium Edition
- * Canonical wrapper for holographic UI elements in Predator v45 | Neural Analytics.
+ * 🔗 HoloContainer
+ * Canonical wrapper for holographic UI elements in PREDATOR Analytics.
  */
 export const HoloContainer: React.FC<HoloContainerProps> = ({
     children,

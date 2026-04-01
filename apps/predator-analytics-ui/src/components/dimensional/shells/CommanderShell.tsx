@@ -58,7 +58,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               </div>
               <div className="flex items-center justify-between p-2 bg-slate-800/50 rounded-lg">
                 <span className="text-slate-400">Версія Моделі:</span>
-                <span className="text-purple-400 font-mono font-bold">Predator v45 | Neural Analytics.0.0</span>
+                <span className="text-purple-400 font-mono font-bold">PREDATOR Analytics v4.0</span>
               </div>
               <div className="flex items-center justify-between p-2 bg-slate-800/50 rounded-lg">
                 <span className="text-slate-400">Когнітивний Індекс:</span>

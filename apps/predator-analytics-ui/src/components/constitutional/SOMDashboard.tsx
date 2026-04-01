@@ -5,7 +5,7 @@ import { RedButton } from './RedButton';
 /**
  * ═══════════════════════════════════════════════════════════════
  * SOM DASHBOARD - Sovereign Observer Module Monitor
- * Predator v45 | Neural Analytics*
+ * 
  * Центральна панель моніторингу конституційного гіпервізора
  * з підтримкою Constitutional Core та Truth Ledger
  * ═══════════════════════════════════════════════════════════════

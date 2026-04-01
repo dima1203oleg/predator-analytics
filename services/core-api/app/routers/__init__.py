@@ -33,6 +33,7 @@ from .cases import router as cases_router
 from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
+from .decision_engine import router as decision_engine_router
 from .declarations import router as declarations_router
 from .factory import router as factory_router
 from .graph import router as graph_router
@@ -61,6 +62,7 @@ __all__ = [
     "companies_router",
     "competitors_router",
     "copilot_router",
+    "decision_engine_router",
     "declarations_router",
     "factory_router",
     "graph_router",

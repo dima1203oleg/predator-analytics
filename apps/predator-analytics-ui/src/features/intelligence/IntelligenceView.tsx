@@ -96,7 +96,49 @@ const IntelligenceView: React.FC = () => {
                     <div className="grid grid-cols-12 gap-10 relative z-10">
                         {/* Main Interaction Cluster */}
                         <div className="col-span-12 xl:col-span-8 flex flex-col gap-10">
-                            {/* Semantic Radar Matrix - The Grand Visualization */}
+                            {/* Decision Intelligence Engine */}
+                            <TacticalCard variant="holographic" className="overflow-hidden min-h-[400px] bg-slate-950/40 relative group" noPadding>
+                                <div className="absolute top-10 left-10 z-20 flex items-center gap-8">
+                                    <div className="p-5 bg-emerald-500/20 rounded-[1.5rem] border border-emerald-500/30 text-emerald-400 shadow-2xl group-hover:scale-110 transition-transform">
+                                        <Brain size={28} className="animate-pulse" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter italic">DECISION INTELLIGENCE ENGINE</h3>
+                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em] mt-1 border-l-2 border-emerald-500/40 pl-3">AI-АДВІЗОР_ДЛЯ_БІЗНЕС-РІШЕНЬ_v55</p>
+                                    </div>
+                                </div>
+
+                                <div className="absolute top-10 right-10 z-20">
+                                    <a 
+                                        href="/decision-intelligence"
+                                        className="flex items-center gap-3 px-6 py-3 bg-emerald-500/20 border border-emerald-500/30 rounded-[1.5rem] text-emerald-400 hover:bg-emerald-500/30 transition-all group"
+                                    >
+                                        <span className="text-[9px] font-black uppercase tracking-widest">ПЕРЕЙТИ_ДО_ДВИГУНА</span>
+                                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    </a>
+                                </div>
+
+                                <div className="absolute inset-x-0 bottom-0 py-20 px-10 pointer-events-none bg-gradient-to-t from-black/80 to-transparent" />
+
+                                <div className="flex-1 h-full pt-32 pb-10 px-10">
+                                    <div className="grid grid-cols-4 gap-6">
+                                        {[
+                                            { icon: Brain, label: 'РЕКОМЕНДАЦІЇ', desc: 'Повний аналіз рішень', color: 'text-emerald-400' },
+                                            { icon: Package, label: 'ЗАКУПІВЛІ', desc: 'Аналіз постачальників', color: 'text-blue-400' },
+                                            { icon: Globe, label: 'РИНОК', desc: 'Оцінка входу на ринок', color: 'text-purple-400' },
+                                            { icon: Users, label: 'КОНТРАГЕНТИ', desc: 'Перевірка партнерів', color: 'text-orange-400' },
+                                        ].map((feature, idx) => (
+                                            <div key={idx} className="bg-black/40 border border-white/5 rounded-[2rem] p-6 hover:border-emerald-500/20 transition-all group/feature">
+                                                <feature.icon size={24} className={cn("mb-4 transition-transform group-hover/feature:scale-110", feature.color)} />
+                                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-2">{feature.label}</h4>
+                                                <p className="text-[8px] font-mono text-slate-500 uppercase tracking-wider">{feature.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </TacticalCard>
+
+                            {/* Semantic Radar Matrix */}
                             <TacticalCard variant="holographic" className="overflow-hidden min-h-[700px] bg-slate-950/40 relative group" noPadding>
                                 <div className="absolute top-10 left-10 z-20 flex items-center gap-8">
                                     <div className="p-5 bg-indigo-500/20 rounded-[1.5rem] border border-indigo-500/30 text-indigo-400 shadow-2xl group-hover:scale-110 transition-transform">

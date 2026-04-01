@@ -4,6 +4,7 @@ import { monitoringApi, etlApi, azrApi } from './api/monitoring';
 import { trainingApi, datasetApi, nasApi, dataCatalogApi, mlApi, mlStudioApi } from './api/ml';
 import { optimizerApi, intelligenceApi, searchApi, trinityApi, somApi, autonomyApi } from './api/intelligence';
 import { ingestionApi } from './api/ingestion';
+import { decisionApi } from './api/decision';
 import { marketApi } from '@/features/market/api/market';
 import { forecastApi } from '@/features/forecast/api/forecast';
 import { diligenceApi } from '@/features/diligence/api/diligence';
@@ -24,7 +25,7 @@ export { apiClient, v45Client, API_BASE_URL, API_V45_URL, IS_TRUTH_ONLY_MODE };
 export {
     systemApi, monitoringApi, etlApi, azrApi, trainingApi, datasetApi,
     nasApi, dataCatalogApi, optimizerApi, intelligenceApi, searchApi,
-    trinityApi, somApi, autonomyApi, ingestionApi, mlApi, mlStudioApi,
+    trinityApi, somApi, autonomyApi, ingestionApi, decisionApi, mlApi, mlStudioApi,
     marketApi, forecastApi, diligenceApi, dashboardApi, competitorsApi,
     factoryApi, infraApi,
     osintService, cersService, registriesService
@@ -109,6 +110,7 @@ export const api = {
     market: marketApi,
     forecast: forecastApi,
     diligence: diligenceApi,
+    decision: decisionApi,
     dashboard: dashboardApi,
     factory: factoryApi,
     infra: infraApi,

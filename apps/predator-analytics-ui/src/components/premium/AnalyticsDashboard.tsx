@@ -1,10 +1,10 @@
 /**
- * Аналітичний Дашборд Predator v55 | Neural Analytics Matrix
+ * Аналітичний Дашборд PREDATOR Analytics
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
- * Прямий моніторинг когнітивної матриці та інфраструктурного шару.
+ * Прямий моніторинг бізнес-аналітики та інфраструктурного шару.
  *
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';

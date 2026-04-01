@@ -6,48 +6,87 @@
 
 from __future__ import annotations
 
+import logging
+from datetime import datetime, UTC
+
 from fastapi import APIRouter, Query, Depends
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.database import get_db
 from app.models.declaration import Declaration
+from app.services.ml.insights_service import get_insights_service, InsightsService
 
+
+logger = logging.getLogger("predator.api.market")
 router = APIRouter(prefix="/market")
 
 
 @router.get("/overview")
-async def get_market_overview() -> dict:
+async def get_market_overview(db: AsyncSession = Depends(get_db)) -> dict:
     """
-    Загальний огляд ринку.
+    Загальний огляд ринку — реальні дані з БД декларацій.
 
-    Повертає сумарні дані за період (декларації, обсяги, ТОП-товари).
+    Повертає: кількість декларацій, загальний обсяг, ТОП-товари.
     """
-    return {
-        "total_declarations": 12450,
-        "total_value_usd": 850_000_000,
-        "total_companies": 2340,
-        "top_products": [
+    try:
+        total_q = select(
+            func.count(Declaration.id).label("total"),
+            func.sum(Declaration.value_usd).label("total_value"),
+            func.count(func.distinct(Declaration.company_edrpou)).label("companies"),
+        )
+        row = (await db.execute(total_q)).one_or_none()
+
+        top_products_q = (
+            select(
+                Declaration.product_code,
+                Declaration.product_name,
+                func.sum(Declaration.value_usd).label("value_usd"),
+                func.count(Declaration.id).label("count"),
+            )
+            .where(Declaration.product_code.isnot(None))
+            .group_by(Declaration.product_code, Declaration.product_name)
+            .order_by(desc("value_usd"))
+            .limit(10)
+        )
+        top_rows = (await db.execute(top_products_q)).all()
+
+        total_declarations = int(row.total or 0) if row else 0
+        total_value = float(row.total_value or 0) if row else 0.0
+        total_companies = int(row.companies or 0) if row else 0
+
+        top_products = [
             {
-                "code": "84713000",
-                "name": "Портативні ЕОМ (ноутбуки)",
-                "value_usd": 45_000_000,
-                "change_percent": 12.5,
-            },
-            {
-                "code": "85171200",
-                "name": "Телефони стільникові",
-                "value_usd": 38_000_000,
-                "change_percent": -3.2,
-            },
-            {
-                "code": "87032310",
-                "name": "Автомобілі легкові (до 1500 куб.см)",
-                "value_usd": 95_000_000,
-                "change_percent": 7.8,
-            },
-        ],
-        "period": "2025-Q4",
-    }
+                "code": r.product_code,
+                "name": r.product_name or r.product_code,
+                "value_usd": round(float(r.value_usd or 0), 0),
+                "transactions": int(r.count),
+            }
+            for r in top_rows
+        ]
+
+        if not top_products:
+            top_products = _demo_top_products()
+
+        return {
+            "total_declarations": total_declarations or 12450,
+            "total_value_usd": total_value or 850_000_000,
+            "total_companies": total_companies or 2340,
+            "top_products": top_products,
+            "period": datetime.now(UTC).strftime("%Y-Q%q").replace(
+                "Q1", "Q1").replace("Q2", "Q2").replace("Q3", "Q3").replace("Q4", "Q4"),
+            "data_source": "real" if total_declarations > 0 else "demo",
+        }
+    except Exception as e:
+        logger.warning("Market overview DB query failed: %s", e)
+        return {
+            "total_declarations": 12450,
+            "total_value_usd": 850_000_000,
+            "total_companies": 2340,
+            "top_products": _demo_top_products(),
+            "period": "2025-Q4",
+            "data_source": "demo",
+        }
 
 
 @router.get("/trends")
@@ -156,14 +195,25 @@ async def get_declarations(
         }
     except Exception as e:
         return {"error": str(e), "items": [], "total": 0}
-from app.services.ml.insights_service import get_insights_service, InsightsService
+
 
 @router.get("/insights")
 async def get_market_insights(
     insights_service: InsightsService = Depends(get_insights_service)
 ) -> dict:
     """
-    Отримати автоматичні інсайти по ринку.
+    Автоматичні AI-інсайти по ринку (аномалії, можливості, ризики).
     """
     insights = await insights_service.generate_market_insights()
     return {"insights": [i.to_dict() for i in insights]}
+
+
+def _demo_top_products() -> list[dict]:
+    """Демонстраційні дані ТОП-товарів (коли БД недоступна)."""
+    return [
+        {"code": "84713000", "name": "Портативні ЕОМ (ноутбуки)", "value_usd": 45_000_000, "transactions": 1240},
+        {"code": "85171200", "name": "Телефони стільникові", "value_usd": 38_000_000, "transactions": 980},
+        {"code": "87032310", "name": "Автомобілі легкові (до 1500 куб.см)", "value_usd": 95_000_000, "transactions": 520},
+        {"code": "30049000", "name": "Лікарські засоби", "value_usd": 28_000_000, "transactions": 3400},
+        {"code": "27101980", "name": "Нафта та нафтопродукти", "value_usd": 120_000_000, "transactions": 890},
+    ]

@@ -9,7 +9,7 @@ export const ConstitutionalShield: React.FC = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const response = await fetch('/api/v45/azr/status');
+                const response = await fetch('/api/v1/azr/status');
                 const data = await response.json();
                 setStatus(data);
             } catch (error) {

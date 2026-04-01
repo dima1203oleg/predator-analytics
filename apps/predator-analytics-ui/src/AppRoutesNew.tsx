@@ -47,6 +47,7 @@ const ExecutiveBriefView = lazy(() => import('./features/dashboard/ExecutiveBrie
 const EntityGraphView = lazy(() => import('./features/intelligence/EntityGraphView'));
 const PremiumHubView = lazy(() => import('./features/intelligence/PremiumHubView'));
 const KnowledgeEngineeringView = lazy(() => import('./features/ai/KnowledgeEngineeringView'));
+const DecisionIntelligenceView = lazy(() => import('./features/decision').then(m => ({ default: m.DecisionIntelligenceView })));
 const AutonomyDashboard = lazy(() => import('./features/platform/AutonomyDashboard'));
 const ComponentsRegistryView = lazy(() => import('./features/platform/ComponentsRegistryView'));
 const PipelineManagerView = lazy(() => import('./features/platform/PipelineManagerView'));
@@ -201,6 +202,7 @@ export const AppRoutesNew = () => {
             <Route path="/analytics" element={<AnalyticsView />} />
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
+            <Route path="/decision-intelligence" element={<DecisionIntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
             <Route path="/forecast-view" element={<ForecastView />} />
             <Route path="/aml" element={<AMLScoringView />} />

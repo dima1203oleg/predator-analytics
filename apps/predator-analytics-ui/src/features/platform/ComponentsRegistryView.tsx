@@ -1,5 +1,5 @@
 /**
- * Predator v45 | Neural Analytics- Реєстр Компонентів (CU-PIE Engine Managed)
+ * Реєстр Компонентів (CU-PIE Engine Managed)
  *
  * Component Utilization & Pipeline Integrity Engine
  * Відображає реальний статус 200+ компонентів, базуючись на їх фактичному залученні в пайплайнах.
@@ -368,8 +368,7 @@ export const ComponentsRegistryView: React.FC = () => {
             <div className="relative z-10">
               <h3 className="text-2xl font-black mb-2">Open Source Power</h3>
               <p className="opacity-90 max-w-sm text-sm leading-relaxed text-indigo-100">
-                Predator v45 | Neural Analyticsпобудований на плечах гігантів. <br />
-                200+ компонентів інтегровано в єдину екосистему.
+                Бібліотеки з відкритим кодом — фундамент сучасної аналітики та AI-рішень.
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <div className="flex -space-x-2">
@@ -396,7 +395,7 @@ export const ComponentsRegistryView: React.FC = () => {
             <span className="text-sm font-bold text-slate-400">Ліцензія та Авторське Право</span>
           </div>
           <p className="text-slate-500 text-sm">
-            Програмний комплекс "Predator v45 | Neural Analytics" є інтелектуальною власністю.
+            Платформа PREDATOR Analytics — інтелектуальна власність для бізнес-аналітики.
           </p>
           <p className="text-slate-400 font-medium mt-1">
             Власник: <span className="text-white">Кізима Дмитро Миколайович</span> (12.03.1985 р.н.)

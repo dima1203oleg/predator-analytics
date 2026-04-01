@@ -8,9 +8,15 @@ import {
   BrainCircuit,
   Briefcase,
   Building2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
   Compass,
+  CreditCard,
   Cpu,
   Database,
+  DollarSign,
   Eye,
   Factory,
   FileText,
@@ -23,6 +29,8 @@ import {
   Lock,
   Network,
   Newspaper,
+  Package,
+  Puzzle,
   Radar,
   Scale,
   ScrollText,
@@ -30,6 +38,8 @@ import {
   Settings,
   Shield,
   Ship,
+  Sparkles,
+  Star,
   Target,
   TrendingUp,
   Upload,
@@ -60,19 +70,60 @@ export interface NavItem {
   matchPaths?: string[];
 }
 
+export interface NavGroup {
+  id: string;
+  label: string;
+  description: string;
+  items: NavItem[];
+  roles?: string[];
+}
+
 export interface NavSection {
   id: string;
   label: string;
   description: string;
   accent: NavAccent;
   items: NavItem[];
+  groups?: NavGroup[];
   collapsed?: boolean;
+  isGlobal?: boolean;
 }
 
 export interface NavigationContext {
   item: NavItem | null;
   section: NavSection | null;
 }
+
+export type NavigationRole =
+  | 'admin'
+  | 'analyst'
+  | 'business'
+  | 'supply_chain'
+  | 'client_basic'
+  | 'client_premium';
+
+const ROLE_ALIASES: Record<string, NavigationRole> = {
+  commander: 'admin',
+  explorer: 'client_basic',
+  operator: 'client_premium',
+  business_owner: 'business',
+  owner: 'business',
+  ceo: 'business',
+};
+
+export const normalizeNavigationRole = (role: string): NavigationRole =>
+  ROLE_ALIASES[role.toLowerCase()] ?? (role as NavigationRole);
+
+const roleMatches = (role: string, allowedRoles?: string[]): boolean => {
+  if (!allowedRoles || allowedRoles.length === 0) {
+    return true;
+  }
+
+  const normalizedRole = normalizeNavigationRole(role);
+  const normalizedAllowed = allowedRoles.map((allowedRole) => normalizeNavigationRole(allowedRole));
+
+  return normalizedAllowed.includes(normalizedRole);
+};
 
 export const navAccentStyles: Record<
   NavAccent,
@@ -151,15 +202,62 @@ export const navAccentStyles: Record<
   },
 };
 
+const GLOBAL_QUICK_ACTIONS: NavItem[] = [
+  {
+    id: 'global-search',
+    label: 'Пошук',
+    path: '/search',
+    icon: Search,
+    description: 'Глобальний пошук з підтримкою швидких переходів та аналітичного контексту.',
+    matchPaths: ['/search-v2'],
+  },
+  {
+    id: 'global-favorites',
+    label: 'Обране',
+    path: '/reports',
+    icon: Star,
+    description: 'Закріплені розділи, звіти та робочі сценарії для швидкого доступу.',
+  },
+  {
+    id: 'global-recent',
+    label: 'Нещодавнє',
+    path: '/overview',
+    icon: Clock,
+    description: 'Останні переглянуті розділи та робочі точки входу.',
+  },
+  {
+    id: 'global-ai-reco',
+    label: 'AI-рекомендації',
+    path: '/ai-insights',
+    icon: Sparkles,
+    description: 'Сигнали та підказки, згенеровані на основі підтверджених даних.',
+  },
+  {
+    id: 'global-assistant',
+    label: 'AI-асистент',
+    path: '/copilot',
+    icon: BrainCircuit,
+    description: 'Природномовний помічник для швидких аналітичних дій і пояснень.',
+  },
+];
+
 /**
  * Канонічна навігація PREDATOR Analytics v56.1.
  * Всі назви та описи призначені для людини, а не для внутрішніх технічних назв.
  */
 export const navigationConfig: NavSection[] = [
   {
-    id: 'command',
+    id: 'global-layer',
+    label: 'Глобальний шар',
+    description: 'Швидкий доступ, обране, нещодавнє та AI-підказки незалежно від активного розділу.',
+    accent: 'violet',
+    isGlobal: true,
+    items: GLOBAL_QUICK_ACTIONS,
+  },
+  {
+    id: 'command-center',
     label: 'Командний центр',
-    description: 'Операційний огляд платформи, ранкові брифінги, події та системний контроль.',
+    description: 'Оперативний штаб прибутку, ризиків і щоденного управлінського контролю.',
     accent: 'amber',
     items: [
       {
@@ -167,7 +265,7 @@ export const navigationConfig: NavSection[] = [
         label: 'Панель управління',
         path: '/',
         icon: LayoutDashboard,
-        description: 'Головна точка входу з живими метриками, секціями та пріоритетами.',
+        description: 'Головна точка входу з живими метриками, пріоритетами та ROI.',
         matchPaths: ['/predator-v24'],
       },
       {
@@ -175,538 +273,240 @@ export const navigationConfig: NavSection[] = [
         label: 'Огляд системи',
         path: '/overview',
         icon: Eye,
-        description: 'Агрегований стан ядра, інфраструктури, декларацій та критичних сигналів.',
+        description: 'Агрегований стан бізнесу, сигналів, ризиків і ключових відхилень.',
       },
       {
         id: 'omni',
         label: 'Повне бачення',
         path: '/omni',
         icon: Layers,
-        description: 'Глибокий зведений режим для складних перехресних аналітичних сценаріїв.',
+        description: 'Зведений режим для глибоких перехресних сценаріїв та синтезу інсайтів.',
       },
       {
         id: 'monitoring',
         label: 'Моніторинг',
         path: '/monitoring',
         icon: Activity,
-        description: 'Живі стани сервісів, черг, помилок, WebSocket-подій та продуктивності.',
+        description: 'Живі стани процесів, подій, відхилень і критичних сигналів.',
       },
       {
         id: 'morning-brief',
         label: 'Ранковий брифінг',
         path: '/morning-brief',
         icon: Compass,
-        description: 'Короткий стратегічний брифінг для оперативного старту роботи.',
+        description: 'Короткий стратегічний огляд для старту робочого дня.',
       },
-    ],
-  },
-  {
-    id: 'intelligence',
-    label: 'Корпоративна розвідка',
-    description: 'Ринкова аналітика, перевірка контрагентів, сценарне моделювання та виявлення шансів.',
-    accent: 'emerald',
-    items: [
-      {
-        id: 'intelligence',
-        label: 'Центр розвідки',
-        path: '/intelligence',
-        icon: Radar,
-        description: 'Стратегічна карта ризиків, сигналів і пріоритетних напрямків для аналітика.',
-      },
-      {
-        id: 'market',
-        label: 'Аналіз ринку',
-        path: '/market',
-        icon: TrendingUp,
-        description: 'Огляд ЗЕД, декларацій, конкурентів та митних потоків у єдиному інтерфейсі.',
-      },
-      {
-        id: 'forecast',
-        label: 'Прогнозування',
-        path: '/forecast',
-        icon: Target,
-        description: 'Прогнози попиту, моделей та сценаріїв на основі фактичних ринкових даних.',
-      },
-      {
-        id: 'diligence',
-        label: 'Перевірка контрагентів',
-        path: '/diligence',
-        icon: Search,
-        description: 'Повний профіль компанії, санкції, аномалії та бенефіціарна структура.',
-        matchPaths: ['/company/'],
-      },
-      {
-        id: 'opportunities',
-        label: 'Можливості',
-        path: '/opportunities',
-        icon: Briefcase,
-        description: 'Інсайти ринку, рекомендовані дії та виконавчі зведення без демо-даних.',
-      },
-      {
-        id: 'competitor-intel',
-        label: 'Конкуренти',
-        path: '/competitor-intel',
-        icon: Eye,
-        description: 'Профілі конкурентів, порівняння позицій і динаміка активності на ринку.',
-      },
-      {
-        id: 'modeling',
-        label: 'Моделювання',
-        path: '/modeling',
-        icon: FlaskConical,
-        description: 'Окремий простір для симуляцій рішень, ризикових сценаріїв і наслідків.',
-      },
-    ],
-  },
-  {
-    id: 'customs',
-    label: 'Митна розвідка',
-    description: 'Митні ризики, санкції, торговельні коридори та цінові відхилення.',
-    accent: 'cyan',
-    items: [
-      {
-        id: 'customs-intel',
-        label: 'Митна аналітика',
-        path: '/customs-intel',
-        icon: Shield,
-        description: 'Базовий митний аналіз по деклараціях, потоках та ризикових категоріях.',
-      },
-      {
-        id: 'customs-premium',
-        label: 'Митний ПРО',
-        path: '/customs-premium',
-        icon: Shield,
-        description: 'Розширений митний контур із преміальними інструментами аналізу.',
-        badge: 'ПРО',
-      },
-      {
-        id: 'aml',
-        label: 'AML-скоринг',
-        path: '/aml',
-        icon: AlertTriangle,
-        description: 'Оцінка ризику відмивання коштів по компаніях, платежах та ланцюгах.',
-      },
-      {
-        id: 'sanctions',
-        label: 'Санкції',
-        path: '/sanctions',
-        icon: Scale,
-        description: 'Перевірка санкційних збігів, списків, причин та актуальності записів.',
-      },
-      {
-        id: 'risk-scoring',
-        label: 'Ризик-скоринг',
-        path: '/risk-scoring',
-        icon: Target,
-        description: 'Комплексний скоринг субʼєктів, партій товару та митних подій.',
-      },
-      {
-        id: 'trade-map',
-        label: 'Карта торгівлі',
-        path: '/trade-map',
-        icon: Globe,
-        description: 'Маршрути, країни, вузли та динаміка міжнародних торговельних потоків.',
-      },
-      {
-        id: 'price-compare',
-        label: 'Порівняння цін',
-        path: '/price-compare',
-        icon: BarChart3,
-        description: 'Пошук цінових перекосів, демпінгу, завищення й підозрілих відхилень.',
-      },
-    ],
-  },
-  {
-    id: 'osint',
-    label: 'OSINT та реєстри',
-    description: 'Пошук сутностей, графи звʼязків, документи, тендери та державні джерела.',
-    accent: 'sky',
-    items: [
-      {
-        id: 'search',
-        label: 'Пошуковий центр',
-        path: '/search',
-        icon: Search,
-        description: 'Гібридний пошук по індексах, реєстрах і відкритих джерелах.',
-        matchPaths: ['/search-v2'],
-      },
-      {
-        id: 'graph',
-        label: 'Граф звʼязків',
-        path: '/graph',
-        icon: Network,
-        description: 'Візуальний аналіз сутностей, бенефіціарів, звʼязків і кластерів.',
-      },
-      {
-        id: 'entity-graph',
-        label: 'Граф сутностей',
-        path: '/entity-graph',
-        icon: Network,
-        description: 'Поглиблена графова проекція з акцентом на ключові обʼєкти розслідування.',
-      },
-      {
-        id: 'registries',
-        label: 'Реєстри',
-        path: '/registries',
-        icon: Database,
-        description: 'Консолідований доступ до офіційних реєстрів та корпоративних записів.',
-      },
-      {
-        id: 'tenders',
-        label: 'Тендери',
-        path: '/tenders',
-        icon: Briefcase,
-        description: 'Аналіз закупівель, переможців, сум, повторюваності та аномалій.',
-      },
-      {
-        id: 'maritime',
-        label: 'Морський трафік',
-        path: '/maritime',
-        icon: Ship,
-        description: 'Відстеження морських маршрутів, суден і транзитних коридорів.',
-      },
-      {
-        id: 'datagov',
-        label: 'Держреєстри',
-        path: '/datagov',
-        icon: Landmark,
-        description: 'Державні набори даних, відкриті реєстри та суміжні джерела для перевірки.',
-      },
-      {
-        id: 'documents',
-        label: 'Документи',
-        path: '/documents',
-        icon: FileText,
-        description: 'Пошук, читання, класифікація і контроль документальних доказів.',
-      },
-    ],
-  },
-  {
-    id: 'analytics-tools',
-    label: 'Аналітичний арсенал',
-    description: 'Звіти, білдери, чартинг, реалтайм-аналітика та окремі огляди.',
-    accent: 'violet',
-    items: [
-      {
-        id: 'analytics',
-        label: 'Аналітика',
-        path: '/analytics',
-        icon: BarChart3,
-        description: 'Поглиблені аналітичні панелі, зрізи та комплексні індикатори.',
-      },
-      {
-        id: 'reports',
-        label: 'Звіти',
-        path: '/reports',
-        icon: FileText,
-        description: 'Конструктор звітів, шаблони та експорт аналітичних матеріалів.',
-      },
-      {
-        id: 'builder',
-        label: 'Конструктор дашбордів',
-        path: '/builder',
-        icon: Blocks,
-        description: 'Налаштування власних вʼюшок, віджетів і композицій для команд.',
-      },
-      {
-        id: 'charts',
-        label: 'Поглиблені графіки',
-        path: '/charts',
-        icon: LineChart,
-        description: 'Розширені чартові інструменти для глибшого візуального аналізу.',
-      },
-      {
-        id: 'realtime',
-        label: 'Реалтайм',
-        path: '/realtime',
-        icon: Activity,
-        description: 'Потоковий режим спостереження за подіями, чергами та змінами.',
-        badge: 'НАЖИВО',
-      },
-      {
-        id: 'market-analytics',
-        label: 'Ринкова аналітика',
-        path: '/market-analytics',
-        icon: TrendingUp,
-        description: 'Преміальна ринкова аналітика для порівнянь, трендів і сегментів.',
-      },
-    ],
-  },
-  {
-    id: 'clients',
-    label: 'Клієнти',
-    description: 'Портфелі клієнтів, реферальний контроль та постачальницькі мережі.',
-    accent: 'rose',
-    items: [
-      {
-        id: 'clients',
-        label: 'Клієнтський центр',
-        path: '/clients',
-        icon: Users,
-        description: 'Сегменти клієнтів, кейси, активність та навігація по їхніх сценаріях.',
-      },
-      {
-        id: 'referral-control',
-        label: 'Реферальний контроль',
-        path: '/referral-control',
-        icon: Users,
-        description: 'Контроль каналів рекомендацій, переходів та повʼязаних ризиків.',
-      },
-      {
-        id: 'suppliers',
-        label: 'Постачальники',
-        path: '/suppliers',
-        icon: Building2,
-        description: 'Пошук і порівняння постачальників, умов і підтверджених можливостей.',
-      },
-    ],
-  },
-  {
-    id: 'client-arsenal',
-    label: 'Клієнтський арсенал',
-    description: 'Персональні брифінги, досьє, владні мапи та ланцюги постачання.',
-    accent: 'indigo',
-    items: [
       {
         id: 'newspaper',
         label: 'Ранкова газета',
         path: '/newspaper',
         icon: Newspaper,
-        description: 'Персоналізований ранок для клієнта з підсумками та новими сигналами.',
+        description: 'Персоналізований дайджест із підсумками, подіями та новими сигналами.',
+      },
+    ],
+    groups: [
+      {
+        id: 'overview',
+        label: 'Огляд',
+        description: 'Оперативний контроль та стратегічний огляд.',
+        items: [
+          { id: 'dashboard', label: 'Панель управління', path: '/', icon: LayoutDashboard, description: 'Головна точка входу з живими метриками, пріоритетами та ROI.' },
+          { id: 'overview', label: 'Огляд системи', path: '/overview', icon: Eye, description: 'Агрегований стан бізнесу, сигналів, ризиків і ключових відхилень.' },
+          { id: 'omni', label: 'Повне бачення', path: '/omni', icon: Layers, description: 'Зведений режим для глибоких перехресних сценаріїв та синтезу інсайтів.' },
+        ],
       },
       {
-        id: 'compromat',
-        label: 'Досьє персони',
-        path: '/compromat-person',
-        icon: FileText,
-        description: 'Профіль особи, звʼязки, ризики, контекст та історія публічних згадок.',
+        id: 'operations',
+        label: 'Оперативка',
+        description: 'Щоденний оперативний контроль.',
+        items: [
+          { id: 'monitoring', label: 'Моніторинг', path: '/monitoring', icon: Activity, description: 'Живі стани процесів, подій, відхилень і критичних сигналів.' },
+          { id: 'morning-brief', label: 'Ранковий брифінг', path: '/morning-brief', icon: Compass, description: 'Короткий стратегічний огляд для старту робочого дня.' },
+          { id: 'newspaper', label: 'Ранкова газета', path: '/newspaper', icon: Newspaper, description: 'Персоналізований дайджест із підсумками, подіями та новими сигналами.' },
+        ],
       },
       {
-        id: 'compromat-firm',
-        label: 'Досьє компанії',
-        path: '/compromat-firm',
-        icon: Building2,
-        description: 'Компанія під лупою: структура, репутація, ризики та звʼязки.',
+        id: 'finances',
+        label: '💰 Фінанси / Unit-економіка',
+        description: 'Фінансовий контроль та unit-економіка бізнес-процесів.',
+        items: [
+          { id: 'budgets', label: 'Бюджети', path: '/budgets', icon: Landmark, description: 'Планування та контроль бюджетів за напрямками.' },
+          { id: 'expenses', label: 'Витрати', path: '/expenses', icon: DollarSign, description: 'Деталізація фактичних витрат, порівняння з бюджетом.' },
+          { id: 'savings', label: 'Економія', path: '/savings', icon: TrendingUp, description: 'Агрегація зекономлених коштів завдяки рекомендаціям платформи.' },
+          { id: 'procurement-optimizer', label: 'Оптимізація закупівель', path: '/procurement-optimizer', icon: Target, description: 'Знайдіть найкращих постачальників та зекономте до 25% на кожній партії.', badge: 'NEW' },
+          { id: 'cost-per-action', label: 'Вартість дії (CPA)', path: '/cpa', icon: BarChart3, description: 'Розрахунок вартості кожної автоматизованої дії.' },
+          { id: 'roi-modules', label: 'ROI по модулях', path: '/roi-modules', icon: LineChart, description: 'Повернення інвестицій для кожного модуля, агента, інтеграції.' },
+          { id: 'ltv-cac', label: 'LTV / CAC', path: '/ltv-cac', icon: Users, description: 'Життєва цінність клієнта та вартість залучення.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'intelligence',
+    label: 'Розвідка',
+    description: 'Мозок системи: де гроші, де небезпека і де наступна можливість.',
+    accent: 'emerald',
+    items: [
+      { id: 'intelligence', label: 'Центр розвідки', path: '/intelligence', icon: Radar, description: 'Стратегічна карта ризиків, сигналів і пріоритетів.' },
+      { id: 'market', label: 'Аналіз ринку', path: '/market', icon: TrendingUp, description: 'Огляд ринку, потоків, конкурентів і потенціалу прибутку.' },
+      { id: 'forecast', label: 'Прогнозування', path: '/forecast', icon: Target, description: 'Сценарії попиту, ризиків і майбутніх можливостей.' },
+      { id: 'opportunities', label: 'Можливості', path: '/opportunities', icon: Briefcase, description: 'Сигнали для зростання виручки та швидкого захоплення ринку.' },
+      { id: 'competitor-intel', label: 'Конкуренти', path: '/competitor-intel', icon: Eye, description: 'Позиції, переваги та слабкі місця конкурентів.', },
+      { id: 'diligence', label: 'Перевірка контрагентів', path: '/diligence', icon: Search, description: 'Профіль компанії, санкції, аномалії та бенефіціарна структура.', matchPaths: ['/company/'] },
+      { id: 'modeling', label: 'Моделювання', path: '/modeling', icon: FlaskConical, description: 'Симуляції рішень, ризиків і наслідків без демо-шуму.' },
+    ],
+    groups: [
+      {
+        id: 'markets-strategy',
+        label: 'Ринки та стратегія',
+        description: 'Сценарії для оцінки ринку, виручки та векторів росту.',
+        items: [
+          { id: 'intelligence', label: 'Центр розвідки', path: '/intelligence', icon: Radar, description: 'Стратегічна карта ризиків, сигналів і пріоритетів.' },
+          { id: 'market', label: 'Аналіз ринку', path: '/market', icon: TrendingUp, description: 'Огляд ринку, потоків, конкурентів і потенціалу прибутку.' },
+          { id: 'forecast', label: 'Прогнозування', path: '/forecast', icon: Target, description: 'Сценарії попиту, ризиків і майбутніх можливостей.' },
+          { id: 'opportunities', label: 'Можливості', path: '/opportunities', icon: Briefcase, description: 'Сигнали для зростання виручки та швидкого захоплення ринку.' },
+          { id: 'competitor-intel', label: 'Конкуренти', path: '/competitor-intel', icon: Eye, description: 'Позиції, переваги та слабкі місця конкурентів.' },
+        ],
       },
       {
-        id: 'power-structure',
-        label: 'Структура влади',
-        path: '/power-structure',
-        icon: Landmark,
-        description: 'Мапа інституційного впливу, посадовців та повʼязаних організацій.',
+        id: 'risk-compliance',
+        label: 'Ризики та комплаєнс',
+        description: 'Підсвічує загрози, що можуть вбити угоду або прибуток.',
+        items: [
+          { id: 'diligence', label: 'Перевірка контрагентів', path: '/diligence', icon: Search, description: 'Профіль компанії, санкції, аномалії та бенефіціари.', matchPaths: ['/company/'] },
+          { id: 'aml', label: 'AML-скоринг', path: '/aml', icon: AlertTriangle, description: 'Оцінка ризику відмивання коштів по компаніях і платежах.' },
+          { id: 'sanctions', label: 'Санкції', path: '/sanctions', icon: Scale, description: 'Перевірка санкційних збігів, списків та актуальності.' },
+          { id: 'risk-scoring', label: 'Ризик-скоринг', path: '/risk-scoring', icon: Target, description: 'Комплексний скоринг субʼєктів, партій і подій.' },
+        ],
       },
       {
-        id: 'supply-chain',
-        label: 'Ланцюги постачання',
-        path: '/supply-chain',
-        icon: Box,
-        description: 'Контроль постачальницьких ланцюгів, вузьких місць і точок ризику.',
+        id: 'osint-investigation',
+        label: 'OSINT та розслідування',
+        description: 'Графи, реєстри, тендери та докази для глибокого розслідування.',
+        roles: ['admin', 'analyst', 'government', 'intelligence'],
+        items: [
+          { id: 'entity-graph', label: 'Граф сутностей', path: '/entity-graph', icon: Network, description: 'Графова проекція ключових об’єктів розслідування.' },
+          { id: 'graph', label: 'Граф звʼязків', path: '/graph', icon: Network, description: 'Бенефіціари, зв’язки та кластери в одному вікні.' },
+          { id: 'power-structure', label: 'Структура влади', path: '/power-structure', icon: Landmark, description: 'Мапа впливу, посадовців і пов’язаних організацій.' },
+          { id: 'compromat-person', label: 'Досьє персони', path: '/compromat-person', icon: FileText, description: 'Профіль особи, зв’язки, ризики та публічні згадки.' },
+          { id: 'compromat-firm', label: 'Досьє компанії', path: '/compromat-firm', icon: Building2, description: 'Компанія під лупою: структура, репутація та ризики.' },
+          { id: 'search', label: 'Пошуковий центр', path: '/search', icon: Search, description: 'Гібридний пошук по індексах і відкритих джерелах.', matchPaths: ['/search-v2'] },
+          { id: 'registries', label: 'Реєстри', path: '/registries', icon: Database, description: 'Консолідований доступ до офіційних реєстрів.' },
+          { id: 'datagov', label: 'Держреєстри', path: '/datagov', icon: Landmark, description: 'Державні набори даних та відкриті джерела.' },
+          { id: 'tenders', label: 'Тендери', path: '/tenders', icon: Briefcase, description: 'Аналіз закупівель, переможців і аномалій.' },
+          { id: 'maritime', label: 'Морський трафік', path: '/maritime', icon: Ship, description: 'Маршрути, судна та транзитні коридори.' },
+          { id: 'documents', label: 'Документи', path: '/documents', icon: FileText, description: 'Пошук, читання і контроль документальних доказів.' },
+        ],
       },
+      {
+        id: 'modeling',
+        label: 'Моделювання',
+        description: 'Симуляції рішень, ризиків і сценаріїв без зайвого шуму.',
+        roles: ['admin', 'analyst'],
+        items: [
+          { id: 'modeling', label: 'Моделювання', path: '/modeling', icon: FlaskConical, description: 'Простір для симуляцій рішень, ризиків і наслідків.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'trade-logistics',
+    label: 'Торгівля та логістика',
+    description: 'Головний генератор економії на митниці, маршрутах і постачанні.',
+    accent: 'cyan',
+    items: [
+      { id: 'customs-intel', label: 'Митна аналітика', path: '/customs-intel', icon: Shield, description: 'Аналіз декларацій, потоків і ризикових категорій.' },
+      { id: 'customs-premium', label: 'Митний ПРО', path: '/customs-premium', icon: Shield, description: 'Преміальний митний контур з розширеними інструментами.', badge: 'ПРО' },
+      { id: 'trade-map', label: 'Карта торгівлі', path: '/trade-map', icon: Globe, description: 'Маршрути, країни, вузли та міжнародні потоки.' },
+      { id: 'price-compare', label: 'Порівняння цін', path: '/price-compare', icon: BarChart3, description: 'Виявлення перекосів, демпінгу та завищення.', },
+      { id: 'supply-chain', label: 'Ланцюги постачання', path: '/supply-chain', icon: Box, description: 'Контроль ланцюгів, вузьких місць і ризиків.' },
+    ],
+  },
+  {
+    id: 'clients',
+    label: 'Контрагенти',
+    description: 'Єдина екосистема партнерів, клієнтів і постачальників.',
+    accent: 'rose',
+    items: [
+      { id: 'clients', label: 'Клієнтський центр', path: '/clients', icon: Users, description: 'Сегменти клієнтів, кейси та активність.' },
+      { id: 'suppliers', label: 'Постачальники', path: '/suppliers', icon: Building2, description: 'Пошук і порівняння постачальників та умов.' },
+      { id: 'referral-control', label: 'Реферальний контроль', path: '/referral-control', icon: Users, description: 'Контроль каналів рекомендацій і пов’язаних ризиків.' },
+      { id: 'compromat-person', label: 'Досьє персони', path: '/compromat-person', icon: FileText, description: 'Профіль особи, зв’язки, ризики та згадки.' },
+      { id: 'compromat-firm', label: 'Досьє компанії', path: '/compromat-firm', icon: Building2, description: 'Компанія під лупою: структура, репутація та ризики.' },
     ],
   },
   {
     id: 'ai-autonomy',
-    label: 'ШІ та автономність',
-    description: 'LLM, агенти, знання, двигуни та контроль автономних процесів.',
-    accent: 'emerald',
+    label: 'ШІ та автоматизація',
+    description: 'Інтелектуальний радник, який працює 24/7.',
+    accent: 'indigo',
     items: [
+      { id: 'agents', label: 'ШІ-агенти', path: '/agents', icon: Users, description: 'Агенти, ролі, задачі та результати роботи.' },
+      { id: 'ai-insights', label: 'ШІ-інсайти', path: '/ai-insights', icon: Zap, description: 'Інсайти та висновки на основі реальних сигналів.' },
+      { id: 'knowledge', label: 'База знань', path: '/knowledge', icon: BrainCircuit, description: 'Актуалізація знань для сценаріїв і моделей.' },
+      { id: 'llm', label: 'LLM-студія', path: '/llm', icon: Brain, description: 'Керування моделями, провайдерами та маршрутами.', roles: ['admin'] },
+      { id: 'engines', label: 'Двигуни', path: '/engines', icon: Cpu, description: 'Стан аналітичних двигунів, latency і throughput.', roles: ['admin'] },
+      { id: 'training', label: 'Тренування моделей', path: '/training', icon: Cpu, description: 'Контроль тренувальних циклів і артефактів.', roles: ['admin'] },
+      { id: 'super', label: 'Суперінтелект', path: '/super', icon: Brain, description: 'Експериментальний режим аналітичної координації.', badge: 'α', roles: ['admin'] },
+      { id: 'ai-control', label: 'Центр керування ШІ', path: '/admin/ai-control', icon: Zap, description: 'Адміністративне керування ШІ-контуром.', roles: ['admin'] },
+    ],
+    groups: [
       {
-        id: 'llm',
-        label: 'LLM-студія',
-        path: '/llm',
-        icon: Brain,
-        description: 'Керування моделями, провайдерами, маршрутами та їхнім станом.',
+        id: 'solution-hub',
+        label: '🧩 Центр рішень',
+        description: 'Створення, зберігання та масштабування бізнес-рішень.',
+        items: [
+          { id: 'my-solutions', label: 'Мої рішення', path: '/my-solutions', icon: Puzzle, description: 'Створені користувачем модулі та пайплайни.' },
+          { id: 'solution-templates', label: 'Шаблони рішень', path: '/solution-templates', icon: Blocks, description: 'Готові кейси: імпорт, перевірка контрагентів, логістика.' },
+          { id: 'publish-solution', label: 'Публікація рішень', path: '/publish-solution', icon: Upload, description: 'Для внутрішніх команд, клієнтів, маркетплейс.' },
+          { id: 'solution-versions', label: 'Версії рішень', path: '/solution-versions', icon: Clock, description: 'Контроль змін, відкат до попередніх версій.' },
+        ],
       },
       {
-        id: 'agents',
-        label: 'Агенти',
-        path: '/agents',
-        icon: Users,
-        description: 'Контроль агентів, ролей, стану задач та результатів їхньої роботи.',
-      },
-      {
-        id: 'knowledge',
-        label: 'База знань',
-        path: '/knowledge',
-        icon: BrainCircuit,
-        description: 'Побудова й актуалізація знань для моделей та аналітичних сценаріїв.',
-      },
-      {
-        id: 'ai-insights',
-        label: 'ШІ-інсайти',
-        path: '/ai-insights',
-        icon: Zap,
-        description: 'Добірка інсайтів і висновків, згенерованих на базі фактичних сигналів.',
-      },
-      {
-        id: 'super',
-        label: 'Суперінтелект',
-        path: '/super',
-        icon: Brain,
-        description: 'Експериментальний режим для високорівневої аналітичної координації.',
-        badge: 'α',
-      },
-      {
-        id: 'training',
-        label: 'Тренування моделей',
-        path: '/training',
-        icon: Cpu,
-        description: 'Контроль циклів тренування, задач, артефактів і помилок навчання.',
-      },
-      {
-        id: 'engines',
-        label: 'Двигуни',
-        path: '/engines',
-        icon: Cpu,
-        description: 'Стан аналітичних двигунів, throughput, latency та деградації.',
-      },
-      {
-        id: 'ai-control',
-        label: 'Центр керування ШІ',
-        path: '/admin/ai-control',
-        icon: Zap,
-        description: 'Адміністративне керування ШІ-контуром, політиками та обмеженнями.',
-        roles: ['admin'],
+        id: 'business-scenarios',
+        label: '📊 Бізнес-сценарії',
+        description: 'Готові процеси для швидкого запуску.',
+        items: [
+          { id: 'import-scenario', label: 'Імпорт товару', path: '/scenario/import', icon: Package, description: 'Повний процес імпорту від перевірки до митного оформлення.' },
+          { id: 'counterparty-check', label: 'Перевірка контрагента', path: '/scenario/counterparty', icon: Search, description: 'Комплексна перевірка компанії перед угодою.' },
+          { id: 'market-analysis', label: 'Аналіз ринку перед закупівлею', path: '/scenario/market', icon: TrendingUp, description: 'Оцінка ринку, цін, постачальників перед закупівлею.' },
+          { id: 'scenario-progress', label: 'Відстеження сценаріїв', path: '/scenario-progress', icon: Activity, description: 'Статус, прогрес та результати запущених сценаріїв.' },
+        ],
       },
     ],
   },
   {
-    id: 'factory',
-    label: 'Фабрика',
-    description: 'Компоненти, пайплайни, фабричні сценарії та системне складання рішень.',
-    accent: 'amber',
-    items: [
-      {
-        id: 'system-factory',
-        label: 'Системна фабрика',
-        path: '/system-factory',
-        icon: Factory,
-        description: 'Комплексне складання систем, контурів, модулів і їхнього стану.',
-      },
-      {
-        id: 'factory-studio',
-        label: 'Студія фабрики',
-        path: '/factory-studio',
-        icon: Wrench,
-        description: 'Гнучка студія для побудови фабричних сценаріїв і пайплайнів.',
-      },
-      {
-        id: 'pipeline',
-        label: 'Пайплайни',
-        path: '/pipeline',
-        icon: Workflow,
-        description: 'Запуск, контроль та аудит пайплайнів обробки та аналітики.',
-      },
-      {
-        id: 'components',
-        label: 'Компоненти',
-        path: '/components',
-        icon: Blocks,
-        description: 'Реєстр компонентів, версій, статусів і сумісності модулів.',
-      },
-      {
-        id: 'autonomy',
-        label: 'Автономність',
-        path: '/autonomy',
-        icon: Zap,
-        description: 'Адміністративний контур для автономних стратегій та правил роботи.',
-        roles: ['admin'],
-      },
-    ],
-  },
-  {
-    id: 'data-platform',
-    label: 'Платформа даних',
-    description: 'Інгестія, парсинг, датасети, сховище та експорт готових даних.',
+    id: 'system',
+    label: 'Система',
+    description: 'Технічний контур, видимий лише адміністраторам.',
     accent: 'sky',
     items: [
-      {
-        id: 'data',
-        label: 'Сховище даних',
-        path: '/data',
-        icon: Database,
-        description: 'Огляд структури даних, індексів, каталогів та готовності сховища.',
-      },
-      {
-        id: 'ingestion',
-        label: 'Завантаження',
-        path: '/ingestion',
-        icon: Upload,
-        description: 'Завантаження джерел, файлів, потоків та стан конвеєрів інгестії.',
-        matchPaths: ['/data-hub'],
-      },
-      {
-        id: 'parsers',
-        label: 'Парсери',
-        path: '/parsers',
-        icon: ScrollText,
-        description: 'Контроль парсерів, конфігурацій, помилок і якості розбору джерел.',
-      },
-      {
-        id: 'databases',
-        label: 'Бази даних',
-        path: '/databases',
-        icon: Database,
-        description: 'Огляд підключених БД, стану, обсягів та допоміжних сервісів.',
-      },
-      {
-        id: 'datasets',
-        label: 'Датасети',
-        path: '/datasets',
-        icon: Layers,
-        description: 'Керування датасетами, версіями, джерелами і готовністю до моделей.',
-        matchPaths: ['/datasets-manager'],
-      },
-      {
-        id: 'export',
-        label: 'Експорт',
-        path: '/export',
-        icon: Upload,
-        description: 'Формування експортів, пакетів вивантаження та журналів передачі.',
-      },
+      { id: 'security', label: 'Безпека', path: '/security', icon: Lock, description: 'Стан захисту, подій і критичних відхилень.' },
+      { id: 'compliance', label: 'Комплаєнс', path: '/compliance', icon: Scale, description: 'Правила, обмеження, процедури та вимоги.' },
+      { id: 'settings', label: 'Налаштування', path: '/settings', icon: Settings, description: 'Налаштування інтерфейсу, доступів і поведінки.' },
+      { id: 'billing', label: 'Тарифний план', path: '/billing', icon: CreditCard, description: 'Управління підпискою, лімітами та монетизацією.' },
+      { id: 'deployment', label: 'Деплоймент', path: '/deployment', icon: Globe, description: 'Середовища, релізи та пайплайни розгортання.', roles: ['admin'] },
+      { id: 'governance', label: 'Суверенне врядування', path: '/governance', icon: Shield, description: 'Політики, аудити та суверенний контроль.', roles: ['admin'] },
+      { id: 'system-factory', label: 'Системна фабрика', path: '/system-factory', icon: Factory, description: 'Контури, модулі й технічний стан платформи.', roles: ['admin'] },
+      { id: 'ingestion', label: 'Завантаження', path: '/ingestion', icon: Upload, description: 'Джерела, потоки та конвеєри інгестії.' },
+      { id: 'data', label: 'Платформа даних', path: '/data', icon: Database, description: 'Структура даних, індекси й готовність сховища.' },
+      { id: 'reports', label: 'Звіти', path: '/reports', icon: FileText, description: 'Конструктор звітів і експорт матеріалів.' },
     ],
-  },
-  {
-    id: 'administration',
-    label: 'Адміністрування',
-    description: 'Безпека, врядування, комплаєнс, деплоймент і системні налаштування.',
-    accent: 'rose',
-    items: [
+    groups: [
       {
-        id: 'governance',
-        label: 'Суверенне врядування',
-        path: '/governance',
-        icon: Shield,
-        description: 'Адміністративний центр політик, аудитів та суверенного контролю.',
+        id: 'integrations',
+        label: '🔗 Інтеграції',
+        description: 'Оркестрація інтеграцій та потоків даних.',
         roles: ['admin'],
-      },
-      {
-        id: 'security',
-        label: 'Безпека',
-        path: '/security',
-        icon: Lock,
-        description: 'Стан захисту, подій безпеки, журналів та критичних відхилень.',
-      },
-      {
-        id: 'compliance',
-        label: 'Комплаєнс',
-        path: '/compliance',
-        icon: Scale,
-        description: 'Перевірка правил, обмежень, процедур та регуляторних вимог.',
-      },
-      {
-        id: 'deployment',
-        label: 'Деплоймент',
-        path: '/deployment',
-        icon: Globe,
-        description: 'Стани середовищ, релізів, пайплайнів розгортання та синхронізації.',
-      },
-      {
-        id: 'settings',
-        label: 'Налаштування',
-        path: '/settings',
-        icon: Settings,
-        description: 'Базові налаштування інтерфейсу, доступів і поведінки платформи.',
+        items: [
+          { id: 'api-keys', label: 'API ключі', path: '/api-keys', icon: Lock, description: 'Управління API-ключами для зовнішніх сервісів.' },
+          { id: 'service-connections', label: 'Підключення до сервісів', path: '/service-connections', icon: Globe, description: 'Конектори до CRM, ERP, митних баз, логістичних платформ.' },
+          { id: 'webhooks', label: 'Webhooks', path: '/webhooks', icon: Upload, description: 'Налаштування вебхуків для подій системи.' },
+          { id: 'data-connectors', label: 'Data connectors', path: '/data-connectors', icon: Database, description: 'Підключення до зовнішніх джерел даних.' },
+          { id: 'flow-builder', label: 'Flow builder', path: '/flow-builder', icon: Workflow, description: 'Візуальний конструктор потоків між інтеграціями.' },
+          { id: 'event-routing', label: 'Event routing', path: '/event-routing', icon: Network, description: 'Маршрутизація подій між інтеграціями.' },
+          { id: 'retry-handling', label: 'Retry / error handling', path: '/retry-handling', icon: AlertTriangle, description: 'Політики повторних спроб, обробка помилок.' },
+        ],
       },
     ],
   },
@@ -726,17 +526,35 @@ const itemMatchesPath = (item: NavItem, pathname: string): boolean => {
 
 export const getVisibleNavigation = (role: string): NavSection[] =>
   navigationConfig
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => !item.roles || item.roles.includes(role)),
-    }))
-    .filter((section) => section.items.length > 0);
+    .map((section) => {
+      const items = section.items.filter((item) => roleMatches(role, item.roles));
+      const groups = section.groups
+        ?.filter((group) => roleMatches(role, group.roles))
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => roleMatches(role, item.roles)),
+        }))
+        .filter((group) => group.items.length > 0);
+
+      return {
+        ...section,
+        items,
+        groups,
+      };
+    })
+    .filter((section) => section.items.length > 0 || (section.groups?.length ?? 0) > 0);
+
+export const getFilteredNavigation = getVisibleNavigation;
 
 export const getNavigationTotals = (role: string): { items: number; sections: number } => {
   const sections = getVisibleNavigation(role);
   return {
     sections: sections.length,
-    items: sections.reduce((total, section) => total + section.items.length, 0),
+    items: sections.reduce(
+      (total, section) =>
+        total + section.items.length + (section.groups?.reduce((groupTotal, group) => groupTotal + group.items.length, 0) ?? 0),
+      0,
+    ),
   };
 };
 
@@ -749,10 +567,19 @@ export const getNavigationContext = (pathname: string, role: string): Navigation
         return { item, section };
       }
     }
+
+    for (const group of section.groups ?? []) {
+      for (const item of group.items) {
+        if (item.path === pathname) {
+          return { item, section };
+        }
+      }
+    }
   }
 
   for (const section of sections) {
-    const sortedItems = [...section.items].sort((left, right) => right.path.length - left.path.length);
+    const groupedItems = section.groups?.flatMap((group) => group.items) ?? [];
+    const sortedItems = [...section.items, ...groupedItems].sort((left, right) => right.path.length - left.path.length);
     const matchedItem = sortedItems.find((item) => itemMatchesPath(item, pathname));
 
     if (matchedItem) {

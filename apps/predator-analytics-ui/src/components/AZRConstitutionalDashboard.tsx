@@ -1,6 +1,5 @@
 /**
- * 🏛️ AZR Constitutional Sovereign Controller | v55 Premium Matrix
- * Predator v55 | Neural Analytics*
+ * 🏛️ AZR Constitutional Sovereign Controller
  * 
  * Автономна система управління конституційними аксіомами (AZR Runtime):
  * - Моніторинг та енфорсмент аксіом ядра
@@ -8,7 +7,7 @@
  * - Детекція парадигмальних порушень
  * - Візуалізація ризикової експозиції через Truth Ledger
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -225,9 +224,9 @@ export const AZRConstitutionalDashboard: React.FC = () => {
     try {
       setIsLoading(true);
       const [constitutionRes, proposalsRes, metricsRes] = await Promise.all([
-        fetch('/api/v45/azr/constitution/verify'),
-        fetch('/api/v45/azr/proposals?limit=10'),
-        fetch('/api/v45/azr/metrics')
+        fetch('/api/v1/azr/constitution/verify'),
+        fetch('/api/v1/azr/proposals?limit=10'),
+        fetch('/api/v1/azr/metrics')
       ]);
 
       if (constitutionRes.ok) setConstitution(await constitutionRes.json());

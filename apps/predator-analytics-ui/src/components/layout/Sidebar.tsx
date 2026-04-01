@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -20,36 +20,27 @@ import {
   navAccentStyles,
   type NavSection,
 } from '../../config/navigation';
+import GlobalLayer from './GlobalLayer';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { cn } from '../../lib/utils';
+import { useSidebarStore } from '../../store/sidebarStore';
 
-const getInitialCollapsed = (): Record<string, boolean> => {
-  try {
-    const stored = localStorage.getItem('predator-nav-collapsed');
-    return stored ? JSON.parse(stored) : {};
-  } catch {
-    return {};
-  }
-};
-
-const Sidebar: React.FC = () => {
+export const Sidebar: React.FC = () => {
   const { user, logout } = useUser();
   const userRole = user?.role || 'viewer';
   const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(getInitialCollapsed);
+  const openSections = useSidebarStore((state) => state.openSections);
+  const toggleSidebarSection = useSidebarStore((state) => state.toggleSection);
 
   const visibleSections = useMemo(() => getVisibleNavigation(userRole), [userRole]);
   const totals = useMemo(() => getNavigationTotals(userRole), [userRole]);
+  const globalSection = useMemo(() => visibleSections.find((section) => section.isGlobal) ?? null, [visibleSections]);
 
   const toggleSection = useCallback((sectionId: string) => {
-    setCollapsedSections((prev) => {
-      const next = { ...prev, [sectionId]: !prev[sectionId] };
-      localStorage.setItem('predator-nav-collapsed', JSON.stringify(next));
-      return next;
-    });
-  }, []);
+    toggleSidebarSection(sectionId);
+  }, [toggleSidebarSection]);
 
   const filteredSections = useMemo<NavSection[]>(() => {
     const query = search.trim().toLowerCase();
@@ -71,6 +62,69 @@ const Sidebar: React.FC = () => {
       }))
       .filter((section) => section.items.length > 0);
   }, [search, visibleSections]);
+
+  const renderNavItem = useCallback(
+    (item: NavSection['items'][number], accentKey: keyof typeof navAccentStyles, searchActive: boolean) => (
+      <NavLink
+        key={item.id}
+        to={item.path}
+        title={!isOpen ? item.label : undefined}
+        className={({ isActive }) =>
+          cn(
+            'group relative flex items-center gap-3 rounded-2xl border border-transparent transition-all duration-200',
+            isOpen ? 'px-3 py-3' : 'mx-auto h-12 w-12 justify-center',
+            isActive
+              ? 'bg-white/[0.08] text-white shadow-[0_12px_30px_rgba(2,6,23,0.28)]'
+              : 'text-slate-400 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+          )
+        }
+      >
+        {({ isActive }) => (
+          <>
+            <div
+              className={cn(
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors',
+                isActive ? navAccentStyles[accentKey].iconBorder : 'border-white/[0.06] bg-black/20',
+              )}
+            >
+              <item.icon
+                className={cn(
+                  'h-[18px] w-[18px] transition-colors',
+                  isActive ? navAccentStyles[accentKey].icon : 'text-slate-400 group-hover:text-white',
+                )}
+              />
+            </div>
+
+            {isOpen && (
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="truncate text-sm font-semibold">{item.label}</span>
+                  {item.badge && (
+                    <span
+                      className={cn(
+                        'rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em]',
+                        navAccentStyles[accentKey].badge,
+                      )}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+                {(searchActive || isActive) && (
+                  <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-slate-500">{item.description}</p>
+                )}
+              </div>
+            )}
+
+            {isOpen && isActive && (
+              <div className={cn('absolute inset-y-3 right-2 w-1 rounded-full bg-gradient-to-b', navAccentStyles[accentKey].glow)} />
+            )}
+          </>
+        )}
+      </NavLink>
+    ),
+    [isOpen],
+  );
 
   return (
     <motion.aside
@@ -175,10 +229,13 @@ const Sidebar: React.FC = () => {
         </div>
       )}
 
+      <GlobalLayer items={globalSection?.items ?? []} isOpen={isOpen} />
+
       <nav className="relative flex-1 overflow-y-auto overflow-x-hidden px-3 pb-4 custom-scrollbar">
-        {filteredSections.map((section) => {
+        {filteredSections.filter((section) => !section.isGlobal).map((section) => {
           const accent = navAccentStyles[section.accent];
-          const isCollapsed = collapsedSections[section.id] && !search;
+          const isCollapsed = !openSections.includes(section.id) && !search;
+          const groups = section.groups ?? [];
 
           return (
             <div
@@ -222,68 +279,28 @@ const Sidebar: React.FC = () => {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className={cn('space-y-1 px-2 pb-2', !isOpen && 'px-0 pb-0')}>
-                      {section.items.map((item) => (
-                        <NavLink
-                          key={item.id}
-                          to={item.path}
-                          title={!isOpen ? item.label : undefined}
-                          className={({ isActive }) =>
-                            cn(
-                              'group relative flex items-center gap-3 rounded-2xl border border-transparent transition-all duration-200',
-                              isOpen ? 'px-3 py-3' : 'mx-auto h-12 w-12 justify-center',
-                              isActive
-                                ? 'bg-white/[0.08] text-white shadow-[0_12px_30px_rgba(2,6,23,0.28)]'
-                                : 'text-slate-400 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
-                            )
-                          }
-                        >
-                          {({ isActive }) => (
-                            <>
-                              <div
-                                className={cn(
-                                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border transition-colors',
-                                  isActive ? accent.iconBorder : 'border-white/[0.06] bg-black/20',
-                                )}
-                              >
-                                <item.icon
-                                  className={cn(
-                                    'h-[18px] w-[18px] transition-colors',
-                                    isActive ? accent.icon : 'text-slate-400 group-hover:text-white',
-                                  )}
-                                />
-                              </div>
-
-                              {isOpen && (
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="truncate text-sm font-semibold">{item.label}</span>
-                                    {item.badge && (
-                                      <span
-                                        className={cn(
-                                          'rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em]',
-                                          accent.badge,
-                                        )}
-                                      >
-                                        {item.badge}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {(search || isActive) && (
-                                    <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-slate-500">
-                                      {item.description}
-                                    </p>
-                                  )}
+                    <div className={cn('space-y-4 px-2 pb-2', !isOpen && 'px-0 pb-0')}>
+                      {groups.length > 0 ? (
+                        groups.map((group) => (
+                          <div key={group.id} className="space-y-2 rounded-2xl border border-white/[0.04] bg-black/10 p-2">
+                            {isOpen && (
+                              <div className="px-2 pt-1">
+                                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">
+                                  {group.label}
                                 </div>
-                              )}
-
-                              {isOpen && isActive && (
-                                <div className={cn('absolute inset-y-3 right-2 w-1 rounded-full bg-gradient-to-b', accent.glow)} />
-                              )}
-                            </>
-                          )}
-                        </NavLink>
-                      ))}
+                                <div className="mt-1 text-[11px] leading-5 text-slate-500">
+                                  {group.description}
+                                </div>
+                              </div>
+                            )}
+                            <div className="space-y-1">
+                              {group.items.map((item) => renderNavItem(item, section.accent, Boolean(search)))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        section.items.map((item) => renderNavItem(item, section.accent, Boolean(search)))
+                      )}
                     </div>
                   </motion.div>
                 )}

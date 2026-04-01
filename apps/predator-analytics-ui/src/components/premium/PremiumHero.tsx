@@ -40,20 +40,20 @@ export const PremiumHero: React.FC = () => {
   const features = [
     {
       icon: Brain,
-      title: 'AI Copilot',
-      description: 'Інтелектуальний помічник з голосовим управлінням',
+      title: 'AI-асистент прибутку',
+      description: 'Інтелектуальний помічник для запитів, звітів і наступних дій',
       color: 'from-purple-600 to-pink-600'
     },
     {
       icon: Shield,
-      title: 'Smart Risk Radar',
-      description: '360° моніторинг ризиків в реальному часі',
+      title: 'Радар ризиків',
+      description: '360° моніторинг ризиків, санкцій і комплаєнсу в реальному часі',
       color: 'from-blue-600 to-cyan-600'
     },
     {
       icon: Target,
-      title: 'Dashboard Builder',
-      description: 'Персоналізовані дашборди за хвилини',
+      title: 'Командний центр',
+      description: 'Персоналізовані дашборди, ROI і брифінги за хвилини',
       color: 'from-green-600 to-emerald-600'
     }
   ];
@@ -62,7 +62,7 @@ export const PremiumHero: React.FC = () => {
     { value: '500%', label: 'ROI' },
     { value: '70%', label: 'Економія часу' },
     { value: '99.9%', label: 'Точність AI' },
-    { value: '24/7', label: 'Підтримка' }
+    { value: '24/7', label: 'Швидкий доступ' }
   ];
 
   return (

@@ -131,7 +131,7 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
 
         try {
             // Виклик API для тестування підключення
-            const response = await fetch('/api/v45/sources/test', {
+            const response = await fetch('/api/v1/sources/test', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(config)

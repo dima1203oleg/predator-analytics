@@ -29,14 +29,17 @@ import {
   Building2,
   Package,
   Ship,
-  Loader2
+  Loader2,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
+import AzrHyperWidget from '@/components/AzrHyperWidget';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { ROIWidgets } from './ROIWidgets';
 import { Badge } from '@/components/ui/badge';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -249,6 +252,7 @@ const DashboardView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedRoiMetric, setSelectedRoiMetric] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -328,6 +332,27 @@ const DashboardView: React.FC = () => {
     return msgs;
   }, [overview, alerts, topRisk]);
 
+  const roiDetails = useMemo<Record<string, { title: string; description: string }>>(() => ({
+    'hours-saved': {
+      title: 'Заощаджено годин',
+      description: 'Показує, скільки часу платформа зберегла завдяки автоматизації аналітичних і операційних дій.',
+    },
+    procurement: {
+      title: 'Економія на закупівлях',
+      description: 'Оцінка різниці між ринковою базою та фактичними умовами закупівлі.',
+    },
+    fines: {
+      title: 'Відвернуті штрафи',
+      description: 'Сума потенційних фінансових втрат, яких вдалося уникнути завдяки ризик-контролю.',
+    },
+    profit: {
+      title: 'Додатковий прибуток',
+      description: 'Потенційна виручка, знайдена через нові можливості та ринкові сигнали.',
+    },
+  }), []);
+
+  const selectedRoiDetail = selectedRoiMetric ? roiDetails[selectedRoiMetric] : null;
+
   if (loading) {
     return (
       <PageTransition>
@@ -393,12 +418,59 @@ const DashboardView: React.FC = () => {
             }
           />
 
+          {/* AZR SOVEREIGN CORE WIDGET */}
+          <AzrHyperWidget />
+
+          {overview && (
+            <ROIWidgets overview={overview} onMetricClick={setSelectedRoiMetric} />
+          )}
+
           {error && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center gap-4">
               <AlertTriangle className="text-rose-400" size={24} />
               <div>
                 <p className="font-bold text-rose-400">{error}</p>
                 <button onClick={fetchData} className="text-sm text-rose-300 underline mt-1">Спробувати знову</button>
+              </div>
+            </motion.div>
+          )}
+
+          {selectedRoiDetail && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+            >
+              <div className="w-full max-w-2xl rounded-3xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-400/70">Детальний ROI-звіт</div>
+                    <h3 className="mt-2 text-2xl font-black text-white">{selectedRoiDetail.title}</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRoiMetric(null)}
+                    className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition-colors hover:text-white"
+                    title="Закрити звіт"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-slate-300">{selectedRoiDetail.description}</p>
+                <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <div className="rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-4">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-300/80">Ефект</div>
+                    <div className="mt-2 text-lg font-black text-white">Позитивний</div>
+                  </div>
+                  <div className="rounded-2xl border border-sky-400/15 bg-sky-500/10 p-4">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-300/80">Частота</div>
+                    <div className="mt-2 text-lg font-black text-white">Щоденно</div>
+                  </div>
+                  <div className="rounded-2xl border border-amber-400/15 bg-amber-500/10 p-4">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-300/80">Статус</div>
+                    <div className="mt-2 text-lg font-black text-white">Оновлюється</div>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}

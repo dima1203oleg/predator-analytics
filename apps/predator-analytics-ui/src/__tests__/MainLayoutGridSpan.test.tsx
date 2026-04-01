@@ -24,19 +24,31 @@ vi.mock('../store/useAppStore', () => ({
   }),
 }));
 
-vi.mock('../components/layout/Sidebar', () => ({ Sidebar: () => null }));
-vi.mock('../components/layout/TopBar', () => ({ TopBar: () => null }));
-vi.mock('../components/ingestion/GlobalIngestionController', () => ({ GlobalIngestionController: () => null }));
-vi.mock('../components/ingestion/ProcessRadar', () => ({ ProcessRadar: () => null }));
-vi.mock('../components/navigation/OrbitMenu', () => ({ default: () => null }));
-vi.mock('../components/ui/CommandPalette', () => ({ CommandPalette: () => null }));
-vi.mock('../components/ui/CyberTerminal', () => ({ CyberTerminal: () => null }));
-vi.mock('../components/ui/MatrixBackground', () => ({ MatrixBackground: () => null }));
-vi.mock('../components/layout/DynamicSystemAura', () => ({ default: () => null }));
+vi.mock('../components/layout/Sidebar', () => ({ Sidebar: () => null, default: () => null }));
+vi.mock('../components/layout/Header', () => ({ default: () => null }));
+vi.mock('../components/ai/ChatBot', () => ({ default: () => null }));
+vi.mock('../hooks/useMediaQuery', () => ({ useMediaQuery: () => false }));
 
 describe('MainLayout', () => {
   beforeEach(() => {
+    const storage = new Map<string, string>();
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      value: {
+        getItem: vi.fn((key: string) => storage.get(key) ?? null),
+        setItem: vi.fn((key: string, value: string) => {
+          storage.set(key, value);
+        }),
+        removeItem: vi.fn((key: string) => {
+          storage.delete(key);
+        }),
+        clear: vi.fn(() => {
+          storage.clear();
+        }),
+      },
+    });
     global.fetch = vi.fn().mockRejectedValue(new Error('no network')) as any;
+    window.localStorage.clear();
   });
 
   afterEach(() => {
@@ -54,6 +66,18 @@ describe('MainLayout', () => {
     const gridSpan = document.querySelector('.col-span-12');
     expect(gridSpan).not.toBeNull();
     expect(gridSpan?.textContent).toContain('ТЕСТОВИЙ КОНТЕНТ');
+    expect(screen.getByTestId('main-layout-shell').className).toContain('ml-[332px]');
+  });
+
+  it('підтягує відступ під згорнутий сайдбар', () => {
+    window.localStorage.setItem('predator-sidebar-open', 'false');
+
+    render(
+      <MainLayout>
+        <div>КОМПАКТНИЙ РЕЖИМ</div>
+      </MainLayout>
+    );
+
+    expect(screen.getByTestId('main-layout-shell').className).toContain('ml-[88px]');
   });
 });
-

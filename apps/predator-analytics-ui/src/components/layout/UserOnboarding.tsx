@@ -26,8 +26,8 @@ export const UserOnboarding: React.FC = () => {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
-        const completed = localStorage.getItem('predator_onboarding_v45');
-        if (!completed) {
+        const currentCompleted = localStorage.getItem('predator_onboarding_completed');
+        if (!currentCompleted) {
             // Delay showing to allow app to load
             const timer = setTimeout(() => setIsVisible(true), 1500);
             return () => clearTimeout(timer);
@@ -44,7 +44,7 @@ export const UserOnboarding: React.FC = () => {
 
     const handleClose = () => {
         setIsVisible(false);
-        localStorage.setItem('predator_onboarding_v45', 'true');
+        localStorage.setItem('predator_onboarding_completed', 'true');
     };
 
     if (!isVisible) return null;

@@ -31,6 +31,16 @@ import { CyberTerminal } from './components/ui/CyberTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 
+// New v11.1 Components
+import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
+import { ProcurementOptimizer } from './components/business/ProcurementOptimizer';
+import { BillingManager } from './components/billing/BillingManager';
+import { ExecutionCenter } from './components/execution/ExecutionCenter';
+import { EmptyState } from './components/empty-state/EmptyState';
+
+// New v11.1 Hooks
+import { useOnboarding, useFirstVisit, useDemoMode } from './hooks/useUserExperience';
+
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {

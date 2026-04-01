@@ -4,12 +4,18 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
+  BadgeCheck,
+  BrainCircuit,
+  Briefcase,
+  Building2,
+  ChevronRight,
   Layers3,
   Loader2,
   Radio,
   ShieldCheck,
   Sparkles,
   TrendingUp,
+  Zap,
 } from 'lucide-react';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
 import {
@@ -106,6 +112,11 @@ const PredatorV24 = () => {
   }, []);
 
   const summary = overview?.summary;
+  const topRiskCompanies = overview?.top_risk_companies?.slice(0, 3) ?? [];
+  const engineEntries = Object.values(overview?.engines ?? {}).slice(0, 4);
+  const infrastructureEntries = Object.entries(overview?.infrastructure ?? {}).slice(0, 6);
+  const countryEntries = Object.entries(overview?.countries ?? {}).slice(0, 5);
+
   const keyStats = [
     {
       label: 'Декларації',
@@ -134,6 +145,33 @@ const PredatorV24 = () => {
       hint: 'Поточна обробка',
       icon: Layers3,
       tone: 'amber',
+    },
+  ] as const;
+
+  const quickActions = [
+    {
+      label: 'Decision Intelligence',
+      description: 'Швидкий перехід до AI-рішень, ризиків і batch-аналізу',
+      to: '/decision-intelligence',
+      icon: BrainCircuit,
+    },
+    {
+      label: 'Перевірка контрагента',
+      description: 'Відкрити досьє компанії та CERS-аналіз',
+      to: '/diligence',
+      icon: BadgeCheck,
+    },
+    {
+      label: 'Ринковий аналіз',
+      description: 'Оцінити тенденції, країни й цінові сигнали',
+      to: '/market',
+      icon: TrendingUp,
+    },
+    {
+      label: 'Аналітичний центр',
+      description: 'Відкрити дашборди, звіти та real-time візуалізації',
+      to: '/analytics',
+      icon: Zap,
     },
   ] as const;
 
@@ -184,6 +222,25 @@ const PredatorV24 = () => {
                 {navigationSections.length} секцій / {navigationSections.reduce((total, section) => total + section.items.length, 0)} підрозділів
               </span>
             </div>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {quickActions.map((action) => (
+                <Link
+                  key={action.to}
+                  to={action.to}
+                  className="group rounded-[24px] border border-white/[0.08] bg-white/[0.04] p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400/20 hover:bg-white/[0.06]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.08] bg-black/20">
+                      <action.icon className="h-5 w-5 text-emerald-300" />
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-white" />
+                  </div>
+                  <div className="mt-3 text-sm font-semibold text-white">{action.label}</div>
+                  <div className="mt-1 text-xs leading-5 text-slate-400">{action.description}</div>
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="grid w-full gap-3 sm:grid-cols-2 xl:max-w-[540px]">
@@ -222,6 +279,150 @@ const PredatorV24 = () => {
             {error}
           </div>
         )}
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-3">
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5 xl:col-span-2">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-black tracking-tight text-white">Топ ризикові компанії</h2>
+              <p className="mt-1 text-sm text-slate-400">Найбільш критичні підтверджені записи з головного огляду.</p>
+            </div>
+            <Link to="/diligence" className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-200 transition hover:bg-emerald-500/15">
+              Відкрити досьє
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {topRiskCompanies.length > 0 ? (
+              topRiskCompanies.map((company, index) => (
+                <div key={`${company.edrpou}-${index}`} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-cyan-300" />
+                        <div className="truncate font-semibold text-white">{company.name}</div>
+                      </div>
+                      <div className="mt-1 text-xs text-slate-500">ЄДРПОУ: {company.edrpou} • Записів: {company.count}</div>
+                    </div>
+                    <span className={cn('rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]', company.maxRisk >= 80 ? 'border-rose-400/20 bg-rose-500/10 text-rose-200' : company.maxRisk >= 50 ? 'border-amber-400/20 bg-amber-500/10 text-amber-200' : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200')}>
+                      {company.maxRisk}% ризику
+                    </span>
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Сумарна вартість</div>
+                      <div className="mt-1 text-sm font-semibold text-white">{formatCurrency(company.totalValue)}</div>
+                    </div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Ризиковий максимум</div>
+                      <div className="mt-1 text-sm font-semibold text-white">{company.maxRisk}%</div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/[0.08] bg-black/20 px-4 py-5 text-sm text-slate-400">
+                Поки немає підтверджених топ-ризиків або бекенд не повернув дані.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <h2 className="text-xl font-black tracking-tight text-white">Стан інфраструктури</h2>
+          <p className="mt-1 text-sm text-slate-400">Короткий огляд ключових підсистем платформи.</p>
+
+          <div className="mt-5 space-y-3">
+            {infrastructureEntries.length > 0 ? (
+              infrastructureEntries.map(([name, component]) => (
+                <div key={name} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-semibold text-white">{name}</div>
+                    <span className={cn('rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em]', component.status === 'healthy' ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200' : component.status === 'warning' ? 'border-amber-400/20 bg-amber-500/10 text-amber-200' : 'border-rose-400/20 bg-rose-500/10 text-rose-200')}>
+                      {component.status}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs text-slate-500">
+                    {'records' in component && component.records !== undefined && <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-1">Записи: {component.records}</span>}
+                    {'documents' in component && component.documents !== undefined && <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-1">Документи: {component.documents}</span>}
+                    {'vectors' in component && component.vectors !== undefined && <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-1">Вектори: {component.vectors}</span>}
+                    {'nodes' in component && component.nodes !== undefined && <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-2 py-1">Вузли: {component.nodes}</span>}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/[0.08] bg-black/20 px-4 py-5 text-sm text-slate-400">Немає доступних індикаторів інфраструктури.</div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-2">
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-black tracking-tight text-white">Двигуни платформи</h2>
+              <p className="mt-1 text-sm text-slate-400">Продуктивність, навантаження та стан ключових сервісів.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {engineEntries.length > 0 ? (
+              engineEntries.map((engine) => (
+                <div key={engine.id} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-white">{engine.name}</div>
+                      <div className="mt-1 text-xs text-slate-500">{engine.trend}</div>
+                    </div>
+                    <span className={cn('rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em]', engine.status === 'optimal' ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200' : engine.status === 'calibrating' ? 'border-amber-400/20 bg-amber-500/10 text-amber-200' : 'border-rose-400/20 bg-rose-500/10 text-rose-200')}>
+                      {engine.status}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-500">
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-2">Score<br /><span className="text-sm font-semibold text-white">{engine.score}</span></div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-2">Latency<br /><span className="text-sm font-semibold text-white">{engine.latency}мс</span></div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-2">Load<br /><span className="text-sm font-semibold text-white">{engine.load}%</span></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/[0.08] bg-black/20 px-4 py-5 text-sm text-slate-400">Дані двигунів ще не підвантажені.</div>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-black tracking-tight text-white">Географія потоку</h2>
+              <p className="mt-1 text-sm text-slate-400">Країни з найбільшим вкладом у зовнішньоекономічну активність.</p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {countryEntries.length > 0 ? (
+              countryEntries.map(([code, stat]) => (
+                <div key={code} className="rounded-2xl border border-white/[0.08] bg-black/20 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-white">{code}</div>
+                      <div className="mt-1 text-xs text-slate-500">Транзакцій: {stat.count}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-semibold text-white">{formatCurrency(stat.value)}</div>
+                      <div className="mt-1 text-xs text-slate-500">Обсяг</div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/[0.08] bg-black/20 px-4 py-5 text-sm text-slate-400">Немає даних по країнах.</div>
+            )}
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.8fr)_minmax(320px,0.9fr)]">

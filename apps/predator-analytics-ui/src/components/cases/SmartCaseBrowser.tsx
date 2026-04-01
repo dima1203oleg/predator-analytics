@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// SMART CASE BROWSER - Predator v45 | Neural Analytics.0
+// SMART CASE BROWSER - PREDATOR Analytics
 // Intuitive case management with advanced filtering
 // ============================================================================
 
