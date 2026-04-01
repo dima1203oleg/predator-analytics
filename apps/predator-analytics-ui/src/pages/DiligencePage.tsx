@@ -6,6 +6,7 @@ import {
     Activity,
     AlertTriangle,
     ArrowRight,
+    BadgeCheck,
     Building2,
     FileText,
     Globe,
@@ -14,13 +15,17 @@ import {
     ShieldCheck,
     UserCheck,
     Users,
+    Sparkles,
+    Target,
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import type {
+    AnomalyRecord,
     CompanyProfileResponse,
     PersonInfo,
     RiskEntity,
     RiskLevelValue,
+    SanctionRecord,
 } from '@/features/diligence/types';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/lib/utils';
@@ -30,6 +35,13 @@ type RiskFilter = 'all' | RiskLevelValue;
 type RadarPoint = {
     label: string;
     value: number;
+};
+
+type ExplainabilityFactor = {
+    label: string;
+    value: number;
+    note: string;
+    tone: 'emerald' | 'amber' | 'rose' | 'cyan';
 };
 
 const riskLevelLabel: Record<RiskLevelValue, string> = {
@@ -147,6 +159,8 @@ const formatStatusLabel = (value?: string | null): string => {
 
 const clampScore = (value: number): number => Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
 
+const formatPercent = (value: number): string => `${Math.round(clampScore(value))}%`;
+
 const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarPoint[] => {
     if (!companyProfile) {
         return [
@@ -252,11 +266,74 @@ export default function DiligencePage() {
     const profileIdentifier = companyProfile?.ueid ?? companyProfile?.edrpou ?? selectedEntity?.ueid ?? selectedEntity?.edrpou;
     const radarPoints = useMemo(() => buildRadarPoints(companyProfile), [companyProfile]);
     const cersConfidence = companyProfile?.cers_confidence;
+    const currentRiskScore = clampScore(companyProfile?.risk_score ?? selectedEntity?.risk_score ?? 0);
+    const currentEntityName = companyProfile?.name ?? selectedEntity?.name ?? 'Об’єкт не обрано';
+    const explainabilityFactors = useMemo<ExplainabilityFactor[]>(() => {
+        if (companyProfile?.risk_details) {
+            const details = companyProfile.risk_details;
+            return [
+                {
+                    label: 'Структурний ризик',
+                    value: clampScore(details.structural.value),
+                    note: `Вага ${Math.round(details.structural.weight * 100)}%`,
+                    tone: 'cyan',
+                },
+                {
+                    label: 'Інституційний ризик',
+                    value: clampScore(details.institutional.value),
+                    note: `Вага ${Math.round(details.institutional.weight * 100)}%`,
+                    tone: 'emerald',
+                },
+                {
+                    label: 'Поведінковий ризик',
+                    value: clampScore(details.behavioral.value),
+                    note: `Вага ${Math.round(details.behavioral.weight * 100)}%`,
+                    tone: 'amber',
+                },
+                {
+                    label: 'Впливовий ризик',
+                    value: clampScore(details.influence.value),
+                    note: `Вага ${Math.round(details.influence.weight * 100)}%`,
+                    tone: 'rose',
+                },
+                {
+                    label: 'Предиктивний ризик',
+                    value: clampScore(details.predictive.value),
+                    note: `Вага ${Math.round(details.predictive.weight * 100)}%`,
+                    tone: 'cyan',
+                },
+            ]
+                .sort((left, right) => right.value - left.value)
+                .slice(0, 3);
+        }
+
+        return [
+            {
+                label: 'Санкційні записи',
+                value: sanctions.length > 0 ? clampScore(58 + sanctions.length * 10) : 18,
+                note: sanctions.length > 0 ? `${sanctions.length} сигнал(и)` : 'Збігів не виявлено',
+                tone: 'rose',
+            },
+            {
+                label: 'Аномалії активності',
+                value: anomalies.length > 0 ? clampScore(42 + anomalies.length * 14) : 16,
+                note: anomalies.length > 0 ? `${anomalies.length} подія(ї)` : 'Поведінка стабільна',
+                tone: 'amber',
+            },
+            {
+                label: 'Прозорість структури',
+                value: beneficiaries.length > 0 ? clampScore(36 + beneficiaries.length * 16) : 24,
+                note: beneficiaries.length > 0 ? `${beneficiaries.length} бенефіціар(и)` : 'Структура без складних вузлів',
+                tone: 'cyan',
+            },
+        ].sort((left, right) => right.value - left.value);
+    }, [anomalies.length, beneficiaries.length, companyProfile, sanctions.length]);
 
     return (
         <div className="space-y-6">
-            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
-                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+            <section className="relative overflow-hidden rounded-[34px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.98),rgba(11,18,31,0.95))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.12),transparent_28%)]" />
+                <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(360px,0.75fr)] xl:items-stretch">
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
@@ -272,6 +349,9 @@ export default function DiligencePage() {
                             >
                                 {backendStatus.statusLabel}
                             </span>
+                            <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-slate-300">
+                                {selectedEntity?.name ?? 'Перший доступний контрагент'}
+                            </span>
                         </div>
 
                         <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
@@ -281,15 +361,142 @@ export default function DiligencePage() {
                             Панель працює з підтвердженими профілями компаній, показує фактичний стан
                             ризику, CERS-компоненти та наявні службові записи без демо-блоків.
                         </p>
+
+                        <div className="mt-6 flex flex-wrap gap-3">
+                            {profileIdentifier ? (
+                                <Link
+                                    to={`/company/${profileIdentifier}/cers`}
+                                    className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/16"
+                                >
+                                    <BadgeCheck size={16} />
+                                    Відкрити CERS-досьє
+                                </Link>
+                            ) : null}
+                            <Link
+                                to="/market"
+                                className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition-all hover:bg-cyan-500/16"
+                            >
+                                <ArrowRight size={16} />
+                                Ринковий контекст
+                            </Link>
+                            <Link
+                                to="/opportunities"
+                                className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-white/[0.08]"
+                            >
+                                <Sparkles size={16} />
+                                Сигнали та дії
+                            </Link>
+                        </div>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
-                        <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
-                        <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
-                        <MetricTile label="Джерело" value={backendStatus.sourceLabel} compact />
+                    <div className="space-y-4">
+                        <div className="rounded-[30px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.24)]">
+                            <div className="flex items-center justify-between gap-3">
+                                <div>
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                                        Поточний профіль
+                                    </div>
+                                    <div className="mt-1 text-lg font-black text-white">{currentEntityName}</div>
+                                </div>
+                                <RiskBadge level={profileRiskLevel} large />
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-center">
+                                <div className="relative">
+                                    <svg className="h-32 w-32 -rotate-90 transform">
+                                        <circle
+                                            cx="64"
+                                            cy="64"
+                                            r="52"
+                                            stroke="currentColor"
+                                            strokeWidth="10"
+                                            fill="transparent"
+                                            className="text-white/6"
+                                        />
+                                        <circle
+                                            cx="64"
+                                            cy="64"
+                                            r="52"
+                                            stroke="currentColor"
+                                            strokeWidth="10"
+                                            fill="transparent"
+                                            strokeDasharray={`${2 * Math.PI * 52}`}
+                                            strokeDashoffset={`${2 * Math.PI * 52 * (1 - currentRiskScore / 100)}`}
+                                            className={profileRiskLevel === 'critical' ? 'text-rose-400' : profileRiskLevel === 'high' ? 'text-orange-300' : 'text-emerald-300'}
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-3xl font-black text-white">{Math.round(currentRiskScore)}</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                                            РИЗИК
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                                        Впевненість CERS
+                                    </div>
+                                    <div className="mt-2 text-2xl font-black text-white">
+                                        {cersConfidence !== undefined ? formatPercent((cersConfidence ?? 0) * 100) : 'Н/Д'}
+                                    </div>
+                                </div>
+                                <div className="rounded-[22px] border border-white/[0.08] bg-black/20 px-4 py-3">
+                                    <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                                        Рівень
+                                    </div>
+                                    <div className="mt-2 text-lg font-bold text-white">
+                                        {riskLevelLabel[profileRiskLevel]}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="rounded-[30px] border border-white/[0.08] bg-white/[0.04] p-5 shadow-[0_18px_45px_rgba(2,6,23,0.22)]">
+                            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                                <Target className="h-3.5 w-3.5 text-cyan-200" />
+                                Чому цей ризик
+                            </div>
+                            <div className="mt-4 space-y-3">
+                                {explainabilityFactors.map((factor) => (
+                                    <div key={factor.label} className="rounded-[22px] border border-white/[0.08] bg-black/20 p-3">
+                                        <div className="flex items-center justify-between gap-3">
+                                            <div className="text-sm font-semibold text-white">{factor.label}</div>
+                                            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                                                {factor.note}
+                                            </div>
+                                        </div>
+                                        <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.06]">
+                                            <div
+                                                className={cn(
+                                                    'h-full rounded-full',
+                                                    factor.tone === 'rose'
+                                                        ? 'bg-rose-400'
+                                                        : factor.tone === 'amber'
+                                                          ? 'bg-amber-300'
+                                                          : factor.tone === 'emerald'
+                                                            ? 'bg-emerald-300'
+                                                            : 'bg-cyan-300',
+                                                )}
+                                                style={{ width: `${factor.value}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
+
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
+                <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
+                <MetricTile label="Санкцій" value={sanctions.length.toString()} />
+                <MetricTile label="Впевненість CERS" value={cersConfidence !== undefined ? formatPercent((cersConfidence ?? 0) * 100) : 'Н/Д'} compact />
+            </div>
 
             <div className="flex h-[calc(100vh-200px)] flex-col gap-6 overflow-hidden lg:flex-row">
                 <div className="flex w-full flex-col overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] shadow-[0_24px_60px_rgba(2,6,23,0.35)] lg:w-96">

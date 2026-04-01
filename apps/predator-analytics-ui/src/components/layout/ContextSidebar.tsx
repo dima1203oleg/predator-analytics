@@ -15,6 +15,8 @@ import {
 import { cn } from '../../lib/utils';
 import { getNavigationContext } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
+import { getRoleDescription, getRoleDisplayName } from '../../config/roles';
+import { useBackendStatus } from '../../hooks/useBackendStatus';
 
 interface ContextTab {
   id: 'actions' | 'analytics' | 'links' | 'documents' | 'risks' | 'insights';
@@ -49,9 +51,9 @@ const readCachedContext = (entityType: string | null, entityId: string | null): 
 export const ContextSidebar: React.FC = () => {
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user } = useUser();
-  const role = user?.role ?? 'viewer';
-  const { item } = getNavigationContext(location.pathname, role);
+  const { canonicalRole, canonicalTier } = useUser();
+  const backendStatus = useBackendStatus();
+  const { item } = getNavigationContext(location.pathname, canonicalRole, canonicalTier);
   const entityId = searchParams.get('context');
   const entityType = searchParams.get('type');
   const [activeTab, setActiveTab] = useState<ContextTab['id']>('actions');
@@ -81,7 +83,7 @@ export const ContextSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="hidden xl:flex xl:w-[360px] xl:flex-col xl:border-l xl:border-white/[0.06] xl:bg-[#04111d]/92 xl:backdrop-blur-2xl">
+    <aside className="hidden xl:flex xl:w-[380px] xl:flex-col xl:border-l xl:border-white/[0.06] xl:bg-[#04111d]/92 xl:backdrop-blur-2xl">
       <div className="border-b border-white/[0.06] p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -106,6 +108,31 @@ export const ContextSidebar: React.FC = () => {
           </button>
         </div>
 
+        <div className="mt-4 rounded-3xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-[0_18px_40px_rgba(2,6,23,0.28)]">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">Роль</div>
+              <div className="mt-1 text-sm font-black text-white">{getRoleDisplayName(canonicalRole)}</div>
+            </div>
+            <span className="rounded-full border border-white/[0.08] bg-black/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">
+              {canonicalTier}
+            </span>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-400">{getRoleDescription(canonicalRole)}</p>
+          <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+            <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Режим</div>
+              <div className={cn('mt-1 font-bold', backendStatus.isOffline ? 'text-rose-200' : 'text-emerald-200')}>
+                {backendStatus.statusLabel}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Джерело</div>
+              <div className="mt-1 truncate font-bold text-slate-200">{backendStatus.sourceLabel}</div>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-4 grid grid-cols-2 gap-2">
           {tabs.map((tab) => (
             <button
@@ -127,15 +154,22 @@ export const ContextSidebar: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <section className="rounded-2xl border border-cyan-400/10 bg-cyan-500/5 p-4">
+          <div className="text-[10px] font-black uppercase tracking-[0.22em] text-cyan-200/80">Швидкий контекст</div>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Поточний екран визначає, які дії мають сенс саме зараз. Це панель для швидких рішень, а не для декоративної статистики.
+          </p>
+        </section>
+
         {activeTab === 'actions' && (
           <section className="rounded-2xl border border-white/[0.05] bg-white/[0.03] p-4">
             <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">
               <Search size={12} /> Швидкі дії
             </div>
             <div className="space-y-2 text-sm text-slate-300">
-              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Замовити аудит</button>
-              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Додати до обраного</button>
-              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Експортувати досьє</button>
+              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Запустити сценарій закупівель</button>
+              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Перевірити контрагента</button>
+              <button className="w-full rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2 text-left transition-colors hover:bg-emerald-500/10 hover:text-white">Відкрити білінг і ліміти</button>
             </div>
           </section>
         )}
@@ -147,12 +181,12 @@ export const ContextSidebar: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="rounded-xl border border-white/[0.05] bg-black/20 p-3">
-                <div className="text-slate-500">Стан</div>
-                <div className="mt-1 text-white font-bold">Висока увага</div>
+                <div className="text-slate-500">Значення</div>
+                <div className="mt-1 text-white font-bold">Вплив на економію</div>
               </div>
               <div className="rounded-xl border border-white/[0.05] bg-black/20 p-3">
-                <div className="text-slate-500">Рівень</div>
-                <div className="mt-1 text-white font-bold">Середній ризик</div>
+                <div className="text-slate-500">Ризик</div>
+                <div className="mt-1 text-white font-bold">Пояснений фактор</div>
               </div>
             </div>
           </section>
@@ -181,7 +215,7 @@ export const ContextSidebar: React.FC = () => {
             <div className="space-y-2 text-sm text-slate-300">
               <div className="rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">Остання декларація</div>
               <div className="rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">Супровідний інвойс</div>
-              <div className="rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">Акт перевірки</div>
+              <div className="rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2">Підтвердження економії</div>
             </div>
           </section>
         )}
@@ -200,7 +234,7 @@ export const ContextSidebar: React.FC = () => {
             <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-300">
               <BrainCircuit size={12} /> ШІ-інсайти
             </div>
-            <p className="text-sm leading-6 text-slate-400">ШІ-підсумок доцільності співпраці та наступні дії сформуємо після підключення джерела контексту.</p>
+            <p className="text-sm leading-6 text-slate-400">ШІ-підсумок доцільності співпраці, топ-фактори ризику та наступні дії зʼявляться після підключення джерела контексту.</p>
           </section>
         )}
       </div>

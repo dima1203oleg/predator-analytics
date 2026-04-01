@@ -6,12 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      jsxImportSource: '@emotion',
-      babel: {
-        plugins: ['@emotion/babel-plugin'],
-      },
-    }),
+    react(),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {

@@ -1,8 +1,6 @@
 /**
- * 💳 Billing & Monetization Component
- * 
- * Управління тарифними планами, лімітами та монетизацією.
- * Підписки, % від економії, оплата за дії (CPA).
+ * Керування тарифами, лімітами та моделями монетизації MVP.
+ * Підтримує підписку, % від економії та оплату за дію.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -80,11 +78,10 @@ interface SavingsTransaction {
   verified: boolean;
 }
 
-// Mock data
 const BILLING_PLANS: BillingPlan[] = [
   {
     id: 'basic',
-    name: 'Basic',
+    name: 'Базовий',
     price: 2499,
     currency: 'UAH',
     period: 'month',
@@ -92,7 +89,7 @@ const BILLING_PLANS: BillingPlan[] = [
       '5 запусків сценаріїв на місяць',
       'Базові звіти та аналітика',
       'Обмежена історія даних',
-      'Email підтримка',
+      'Підтримка електронною поштою',
     ],
     limits: {
       scenariosPerMonth: 5,
@@ -105,7 +102,7 @@ const BILLING_PLANS: BillingPlan[] = [
   },
   {
     id: 'pro',
-    name: 'Pro',
+    name: 'Про',
     price: 12499,
     currency: 'UAH',
     period: 'month',
@@ -129,7 +126,7 @@ const BILLING_PLANS: BillingPlan[] = [
   },
   {
     id: 'enterprise',
-    name: 'Enterprise',
+    name: 'Корпоративний',
     price: 0,
     currency: 'USD',
     period: 'month',
@@ -141,7 +138,7 @@ const BILLING_PLANS: BillingPlan[] = [
       'On‑premise розгортання',
       'Персональний менеджер',
       'SLA гарантії',
-      'White label можливості',
+      'Можливості брендованого інтерфейсу',
       'Кастомні інтеграції',
     ],
     limits: {
@@ -352,7 +349,7 @@ const UsageDashboard: React.FC<{
       </Card>
     </div>
 
-    {/* Usage Progress */}
+    {/* Прогрес використання */}
     <Card className="bg-slate-900/50 border-slate-800">
       <CardHeader>
         <CardTitle className="text-white">Використання лімітів</CardTitle>
@@ -398,6 +395,29 @@ const UsageDashboard: React.FC<{
             value={usage.storageLimit === -1 ? 0 : (usage.storageUsed / usage.storageLimit) * 100}
             className="h-2"
           />
+        </div>
+      </CardContent>
+    </Card>
+
+    <Card className="bg-slate-900/50 border-slate-800">
+      <CardHeader>
+        <CardTitle className="text-white">Верифікація економії</CardTitle>
+        <CardDescription className="text-slate-400">
+          Механізм для моделі білінгу на основі підтвердженої економії.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="text-sm font-semibold text-white">1. Підтвердження угоди</div>
+          <div className="mt-2 text-sm leading-6 text-slate-400">Клієнт підтверджує угоду в системі або завантажує інвойс.</div>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="text-sm font-semibold text-white">2. Верифікація</div>
+          <div className="mt-2 text-sm leading-6 text-slate-400">Інтеграція з ERP або ручний аудит підтверджують фактичну економію.</div>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="text-sm font-semibold text-white">3. Розрахунок комісії</div>
+          <div className="mt-2 text-sm leading-6 text-slate-400">Після верифікації система обчислює комісію та формує рахунок.</div>
         </div>
       </CardContent>
     </Card>
@@ -482,8 +502,7 @@ export const BillingManager: React.FC = () => {
 
   const handleSelectPlan = (planId: string) => {
     if (planId === 'enterprise') {
-      // Handle enterprise contact
-      window.open('mailto:enterprise@predator.analytics?subject=Enterprise Plan Inquiry');
+      window.open('mailto:enterprise@predator.analytics?subject=Запит%20на%20корпоративний%20тариф');
       return;
     }
     
@@ -499,14 +518,14 @@ export const BillingManager: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="space-y-6 text-slate-200">
+      <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">💳 Тарифний план та білінг</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Тарифний план та білінг</h1>
             <p className="text-slate-400">
-              Управління підпискою, лімітами та відстеження економії
+              Управління підпискою, лімітами, підтвердженням економії та моделями монетизації
             </p>
           </div>
           <div className="flex items-center gap-3">

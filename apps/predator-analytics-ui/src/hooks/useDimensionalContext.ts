@@ -10,7 +10,7 @@
 
 import { useUser } from '../context/UserContext';
 import { useShell, UIShell } from '../context/ShellContext';
-import { UserRole } from '../config/roles';
+import { UserRole, normalizeUserRole } from '../config/roles';
 
 export type Dimension = 'NEBULA' | 'CORTEX' | 'NEXUS';
 export type DataSensitivity = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'CLASSIFIED';
@@ -67,8 +67,7 @@ function determineVisualizationMode(
   // Admin (Commander) sees everything
   if (role === UserRole.ADMIN) return 'FULL';
 
-  // Premium (Operator) permissions
-  if (role === UserRole.CLIENT_PREMIUM) {
+  if (role === UserRole.ANALYST || role === UserRole.BUSINESS) {
     switch (sensitivity) {
       case 'INTERNAL':
         return 'FULL';
@@ -81,8 +80,20 @@ function determineVisualizationMode(
     }
   }
 
-  // Basic (Explorer) permissions (most restricted)
-  if (role === UserRole.CLIENT_BASIC) {
+  if (role === UserRole.SUPPLY_CHAIN) {
+    switch (sensitivity) {
+      case 'INTERNAL':
+        return 'FULL';
+      case 'CONFIDENTIAL':
+        return 'BLURRED';
+      case 'CLASSIFIED':
+        return 'REDACTED';
+      default:
+        return 'FULL';
+    }
+  }
+
+  if (role === UserRole.VIEWER) {
     switch (sensitivity) {
       case 'INTERNAL':
         return 'HASHED';
@@ -103,9 +114,13 @@ function determineVisualizationMode(
  */
 function getInformationDensity(role: UserRole): number {
   switch (role) {
-    case UserRole.CLIENT_BASIC:
+    case UserRole.VIEWER:
       return 30; // Low density
-    case UserRole.CLIENT_PREMIUM:
+    case UserRole.SUPPLY_CHAIN:
+      return 55;
+    case UserRole.BUSINESS:
+      return 70;
+    case UserRole.ANALYST:
       return 60; // Medium density
     case UserRole.ADMIN:
       return 100; // Maximum density
@@ -122,11 +137,11 @@ export const useDimensionalContext = (): DimensionalContext => {
   const { currentShell } = useShell();
 
   const dimension = shellToDimension(currentShell);
-  const role = user?.role || UserRole.CLIENT_BASIC;
+  const role = normalizeUserRole(user?.role) as UserRole;
 
   // Metadata flags
-  const isExplorer = role === UserRole.CLIENT_BASIC;
-  const isOperator = role === UserRole.CLIENT_PREMIUM;
+  const isExplorer = role === UserRole.VIEWER || role === UserRole.SUPPLY_CHAIN;
+  const isOperator = role === UserRole.BUSINESS || role === UserRole.ANALYST;
   const isCommander = role === UserRole.ADMIN;
 
   // Permission checking
@@ -140,11 +155,13 @@ export const useDimensionalContext = (): DimensionalContext => {
   const canAccessLevel = (requiredRole: UserRole): boolean => {
     if (!user) return false;
     const roleLevel = {
-        [UserRole.CLIENT_BASIC]: 1,
-        [UserRole.CLIENT_PREMIUM]: 2,
-        [UserRole.ADMIN]: 3
+        [UserRole.VIEWER]: 1,
+        [UserRole.SUPPLY_CHAIN]: 2,
+        [UserRole.BUSINESS]: 3,
+        [UserRole.ANALYST]: 4,
+        [UserRole.ADMIN]: 5
     };
-    return roleLevel[user.role] >= roleLevel[requiredRole];
+    return roleLevel[normalizeUserRole(user.role)] >= roleLevel[normalizeUserRole(requiredRole)];
   };
 
   // Visualization mode selector

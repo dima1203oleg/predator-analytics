@@ -1,17 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Suspense, lazy, useEffect } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Suspense, lazy, type ReactNode } from 'react';
+import { CreditCard, Lock, ShieldAlert } from 'lucide-react';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
-import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
-import { UserRole } from './config/roles';
+import { getRoleDisplayName, UserRole } from './config/roles';
+import { getNavigationAccessState } from './config/navigation';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import ActivityView from './features/dashboard/ActivityView';
 import DashboardView from './features/dashboard/DashboardView';
 import IntelligenceView from './features/intelligence/IntelligenceView';
-import OmniscienceView from './features/dashboard/OmniscienceView';
-import PredatorV24 from './pages/PredatorV24';
+import MvpCommandCenter from './pages/MvpCommandCenter';
 
 // Lazy loaded views - Named exports need .then() mapping
 const SearchView = lazy(() => import('./features/osint/SearchView').then(m => ({ default: m.SearchView })));
@@ -23,6 +23,7 @@ const AnalyticsView = lazy(() => import('./features/intelligence/AnalyticsView')
 const CasesView = lazy(() => import('./features/intelligence/CasesView'));
 const DatabasesView = lazy(() => import('./features/platform/DatabasesView'));
 const MonitoringView = lazy(() => import('./features/dashboard/MonitoringView'));
+const OmniscienceView = lazy(() => import('./features/dashboard/OmniscienceView'));
 const SecurityView = lazy(() => import('./features/platform/SecurityView'));
 const LLMView = lazy(() => import('./features/ai/LLMView'));
 const DataView = lazy(() => import('./features/platform/DataView'));
@@ -95,6 +96,10 @@ const ComprompatPersonView = lazy(() => import('./features/newspaper/ComprompatP
 const FirmDossierView = lazy(() => import('./features/newspaper/FirmDossierView'));
 const PowerStructureView = lazy(() => import('./features/newspaper/PowerStructureView'));
 const SupplyChainAnalyticsView = lazy(() => import('./features/supply-chain/SupplyChainAnalyticsView'));
+const ProcurementOptimizer = lazy(() => import('./components/business/ProcurementOptimizer'));
+const BillingManager = lazy(() => import('./components/billing/BillingManager'));
+const ExecutionCenter = lazy(() => import('./components/execution/ExecutionCenter'));
+const EmptyState = lazy(() => import('./components/empty-state/EmptyState'));
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
@@ -149,8 +154,80 @@ const LoadingFallback = () => (
 
 export const AppRoutesNew = () => {
   const location = useLocation();
-  const { user } = useUser();
-  const effectiveRole = user?.role || UserRole.VIEWER;
+  const { canonicalRole, canonicalTier } = useUser();
+  const effectiveRole = canonicalRole || UserRole.VIEWER;
+  const tierLabel = canonicalTier === 'enterprise' ? 'Корпоративний' : canonicalTier === 'pro' ? 'Про' : 'Базовий';
+
+  const AccessFallback = ({ state }: { state: 'upgrade' | 'forbidden' }) => (
+    <div className="mx-auto max-w-3xl">
+      <div className="overflow-hidden rounded-[32px] border border-white/[0.08] bg-[linear-gradient(180deg,rgba(6,17,29,0.96),rgba(5,13,23,0.96))] p-8 shadow-[0_28px_80px_rgba(2,6,23,0.38)]">
+        <div className="flex h-16 w-16 items-center justify-center rounded-[22px] border border-white/[0.08] bg-white/[0.04]">
+          {state === 'upgrade' ? (
+            <CreditCard className="h-7 w-7 text-cyan-300" />
+          ) : (
+            <ShieldAlert className="h-7 w-7 text-rose-300" />
+          )}
+        </div>
+
+        <h2 className="mt-6 text-3xl font-black text-white">
+          {state === 'upgrade'
+            ? 'Цей сценарій недоступний на поточному тарифі'
+            : 'Поточна роль не має доступу до цього сценарію'}
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-400">
+          {state === 'upgrade'
+            ? `Ваша роль "${getRoleDisplayName(canonicalRole)}" підтримує цей напрямок, але тариф "${tierLabel}" не включає потрібні можливості.`
+            : `Роль "${getRoleDisplayName(canonicalRole)}" не входить до контуру доступу для цього маршруту.`}
+        </p>
+
+        <div className="mt-6 rounded-[24px] border border-white/[0.08] bg-black/20 p-4 text-sm leading-6 text-slate-300">
+          Доступ у Predator Analytics визначається як <span className="font-bold text-white">Роль ∩ тариф</span>.
+          Це означає, що маршрут має бути дозволений і роллю, і тарифом одночасно.
+        </div>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          {state === 'upgrade' && (
+            <Link
+              to="/billing"
+              className="inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-400"
+            >
+              <CreditCard className="h-4 w-4" />
+              Перейти до тарифів
+            </Link>
+          )}
+          <Link
+            to="/getting-started"
+            className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.12] bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08]"
+          >
+            <Lock className="h-4 w-4" />
+            Відкрити швидкий старт
+          </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/15"
+          >
+            Повернутись до командного центру
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ProtectedNavigationRoute = ({
+    path,
+    children,
+  }: {
+    path: string;
+    children: ReactNode;
+  }) => {
+    const accessState = getNavigationAccessState(path, canonicalRole, canonicalTier);
+
+    if (accessState === 'upgrade' || accessState === 'forbidden') {
+      return <AccessFallback state={accessState} />;
+    }
+
+    return <>{children}</>;
+  };
 
   return (
     <MainLayout>
@@ -158,16 +235,37 @@ export const AppRoutesNew = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* 🎯 CANONICAL v4.2.0 MODES */}
-            <Route path="/" element={<PredatorV24 />} />
-            <Route path="/predator-v24" element={<PredatorV24 />} />
+            <Route path="/" element={<MvpCommandCenter />} />
+            <Route path="/predator-v24" element={<MvpCommandCenter />} />
             <Route path="/overview" element={<DashboardView />} />
-            <Route path="/market" element={<MarketPage />} />
-            <Route path="/forecast" element={<ForecastPage />} />
-            <Route path="/diligence" element={<DiligencePage />} />
+            <Route path="/market" element={<ProtectedNavigationRoute path="/market"><MarketPage /></ProtectedNavigationRoute>} />
+            <Route path="/forecast" element={<ProtectedNavigationRoute path="/forecast"><ForecastPage /></ProtectedNavigationRoute>} />
+            <Route path="/diligence" element={<ProtectedNavigationRoute path="/diligence"><DiligencePage /></ProtectedNavigationRoute>} />
             <Route path="/opportunities" element={<OpportunitiesPage />} />
             <Route path="/company/:id/cers" element={<CompanyCERSDashboard />} />
             <Route path="/clients" element={<ClientsHubView />} />
             <Route path="/clients/:segment" element={<ClientSegmentView />} />
+            <Route
+              path="/getting-started"
+              element={
+                <EmptyState
+                  type="no-data"
+                  onStartDemo={() => (window.location.href = '/procurement-optimizer')}
+                  onUploadData={() => (window.location.href = '/billing')}
+                  onConnectAPI={() => (window.location.href = '/billing')}
+                />
+              }
+            />
+            <Route
+              path="/demo-completed"
+              element={
+                <EmptyState
+                  type="demo-completed"
+                  onStartDemo={() => (window.location.href = '/procurement-optimizer')}
+                  onUploadData={() => (window.location.href = '/billing')}
+                />
+              }
+            />
 
             {/* Legacy Dashboard Routes */}
             <Route path="/omni" element={<OmniscienceView />} />
@@ -256,6 +354,55 @@ export const AppRoutesNew = () => {
             <Route path="/user-analytics" element={<UserAnalyticsDashboard />} />
             <Route path="/verify-system" element={<SystemVerificationSuite />} />
             <Route path="/modeling" element={<ScenarioModeling />} />
+            <Route
+              path="/procurement-optimizer"
+              element={
+                <ProtectedNavigationRoute path="/procurement-optimizer">
+                  <ProcurementOptimizer />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario/import"
+              element={
+                <ProtectedNavigationRoute path="/scenario/import">
+                  <ProcurementOptimizer />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario/counterparty"
+              element={
+                <ProtectedNavigationRoute path="/scenario/counterparty">
+                  <DiligencePage />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario/market"
+              element={
+                <ProtectedNavigationRoute path="/scenario/market">
+                  <MarketPage />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route
+              path="/scenario-progress"
+              element={
+                <ProtectedNavigationRoute path="/scenario-progress">
+                  <ExecutionCenter />
+                </ProtectedNavigationRoute>
+              }
+            />
+            <Route path="/execution-center" element={<Navigate to="/scenario-progress" replace />} />
+            <Route
+              path="/billing"
+              element={
+                <ProtectedNavigationRoute path="/billing">
+                  <BillingManager />
+                </ProtectedNavigationRoute>
+              }
+            />
 
             {/* Admin & System */}
             <Route path="/admin" element={<MonitoringView />} />

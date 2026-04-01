@@ -1,8 +1,6 @@
 /**
- * 🌟 Empty State UX Component
- * 
- * Компонент для порожнього стану користувача.
- * Пропонує завантажити дані або спробувати демо-режим.
+ * Порожні стани для MVP-потоку.
+ * Дають користувачу вибір між власними даними, ринковим режимом і демо-режимом.
  */
 
 import React, { useState } from 'react';
@@ -51,7 +49,6 @@ interface DataSource {
   status: 'connected' | 'disconnected' | 'pending';
 }
 
-// Mock data
 const DATA_SOURCES: DataSource[] = [
   {
     id: 'customs',
@@ -145,8 +142,8 @@ const NoDataState: React.FC<{
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="text-slate-200">
+      <div className="mx-auto max-w-4xl">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -177,22 +174,22 @@ const NoDataState: React.FC<{
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-500 rounded-full mb-4">
                   <Play className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Спробувати демо</h3>
+                <h3 className="text-2xl font-bold text-white mb-3">Працювати на ринку</h3>
                 <p className="text-slate-300 mb-6">
-                  Перегляньте повний функціонал на реальних прикладах без завантаження даних
+                  Запустіть сценарій на ринкових даних або подивіться демо-режим без завантаження власних файлів
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-center justify-center gap-2 text-cyan-400">
                     <Zap className="w-4 h-4" />
-                    <span className="font-medium">Результат за 2 хвилини</span>
+                    <span className="font-medium">Перший результат до 3 хвилин</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-emerald-400">
                     <TrendingUp className="w-4 h-4" />
-                    <span className="font-medium">Демонстрація економії 250 000 ₴</span>
+                    <span className="font-medium">Ринковий пошук постачальників і демо-режим</span>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-violet-400">
                     <Star className="w-4 h-4" />
-                    <span className="font-medium">Безкоштовно</span>
+                    <span className="font-medium">Без власних даних</span>
                   </div>
                 </div>
               </CardContent>
@@ -393,8 +390,8 @@ const NoDataState: React.FC<{
 };
 
 const FirstTimeState: React.FC<{ onStartDemo: () => void }> = ({ onStartDemo }) => (
-  <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-    <div className="max-w-4xl mx-auto text-center">
+  <div className="text-slate-200">
+    <div className="mx-auto max-w-4xl text-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -460,8 +457,8 @@ const DemoCompletedState: React.FC<{
   onStartNewScenario: () => void;
   onUploadData: () => void;
 }> = ({ savings, onStartNewScenario, onUploadData }) => (
-  <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-    <div className="max-w-4xl mx-auto">
+  <div className="text-slate-200">
+    <div className="mx-auto max-w-4xl">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -479,7 +476,7 @@ const DemoCompletedState: React.FC<{
             Ваша потенційна економія: {savings.toLocaleString('uk-UA')} ₴
           </p>
           <p className="text-xl text-slate-400">
-            Тепер уявіть, що ви можете отримувати такі результати регулярно
+            Хочете повторити цей результат на власних даних або продовжити роботу на ринку?
           </p>
         </div>
 
@@ -580,7 +577,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         />
       );
     default:
-      return <NoDataState onStartDemo={onStartDemo || (() => {}} onUploadData={onUploadData || (() => {})} onConnectAPI={onConnectAPI || (() => {})} />;
+      return (
+        <NoDataState
+          onStartDemo={onStartDemo || (() => {})}
+          onUploadData={onUploadData || (() => {})}
+          onConnectAPI={onConnectAPI || (() => {})}
+        />
+      );
   }
 };
 

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Command,
+  Figma,
   Search,
   FileText,
   Brain,
@@ -21,6 +22,7 @@ import { cn } from '../../utils/cn';
 import { premiumLocales } from '../../locales/uk/premium';
 import { getVisibleNavigation } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
+import { useFigmaBridge } from '@/hooks/useFigmaBridge';
 
 interface QuickAction {
   id: string;
@@ -77,13 +79,15 @@ export const CommandPalette: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { user } = useUser();
+  const role = user?.role ?? 'supply_chain';
+  const tier = user?.tier ?? 'basic';
+  const figmaBridge = useFigmaBridge();
 
-  // Cast to any for locale access
+  // Використовуємо доступ до локалі через типізований запасний шлях
   const locales = premiumLocales as any;
 
   const navigationActions = useMemo<QuickAction[]>(() => {
-    const role = user?.role ?? 'client_premium';
-    const sections = getVisibleNavigation(role);
+    const sections = getVisibleNavigation(role, tier);
 
     const sectionActions = sections.flatMap((section) => section.items.map((item) => ({
       id: item.id,
@@ -110,10 +114,13 @@ export const CommandPalette: React.FC = () => {
     );
 
     return [...sectionActions, ...groupActions];
-  }, [user?.role]);
+  }, [role, tier]);
 
   const quickActions: QuickAction[] = [
     { id: 'dashboard', icon: <BarChart3 size={18} />, label: locales.commandPalette.actions.dashboard.label, description: locales.commandPalette.actions.dashboard.desc, shortcut: 'D', category: 'navigation', path: '/' },
+    { id: 'procurement-optimizer', icon: <Sparkles size={18} />, label: 'Оптимізація закупівель', description: 'Швидкий запуск сценарію економії для імпортера.', shortcut: 'P', category: 'navigation', path: '/procurement-optimizer' },
+    { id: 'execution-center', icon: <Zap size={18} />, label: 'Центр виконання', description: 'Переглянути активні job-based сценарії.', shortcut: 'E', category: 'navigation', path: '/scenario-progress' },
+    { id: 'billing', icon: <Settings size={18} />, label: 'Білінг і тариф', description: 'Перевірити ліміти, комісію та модель монетизації.', shortcut: 'B', category: 'navigation', path: '/billing' },
     { id: 'documents', icon: <FileText size={18} />, label: locales.commandPalette.actions.documents.label, description: locales.commandPalette.actions.documents.desc, shortcut: 'O', category: 'navigation', path: '/documents' },
     { id: 'analytics', icon: <Brain size={18} />, label: locales.commandPalette.actions.analytics.label, description: locales.commandPalette.actions.analytics.desc, shortcut: 'A', category: 'navigation', path: '/analytics' },
     { id: 'search', icon: <Search size={18} />, label: locales.commandPalette.actions.search.label, description: locales.commandPalette.actions.search.desc, shortcut: 'S', category: 'navigation', path: '/search' },
@@ -122,13 +129,26 @@ export const CommandPalette: React.FC = () => {
     { id: 'databases', icon: <Database size={18} />, label: locales.commandPalette.actions.databases.label, description: locales.commandPalette.actions.databases.desc, category: 'navigation', path: '/databases' },
     { id: 'settings', icon: <Settings size={18} />, label: locales.commandPalette.actions.settings.label, description: locales.commandPalette.actions.settings.desc, shortcut: ',', category: 'navigation', path: '/settings' },
     { id: 'agents', icon: <Users size={18} />, label: locales.commandPalette.actions.agents.label, description: locales.commandPalette.actions.agents.desc, category: 'navigation', path: '/agents' },
+    ...(figmaBridge.fileUrl
+      ? [{
+        id: 'figma-design-bridge',
+        icon: <Figma size={18} />,
+        label: 'Відкрити Figma-макет',
+        description: `Канонічний макет: ${figmaBridge.fileName}`,
+        shortcut: 'F',
+        category: 'navigation' as const,
+        action: () => {
+          window.open(figmaBridge.fileUrl ?? '', '_blank', 'noopener,noreferrer');
+        },
+      }]
+      : []),
   ];
 
   const allActions = [...navigationActions, ...quickActions].filter(
     (action, index, list) => list.findIndex((current) => current.id === action.id) === index,
   );
 
-  // Load recent actions from localStorage
+  // Завантажуємо нещодавні дії з localStorage
   useEffect(() => {
     const stored = localStorage.getItem('predator_recent_actions');
     if (stored) {
@@ -138,7 +158,7 @@ export const CommandPalette: React.FC = () => {
     }
   }, []);
 
-  // Keyboard shortcut to open (Cmd/Ctrl + K)
+  // Гаряча клавіша для відкриття (Cmd/Ctrl + K)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -154,7 +174,7 @@ export const CommandPalette: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Focus input when opened
+  // Фокусуємо поле після відкриття
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
@@ -200,7 +220,7 @@ export const CommandPalette: React.FC = () => {
       .map(({ action }) => action);
   }, [allActions, query]);
 
-  // Handle action execution
+  // Обробка запуску дії
   const executeAction = useCallback((action: QuickAction) => {
     const newRecent = [action.id, ...recentActions.filter(id => id !== action.id)].slice(0, 5);
     setRecentActions(newRecent);
@@ -233,7 +253,7 @@ export const CommandPalette: React.FC = () => {
     return 'Працює швидкий бізнес-пошук по меню та сутностях';
   }, [query]);
 
-  // Keyboard navigation
+  // Навігація з клавіатури
   useEffect(() => {
     if (!isOpen) return;
 

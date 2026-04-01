@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { getVisibleNavigation, getNavigationTotals } from '../config/navigation';
+import {
+  getNavigationAccessState,
+  getVisibleNavigation,
+  getNavigationTotals,
+} from '../config/navigation';
 
 describe('navigation RBAC', () => {
   it('приховує адміністративні підпункти для не-адміністратора', () => {
@@ -23,5 +27,11 @@ describe('navigation RBAC', () => {
     expect(sections[0]?.id).toBe('global-layer');
     expect(totals.sections).toBeGreaterThan(0);
     expect(totals.items).toBeGreaterThan(0);
+  });
+
+  it('розрізняє недоступність через тариф і через роль', () => {
+    expect(getNavigationAccessState('/forecast', 'business', 'basic')).toBe('upgrade');
+    expect(getNavigationAccessState('/graph', 'business', 'enterprise')).toBe('forbidden');
+    expect(getNavigationAccessState('/billing', 'business', 'basic')).toBe('allowed');
   });
 });

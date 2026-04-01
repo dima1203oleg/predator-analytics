@@ -21,9 +21,9 @@ export const ShellSwitcher: React.FC = () => {
   if (!user) return null;
 
   const shells = [
-    { id: UIShell.EXPLORER, label: 'Explorer', icon: <Eye size={14} />, role: UserRole.CLIENT_BASIC },
-    { id: UIShell.OPERATOR, label: 'Operator', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
-    { id: UIShell.COMMANDER, label: 'Commander', icon: <Crown size={14} />, role: UserRole.ADMIN },
+    { id: UIShell.EXPLORER, label: 'Дослідник', icon: <Eye size={14} />, role: UserRole.CLIENT_BASIC },
+    { id: UIShell.OPERATOR, label: 'Оператор', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
+    { id: UIShell.COMMANDER, label: 'Командир', icon: <Crown size={14} />, role: UserRole.ADMIN },
   ];
 
   const roleHierarchy = {
@@ -37,7 +37,7 @@ export const ShellSwitcher: React.FC = () => {
       {shells.map((shell) => {
         const hasAccess = roleHierarchy[user.role] >= roleHierarchy[shell.role];
 
-        // Mobile Restriction: Commander is not supported on mobile
+        // Обмеження для мобільних: режим командира не підтримується
         if (isMobile && shell.role === UserRole.ADMIN) return null;
 
         if (!hasAccess) return null;
@@ -55,7 +55,7 @@ export const ShellSwitcher: React.FC = () => {
                 : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
               }
             `}
-            title={shell.role === UserRole.ADMIN && isMobile ? 'Commander mode not available on mobile' : `Switch to ${shell.label} Mode`}
+            title={shell.role === UserRole.ADMIN && isMobile ? 'Режим командира недоступний на мобільних' : `Перемкнути на режим ${shell.label}`}
           >
             {shell.icon}
             <span className={isActive ? 'block' : 'hidden'}>{shell.label}</span>

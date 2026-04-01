@@ -1,8 +1,6 @@
 /**
- * 🎯 Killer Use‑Case: Оптимізація закупівель імпортера
- * 
- * Головний сценарій MVP для швидкого виходу на ринок.
- * Користувач вводить товар → система аналізує → показує економію.
+ * Головний MVP-сценарій для оптимізації закупівель імпортера.
+ * Користувач вводить товар, отримує екран цінності, пояснення рекомендації та наступні кроки.
  */
 
 import React, { useState, useCallback } from 'react';
@@ -43,6 +41,10 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ValueScreen as NewValueScreen } from '@/components/premium/ValueScreen';
+import { EmptyState } from '@/components/premium/EmptyState';
+import { DataStrategy } from '@/components/premium/DataStrategy';
+import { CustomerLifecycleTracker } from '@/components/premium/CustomerLifecycle';
 
 // Types
 interface OptimizationRequest {
@@ -102,10 +104,15 @@ interface OptimizationResult {
     legalIssues: boolean;
     reputationScore: number;
   };
+  explainabilityFactors: string[];
+  dataFreshness: {
+    critical: string;
+    secondary: string;
+    fallbackMode: string;
+  };
   generatedAt: string;
 }
 
-// Mock data for demo mode
 const DEMO_RESULT: OptimizationResult = {
   id: 'demo-001',
   request: {
@@ -169,7 +176,29 @@ const DEMO_RESULT: OptimizationResult = {
     legalIssues: false,
     reputationScore: 85,
   },
+  explainabilityFactors: [
+    'Ціна рекомендованого постачальника на 20% нижча за ринкову медіану.',
+    'Контрагент має низький санкційний і репутаційний ризик.',
+    'Маршрут і частота поставок стабільні за останні 6 місяців.',
+  ],
+  dataFreshness: {
+    critical: 'Митні декларації та санкційні списки оновлено сьогодні.',
+    secondary: 'Логістичні тарифи та ринкові бази оновлено цього тижня.',
+    fallbackMode: 'За недостатності даних система покаже діапазон економії замість точної цифри.',
+  },
   generatedAt: new Date().toISOString(),
+};
+
+const riskLabels: Record<'low' | 'medium' | 'high', string> = {
+  low: 'Низький',
+  medium: 'Середній',
+  high: 'Високий',
+};
+
+const logisticsMethodLabels: Record<'sea' | 'land' | 'air', string> = {
+  sea: 'Морем',
+  land: 'Суходолом',
+  air: 'Авіа',
 };
 
 // Components
@@ -292,13 +321,58 @@ const RequestForm: React.FC<{
   );
 };
 
-const ValueScreen: React.FC<{
+// New Value Screen wrapper using premium component
+const ValueScreenWrapper: React.FC<{
   result: OptimizationResult;
   onSaveScenario: () => void;
   onShareResults: () => void;
   onDownloadReport: () => void;
 }> = ({ result, onSaveScenario, onShareResults, onDownloadReport }) => {
-  const [showDetails, setShowDetails] = useState(false);
+  // Map OptimizationResult to NewValueScreen props
+  const valueScreenProps = {
+    savings: {
+      amount: result.savings.amount,
+      currency: result.savings.currency,
+      percentage: result.savings.percentage,
+    },
+    confidence: result.confidence,
+    factors: result.explainabilityFactors,
+    assumptions: [
+      { label: 'Курс USD/UAH', value: result.assumptions.exchangeRate },
+      { label: 'Обсяг партії', value: `${result.assumptions.volume} од.` },
+      { label: 'Митний тариф', value: `${result.assumptions.customsTariff}%` },
+      { label: 'Логістика', value: `$${result.assumptions.logistics}` },
+    ],
+    risks: [
+      { label: 'Загальний ризик', status: result.riskAssessment.overall },
+      { label: 'Санкції', status: result.riskAssessment.sanctions ? 'high' : 'low' },
+    ],
+    recommendations: [
+      {
+        icon: '🏭',
+        title: result.recommendations.bestSupplier.name,
+        subtitle: result.recommendations.bestSupplier.country,
+        metric: `$${result.recommendations.bestSupplier.price}/од.`,
+      },
+      {
+        icon: '📋',
+        title: result.recommendations.optimalCustomsCode,
+        subtitle: 'Код УКТЗЕД',
+        metric: `${result.assumptions.customsTariff}%`,
+      },
+      {
+        icon: '🚢',
+        title: logisticsMethodLabels[result.recommendations.logisticsRoute.method],
+        subtitle: result.recommendations.logisticsRoute.estimatedTime,
+        metric: `$${result.recommendations.logisticsRoute.cost}`,
+      },
+    ],
+    onSave: onSaveScenario,
+    onShare: onShareResults,
+    onDownload: onDownloadReport,
+    onSubscribe: () => { /* Handle subscribe */ },
+    onAutomate: () => { /* Handle automate */ },
+  };
 
   return (
     <motion.div
@@ -307,197 +381,80 @@ const ValueScreen: React.FC<{
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      {/* Main Value Card */}
-      <Card className="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 border-emerald-500/30">
-        <CardContent className="p-8">
-          <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-emerald-500 rounded-full mb-4"
-            >
-              <TrendingDown className="w-10 h-10 text-white" />
-            </motion.div>
-            <h2 className="text-3xl font-bold text-white mb-2">
-              Ваша потенційна економія
-            </h2>
-            <div className="text-5xl font-bold text-emerald-400 mb-2">
-              {result.savings.amount.toLocaleString('uk-UA')} {result.savings.currency}
-            </div>
-            <div className="text-xl text-slate-300">
-              {result.savings.percentage}% від вартості партії
-            </div>
-            <Badge className="mt-4 bg-emerald-500/20 text-emerald-300 border-emerald-500/30">
-              <CheckCircle2 className="w-4 h-4 mr-1" />
-              Рівень довіри: {result.confidence}%
-            </Badge>
-          </div>
+      <NewValueScreen {...valueScreenProps} />
+      
+      {/* Additional Details Section */}
+      <Card className="bg-slate-900/50 border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-cyan-400" />
+            Детальний аналіз
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="suppliers" className="w-full">
+            <TabsList className="bg-slate-800 border-slate-700">
+              <TabsTrigger value="suppliers">Альтернативні постачальники</TabsTrigger>
+              <TabsTrigger value="market">Ринок</TabsTrigger>
+              <TabsTrigger value="data">Дані</TabsTrigger>
+            </TabsList>
 
-          {/* Key Recommendations */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-slate-800/50 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-cyan-400" />
-                <span className="font-medium text-white">Найкращий постачальник</span>
+            <TabsContent value="suppliers" className="space-y-4 mt-4">
+              <div className="space-y-3">
+                {result.recommendations.alternativeSuppliers.map((supplier, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg"
+                  >
+                    <div>
+                      <div className="font-medium text-white">{supplier.name}</div>
+                      <div className="text-sm text-slate-400">{supplier.country}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-medium text-emerald-400">${supplier.price}/од.</div>
+                      <Badge className={
+                        supplier.riskLevel === 'low' ? 'bg-emerald-500/20 text-emerald-300' :
+                        supplier.riskLevel === 'medium' ? 'bg-amber-500/20 text-amber-300' :
+                        'bg-red-500/20 text-red-300'
+                      }>
+                        {riskLabels[supplier.riskLevel]}
+                      </Badge>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-              <div className="text-white font-semibold">{result.recommendations.bestSupplier.name}</div>
-              <div className="text-sm text-slate-400">{result.recommendations.bestSupplier.country}</div>
-              <div className="text-emerald-400 font-medium">${result.recommendations.bestSupplier.price}/од.</div>
-            </div>
+            </TabsContent>
 
-            <div className="bg-slate-800/50 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-5 h-5 text-cyan-400" />
-                <span className="font-medium text-white">Оптимальний код УКТЗЕД</span>
+            <TabsContent value="market" className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-800/50 p-4 rounded-lg">
+                  <div className="text-sm text-slate-400 mb-2">Середня ціна</div>
+                  <div className="text-2xl font-bold text-white">${result.marketAnalysis.averagePrice}</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    Діапазон: ${result.marketAnalysis.priceRange.min} - ${result.marketAnalysis.priceRange.max}
+                  </div>
+                </div>
+                <div className="bg-slate-800/50 p-4 rounded-lg">
+                  <div className="text-sm text-slate-400 mb-2">Постачальників</div>
+                  <div className="text-2xl font-bold text-white">{result.marketAnalysis.supplierCount}</div>
+                  <div className="text-xs text-slate-500 mt-1">
+                    Тренд: {result.marketAnalysis.marketTrend === 'increasing' ? '📈 Зростає' : 
+                             result.marketAnalysis.marketTrend === 'decreasing' ? '📉 Падає' : 
+                             '➡️ Стабільно'}
+                  </div>
+                </div>
               </div>
-              <div className="text-white font-semibold">{result.recommendations.optimalCustomsCode}</div>
-              <div className="text-sm text-slate-400">Митний тариф: {result.assumptions.customsTariff}%</div>
-            </div>
+            </TabsContent>
 
-            <div className="bg-slate-800/50 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Truck className="w-5 h-5 text-cyan-400" />
-                <span className="font-medium text-white">Логістика</span>
-              </div>
-              <div className="text-white font-semibold capitalize">{result.recommendations.logisticsRoute.method}</div>
-              <div className="text-sm text-slate-400">{result.recommendations.logisticsRoute.estimatedTime}</div>
-              <div className="text-emerald-400 font-medium">${result.recommendations.logisticsRoute.cost}</div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Button onClick={onSaveScenario} className="bg-cyan-500 hover:bg-cyan-600 text-white">
-              <Star className="w-4 h-4 mr-2" />
-              Зберегти сценарій
-            </Button>
-            <Button onClick={onDownloadReport} variant="outline" className="border-slate-700 text-slate-300">
-              <Download className="w-4 h-4 mr-2" />
-              Завантажити звіт
-            </Button>
-            <Button onClick={onShareResults} variant="outline" className="border-slate-700 text-slate-300">
-              <Share2 className="w-4 h-4 mr-2" />
-              Поділитися результатом
-            </Button>
-            <Button onClick={() => setShowDetails(!showDetails)} variant="outline" className="border-slate-700 text-slate-300">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Детальний аналіз
-            </Button>
-          </div>
+            <TabsContent value="data" className="mt-4">
+              <DataStrategy compact={false} showFullDetails={true} />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
-
-      {/* Disclaimer */}
-      <Alert className="bg-amber-500/10 border-amber-500/30">
-        <Info className="w-4 h-4 text-amber-400" />
-        <AlertDescription className="text-amber-200">
-          <strong>Важливо:</strong> Оцінка розрахована на основі історичних даних. 
-          Фактичний результат може відрізнятися залежно від ринкових умов, курсу валют та конкретних умов угоди.
-        </AlertDescription>
-      </Alert>
-
-      {/* Detailed Analysis */}
-      <AnimatePresence>
-        {showDetails && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card className="bg-slate-900/50 border-slate-800">
-              <CardHeader>
-                <CardTitle className="text-white">Детальний аналіз ринку</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="suppliers" className="w-full">
-                  <TabsList className="bg-slate-800 border-slate-700">
-                    <TabsTrigger value="suppliers">Постачальники</TabsTrigger>
-                    <TabsTrigger value="market">Ринок</TabsTrigger>
-                    <TabsTrigger value="risks">Ризики</TabsTrigger>
-                    <TabsTrigger value="assumptions">Припущення</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="suppliers" className="space-y-4">
-                    <div className="space-y-3">
-                      {result.recommendations.alternativeSuppliers.map((supplier, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                          <div>
-                            <div className="font-medium text-white">{supplier.name}</div>
-                            <div className="text-sm text-slate-400">{supplier.country}</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-medium text-emerald-400">${supplier.price}/од.</div>
-                            <Badge className={
-                              supplier.riskLevel === 'low' ? 'bg-emerald-500/20 text-emerald-300' :
-                              supplier.riskLevel === 'medium' ? 'bg-amber-500/20 text-amber-300' :
-                              'bg-red-500/20 text-red-300'
-                            }>
-                              Ризик: {supplier.riskLevel}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="market" className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-800/50 p-4 rounded-lg">
-                        <div className="text-sm text-slate-400 mb-1">Середня ціна</div>
-                        <div className="text-2xl font-bold text-white">${result.marketAnalysis.averagePrice}</div>
-                      </div>
-                      <div className="bg-slate-800/50 p-4 rounded-lg">
-                        <div className="text-sm text-slate-400 mb-1">Кількість постачальників</div>
-                        <div className="text-2xl font-bold text-white">{result.marketAnalysis.supplierCount}</div>
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="risks" className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                        <span className="text-white">Загальний ризик</span>
-                        <Badge className={
-                          result.riskAssessment.overall === 'low' ? 'bg-emerald-500/20 text-emerald-300' :
-                          result.riskAssessment.overall === 'medium' ? 'bg-amber-500/20 text-amber-300' :
-                          'bg-red-500/20 text-red-300'
-                        }>
-                          {result.riskAssessment.overall}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                        <span className="text-white">Санкції</span>
-                        <Badge className={result.riskAssessment.sanctions ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'}>
-                          {result.riskAssessment.sanctions ? 'Є збіги' : 'Немає'}
-                        </Badge>
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="assumptions" className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                        <span className="text-white">Курс USD/UAH</span>
-                        <span className="font-mono text-white">{result.assumptions.exchangeRate}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                        <span className="text-white">Обсяг партії</span>
-                        <span className="font-mono text-white">{result.assumptions.volume} од.</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                        <span className="text-white">Митний тариф</span>
-                        <span className="font-mono text-white">{result.assumptions.customsTariff}%</span>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 };
@@ -551,15 +508,15 @@ export const ProcurementOptimizer: React.FC = () => {
   }, [currentResult]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="space-y-6 text-slate-200">
+      <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
-            🎯 Оптимізація закупівель
+            Оптимізація закупівель
           </h1>
           <p className="text-xl text-slate-400 mb-6">
-            Знайдіть найкращих постачальників та зекономте до 25% на кожній партії
+            Знайдіть найкращого постачальника, код УКТЗЕД і маршрут з екраном цінності та рівнем довіри
           </p>
           
           {!currentResult && (
@@ -582,7 +539,7 @@ export const ProcurementOptimizer: React.FC = () => {
             <CardContent className="p-12 text-center">
               <Loader2 className="w-16 h-16 mx-auto mb-4 text-cyan-400 animate-spin" />
               <h3 className="text-xl font-semibold text-white mb-2">Аналізуємо ринок...</h3>
-              <p className="text-slate-400 mb-6">Перевіряємо {isDemoMode ? 'демо-дані' : 'ваш запит'} по тисячах постачальників</p>
+              <p className="text-slate-400 mb-6">Перевіряємо {isDemoMode ? 'демо-дані' : 'ваш запит'} по митних деклараціях, санкціях і ринкових сигналах</p>
               <Progress value={65} className="w-full max-w-md mx-auto" />
             </CardContent>
           </Card>
@@ -608,7 +565,7 @@ export const ProcurementOptimizer: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <ValueScreen
+              <ValueScreenWrapper
                 result={currentResult}
                 onSaveScenario={handleSaveScenario}
                 onShareResults={handleShareResults}

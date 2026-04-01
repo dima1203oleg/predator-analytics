@@ -1,12 +1,12 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useUser } from './UserContext';
-import { UserRole } from '../config/roles';
+import { UserRole, normalizeUserRole } from '../config/roles';
 
 export enum UIShell {
-  EXPLORER = 'explorer',   // Nebula Hub
-  OPERATOR = 'operator',   // Tactical HUD
-  COMMANDER = 'commander', // Neural Cortex
+  EXPLORER = 'explorer',
+  OPERATOR = 'operator',
+  COMMANDER = 'commander',
 }
 
 interface ShellContextType {
@@ -22,12 +22,14 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [currentShell, setCurrentShell] = useState<UIShell>(UIShell.EXPLORER);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Auto-set shell based on role when user changes
+  // Автоматично підбираємо оболонку за роллю користувача
   useEffect(() => {
     if (user) {
-      if (user.role === UserRole.ADMIN) {
+      const role = normalizeUserRole(user.role);
+
+      if (role === UserRole.ADMIN) {
         setCurrentShell(UIShell.COMMANDER);
-      } else if (user.role === UserRole.CLIENT_PREMIUM) {
+      } else if (role === UserRole.ANALYST || role === UserRole.BUSINESS) {
         setCurrentShell(UIShell.OPERATOR);
       } else {
         setCurrentShell(UIShell.EXPLORER);
@@ -37,24 +39,26 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [user]);
 
   const setShell = (shell: UIShell) => {
-    // Only allow setting a shell if user has sufficient role
+    // Дозволяємо зміну оболонки лише за достатнього рівня доступу
     if (!user) return;
 
-    // Hierarchy: ADMIN(3) > PREMIUM(2) > BASIC(1)
+    // Ієрархія доступу: адміністратор > аналітик/бізнес > перегляд
     const roleLevel = {
-      [UserRole.CLIENT_BASIC]: 1,
-      [UserRole.CLIENT_PREMIUM]: 2,
+      [UserRole.VIEWER]: 1,
+      [UserRole.SUPPLY_CHAIN]: 1,
+      [UserRole.BUSINESS]: 2,
+      [UserRole.ANALYST]: 2,
       [UserRole.ADMIN]: 3,
     };
 
-    // Shell Requirements
+    // Вимоги для кожної оболонки
     const shellLevel = {
        [UIShell.EXPLORER]: 1,
        [UIShell.OPERATOR]: 2,
        [UIShell.COMMANDER]: 3,
     };
 
-    const currentLevel = roleLevel[user.role] || 1;
+    const currentLevel = roleLevel[normalizeUserRole(user.role)] || 1;
     const requiredLevel = shellLevel[shell] || 1;
 
     if (currentLevel >= requiredLevel) {
@@ -72,7 +76,7 @@ export const ShellProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 export const useShell = (): ShellContextType => {
   const context = useContext(ShellContext);
   if (!context) {
-    console.warn('useShell used outside of ShellProvider - returning defaults');
+    console.warn('useShell викликано поза ShellProvider - повертаємо значення за замовчуванням');
     return {
       currentShell: UIShell.EXPLORER,
       setShell: () => {},

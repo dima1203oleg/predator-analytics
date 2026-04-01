@@ -71,10 +71,9 @@ const timeAgo = (timestamp?: string): string => {
 };
 
 const PredatorV24 = () => {
-  const { user } = useUser();
+  const { canonicalRole, canonicalTier } = useUser();
   const backendStatus = useBackendStatus();
-  const currentRole = user?.role ?? 'viewer';
-  const navigationSections = useMemo(() => getVisibleNavigation(currentRole), [currentRole]);
+  const navigationSections = useMemo(() => getVisibleNavigation(canonicalRole, canonicalTier), [canonicalTier, canonicalRole]);
 
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [loading, setLoading] = useState(true);
@@ -150,28 +149,28 @@ const PredatorV24 = () => {
 
   const quickActions = [
     {
-      label: 'Decision Intelligence',
-      description: 'Швидкий перехід до AI-рішень, ризиків і batch-аналізу',
-      to: '/decision-intelligence',
-      icon: BrainCircuit,
+      label: 'Оптимізація закупівель',
+      description: 'Швидкий перехід до MVP-сценарію та екрану цінності',
+      to: '/procurement-optimizer',
+      icon: BadgeCheck,
+    },
+    {
+      label: 'Центр виконання',
+      description: 'Подивитися активні job-based сценарії і результат',
+      to: '/scenario-progress',
+      icon: Zap,
     },
     {
       label: 'Перевірка контрагента',
       description: 'Відкрити досьє компанії та CERS-аналіз',
       to: '/diligence',
-      icon: BadgeCheck,
+      icon: BrainCircuit,
     },
     {
       label: 'Ринковий аналіз',
       description: 'Оцінити тенденції, країни й цінові сигнали',
       to: '/market',
       icon: TrendingUp,
-    },
-    {
-      label: 'Аналітичний центр',
-      description: 'Відкрити дашборди, звіти та real-time візуалізації',
-      to: '/analytics',
-      icon: Zap,
     },
   ] as const;
 

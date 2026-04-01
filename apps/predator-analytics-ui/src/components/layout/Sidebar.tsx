@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { isSidebarOpenAtom, sidebarSearchAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
+import { getRoleDescription, getRoleDisplayName } from '../../config/roles';
 import {
   getNavigationTotals,
   getVisibleNavigation,
@@ -26,16 +27,16 @@ import { cn } from '../../lib/utils';
 import { useSidebarStore } from '../../store/sidebarStore';
 
 export const Sidebar: React.FC = () => {
-  const { user, logout } = useUser();
-  const userRole = user?.role || 'viewer';
+  const { user, logout, canonicalRole, canonicalTier } = useUser();
+  const userRole = canonicalRole;
   const backendStatus = useBackendStatus();
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
   const openSections = useSidebarStore((state) => state.openSections);
   const toggleSidebarSection = useSidebarStore((state) => state.toggleSection);
 
-  const visibleSections = useMemo(() => getVisibleNavigation(userRole), [userRole]);
-  const totals = useMemo(() => getNavigationTotals(userRole), [userRole]);
+  const visibleSections = useMemo(() => getVisibleNavigation(userRole, canonicalTier), [canonicalTier, userRole]);
+  const totals = useMemo(() => getNavigationTotals(userRole, canonicalTier), [canonicalTier, userRole]);
   const globalSection = useMemo(() => visibleSections.find((section) => section.isGlobal) ?? null, [visibleSections]);
 
   const toggleSection = useCallback((sectionId: string) => {
@@ -186,6 +187,12 @@ export const Sidebar: React.FC = () => {
               </span>
             </div>
 
+            <div className="mt-4 rounded-2xl border border-white/[0.06] bg-black/20 p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Поточна роль</div>
+              <div className="mt-1 text-sm font-black text-white">{getRoleDisplayName(userRole)}</div>
+              <div className="mt-1 text-xs leading-5 text-slate-400">{getRoleDescription(userRole)}</div>
+            </div>
+
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
                 <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Секції</div>
@@ -200,6 +207,21 @@ export const Sidebar: React.FC = () => {
             <div className="mt-4 rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
               <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Джерело</div>
               <div className="mt-1 text-sm font-semibold text-slate-200">{backendStatus.sourceLabel}</div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-2">
+              <NavLink
+                to="/procurement-optimizer"
+                className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/15"
+              >
+                Запустити сценарій закупівель
+              </NavLink>
+              <NavLink
+                to="/scenario-progress"
+                className="rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/15"
+              >
+                Відкрити центр виконання
+              </NavLink>
             </div>
           </div>
         )}
@@ -338,6 +360,21 @@ export const Sidebar: React.FC = () => {
             </>
           )}
         </div>
+
+        {isOpen && (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Тариф</div>
+              <div className="mt-1 text-sm font-black text-white">{canonicalTier}</div>
+            </div>
+            <div className="rounded-2xl border border-white/[0.06] bg-black/20 px-3 py-2.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">Бекенд</div>
+              <div className={cn('mt-1 text-sm font-black', backendStatus.isOffline ? 'text-rose-200' : 'text-emerald-200')}>
+                {backendStatus.isOffline ? 'Немає зв’язку' : 'Активний'}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <button

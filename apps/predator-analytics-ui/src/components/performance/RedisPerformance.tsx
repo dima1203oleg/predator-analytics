@@ -23,7 +23,7 @@ import {
   BarChart3,
   Cpu,
   HardDrive,
-  Memory,
+  MemoryStick,
   Network,
   Download,
   Upload,
@@ -549,7 +549,7 @@ export const RedisPerformance: React.FC = () => {
                 title="Використання памʼяті"
                 value={performanceMetrics.memoryUsage}
                 unit="%"
-                icon={Memory}
+                icon={MemoryStick}
                 trend={{ value: -1.2, direction: 'down' }}
                 color="amber"
               />
@@ -640,7 +640,6 @@ export const RedisPerformance: React.FC = () => {
               {filteredKeys.map(key => (
                 <CacheKeyCard
                   key={key.key}
-                  key={key}
                   onDelete={handleDeleteKey}
                   onRefresh={handleRefreshKey}
                 />

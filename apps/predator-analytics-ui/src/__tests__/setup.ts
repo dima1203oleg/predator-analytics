@@ -59,3 +59,35 @@ Object.defineProperty(globalThis, 'crypto', {
         getRandomValues: (arr: Uint8Array) => arr,
     },
 })
+
+// Стабільний localStorage для тестів, незалежний від поведінки jsdom у цьому рантаймі
+const createStorage = (): Storage => {
+    const store = new Map<string, string>()
+
+    return {
+        get length() {
+            return store.size
+        },
+        clear: () => store.clear(),
+        getItem: (key: string) => store.get(key) ?? null,
+        key: (index: number) => Array.from(store.keys())[index] ?? null,
+        removeItem: (key: string) => {
+            store.delete(key)
+        },
+        setItem: (key: string, value: string) => {
+            store.set(key, value)
+        },
+    } as Storage
+}
+
+const localStorageMock = createStorage()
+
+Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: localStorageMock,
+})
+
+Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: localStorageMock,
+})

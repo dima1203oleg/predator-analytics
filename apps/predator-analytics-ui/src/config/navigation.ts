@@ -49,6 +49,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { normalizeUserRole, UserRole } from './roles';
 
 export type NavAccent =
   | 'amber'
@@ -67,6 +68,7 @@ export interface NavItem {
   description: string;
   badge?: string;
   roles?: string[];
+  tiers?: AccessTier[];
   matchPaths?: string[];
 }
 
@@ -76,6 +78,7 @@ export interface NavGroup {
   description: string;
   items: NavItem[];
   roles?: string[];
+  tiers?: AccessTier[];
 }
 
 export interface NavSection {
@@ -87,6 +90,8 @@ export interface NavSection {
   groups?: NavGroup[];
   collapsed?: boolean;
   isGlobal?: boolean;
+  roles?: string[];
+  tiers?: AccessTier[];
 }
 
 export interface NavigationContext {
@@ -94,25 +99,42 @@ export interface NavigationContext {
   section: NavSection | null;
 }
 
+export type NavigationAccessState = 'allowed' | 'upgrade' | 'forbidden' | 'unknown';
+
 export type NavigationRole =
   | 'admin'
   | 'analyst'
   | 'business'
   | 'supply_chain'
-  | 'client_basic'
-  | 'client_premium';
+  | 'viewer';
+
+export type AccessTier = 'basic' | 'pro' | 'enterprise';
 
 const ROLE_ALIASES: Record<string, NavigationRole> = {
   commander: 'admin',
-  explorer: 'client_basic',
-  operator: 'client_premium',
+  explorer: 'viewer',
+  operator: 'supply_chain',
   business_owner: 'business',
   owner: 'business',
   ceo: 'business',
+  client_basic: 'viewer',
+  client_premium: 'analyst',
 };
 
 export const normalizeNavigationRole = (role: string): NavigationRole =>
-  ROLE_ALIASES[role.toLowerCase()] ?? (role as NavigationRole);
+  ROLE_ALIASES[role.toLowerCase()] ?? (normalizeUserRole(role) as NavigationRole);
+
+export const normalizeAccessTier = (tier?: string | null): AccessTier => {
+  if (!tier || tier === 'free' || tier === 'basic') {
+    return 'basic';
+  }
+
+  if (tier === 'enterprise') {
+    return 'enterprise';
+  }
+
+  return 'pro';
+};
 
 const roleMatches = (role: string, allowedRoles?: string[]): boolean => {
   if (!allowedRoles || allowedRoles.length === 0) {
@@ -123,6 +145,14 @@ const roleMatches = (role: string, allowedRoles?: string[]): boolean => {
   const normalizedAllowed = allowedRoles.map((allowedRole) => normalizeNavigationRole(allowedRole));
 
   return normalizedAllowed.includes(normalizedRole);
+};
+
+const tierMatches = (tier: string, allowedTiers?: AccessTier[]): boolean => {
+  if (!allowedTiers || allowedTiers.length === 0) {
+    return true;
+  }
+
+  return allowedTiers.includes(normalizeAccessTier(tier));
 };
 
 export const navAccentStyles: Record<
@@ -330,13 +360,13 @@ export const navigationConfig: NavSection[] = [
         label: '💰 Фінанси / Unit-економіка',
         description: 'Фінансовий контроль та unit-економіка бізнес-процесів.',
         items: [
-          { id: 'budgets', label: 'Бюджети', path: '/budgets', icon: Landmark, description: 'Планування та контроль бюджетів за напрямками.' },
-          { id: 'expenses', label: 'Витрати', path: '/expenses', icon: DollarSign, description: 'Деталізація фактичних витрат, порівняння з бюджетом.' },
-          { id: 'savings', label: 'Економія', path: '/savings', icon: TrendingUp, description: 'Агрегація зекономлених коштів завдяки рекомендаціям платформи.' },
-          { id: 'procurement-optimizer', label: 'Оптимізація закупівель', path: '/procurement-optimizer', icon: Target, description: 'Знайдіть найкращих постачальників та зекономте до 25% на кожній партії.', badge: 'NEW' },
-          { id: 'cost-per-action', label: 'Вартість дії (CPA)', path: '/cpa', icon: BarChart3, description: 'Розрахунок вартості кожної автоматизованої дії.' },
-          { id: 'roi-modules', label: 'ROI по модулях', path: '/roi-modules', icon: LineChart, description: 'Повернення інвестицій для кожного модуля, агента, інтеграції.' },
-          { id: 'ltv-cac', label: 'LTV / CAC', path: '/ltv-cac', icon: Users, description: 'Життєва цінність клієнта та вартість залучення.' },
+          { id: 'budgets', label: 'Бюджети', path: '/budgets', icon: Landmark, description: 'Планування та контроль бюджетів за напрямками.', tiers: ['pro', 'enterprise'] },
+          { id: 'expenses', label: 'Витрати', path: '/expenses', icon: DollarSign, description: 'Деталізація фактичних витрат, порівняння з бюджетом.', tiers: ['pro', 'enterprise'] },
+          { id: 'savings', label: 'Економія', path: '/savings', icon: TrendingUp, description: 'Агрегація зекономлених коштів завдяки рекомендаціям платформи.', tiers: ['pro', 'enterprise'] },
+          { id: 'procurement-optimizer', label: 'Оптимізація закупівель', path: '/procurement-optimizer', icon: Target, description: 'Знайдіть найкращих постачальників та зекономте до 25% на кожній партії.', badge: 'NEW', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'cost-per-action', label: 'Вартість дії (CPA)', path: '/cpa', icon: BarChart3, description: 'Розрахунок вартості кожної автоматизованої дії.', tiers: ['pro', 'enterprise'] },
+          { id: 'roi-modules', label: 'ROI по модулях', path: '/roi-modules', icon: LineChart, description: 'Повернення інвестицій для кожного модуля, агента, інтеграції.', tiers: ['pro', 'enterprise'] },
+          { id: 'ltv-cac', label: 'LTV / CAC', path: '/ltv-cac', icon: Users, description: 'Життєва цінність клієнта та вартість залучення.', tiers: ['enterprise'] },
         ],
       },
     ],
@@ -349,9 +379,9 @@ export const navigationConfig: NavSection[] = [
     items: [
       { id: 'intelligence', label: 'Центр розвідки', path: '/intelligence', icon: Radar, description: 'Стратегічна карта ризиків, сигналів і пріоритетів.' },
       { id: 'market', label: 'Аналіз ринку', path: '/market', icon: TrendingUp, description: 'Огляд ринку, потоків, конкурентів і потенціалу прибутку.' },
-      { id: 'forecast', label: 'Прогнозування', path: '/forecast', icon: Target, description: 'Сценарії попиту, ризиків і майбутніх можливостей.' },
-      { id: 'opportunities', label: 'Можливості', path: '/opportunities', icon: Briefcase, description: 'Сигнали для зростання виручки та швидкого захоплення ринку.' },
-      { id: 'competitor-intel', label: 'Конкуренти', path: '/competitor-intel', icon: Eye, description: 'Позиції, переваги та слабкі місця конкурентів.', },
+      { id: 'forecast', label: 'Прогнозування', path: '/forecast', icon: Target, description: 'Сценарії попиту, ризиків і майбутніх можливостей.', tiers: ['pro', 'enterprise'] },
+      { id: 'opportunities', label: 'Можливості', path: '/opportunities', icon: Briefcase, description: 'Сигнали для зростання виручки та швидкого захоплення ринку.', tiers: ['pro', 'enterprise'] },
+      { id: 'competitor-intel', label: 'Конкуренти', path: '/competitor-intel', icon: Eye, description: 'Позиції, переваги та слабкі місця конкурентів.', tiers: ['pro', 'enterprise'] },
       { id: 'diligence', label: 'Перевірка контрагентів', path: '/diligence', icon: Search, description: 'Профіль компанії, санкції, аномалії та бенефіціарна структура.', matchPaths: ['/company/'] },
       { id: 'modeling', label: 'Моделювання', path: '/modeling', icon: FlaskConical, description: 'Симуляції рішень, ризиків і наслідків без демо-шуму.' },
     ],
@@ -384,6 +414,7 @@ export const navigationConfig: NavSection[] = [
         label: 'OSINT та розслідування',
         description: 'Графи, реєстри, тендери та докази для глибокого розслідування.',
         roles: ['admin', 'analyst', 'government', 'intelligence'],
+        tiers: ['pro', 'enterprise'],
         items: [
           { id: 'entity-graph', label: 'Граф сутностей', path: '/entity-graph', icon: Network, description: 'Графова проекція ключових об’єктів розслідування.' },
           { id: 'graph', label: 'Граф звʼязків', path: '/graph', icon: Network, description: 'Бенефіціари, зв’язки та кластери в одному вікні.' },
@@ -416,10 +447,10 @@ export const navigationConfig: NavSection[] = [
     accent: 'cyan',
     items: [
       { id: 'customs-intel', label: 'Митна аналітика', path: '/customs-intel', icon: Shield, description: 'Аналіз декларацій, потоків і ризикових категорій.' },
-      { id: 'customs-premium', label: 'Митний ПРО', path: '/customs-premium', icon: Shield, description: 'Преміальний митний контур з розширеними інструментами.', badge: 'ПРО' },
+      { id: 'customs-premium', label: 'Митний ПРО', path: '/customs-premium', icon: Shield, description: 'Преміальний митний контур з розширеними інструментами.', badge: 'ПРО', tiers: ['pro', 'enterprise'] },
       { id: 'trade-map', label: 'Карта торгівлі', path: '/trade-map', icon: Globe, description: 'Маршрути, країни, вузли та міжнародні потоки.' },
-      { id: 'price-compare', label: 'Порівняння цін', path: '/price-compare', icon: BarChart3, description: 'Виявлення перекосів, демпінгу та завищення.', },
-      { id: 'supply-chain', label: 'Ланцюги постачання', path: '/supply-chain', icon: Box, description: 'Контроль ланцюгів, вузьких місць і ризиків.' },
+      { id: 'price-compare', label: 'Порівняння цін', path: '/price-compare', icon: BarChart3, description: 'Виявлення перекосів, демпінгу та завищення.', tiers: ['basic', 'pro', 'enterprise'] },
+      { id: 'supply-chain', label: 'Ланцюги постачання', path: '/supply-chain', icon: Box, description: 'Контроль ланцюгів, вузьких місць і ризиків.', tiers: ['pro', 'enterprise'] },
     ],
   },
   {
@@ -430,9 +461,9 @@ export const navigationConfig: NavSection[] = [
     items: [
       { id: 'clients', label: 'Клієнтський центр', path: '/clients', icon: Users, description: 'Сегменти клієнтів, кейси та активність.' },
       { id: 'suppliers', label: 'Постачальники', path: '/suppliers', icon: Building2, description: 'Пошук і порівняння постачальників та умов.' },
-      { id: 'referral-control', label: 'Реферальний контроль', path: '/referral-control', icon: Users, description: 'Контроль каналів рекомендацій і пов’язаних ризиків.' },
-      { id: 'compromat-person', label: 'Досьє персони', path: '/compromat-person', icon: FileText, description: 'Профіль особи, зв’язки, ризики та згадки.' },
-      { id: 'compromat-firm', label: 'Досьє компанії', path: '/compromat-firm', icon: Building2, description: 'Компанія під лупою: структура, репутація та ризики.' },
+      { id: 'referral-control', label: 'Реферальний контроль', path: '/referral-control', icon: Users, description: 'Контроль каналів рекомендацій і пов’язаних ризиків.', tiers: ['pro', 'enterprise'] },
+      { id: 'compromat-person', label: 'Досьє персони', path: '/compromat-person', icon: FileText, description: 'Профіль особи, зв’язки, ризики та згадки.', tiers: ['pro', 'enterprise'] },
+      { id: 'compromat-firm', label: 'Досьє компанії', path: '/compromat-firm', icon: Building2, description: 'Компанія під лупою: структура, репутація та ризики.', tiers: ['pro', 'enterprise'] },
     ],
   },
   {
@@ -443,18 +474,19 @@ export const navigationConfig: NavSection[] = [
     items: [
       { id: 'agents', label: 'ШІ-агенти', path: '/agents', icon: Users, description: 'Агенти, ролі, задачі та результати роботи.' },
       { id: 'ai-insights', label: 'ШІ-інсайти', path: '/ai-insights', icon: Zap, description: 'Інсайти та висновки на основі реальних сигналів.' },
-      { id: 'knowledge', label: 'База знань', path: '/knowledge', icon: BrainCircuit, description: 'Актуалізація знань для сценаріїв і моделей.' },
-      { id: 'llm', label: 'LLM-студія', path: '/llm', icon: Brain, description: 'Керування моделями, провайдерами та маршрутами.', roles: ['admin'] },
-      { id: 'engines', label: 'Двигуни', path: '/engines', icon: Cpu, description: 'Стан аналітичних двигунів, latency і throughput.', roles: ['admin'] },
-      { id: 'training', label: 'Тренування моделей', path: '/training', icon: Cpu, description: 'Контроль тренувальних циклів і артефактів.', roles: ['admin'] },
-      { id: 'super', label: 'Суперінтелект', path: '/super', icon: Brain, description: 'Експериментальний режим аналітичної координації.', badge: 'α', roles: ['admin'] },
-      { id: 'ai-control', label: 'Центр керування ШІ', path: '/admin/ai-control', icon: Zap, description: 'Адміністративне керування ШІ-контуром.', roles: ['admin'] },
+      { id: 'knowledge', label: 'База знань', path: '/knowledge', icon: BrainCircuit, description: 'Актуалізація знань для сценаріїв і моделей.', tiers: ['pro', 'enterprise'] },
+      { id: 'llm', label: 'LLM-студія', path: '/llm', icon: Brain, description: 'Керування моделями, провайдерами та маршрутами.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'engines', label: 'Двигуни', path: '/engines', icon: Cpu, description: 'Стан аналітичних двигунів, latency і throughput.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'training', label: 'Тренування моделей', path: '/training', icon: Cpu, description: 'Контроль тренувальних циклів і артефактів.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'super', label: 'Суперінтелект', path: '/super', icon: Brain, description: 'Експериментальний режим аналітичної координації.', badge: 'α', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'ai-control', label: 'Центр керування ШІ', path: '/admin/ai-control', icon: Zap, description: 'Адміністративне керування ШІ-контуром.', roles: ['admin'], tiers: ['enterprise'] },
     ],
     groups: [
       {
         id: 'solution-hub',
         label: '🧩 Центр рішень',
         description: 'Створення, зберігання та масштабування бізнес-рішень.',
+        tiers: ['pro', 'enterprise'],
         items: [
           { id: 'my-solutions', label: 'Мої рішення', path: '/my-solutions', icon: Puzzle, description: 'Створені користувачем модулі та пайплайни.' },
           { id: 'solution-templates', label: 'Шаблони рішень', path: '/solution-templates', icon: Blocks, description: 'Готові кейси: імпорт, перевірка контрагентів, логістика.' },
@@ -467,10 +499,10 @@ export const navigationConfig: NavSection[] = [
         label: '📊 Бізнес-сценарії',
         description: 'Готові процеси для швидкого запуску.',
         items: [
-          { id: 'import-scenario', label: 'Імпорт товару', path: '/scenario/import', icon: Package, description: 'Повний процес імпорту від перевірки до митного оформлення.' },
-          { id: 'counterparty-check', label: 'Перевірка контрагента', path: '/scenario/counterparty', icon: Search, description: 'Комплексна перевірка компанії перед угодою.' },
-          { id: 'market-analysis', label: 'Аналіз ринку перед закупівлею', path: '/scenario/market', icon: TrendingUp, description: 'Оцінка ринку, цін, постачальників перед закупівлею.' },
-          { id: 'scenario-progress', label: 'Відстеження сценаріїв', path: '/scenario-progress', icon: Activity, description: 'Статус, прогрес та результати запущених сценаріїв.' },
+          { id: 'import-scenario', label: 'Імпорт товару', path: '/scenario/import', icon: Package, description: 'Повний процес імпорту від перевірки до митного оформлення.', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'counterparty-check', label: 'Перевірка контрагента', path: '/scenario/counterparty', icon: Search, description: 'Комплексна перевірка компанії перед угодою.', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'market-analysis', label: 'Аналіз ринку перед закупівлею', path: '/scenario/market', icon: TrendingUp, description: 'Оцінка ринку, цін, постачальників перед закупівлею.', tiers: ['basic', 'pro', 'enterprise'] },
+          { id: 'scenario-progress', label: 'Відстеження сценаріїв', path: '/scenario-progress', icon: Activity, description: 'Статус, прогрес та результати запущених сценаріїв.', tiers: ['basic', 'pro', 'enterprise'] },
         ],
       },
     ],
@@ -481,16 +513,16 @@ export const navigationConfig: NavSection[] = [
     description: 'Технічний контур, видимий лише адміністраторам.',
     accent: 'sky',
     items: [
-      { id: 'security', label: 'Безпека', path: '/security', icon: Lock, description: 'Стан захисту, подій і критичних відхилень.' },
-      { id: 'compliance', label: 'Комплаєнс', path: '/compliance', icon: Scale, description: 'Правила, обмеження, процедури та вимоги.' },
-      { id: 'settings', label: 'Налаштування', path: '/settings', icon: Settings, description: 'Налаштування інтерфейсу, доступів і поведінки.' },
-      { id: 'billing', label: 'Тарифний план', path: '/billing', icon: CreditCard, description: 'Управління підпискою, лімітами та монетизацією.' },
-      { id: 'deployment', label: 'Деплоймент', path: '/deployment', icon: Globe, description: 'Середовища, релізи та пайплайни розгортання.', roles: ['admin'] },
-      { id: 'governance', label: 'Суверенне врядування', path: '/governance', icon: Shield, description: 'Політики, аудити та суверенний контроль.', roles: ['admin'] },
-      { id: 'system-factory', label: 'Системна фабрика', path: '/system-factory', icon: Factory, description: 'Контури, модулі й технічний стан платформи.', roles: ['admin'] },
-      { id: 'ingestion', label: 'Завантаження', path: '/ingestion', icon: Upload, description: 'Джерела, потоки та конвеєри інгестії.' },
-      { id: 'data', label: 'Платформа даних', path: '/data', icon: Database, description: 'Структура даних, індекси й готовність сховища.' },
-      { id: 'reports', label: 'Звіти', path: '/reports', icon: FileText, description: 'Конструктор звітів і експорт матеріалів.' },
+      { id: 'security', label: 'Безпека', path: '/security', icon: Lock, description: 'Стан захисту, подій і критичних відхилень.', tiers: ['pro', 'enterprise'] },
+      { id: 'compliance', label: 'Комплаєнс', path: '/compliance', icon: Scale, description: 'Правила, обмеження, процедури та вимоги.', tiers: ['pro', 'enterprise'] },
+      { id: 'settings', label: 'Налаштування', path: '/settings', icon: Settings, description: 'Налаштування інтерфейсу, доступів і поведінки.', tiers: ['basic', 'pro', 'enterprise'] },
+      { id: 'billing', label: 'Тарифний план', path: '/billing', icon: CreditCard, description: 'Управління підпискою, лімітами та монетизацією.', tiers: ['basic', 'pro', 'enterprise'] },
+      { id: 'deployment', label: 'Деплоймент', path: '/deployment', icon: Globe, description: 'Середовища, релізи та пайплайни розгортання.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'governance', label: 'Суверенне врядування', path: '/governance', icon: Shield, description: 'Політики, аудити та суверенний контроль.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'system-factory', label: 'Системна фабрика', path: '/system-factory', icon: Factory, description: 'Контури, модулі й технічний стан платформи.', roles: ['admin'], tiers: ['enterprise'] },
+      { id: 'ingestion', label: 'Завантаження', path: '/ingestion', icon: Upload, description: 'Джерела, потоки та конвеєри інгестії.', tiers: ['pro', 'enterprise'] },
+      { id: 'data', label: 'Платформа даних', path: '/data', icon: Database, description: 'Структура даних, індекси й готовність сховища.', tiers: ['enterprise'] },
+      { id: 'reports', label: 'Звіти', path: '/reports', icon: FileText, description: 'Конструктор звітів і експорт матеріалів.', tiers: ['basic', 'pro', 'enterprise'] },
     ],
     groups: [
       {
@@ -501,11 +533,11 @@ export const navigationConfig: NavSection[] = [
         items: [
           { id: 'api-keys', label: 'API ключі', path: '/api-keys', icon: Lock, description: 'Управління API-ключами для зовнішніх сервісів.' },
           { id: 'service-connections', label: 'Підключення до сервісів', path: '/service-connections', icon: Globe, description: 'Конектори до CRM, ERP, митних баз, логістичних платформ.' },
-          { id: 'webhooks', label: 'Webhooks', path: '/webhooks', icon: Upload, description: 'Налаштування вебхуків для подій системи.' },
-          { id: 'data-connectors', label: 'Data connectors', path: '/data-connectors', icon: Database, description: 'Підключення до зовнішніх джерел даних.' },
-          { id: 'flow-builder', label: 'Flow builder', path: '/flow-builder', icon: Workflow, description: 'Візуальний конструктор потоків між інтеграціями.' },
+          { id: 'webhooks', label: 'Вебхуки', path: '/webhooks', icon: Upload, description: 'Налаштування вебхуків для подій системи.' },
+          { id: 'data-connectors', label: 'Конектори даних', path: '/data-connectors', icon: Database, description: 'Підключення до зовнішніх джерел даних.' },
+          { id: 'flow-builder', label: 'Конструктор потоків', path: '/flow-builder', icon: Workflow, description: 'Візуальний конструктор потоків між інтеграціями.' },
           { id: 'event-routing', label: 'Event routing', path: '/event-routing', icon: Network, description: 'Маршрутизація подій між інтеграціями.' },
-          { id: 'retry-handling', label: 'Retry / error handling', path: '/retry-handling', icon: AlertTriangle, description: 'Політики повторних спроб, обробка помилок.' },
+          { id: 'retry-handling', label: 'Повторні спроби та помилки', path: '/retry-handling', icon: AlertTriangle, description: 'Політики повторних спроб і обробка помилок.' },
         ],
       },
     ],
@@ -524,15 +556,28 @@ const itemMatchesPath = (item: NavItem, pathname: string): boolean => {
   return item.matchPaths?.some((matchPath) => pathname.startsWith(matchPath)) ?? false;
 };
 
-export const getVisibleNavigation = (role: string): NavSection[] =>
+const collectSectionItems = (section: NavSection): NavItem[] => [
+  ...section.items,
+  ...(section.groups?.flatMap((group) => group.items) ?? []),
+];
+
+export const getVisibleNavigation = (role: string, tier: string = 'basic'): NavSection[] =>
   navigationConfig
     .map((section) => {
-      const items = section.items.filter((item) => roleMatches(role, item.roles));
+      if (!roleMatches(role, section.roles as string[] | undefined) || !tierMatches(tier, section.tiers)) {
+        return {
+          ...section,
+          items: [],
+          groups: [],
+        };
+      }
+
+      const items = section.items.filter((item) => roleMatches(role, item.roles) && tierMatches(tier, item.tiers));
       const groups = section.groups
-        ?.filter((group) => roleMatches(role, group.roles))
+        ?.filter((group) => roleMatches(role, group.roles) && tierMatches(tier, group.tiers))
         .map((group) => ({
           ...group,
-          items: group.items.filter((item) => roleMatches(role, item.roles)),
+          items: group.items.filter((item) => roleMatches(role, item.roles) && tierMatches(tier, item.tiers)),
         }))
         .filter((group) => group.items.length > 0);
 
@@ -546,8 +591,8 @@ export const getVisibleNavigation = (role: string): NavSection[] =>
 
 export const getFilteredNavigation = getVisibleNavigation;
 
-export const getNavigationTotals = (role: string): { items: number; sections: number } => {
-  const sections = getVisibleNavigation(role);
+export const getNavigationTotals = (role: string, tier: string = 'basic'): { items: number; sections: number } => {
+  const sections = getVisibleNavigation(role, tier);
   return {
     sections: sections.length,
     items: sections.reduce(
@@ -558,8 +603,8 @@ export const getNavigationTotals = (role: string): { items: number; sections: nu
   };
 };
 
-export const getNavigationContext = (pathname: string, role: string): NavigationContext => {
-  const sections = getVisibleNavigation(role);
+export const getNavigationContext = (pathname: string, role: string, tier: string = 'basic'): NavigationContext => {
+  const sections = getVisibleNavigation(role, tier);
 
   for (const section of sections) {
     for (const item of section.items) {
@@ -588,4 +633,46 @@ export const getNavigationContext = (pathname: string, role: string): Navigation
   }
 
   return { item: null, section: null };
+};
+
+export const canAccessNavigationPath = (pathname: string, role: string, tier: string = 'basic'): boolean =>
+  getNavigationContext(pathname, role, tier).item !== null;
+
+export const getNavigationAccessState = (
+  pathname: string,
+  role: string,
+  tier: string = 'basic',
+): NavigationAccessState => {
+  const visibleSections = getVisibleNavigation(role, tier);
+  const visibleItems = visibleSections.flatMap(collectSectionItems);
+
+  if (visibleItems.some((item) => itemMatchesPath(item, pathname))) {
+    return 'allowed';
+  }
+
+  const roleAllowedSections = navigationConfig
+    .filter((section) => roleMatches(role, section.roles as string[] | undefined))
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => roleMatches(role, item.roles)),
+      groups: section.groups
+        ?.filter((group) => roleMatches(role, group.roles))
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => roleMatches(role, item.roles)),
+        }))
+        .filter((group) => group.items.length > 0),
+    }));
+
+  const roleAllowedItems = roleAllowedSections.flatMap(collectSectionItems);
+
+  if (roleAllowedItems.some((item) => itemMatchesPath(item, pathname))) {
+    return 'upgrade';
+  }
+
+  const existsInNavigation = navigationConfig
+    .flatMap(collectSectionItems)
+    .some((item) => itemMatchesPath(item, pathname));
+
+  return existsInNavigation ? 'forbidden' : 'unknown';
 };

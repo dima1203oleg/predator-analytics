@@ -40,6 +40,31 @@ vi.mock('../locales/uk/premium', () => ({
   },
 }));
 
+vi.mock('@/hooks/useFigmaBridge', () => ({
+  useFigmaBridge: () => ({
+    status: 'connected',
+    statusLabel: 'Figma підключено',
+    message: 'Макет синхронізовано.',
+    fileKey: 'AbCdEf12345',
+    fileUrl: 'https://www.figma.com/file/AbCdEf12345',
+    fileName: 'Predator UI',
+    syncedAt: '2026-04-01T08:30:00Z',
+    syncedAtLabel: '1 квітня 2026, 08:30',
+    tokenValidated: true,
+    accountLabel: 'Dima kizima',
+    accountEmail: 'dima@example.com',
+    pages: [],
+    pageCount: 0,
+    source: 'api',
+    isLoading: false,
+    isSaving: false,
+    error: null,
+    refresh: vi.fn(),
+    saveConfig: vi.fn(async () => true),
+    clearConfig: vi.fn(async () => true),
+  }),
+}));
+
 vi.mock('framer-motion', async () => {
   return {
     motion: {
@@ -62,6 +87,19 @@ describe('CommandPalette', () => {
     );
 
     expect(screen.getByTitle('Командна палітра')).toBeInTheDocument();
+  });
+
+  it('додає дію для відкриття привʼязаного Figma-макета', () => {
+    render(
+      <MemoryRouter>
+        <CommandPalette />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByTitle('Командна палітра'));
+
+    expect(screen.getByText('Відкрити Figma-макет')).toBeInTheDocument();
+    expect(screen.getByText(/канонічний макет: Predator UI/i)).toBeInTheDocument();
   });
 
   it('показує NLP-підказку для бізнес-запиту', () => {

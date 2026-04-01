@@ -64,8 +64,8 @@ describe('Navigation Architecture v4.0', () => {
       expect(sectionIds).toContain('trade-logistics');
       expect(sectionIds).toContain('clients');
       
-      // Не має бачити технічні розділи
-      expect(sectionIds).not.toContain('system');
+      // Системний розділ лишається доступним частково через налаштування та білінг
+      expect(sectionIds).toContain('system');
       
       // Глобальний шар завжди видимий
       expect(sectionIds).toContain('global-layer');
@@ -209,7 +209,7 @@ describe('Navigation Architecture v4.0', () => {
 
   describe('AI Autonomy Section', () => {
     it('має правильну структуру AI компонентів', () => {
-      const sections = getVisibleNavigation('admin');
+      const sections = getVisibleNavigation('admin', 'enterprise');
       const aiSection = sections.find(section => section.id === 'ai-autonomy');
       
       expect(aiSection).toBeDefined();
@@ -227,7 +227,7 @@ describe('Navigation Architecture v4.0', () => {
     });
 
     it('LLM та інженерні інструменти фільтруються для не-адмінів', () => {
-      const sections = getVisibleNavigation('business');
+      const sections = getVisibleNavigation('business', 'enterprise');
       const aiSection = sections.find(section => section.id === 'ai-autonomy');
       
       expect(aiSection).toBeDefined();
@@ -246,7 +246,7 @@ describe('Navigation Architecture v4.0', () => {
 
   describe('System Section', () => {
     it('має всі системні інструменти', () => {
-      const sections = getVisibleNavigation('admin');
+      const sections = getVisibleNavigation('admin', 'enterprise');
       const systemSection = sections.find(section => section.id === 'system');
       
       expect(systemSection).toBeDefined();
@@ -264,15 +264,17 @@ describe('Navigation Architecture v4.0', () => {
       expect(itemIds).toContain('reports');
     });
 
-    it('системний розділ прихований для не-адміністративних ролей', () => {
-      const businessSections = getVisibleNavigation('business');
-      const analystSections = getVisibleNavigation('analyst');
+    it('неадміністративні ролі бачать лише безпечну бізнес-частину системного розділу', () => {
+      const businessSections = getVisibleNavigation('business', 'basic');
+      const analystSections = getVisibleNavigation('analyst', 'basic');
       
       const businessSystem = businessSections.find(s => s.id === 'system');
       const analystSystem = analystSections.find(s => s.id === 'system');
       
-      expect(businessSystem).toBeUndefined();
-      expect(analystSystem).toBeUndefined();
+      expect(businessSystem).toBeDefined();
+      expect(analystSystem).toBeDefined();
+      expect(businessSystem?.items.map((item) => item.id)).toEqual(expect.arrayContaining(['settings', 'billing', 'reports']));
+      expect(analystSystem?.items.map((item) => item.id)).toEqual(expect.arrayContaining(['settings', 'billing', 'reports']));
     });
   });
 

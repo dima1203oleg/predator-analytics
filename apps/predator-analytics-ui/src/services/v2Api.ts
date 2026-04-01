@@ -5,6 +5,7 @@
  */
 
 import axios from 'axios';
+import { USE_LOCAL_DEV_PROXY } from './api/config';
 
 const getMetaEnv = () => {
     try {
@@ -17,7 +18,9 @@ const getMetaEnv = () => {
 const metaEnv = getMetaEnv();
 
 // v2 API base — uses same backend, different prefix
-const V2_BASE = metaEnv.VITE_API_URL
+const V2_BASE = USE_LOCAL_DEV_PROXY
+    ? '/api/v2'
+    : metaEnv.VITE_API_URL
     ? `${metaEnv.VITE_API_URL.replace(/\/api\/v1\/?$/, '')}/api/v2`
     : '/api/v2';
 

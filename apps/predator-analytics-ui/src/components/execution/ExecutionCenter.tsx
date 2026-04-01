@@ -1,8 +1,6 @@
 /**
- * 📊 Execution Center - Business View
- * 
- * Центр виконання сценаріїв для бізнес-користувачів.
- * Статуси, прогрес, результати без технічних деталей.
+ * Центр виконання для бізнес-користувачів.
+ * Показує job-based статуси, прогрес і результати без технічних логів.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -12,8 +10,6 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Pause,
-  Play,
   Square,
   RefreshCw,
   TrendingDown,
@@ -41,7 +37,7 @@ interface ScenarioExecution {
   id: string;
   name: string;
   type: 'procurement' | 'diligence' | 'market' | 'risk';
-  status: 'queued' | 'running' | 'completed' | 'failed' | 'paused';
+  status: 'queued' | 'running' | 'success' | 'failed' | 'partial';
   progress: number;
   startedAt: string;
   estimatedEnd?: string;
@@ -65,13 +61,12 @@ interface QuickStats {
   avgExecutionTime: string;
 }
 
-// Mock data
 const MOCK_EXECUTIONS: ScenarioExecution[] = [
   {
     id: 'exec-001',
     name: 'Оптимізація закупівель електрогенераторів',
     type: 'procurement',
-    status: 'completed',
+    status: 'success',
     progress: 100,
     startedAt: '2024-03-20 10:30',
     completedAt: '2024-03-20 10:35',
@@ -128,9 +123,9 @@ const StatusIcon: React.FC<{ status: ScenarioExecution['status'] }> = ({ status 
   const icons = {
     queued: <Clock className="w-5 h-5 text-slate-400" />,
     running: <RefreshCw className="w-5 h-5 text-amber-400 animate-spin" />,
-    completed: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
+    success: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
     failed: <AlertCircle className="w-5 h-5 text-red-400" />,
-    paused: <Pause className="w-5 h-5 text-slate-400" />,
+    partial: <AlertCircle className="w-5 h-5 text-cyan-400" />,
   };
 
   return icons[status];
@@ -140,17 +135,17 @@ const StatusBadge: React.FC<{ status: ScenarioExecution['status'] }> = ({ status
   const styles = {
     queued: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
     running: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-    completed: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    success: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
     failed: 'bg-red-500/20 text-red-300 border-red-500/30',
-    paused: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+    partial: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
   };
 
   const labels = {
     queued: 'В черзі',
     running: 'Виконується',
-    completed: 'Завершено',
+    success: 'Успішно',
     failed: 'Помилка',
-    paused: 'Призупинено',
+    partial: 'Частково виконано',
   };
 
   return (
@@ -185,12 +180,10 @@ const TypeIcon: React.FC<{ type: ScenarioExecution['type'] }> = ({ type }) => {
 
 const ExecutionCard: React.FC<{
   execution: ScenarioExecution;
-  onPause: (id: string) => void;
-  onResume: (id: string) => void;
   onStop: (id: string) => void;
   onRestart: (id: string) => void;
   onView: (id: string) => void;
-}> = ({ execution, onPause, onResume, onStop, onRestart, onView }) => {
+}> = ({ execution, onStop, onRestart, onView }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -316,25 +309,13 @@ const ExecutionCard: React.FC<{
           )}
         </div>
         <div className="flex gap-2">
-          {execution.status === 'running' && (
-            <Button variant="outline" size="sm" onClick={() => onPause(execution.id)} className="border-slate-700 text-slate-300">
-              <Pause className="w-4 h-4 mr-1" />
-              Пауза
-            </Button>
-          )}
-          {execution.status === 'paused' && (
-            <Button variant="outline" size="sm" onClick={() => onResume(execution.id)} className="border-slate-700 text-slate-300">
-              <Play className="w-4 h-4 mr-1" />
-              Продовжити
-            </Button>
-          )}
-          {(execution.status === 'queued' || execution.status === 'running' || execution.status === 'paused') && (
+          {(execution.status === 'queued' || execution.status === 'running') && (
             <Button variant="outline" size="sm" onClick={() => onStop(execution.id)} className="border-red-700 text-red-400">
               <Square className="w-4 h-4 mr-1" />
               Зупинити
             </Button>
           )}
-          {execution.status === 'failed' && (
+          {(execution.status === 'failed' || execution.status === 'partial') && (
             <Button variant="outline" size="sm" onClick={() => onRestart(execution.id)} className="border-slate-700 text-slate-300">
               <RefreshCw className="w-4 h-4 mr-1" />
               Перезапустити
@@ -429,7 +410,7 @@ export const ExecutionCenter: React.FC = () => {
             return {
               ...exec,
               progress: 100,
-              status: 'completed' as const,
+              status: 'success' as const,
               completedAt: new Date().toISOString(),
             };
           }
@@ -442,20 +423,16 @@ export const ExecutionCenter: React.FC = () => {
     return () => clearInterval(interval);
   }, [recordScenarioRun, recordSavings]);
 
-  const handlePause = (id: string) => {
-    setExecutions(prev => prev.map(exec => 
-      exec.id === id ? { ...exec, status: 'paused' as const } : exec
-    ));
-  };
-
-  const handleResume = (id: string) => {
-    setExecutions(prev => prev.map(exec => 
-      exec.id === id ? { ...exec, status: 'running' as const } : exec
-    ));
-  };
-
   const handleStop = (id: string) => {
-    setExecutions(prev => prev.filter(exec => exec.id !== id));
+    setExecutions(prev => prev.map(exec =>
+      exec.id === id
+        ? {
+            ...exec,
+            status: 'partial' as const,
+            error: 'Сценарій зупинено користувачем до завершення повного циклу.',
+          }
+        : exec
+    ));
   };
 
   const handleRestart = (id: string) => {
@@ -477,25 +454,25 @@ export const ExecutionCenter: React.FC = () => {
   const filteredExecutions = executions.filter(exec => {
     switch (activeTab) {
       case 'active':
-        return exec.status === 'running' || exec.status === 'queued' || exec.status === 'paused';
-      case 'completed':
-        return exec.status === 'completed';
-      case 'failed':
-        return exec.status === 'failed';
+        return exec.status === 'running' || exec.status === 'queued';
+      case 'success':
+        return exec.status === 'success';
+      case 'attention':
+        return exec.status === 'failed' || exec.status === 'partial';
       default:
         return true;
     }
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="space-y-6 text-slate-200">
+      <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">📊 Центр виконання</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Центр виконання</h1>
             <p className="text-slate-400">
-              Моніторинг та управління бізнес-сценаріями
+              Бізнес-представлення для моніторингу job-based сценаріїв без технічних логів і стеків
             </p>
           </div>
           <div className="flex gap-3">
@@ -517,13 +494,13 @@ export const ExecutionCenter: React.FC = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-slate-900 border border-slate-800">
             <TabsTrigger value="active" className="data-[state=active]:bg-slate-800">
-              Активні ({executions.filter(e => e.status === 'running' || e.status === 'queued' || e.status === 'paused').length})
+              Активні ({executions.filter(e => e.status === 'running' || e.status === 'queued').length})
             </TabsTrigger>
-            <TabsTrigger value="completed" className="data-[state=active]:bg-slate-800">
-              Завершені ({executions.filter(e => e.status === 'completed').length})
+            <TabsTrigger value="success" className="data-[state=active]:bg-slate-800">
+              Успішні ({executions.filter(e => e.status === 'success').length})
             </TabsTrigger>
-            <TabsTrigger value="failed" className="data-[state=active]:bg-slate-800">
-              Помилки ({executions.filter(e => e.status === 'failed').length})
+            <TabsTrigger value="attention" className="data-[state=active]:bg-slate-800">
+              Потребують уваги ({executions.filter(e => e.status === 'failed' || e.status === 'partial').length})
             </TabsTrigger>
           </TabsList>
 
@@ -533,8 +510,6 @@ export const ExecutionCenter: React.FC = () => {
                 <ExecutionCard
                   key={execution.id}
                   execution={execution}
-                  onPause={handlePause}
-                  onResume={handleResume}
                   onStop={handleStop}
                   onRestart={handleRestart}
                   onView={handleView}
@@ -543,14 +518,12 @@ export const ExecutionCenter: React.FC = () => {
             </AnimatePresence>
           </TabsContent>
 
-          <TabsContent value="completed" className="space-y-4">
+          <TabsContent value="success" className="space-y-4">
             <AnimatePresence>
               {filteredExecutions.map(execution => (
                 <ExecutionCard
                   key={execution.id}
                   execution={execution}
-                  onPause={handlePause}
-                  onResume={handleResume}
                   onStop={handleStop}
                   onRestart={handleRestart}
                   onView={handleView}
@@ -559,14 +532,12 @@ export const ExecutionCenter: React.FC = () => {
             </AnimatePresence>
           </TabsContent>
 
-          <TabsContent value="failed" className="space-y-4">
+          <TabsContent value="attention" className="space-y-4">
             <AnimatePresence>
               {filteredExecutions.map(execution => (
                 <ExecutionCard
                   key={execution.id}
                   execution={execution}
-                  onPause={handlePause}
-                  onResume={handleResume}
                   onStop={handleStop}
                   onRestart={handleRestart}
                   onView={handleView}

@@ -1,29 +1,70 @@
 export enum UserRole {
+  VIEWER = 'viewer',
+  SUPPLY_CHAIN = 'supply_chain',
+  BUSINESS = 'business',
+  ANALYST = 'analyst',
+  ADMIN = 'admin',
+
+  // Legacy aliases
   CLIENT_BASIC = 'client_basic',
   CLIENT_PREMIUM = 'client_premium',
-  ADMIN = 'admin',
-  // Backward-compatible aliases (legacy component support)
-  OPERATOR = 'client_premium',
-  COMMANDER = 'admin',
-  EXPLORER = 'client_basic',
+  OPERATOR = 'operator',
+  COMMANDER = 'commander',
+  EXPLORER = 'explorer',
 }
 
-// Цивільні назви для UI (ніяких технічних термінів!)
-export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
-  [UserRole.CLIENT_BASIC]: 'Клієнтський доступ',
-  [UserRole.CLIENT_PREMIUM]: 'Преміум-аналітика',
-  [UserRole.ADMIN]: 'Адміністрування системи',
+export type CanonicalUserRole =
+  | UserRole.VIEWER
+  | UserRole.SUPPLY_CHAIN
+  | UserRole.BUSINESS
+  | UserRole.ANALYST
+  | UserRole.ADMIN;
+
+const ROLE_ALIAS_MAP: Record<string, CanonicalUserRole> = {
+  [UserRole.VIEWER]: UserRole.VIEWER,
+  [UserRole.CLIENT_BASIC]: UserRole.VIEWER,
+  [UserRole.EXPLORER]: UserRole.VIEWER,
+
+  [UserRole.SUPPLY_CHAIN]: UserRole.SUPPLY_CHAIN,
+  [UserRole.OPERATOR]: UserRole.SUPPLY_CHAIN,
+
+  [UserRole.BUSINESS]: UserRole.BUSINESS,
+  business_owner: UserRole.BUSINESS,
+  owner: UserRole.BUSINESS,
+  ceo: UserRole.BUSINESS,
+
+  [UserRole.ANALYST]: UserRole.ANALYST,
+  [UserRole.CLIENT_PREMIUM]: UserRole.ANALYST,
+
+  [UserRole.ADMIN]: UserRole.ADMIN,
+  [UserRole.COMMANDER]: UserRole.ADMIN,
 };
 
-// Короткі описи для підзаголовків
-export const ROLE_DESCRIPTIONS: Record<UserRole, string> = {
-  [UserRole.CLIENT_BASIC]: 'Базовий режим перегляду інформації',
-  [UserRole.CLIENT_PREMIUM]: 'Розширений аналітичний режим',
-  [UserRole.ADMIN]: 'Внутрішній технічний режим',
+export const normalizeUserRole = (role?: string | null): CanonicalUserRole => {
+  if (!role) {
+    return UserRole.VIEWER;
+  }
+
+  return ROLE_ALIAS_MAP[role.toLowerCase()] ?? UserRole.VIEWER;
+};
+
+export const ROLE_DISPLAY_NAMES: Record<CanonicalUserRole, string> = {
+  [UserRole.VIEWER]: 'Перегляд',
+  [UserRole.SUPPLY_CHAIN]: 'Закупівлі та логістика',
+  [UserRole.BUSINESS]: 'Бізнес-керівник',
+  [UserRole.ANALYST]: 'Аналітик',
+  [UserRole.ADMIN]: 'Адміністратор',
+};
+
+export const ROLE_DESCRIPTIONS: Record<CanonicalUserRole, string> = {
+  [UserRole.VIEWER]: 'Базовий доступ до оглядів, демо та перевірених результатів',
+  [UserRole.SUPPLY_CHAIN]: 'Операційна роль для оптимізації закупівель, постачальників і логістики',
+  [UserRole.BUSINESS]: 'Роль для керівників, що працюють з ROI, економією та стратегічними рішеннями',
+  [UserRole.ANALYST]: 'Розширений аналітичний режим з розвідкою, ризиками та поясненнями AI',
+  [UserRole.ADMIN]: 'Технічний і системний контур з повним керуванням платформою',
 };
 
 export interface RoleCapabilities {
-  // UI Sections
   canSeeDashboards: boolean;
   canSeeVisualAnalytics: boolean;
   canSeeRelationsGraph: boolean;
@@ -31,60 +72,79 @@ export interface RoleCapabilities {
   canSeeOpenSearch: boolean;
   canSeeSensitiveData: boolean;
   canSeeSystemCore: boolean;
-
-  // Features
-  canAccessFullNewspaper: boolean;
-  canAccessDetailedTrends: boolean;
-  canToggleSensitiveData: boolean;
-  canManageUsers: boolean;
-  canManageJurisdictions: boolean;
-  canViewAuditLogs: boolean;
+  canAccessExecutionTechView: boolean;
+  canAccessBillingVerification: boolean;
+  canRunOutcomeScenarios: boolean;
 }
 
-export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
-  [UserRole.CLIENT_BASIC]: {
-    canSeeDashboards: false,
+export const ROLE_CAPABILITIES: Record<CanonicalUserRole, RoleCapabilities> = {
+  [UserRole.VIEWER]: {
+    canSeeDashboards: true,
     canSeeVisualAnalytics: false,
     canSeeRelationsGraph: false,
     canSeeTimelines: false,
     canSeeOpenSearch: false,
     canSeeSensitiveData: false,
     canSeeSystemCore: false,
-    canAccessFullNewspaper: false,
-    canAccessDetailedTrends: false,
-    canToggleSensitiveData: false,
-    canManageUsers: false,
-    canManageJurisdictions: false,
-    canViewAuditLogs: false,
+    canAccessExecutionTechView: false,
+    canAccessBillingVerification: false,
+    canRunOutcomeScenarios: false,
   },
-  [UserRole.CLIENT_PREMIUM]: {
+  [UserRole.SUPPLY_CHAIN]: {
+    canSeeDashboards: true,
+    canSeeVisualAnalytics: true,
+    canSeeRelationsGraph: false,
+    canSeeTimelines: true,
+    canSeeOpenSearch: false,
+    canSeeSensitiveData: true,
+    canSeeSystemCore: false,
+    canAccessExecutionTechView: false,
+    canAccessBillingVerification: false,
+    canRunOutcomeScenarios: true,
+  },
+  [UserRole.BUSINESS]: {
+    canSeeDashboards: true,
+    canSeeVisualAnalytics: true,
+    canSeeRelationsGraph: false,
+    canSeeTimelines: false,
+    canSeeOpenSearch: false,
+    canSeeSensitiveData: true,
+    canSeeSystemCore: false,
+    canAccessExecutionTechView: false,
+    canAccessBillingVerification: true,
+    canRunOutcomeScenarios: true,
+  },
+  [UserRole.ANALYST]: {
     canSeeDashboards: true,
     canSeeVisualAnalytics: true,
     canSeeRelationsGraph: true,
     canSeeTimelines: true,
     canSeeOpenSearch: true,
-    canSeeSensitiveData: true, // via toggle
+    canSeeSensitiveData: true,
     canSeeSystemCore: false,
-    canAccessFullNewspaper: true,
-    canAccessDetailedTrends: true,
-    canToggleSensitiveData: true,
-    canManageUsers: false,
-    canManageJurisdictions: false,
-    canViewAuditLogs: false,
+    canAccessExecutionTechView: true,
+    canAccessBillingVerification: true,
+    canRunOutcomeScenarios: true,
   },
   [UserRole.ADMIN]: {
-    canSeeDashboards: false, // Not product dashboards
-    canSeeVisualAnalytics: false,
-    canSeeRelationsGraph: false,
-    canSeeTimelines: false,
-    canSeeOpenSearch: false,
-    canSeeSensitiveData: false,
+    canSeeDashboards: true,
+    canSeeVisualAnalytics: true,
+    canSeeRelationsGraph: true,
+    canSeeTimelines: true,
+    canSeeOpenSearch: true,
+    canSeeSensitiveData: true,
     canSeeSystemCore: true,
-    canAccessFullNewspaper: false,
-    canAccessDetailedTrends: false,
-    canToggleSensitiveData: false,
-    canManageUsers: true,
-    canManageJurisdictions: true,
-    canViewAuditLogs: true,
+    canAccessExecutionTechView: true,
+    canAccessBillingVerification: true,
+    canRunOutcomeScenarios: true,
   },
 };
+
+export const getRoleDisplayName = (role?: string | null): string =>
+  ROLE_DISPLAY_NAMES[normalizeUserRole(role)];
+
+export const getRoleDescription = (role?: string | null): string =>
+  ROLE_DESCRIPTIONS[normalizeUserRole(role)];
+
+export const getRoleCapabilities = (role?: string | null): RoleCapabilities =>
+  ROLE_CAPABILITIES[normalizeUserRole(role)];

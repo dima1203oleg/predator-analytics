@@ -2,22 +2,22 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-// Contexts
+// Контексти
 import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
 import { UserProvider } from './context/UserContext';
-// Stores
+// Сховища стану
 import { useAppStore } from './store/useAppStore';
 
-// Remaining Providers
+// Решта провайдерів
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
 import { ShellProvider } from './context/ShellContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
 import { ToastProvider } from './context/ToastContext';
 
 
-// Components
+// Компоненти
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
 import BootScreen from './components/BootScreen';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -31,24 +31,14 @@ import { CyberTerminal } from './components/ui/CyberTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 
-// New v11.1 Components
-import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
-import { ProcurementOptimizer } from './components/business/ProcurementOptimizer';
-import { BillingManager } from './components/billing/BillingManager';
-import { ExecutionCenter } from './components/execution/ExecutionCenter';
-import { EmptyState } from './components/empty-state/EmptyState';
-
-// New v11.1 Hooks
-import { useOnboarding, useFirstVisit, useDemoMode } from './hooks/useUserExperience';
-
-// Setup Query Client with optimized settings
+// Налаштування Query Client з оптимізованими параметрами
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      staleTime: 5 * 60 * 1000, // 5 хвилин
+      gcTime: 10 * 60 * 1000, // 10 хвилин (раніше cacheTime)
     },
   },
 });
@@ -65,19 +55,19 @@ function App() {
     document.documentElement.classList.toggle('high-visibility', highVisibility);
   }, [highVisibility]);
 
-  // Global error capture for runtime issues (shows overlay with details)
+  // Глобальне перехоплення runtime-помилок з оверлеєм для діагностики
   const [globalError, setGlobalError] = useState<{ message: string; stack?: string } | null>(null);
 
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       try {
-        // event.error may be undefined in some browsers
+        // У деяких браузерах event.error може бути відсутнім
         const msg = event.message || (event.error && event.error.message) || String(event.error || 'Unknown error');
         const stack = event.error && event.error.stack ? event.error.stack : undefined;
         console.error('Global error captured', msg, event.error);
         setGlobalError({ message: msg, stack });
       } catch (e) {
-        // swallow
+        // Ігноруємо другорядні помилки самого обробника
       }
     };
 
@@ -90,7 +80,7 @@ function App() {
         console.error('Unhandled promise rejection captured', reason);
         setGlobalError({ message: msg, stack });
       } catch (e) {
-        // swallow
+        // Ігноруємо другорядні помилки самого обробника
       }
     };
 
@@ -109,10 +99,6 @@ function App() {
 
   const handleLogin = () => {
     setAppState('READY');
-  };
-
-  const handleLogout = () => {
-    setAppState('LOGIN');
   };
 
   return (
@@ -159,7 +145,7 @@ function App() {
           </UserProvider>
         </BrowserRouter>
       </QueryClientProvider>
-      {/* Global runtime error overlay (helps capture crashes during user actions) */}
+      {/* Глобальний оверлей помилки для швидкого виявлення падінь під час взаємодії */}
       {globalError && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
           <div className="bg-rose-900/95 text-white p-6 rounded-lg max-w-3xl w-full">

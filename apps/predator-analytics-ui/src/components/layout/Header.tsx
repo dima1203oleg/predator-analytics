@@ -10,24 +10,30 @@ import {
   Radio,
   Search,
   ShieldCheck,
+  Sparkles,
   UserCircle,
+  Target,
+  CreditCard,
 } from 'lucide-react';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
+import { getRoleDisplayName, getRoleDescription } from '../../config/roles';
 import { useUser } from '../../context/UserContext';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
 import { cn } from '../../lib/utils';
+import { FigmaDesignBridge } from '../design/FigmaDesignBridge';
 
 const Header: React.FC = () => {
-  const { user } = useUser();
+  const { user, canonicalRole, canonicalTier } = useUser();
   const location = useLocation();
   const currentDate = format(new Date(), "d MMMM yyyy 'р.'", { locale: uk });
   const backendStatus = useBackendStatus();
-  const currentRole = user?.role ?? 'viewer';
-  const { item, section } = getNavigationContext(location.pathname, currentRole);
+  const { item, section } = getNavigationContext(location.pathname, canonicalRole, canonicalTier);
   const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
+  const roleLabel = getRoleDisplayName(canonicalRole);
+  const roleDescription = getRoleDescription(canonicalRole);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#06111d]/72 backdrop-blur-2xl">
+    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[linear-gradient(180deg,rgba(8,18,30,0.88),rgba(6,15,26,0.78))] backdrop-blur-2xl">
       <div className="mx-auto flex max-w-[1660px] flex-col gap-4 px-5 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
@@ -47,14 +53,14 @@ const Header: React.FC = () => {
               )}
             </div>
 
-            <div className="min-w-0">
-              <h1 className="truncate text-xl font-black tracking-tight text-white sm:text-2xl">
-                {item?.label ?? 'Панель управління'}
-              </h1>
-              <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
-                {item?.description ?? section?.description ?? 'Операційний контекст не визначено для поточного маршруту.'}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-400">
+              <div className="min-w-0">
+                <h1 className="truncate text-xl font-black tracking-tight text-white sm:text-2xl">
+                  {item?.label ?? 'Панель управління'}
+                </h1>
+                <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
+                  {item?.description ?? section?.description ?? 'Операційний контекст не визначено для поточного маршруту.'}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-400">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
                   <Calendar className="h-3.5 w-3.5 text-slate-500" />
                   {currentDate}
@@ -74,6 +80,11 @@ const Header: React.FC = () => {
                   <Command className="h-3.5 w-3.5 text-slate-500" />
                   {backendStatus.modeLabel}
                 </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+                  {roleLabel}
+                </span>
+                <FigmaDesignBridge variant="chip" className="shrink-0" />
               </div>
             </div>
           </div>
@@ -110,12 +121,23 @@ const Header: React.FC = () => {
                   {user?.name || 'Адміністратор'}
                 </div>
                 <div className="mt-1 truncate text-[11px] text-slate-400">
-                  {backendStatus.sourceLabel}
+                  {roleDescription}
                 </div>
               </div>
               <div className="ml-4 flex h-10 w-10 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
                 <UserCircle className="h-5 w-5 text-indigo-300" />
               </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-xs font-bold text-emerald-100">
+                <Target className="h-4 w-4" />
+                Швидкий сценарій
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-3 text-xs font-bold text-cyan-100">
+                <CreditCard className="h-4 w-4" />
+                {canonicalTier}
+              </span>
             </div>
           </div>
         </div>
