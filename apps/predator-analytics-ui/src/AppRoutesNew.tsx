@@ -14,7 +14,7 @@ import OmniscienceView from './features/dashboard/OmniscienceView';
 import PredatorV24 from './pages/PredatorV24';
 
 // Lazy loaded views - Named exports need .then() mapping
-const SearchView = lazy(() => import('./features/osint/SearchView').then(m => ({ default: m.SearchView })));
+const SearchPage = lazy(() => import('./features/search/SearchPage'));
 const GraphView = lazy(() => import('./features/intelligence/GraphView').then(m => ({ default: m.GraphView })));
 
 // Lazy loaded views - Default exports
@@ -176,7 +176,7 @@ export const AppRoutesNew = () => {
             <Route path="/trends" element={<ActivityView />} />
 
             {/* Discovery Routes */}
-            <Route path="/search" element={<SearchView />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/search-v2" element={<SearchConsole />} />
             <Route path="/documents" element={<DocumentsView />} />
             <Route path="/cases" element={<CasesView />} />
