@@ -144,7 +144,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </div>
 
                         {/* Sign In Fields - COMPACT */}
-                        <div className="w-72 space-y-3">
+                        <form className="w-72 space-y-3" onSubmit={(e) => { e.preventDefault(); setStep('scanning'); }}>
                             <div className="relative">
                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-600/60">
                                     <User size={16} />
@@ -168,14 +168,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </div>
                             
                             <motion.button 
+                                type="submit"
                                 whileHover={{ scale: 1.01, backgroundColor: 'rgba(34,211,238,1)', color: 'black' }}
                                 whileTap={{ scale: 0.99 }}
-                                onClick={() => setStep('scanning')}
                                 className="w-full bg-transparent border border-cyan-500/30 text-cyan-400 font-bold py-3.5 rounded-lg tracking-[0.4em] text-xs transition-all shadow-[0_0_20px_rgba(34,211,238,0.1)]"
                             >
                                 АВТОРИЗУВАТИ МІСІЮ
                             </motion.button>
-                        </div>
+                        </form>
                     </motion.div>
                 )}
 

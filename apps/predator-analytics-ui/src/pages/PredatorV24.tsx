@@ -7,6 +7,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
+  Brain,
   Database,
   Layers3,
   Loader2,
