@@ -251,7 +251,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       const p = currentPhase === 0 ? Math.min(1, elapsed / PHASE_DURATIONS[0]) : 1;
       
       // Геометрична сітка
-      ctx.strokeStyle = `rgba(34, 211, 238, ${0.05 * p})`;
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.05 * p})`;
       ctx.lineWidth = 1;
       const gridSize = 100;
       for (let x = (now * 0.05) % gridSize; x < w; x += gridSize) {
@@ -263,7 +263,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
       // Бігучі лінії скану (рандомні горизонтальні глітчі)
       if (Math.random() > 0.8) {
-        ctx.fillStyle = `rgba(239, 68, 68, ${0.1 * p})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * p})`;
         ctx.fillRect(0, Math.random() * h, w, 2 + Math.random() * 4);
       }
     }
@@ -277,7 +277,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.translate(cx, cy);
 
       // 1. Малюємо координатну сітку Землі (Глобус)
-      ctx.strokeStyle = `rgba(34, 211, 238, ${0.2 * p})`;
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.2 * p})`;
       ctx.lineWidth = 1;
 
       // Горизонтальні лінії (широти)
@@ -303,9 +303,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           ctx.ellipse(0, 0, width, globeRadius, 0, 0, Math.PI * 2);
           // Робимо тильну сторону глобуса темнішою
           if (Math.sin(angle) < 0) {
-            ctx.strokeStyle = `rgba(34, 211, 238, ${0.05 * p})`;
+            ctx.strokeStyle = `rgba(220, 38, 38, ${0.05 * p})`;
           } else {
-            ctx.strokeStyle = `rgba(34, 211, 238, ${0.35 * p})`;
+            ctx.strokeStyle = `rgba(220, 38, 38, ${0.35 * p})`;
           }
           ctx.stroke();
         }
@@ -316,9 +316,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.rotate(angle);
       
       const grad = ctx.createConicGradient(0, 0, 0);
-      grad.addColorStop(0, 'rgba(34, 211, 238, 0)');
-      grad.addColorStop(0.1, `rgba(34, 211, 238, ${0.5 * p})`);
-      grad.addColorStop(0.12, 'rgba(34, 211, 238, 0)');
+      grad.addColorStop(0, 'rgba(220, 38, 38, 0)');
+      grad.addColorStop(0.1, `rgba(220, 38, 38, ${0.5 * p})`);
+      grad.addColorStop(0.12, 'rgba(220, 38, 38, 0)');
       
       ctx.beginPath();
       ctx.moveTo(0, 0);
@@ -330,7 +330,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.lineTo(globeRadius, 0);
-      ctx.strokeStyle = `rgba(34, 211, 238, ${0.8 * p})`;
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.8 * p})`;
       ctx.lineWidth = 2;
       ctx.stroke();
       
@@ -343,17 +343,17 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const tx = Math.cos(tgtAngle) * tgtDist;
         const ty = Math.sin(tgtAngle) * tgtDist;
         
-        ctx.strokeStyle = `rgba(239, 68, 68, ${0.7 * p})`; // Червоні цілі
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * p})`; // Червоні цілі
         ctx.lineWidth = 1;
         ctx.strokeRect(tx - 4, ty - 4, 8, 8);
-        ctx.fillStyle = `rgba(239, 68, 68, ${0.3 * p})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.3 * p})`;
         ctx.fillRect(tx - 4, ty - 4, 8, 8);
 
         // Хрест
         ctx.beginPath();
         ctx.moveTo(tx - 8, ty); ctx.lineTo(tx + 8, ty);
         ctx.moveTo(tx, ty - 8); ctx.lineTo(tx, ty + 8);
-        ctx.strokeStyle = `rgba(34, 211, 238, ${0.5 * p})`;
+        ctx.strokeStyle = `rgba(220, 38, 38, ${0.5 * p})`;
         ctx.stroke();
       }
       ctx.restore();
@@ -371,7 +371,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       // Обертання кутів
       ctx.rotate(now * 0.001);
       
-      ctx.strokeStyle = `rgba(239, 68, 68, ${0.6 * p})`;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.6 * p})`;
       ctx.lineWidth = 3;
       
       // Куточки прицілу
@@ -393,7 +393,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
       // Швидкі перешкоди (glitch bars)
       if (Math.random() > 0.5) {
-        ctx.fillStyle = `rgba(34, 211, 238, ${0.1 * p})`;
+        ctx.fillStyle = `rgba(220, 38, 38, ${0.1 * p})`;
         ctx.fillRect(cx - boxSize, Math.random() * h, boxSize * 2, 5 + Math.random() * 20);
       }
     }
@@ -412,7 +412,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       // Строгі червоні лазерні лінії, що розходяться
       if (elapsed < 1200) {
         const waveP = elapsed / 1200;
-        ctx.strokeStyle = `rgba(239, 68, 68, ${(1 - waveP) * 0.5})`;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - waveP) * 0.5})`;
         ctx.lineWidth = 2;
         
         ctx.beginPath();
@@ -429,14 +429,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const r = waveP * Math.max(w, h);
         ctx.beginPath();
         ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(34, 211, 238, ${(1 - waveP) * 0.3})`;
+        ctx.strokeStyle = `rgba(220, 38, 38, ${(1 - waveP) * 0.3})`;
         ctx.stroke();
       }
 
       // Темне глибоке світіння за монетою
       const glowR = 150 + Math.sin(now * 0.002) * 15;
       const ambientGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
-      ambientGrad.addColorStop(0, `rgba(34, 211, 238, ${0.1 * p})`);
+      ambientGrad.addColorStop(0, `rgba(220, 38, 38, ${0.1 * p})`);
       ambientGrad.addColorStop(0.5, `rgba(1, 4, 9, 0)`);
       ctx.beginPath();
       ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
@@ -560,7 +560,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <div className="text-[8px] text-slate-500 uppercase tracking-widest">
                 ПЕРЕХОПЛЕНО (TX):
               </div>
-              <div className="text-sm font-black text-cyan-400 font-mono tabular-nums tracking-widest">
+              <div className="text-sm font-black text-red-600 font-mono tabular-nums tracking-widest">
                 {interceptCount.toLocaleString()} 
               </div>
             </div>
@@ -572,22 +572,22 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                         key={`${code}-${idx}`}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1 - idx * 0.15, x: 0 }}
-                        className="text-[8px] text-slate-500 font-mono tracking-wider"
+                        className="text-[8px] text-red-500/70 font-mono tracking-wider"
                     >
-                        [SYS.MEM] ALLOC: {code} ... OK
+                        [NSA.KERNEL] DECRYPT: {code} ... VALIDATED
                     </motion.div>
                 ))}
             </div>
 
             {/* Знизу справа: Прогрес */}
             <div className="absolute bottom-16 right-6 space-y-1.5 w-64 text-right">
-              <div className="flex justify-between text-[8px] text-cyan-400/60 uppercase tracking-widest font-bold">
-                <span>INTEL_SCAN</span>
+              <div className="flex justify-between text-[8px] text-red-600/60 uppercase tracking-widest font-bold">
+                <span>STRATCOM_UPLINK</span>
                 <span>{Math.floor(scanProgress)}%</span>
               </div>
               <div className="h-[2px] bg-slate-900 overflow-hidden relative">
                 <motion.div
-                  className="absolute top-0 bottom-0 left-0 bg-cyan-500 shadow-[0_0_10px_#22d3ee]"
+                  className="absolute top-0 bottom-0 left-0 bg-red-600 shadow-[0_0_10px_#dc2626]"
                   animate={{ width: `${scanProgress}%` }}
                   transition={{ duration: 0.3, ease: 'linear' }}
                 />
@@ -619,11 +619,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 0.5, repeat: Infinity }}
-              className="text-[12px] text-cyan-500 tracking-[0.5em] uppercase font-black"
+              className="text-[12px] text-red-600 tracking-[0.5em] uppercase font-black"
             >
               ВСТАНОВЛЕННЯ З'ЄДНАННЯ
             </motion.div>
-            <div className="mt-2 text-[8px] text-cyan-500/50 tracking-widest uppercase">
+            <div className="mt-2 text-[8px] text-red-600/50 tracking-widest uppercase">
               ШИФРУВАННЯ ПОТОКІВ AES-512...
             </div>
           </motion.div>
@@ -640,7 +640,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={transitionSmooth}
             className="relative z-30 text-center"
           >
-            <div className="text-[12px] text-cyan-400 tracking-[0.6em] uppercase font-black">
+            <div className="text-[12px] text-red-600 tracking-[0.6em] uppercase font-black">
               ГЛОБАЛЬНИЙ МОНІТОРИНГ
             </div>
             <div className="mt-2 text-[8px] text-slate-500 tracking-widest uppercase">
@@ -673,7 +673,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           </motion.div>
         )}
 
-        {/* ── ФАЗА 3: RAPTOR REVEAL — 3D крутяча монета (Кругла, як на LoginScreen) ── */}
+        {/* ── ФАЗА 3: RAPTOR REVEAL — Строга поява без кружляння ── */}
         {phase === 3 && (
           <motion.div
             key="phase3"
@@ -684,46 +684,37 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="relative z-30 flex flex-col items-center justify-center"
           >
-            {/* 3D КРУТЯЧА МОНЕТА (Повністю ідентична до LoginScreen, кругла) */}
+            {/* Жорсткий статичний логотип (Тільки Scale in) */}
             <motion.div
               initial={{
-                scale: 10,
-                y: -100,
+                scale: 5,
                 opacity: 0,
-                rotateY: 90,
-                filter: 'blur(20px)',
+                filter: 'blur(10px)',
               }}
               animate={{
-                scale: 3,
-                y: 0,
+                scale: 1,
                 opacity: 1,
-                rotateY: [90, 0, 360, 720, 1080],
                 filter: 'blur(0px)',
               }}
               transition={{
-                duration: 3.5,
-                times: [0, 0.2, 0.4, 0.7, 1],
-                rotateY: { duration: 3.5, ease: 'easeOut' },
-                y: { duration: 0.5, ease: 'circOut' },
-                scale: { duration: 0.7, ease: 'circOut' },
-                filter: { duration: 0.4 },
+                duration: 1.2,
+                ease: 'circOut'
               }}
-              className="relative mb-10 w-36 h-36"
-              style={{ perspective: '1000px' }}
+              className="relative mb-10 w-40 h-40"
             >
                 <div
-                    className="w-full h-full rounded-full bg-black/80 border-2 border-cyan-500/40 shadow-[0_0_80px_rgba(34,211,238,0.2)] flex items-center justify-center relative overflow-hidden"
-                    style={{ clipPath: 'circle(50% at 50% 50%)', transformStyle: 'preserve-3d' }}
+                    className="w-full h-full rounded-full bg-black/90 border-4 border-red-600 shadow-[0_0_100px_rgba(220,38,38,0.5)] flex items-center justify-center relative overflow-hidden"
+                    style={{ clipPath: 'circle(50% at 50% 50%)' }}
                 >
                     <motion.div
-                        className="w-[70%] h-[70%] text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]"
+                        className="w-[70%] h-[70%] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
                     >
                         <GeometricRaptor className="w-full h-full object-contain" />
                     </motion.div>
                     
                     {/* Скан лінія в монеті */}
                     <div className="absolute inset-0 pointer-events-none">
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)] animate-[scan_2s_linear_infinite]" />
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,1)] animate-[scan_1.5s_linear_infinite]" />
                     </div>
                 </div>
             </motion.div>
@@ -732,19 +723,19 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             <motion.div
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+              transition={{ delay: 1, duration: 0.8, ease: 'easeOut' }}
               className="text-center space-y-4"
             >
               <motion.h1
                 animate={{
                   textShadow: [
-                    '0 0 10px rgba(34,211,238,0.3)',
-                    '0 0 30px rgba(34,211,238,0.5)',
-                    '0 0 10px rgba(34,211,238,0.3)',
+                    '0 0 10px rgba(220,38,38,0.8)',
+                    '0 0 30px rgba(220,38,38,1)',
+                    '0 0 10px rgba(220,38,38,0.8)',
                   ],
                 }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="text-4xl md:text-6xl font-black tracking-[0.4em] text-white"
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                className="text-5xl md:text-7xl font-black tracking-[0.4em] text-white"
               >
                 PREDATOR
               </motion.h1>
@@ -752,25 +743,25 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
                 className="flex items-center justify-center gap-3"
               >
-                <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-red-500/50" />
-                <h2 className="text-[10px] font-black tracking-[0.6em] text-red-500 uppercase">
-                    МІРОВИЙ ПОРЯДОК
+                <div className="w-16 h-[2px] bg-gradient-to-r from-transparent to-red-600" />
+                <h2 className="text-[12px] font-black tracking-[0.8em] text-white uppercase bg-red-600/30 px-4 py-1">
+                    СИСТЕМА НАЦІОНАЛЬНОЇ БЕЗПЕКИ
                 </h2>
-                <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-red-500/50" />
+                <div className="w-16 h-[2px] bg-gradient-to-l from-transparent to-red-600" />
               </motion.div>
 
-              {/* "СИСТЕМА ГОТОВА" — суворо блимає зеленим */}
+              {/* ДОСТУП ДОЗВОЛЕНО — Безкомпромісний білий/червоний статус */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 0, 1, 1] }}
-                transition={{ delay: 2, duration: 1.5 }}
-                className="pt-6"
+                transition={{ delay: 2, duration: 1 }}
+                className="pt-8"
               >
-                  <span className="text-[9px] text-emerald-500 font-bold tracking-[0.8em] uppercase border border-emerald-500/30 px-4 py-1.5 rounded-sm bg-emerald-500/10">
-                      СИСТЕМА ГОТОВА
+                  <span className="text-[12px] text-white font-black tracking-[1em] uppercase border-y-2 border-white px-6 py-2 bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)]">
+                      ДОСТУП ДОЗВОЛЕНО
                   </span>
               </motion.div>
             </motion.div>
