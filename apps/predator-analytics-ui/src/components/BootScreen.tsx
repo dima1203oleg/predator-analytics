@@ -268,69 +268,95 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       }
     }
 
-    /* ФАЗА 1: РАДАР ТА СУПУТНИКОВЕ ПЕРЕХОПЛЕННЯ */
+    /* ФАЗА 1: РАДАР ТА СУПУТНИКОВЕ ПЕРЕХОПЛЕННЯ (ГЛОБАЛЬНИЙ МАСШТАБ) */
     if (currentPhase === 1) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
-      const radarSize = Math.min(w, h) * 0.35;
+      const globeRadius = Math.min(w, h) * 0.35;
       
-      // Радарна лінія (Sweep)
-      const angle = now * 0.003;
+      ctx.save();
       ctx.translate(cx, cy);
+
+      // 1. Малюємо координатну сітку Землі (Глобус)
+      ctx.strokeStyle = `rgba(34, 211, 238, ${0.2 * p})`;
+      ctx.lineWidth = 1;
+
+      // Горизонтальні лінії (широти)
+      for (let i = -4; i <= 4; i++) {
+        const yOffset = (i / 4) * globeRadius;
+        const width = Math.sqrt(globeRadius * globeRadius - yOffset * yOffset);
+        if (width > 0) {
+          ctx.beginPath();
+          ctx.ellipse(0, yOffset, width, width * 0.15, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      // Вертикальні лінії (довготи), що обертаються
+      const numLongitudes = 12;
+      const rotationSpeed = now * 0.0007; // Швидкість обертання Землі
+      for (let i = 0; i < numLongitudes; i++) {
+        const angle = (i / numLongitudes) * Math.PI * 2 + rotationSpeed;
+        const cosA = Math.cos(angle);
+        const width = globeRadius * Math.abs(cosA);
+        if (width > 0.5) {
+          ctx.beginPath();
+          ctx.ellipse(0, 0, width, globeRadius, 0, 0, Math.PI * 2);
+          // Робимо тильну сторону глобуса темнішою
+          if (Math.sin(angle) < 0) {
+            ctx.strokeStyle = `rgba(34, 211, 238, ${0.05 * p})`;
+          } else {
+            ctx.strokeStyle = `rgba(34, 211, 238, ${0.35 * p})`;
+          }
+          ctx.stroke();
+        }
+      }
+
+      // 2. Радарна лінія (Sweep), що сканує глобус
+      const angle = now * 0.003;
       ctx.rotate(angle);
       
       const grad = ctx.createConicGradient(0, 0, 0);
       grad.addColorStop(0, 'rgba(34, 211, 238, 0)');
-      grad.addColorStop(0.1, `rgba(34, 211, 238, ${0.4 * p})`);
+      grad.addColorStop(0.1, `rgba(34, 211, 238, ${0.5 * p})`);
       grad.addColorStop(0.12, 'rgba(34, 211, 238, 0)');
       
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, radarSize, 0, Math.PI * 2);
+      ctx.arc(0, 0, globeRadius, 0, Math.PI * 2);
       ctx.fillStyle = grad;
       ctx.fill();
       
       // Радарний промінь (чіткий)
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(radarSize, 0);
+      ctx.lineTo(globeRadius, 0);
       ctx.strokeStyle = `rgba(34, 211, 238, ${0.8 * p})`;
       ctx.lineWidth = 2;
       ctx.stroke();
       
       ctx.rotate(-angle);
-      ctx.translate(-cx, -cy);
 
-      // Кільця радара
-      for (let i = 1; i <= 3; i++) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, (radarSize / 3) * i, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(34, 211, 238, ${0.15 * p})`;
-        ctx.lineWidth = i === 3 ? 2 : 1;
-        ctx.setLineDash(i % 2 === 0 ? [5, 10] : []);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-      
-      // Геометричні 'цілі' на радарі
-      for (let i = 0; i < 5; i++) {
-        const tgtAngle = (i * Math.PI * 2) / 5 + (now * 0.0005 * (i % 2 === 0 ? 1 : -1));
-        const tgtDist = radarSize * 0.4 + Math.sin(now * 0.001 + i) * radarSize * 0.3;
-        const tx = cx + Math.cos(tgtAngle) * tgtDist;
-        const ty = cy + Math.sin(tgtAngle) * tgtDist;
+      // 3. Геометричні 'цілі' на радарі
+      for (let i = 0; i < 6; i++) {
+        const tgtAngle = (i * Math.PI * 2) / 6 + (now * 0.0005 * (i % 2 === 0 ? 1 : -1));
+        const tgtDist = globeRadius * 0.4 + Math.sin(now * 0.001 + i) * globeRadius * 0.4;
+        const tx = Math.cos(tgtAngle) * tgtDist;
+        const ty = Math.sin(tgtAngle) * tgtDist;
         
-        ctx.strokeStyle = `rgba(239, 68, 68, ${0.6 * p})`; // Червоні цілі
+        ctx.strokeStyle = `rgba(239, 68, 68, ${0.7 * p})`; // Червоні цілі
         ctx.lineWidth = 1;
         ctx.strokeRect(tx - 4, ty - 4, 8, 8);
-        ctx.fillStyle = `rgba(239, 68, 68, ${0.2 * p})`;
+        ctx.fillStyle = `rgba(239, 68, 68, ${0.3 * p})`;
         ctx.fillRect(tx - 4, ty - 4, 8, 8);
 
         // Хрест
         ctx.beginPath();
         ctx.moveTo(tx - 8, ty); ctx.lineTo(tx + 8, ty);
         ctx.moveTo(tx, ty - 8); ctx.lineTo(tx, ty + 8);
-        ctx.strokeStyle = `rgba(34, 211, 238, ${0.4 * p})`;
+        ctx.strokeStyle = `rgba(34, 211, 238, ${0.5 * p})`;
         ctx.stroke();
       }
+      ctx.restore();
     }
 
     /* ФАЗА 2: АВТОРИЗАЦІЯ (Гострі квадрати, червоні тривожні лінії) */
@@ -521,7 +547,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-red-600 animate-pulse shadow-[0_0_10px_#dc2626] rounded-full" />
                 <span className="text-[10px] font-black tracking-[0.4em]">
-                  ТАЄМНО / COSMIC CLEARANCE
+                  ГЛОБАЛЬНИЙ НАГЛЯД / NEW WORLD ORDER
                 </span>
               </div>
               <p className="text-[7px] text-red-400/60 uppercase tracking-widest pl-4">
@@ -615,10 +641,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             className="relative z-30 text-center"
           >
             <div className="text-[12px] text-cyan-400 tracking-[0.6em] uppercase font-black">
-              САТЕЛІТАРНЕ ПЕРЕХОПЛЕННЯ
+              ГЛОБАЛЬНИЙ МОНІТОРИНГ
             </div>
             <div className="mt-2 text-[8px] text-slate-500 tracking-widest uppercase">
-              ПОШУК ЦІЛЕЙ У ГЛОБАЛЬНІЙ МЕРЕЖІ
+              СИНХРОНІЗАЦІЯ СУПУТНИКІВ ПО ВСЬОМУ СВІТУ
             </div>
           </motion.div>
         )}
@@ -731,7 +757,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               >
                 <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-red-500/50" />
                 <h2 className="text-[10px] font-black tracking-[0.6em] text-red-500 uppercase">
-                    Глобальна Розвідка
+                    МІРОВИЙ ПОРЯДОК
                 </h2>
                 <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-red-500/50" />
               </motion.div>
