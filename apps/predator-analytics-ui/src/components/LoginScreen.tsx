@@ -95,7 +95,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
                         className="text-center z-10 flex flex-col items-center space-y-6 max-w-lg w-full"
                     >
-                        {/* Central Logo Node - COMPACT */}
+                        {/* Central Logo Node — КРУГЛА МОНЕТА */}
                         <div className="relative group cursor-pointer" onClick={() => setStep('scanning')}>
                             <motion.div 
                                 animate={{ rotate: 360 }}
@@ -103,10 +103,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 className="absolute -inset-6 border border-cyan-500/10 rounded-full"
                             />
                             
-                            {/* Main Raptor Container - SHRUNK */}
+                            {/* Монета — ідеально кругла */}
                             <div 
-                                className="w-40 h-40 rounded-full bg-black/40 border-2 border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.2)] flex items-center justify-center relative overflow-hidden transition-all duration-700"
-                                style={{ perspective: '1000px' }}
+                                className="w-40 h-40 rounded-full bg-black/40 border-2 border-cyan-500/40 shadow-[0_0_40px_rgba(34,211,238,0.2)] flex items-center justify-center relative transition-all duration-700"
+                                style={{ perspective: '1000px', clipPath: 'circle(50% at 50% 50%)' }}
                             >
                                 <motion.div
                                     animate={{ 
@@ -119,16 +119,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         rotateY: { duration: 6, repeat: Infinity, ease: "linear" },
                                         filter: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                                     }}
-                                    className="w-[75%] h-[75%] text-cyan-500 flex items-center justify-center"
+                                    className="w-[70%] h-[70%] text-cyan-500 flex items-center justify-center"
+                                    style={{ transformStyle: 'preserve-3d' }}
                                 >
                                     <GeometricRaptor className="w-full h-full object-contain" />
                                 </motion.div>
                                 
+                                {/* Скан-лінія */}
                                 <motion.div 
                                     animate={{ top: ['0%', '100%', '0%'] }}
                                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                                     className="absolute left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)] z-20 opacity-20"
                                 />
+
+                                {/* Внутрішній обід монети */}
+                                <div className="absolute inset-[3px] rounded-full border border-cyan-500/15 pointer-events-none" />
                             </div>
                         </div>
 

@@ -7,7 +7,7 @@
  * - Частинковою системою та неоновими спалахами
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Logo } from './Logo';
+import { Logo, GeometricRaptor } from './Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type Phase = 0 | 1 | 2 | 3 | 4;
@@ -260,9 +260,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const cx = w / 2;
     const cy = h / 2;
 
-    /* ФАЗА 0: DIGITAL RAIN — Ініціалізація сканування */
-    if (currentPhase === 0) {
-      const p = Math.min(1, elapsed / PHASE_DURATIONS[0]);
+    /* DIGITAL RAIN — Матриця, що зникає плавно */
+    if (currentPhase <= 2) {
+      let matrixOpacity = 1;
+      if (currentPhase === 1) {
+        matrixOpacity = 1 - 0.5 * Math.min(1, elapsed / PHASE_DURATIONS[1]);
+      } else if (currentPhase === 2) {
+        matrixOpacity = 0.5 - 0.5 * Math.min(1, elapsed / PHASE_DURATIONS[2]);
+      }
+      const p = currentPhase === 0 ? Math.min(1, elapsed / PHASE_DURATIONS[0]) : 1;
+
       // Вертикальні потоки даних
       ctx.font = '10px monospace';
       for (let col = 0; col < w; col += 20) {
@@ -271,14 +278,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const yOffset = (now * speed * 0.05 + col * 7) % h;
         for (let row = 0; row < 8; row++) {
           const y = (yOffset + row * 16) % h;
-          const alpha = (1 - row / 8) * 0.4 * p;
+          const alpha = (1 - row / 8) * 0.4 * p * matrixOpacity;
           ctx.fillStyle = `rgba(34, 211, 238, ${alpha})`;
           ctx.fillText(chars[Math.floor(Math.random() * chars.length)], col, y);
         }
       }
 
       // Грід сканування
-      ctx.strokeStyle = `rgba(34, 211, 238, ${0.08 * p})`;
+      ctx.strokeStyle = `rgba(34, 211, 238, ${0.08 * p * matrixOpacity})`;
       ctx.lineWidth = 0.5;
       const gridSize = 60;
       for (let x = 0; x < w; x += gridSize) {
@@ -698,7 +705,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="absolute inset-0 rounded-full"
               />
 
-              <Logo size="lg" animated={true} />
+              <div className="w-32 h-32 rounded-full border-[3px] border-cyan-500/80 bg-black/40 backdrop-blur-sm flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.5),inset_0_0_20px_rgba(34,211,238,0.3)] relative overflow-hidden">
+                <GeometricRaptor className="w-24 h-24 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+                <div className="absolute inset-0 pointer-events-none rounded-full overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.9)] animate-[scan_3s_linear_infinite]" />
+                </div>
+              </div>
 
               {/* Мікро-спалах при приземленні */}
               <motion.div

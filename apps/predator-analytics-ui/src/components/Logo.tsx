@@ -7,6 +7,7 @@ export const GeometricRaptor: React.FC<{ className?: string }> = ({ className })
     src={raptorLogo} 
     alt="Predator Logo"
     className={`${className} mix-blend-screen object-contain`}
+    style={{ clipPath: 'circle(48% at 50% 50%)' }}
   />
 );
 
