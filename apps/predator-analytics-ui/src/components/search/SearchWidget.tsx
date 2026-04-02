@@ -1,136 +1,149 @@
 import React, { useState } from 'react';
-import { Search, ArrowRight, Zap, History, Star, TrendingUp } from 'lucide-react';
+import { Search, ArrowRight, Zap, History, Star, TrendingUp, Skull, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * 🛠️ TACTICAL SEARCH WIDGET | v55.6.1 (PREDATOR_CORE)
+ * ВІДЖЕТ ШВИДКОГО ПОШУКУ (ШВИДКИЙ ДОСТУП ДО СВЯТИЛИЩА)
+ * 
+ * Тепер у "устрашаючому" тактичному стилі.
+ */
+
 interface SearchWidgetProps {
-  className?: string;
-  variant?: 'compact' | 'expanded';
+    className?: string;
 }
 
-export const SearchWidget: React.FC<SearchWidgetProps> = ({ className, variant = 'expanded' }) => {
-  const [query, setQuery] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const navigate = useNavigate();
+export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [query, setQuery] = useState('');
+    const navigate = useNavigate();
 
-  const handleSearch = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-    } else {
-      navigate('/search');
-    }
-  };
+    const handleSearch = (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (query.trim()) {
+            navigate(`/search?q=${encodeURIComponent(query)}`);
+        } else {
+            navigate('/search');
+        }
+    };
 
-  const suggestions = [
-    { label: 'ТОВ "Мега-Трейд"', type: 'Компанія', icon: TrendingUp },
-    { label: 'Декларації 2024: Посуд', type: 'Фільтр', icon: History },
-    { label: 'Ризиковий імпорт з Китаю', type: 'Інсайт', icon: Zap },
-  ];
+    return (
+        <div className={cn("relative w-full max-w-4xl mx-auto z-50 px-6", className)}>
+            <motion.div 
+                layout
+                className={cn(
+                    "relative overflow-hidden transition-all duration-500 rounded-[2rem] border backdrop-blur-3xl shadow-3xl",
+                    isFocused 
+                        ? "bg-black/90 border-red-500/50 shadow-[0_40px_100px_-20px_rgba(220,38,38,0.3)] ring-4 ring-red-600/10" 
+                        : "bg-slate-900/60 border-white/5 hover:border-red-900/20 shadow-2xl"
+                )}
+            >
+                {/* Tactical Scanning Background Line */}
+                <AnimatePresence>
+                    {isFocused && (
+                        <motion.div 
+                            initial={{ x: '-100%' }}
+                            animate={{ x: '100%' }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                            className="absolute inset-0 top-0 left-0 h-1 bg-gradient-to-r from-transparent via-red-600/20 to-transparent w-full pointer-events-none"
+                        />
+                    )}
+                </AnimatePresence>
 
-  return (
-    <div className={cn("relative group w-full", className)}>
-      <motion.div
-        animate={{ 
-          scale: isFocused ? 1.02 : 1,
-          boxShadow: isFocused ? '0 0 50px rgba(99,102,241,0.2)' : '0 0 0px rgba(0,0,0,0)'
-        }}
-        className={cn(
-          "relative flex items-center gap-4 bg-slate-950/60 border border-white/10 rounded-[2.5rem] px-8 py-6 transition-all",
-          isFocused ? "border-indigo-500/50 bg-indigo-500/5" : "hover:border-white/20"
-        )}
-      >
-        <Search className={cn(
-          "w-8 h-8 transition-colors",
-          isFocused ? "text-indigo-400" : "text-slate-500"
-        )} />
-        
-        <form onSubmit={handleSearch} className="flex-1">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-            placeholder="Шукати компанії, митні коди, декларації або ризики..."
-            className="w-full bg-transparent border-none outline-none text-xl font-medium text-white placeholder:text-slate-600 focus:ring-0 italic"
-          />
-        </form>
-
-        <motion.button
-          whileHover={{ x: 5 }}
-          onClick={() => handleSearch()}
-          className="p-4 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white rounded-2xl transition-all group/btn shadow-xl shadow-indigo-500/10"
-        >
-          <ArrowRight size={24} className="group-hover/btn:translate-x-1 transition-transform" />
-        </motion.button>
-
-        {/* Hotkeys indicator */}
-        {!isFocused && (
-          <div className="absolute right-24 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-500 uppercase tracking-widest hidden md:flex">
-             <span>CMD</span>
-             <span className="w-1 h-3 bg-slate-700" />
-             <span>K</span>
-          </div>
-        )}
-      </motion.div>
-
-      {/* Suggestions Dropdown */}
-      <AnimatePresence>
-        {isFocused && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            className="absolute top-full left-4 right-4 mt-4 bg-slate-950/90 backdrop-blur-3xl border border-indigo-500/20 rounded-[2.5rem] p-6 z-[100] shadow-[0_40px_100px_rgba(0,0,0,0.8)]"
-          >
-            <div className="flex items-center justify-between mb-6 px-4">
-              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] flex items-center gap-3 italic">
-                <Star size={14} className="fill-current" /> ШВИДКІ_ПОРАДИ
-              </span>
-              <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest italic">NEXUS_SUGGEST_v55</span>
-            </div>
-            
-            <div className="space-y-2">
-              {suggestions.map((s, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setQuery(s.label);
-                    handleSearch();
-                  }}
-                  className="w-full flex items-center justify-between p-6 hover:bg-white/5 rounded-3xl transition-all group/item border border-transparent hover:border-white/10"
-                >
-                  <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center text-slate-500 group-hover/item:text-indigo-400 group-hover/item:border-indigo-500/30 transition-all">
-                      <s.icon size={22} />
+                <form onSubmit={handleSearch} className="relative p-3 flex items-center gap-4">
+                    <div className={cn(
+                        "p-4 rounded-2xl transition-all duration-300",
+                        isFocused ? "bg-red-600/20 scale-110" : "bg-white/5"
+                    )}>
+                        {isFocused ? (
+                            <Skull size={24} className="text-red-500 drop-shadow-[0_0_10px_#ef4444]" />
+                        ) : (
+                            <Search size={22} className="text-slate-500" />
+                        )}
                     </div>
-                    <div className="text-left">
-                      <p className="text-[16px] font-bold text-white group-hover/item:text-indigo-300 transition-colors italic uppercase tracking-tight">{s.label}</p>
-                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-1 italic">{s.type}</p>
-                    </div>
-                  </div>
-                  <ArrowRight size={20} className="text-slate-800 group-hover/item:text-indigo-500 group-hover/item:translate-x-2 transition-all" />
-                </button>
-              ))}
-            </div>
+                    
+                    <input 
+                        type="text" 
+                        placeholder="ШВИДКИЙ ТАКТИЧНИЙ ПОШУК..."
+                        className="flex-1 bg-transparent border-none text-xl font-bold text-white placeholder:text-slate-700 focus:outline-none focus:ring-0 uppercase italic tracking-tighter"
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
 
-            <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between px-4">
-               <div className="flex gap-4">
-                  <span className="text-[9px] font-black text-slate-600 bg-white/5 px-3 py-1 rounded-lg italic">ПОШУК: Enter</span>
-                  <span className="text-[9px] font-black text-slate-600 bg-white/5 px-3 py-1 rounded-lg italic">НАВІГАЦІЯ: ↑↓</span>
-               </div>
-               <button 
-                 onClick={() => navigate('/search')}
-                 className="text-[10px] font-black text-indigo-400 hover:text-white uppercase tracking-[0.2em] italic"
-               >
-                 РОЗШИРЕНИЙ_ПОШУК →
-               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
+                    <div className="flex items-center gap-2">
+                        <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-xl">
+                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">CMD+K</span>
+                        </div>
+                        
+                        <motion.button 
+                            whileHover={{ scale: 1.05, x: 3 }}
+                            whileTap={{ scale: 0.95 }}
+                            type="submit"
+                            className={cn(
+                                "p-4 rounded-xl transition-all group",
+                                isFocused ? "bg-red-600 text-white shadow-3xl" : "bg-white/5 text-slate-500 hover:text-white hover:bg-slate-800"
+                            )}
+                        >
+                            <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+                        </motion.button>
+                    </div>
+                </form>
+
+                {/* Sub-interface: Recent Searches / Trends */}
+                <AnimatePresence>
+                    {isFocused && (
+                        <motion.div 
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="border-t border-red-500/10 bg-black/40 overflow-hidden"
+                        >
+                            <div className="p-6 grid grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 border-b border-red-950/20 pb-2">
+                                        <History size={12} className="text-red-900" />
+                                        <span className="text-[10px] font-black text-red-900 uppercase tracking-widest italic font-mono">ІСТОРІЯ_ЗАПИТІВ</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        {['ТОВ "ОФШОР-МИТО"', 'ЄДРПОУ 44923412', 'Микола Верес'].map(item => (
+                                            <button key={item} className="text-left py-2 px-3 hover:bg-red-600/5 rounded-lg text-sm text-slate-400 hover:text-red-400 transition-colors uppercase font-bold italic tracking-tight">
+                                                {item}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 border-b border-red-950/20 pb-2">
+                                        <TrendingUp size={12} className="text-red-900" />
+                                        <span className="text-[10px] font-black text-red-900 uppercase tracking-widest italic font-mono">ГАРЯЧІ_ТРЕНДИ_РИЗИКУ</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        {['ПСЕНИЦЯ_ЕКСПОРТ', 'САНКЦІЇ_РФ', 'ТИЛОВА_КОРУПЦІЯ'].map(item => (
+                                            <button key={item} className="text-left py-2 px-3 hover:bg-red-600/5 rounded-lg text-sm text-slate-400 hover:text-red-400 transition-colors flex items-center justify-between group/trend uppercase font-bold italic tracking-tight">
+                                                <span>{item}</span>
+                                                <Zap size={12} className="text-amber-500 opacity-0 group-hover/trend:opacity-100 transition-opacity" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Threat Alert Panel */}
+                            <div className="px-6 py-4 bg-red-600/10 flex items-center justify-between border-t border-red-500/20">
+                                <div className="flex items-center gap-3">
+                                    <ShieldAlert size={14} className="text-red-500 animate-pulse" />
+                                    <span className="text-[9px] font-black text-red-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТОРИНГУ АКТИВОВАНА</span>
+                                </div>
+                                <span className="text-[8px] font-mono text-red-900 uppercase">LATENCY: 0.1ms</span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </motion.div>
+        </div>
+    );
 };

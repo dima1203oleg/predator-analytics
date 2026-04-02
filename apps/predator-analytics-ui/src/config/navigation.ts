@@ -251,7 +251,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
 const baseNavigationConfig: NavSection[] = [
   {
     id: 'command',
-    label: 'Командний центр',
+    label: 'Командний центр v11.5',
     description: 'Оперативний контроль, ранкові зведення, реальний час і швидкий старт робочого дня.',
     outcome: 'За 5 секунд показує стан бізнесу, головні сигнали й наступну дію з вимірюваним ROI.',
     accent: 'amber',
@@ -295,7 +295,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Ранковий брифінг',
+        label: 'Morning Briefing v11.5',
         path: '/morning-brief',
         icon: Compass,
         description: 'Короткий стратегічний брифінг з пріоритетами, ризиками та сигналами на день.',
@@ -315,9 +315,9 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'intelligence',
-    label: 'Розвідка',
+    label: 'OSINT-Контур v11.5',
     description: 'Ринки, ризики, OSINT, досьє, звіти та моделі в одному аналітичному контурі.',
-    outcome: 'Дає відповідь на три питання: де заробити, кого перевірити і який сценарій спрацює завтра.',
+    outcome: 'Sovereign Apex: Дає відповідь на три питання: де заробити, кого перевірити і який сценарій завтра.',
     accent: 'emerald',
     items: [
       {

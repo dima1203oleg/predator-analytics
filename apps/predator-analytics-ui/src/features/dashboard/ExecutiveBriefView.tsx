@@ -1,8 +1,8 @@
 /**
- * PREDATOR v55.5 | Sovereign Briefing Sanctum — Стратегічний Дайджест Аналітика
+ * PREDATOR OSINT-Контур v11.5 | MORNING BRIEFING
  * 
- * Центр формування персоналізованих звітів для вищого керівництва.
- * - Глибока семантична агрегація новин та подій
+ * Центр формування персоналізованих звітів для вищого керівництва (Apex Sovereign Style).
+ * - Глибока семантична агрегація новин та подій v11.5
  * - Персоналізація контенту під ролі (БІЗНЕС, УРЯД, БЕЗПЕКА)
  * - Візуалізація обґрунтування висновків ШІ (XAI)
  * - Експорт у захищені формати та прямий друк
@@ -109,11 +109,11 @@ const ExecutiveBriefView: React.FC = () => {
                                 </div>
                                 <div>
                                     <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        SOVEREIGN <span className="text-sky-400">BRIEFING</span>
+                                        MORNING <span className="text-sky-400">BRIEFING</span>
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-sky-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Star size={12} className="animate-pulse" /> 
-                                        EXECUTIVE_SIGNAL_DECODE_v55.5
+                                        OSINT_КOHTYР_v11.5_SOVEREIGN_APEX
                                     </p>
                                 </div>
                             </div>
@@ -212,7 +212,7 @@ const ExecutiveBriefView: React.FC = () => {
                                     </div>
                                     <div className="text-center space-y-4">
                                         <p className="text-xl font-black text-white uppercase tracking-[0.5em] italic">СИНТЕЗ СТРАТЕГІЧНОГО ЗВІТУ...</p>
-                                        <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">АГРЕГАЦІЯ_СЕМАНТИЧНИХ_ТОЧОК_АЗР_v55.5</p>
+                                        <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">АГРЕГАЦІЯ_СЕМАНТИЧНИХ_ТОЧОК_v11.5_APEX</p>
                                     </div>
                                 </div>
                             ) : brief && (

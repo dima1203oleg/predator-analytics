@@ -1,18 +1,20 @@
 /**
- * 🔍 PREDATOR Semantic Search | v55.6
+ * 🔍 PREDATOR Semantic Search | v55.6.1 (TACTICAL_OVERRIDE)
  * НЕЙРОФОРМНИЙ ПОШУКОВИЙ ДВИГУН (SOVEREIGN SEARCH)
  * 
- * Інтелектуальний пошук з урахуванням семантичних зв'язків та ризиків.
- * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
+ * "УСТРАШАЮЧИЙ" РЕЖИМ: Глибинний аналіз ризиків та кримінальних структур.
+ * © 2026 PREDATOR Analytics - СУВОРИЙ УКРАЇНСЬКИЙ ІНТЕРФЕЙС (HR-04)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     Search, Filter, SlidersHorizontal, RefreshCw, 
     ArrowRight, Globe, Database, Target, Brain,
     Shield, Briefcase, FileText, User, MapPin,
     AlertTriangle, CheckCircle2, ChevronRight,
-    Zap, Sparkles, Orbit, Binary, Layout
+    Zap, Sparkles, Orbit, Binary, Layout,
+    Skull, ShieldAlert, Activity, Eye, Ghost,
+    Info, Lock, Fingerprint, Terminal
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -23,6 +25,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { Badge } from '@/components/ui/badge';
 import { CyberOrb } from '@/components/CyberOrb';
+import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import { cn } from '@/utils/cn';
 
 const SearchPage: React.FC = () => {
@@ -30,28 +33,36 @@ const SearchPage: React.FC = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [results, setResults] = useState<any[]>([]);
     const [activeFilter, setActiveFilter] = useState('ALL');
+    const [threatLevel, setThreatLevel] = useState(42);
 
     const handleSearch = () => {
         if (!query.trim()) return;
         setIsSearching(true);
-        // Апрексімація нейронного пошуку
+        // Імітація глибокого сканування
         setTimeout(() => {
             setResults([
-                { id: '1', title: 'ТОВ "МИТНИЙ_ОФШОР"', type: 'COMPANY', risk: 94, info: 'Виявлено зв\'язки з санкційними списками', date: '2026-03-22' },
-                { id: '2', title: 'Декларація №445582/2026', type: 'DECLARATION', risk: 42, info: 'Заниження митної вартості (метал)', date: '2026-03-21' },
-                { id: '3', title: 'Петро Порошенко (Бенефіціар)', type: 'PERSON', risk: 15, info: 'UBO 24 структур', date: '2026-03-20' },
-                { id: '4', title: 'Перевалка "Південь"', type: 'LOCATION', risk: 68, info: 'Аномальна активність вантажів', date: '2026-03-19' },
+                { id: '1', title: 'ТОВ "МИТНИЙ_ОФШОР"', type: 'COMPANY', risk: 94, info: 'Виявлено зв\'язки з санкційними списками РФ', date: '2026-03-22', severity: 'CRITICAL' },
+                { id: '2', title: 'Декларація №445582/2026', type: 'DECLARATION', risk: 42, info: 'Підозра на заниження митної вартості: титан', date: '2026-03-21', severity: 'HIGH' },
+                { id: '3', title: 'Петро Порошенко (Бенефіціар)', type: 'PERSON', risk: 15, info: 'Кінцевий бенефіціар 24 офшорних структур', date: '2026-03-20', severity: 'LOW' },
+                { id: '4', title: 'Перевалка "Південь"', type: 'LOCATION', risk: 68, info: 'Аномальна активність нічних вантажів', date: '2026-03-19', severity: 'MEDIUM' },
             ]);
             setIsSearching(false);
-        }, 1500);
+            setThreatLevel(89); // Підвищуємо рівень загрози після виявлення
+        }, 2000);
     };
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#010204] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.05)" />
-                <NeuralPulse color="rgba(99, 102, 241, 0.03)" size={1400} />
+                <CyberGrid color="rgba(244, 63, 94, 0.03)" />
+                <NeuralPulse color="rgba(244, 63, 94, 0.05)" size={1600} />
+                
+                {/* Tactical Overlay (Scanning Line) */}
+                <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden opacity-20">
+                    <div className="w-full h-1 bg-red-600/30 blur-[4px] absolute animate-[scan_6s_linear_infinite]" />
+                    <div className="w-full h-[100vh] bg-[linear-gradient(rgba(244,63,94,0)_0%,rgba(244,63,94,0.05)_50%,rgba(244,63,94,0)_100%)] absolute animate-[scan_6s_linear_infinite]" />
+                </div>
 
                 <div className="relative z-10 max-w-[1400px] mx-auto p-4 sm:p-12 space-y-16">
                     
@@ -59,77 +70,79 @@ const SearchPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group/orb">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full scale-150 group-hover:opacity-70 transition-opacity animate-pulse opacity-40" />
-                                    <div className="relative p-7 bg-slate-900/80 border border-indigo-500/30 rounded-[2.5rem] shadow-3xl backdrop-blur-3xl group-hover:border-indigo-400 transition-all">
-                                        <Search size={42} className="text-indigo-400 drop-shadow-[0_0_20px_rgba(99,102,241,0.8)]" />
+                                    <div className="absolute inset-0 bg-red-600/30 blur-[100px] rounded-full scale-150 animate-pulse opacity-20" />
+                                    <div className="relative p-7 bg-black/80 border border-red-500/30 rounded-[2.5rem] shadow-[0_0_100px_rgba(244,63,94,0.2)] backdrop-blur-3xl transition-all">
+                                        <Skull size={42} className="text-red-500 drop-shadow-[0_0_20px_#f43f5e]" />
                                     </div>
                                 </div>
-                                <div>
-                                    <h1 className="text-6xl font-black text-white tracking-[0.05em] uppercase leading-none font-display italic skew-x-[-2.5deg]">
-                                        ПОШУК <span className="text-indigo-500">СВЯТИЛИЩА</span>
+                                <div className="space-y-4">
+                                    <h1 className="text-7xl font-black text-white tracking-[-0.02em] uppercase leading-none font-display italic skew-x-[-4deg]">
+                                        ПОШУК <span className="text-red-600 group-hover:animate-glitch">ПРЕДАТОРА</span>
                                     </h1>
-                                    <div className="flex items-center gap-6 mt-6">
-                                        <div className="h-0.5 w-16 bg-gradient-to-r from-indigo-500 to-transparent" />
-                                        <span className="text-[11px] font-mono font-black text-indigo-500/90 uppercase tracking-[0.6em] animate-pulse">
-                                            SEMANTIC_SEARCH_ENGINE // v55.6
+                                    <div className="flex items-center gap-6">
+                                        <div className="h-0.5 w-24 bg-gradient-to-r from-red-600 to-transparent" />
+                                        <span className="text-[12px] font-mono font-black text-red-500 uppercase tracking-[0.6em] flex items-center gap-3">
+                                            <ShieldAlert size={14} className="animate-pulse" /> СИСТЕМА_ВТЕЧІ_НЕМОЖЛИВА_v55.6
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         }
                         stats={[
-                            { label: 'ДОКУМЕНТІВ', value: '14.2M', color: 'primary', icon: <Database size={14} /> },
-                            { label: 'ВЕКТОРІВ', value: '52.4M', color: 'success', icon: <Binary size={14} /> },
-                            { label: 'ЧАС_ПОШУКУ', value: '4ms', color: 'primary', icon: <Zap size={14} />, animate: true }
+                            { label: 'РІВЕНЬ_ЗАГРОЗИ', value: `${threatLevel}%`, color: threatLevel > 70 ? 'danger' : 'primary', icon: <Skull size={14} />, animate: true },
+                            { label: 'АКТИВНІ_ЦІЛІ', value: '1.42M', color: 'primary', icon: <Target size={14} /> },
+                            { label: 'ВІДГУК_ЯДРА', value: '2ms', color: 'success', icon: <Zap size={14} />, animate: true }
                         ]}
                     />
 
-                    {/* Central Search Interface */}
-                    <div className="flex flex-col gap-12 items-center w-full">
-                        <TacticalCard variant="holographic" className="w-full max-w-5xl p-4 bg-slate-900/40 rounded-[3rem] border-white/5 shadow-3xl group/search" noPadding>
-                            <div className="relative p-6 flex items-center gap-6">
-                                <div className="p-5 bg-indigo-500/10 rounded-2xl shadow-inner group-focus-within/search:bg-indigo-500/20 transition-all">
-                                    <Search size={32} className="text-indigo-400 group-focus-within/search:scale-110 transition-transform" />
+                    {/* Threat Interface Overlay */}
+                    <div className="flex flex-col gap-12 items-center w-full relative">
+                        <div className="absolute -top-12 left-0 right-0 flex justify-between px-12 pointer-events-none">
+                            <span className="text-[10px] font-black text-red-500 font-mono tracking-widest opacity-40 uppercase italic animate-[blink_2s_infinite]">SYSTEM_STATUS: AGGRESSIVE</span>
+                            <span className="text-[10px] font-black text-red-500 font-mono tracking-widest opacity-40 uppercase italic">SCAN_COORDINATES: [48.3794, 31.1656]</span>
+                        </div>
+
+                        <TacticalCard variant="cyber" className="w-full max-w-5xl p-4 bg-black/60 rounded-[3rem] border-red-900/30 shadow-[0_0_80px_rgba(0,0,0,1)] group/search" noPadding>
+                            <div className="relative p-8 flex items-center gap-8">
+                                <div className="p-6 bg-red-600/10 rounded-2xl shadow-[inset_0_0_20px_rgba(244,63,94,0.1)] group-focus-within/search:bg-red-600/20 transition-all">
+                                    <Search size={38} className="text-red-500 group-focus-within/search:scale-125 transition-transform drop-shadow-[0_0_10px_#f43f5e]" />
                                 </div>
                                 <input 
                                     type="text" 
-                                    placeholder="ВВЕДІТЬ ЄДРПОУ, НАЗВУ АБО ТИП ТОВАРУ..."
-                                    className="flex-1 bg-transparent border-none text-3xl font-black text-white uppercase italic tracking-tighter placeholder:text-slate-700 focus:outline-none focus:ring-0 leading-none"
+                                    placeholder="ВВЕДІТЬ ОБ'ЄКТ СПОСТЕРЕЖЕННЯ (ЄДРПОУ, НАЗВА)..."
+                                    className="flex-1 bg-transparent border-none text-4xl font-black text-white italic tracking-tighter placeholder:text-red-950/40 focus:outline-none focus:ring-0 leading-none uppercase"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                 />
-                                <div className="flex items-center gap-4">
-                                    <button className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
-                                        <SlidersHorizontal size={24} />
+                                <div className="flex items-center gap-6">
+                                    <button className="p-5 bg-red-500/5 hover:bg-red-500/10 rounded-2xl text-red-900 hover:text-red-500 transition-all border border-red-900/20">
+                                        <SlidersHorizontal size={28} />
                                     </button>
                                     <motion.button 
-                                        whileHover={{ scale: 1.05, x: 5 }}
+                                        whileHover={{ scale: 1.05, x: 5, boxShadow: '0 0 50px rgba(220, 38, 38, 0.4)' }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={handleSearch}
-                                        className="px-10 py-5 bg-indigo-600 text-white font-black rounded-2xl text-[11px] uppercase tracking-[0.3em] shadow-3xl hover:bg-indigo-500 transition-all flex items-center gap-4 italic group"
+                                        className="px-14 py-6 bg-red-600 text-white font-black rounded-3xl text-[12px] uppercase tracking-[0.4em] shadow-[0_20px_50px_rgba(220,38,38,0.3)] hover:bg-red-500 transition-all flex items-center gap-6 italic group"
                                     >
-                                        <span>НЕЙРО_ПОШУК</span>
-                                        <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+                                        <span>ІНІЦІЮВАТИ_ПОШУК</span>
+                                        <ArrowRight size={24} className="group-hover:translate-x-3 transition-transform" />
                                     </motion.button>
                                 </div>
                             </div>
-
-                            {/* Floating Active Pulse */}
-                            <div className="absolute -bottom-1 left-12 right-12 h-0.5 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-focus-within/search:opacity-100 transition-opacity" />
                         </TacticalCard>
 
-                        {/* Search Filters */}
-                        <div className="flex flex-wrap justify-center gap-6">
+                        {/* Search Filters with Tactical Style */}
+                        <div className="flex flex-wrap justify-center gap-4">
                             {['ALL', 'COMPANIES', 'DECLARATIONS', 'PERSONS', 'LOCATIONS', 'CUSTOMS'].map((f) => (
                                 <button 
                                     key={f}
                                     onClick={() => setActiveFilter(f)}
                                     className={cn(
-                                        "px-8 py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] transition-all italic border shadow-2xl",
+                                        "px-10 py-4 rounded-[1.2rem] text-[10px] font-black uppercase tracking-[0.4em] transition-all italic border shadow-2xl skew-x-[-8deg]",
                                         activeFilter === f 
-                                            ? "bg-indigo-600 border-indigo-400 text-white shadow-[0_0_30px_rgba(99,102,241,0.4)]" 
-                                            : "bg-black/60 border-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10"
+                                            ? "bg-red-600 border-red-400 text-white shadow-[0_0_40px_rgba(220,38,38,0.4)]" 
+                                            : "bg-black/80 border-red-950/20 text-red-950 hover:text-red-500 hover:border-red-500/40"
                                     )}
                                 >
                                     {f}
@@ -138,68 +151,96 @@ const SearchPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Results / Empty state */}
-                    <div className="grid grid-cols-12 gap-12 mt-12">
+                    {/* Results / Tactical Recon */}
+                    <div className="grid grid-cols-12 gap-12 mt-20 relative">
                         {isSearching ? (
-                            <div className="col-span-12 flex flex-col items-center justify-center py-40 gap-12">
-                                <CyberOrb size={180} color="#6366f1" intensity={0.6} pulse />
-                                <div className="text-center space-y-4">
-                                    <span className="text-xl font-black text-white uppercase tracking-[0.8em] italic animate-pulse block">COGNITIVE_RECONSTRUCTION</span>
-                                    <div className="h-1 w-64 bg-white/5 rounded-full overflow-hidden mx-auto shadow-2xl">
+                            <div className="col-span-12 flex flex-col items-center justify-center py-40 gap-16">
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[100px] scale-150 animate-pulse" />
+                                    <CyberOrb size={220} color="#f43f5e" intensity={0.8} pulse />
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                        <Eye size={40} className="text-white animate-pulse" />
+                                    </div>
+                                </div>
+                                <div className="text-center space-y-6">
+                                    <span className="text-2xl font-black text-red-500 uppercase tracking-[1em] italic animate-pulse block">ДЕТЕКЦІЯ_КРИМІНАЛЬНИХ_ЗВ'ЯЗКІВ</span>
+                                    <div className="h-1.5 w-96 bg-red-950/30 rounded-full overflow-hidden mx-auto border border-red-900/20 shadow-2xl">
                                         <motion.div 
                                             initial={{ width: 0 }}
                                             animate={{ width: '100%' }}
-                                            transition={{ duration: 1.5, repeat: Infinity }}
-                                            className="h-full bg-indigo-500 shadow-[0_0_15px_#6366f1]"
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                            className="h-full bg-red-600 shadow-[0_0_20px_#f43f5e]"
                                         />
                                     </div>
+                                    <p className="text-[10px] font-black text-red-900 uppercase tracking-[0.5em] italic">RECON_IN_PROGRESS_v55.6</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (
-                            <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
                                 <AnimatePresence mode="popLayout">
                                     {results.map((res, i) => (
                                         <motion.div
                                             key={res.id}
-                                            initial={{ opacity: 0, y: 30 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: i * 0.1 }}
+                                            initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.1, duration: 0.5 }}
                                             className="group relative"
                                         >
-                                            <TacticalCard variant="cyber" className="p-10 border-white/5 bg-slate-900/40 rounded-[3rem] hover:border-indigo-500/30 transition-all shadow-3xl flex gap-10 overflow-hidden group/item" noPadding={false}>
-                                                <div className="absolute top-0 right-0 p-12 opacity-[0.02] group-hover/item:opacity-[0.08] transition-all transform group-hover/item:scale-110 group-hover/item:rotate-12">
-                                                    {res.type === 'COMPANY' ? <Briefcase size={280} /> : res.type === 'DECLARATIONS' ? <FileText size={280} /> : <User size={280} />}
+                                            <TacticalCard variant="cyber" className={cn(
+                                                "p-12 border-red-900/20 bg-black/60 rounded-[3rem] hover:border-red-600/40 transition-all shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex gap-12 overflow-hidden group/item",
+                                                res.risk > 80 && "border-red-600/50"
+                                            )} noPadding={false}>
+                                                <div className="absolute top-0 right-0 p-12 opacity-[0.01] group-hover/item:opacity-[0.1] transition-all transform group-hover/item:scale-125 group-hover/item:rotate-[-12deg] pointer-events-none">
+                                                    {res.severity === 'CRITICAL' ? <Skull size={320} className="text-red-600" /> : <Ghost size={320} className="text-red-900" />}
                                                 </div>
 
-                                                <div className="flex-1 space-y-6 relative z-10">
-                                                    <div className="flex items-center gap-4 border-b border-white/5 pb-4">
-                                                        <div className="p-3 bg-indigo-500/10 rounded-xl">
-                                                            {res.type === 'COMPANY' ? <Briefcase size={18} className="text-indigo-400" /> : <Database size={18} className="text-indigo-400" />}
-                                                        </div>
-                                                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] italic">{res.type}</span>
-                                                    </div>
-                                                    
-                                                    <div className="space-y-2">
-                                                        <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-tight group-hover/item:text-indigo-400 transition-colors uppercase italic">{res.title}</h3>
-                                                        <p className="text-[14px] text-slate-400 leading-relaxed font-black uppercase italic tracking-tight">{res.info}</p>
-                                                    </div>
-
-                                                    <div className="flex items-center justify-between pt-4">
-                                                        <div className="flex items-center gap-8">
-                                                            <div className="flex flex-col">
-                                                                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ДАТА_ФОРМУВАННЯ</span>
-                                                                <span className="text-[10px] font-mono font-black text-slate-300">{res.date}</span>
+                                                <div className="flex-1 space-y-8 relative z-10">
+                                                    <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                                                        <div className="flex items-center gap-5">
+                                                            <div className={cn(
+                                                                "p-4 rounded-2xl shadow-inner",
+                                                                res.severity === 'CRITICAL' ? "bg-red-600/20" : "bg-white/5"
+                                                            )}>
+                                                                {res.type === 'COMPANY' ? <Briefcase size={22} className="text-red-500" /> : <Database size={22} className="text-red-500" />}
                                                             </div>
                                                             <div className="flex flex-col">
-                                                                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">SCORE</span>
-                                                                <span className={cn("text-sm font-black font-mono italic", res.risk > 70 ? "text-rose-500" : "text-emerald-400")}>{res.risk}%</span>
+                                                                <span className="text-[12px] font-black text-red-500 uppercase tracking-[0.4em] italic leading-none">{res.type}</span>
+                                                                <span className="text-[9px] font-mono text-red-900 uppercase mt-1">ID: {res.id.padStart(6, '0')}</span>
+                                                            </div>
+                                                        </div>
+                                                        {res.severity === 'CRITICAL' && (
+                                                            <Badge variant="outline" className="bg-red-600/10 border-red-600/50 text-red-500 text-[9px] px-4 py-1.5 font-black uppercase tracking-[0.4em] animate-pulse">КРИТИЧНО</Badge>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    <div className="space-y-4">
+                                                        <h3 className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none group-hover/item:text-red-500 transition-colors">{res.title}</h3>
+                                                        <div className="p-6 bg-red-600/5 border-l-4 border-red-600 rounded-r-2xl">
+                                                            <p className="text-[16px] text-slate-300 leading-relaxed font-black uppercase italic tracking-tight">{res.info}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                                                        <div className="flex items-center gap-10">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">ДАТА_ФОРМУВАННЯ</span>
+                                                                <span className="text-[12px] font-mono font-black text-red-800">{res.date}</span>
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">RISK_SCORE</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="h-2 w-24 bg-red-950/40 rounded-full overflow-hidden">
+                                                                        <div className="h-full bg-red-600" style={{ width: `${res.risk}%` }} />
+                                                                    </div>
+                                                                    <span className={cn("text-xl font-black font-mono italic", res.risk > 70 ? "text-red-500" : "text-emerald-500")}>{res.risk}%</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <motion.button 
-                                                            whileHover={{ x: 8 }}
-                                                            className="flex items-center gap-4 text-[10px] font-black text-indigo-400 hover:text-white transition-colors uppercase italic tracking-[0.2em]"
+                                                            whileHover={{ x: 12 }}
+                                                            className="flex items-center gap-4 text-[12px] font-black text-red-500 hover:text-white transition-colors uppercase italic tracking-[0.3em] group/btn"
                                                         >
-                                                            АНАЛІЗУВАТИ <ChevronRight size={16} />
+                                                            РОЗПОЧАТИ_ДОПИТ <Fingerprint size={20} className="group-hover/btn:rotate-12 transition-transform" />
                                                         </motion.button>
                                                     </div>
                                                 </div>
@@ -209,21 +250,33 @@ const SearchPage: React.FC = () => {
                                 </AnimatePresence>
                             </div>
                         ) : (
-                            <div className="col-span-12 flex flex-col items-center justify-center py-40 text-center gap-10">
+                            <div className="col-span-12 flex flex-col items-center justify-center py-40 text-center gap-12">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-indigo-500/10 blur-[60px] rounded-full scale-150 group-hover:scale-175 transition-all" />
-                                    <Search size={80} className="text-slate-800 relative z-10 group-hover:text-slate-700 transition-colors" />
+                                    <div className="absolute inset-0 bg-red-600/5 blur-[80px] rounded-full scale-200" />
+                                    <Ghost size={120} className="text-red-950/40 relative z-10 animate-pulse" />
                                 </div>
-                                <div className="space-y-4">
-                                    <h3 className="text-2xl font-black text-slate-600 uppercase tracking-[0.6em] italic">СИСТЕМА ОЧІКУЄ ЗАПИТ</h3>
-                                    <p className="text-sm text-slate-500 font-black uppercase italic tracking-widest max-w-lg opacity-60">ШІ-рушій готовий до семантичної дистиляції торговельних потоків</p>
+                                <div className="space-y-6">
+                                    <h3 className="text-4xl font-black text-red-950 uppercase tracking-[0.8em] italic">СИСТЕМА ТИШІ</h3>
+                                    <p className="text-[12px] text-red-900/60 font-black uppercase italic tracking-[0.3em] max-w-xl mx-auto leading-relaxed border-t border-red-900/10 pt-8">
+                                        ПРЕДАТОР ПОТРЕБУЄ ЦІЛЬ ДЛЯ АНАЛІЗУ. ВВЕДІТЬ ДАНІ ДЛЯ ІНІЦІАЦІЇ ПРОТОКОЛУ СПОСТЕРЕЖЕННЯ.
+                                    </p>
                                 </div>
                             </div>
                         )}
                     </div>
                 </div>
 
+                <AudioSanctuary />
+
                 <style dangerouslySetInnerHTML={{ __html: `
+                    @keyframes scan {
+                        0% { top: -100px; }
+                        100% { top: 100vh; }
+                    }
+                    @keyframes blink {
+                        0%, 100% { opacity: 0.1; }
+                        50% { opacity: 0.4; }
+                    }
                     .no-scrollbar::-webkit-scrollbar {
                         display: none;
                     }

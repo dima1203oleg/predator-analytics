@@ -28,6 +28,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { SearchWidget } from '@/components/search/SearchWidget';
+import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 
 const IntelligenceView: React.FC = () => {
@@ -42,11 +43,11 @@ const IntelligenceView: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#010204] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.08)" />
-                <NeuralPulse color="rgba(99, 102, 241, 0.05)" size={1500} />
-                <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
+                <CyberGrid color="rgba(244, 63, 94, 0.05)" />
+                <NeuralPulse color="rgba(244, 63, 94, 0.03)" size={1500} />
+                <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-red-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(220,38,38,0.5)]" />
 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-12 space-y-16">
                     <SearchWidget className="mb-16 scale-105" />
@@ -312,6 +313,8 @@ const IntelligenceView: React.FC = () => {
                         }
                     `
                 }} />
+
+                <AudioSanctuary />
             </div>
         </PageTransition>
     );

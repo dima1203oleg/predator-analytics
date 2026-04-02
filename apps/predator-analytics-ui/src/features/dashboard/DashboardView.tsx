@@ -28,6 +28,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { dashboardApi } from '@/services/api/dashboard';
 import { SearchWidget } from '@/components/search/SearchWidget';
+import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import type { DashboardOverview, EngineInfo, DashboardAlert, RadarItem, RiskCompany } from '@/services/api/dashboard';
 
 // ========================
@@ -262,10 +263,10 @@ const DashboardView: React.FC = () => {
     <PageTransition>
       <div className="w-full min-h-screen p-4 sm:p-12 flex flex-col gap-16 relative bg-[#010409] font-sans pb-40 overflow-hidden">
         <AdvancedBackground />
-        <CyberGrid color="rgba(99, 102, 241, 0.08)" />
-        <NeuralPulse color="rgba(0, 243, 255, 0.05)" size={1600} />
+        <CyberGrid color="rgba(244, 63, 94, 0.05)" />
+        <NeuralPulse color="rgba(244, 63, 94, 0.03)" size={1600} />
         
-        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-indigo-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(99,102,241,0.5)]" />
+        <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-red-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(220,38,38,0.5)]" />
         
         <div className="relative z-10 max-w-[1900px] mx-auto w-full space-y-16">
           
@@ -659,6 +660,8 @@ const DashboardView: React.FC = () => {
             </motion.div>
           </div>
         </div>
+
+        <AudioSanctuary />
 
         <style dangerouslySetInnerHTML={{
           __html: `

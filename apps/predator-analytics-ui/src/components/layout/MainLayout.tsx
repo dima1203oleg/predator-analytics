@@ -11,6 +11,7 @@ import ShellCommandPalette from './ShellCommandPalette';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
+import { ConstitutionalShield } from '../shared/ConstitutionalShield';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -175,6 +176,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}
+      <ConstitutionalShield />
     </div>
   );
 };

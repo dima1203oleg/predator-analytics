@@ -138,7 +138,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </h1>
                             <div className="flex flex-col items-center">
                                 <h2 className="text-sm font-bold tracking-[0.6em] text-cyan-600 uppercase">
-                                    Strategic Analysis Unit
+                                    Підрозділ Стратегічного Аналізу
                                 </h2>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 </div>
                                 <input 
                                     readOnly
-                                    placeholder="LOGIN_ID" 
+                                    placeholder="ID КОРИСТУВАЧА" 
                                     className="w-full bg-cyan-950/20 border border-cyan-500/20 rounded-lg py-3 pl-10 pr-4 text-[10px] tracking-[0.2em] font-bold text-cyan-100 placeholder:text-cyan-800 focus:border-cyan-400/50 outline-none transition-all"
                                 />
                             </div>
@@ -162,7 +162,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <input 
                                     readOnly
                                     type="password"
-                                    placeholder="ACCESS_KEY" 
+                                    placeholder="КЛЮЧ ДОСТУПУ" 
                                     className="w-full bg-cyan-950/20 border border-cyan-500/20 rounded-lg py-3 pl-10 pr-4 text-[10px] tracking-[0.2em] font-bold text-cyan-100 placeholder:text-cyan-800 focus:border-cyan-400/50 outline-none transition-all"
                                 />
                             </div>
@@ -173,7 +173,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 onClick={() => setStep('scanning')}
                                 className="w-full bg-transparent border border-cyan-500/30 text-cyan-400 font-bold py-3.5 rounded-lg tracking-[0.4em] text-xs transition-all shadow-[0_0_20px_rgba(34,211,238,0.1)]"
                             >
-                                AUTHORIZE MISSION
+                                АВТОРИЗУВАТИ МІСІЮ
                             </motion.button>
                         </div>
                     </motion.div>
@@ -199,7 +199,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     {scanProgress}%
                                 </div>
                                 <div className="text-[8px] font-black text-cyan-600 tracking-[0.3em] uppercase">
-                                    SCANNING BIO-HASH
+                                    СКАНУВАННЯ БІО-ХЕШУ
                                 </div>
                             </div>
                         </div>
@@ -214,9 +214,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         className="flex flex-col md:flex-row gap-4 z-10 max-w-5xl w-full px-4"
                     >
                         {[
-                            { role: UserRole.ADMIN, label: 'COMMANDER', desc: 'Full System Sovereignty', icon: ShieldAlert, color: 'cyan', level: 'V' },
-                            { role: UserRole.CLIENT_PREMIUM, label: 'SR. ANALYST', desc: 'Global Intelligence Access', icon: Activity, color: 'blue', level: 'IV' },
-                            { role: UserRole.CLIENT_BASIC, label: 'OPERATOR', desc: 'Standard Data Streams', icon: Terminal, color: 'slate', level: 'III' }
+                            { role: UserRole.ADMIN, label: 'КОМАНДИР', desc: 'Повний Суверенітет Системи', icon: ShieldAlert, color: 'cyan', level: 'V' },
+                            { role: UserRole.CLIENT_PREMIUM, label: 'СТ. АНАЛІТИК', desc: 'Доступ до Глобальної Розвідки', icon: Activity, color: 'blue', level: 'IV' },
+                            { role: UserRole.CLIENT_BASIC, label: 'ОПЕРАТОР', desc: 'Стандартні Потоки Даних', icon: Terminal, color: 'slate', level: 'III' }
                         ].map((item, idx) => (
                             <motion.button
                                 key={item.role}
@@ -248,12 +248,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     </span>
                                 </div>
                                 <div className="space-y-1">
-                                    <div className="text-[8px] font-bold text-cyan-700 tracking-widest uppercase">Personnel Class</div>
+                                    <div className="text-[8px] font-bold text-cyan-700 tracking-widest uppercase">Клас Персоналу</div>
                                     <div className="text-xl font-black text-white tracking-widest group-hover:text-cyan-400 transition-colors">{item.label}</div>
                                     <p className="text-[9px] text-slate-500 font-medium leading-relaxed">{item.desc}</p>
                                 </div>
                                 <div className="pt-2 flex items-center gap-2 text-[8px] font-black text-cyan-400 opacity-40 group-hover:opacity-100 transition-all uppercase">
-                                    Link established <Zap size={8} />
+                                    Зв'язок встановлено <Zap size={8} />
                                 </div>
                             </motion.button>
                         ))}
@@ -267,7 +267,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     animate={{ opacity: [0.3, 0.6, 0.3] }}
                     transition={{ duration: 4, repeat: Infinity }}
                 >
-                    SECURE_NODE_01 // ENCRYPTION_ACTIVE // NEXUS_LINK_OK // VERSION_56.1.4_STABLE
+                    ЗАХИЩЕНИЙ_ВУЗОЛ_01 // ШИФРУВАННЯ_АКТИВНЕ // ЗВ'ЯЗОК_NEXUS_OK // ВЕРСІЯ_56.1.4_СТАБІЛЬНА
                 </motion.div>
             </div>
 

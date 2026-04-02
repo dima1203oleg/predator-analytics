@@ -133,11 +133,12 @@
 body {
     color-scheme: dark;
     background-color: var(--shell-bg);
-    color: var(--shell-text-soft);
+    color: #e2e8f0;
     background-image:
-        radial-gradient(circle at 14% 14%, rgba(245, 158, 11, 0.08), transparent 28%),
-        radial-gradient(circle at 85% 8%, rgba(34, 211, 238, 0.08), transparent 26%),
-        radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.08), transparent 34%),
+        radial-gradient(circle at 14% 14%, rgba(245, 158, 11, 0.10), transparent 28%),
+        radial-gradient(circle at 85% 8%, rgba(34, 211, 238, 0.10), transparent 26%),
+        radial-gradient(circle at 50% 100%, rgba(59, 130, 246, 0.10), transparent 34%),
+        radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.04), transparent 60%),
         linear-gradient(180deg, #08111f 0%, #050a14 52%, #03060d 100%);
     min-height: 100dvh;
     margin: 0;
@@ -148,6 +149,8 @@ body {
     text-rendering: optimizeLegibility;
     background-attachment: fixed;
     font-family: 'Space Grotesk', system-ui, sans-serif;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
 }
 
 #root {
@@ -910,3 +913,298 @@ kbd {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* ============================================================================
+   PREDATOR v56.1 — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
+   Контраст, читабельність, динамічні ефекти, мікро-анімації
+   ============================================================================ */
+
+/* ── ГЛОБАЛЬНІ HOVER MICRO-INTERACTIONS ── */
+button,
+a,
+[role="button"],
+.clickable {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover:not(:disabled),
+[role="button"]:hover {
+    transform: translateY(-1px);
+}
+
+button:active:not(:disabled),
+[role="button"]:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ── ПОСИЛЕНА ТИПОГРАФІКА ── */
+h1, h2, h3, h4, h5, h6 {
+    color: #f8fafc;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-rendering: geometricPrecision;
+}
+
+h1 { letter-spacing: -0.025em; }
+h2 { letter-spacing: -0.02em; }
+
+/* Краща читабельність параграфів */
+p {
+    color: #cbd5e1;
+    line-height: 1.7;
+}
+
+/* Посилений контраст для label та caption */
+label, .label-text {
+    color: #94a3b8;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+}
+
+.text-muted, .text-secondary {
+    color: #94a3b8 !important;
+}
+
+/* ── ІНТЕРАКТИВНІ INPUT-ПОЛЯ ── */
+input, textarea, select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):hover,
+textarea:hover,
+select:hover {
+    border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+    border-color: rgba(99, 102, 241, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), 0 0 20px rgba(99, 102, 241, 0.08) !important;
+}
+
+/* ── ПОСИЛЕНІ GLASS ПАНЕЛІ ── */
+.glass-ultra {
+    background: rgba(2, 6, 23, 0.72);
+    backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow:
+        0 10px 40px 0 rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.glass-ultra:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 16px 56px 0 rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* ── PREMIUM TABLE STYLING ── */
+table {
+    color: #e2e8f0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+thead th {
+    color: #f1f5f9;
+    background: rgba(15, 23, 42, 0.7);
+    border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+}
+
+tbody td {
+    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+}
+
+tbody tr {
+    transition: all 0.2s ease;
+}
+
+tbody tr:hover {
+    background: rgba(99, 102, 241, 0.06);
+    box-shadow: inset 3px 0 0 var(--accent-indigo);
+}
+
+/* ── CHIP / TAG STYLES ── */
+.chip, .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s ease;
+}
+
+.chip:hover, .tag:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── ПОСИЛЕНІ RECHARTS ГРАФІКИ ── */
+.recharts-text,
+.recharts-cartesian-axis-tick text,
+.recharts-legend-item-text {
+    fill: #e2e8f0 !important;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.recharts-default-tooltip {
+    background: rgba(2, 6, 23, 0.96) !important;
+    border: 1px solid rgba(99, 102, 241, 0.25) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    backdrop-filter: blur(20px) !important;
+}
+
+.recharts-tooltip-label {
+    color: #f8fafc !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+}
+
+.recharts-tooltip-item {
+    color: #cbd5e1 !important;
+    font-size: 12px !important;
+}
+
+/* ── PULSE DOT INDICATOR ── */
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 4px currentColor;
+    }
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
+    }
+}
+
+.pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── FADE-IN ANIMATION ── */
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Stagger delays for lists */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+
+/* ── GRADIENT BORDER GLOW ── */
+@keyframes border-glow-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.border-glow {
+    position: relative;
+}
+
+.border-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(6, 182, 212, 0.3), rgba(16, 185, 129, 0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: border-glow-pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ── КРАЩІ SKELETON-ЛОАДЕРИ ── */
+@keyframes premium-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-premium {
+    background: linear-gradient(
+        90deg,
+        rgba(15, 23, 42, 0.6) 0%,
+        rgba(30, 41, 59, 0.4) 25%,
+        rgba(51, 65, 85, 0.3) 50%,
+        rgba(30, 41, 59, 0.4) 75%,
+        rgba(15, 23, 42, 0.6) 100%
+    );
+    background-size: 200% 100%;
+    animation: premium-shimmer 2s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+/* ── ЧИСЛО / МЕТРИКА ВИДІЛЕННЯ ── */
+.metric-value {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    letter-spacing: -0.02em;
+    font-weight: 800;
+}
+
+/* ── AMBIENT BREATHING BACKGROUND ── */
+@keyframes ambient-breathe {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.ambient-breathe {
+    animation: ambient-breathe 8s ease-in-out infinite;
+}
+
+/* ── NOTIFICATION BADGE ── */
+@keyframes notif-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.notif-badge {
+    animation: notif-bounce 2s ease-in-out infinite;
+    box-shadow: 0 0 8px currentColor;
+}
+
+/* ── ВИКОНАВСЬКА СТРІЧКА STATUS BAR ── */
+.status-bar-glow {
+    background: linear-gradient(90deg,
+        rgba(16, 185, 129, 0.15),
+        rgba(6, 182, 212, 0.1),
+        rgba(99, 102, 241, 0.15)
+    );
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
