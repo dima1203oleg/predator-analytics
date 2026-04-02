@@ -15,6 +15,9 @@ export default defineConfig({
   server: {
     port: 3030,
     strictPort: true,
+    hmr: {
+      clientPort: 3030,
+    },
     proxy: {
       '/api': {
         // Реальний API Server (порт 8000) замість Mock
