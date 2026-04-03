@@ -1,9 +1,10 @@
 /**
- * BootScreen — "ЯДРО NEXUS v56.1" (SOVEREIGN NEXUS CORE)
+ * BootScreen — "ЯДРО NEXUS v56.1.4" (SOVEREIGN NEXUS CORE — PREMIUM)
  * Кінематографічна заставка з:
  * - Суворою військовою/розвідувальною естетикою
  * - Глобальним скануванням та ініціалізацією
  * - Web Audio API звуковими ефектами
+ * - Преміальними ефектами глибини та атмосфери
  * - Жодних "святкових" частинок, лише строгі глітчі та графіки
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -258,31 +259,51 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const currentPhase = skipRef.current ? 4 : phase;
 
     // Очищення з ефектом motion blur (затемнення)
-    ctx.fillStyle = 'rgba(1, 4, 9, 0.4)';
+    ctx.fillStyle = 'rgba(1, 4, 9, 0.45)';
     ctx.fillRect(0, 0, w, h);
 
     const cx = w / 2;
     const cy = h / 2;
 
+    // Глибока атмосферна підсвітка по центру (subtle dark crimson)
+    if (currentPhase <= 3) {
+      const atmGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.5);
+      atmGrad.addColorStop(0, 'rgba(120, 10, 10, 0.04)');
+      atmGrad.addColorStop(0.5, 'rgba(30, 5, 5, 0.02)');
+      atmGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = atmGrad;
+      ctx.fillRect(0, 0, w, h);
+    }
+
     /* DIGITAL RAIN ФОН — Чіткі лінії і координатна сітка */
     if (currentPhase <= 2) {
       const p = currentPhase === 0 ? Math.min(1, elapsed / PHASE_DURATIONS[0]) : 1;
       
-      // Геометрична сітка
-      ctx.strokeStyle = `rgba(220, 38, 38, ${0.05 * p})`;
+      // Геометрична сітка (основна — більш тонка)
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.04 * p})`;
       ctx.lineWidth = 1;
       const gridSize = 100;
-      for (let x = (now * 0.05) % gridSize; x < w; x += gridSize) {
+      for (let x = (now * 0.03) % gridSize; x < w; x += gridSize) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
       }
-      for (let y = (now * 0.05) % gridSize; y < h; y += gridSize) {
+      for (let y = (now * 0.03) % gridSize; y < h; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Мікро-сітка (додатковий рівень глибини)
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.015 * p})`;
+      const microGrid = 25;
+      for (let x = 0; x < w; x += microGrid) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += microGrid) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
       }
 
       // Бігучі лінії скану (рандомні горизонтальні глітчі)
-      if (Math.random() > 0.8) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.1 * p})`;
-        ctx.fillRect(0, Math.random() * h, w, 2 + Math.random() * 4);
+      if (Math.random() > 0.85) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.06 * p})`;
+        ctx.fillRect(0, Math.random() * h, w, 1 + Math.random() * 3);
       }
     }
 
@@ -323,12 +344,48 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       }
 
       // Цифрові кільця навколо глобуса (Статус супутників)
+      // Перше кільце — пунктирне
       ctx.setLineDash([5, 15]);
       ctx.beginPath();
-      ctx.arc(0, 0, globeRadius * 1.2, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(220, 38, 38, ${0.1 * p})`;
+      ctx.arc(0, 0, globeRadius * 1.15, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.12 * p})`;
       ctx.stroke();
       ctx.setLineDash([]);
+
+      // Друге кільце — суцільне тонке
+      ctx.beginPath();
+      ctx.arc(0, 0, globeRadius * 1.25, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.06 * p})`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+
+      // Третє кільце — пунктирне зовнішнє з рухом
+      ctx.setLineDash([2, 8]);
+      ctx.beginPath();
+      const outerOrbitAngle = now * 0.0005;
+      ctx.save();
+      ctx.rotate(outerOrbitAngle);
+      ctx.arc(0, 0, globeRadius * 1.4, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.08 * p})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+      ctx.setLineDash([]);
+
+      // Мітки секторів на зовнішньому кільці
+      for (let s = 0; s < 12; s++) {
+        const sAngle = (s / 12) * Math.PI * 2;
+        const sx1 = Math.cos(sAngle) * globeRadius * 1.25;
+        const sy1 = Math.sin(sAngle) * globeRadius * 1.25;
+        const sx2 = Math.cos(sAngle) * globeRadius * 1.3;
+        const sy2 = Math.sin(sAngle) * globeRadius * 1.3;
+        ctx.beginPath();
+        ctx.moveTo(sx1, sy1);
+        ctx.lineTo(sx2, sy2);
+        ctx.strokeStyle = `rgba(220, 38, 38, ${0.2 * p})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
 
       // 2. Радарний промінь
       const angle = now * 0.0025;
@@ -444,14 +501,25 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.stroke();
       }
 
-      // Темне глибоке світіння за монетою
-      const glowR = 150 + Math.sin(now * 0.002) * 15;
-      const ambientGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
-      ambientGrad.addColorStop(0, `rgba(220, 38, 38, ${0.1 * p})`);
-      ambientGrad.addColorStop(0.5, `rgba(1, 4, 9, 0)`);
+      // Темне глибоке світіння за монетою — багатошарове
+      const glowR = 200 + Math.sin(now * 0.002) * 20;
+      // Зовнішній ореол
+      const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR * 1.5);
+      outerGrad.addColorStop(0, `rgba(220, 38, 38, ${0.06 * p})`);
+      outerGrad.addColorStop(0.4, `rgba(120, 10, 10, ${0.03 * p})`);
+      outerGrad.addColorStop(1, 'rgba(1, 4, 9, 0)');
       ctx.beginPath();
-      ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
-      ctx.fillStyle = ambientGrad;
+      ctx.arc(cx, cy, glowR * 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = outerGrad;
+      ctx.fill();
+      // Внутрішнє ядро
+      const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR * 0.6);
+      coreGrad.addColorStop(0, `rgba(220, 38, 38, ${0.15 * p})`);
+      coreGrad.addColorStop(0.6, `rgba(180, 20, 20, ${0.05 * p})`);
+      coreGrad.addColorStop(1, 'rgba(1, 4, 9, 0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, glowR * 0.6, 0, Math.PI * 2);
+      ctx.fillStyle = coreGrad;
       ctx.fill();
     }
 
@@ -539,8 +607,26 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       <canvas ref={canvasRef} className="absolute inset-0" />
 
       {/* Суворий мілітарі-оверлей (Scanlines + Вінетка) */}
-      <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4yIi8+PC9zdmc+')] opacity-40 mix-blend-overlay" />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(1,4,9,0.9)_100%)] z-10" />
+      <div className="absolute inset-0 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4xNSIvPjwvc3ZnPg==')] opacity-50 mix-blend-overlay" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(1,4,9,0.85)_70%,rgba(1,4,9,0.98)_100%)] z-10" />
+
+      {/* Кутові маркери HUD (завжди видимі — рамка прицілу) */}
+      {phase < 4 && (
+        <div className="absolute inset-0 pointer-events-none z-[15]">
+          {/* Top-Left */}
+          <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-red-700/40" />
+          <div className="absolute top-4 left-4 w-6 h-6 border-t border-l border-red-500/20" />
+          {/* Top-Right */}
+          <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-red-700/40" />
+          <div className="absolute top-4 right-4 w-6 h-6 border-t border-r border-red-500/20" />
+          {/* Bottom-Left */}
+          <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-red-700/40" />
+          <div className="absolute bottom-4 left-4 w-6 h-6 border-b border-l border-red-500/20" />
+          {/* Bottom-Right */}
+          <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-red-700/40" />
+          <div className="absolute bottom-4 right-4 w-6 h-6 border-b border-r border-red-500/20" />
+        </div>
+      )}
 
       {/* HUD — Технічна інформація (завжди видима під час загрузки крім фази 4) */}
       <AnimatePresence mode="wait">
@@ -553,37 +639,46 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={{ duration: 0.3 }}
             className="absolute inset-0 pointer-events-none z-20"
           >
-            {/* Верхній лівий: Секретно */}
-            <div className="absolute top-6 left-6 text-red-500 space-y-1">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-600 animate-pulse shadow-[0_0_10px_#dc2626] rounded-full" />
-                <span className="text-[10px] font-black tracking-[0.5em] text-red-600">
-                  STRATEGIC ASSET COMMAND / GLOBAL WATCHDOG v56.1
+            {/* Верхній лівий: Класифікація */}
+            <div className="absolute top-8 left-8 text-red-500 space-y-1.5">
+              <div className="flex items-center gap-2.5">
+                <div className="relative">
+                  <div className="w-2.5 h-2.5 bg-red-600 animate-pulse shadow-[0_0_12px_#dc2626,0_0_30px_rgba(220,38,38,0.3)] rounded-full" />
+                  <div className="absolute inset-0 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping opacity-30" />
+                </div>
+                <span className="text-[10px] font-black tracking-[0.5em] text-red-600 drop-shadow-[0_0_6px_rgba(220,38,38,0.4)]">
+                  STRATEGIC ASSET COMMAND / GLOBAL WATCHDOG v56.1.4
                 </span>
               </div>
-              <p className="text-[7px] text-red-400/60 uppercase tracking-widest pl-4 font-bold">
+              <p className="text-[7px] text-red-400/50 uppercase tracking-[0.3em] pl-5 font-bold">
                 LEVEL 5 CLEARANCE REQUIRED — SOVEREIGN ACCESS ONLY
+              </p>
+              <p className="text-[6px] text-slate-600 uppercase tracking-widest pl-5">
+                CLASSIFICATION: COSMIC TOP SECRET // NOFORN // PREDATOR EYES ONLY
               </p>
             </div>
 
             {/* Верхній правий: Телеметрія */}
-            <div className="absolute top-6 right-6 text-right space-y-1">
-              <div className="text-[8px] text-slate-500 uppercase tracking-widest">
-                ПЕРЕХОПЛЕНО (TX):
+            <div className="absolute top-8 right-8 text-right space-y-1">
+              <div className="text-[8px] text-slate-600 uppercase tracking-[0.3em]">
+                ПЕРЕХОПЛЕНО ТРАНЗАКЦІЙ
               </div>
-              <div className="text-sm font-black text-red-600 font-mono tabular-nums tracking-widest">
+              <div className="text-base font-black text-red-600 font-mono tabular-nums tracking-widest drop-shadow-[0_0_8px_rgba(220,38,38,0.4)]">
                 {interceptCount.toLocaleString()} 
+              </div>
+              <div className="text-[7px] text-slate-700 uppercase tracking-widest">
+                NODES ACTIVE: 4,217 / SESSIONS: 892
               </div>
             </div>
 
             {/* Зліва знизу: Телеметрія логів */}
-            <div className="absolute bottom-16 left-6 space-y-1">
+            <div className="absolute bottom-20 left-8 space-y-1 hidden md:block">
                 {hexCodes.map((code, idx) => (
                     <motion.div
                         key={`${code}-${idx}`}
                         initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1 - idx * 0.15, x: 0 }}
-                        className="text-[8px] text-red-500 font-mono tracking-wider"
+                        animate={{ opacity: 1 - idx * 0.12, x: 0 }}
+                        className="text-[8px] text-red-500/70 font-mono tracking-wider"
                     >
                         [P-NET.CORE] INJECT_KEY: {code} ... SYNCED
                     </motion.div>
@@ -591,22 +686,25 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             </div>
 
             {/* Знизу справа: Прогрес */}
-            <div className="absolute bottom-16 right-6 space-y-1.5 w-64 text-right">
-              <div className="flex justify-between text-[8px] text-red-600/60 uppercase tracking-widest font-bold">
+            <div className="absolute bottom-20 right-8 space-y-2 w-72 text-right">
+              <div className="flex justify-between text-[9px] text-red-600/70 uppercase tracking-[0.3em] font-bold">
                 <span>STRATCOM_UPLINK</span>
-                <span>{Math.floor(scanProgress)}%</span>
+                <span className="text-red-500">{Math.floor(scanProgress)}%</span>
               </div>
-              <div className="h-[2px] bg-slate-900 overflow-hidden relative">
+              <div className="h-[3px] bg-slate-900/80 overflow-hidden relative rounded-sm border border-slate-800/50">
                 <motion.div
-                  className="absolute top-0 bottom-0 left-0 bg-red-600 shadow-[0_0_10px_#dc2626]"
+                  className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-red-700 via-red-600 to-red-500 shadow-[0_0_12px_#dc2626]"
                   animate={{ width: `${scanProgress}%` }}
                   transition={{ duration: 0.3, ease: 'linear' }}
                 />
               </div>
+              <div className="text-[6px] text-slate-700 uppercase tracking-widest">
+                AES-512-GCM / QUANTUM-RESISTANT / ZERO-KNOWLEDGE
+              </div>
             </div>
             
             {/* Попередження по центру знизу */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[8px] text-red-600 font-black tracking-[0.4em] uppercase bg-black/80 px-4 py-1 border border-red-950/50">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[8px] text-red-600/90 font-black tracking-[0.5em] uppercase bg-black/90 px-6 py-1.5 border border-red-900/40 shadow-[0_0_20px_rgba(220,38,38,0.1),inset_0_0_20px_rgba(0,0,0,0.5)]">
                 PROPRIETARY OSINT CORE — PROPERTY OF PREDATOR GROUP — TOP SECRET
             </div>
           </motion.div>
@@ -695,12 +793,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="relative z-30 flex flex-col items-center justify-center"
           >
-            {/* Жорсткий статичний логотип (Тільки Scale in) */}
+            {/* Масивний логотип з подвійним кільцем */}
             <motion.div
               initial={{
-                scale: 5,
+                scale: 4,
                 opacity: 0,
-                filter: 'blur(10px)',
+                filter: 'blur(12px)',
               }}
               animate={{
                 scale: 1,
@@ -708,72 +806,91 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 filter: 'blur(0px)',
               }}
               transition={{
-                duration: 1.2,
-                ease: 'circOut'
+                duration: 1.4,
+                ease: [0.16, 1, 0.3, 1]
               }}
-              className="relative mb-10 w-40 h-40"
+              className="relative mb-12 w-44 h-44 md:w-52 md:h-52"
             >
+                {/* Зовнішнє обертальне кільце */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -inset-4 rounded-full border border-red-800/30"
+                  style={{ borderStyle: 'dashed' }}
+                />
+                {/* Друге зовнішнє кільце — протилежне обертання */}
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -inset-8 rounded-full border border-red-900/15"
+                  style={{ borderStyle: 'dotted' }}
+                />
                 <div
-                    className="w-full h-full rounded-full bg-black/90 border-4 border-red-600 shadow-[0_0_100px_rgba(220,38,38,0.5)] flex items-center justify-center relative overflow-hidden"
+                    className="w-full h-full rounded-full bg-gradient-to-b from-black via-black/95 to-red-950/20 border-2 border-red-600/80 shadow-[0_0_80px_rgba(220,38,38,0.4),0_0_160px_rgba(220,38,38,0.15),inset_0_0_40px_rgba(220,38,38,0.1)] flex items-center justify-center relative overflow-hidden"
                     style={{ clipPath: 'circle(50% at 50% 50%)' }}
                 >
                     <motion.div
-                        className="w-[70%] h-[70%] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"
+                        className="w-[65%] h-[65%] text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]"
                     >
                         <GeometricRaptor className="w-full h-full object-contain" />
                     </motion.div>
                     
                     {/* Скан лінія в монеті */}
                     <div className="absolute inset-0 pointer-events-none">
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,1)] animate-[scan_1.5s_linear_infinite]" />
+                        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent shadow-[0_0_15px_rgba(220,38,38,1)] animate-[scan_2s_ease-in-out_infinite]" />
                     </div>
+                    {/* Внутрішнє тонке кільце */}
+                    <div className="absolute inset-2 rounded-full border border-red-700/20 pointer-events-none" />
                 </div>
             </motion.div>
 
             {/* Текст */}
             <motion.div
-              initial={{ y: 30, opacity: 0 }}
+              initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1, duration: 0.8, ease: 'easeOut' }}
-              className="text-center space-y-4"
+              transition={{ delay: 1, duration: 1, ease: 'easeOut' }}
+              className="text-center space-y-5"
             >
               <motion.h1
                 animate={{
                   textShadow: [
-                    '0 0 10px rgba(220,38,38,0.8)',
-                    '0 0 30px rgba(220,38,38,1)',
-                    '0 0 10px rgba(220,38,38,0.8)',
+                    '0 0 10px rgba(220,38,38,0.6), 0 0 40px rgba(220,38,38,0.2)',
+                    '0 0 20px rgba(220,38,38,0.9), 0 0 60px rgba(220,38,38,0.3)',
+                    '0 0 10px rgba(220,38,38,0.6), 0 0 40px rgba(220,38,38,0.2)',
                   ],
                 }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="text-5xl md:text-7xl font-black tracking-[0.4em] text-white"
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                className="text-6xl md:text-8xl font-black tracking-[0.3em] text-white"
               >
                 PREDATOR
               </motion.h1>
 
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5, duration: 1 }}
-                className="flex items-center justify-center gap-3"
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ delay: 1.5, duration: 1.2, ease: 'easeOut' }}
+                className="flex items-center justify-center gap-4"
               >
-                <div className="w-24 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent" />
-                <h2 className="text-[14px] font-black tracking-[1em] text-white uppercase px-4 py-1">
+                <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+                <h2 className="text-[13px] md:text-[15px] font-black tracking-[1.2em] text-red-400/90 uppercase whitespace-nowrap">
                     STRATEGIC INTEL ASSET
                 </h2>
-                <div className="w-24 h-[2px] bg-gradient-to-l from-transparent via-red-600 to-transparent" />
+                <div className="w-32 h-[1px] bg-gradient-to-l from-transparent via-red-600 to-transparent" />
               </motion.div>
 
-              {/* ДОСТУП ДОЗВОЛЕНО — Безкомпромісний білий/червоний статус */}
+              {/* ДОСТУП ДОЗВОЛЕНО — Преміальний блок */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 0, 1, 1] }}
-                transition={{ delay: 2, duration: 1 }}
-                className="pt-8"
+                transition={{ delay: 2.2, duration: 0.8 }}
+                className="pt-10"
               >
-                  <span className="text-[12px] text-white font-black tracking-[1em] uppercase border-y-2 border-white px-6 py-2 bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)]">
-                      ДОСТУП ДОЗВОЛЕНО
-                  </span>
+                  <div className="inline-block relative">
+                      <div className="absolute inset-0 bg-red-600 blur-lg opacity-30" />
+                      <span className="relative text-[12px] text-white font-black tracking-[1.2em] uppercase border border-red-500/60 px-8 py-2.5 bg-red-600/90 shadow-[0_0_30px_rgba(220,38,38,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]">
+                          ДОСТУП ДОЗВОЛЕНО
+                      </span>
+                  </div>
               </motion.div>
             </motion.div>
           </motion.div>
