@@ -277,7 +277,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             <div className="text-center">
               <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] mb-4 block">Коефіцієнт Живучості</span>
               <p className="text-[9px] text-slate-400 font-mono uppercase tracking-widest max-w-[200px] leading-relaxed mx-auto">
-                Агрегований індекс стабільності вузлів обробки v55.9
+                Агрегований індекс стабільності вузлів обробки v56.1.4
               </p>
             </div>
           </TacticalCard>

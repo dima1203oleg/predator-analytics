@@ -1,5 +1,5 @@
 /**
- * 🛰️ OSINT COMMAND CENTER (v55.2 REFACTORED)
+ * 🛰️ OSINT COMMAND CENTER (v56.1.4 REFACTORED)
  * Оптимізована версія з використанням useOsintNexus та модульних компонентів.
  * Усі тексти — українською (HR-03/HR-04).
  */
@@ -40,7 +40,7 @@ export const OsintCommandCenter: React.FC = () => {
                     <div>
                         <h1 className="text-xl font-black tracking-tighter text-white flex items-center gap-2">
                             OSINT COMMAND CENTER
-                            <span className="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/30 font-mono">v55.2</span>
+                            <span className="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/30 font-mono">v56.1.4</span>
                         </h1>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global Intelligence & Registry Nexus</p>
                     </div>

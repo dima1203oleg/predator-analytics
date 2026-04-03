@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Реєстри — Бізнес Досьє
+ * PREDATOR v56.1.4 | Реєстри — Бізнес Досьє
  *
  * Глибоке сканування юридичних осіб:
  * - Пошук за ЄДРПОУ та назвою
@@ -8,7 +8,7 @@
  * - Семантичний класифікатор видів діяльності
  * - Фактори ризику та рекомендації
  *
- * © 2026 PREDATOR Analytics — Повна українізація v55.5  HR-04 compliant
+ * © 2026 PREDATOR Analytics — Повна українізація v56.1.4  HR-04 compliant
  */
 
 import React, { useState, useEffect } from 'react';
@@ -220,11 +220,11 @@ const RegistriesView: React.FC = () => {
             <div className="w-full p-8 flex flex-col gap-10 relative bg-[#020617] pb-32">
                 <AdvancedBackground />
 
-                {/* ViewHeader v55.5 */}
+                {/* ViewHeader v56.1.4 */}
                 <ViewHeader
                     title="БІЗНЕС ДОСЬЄ"
                     icon={<Building2 className="text-emerald-400" />}
-                    breadcrumbs={['ОСІНТ', 'РЕЄСТРИ', 'ЮРИДИЧНІ ОСОБИ', 'СКАНЕР_РЕЄСТРІВ_v55.5']}
+                    breadcrumbs={['ОСІНТ', 'РЕЄСТРИ', 'ЮРИДИЧНІ ОСОБИ', 'СКАНЕР_РЕЄСТРІВ_v56.1.4']}
                     stats={[
                         { label: "Об'єктів у базі", value: registryStats.objects, icon: <Database />, color: 'success' },
                         { label: 'Граф зв\'язків', value: 'АКТИВНО', icon: <Globe />, color: 'primary' },
@@ -368,7 +368,7 @@ const RegistriesView: React.FC = () => {
                                 <div className="w-24 h-24 border-t-2 border-r-2 border-emerald-500 rounded-full animate-spin shadow-2xl" />
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.6em] animate-pulse italic">ВІДНОВЛЕННЯ ДОСЬЄ v55.5</span>
+                                <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.6em] animate-pulse italic">ВІДНОВЛЕННЯ ДОСЬЄ v56.1.4</span>
                                 <span className="text-[10px] font-mono text-slate-600">ЗАХИЩЕНИЙ ПОТІК ВСТАНОВЛЕНО</span>
                             </div>
                         </div>

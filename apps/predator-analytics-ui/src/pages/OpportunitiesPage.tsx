@@ -190,7 +190,7 @@ export default function OpportunitiesPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-amber">
-                                <span className="relative z-10">PREDATOR v11.5 | OPPORTUNITIES</span>
+                                <span className="relative z-10">PREDATOR v56.1.4 | OPPORTUNITIES</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -222,7 +222,7 @@ export default function OpportunitiesPage() {
                                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Strategic Node</span>
                             </div>
                             <div className="text-base font-bold text-white tracking-tight">Active Signals: {insights.length}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v11.5 OSINT-HUB</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v56.1.4 OSINT-HUB</div>
                         </div>
 
                         <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">

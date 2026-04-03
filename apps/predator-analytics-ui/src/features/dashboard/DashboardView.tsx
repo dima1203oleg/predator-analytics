@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR STRATEGIC NEXUS | v56.1
+ * 🦅 PREDATOR STRATEGIC NEXUS | v56.1.4
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митних ризиків та торговельних потоків.
@@ -64,11 +64,11 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
     tooltip: {
       trigger: 'item',
       backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: '#6366f1',
+      borderColor: '#dc2626',
       textStyle: { color: '#fff', fontSize: 10 },
       formatter: (params: any) => {
         if (!params.value) return '';
-        return data.map((d, i) => `${d.name}: ${params.value[i]}% (${d.count} декл.)`).join('<br/>');
+        return data.map((d, i) => `${d.name}: ${params.value[i]}% (ДЕКЛ: ${d.count})`).join('<br/>');
       }
     },
     radar: {
@@ -76,7 +76,7 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
       shape: 'circle',
       splitNumber: 5,
       axisName: {
-        color: '#6366f1',
+        color: '#dc2626',
         fontSize: 10,
         fontWeight: '900',
         fontFamily: 'Inter',
@@ -85,10 +85,10 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
       splitLine: {
         lineStyle: {
           color: [
-            'rgba(99, 102, 241, 0.05)',
-            'rgba(99, 102, 241, 0.1)',
-            'rgba(99, 102, 241, 0.15)',
-            'rgba(244, 63, 94, 0.2)'
+            'rgba(220, 38, 38, 0.05)',
+            'rgba(220, 38, 38, 0.1)',
+            'rgba(245, 158, 11, 0.15)',
+            'rgba(220, 38, 38, 0.2)'
           ]
         }
       },
@@ -107,12 +107,12 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
             name: 'Середній ризик за секторами',
             symbol: 'circle',
             symbolSize: 6,
-            itemStyle: { color: '#6366f1' },
-            lineStyle: { color: '#6366f1', width: 3, shadowBlur: 20, shadowColor: '#6366f1' },
+            itemStyle: { color: '#dc2626' },
+            lineStyle: { color: '#dc2626', width: 3, shadowBlur: 20, shadowColor: '#dc2626' },
             areaStyle: {
               color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
-                { offset: 0, color: 'rgba(99, 102, 241, 0.5)' },
-                { offset: 1, color: 'rgba(99, 102, 241, 0.05)' }
+                { offset: 0, color: 'rgba(220, 38, 38, 0.5)' },
+                { offset: 1, color: 'rgba(220, 38, 38, 0.05)' }
               ])
             }
           }
@@ -147,10 +147,10 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
     .map(([c, stat]) => ({
       name: c,
       value: [...countryCoords[c], Math.min(stat.count, 200)],
-      itemStyle: { color: stat.count > 100 ? '#f43f5e' : stat.count > 50 ? '#f59e0b' : '#6366f1' }
+      itemStyle: { color: stat.count > 100 ? '#dc2626' : stat.count > 50 ? '#f59e0b' : '#ef4444' }
     }));
 
-  scatterData.push({ name: 'Київ', value: [...kyiv, 150], itemStyle: { color: '#6366f1' } });
+  scatterData.push({ name: 'Київ', value: [...kyiv, 150], itemStyle: { color: '#dc2626' } });
 
   const option = {
     backgroundColor: 'transparent',
@@ -170,7 +170,7 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
     tooltip: {
       trigger: 'item',
       backgroundColor: 'rgba(2, 6, 23, 0.95)',
-      borderColor: '#6366f1',
+      borderColor: '#dc2626',
       textStyle: { color: '#fff', fontSize: 11, fontFamily: 'Inter' },
       formatter: (params: any) => {
         const c = params.name;
@@ -187,10 +187,10 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
           show: true,
           period: 4,
           trailLength: 0.7,
-          color: '#6366f1',
+          color: '#dc2626',
           symbolSize: 3,
         },
-        lineStyle: { color: '#6366f1', width: 2, opacity: 0.15, curveness: 0.4 },
+        lineStyle: { color: '#dc2626', width: 2, opacity: 0.15, curveness: 0.4 },
         data: linesData
       },
       {
@@ -199,7 +199,7 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
         data: scatterData,
         symbolSize: (v: number[]) => Math.max(v[2] / 10, 8),
         rippleEffect: { brushType: 'stroke', scale: 5, period: 4 },
-        itemStyle: { shadowBlur: 30, shadowColor: '#6366f1', opacity: 0.8 }
+        itemStyle: { shadowBlur: 30, shadowColor: '#dc2626', opacity: 0.8 }
       }
     ]
   };
@@ -250,8 +250,8 @@ const DashboardView: React.FC = () => {
           <div className="flex flex-col items-center gap-12">
             <CyberOrb size="xl" status="processing" pulsing />
             <div className="text-center space-y-4">
-               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">ІНІЦІАЛІЗАЦІЯ_NEXUS</h2>
-               <p className="text-indigo-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Завантаження стратегічних метрик...</p>
+               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V56</h2>
+               <p className="text-red-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
             </div>
           </div>
         </div>
@@ -280,12 +280,12 @@ const DashboardView: React.FC = () => {
                 </div>
                 <div className="ml-4">
                   <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-3deg]">
-                    СТРАТЕГІЧНИЙ <span className="text-indigo-500">NEXUS</span>
+                    ГОЛОВНИЙ <span className="text-red-600">ПУЛЬТ</span>
                   </h1>
                   <div className="flex items-center gap-6 mt-6">
-                    <div className="h-0.5 w-20 bg-gradient-to-r from-indigo-500 to-transparent" />
-                    <span className="text-[11px] font-mono font-black text-indigo-500/90 uppercase tracking-[0.6em] animate-pulse">
-                      PREDATOR_CENTRAL_COMMAND // v56.1
+                    <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
+                    <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
+                      PREDATOR_CENTRAL_COMMAND // v56.1.4
                     </span>
                   </div>
                 </div>
@@ -300,13 +300,13 @@ const DashboardView: React.FC = () => {
             actions={
               <div className="flex gap-6">
                 <motion.button 
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(99,102,241,0.3)' }}
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(220,38,38,0.3)' }}
                   whileTap={{ scale: 0.95 }}
                   onClick={fetchData}
                   disabled={refreshing}
-                  className="px-10 py-5 bg-black/60 border-2 border-indigo-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-indigo-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
+                  className="px-10 py-5 bg-black/60 border-2 border-red-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-red-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
                 >
-                  <RefreshCw size={20} className={cn("text-indigo-400 transition-transform", refreshing && "animate-spin")} />
+                  <RefreshCw size={20} className={cn("text-red-500 transition-transform", refreshing && "animate-spin")} />
                   <span>СИНХРОНІЗАЦІЯ_ЯДРА</span>
                 </motion.button>
               </div>
@@ -329,7 +329,7 @@ const DashboardView: React.FC = () => {
               {/* Grand Metrics Row */}
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
                 {[
-                  { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'indigo', sub: 'Загальна вартість' },
+                  { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'red', sub: 'Загальна вартість' },
                   { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
                   { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'rose', sub: 'Високий ризик' },
@@ -350,7 +350,7 @@ const DashboardView: React.FC = () => {
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-indigo-400 transition-colors">{m.label}</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic group-hover:text-red-500 transition-colors">{m.label}</p>
                         <p className="text-[9px] font-bold text-slate-700 uppercase tracking-tighter italic">{m.sub}</p>
                       </div>
                       <p className="text-4xl font-mono font-black text-white italic tracking-tighter">{m.value}</p>
@@ -363,7 +363,7 @@ const DashboardView: React.FC = () => {
             
                 {/* ЛІВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-4 space-y-12">
-                  <TacticalCard title="ДВИГУНИ_АНАЛІЗУ" icon={<Cpu size={22} className="text-indigo-400" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                  <TacticalCard title="ДВИГУНИ_АНАЛІЗУ" icon={<Cpu size={22} className="text-red-500" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
                     <div className="space-y-8">
                       {Object.entries(overview!.engines).map(([key, data], idx) => (
                         <motion.div 
@@ -376,7 +376,7 @@ const DashboardView: React.FC = () => {
                           <div className="absolute inset-0 bg-indigo-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="flex justify-between items-center mb-8 relative z-10">
                             <span className="text-[12px] font-black text-slate-200 uppercase tracking-[0.3em] italic flex items-center gap-4">
-                              <Terminal size={16} className="text-indigo-500" /> {data.name || key}
+                              <Terminal size={16} className="text-red-500" /> {data.name || key}
                             </span>
                             <Badge variant="outline" className={cn(
                               "text-[9px] font-black px-5 py-1.5 tracking-widest rounded-xl border-2 italic",
@@ -526,7 +526,7 @@ const DashboardView: React.FC = () => {
                                      </div>
                                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-tight italic truncate max-w-[200px]">{alert.company}</span>
                                   </div>
-                                  <button className="px-8 py-3.5 bg-indigo-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(99,102,241,0.3)]">
+                                  <button className="px-8 py-3.5 bg-red-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center gap-3 italic group/btn shadow-[0_10px_30px_rgba(220,38,38,0.3)]">
                                      РОЗСЛІДУВАТИ <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                   </button>
                                </div>
@@ -629,11 +629,11 @@ const DashboardView: React.FC = () => {
         </div>
 
         {/* Strategic Information Ticker */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90 backdrop-blur-3xl border-t border-indigo-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-          <div className="px-12 bg-indigo-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(99,102,241,0.5)] relative z-10 italic">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#02040a]/90 backdrop-blur-3xl border-t border-red-500/20 h-16 flex items-center overflow-hidden shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
+          <div className="px-12 bg-red-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(220,38,38,0.5)] relative z-10 italic text-white">
             <div className="flex items-center gap-4">
-               <Fingerprint size={24} className="text-black animate-pulse" />
-               <span className="text-[13px] font-black text-black uppercase tracking-[0.4em] whitespace-nowrap">PREDATOR_SOVEREIGN_LINK</span>
+               <Fingerprint size={24} className="text-white animate-pulse" />
+               <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">PREDATOR_SOVEREIGN_LINK</span>
             </div>
           </div>
           <div className="flex-1 flex items-center">
@@ -643,15 +643,15 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v56.1 NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
+                `СИСТЕМА: v56.1.4 NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes!)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges!)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk}% [${overview?.top_risk_companies?.[0]?.name}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents!)} ДОКУМЕНТІВ`,
-                `НЕЙРО-АКТИВНІСТЬ: 72% | OODA_LATENCY: 6.2ms`,
+                `НЕЙРО-АКТИВНІСТЬ: 78% | OODA_LATENCY: 5.8ms`,
                 `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd!)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations!)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">
-                  <div className="w-3 h-3 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_15px_#6366f1]" />
+                  <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse shadow-[0_0_15px_#dc2626]" />
                   <span className="text-[12px] font-mono text-slate-400 font-black uppercase tracking-[0.3em] italic">
                     {log}
                   </span>

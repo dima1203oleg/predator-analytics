@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | AML Когнітивний Аналізатор
+ * PREDATOR v56.1.4 | AML Когнітивний Аналізатор
  *
  * Anti-Money Laundering Scoring Engine — повне підключення до бекенду.
  * Маршрут: /aml
@@ -384,9 +384,9 @@ const AMLScoringView: React.FC = () => {
                 <ViewHeader
                     title="AML АНАЛІЗАТОР"
                     icon={<ShieldAlert className="text-rose-400" />}
-                    breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML СКОРІНГ v11.5']}
+                    breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML СКОРІНГ v56.1.4']}
                     badges={[
-                        { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'rose', icon: <Zap size={10} /> },
+                        { label: 'OSINT_HUB_v56.1.4_CERTIFIED', color: 'rose', icon: <Zap size={10} /> },
                         { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                     ]}
                     stats={[

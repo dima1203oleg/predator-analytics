@@ -69,6 +69,96 @@
     --shell-glow: rgba(34, 211, 238, 0.14);
 }
 
+/* ═══════════════════════════════════════════════════
+   OPERATIONAL MODE SYSTEM (ThemeContext)
+   Динамічна зміна палітри залежно від ситуації
+   ═══════════════════════════════════════════════════ */
+
+/* Плавна transition при зміні операційного режиму */
+.op-mode-transition,
+.op-mode-transition * {
+  transition: border-color 0.5s ease, box-shadow 0.5s ease, color 0.3s ease, background-color 0.5s ease !important;
+}
+
+/* Утиліти що використовують операційні змінні */
+.op-accent-border { border-color: var(--op-accent-border); }
+.op-accent-glow   { box-shadow: var(--op-accent-glow); }
+.op-accent-text   { color: var(--op-accent-text); }
+.op-accent-bg     { background-color: var(--op-accent-bg); }
+
+/* Пульсуючий індикатор операційного режиму */
+@keyframes op-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--op-pulse-color); }
+  50%      { opacity: 0.5; box-shadow: 0 0 20px var(--op-pulse-color); }
+}
+.op-indicator-pulse {
+  animation: op-pulse 2s ease-in-out infinite;
+  background-color: var(--op-accent);
+}
+
+/* Sidebar з динамічним акцентом */
+.op-sidebar-active {
+  background: var(--op-sidebar-active);
+  border: 1px solid var(--op-accent-border);
+  box-shadow: 0 0 20px var(--op-accent-bg);
+}
+
+/* Header glow — тонка лінія */
+.op-header-line {
+  background: var(--op-header-glow);
+  height: 1px;
+}
+
+/* Картка з операційним акцентом */
+.op-card {
+  border: 1px solid var(--op-accent-border, rgba(255,255,255,0.06));
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.op-card:hover {
+  box-shadow: var(--op-accent-glow);
+  border-color: var(--op-accent);
+}
+
+/* Scanline з операційним кольором */
+@keyframes op-scan-sweep {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(300%); }
+}
+.op-scanline::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--op-scanline, rgba(99,102,241,0.03)) 50%,
+    transparent 100%
+  );
+  height: 33%;
+  animation: op-scan-sweep 6s linear infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* THREAT MODE — додаткові ефекти */
+[data-op-mode="threat"] .shell-header-bar {
+  border-bottom-color: rgba(239, 68, 68, 0.2) !important;
+}
+[data-op-mode="threat"] .shell-header-bar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239,68,68,0.4), transparent);
+}
+
+/* STEALTH MODE — затемнення */
+[data-op-mode="stealth"] {
+  --surface-1: rgba(5, 15, 10, 0.85) !important;
+}
+
 /* THEME MODES */
 .theme-nato-secure {
     --background: 222 100% 3%;

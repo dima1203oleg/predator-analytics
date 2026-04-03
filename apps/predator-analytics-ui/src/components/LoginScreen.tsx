@@ -1,5 +1,5 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.1
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.1.4
  * Екран авторизації глобальної розвідувальної платформи.
  * Атмосфера: строгість, страх, масштаб, багатство.
  */
@@ -161,12 +161,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="w-2.5 h-2.5 bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,1)] animate-pulse" />
                             <span className="text-[10px] font-black text-red-600 tracking-[0.5em] uppercase">
-                                TOP SECRET // SOVEREIGN UPLINK
+                                ЦІЛКОМ ТАЄМНО // СУВЕРЕННИЙ КАНАЛ
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
                         <span className="text-[8px] text-amber-600/80 font-bold tracking-[0.3em]">
-                            КАТЕГОРІЯ ДОСТУПУ: SOVEREIGN
+                            КАТЕГОРІЯ ДОСТУПУ: СУВЕРЕННИЙ
                         </span>
                     </div>
 
@@ -247,10 +247,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute right-0 top-20 bottom-20 w-52 z-10 pointer-events-none flex flex-col justify-between py-4 pr-5 items-end text-right">
                 <div className="space-y-3">
                     {[
-                        { label: 'QUANTUM SHIELD', status: 'АКТИВНО', color: 'text-emerald-500', icon: Shield },
-                        { label: 'DARKNET SCAN', status: 'АКТИВНО', color: 'text-emerald-500', icon: Radar },
-                        { label: 'SAT UPLINK', status: 'ОНЛАЙН', color: 'text-emerald-500', icon: Satellite },
-                        { label: 'CRYPTO TRACE', status: 'АКТИВНО', color: 'text-red-500', icon: Radio },
+                        { label: 'КВАНТОВИЙ ЗАХИСТ', status: 'АКТИВНО', color: 'text-emerald-500', icon: Shield },
+                        { label: 'ДАРКНЕТ СКАН', status: 'АКТИВНО', color: 'text-emerald-500', icon: Radar },
+                        { label: 'СУПУТН. ЗВ\'ЯЗОК', status: 'ОНЛАЙН', color: 'text-emerald-500', icon: Satellite },
+                        { label: 'КРИПТО-ТРЕЙС', status: 'АКТИВНО', color: 'text-red-500', icon: Radio },
                         { label: 'БІОМЕТРІЯ', status: 'ОЧІКУЄ', color: 'text-amber-500', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
@@ -369,13 +369,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </motion.h1>
                             <div className="flex items-center justify-center gap-4">
                                 <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
-                                <h2 className="text-[12px] font-black tracking-[1em] text-white uppercase bg-red-600/20 px-6 py-1.5 border border-red-600/30">
-                                    STRATEGIC INTEL NETWORK
+                            <h2 className="text-[12px] font-black tracking-[1em] text-white uppercase bg-red-600/20 px-6 py-1.5 border border-red-600/30">
+                                    СТРАТЕГІЧНА РОЗВІДУВАЛЬНА МЕРЕЖА
                                 </h2>
                                 <div className="h-[2px] w-20 bg-gradient-to-l from-transparent via-red-600 to-transparent" />
                             </div>
                             <p className="text-[9px] text-red-600/60 tracking-[0.5em] uppercase font-bold">
-                                UNIFIED GLOBAL COMMAND TERMINAL v56.1
+                                ЄДИНИЙ ГЛОБАЛЬНИЙ КОМАНДНИЙ ТЕРМІНАЛ v56.1.4
                             </p>
                         </div>
 
@@ -414,7 +414,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                             <div className="text-center">
                                 <span className="text-[7px] text-slate-800 tracking-[0.2em]">
-                                    BIOMETRIC_FALLBACK // RETINA_SCAN // VOICE_ID
+                                    БІОМЕТРИКА // СКАН СІТКІВКИ // ГОЛОСОВА ІДЕНТИФІКАЦІЯ
                                 </span>
                             </div>
                         </form>
@@ -622,7 +622,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-red-900/30 backdrop-blur-md">
                 <div className="flex items-center">
                     <div className="bg-red-600 text-white text-[10px] font-black px-4 py-2 z-10 tracking-widest whitespace-nowrap">
-                        LIVE INTEL FEED
+                        ОПЕРАТИВНИЙ КАНАЛ
                     </div>
                     <div className="relative flex-1 py-2 overflow-hidden items-center flex">
                         <motion.div

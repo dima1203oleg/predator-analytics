@@ -269,7 +269,7 @@ const PredatorV24 = () => {
           <div className="flex-1 space-y-6">
             <div className="flex flex-wrap items-center gap-3">
               <div className="badge-v2 badge-v2-emerald text-[10px] font-black tracking-[0.2em]">
-                <span className="relative z-10">PREDATOR v11.5 | COMMAND CORE</span>
+                <span className="relative z-10">PREDATOR v56.1.4 | COMMAND CORE</span>
                 <div className="badge-v2-glimmer" />
               </div>
               <div className={cn(
@@ -298,7 +298,7 @@ const PredatorV24 = () => {
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-emerald-400/80 transition-colors">OSINT-HUB Node</span>
               </div>
-              <div className="text-base font-bold text-white tracking-tight">System v11.5 Apex</div>
+              <div className="text-base font-bold text-white tracking-tight">System v56.1.4 Apex</div>
               <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Full Sync Certified</div>
             </div>
 

@@ -190,8 +190,8 @@ const DatabasesView: React.FC = () => {
             >
                 <div className="p-4 h-[550px] flex flex-col glass-morphism rounded-2xl border border-white/10 bg-black/60">
                     <div className="mb-4 flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Активний маршрут: /databases/query</span>
+                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Активний маршрут: /databases/query</span>
                     </div>
                     <textarea
                         value={sqlQuery}
@@ -205,7 +205,7 @@ const DatabasesView: React.FC = () => {
                             <span className="text-[10px] font-mono text-slate-300">Рядки: {queryResult?.length || 0}</span>
                             <span className="text-[10px] font-mono text-slate-300">Час виконання: Н/д</span>
                         </div>
-                        <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-black uppercase tracking-widest text-xs rounded-xl flex items-center gap-2 shadow-lg shadow-cyan-600/20 transition-all active:scale-95 disabled:opacity-50">
+                        <button onClick={handleExecute} disabled={isExecuting} className="px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest text-[11px] rounded-xl flex items-center gap-2 shadow-lg shadow-red-600/20 transition-all active:scale-95 disabled:opacity-50 italic">
                             {isExecuting ? <RefreshCw size={14} className="animate-spin" /> : <Play size={14} />} Виконати запит
                         </button>
                     </div>
@@ -235,48 +235,49 @@ const DatabasesView: React.FC = () => {
                 </div>
             </Modal>
 
-            {/* Neural Hub Header v55 Extreme */}
-            <div className="relative z-20 mt-12 mb-16 rounded-[48px] border border-white/5 bg-slate-950/40 backdrop-blur-[40px] p-10 flex flex-col lg:flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)]">
+            {/* Neural Hub Header v56.1.4 Sovereign */}
+            <div className="relative z-20 mt-12 mb-16 rounded-[48px] border border-white/5 bg-[#020408] backdrop-blur-[40px] p-10 flex flex-col lg:flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-hidden">
                 <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
                 <div className="relative w-40 h-40 shrink-0">
-                    <div className="absolute inset-0 border border-cyan-500/10 rounded-full animate-[spin_20s_linear_infinite]" />
-                    <div className="absolute inset-4 border border-dashed border-cyan-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                    <div className="absolute inset-0 border border-red-500/10 rounded-full animate-[spin_20s_linear_infinite]" />
+                    <div className="absolute inset-4 border border-dashed border-red-400/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-20 h-20 bg-cyan-500/10 border border-cyan-400/30 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.2)] backdrop-blur-xl">
-                            <DatabaseZap className="w-10 h-10 text-cyan-400" />
+                        <div className="w-20 h-20 bg-red-500/10 border border-red-400/30 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(220,38,38,0.3)] backdrop-blur-xl">
+                            <DatabaseZap className="w-10 h-10 text-red-500" />
                         </div>
                     </div>
                 </div>
 
                 <div className="flex-1 text-center lg:text-left relative z-10">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-cyan-400 mb-6">
+                    <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-red-500 mb-6 italic">
                         <Activity className="w-3.5 h-3.5 animate-pulse" />
-                        СИНХРОНІЗОВАНЕ ЯДРО ЗНАНЬ v55
+                        СУВЕРЕННИЙ ДАТА-ЦЕНТР v56.1.4
                     </div>
-                    <h1 className="text-5xl lg:text-6xl font-black text-white uppercase italic tracking-tighter leading-none mb-4">
-                        НЕЙРОННА СІТКА <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500">СХОВИЩ</span>
+                    <h1 className="text-5xl lg:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-4 skew-x-[-2deg]">
+                        ЯДРО <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-500 to-red-700">СУВЕРЕНИТЕТУ</span>
                     </h1>
-                    <p className="text-slate-400 font-medium max-w-2xl leading-relaxed text-sm lg:text-base">
-                        Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків.
+                    <p className="text-slate-400 font-medium max-w-2xl leading-relaxed text-sm lg:text-base italic">
+                        Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків під захистом <span className="text-red-500 font-bold">Constitutional Shield</span>.
                     </p>
                 </div>
 
                 <div className="flex gap-4 shrink-0 w-full lg:w-auto">
                     {[
-                        { label: 'S3 СХОВИЩА', val: buckets.length > 0 ? String(buckets.length) : 'Н/д', color: 'text-cyan-400', icon: HardDrive },
+                        { label: 'S3 СХОВИЩА', val: buckets.length > 0 ? String(buckets.length) : 'Н/д', color: 'text-red-500', icon: HardDrive },
                         {
                             label: 'СТАН БЕКЕНДУ',
                             val: backendStatus.isOffline ? 'НЕДОСТУПНИЙ' : metrics.isLive ? 'АКТИВНИЙ' : 'Н/д',
-                            color: backendStatus.isOffline ? 'text-rose-400' : metrics.isLive ? 'text-emerald-400' : 'text-slate-300',
+                            color: backendStatus.isOffline ? 'text-rose-600' : metrics.isLive ? 'text-red-500' : 'text-slate-300',
                             icon: ShieldCheck,
                         }
                     ].map((s, idx) => (
-                        <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-cyan-500/30">
-                            <s.icon size={16} className={cn("mx-auto mb-3", s.color)} />
-                            <p className="text-[10px] text-slate-300 font-black uppercase tracking-widest mb-1">{s.label}</p>
-                            <p className={cn("text-xl font-black font-mono", s.color)}>{s.val}</p>
+                        <div key={idx} className="flex-1 lg:w-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-center shadow-lg backdrop-blur-xl transition-all hover:border-red-500/40 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-8 h-px bg-gradient-to-l from-red-600 to-transparent" />
+                            <s.icon size={16} className={cn("mx-auto mb-3 transition-colors", s.color)} />
+                            <p className="text-[10px] text-slate-300 font-black uppercase tracking-widest mb-1 italic">{s.label}</p>
+                            <p className={cn("text-xl font-black font-mono transition-transform group-hover:scale-110", s.color)}>{s.val}</p>
                         </div>
                     ))}
                 </div>
@@ -312,12 +313,12 @@ const DatabasesView: React.FC = () => {
             <div className="sticky top-24 z-40 px-4">
                 <div className="max-w-fit mx-auto p-2 bg-slate-900/80 backdrop-blur-2xl border border-white/5 rounded-3xl flex flex-wrap shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
                     {[
-                        { id: 'ETL', label: 'ПОТІК ETL', icon: Network, color: 'text-amber-400' },
-                        { id: 'RELATIONAL', label: 'Реляційні', icon: Database, color: 'text-blue-400' },
-                        { id: 'OBJECT', label: 'S3 Об\'єкти', icon: Server, color: 'text-indigo-400' },
-                        { id: 'VECTOR', label: 'Векторний ШІ', icon: Layers, color: 'text-emerald-400' },
-                        { id: 'GRAPH', label: 'Топологія Графу', icon: Share2, color: 'text-purple-400' },
-                        { id: 'CALIBRATION', label: 'ШІ Синтез', icon: Binary, color: 'text-rose-400' }
+                        { id: 'ETL', label: 'ПОТІК ETL', icon: Network, color: 'text-amber-500' },
+                        { id: 'RELATIONAL', label: 'Реляційні', icon: Database, color: 'text-red-500' },
+                        { id: 'OBJECT', label: 'S3 Об\'єкти', icon: Server, color: 'text-amber-500' },
+                        { id: 'VECTOR', label: 'Векторний ШІ', icon: Layers, color: 'text-red-500' },
+                        { id: 'GRAPH', label: 'Топологія Графу', icon: Share2, color: 'text-amber-600' },
+                        { id: 'CALIBRATION', label: 'ШІ Синтез', icon: Binary, color: 'text-slate-400' }
                     ].map(tab => {
                         const isActive = activeTab === tab.id;
                         return (
@@ -325,8 +326,8 @@ const DatabasesView: React.FC = () => {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={cn(
-                                    "relative py-3.5 px-6 rounded-[20px] transition-all duration-500 flex items-center gap-3 overflow-hidden group",
-                                    isActive ? "bg-white/10 shadow-lg scale-105 z-10" : "hover:bg-white/5"
+                                    "relative py-3.5 px-6 rounded-[20px] transition-all duration-500 flex items-center gap-3 overflow-hidden group italic",
+                                    isActive ? "bg-white/10 shadow-[0_0_30px_rgba(220,38,38,0.1)] scale-105 z-10" : "hover:bg-white/5"
                                 )}
                             >
                                 <span className={cn("transition-transform duration-500", isActive ? "scale-110" : "opacity-40", tab.color)}>
@@ -341,7 +342,7 @@ const DatabasesView: React.FC = () => {
                                 {isActive && (
                                     <motion.div
                                         layoutId="tabUnderline"
-                                        className={cn("absolute inset-0 border-b-2 bg-gradient-to-t from-white/10 to-transparent", tab.color.replace('text', 'border'))}
+                                        className={cn("absolute inset-0 border-b-2 bg-gradient-to-t from-white/10 to-transparent shadow-[inset_0_-2px_10px_rgba(0,0,0,0.5)]", tab.color.replace('text', 'border'))}
                                     />
                                 )}
                             </button>

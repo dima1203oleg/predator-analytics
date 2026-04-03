@@ -1,5 +1,5 @@
 /**
- * 🔍 PREDATOR Semantic Search | v55.6.1 (TACTICAL_OVERRIDE)
+ * 🔍 PREDATOR Semantic Search | v56.1.4.1 (TACTICAL_OVERRIDE)
  * НЕЙРОФОРМНИЙ ПОШУКОВИЙ ДВИГУН (SOVEREIGN SEARCH)
  * 
  * "УСТРАШАЮЧИЙ" РЕЖИМ: Глибинний аналіз ризиків та кримінальних структур.
@@ -82,7 +82,7 @@ const SearchPage: React.FC = () => {
                                     <div className="flex items-center gap-6">
                                         <div className="h-0.5 w-24 bg-gradient-to-r from-red-600 to-transparent" />
                                         <span className="text-[12px] font-mono font-black text-red-500 uppercase tracking-[0.6em] flex items-center gap-3">
-                                            <ShieldAlert size={14} className="animate-pulse" /> СИСТЕМА_ВТЕЧІ_НЕМОЖЛИВА_v55.6
+                                            <ShieldAlert size={14} className="animate-pulse" /> СИСТЕМА_ВТЕЧІ_НЕМОЖЛИВА_v56.1.4
                                         </span>
                                     </div>
                                 </div>
@@ -172,7 +172,7 @@ const SearchPage: React.FC = () => {
                                             className="h-full bg-red-600 shadow-[0_0_20px_#f43f5e]"
                                         />
                                     </div>
-                                    <p className="text-[10px] font-black text-red-900 uppercase tracking-[0.5em] italic">RECON_IN_PROGRESS_v55.6</p>
+                                    <p className="text-[10px] font-black text-red-900 uppercase tracking-[0.5em] italic">RECON_IN_PROGRESS_v56.1.4</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (

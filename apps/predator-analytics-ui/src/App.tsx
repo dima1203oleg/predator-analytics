@@ -14,6 +14,7 @@ import { useAppStore } from './store/useAppStore';
 import { SensitiveDataProvider } from './context/SensitiveDataContext';
 import { ShellProvider } from './context/ShellContext';
 import { SuperIntelligenceProvider } from './context/SuperIntelligenceContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 
 
@@ -113,6 +114,7 @@ function App() {
                   <SensitiveDataProvider>
                     <ToastProvider>
                       <GlobalProvider>
+                        <ThemeProvider>
                         <SuperIntelligenceProvider>
                         <AdvancedBackground />
                         <NeuralPulse />
@@ -137,6 +139,7 @@ function App() {
                           </>
                         )}
                         </SuperIntelligenceProvider>
+                        </ThemeProvider>
                       </GlobalProvider>
                     </ToastProvider>
                   </SensitiveDataProvider>

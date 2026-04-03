@@ -1,5 +1,5 @@
 /**
- * 🛰️ Semantic Radar Matrix | v55.5 Sovereign Matrix
+ * 🛰️ Semantic Radar Matrix | v56.1.4 Sovereign Matrix
  * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
  *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
@@ -9,7 +9,7 @@
  * - AI Інсайти та аналіз ризиків
  * - Розширена візуальна аналітика
  *
- * © 2026 PREDATOR Analytics — Повна українізація v55.5
+ * © 2026 PREDATOR Analytics — Повна українізація v56.1.4
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -58,11 +58,11 @@ interface GraphLink {
 const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> = {
     PERSON: { color: '#60a5fa', icon: <Info size={14} />, label: premiumLocales.semanticRadar.categories.person },
     ORGANIZATION: { color: '#f59e0b', icon: <Building2 size={14} />, label: premiumLocales.semanticRadar.categories.organization },
-    LOCATION: { color: '#10b981', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
-    PROJECT: { color: '#ec4899', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
-    EVENT: { color: '#ef4444', icon: <Activity size={14} />, label: premiumLocales.semanticRadar.categories.event },
-    CONCEPT: { color: '#8b5cf6', icon: <BrainCircuit size={14} />, label: premiumLocales.semanticRadar.categories.concept },
-    DEFAULT: { color: '#94a3b8', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
+    LOCATION: { color: '#f43f5e', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
+    PROJECT: { color: '#e11d48', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
+    EVENT: { color: '#be123c', icon: <Activity size={14} />, label: premiumLocales.semanticRadar.categories.event },
+    CONCEPT: { color: '#fb7185', icon: <BrainCircuit size={14} />, label: premiumLocales.semanticRadar.categories.concept },
+    DEFAULT: { color: '#9f1239', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
 };
 
 // === ДОПОМІЖНІ КОМПОНЕНТИ ===
@@ -76,7 +76,7 @@ const RadarOverlay: React.FC = () => (
         <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500/10 to-transparent origin-center opacity-30"
+            className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-red-500/10 to-transparent origin-center opacity-30"
             style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 60%)' }}
         />
 
@@ -85,17 +85,17 @@ const RadarOverlay: React.FC = () => (
             {[1, 2, 3, 4].map((i) => (
                 <div
                     key={i}
-                    className="absolute rounded-full border border-blue-500/10 shadow-[inner_0_0_20px_rgba(59,130,246,0.05)]"
+                    className="absolute rounded-full border border-red-500/10 shadow-[inner_0_0_20px_rgba(239,68,68,0.05)]"
                     style={{ width: `${i * 25}%`, height: `${i * 25}%` }}
                 />
             ))}
         </div>
 
         {/* Tactical Indicators */}
-        <div className="absolute top-10 left-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
+        <div className="absolute top-10 left-10 text-[8px] font-black text-red-500/40 uppercase tracking-[0.4em] font-mono">
             РАДАР_АКТИВНИЙ // ГЛИБИНА: 4
         </div>
-        <div className="absolute bottom-10 right-10 text-[8px] font-black text-blue-500/40 uppercase tracking-[0.4em] font-mono">
+        <div className="absolute bottom-10 right-10 text-[8px] font-black text-red-500/40 uppercase tracking-[0.4em] font-mono">
             КООРДИНАТИ: 50.4501° N, 30.5234° E
         </div>
     </div>
@@ -216,7 +216,7 @@ const AnalysisGraph: React.FC<{
                     ctx.beginPath();
                     ctx.moveTo(s.x!, s.y!);
                     ctx.lineTo(t.x!, t.y!);
-                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
                     ctx.setLineDash([5, 5]);
                     ctx.lineWidth = 1;
                     ctx.stroke();
@@ -224,7 +224,7 @@ const AnalysisGraph: React.FC<{
 
                     if (link.relation && Math.hypot(s.x! - t.x!, s.y! - t.y!) > 150) {
                         ctx.font = 'bold 8px Courier New';
-                        ctx.fillStyle = 'rgba(59, 130, 246, 0.4)';
+                        ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
                         ctx.textAlign = 'center';
                         ctx.fillText(link.relation.toUpperCase(), (s.x! + t.x!) / 2, (s.y! + t.y!) / 2);
                     }
@@ -371,17 +371,17 @@ const AnalyticsView: React.FC = () => {
 
             {/* Ambient Lighting Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-blue-500/5 blur-[150px] rounded-full animate-pulse" />
-                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-indigo-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-red-500/5 blur-[150px] rounded-full animate-pulse" />
+                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-rose-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
             </div>
 
-            {/* ViewHeader v55.5 */}
+            {/* ViewHeader v56.1.4 */}
             <ViewHeader
                 title="СЕМАНТИЧНИЙ РАДАР"
-                icon={<Network className="text-blue-400" />}
-                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v11.5']}
+                icon={<Network className="text-red-400" />}
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v56.1.4']}
                 badges={[
-                    { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
+                    { label: 'OSINT_HUB_v56.1.4_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
                     { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                 ]}
                 stats={[
@@ -406,7 +406,7 @@ const AnalyticsView: React.FC = () => {
                     <div className="absolute right-3 top-2.5 bottom-2.5 flex items-center gap-2">
                         <button
                             onClick={() => handleSearch()}
-                            className="px-8 h-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-[20px] transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl"
+                            className="px-8 h-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-[20px] transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl"
                         >
                             {isScanning ? <Activity size={16} className="animate-spin" /> : <><Target size={16} /> {premiumLocales.semanticRadar.search.button}</>}
                         </button>

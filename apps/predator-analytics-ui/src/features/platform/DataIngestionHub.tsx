@@ -1,9 +1,9 @@
 /**
- * 🌀 Omni-Data Ingestion Nexus | v55.2 Premium Matrix
+ * 🌀 Omni-Data Ingestion Nexus | v56.1.4 Premium Matrix
  * PREDATOR Цитадель Захоплення та Обробки Даних
  * 
  * Керування потоками інформації, підключення джерел та моніторинг ETL.
- * © 2026 PREDATOR Analytics - Повна українізація v55.2
+ * © 2026 PREDATOR Analytics - Повна українізація v56.1.4
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';

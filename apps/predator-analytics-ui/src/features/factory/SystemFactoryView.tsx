@@ -49,7 +49,7 @@ export default function SystemFactoryView() {
     {
       id: 'msg-0',
       sender: 'system',
-      text: 'ЗАВОД PREDATOR v55.1 ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
+      text: 'ЗАВОД PREDATOR v56.1.4 ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
       timestamp: new Date()
     }
   ]);

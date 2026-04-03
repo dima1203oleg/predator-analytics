@@ -16,14 +16,16 @@ import {
     ShieldAlert,
     Scale,
     Fingerprint,
-    Gavel
+    Gavel,
+    UserCheck
 } from 'lucide-react';
 import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import type {
     RiskEntity,
     RiskLevelValue,
-    CompanyProfileResponse
+    CompanyProfileResponse,
+    PersonInfo
 } from '@/features/diligence/types';
 import type { ContextRailPayload, ContextTone } from '@/types/shell';
 import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
@@ -366,7 +368,7 @@ export default function DiligencePage() {
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
-                                OSINT-HUB v11.5 | Контрагентна розвідка
+                                OSINT-HUB v56.1.4 | Контрагентна розвідка
                             </span>
                             <span
                                 className={cn(
@@ -397,8 +399,7 @@ export default function DiligencePage() {
                         <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
                         <MetricTile 
                             label="Статус" 
-                            value="v11.5 HUB" 
-                            accent="text-emerald-400"
+                            value="v56.1.4 HUB" 
                             compact 
                         />
                     </div>

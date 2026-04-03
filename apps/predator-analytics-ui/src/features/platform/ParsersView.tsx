@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
+ * PREDATOR v56.1.4 | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
@@ -163,7 +163,7 @@ const ParsersView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full pb-20">
                 
-                {/* View Header v55.5 */}
+                {/* View Header v56.1.4 */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">

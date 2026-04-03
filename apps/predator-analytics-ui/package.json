@@ -1,6 +1,6 @@
 {
   "name": "predator-analytics-ui",
-  "version": "55.0.0",
+  "version": "56.1.4",
   "private": true,
   "type": "module",
   "scripts": {

@@ -83,8 +83,8 @@ const buildChartOption = (forecast: ForecastResponse) => ({
             smooth: true,
             symbol: 'circle',
             symbolSize: 8,
-            itemStyle: { color: '#10b981', borderWidth: 2, borderColor: '#059669' },
-            lineStyle: { color: '#10b981', width: 3 },
+            itemStyle: { color: '#ef4444', borderWidth: 2, borderColor: '#dc2626' },
+            lineStyle: { color: '#ef4444', width: 3 },
             areaStyle: {
                 color: {
                     type: 'linear',
@@ -93,8 +93,8 @@ const buildChartOption = (forecast: ForecastResponse) => ({
                     x2: 0,
                     y2: 1,
                     colorStops: [
-                        { offset: 0, color: 'rgba(16, 185, 129, 0.35)' },
-                        { offset: 1, color: 'rgba(16, 185, 129, 0.04)' },
+                        { offset: 0, color: 'rgba(239, 68, 68, 0.35)' },
+                        { offset: 1, color: 'rgba(239, 68, 68, 0.04)' },
                     ],
                 },
             },
@@ -105,7 +105,7 @@ const buildChartOption = (forecast: ForecastResponse) => ({
             type: 'line',
             smooth: true,
             symbol: 'none',
-            lineStyle: { color: 'rgba(148, 163, 184, 0.6)', width: 1, type: 'dashed' },
+            lineStyle: { color: 'rgba(251, 191, 36, 0.4)', width: 1, type: 'dashed' },
             data: forecast.forecast.map((point) => point.confidence_lower),
         },
         {
@@ -113,7 +113,7 @@ const buildChartOption = (forecast: ForecastResponse) => ({
             type: 'line',
             smooth: true,
             symbol: 'none',
-            lineStyle: { color: 'rgba(148, 163, 184, 0.6)', width: 1, type: 'dashed' },
+            lineStyle: { color: 'rgba(251, 191, 36, 0.4)', width: 1, type: 'dashed' },
             data: forecast.forecast.map((point) => point.confidence_upper),
         },
     ],
@@ -210,21 +210,21 @@ export default function ForecastPage() {
                 id: 'conservative',
                 title: 'Консервативний',
                 description: 'Пониження попиту на 10% відносно базового прогнозу.',
-                tone: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
+                tone: 'border-slate-400/20 bg-slate-500/10 text-slate-200',
                 points: createScenarioPoints(forecast.forecast, 0.9),
             },
             {
                 id: 'base',
                 title: 'Базовий',
                 description: 'Поточний прогноз, отриманий із фактичного ендпоїнту.',
-                tone: 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                tone: 'border-red-400/20 bg-red-500/10 text-red-200',
                 points: forecast.forecast,
             },
             {
                 id: 'accelerated',
                 title: 'Прискорений',
                 description: 'Зростання попиту на 12% поверх базового сценарію.',
-                tone: 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
+                tone: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
                 points: createScenarioPoints(forecast.forecast, 1.12),
             },
         ];
@@ -234,67 +234,70 @@ export default function ForecastPage() {
         <div className="space-y-6">
             <ConstitutionalShield />
             
-            <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
+            <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#020408] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none transform -rotate-6">
-                    <Brain size={240} strokeWidth={0.5} className="text-emerald-400" />
+                    <Brain size={240} strokeWidth={0.5} className="text-red-500" />
                 </div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(16,185,129,0.08),transparent_50%)] pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(220,38,38,0.12),transparent_50%)] pointer-events-none" />
 
                 <div className="flex flex-col gap-10 xl:flex-row xl:items-start xl:justify-between relative z-10">
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
-                            <div className="badge-v2 badge-v2-emerald">
-                                <span className="relative z-10">PREDATOR v11.5 | ML-FORECASTING</span>
+                            <div className="badge-v2 badge-v2-red">
+                                <span className="relative z-10 text-white font-black italic">PREDATOR v56.1.4 | ML-FORECASTING</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
-                                "badge-v2 px-4 font-black uppercase tracking-[0.15em]",
-                                backendStatus.isOffline ? "badge-v2-rose" : "badge-v2-cyan"
+                                "badge-v2 px-4 font-black uppercase tracking-[0.15em] border-red-500/20 text-red-500",
+                                backendStatus.isOffline ? "bg-rose-500/10" : "bg-red-500/10"
                             )}>
                                 {backendStatus.statusLabel}
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+                            <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl uppercase italic skew-x-[-2deg]">
                                 <div className="relative">
-                                    <TrendingUp className="text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" size={52} />
-                                    <div className="absolute -inset-2 bg-emerald-400/20 blur-xl rounded-full animate-pulse" />
+                                    <TrendingUp className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" size={52} />
+                                    <div className="absolute -inset-2 bg-red-600/30 blur-2xl rounded-full animate-pulse" />
                                 </div>
-                                <span>Прогнозування</span>
+                                <span>ПРОГНОСТИЧНЕ <span className="text-red-600 font-display">ЯДРО</span></span>
                             </h1>
                             <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
-                                Керуйте товарним кодом та ML-моделями під захистом <span className="text-emerald-400 font-bold border-b border-emerald-400/30">Constitutional Shield</span>. Всі сценарії базуються на верифікованих ринкових даних.
+                                Керуйте товарним кодом та ML-моделями під захистом <span className="text-red-500 font-bold border-b border-red-500/30">Constitutional Shield</span>. Всі сценарії базуються на верифікованих ринкових даних.
                             </p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl overflow-hidden relative">
+                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-emerald-400/80 transition-colors">Projective Core</span>
+                                <div className="h-1.5 w-1.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-red-400/80 transition-colors italic">Projective Core</span>
                             </div>
                             <div className="text-base font-bold text-white tracking-tight">Active Model: {request.model}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v11.5 OSINT-HUB</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v56.1.4 SOVEREIGN</div>
                         </div>
 
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl overflow-hidden relative">
+                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-amber-500 to-transparent" />
                             <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Target Sector</span>
+                                <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors italic">Target Sector</span>
                             </div>
                             <div className="text-base font-bold text-white tracking-tight">{request.product_code}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
+                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase italic">Level 4 Certified</div>
                         </div>
 
-                        <div className="card-depth rounded-[28px] border border-amber-400/10 bg-amber-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(251,191,36,0.05)] col-span-2 sm:col-span-1">
+                        <div className="card-depth rounded-[28px] border border-red-500/10 bg-red-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(220,38,38,0.05)] col-span-2 sm:col-span-1 border-r border-red-500/20 overflow-hidden relative">
+                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div className="flex items-center gap-2 mb-3">
-                                <ShieldCheck className="h-3 w-3 text-amber-400" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/60">Verification</span>
+                                <ShieldCheck className="h-3 w-3 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/60 italic">Verification</span>
                             </div>
-                            <div className="text-base font-black text-amber-400 tracking-tighter uppercase leading-none">Predictive Certified</div>
-                            <div className="text-[10px] text-amber-500/40 mt-1 font-mono">TRUSTED CORE</div>
+                            <div className="text-base font-black text-red-500 tracking-tighter uppercase leading-none italic">Sovereign Core</div>
+                            <div className="text-[10px] text-red-500/40 mt-1 font-mono uppercase tracking-[0.2em]">Trusted Node</div>
                         </div>
                     </div>
                 </div>
@@ -359,7 +362,7 @@ export default function ForecastPage() {
                         setRequest(nextRequest);
                         fetchForecast(nextRequest);
                     }}
-                    className="inline-flex items-center justify-center gap-2 rounded-[24px] border border-emerald-400/20 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-500/18"
+                    className="inline-flex items-center justify-center gap-2 rounded-[24px] border border-red-400/20 bg-red-500/10 px-6 py-3 text-[11px] font-black uppercase tracking-widest text-red-100 transition-all hover:bg-red-500/20 italic"
                 >
                     <RefreshCw size={16} className={cn(forecastLoading && 'animate-spin')} />
                     Оновити прогноз
@@ -373,13 +376,15 @@ export default function ForecastPage() {
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={cn(
-                                'flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all',
+                                'flex items-center gap-3 rounded-2xl border px-6 py-3 text-[11px] font-black uppercase tracking-widest transition-all italic',
                                 activeTab === tab.key
-                                    ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
-                                    : 'border-transparent text-slate-300 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
+                                    ? 'border-red-500/40 bg-red-500/10 text-red-500 shadow-[0_0_20px_rgba(220,38,38,0.1)]'
+                                    : 'border-transparent text-slate-400 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
                             )}
                         >
-                            {tab.icon}
+                            <div className={cn("transition-transform", activeTab === tab.key && "text-red-500 animate-pulse")}>
+                                {tab.icon}
+                            </div>
                             {tab.label}
                         </button>
                     ))}
@@ -441,8 +446,8 @@ function DemandForecastTab({
     if (loading) {
         return (
             <div className="flex h-64 flex-col items-center justify-center gap-4 text-slate-400">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-400" />
-                <p className="animate-pulse">Розрахунок ML-прогнозу...</p>
+                <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+                <p className="animate-pulse font-black uppercase tracking-widest text-[11px] italic">Генерація прогнозу_Ядра...</p>
             </div>
         );
     }
@@ -463,21 +468,21 @@ function DemandForecastTab({
         <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
                 <SummaryCard
-                    icon={<TrendingUp className="text-emerald-300" />}
+                    icon={<TrendingUp className="text-red-400" />}
                     label="Прогнозний ріст"
-                    tone="border-emerald-400/20 bg-emerald-500/10 text-emerald-200"
+                    tone="border-red-400/20 bg-red-500/10 text-red-200"
                     value={`${growth >= 0 ? '+' : ''}${growth.toFixed(0)}%`}
                 />
                 <SummaryCard
-                    icon={<Target className="text-cyan-300" />}
+                    icon={<Target className="text-amber-400" />}
                     label="Впевненість"
-                    tone="border-cyan-400/20 bg-cyan-500/10 text-cyan-200"
+                    tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
                     value={`${(forecast.confidence_score * 100).toFixed(0)}%`}
                 />
                 <SummaryCard
-                    icon={<Zap className="text-amber-300" />}
+                    icon={<Zap className="text-slate-400" />}
                     label="MAPE (похибка)"
-                    tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
+                    tone="border-slate-400/20 bg-slate-500/10 text-slate-200"
                     value={`${(forecast.mape * 100).toFixed(1)}%`}
                 />
             </div>
@@ -496,13 +501,13 @@ function DemandForecastTab({
                         </span>
                         <span
                             className={cn(
-                                'rounded-full border px-3 py-1.5 font-semibold',
+                                'rounded-full border px-3 py-1.5 font-semibold uppercase text-[10px] tracking-wider',
                                 forecast.source === 'real'
-                                    ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
+                                    ? 'border-red-400/20 bg-red-500/10 text-red-200 shadow-[0_0_10px_rgba(220,38,38,0.2)]'
                                     : 'border-amber-400/20 bg-amber-500/10 text-amber-200',
                             )}
                         >
-                            {forecast.source === 'real' ? 'Реальні дані' : 'Синтетичні'}
+                            {forecast.source === 'real' ? 'Verified_Core' : 'Synthetic_Node'}
                         </span>
                     </div>
                 </div>
@@ -512,12 +517,15 @@ function DemandForecastTab({
                 </div>
             </div>
 
-            <div className="rounded-[28px] border border-emerald-400/16 bg-emerald-500/8 p-6">
-                <div className="flex items-start gap-4">
-                    <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-emerald-300" />
+            <div className="rounded-[28px] border border-red-400/16 bg-red-500/8 p-6 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="flex items-start gap-4 relative z-10">
+                    <div className="p-2 rounded-xl bg-red-500/20 text-red-500">
+                        <AlertCircle className="h-6 w-6 shrink-0" />
+                    </div>
                     <div>
-                        <h4 className="text-lg font-black text-white">AI-інтерпретація</h4>
-                        <p className="mt-2 text-sm leading-7 text-slate-300">{forecast.interpretation_uk}</p>
+                        <h4 className="text-lg font-black text-white italic uppercase tracking-widest">Sovereign AI Interpretation</h4>
+                        <p className="mt-2 text-sm leading-7 text-slate-300 italic">{forecast.interpretation_uk}</p>
                     </div>
                 </div>
             </div>
@@ -541,7 +549,7 @@ function DemandForecastTab({
                             {forecast.forecast.map((point) => (
                                 <tr key={point.date} className="text-sm transition-colors hover:bg-white/[0.03]">
                                     <td className="px-6 py-4 font-semibold text-slate-200">{point.date}</td>
-                                    <td className="px-6 py-4 text-right font-black text-emerald-200">
+                                    <td className="px-6 py-4 text-right font-black text-red-500 italic">
                                         {point.predicted_volume.toLocaleString('uk-UA')}
                                     </td>
                                     <td className="px-6 py-4 text-right font-mono text-slate-300">
@@ -602,10 +610,11 @@ function ModelsTab({
                     models.map((model) => (
                         <div
                             key={model.key}
-                            className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5 transition-all hover:border-emerald-400/18 hover:bg-white/[0.04]"
+                            className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-5 transition-all hover:border-red-400/30 hover:bg-red-500/[0.03] group relative overflow-hidden"
                         >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-500/10">
-                                <Brain className="h-5 w-5 text-emerald-200" />
+                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
+                            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-red-400/20 bg-red-500/10 group-hover:scale-110 transition-transform">
+                                <Brain className="h-5 w-5 text-red-500" />
                             </div>
                             <div className="mt-4 flex items-center justify-between gap-3">
                                 <h4 className="text-lg font-black text-white">{model.name_uk}</h4>
@@ -706,9 +715,10 @@ function ScenariosTab({
                 })}
             </div>
 
-            <div className="rounded-[28px] border border-cyan-400/16 bg-cyan-500/8 p-6">
-                <h4 className="text-lg font-black text-white">Робоча примітка</h4>
-                <p className="mt-2 text-sm leading-7 text-slate-300">
+            <div className="rounded-[28px] border border-red-500/20 bg-red-500/5 p-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-3xl rounded-full" />
+                <h4 className="text-lg font-black text-white italic uppercase tracking-widest relative z-10">Сценарна примітка</h4>
+                <p className="mt-2 text-sm leading-7 text-slate-300 italic relative z-10">
                     Це не окремий сценарний API, а прозорий розрахунок поверх поточного прогнозу.
                     Такий підхід корисний уже зараз і не вводить користувача в оману фіктивним модулем.
                 </p>
@@ -729,17 +739,17 @@ function SummaryCard({
     value: string;
 }) {
     // Extract base color from tone if possible for border effects
-    const isEmerald = tone.includes('emerald');
-    const isCyan = tone.includes('cyan');
+    const isRed = tone.includes('red');
     const isAmber = tone.includes('amber');
+    const isSlate = tone.includes('slate');
     
     return (
-        <div className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500">
+        <div className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500 hover:border-red-500/40">
             <div className={cn(
                 "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700",
-                isEmerald && "bg-gradient-to-br from-emerald-500/[0.03] to-transparent",
-                isCyan && "bg-gradient-to-br from-cyan-500/[0.03] to-transparent",
-                isAmber && "bg-gradient-to-br from-amber-500/[0.03] to-transparent"
+                isRed && "bg-gradient-to-br from-red-600/[0.04] to-transparent",
+                isAmber && "bg-gradient-to-br from-amber-500/[0.04] to-transparent",
+                isSlate && "bg-gradient-to-br from-slate-500/[0.04] to-transparent"
             )} />
             
             <div className="relative z-10 space-y-6">
@@ -764,9 +774,9 @@ function SummaryCard({
             
             <div className={cn(
                 "absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700",
-                isEmerald && "bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent",
-                isCyan && "bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent",
-                isAmber && "bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"
+                isRed && "bg-gradient-to-r from-transparent via-red-600/30 to-transparent",
+                isAmber && "bg-gradient-to-r from-transparent via-amber-600/30 to-transparent",
+                isSlate && "bg-gradient-to-r from-transparent via-slate-600/30 to-transparent"
             )} />
         </div>
     );

@@ -79,7 +79,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
         setIsDeliberating(true);
         setError(null);
         setResult(null);
-        setQuery("Strategic Autonomous Analysis_v55.9_Initiated...");
+        setQuery("Strategic Autonomous Analysis_v56.1.4_Initiated...");
 
         try {
             setPhase('GENERATING');
@@ -117,7 +117,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                         <div className="flex flex-wrap items-center gap-6">
                             <div className="flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 rounded-full border border-cyan-500/20">
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
-                                <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest font-mono">ARBITRATOR_v55.9_ACTIVE</span>
+                                <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest font-mono">ARBITRATOR_v56.1.4_ACTIVE</span>
                             </div>
                             {result && (
                                 <div className="flex items-center gap-8 pl-8 border-l border-white/10">

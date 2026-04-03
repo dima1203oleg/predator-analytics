@@ -149,7 +149,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2 px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20">
                                     <Bot size={14} className="text-purple-400" />
-                                    <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest">CHAIN_v55.9</span>
+                                    <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest">CHAIN_v56.1.4</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className={cn("w-2 h-2 rounded-full animate-pulse", isProcessing ? "bg-purple-500 shadow-[0_0_10px_#a855f7]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]")} />

@@ -1,5 +1,5 @@
 /**
- * 🧠 PREDATOR Strategic Intelligence Center | v55.5
+ * 🧠 PREDATOR Strategic Intelligence Center | v56.1.4
  * МОДУЛЬ СТРАТЕГІЧНОЇ РОЗВІДКИ ТА КОГНІТИВНОГО МОНІТОРИНГУ
  * 
  * Центр управління AI-агентами та стратегічного аналізу.
@@ -129,7 +129,7 @@ const IntelligencePage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-indigo-500/50" />
                                         <span className="text-[10px] font-mono font-black text-indigo-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                            COGNITIVE_WARFARE_SUITE // v55.5
+                                            COGNITIVE_WARFARE_SUITE // v56.1.4
                                         </span>
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ const IntelligencePage: React.FC = () => {
 
                              {/* Central Strategic Visualizer */}
                              <TacticalCard variant="holographic" className="h-[550px] relative overflow-hidden group/viz" noPadding>
-                                 <AdvancedBackground className="opacity-30" />
+                                 <AdvancedBackground />
                                  <CyberGrid color="rgba(99, 102, 241, 0.05)" />
                                  
                                  <div className="absolute inset-0 flex items-center justify-center">
@@ -305,7 +305,7 @@ const IntelligencePage: React.FC = () => {
                                          <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-2 hover:border-amber-500 transition-colors">
                                              <span className="text-[9px] font-mono text-slate-600 shrink-0">0{i}:24:14</span>
                                              <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tighter">
-                                                 СИСТЕМА $\{`AGENT_0${i+1}`\} ВИЯВИЛА НОВИЙ ПАТЕРН ПЕРЕМІЩЕННЯ АКТИВІВ У СЕКТОРІ B-12. СКОР РИЗИКУ: 0.88.
+                                                 СИСТЕМА AGENT_0{i+1} ВИЯВИЛА НОВИЙ ПАТЕРН ПЕРЕМІЩЕННЯ АКТИВІВ У СЕКТОРІ B-12. СКОР РИЗИКУ: 0.88.
                                              </p>
                                          </div>
                                      ))}

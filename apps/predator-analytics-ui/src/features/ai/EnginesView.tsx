@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
+ * PREDATOR v56.1.4 | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
  * 
  * Потужний хаб моніторингу та керування 6 нейронними двигунами:
  * Behavioral, Institutional, Influence, Structural, Predictive, CERS.
@@ -341,7 +341,7 @@ const EnginesView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full">
                 
-                {/* View Header v55.5 */}
+                {/* View Header v56.1.4 */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">

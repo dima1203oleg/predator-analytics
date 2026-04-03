@@ -33,7 +33,7 @@ export const API_V45_URL = getV45Url();
  * TRUTH-ONLY MODE — no mock fallbacks when using remote server.
  * All API errors propagate to the component for proper error display.
  * 
- * v56.1: Added remote server support
+ * v56.1.4: Added remote server support
  */
 export const IS_TRUTH_ONLY_MODE = API_BASE_URL.includes('194.177') ? true : false;
 

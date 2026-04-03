@@ -1,5 +1,5 @@
 /**
- * 🕸️ PREDATOR Topology Sanctum | v55.6
+ * 🕸️ PREDATOR Topology Sanctum | v56.1.4
  * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙРОФОРМНОЇ ГРАФ ОПТИМІЗАЦІЇ
  * 
  * Професійна система візуалізації та аналізу складних взаємозв'язків.
@@ -244,7 +244,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     <div className="flex items-center gap-6 mt-6">
                                         <div className="h-0.5 w-16 bg-gradient-to-r from-indigo-500 to-transparent" />
                                         <span className="text-[11px] font-mono font-black text-indigo-500/90 uppercase tracking-[0.6em] animate-pulse">
-                                            NEO4J_NEURAL_ENGINE_EX // v55.6
+                                            NEO4J_NEURAL_ENGINE_EX // v56.1.4
                                         </span>
                                     </div>
                                 </div>
@@ -271,7 +271,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     </div>
                                     <div>
                                         <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter skew-x-[-3deg]">МАПИ <span className="text-indigo-400">КОГНІЦІЇ</span></h3>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mt-1 italic">TOPOLOGICAL_MAPPING_v55.6</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mt-1 italic">TOPOLOGICAL_MAPPING_v56.1.4</p>
                                     </div>
                                 </div>
 

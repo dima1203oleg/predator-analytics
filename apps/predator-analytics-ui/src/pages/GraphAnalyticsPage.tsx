@@ -1,5 +1,5 @@
 /**
- * 🕸️ PREDATOR Cognitive Graph Analytics | v55.5
+ * 🕸️ PREDATOR Cognitive Graph Analytics | v56.1.4
  * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
@@ -187,7 +187,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-indigo-500/50" />
                                         <span className="text-[10px] font-mono font-black text-indigo-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                            NEURAL_TOPOLOGY_ANALYZER // v55.5
+                                            NEURAL_TOPOLOGY_ANALYZER // v56.1.4
                                         </span>
                                     </div>
                                 </div>
@@ -249,7 +249,7 @@ const GraphAnalyticsPage: React.FC = () => {
 
                                 {/* Graph Rendering Simulation */}
                                 <div className="absolute inset-0 z-0">
-                                     <AdvancedBackground className="opacity-40" />
+                                     <AdvancedBackground />
                                      <CyberGrid color="rgba(99, 102, 241, 0.05)" />
                                      
                                      {/* Simulated Graph Nodes */}
@@ -389,12 +389,12 @@ const GraphAnalyticsPage: React.FC = () => {
                                      </div>
 
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">>> ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">>> ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
-                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">>> ЗАПУСК PAGERANK_OPTIMIZED_v55.5</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">>> МОДЕЛЬ_GNN: ВАХ_СКОР = 0.9984</p>
-                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">>> УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">>> АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors"{" >{" >> "}"} ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors"{" >{" >> "}"} ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
+                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase"{" >{" >> "}"} ЗАПУСК PAGERANK_OPTIMIZED_v56.1.4</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors"{" >{" >> "}"} МОДЕЛЬ_GNN: ВАХ_СКОР = 0.9984</p>
+                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500"{" >{" >> "}"} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors"{" >{" >> "}"} АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
                                      </div>
                                      
                                      <div className="absolute -right-20 -bottom-20 opacity-[0.03] group-hover/ops:opacity-[0.08] transition-opacity">

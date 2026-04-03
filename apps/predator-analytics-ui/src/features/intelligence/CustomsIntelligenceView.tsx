@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Cerebro Intelligence Hub — Центр Сигнальної Розвідки
+ * PREDATOR v56.1.4 | Cerebro Intelligence Hub — Центр Сигнальної Розвідки
  * 
  * Модуль моніторингу в реальному часі (Telegram, RSS, WebSockets).
  * - Глибокий парсинг повідомлень через нейронні мережі
@@ -168,9 +168,9 @@ const CustomsIntelligenceView = () => {
     return (
         <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
             <AdvancedBackground />
-            <CyberGrid color="rgba(16, 185, 129, 0.05)" />
+            <CyberGrid color="rgba(244, 63, 94, 0.05)" />
 
-            {/* Pipeline Overlay v55.5 */}
+            {/* Pipeline Overlay v56.1.4 */}
             <AnimatePresence>
                 {activeJobId && (
                     <motion.div
@@ -179,7 +179,7 @@ const CustomsIntelligenceView = () => {
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 bg-[#02040a]/95 backdrop-blur-3xl flex items-center justify-center p-8 sm:p-20"
                     >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_70%)] pointer-events-none" />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.1),transparent_70%)] pointer-events-none" />
                         <div className="w-full max-w-6xl space-y-12 relative z-10">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-2">
@@ -191,7 +191,7 @@ const CustomsIntelligenceView = () => {
                                             НЕЙРОННИЙ <span className="text-emerald-400">ПАЙПЛАЙН</span>
                                         </h3>
                                     </div>
-                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] ml-16">LIVE_INGESTION_ENGINE_v55.5</p>
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] ml-16">LIVE_INGESTION_ENGINE_v56.1.4</p>
                                 </div>
                                 <button
                                     onClick={() => setActiveJobId(null)}
@@ -203,7 +203,7 @@ const CustomsIntelligenceView = () => {
 
                             <div className="p-12 bg-slate-900/40 border border-white/5 rounded-[60px] shadow-2xl relative overflow-hidden backdrop-blur-3xl">
                                 <div className="absolute top-0 right-0 p-10 opacity-5">
-                                    <Cpu size={300} className="text-emerald-500" />
+                                    <Cpu size={300} className="text-red-500" />
                                 </div>
                                 <PipelineMonitor
                                     jobId={activeJobId}
@@ -216,7 +216,7 @@ const CustomsIntelligenceView = () => {
 
                             <div className="text-center">
                                 <p className="text-xs font-black text-slate-600 uppercase tracking-[0.3em] flex items-center justify-center gap-4">
-                                    <Info size={14} className="text-emerald-500" />
+                                    <Info size={14} className="text-red-500" />
                                     НАТИСНІТЬ 'ESC' ДЛЯ ФОНОВОГО РЕЖИМУ ОБРОБКИ
                                 </p>
                             </div>
@@ -227,31 +227,31 @@ const CustomsIntelligenceView = () => {
 
             <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                 
-                {/* View Header v55.5 */}
+                {/* View Header v56.1.4 */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-8">
                             <div className="relative">
-                                <div className="absolute inset-0 bg-emerald-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
-                                <div className="relative w-16 h-16 bg-slate-900 border border-emerald-500/20 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                    <Radio size={32} className="text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+                                <div className="absolute inset-0 bg-red-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                <div className="relative w-16 h-16 bg-slate-900 border border-red-500/20 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
+                                    <Radio size={32} className="text-red-400 drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]" />
                                 </div>
                             </div>
                             <div>
                                 <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                    CEREBRO <span className="text-emerald-400">INTELLIGENCE</span>
+                                    CEREBRO <span className="text-red-400">INTELLIGENCE</span>
                                 </h1>
-                                <p className="text-[10px] font-mono font-black text-emerald-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
+                                <p className="text-[10px] font-mono font-black text-red-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                     <Database size={12} className="animate-pulse" /> 
-                                    NEURAL_SIGNAL_MONITOR_v11.5
+                                    NEURAL_SIGNAL_MONITOR_v56.1.4
                                 </p>
                             </div>
                         </div>
                     }
                     icon={<Shield size={22} className="text-emerald-400" />}
-                    breadcrumbs={['OSINT-HUB', 'МИТНИЦЯ', 'DEEP_DIVE v11.5']}
+                    breadcrumbs={['OSINT-HUB', 'МИТНИЦЯ', 'DEEP_DIVE v56.1.4']}
                     badges={[
-                        { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
+                        { label: 'OSINT_HUB_v56.1.4_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
                         { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                     ]}
                     stats={[
@@ -271,10 +271,10 @@ const CustomsIntelligenceView = () => {
                             </div>
                             
                             <div className="flex items-center gap-6 mb-12">
-                                <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/30">
-                                    <Plus className="text-emerald-400" size={32} />
+                                <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/30">
+                                    <Plus className="text-red-400" size={32} />
                                 </div>
-                                <h2 className="text-2xl font-black text-white tracking-wider uppercase italic">ІНІЦІЇВАТИ <span className="text-emerald-400">ЦИКЛ</span></h2>
+                                <h2 className="text-2xl font-black text-white tracking-wider uppercase italic">ІНІЦІЇВАТИ <span className="text-red-400">ЦИКЛ</span></h2>
                             </div>
 
                             <form onSubmit={handleAdd} className="space-y-8 relative z-10">
@@ -308,7 +308,7 @@ const CustomsIntelligenceView = () => {
                             </form>
                         </TacticalCard>
 
-                        {/* Signal Metrics v55.5 */}
+                        {/* Signal Metrics v56.1.4 */}
                         <div className="grid grid-cols-2 gap-6">
                             {[
                                 { label: 'АКТИВНІ_ХАБИ', value: channels.length, sub: 'Connectors', color: 'indigo', icon: Layers },
@@ -418,7 +418,7 @@ const CustomsIntelligenceView = () => {
                             </div>
                         </div>
 
-                        {/* System Log Matrix v55.5 */}
+                        {/* System Log Matrix v56.1.4 */}
                         <div className="p-10 bg-black/60 border border-white/10 rounded-[60px] relative overflow-hidden group panel-3d">
                             <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:rotate-12 transition-transform duration-1000">
                                 <Terminal size={200} className="text-emerald-400" />
@@ -440,7 +440,7 @@ const CustomsIntelligenceView = () => {
                                 <div className="text-emerald-500 flex items-center gap-4">
                                     <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>
                                     <CheckCircle2 size={14} className="shrink-0" />
-                                    <span className="font-black">CORE:</span> [СИСТЕМА] Основні сервіси збору даних ініціалізовані за протоколом AZR_v55.5.
+                                    <span className="font-black">CORE:</span> [СИСТЕМА] Основні сервіси збору даних ініціалізовані за протоколом AZR_v56.1.4.
                                 </div>
                                 <div className="text-cyan-400 flex items-center gap-4">
                                     <span className="opacity-40">[{new Date().toLocaleTimeString()}]</span>

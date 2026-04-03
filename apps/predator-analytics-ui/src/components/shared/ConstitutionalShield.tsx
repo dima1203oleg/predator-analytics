@@ -10,7 +10,7 @@ const Badge: React.FC<{ children: React.ReactNode, className?: string }> = ({ ch
 );
 
 /**
- * PREDATOR OSINT-Контур v11.5 | Constitutional Shield
+ * PREDATOR OSINT-Контур v56.1.4 | Constitutional Shield
  * Sovereign integrity monitoring & automated constitutional protection.
  */
 export const ConstitutionalShield: React.FC = () => {
@@ -21,13 +21,13 @@ export const ConstitutionalShield: React.FC = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                // In v11.5 we use the updated status endpoint
+                // In v56.1.4 we use the updated status endpoint
                 const response = await fetch('/api/v45/azr/status');
                 const data = await response.json();
                 setStatus(data);
                 setLastUpdated(new Date());
             } catch (error) {
-                console.error("Constitutional Shield v11.5 Error:", error);
+                console.error("Constitutional Shield v56.1.4 Error:", error);
                 // Fallback for demo if API fails
                 setStatus({
                     is_running: true,
@@ -41,7 +41,7 @@ export const ConstitutionalShield: React.FC = () => {
         };
 
         fetchStatus();
-        const interval = setInterval(fetchStatus, 15000); // More frequent in v11.5
+        const interval = setInterval(fetchStatus, 15000); // More frequent in v56.1.4
         return () => clearInterval(interval);
     }, []);
 
@@ -98,7 +98,7 @@ export const ConstitutionalShield: React.FC = () => {
                 {/* Side Tag (Apex Style) */}
                 <div className="absolute -right-2 top-0 translate-x-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                     <div className="bg-slate-900/90 border border-blue-500/30 px-3 py-1 rounded-r-lg backdrop-blur-md">
-                        <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">CONSTITUTIONAL_GUARD_v11.5</span>
+                        <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">CONSTITUTIONAL_GUARD_v56.1.4</span>
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@ export const ConstitutionalShield: React.FC = () => {
                                             <Shield size={18} className="text-blue-400" />
                                         </div>
                                         <div>
-                                            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v11.5</h4>
+                                            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v56.1.4</h4>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                                 <span className="text-[8px] font-mono text-emerald-400 uppercase">SYSTEM_SAFE</span>
@@ -156,7 +156,7 @@ export const ConstitutionalShield: React.FC = () => {
                             <div className="px-6 py-4 bg-black/40 flex items-center justify-between border-t border-white/5">
                                 <div className="flex items-center gap-3">
                                     <Activity size={12} className="text-slate-600" />
-                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v11.5.0-STABLE</span>
+                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v56.1.4.0-STABLE</span>
                                 </div>
                                 <div className="flex gap-1">
                                     {[1, 2, 3, 4, 5].map(i => (

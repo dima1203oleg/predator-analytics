@@ -4,16 +4,26 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEPLOY_DIR="$(dirname "$SCRIPT_DIR")"
 
-echo "🚀 [1/6] Starting local k3d cluster..."
+echo "🔍 [0/6] Checking pre-requisites..."
+if ! xcode-select -p >/dev/null 2>&1; then
+  echo "⚠️  WARNING: Xcode Command Line Tools not detected!"
+  echo "👉 Run: xcode-select --install"
+  # Don't exit, maybe it is installed but not in path
+fi
+
+echo "🚀 [1/6] Starting local k3d cluster (RAM Optimized)..."
 if k3d cluster list | grep -q "predator-local"; then
   echo "Cluster already exists, starting it..."
   k3d cluster start predator-local
 else
-  echo "Creating new cluster..."
+  echo "Creating new cluster (1 server, 1 agent)..."
   k3d cluster create predator-local \
+    --agents 1 \
+    --servers 1 \
     -p "80:80@loadbalancer" \
     -p "443:443@loadbalancer" \
     -p "3030:3030@loadbalancer" \
+    -v "predator-k3d-storage:/var/lib/rancher/k3s/storage@server:0" \
     --k3s-arg "--disable=traefik@server:0"
 fi
 
@@ -50,13 +60,13 @@ echo "🌐 ArgoCD UI (port-forward):"
 echo "   kubectl port-forward svc/argocd-server -n argocd 8080:443"
 echo "   Then visit: https://localhost:8080"
 echo ""
+echo "📊 RAM Optimizations for 8GB Mac:"
+echo "   1. alias k=kubectl (added to ~/.zshrc?)"
+echo "   2. k3d cluster stop predator-local  # Stop when not in use"
+echo "   3. k3d cluster start predator-local # Start when needed"
+echo "   4. docker system prune -f           # Keep Docker clean"
+echo ""
 echo "📊 Check deployment status:"
 echo "   kubectl get all -n predator"
 echo "   kubectl logs -n predator -l app=frontend -f"
-echo ""
-echo "🛑 To stop the cluster:"
-echo "   k3d cluster stop predator-local"
-echo ""
-echo "🗑️  To delete the cluster:"
-echo "   k3d cluster delete predator-local"
 echo "═══════════════════════════════════════════════════════════════"

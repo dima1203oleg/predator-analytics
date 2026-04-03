@@ -265,7 +265,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
 ];
 
 /**
- * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v11.5 OSINT-HUB.
+ * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v56.1.4 OSINT-HUB.
  * Шість верхніх блоків зберігають попередні модулі, але прибирають перевантаження на рівні головних секцій.
  */
 const baseNavigationConfig: NavSection[] = [
@@ -315,7 +315,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Strategic Briefing v56.1',
+        label: 'Strategic Briefing v56.1.4',
         path: '/morning-brief',
         icon: Compass,
         description: 'Пріоритетний аналіз суверенних ризиків, ринкових аномалій та критичних цілей на день.',
@@ -335,10 +335,10 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'intelligence',
-    label: 'OSINT-Контур v56.1',
+    label: 'OSINT-Контур v56.1.4',
     description: 'Ринки, ризики, тотальне досьє та предиктивні моделі в єдиному розвідувальному контурі.',
     outcome: 'Sovereign Apex: Предиктивна відповідь на виклики ринку через призму великих даних та ШІ.',
-    accent: 'emerald',
+    accent: 'rose',
     items: [
       {
         id: 'intelligence',
@@ -615,8 +615,8 @@ const baseNavigationConfig: NavSection[] = [
     id: 'ai-automation',
     label: 'ШІ та автоматизація',
     description: 'Агенти, інсайти, база знань і прихований інженерний контур моделей.',
-    outcome: 'Автоматизує рутину, дає персоналізовані інсайти й поступово підлаштовує систему під бізнес-правила.',
-    accent: 'amber',
+    outcome: 'Автоматизує рутину, дає персоналізовані інсайти й поступово подлаштовує систему під бізнес-правила.',
+    accent: 'red',
     items: [
       {
         id: 'agents',

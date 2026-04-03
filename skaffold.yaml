@@ -1,0 +1,36 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: predator-analytics-ui
+build:
+  artifacts:
+    - image: ghcr.io/dima1203oleg/predator-frontend
+      context: apps/predator-analytics-ui
+      docker:
+        dockerfile: Dockerfile
+        target: dev
+      sync:
+        manual:
+          - src: "src/**/*"
+            dest: "/app"
+          - src: "public/**/*"
+            dest: "/app"
+          - src: "*.json"
+            dest: "/app"
+          - src: "index.html"
+            dest: "/app"
+          - src: "vite.config.ts"
+            dest: "/app"
+manifests:
+  helm:
+    releases:
+      - name: predator
+        chartPath: deploy/helm/predator
+        valuesFiles:
+          - deploy/helm/predator/values.yaml
+        artifactOverrides:
+          frontend: ghcr.io/dima1203oleg/predator-frontend
+        imageStrategy:
+          helm: {}
+deploy:
+  helm: {}

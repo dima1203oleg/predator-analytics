@@ -516,7 +516,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'NEXUS v56.1', 'МЕНЕДЖЕР ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v56.1.4', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },

@@ -207,7 +207,7 @@ export const CommandPalette: React.FC = () => {
                     <span><span className="text-slate-400">↵</span> виконати</span>
                     <span><span className="text-slate-400">⌘K</span> відкрити</span>
                 </div>
-                <div className="font-mono opacity-50 font-bold">Predator v56.1 | Neural Analytics</div>
+                <div className="font-mono opacity-50 font-bold">Predator v56.1.4 | Neural Analytics</div>
             </div>
           </motion.div>
         </div>

@@ -250,9 +250,9 @@ export default function ZradaControlView() {
         <ViewHeader
           title="Зрада-Контроль"
           icon={<ShieldX className="w-6 h-6 text-rose-400" />}
-          breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'ЗРАДА-КОНТРОЛЬ v11.5']}
+          breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'ЗРАДА-КОНТРОЛЬ v56.1.4']}
           badges={[
-            { label: 'OSINT_HUB_v11.5_CERTIFIED', color: 'amber', icon: <Zap size={10} /> },
+            { label: 'OSINT_HUB_v56.1.4_CERTIFIED', color: 'amber', icon: <Zap size={10} /> },
             { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
           ]}
           actions={

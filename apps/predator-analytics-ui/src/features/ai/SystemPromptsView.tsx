@@ -78,7 +78,7 @@ const SystemPromptsView = () => {
         {/* Middle Column: Prompts List */}
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v55.2</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v56.1.4</h3>
               <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-amber-400">
                  <RefreshCw size={14} />
               </Button>

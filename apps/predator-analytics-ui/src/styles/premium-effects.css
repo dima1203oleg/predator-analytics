@@ -555,3 +555,272 @@
   animation: ring-orbit 20s linear infinite;
   pointer-events: none;
 }
+
+/* ============================================================================
+   PREDATOR v56.1.4 — SOVEREIGN POWER DESIGN SYSTEM
+   Потужні ефекти для основного інтерфейсу
+   ============================================================================ */
+
+/* ── COMMAND TERMINAL CARD — Стиль командного терміналу ── */
+.terminal-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(1, 4, 9, 0.9) 0%, rgba(5, 10, 20, 0.85) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.terminal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--op-accent, rgba(99, 102, 241, 0.6)), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.terminal-card:hover::before {
+  opacity: 1;
+}
+
+.terminal-card:hover {
+  border-color: var(--op-accent-border, rgba(255, 255, 255, 0.1));
+  box-shadow:
+    0 8px 48px rgba(0, 0, 0, 0.7),
+    0 0 30px var(--op-accent-bg, rgba(99, 102, 241, 0.06)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+/* ── TACTICAL HEADER BAR — Верхня полоса з операційним акцентом ── */
+.tactical-header {
+  position: relative;
+  background: linear-gradient(180deg, rgba(1, 4, 9, 0.95) 0%, rgba(2, 6, 15, 0.9) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+}
+
+.tactical-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--op-header-glow, linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent));
+}
+
+/* ── POWER METRIC — Великий статистичний блок ── */
+.power-metric {
+  position: relative;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(1, 4, 9, 0.8) 0%, rgba(8, 15, 30, 0.7) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.power-metric::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 0%, var(--op-accent-bg, rgba(99, 102, 241, 0.05)) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.power-metric::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--op-accent, rgba(99, 102, 241, 0.6));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.power-metric:hover {
+  border-color: var(--op-accent-border, rgba(255, 255, 255, 0.08));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px var(--op-accent-bg, rgba(99, 102, 241, 0.04));
+}
+
+.power-metric:hover::after {
+  opacity: 1;
+}
+
+/* ── SOVEREIGN GRID — Сітка з ефектом глибини ── */
+.sovereign-grid {
+  position: relative;
+}
+
+.sovereign-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image:
+    linear-gradient(var(--op-accent, rgba(99,102,241,0.3)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--op-accent, rgba(99,102,241,0.3)) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+}
+
+/* ── DANGER STRIPE — Тривожна смуга для критичних секцій ── */
+.danger-stripe {
+  position: relative;
+  overflow: hidden;
+}
+
+.danger-stripe::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(239, 68, 68, 0.6) 0px,
+    rgba(239, 68, 68, 0.6) 12px,
+    transparent 12px,
+    transparent 20px
+  );
+  animation: danger-march 1s linear infinite;
+}
+
+@keyframes danger-march {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+/* ── RADAR SWEEP — Радарний ефект для активних секцій ── */
+@keyframes radar-sweep-bg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.radar-sweep::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform-origin: center;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 340deg,
+    var(--op-accent-bg, rgba(99, 102, 241, 0.06)) 350deg,
+    transparent 360deg
+  );
+  animation: radar-sweep-bg 8s linear infinite;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* ── INTEL TICKER — Рядок оперативної інформації ── */
+@keyframes intel-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.intel-ticker {
+  overflow: hidden;
+  white-space: nowrap;
+  background: rgba(1, 4, 9, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.intel-ticker-content {
+  display: inline-block;
+  animation: intel-scroll 60s linear infinite;
+}
+
+/* ── HOLOGRAPHIC SHIMMER — Голографічний відблиск для преміальних карток ── */
+@keyframes holo-shine {
+  0% { left: -120%; }
+  30% { left: 120%; }
+  100% { left: 120%; }
+}
+
+.holo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 60%,
+    transparent 100%
+  );
+  transform: skewX(-15deg);
+  animation: holo-shine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── NEXUS PULSE — Пульсуючий ефект для активних елементів ── */
+@keyframes nexus-breathe {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--op-accent-bg, rgba(99, 102, 241, 0.05));
+  }
+  50% {
+    box-shadow:
+      0 0 20px var(--op-accent-bg, rgba(99, 102, 241, 0.1)),
+      0 0 40px var(--op-accent-bg, rgba(99, 102, 241, 0.03));
+  }
+}
+
+.nexus-pulse {
+  animation: nexus-breathe 4s ease-in-out infinite;
+}
+
+/* ── DEPTH SHADOW LAYERS — Глибокі тіні для преміального відчуття ── */
+.depth-shadow-1 {
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.depth-shadow-2 {
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 12px 48px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.depth-shadow-3 {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 24px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+

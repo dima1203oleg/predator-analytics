@@ -1,5 +1,5 @@
 /**
- * PREDATOR v55.5 | Морський контур — Морський розвідувальний суверен
+ * PREDATOR v56.1.4 | Морський контур — Морський розвідувальний суверен
  *
  * Система глобального моніторингу морського трафіку та оцінки ризиків.
  * - AIS трекінг суден у реальному часі з алгоритмами CERS
@@ -427,7 +427,7 @@ const MaritimeView: React.FC = () => {
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-center gap-2.5 px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full">
                                             <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.4em]">МОРСЬКИЙ_КОНТУР_v55.5</span>
+                                            <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.4em]">МОРСЬКИЙ_КОНТУР_v56.1.4</span>
                                         </div>
                                         <Badge className={cn(
                                             'border text-[8px] font-black',
@@ -442,7 +442,7 @@ const MaritimeView: React.FC = () => {
                                         МОРСЬКИЙ <span className="text-blue-400 drop-shadow-[0_0_20px_rgba(14,165,233,0.5)]">СУВЕРЕН</span>
                                     </h1>
                                     <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.3em]">
-                                        КОНТУР МОРСЬКОГО МОНІТОРИНГУ · PRED-NAV-v55.5
+                                        КОНТУР МОРСЬКОГО МОНІТОРИНГУ · PRED-NAV-v56.1.4
                                     </p>
                                 </div>
                             </div>

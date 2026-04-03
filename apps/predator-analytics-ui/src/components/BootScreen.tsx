@@ -19,11 +19,11 @@ type Phase = 0 | 1 | 2 | 3 | 4;
 // 4: СИСТЕМА ГОТОВА (fade out)
 
 const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1600, // ВСТАНОВЛЕННЯ З'ЄДНАННЯ
-  1: 2200, // ГЛОБАЛЬНЕ СКАНУВАННЯ
-  2: 1400, // АВТОРИЗАЦІЯ
-  3: 4500, // REVEAL
-  4: 1000,
+  0: 1800, // ВСТАНОВЛЕННЯ З'ЄДНАННЯ — трохи довше для атмосфери
+  1: 2500, // ГЛОБАЛЬНЕ СКАНУВАННЯ — достатньо для радара
+  2: 1600, // АВТОРИЗАЦІЯ — коротке напруження
+  3: 4800, // REVEAL — величний момент
+  4: 1200, // FADE OUT — плавне завершення
 };
 
 /* ─── Web Audio — синтезовані звуки без зовнішніх файлів ─── */
@@ -589,14 +589,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     setPhase(4); // Перехід до фази затухання
   };
 
-  /* ── Crossfade variant для AnimatePresence ── */
+  /* ── Crossfade variant для AnimatePresence (Кінематографічний) ── */
   const fadeVariants = {
-    initial: { opacity: 0, scale: 0.98 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 1.02, filter: 'blur(4px)' },
+    initial: { opacity: 0, scale: 0.96, filter: 'blur(6px)' },
+    animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
+    exit: { opacity: 0, scale: 1.04, filter: 'blur(10px)' },
   };
 
-  const transitionSmooth = { duration: 0.5, ease: 'easeOut' };
+  const transitionSmooth = { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] };
 
   return (
     <div
@@ -647,14 +647,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <div className="absolute inset-0 w-2.5 h-2.5 bg-red-600 rounded-full animate-ping opacity-30" />
                 </div>
                 <span className="text-[10px] font-black tracking-[0.5em] text-red-600 drop-shadow-[0_0_6px_rgba(220,38,38,0.4)]">
-                  STRATEGIC ASSET COMMAND / GLOBAL WATCHDOG v56.1.4
+                  СТРАТЕГІЧНЕ КОМАНДУВАННЯ / ГЛОБАЛЬНИЙ НАГЛЯД v56.1.4
                 </span>
               </div>
               <p className="text-[7px] text-red-400/50 uppercase tracking-[0.3em] pl-5 font-bold">
-                LEVEL 5 CLEARANCE REQUIRED — SOVEREIGN ACCESS ONLY
+                РІВЕНЬ ДОПУСКУ 5 — ТІЛЬКИ СУВЕРЕННИЙ ДОСТУП
               </p>
               <p className="text-[6px] text-slate-600 uppercase tracking-widest pl-5">
-                CLASSIFICATION: COSMIC TOP SECRET // NOFORN // PREDATOR EYES ONLY
+                КЛАСИФІКАЦІЯ: ЦІЛКОМ ТАЄМНО // БЕЗ РОЗГОЛОШЕННЯ // ТІЛЬКИ ДЛЯ PREDATOR
               </p>
             </div>
 
@@ -667,7 +667,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 {interceptCount.toLocaleString()} 
               </div>
               <div className="text-[7px] text-slate-700 uppercase tracking-widest">
-                NODES ACTIVE: 4,217 / SESSIONS: 892
+                ВУЗЛІВ АКТИВНО: 4 217 / СЕСІЙ: 892
               </div>
             </div>
 
@@ -680,7 +680,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                         animate={{ opacity: 1 - idx * 0.12, x: 0 }}
                         className="text-[8px] text-red-500/70 font-mono tracking-wider"
                     >
-                        [P-NET.CORE] INJECT_KEY: {code} ... SYNCED
+                        [P-NET.ЯДРО] КОД_КЛЮЧА: {code} ... СИНХР.
                     </motion.div>
                 ))}
             </div>
@@ -688,7 +688,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {/* Знизу справа: Прогрес */}
             <div className="absolute bottom-20 right-8 space-y-2 w-72 text-right">
               <div className="flex justify-between text-[9px] text-red-600/70 uppercase tracking-[0.3em] font-bold">
-                <span>STRATCOM_UPLINK</span>
+                <span>СТРАТКОМ_КАНАЛ</span>
                 <span className="text-red-500">{Math.floor(scanProgress)}%</span>
               </div>
               <div className="h-[3px] bg-slate-900/80 overflow-hidden relative rounded-sm border border-slate-800/50">
@@ -699,13 +699,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 />
               </div>
               <div className="text-[6px] text-slate-700 uppercase tracking-widest">
-                AES-512-GCM / QUANTUM-RESISTANT / ZERO-KNOWLEDGE
+                AES-512-GCM / КВАНТОСТІЙКИЙ / НУЛЬОВЕ РОЗГОЛОШЕННЯ
               </div>
             </div>
             
             {/* Попередження по центру знизу */}
             <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[8px] text-red-600/90 font-black tracking-[0.5em] uppercase bg-black/90 px-6 py-1.5 border border-red-900/40 shadow-[0_0_20px_rgba(220,38,38,0.1),inset_0_0_20px_rgba(0,0,0,0.5)]">
-                PROPRIETARY OSINT CORE — PROPERTY OF PREDATOR GROUP — TOP SECRET
+                ВЛАСНІСТЬ PREDATOR GROUP — ЯДРО OSINT — ЦІЛКОМ ТАЄМНО
             </div>
           </motion.div>
         )}
@@ -733,7 +733,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               ВСТАНОВЛЕННЯ З'ЄДНАННЯ З ЯДРОМ...
             </motion.div>
             <div className="mt-2 text-[9px] text-red-600/60 tracking-widest uppercase font-bold">
-              QUANTUM-RESISTANT HANDSHAKE (AES-512-GCM)
+              КВАНТОСТІЙКЕ РУКОСТИСКАННЯ (AES-512-GCM)
             </div>
           </motion.div>
         )}
@@ -873,7 +873,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               >
                 <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-red-600 to-transparent" />
                 <h2 className="text-[13px] md:text-[15px] font-black tracking-[1.2em] text-red-400/90 uppercase whitespace-nowrap">
-                    STRATEGIC INTEL ASSET
+                    СТРАТЕГІЧНИЙ РОЗВІДУВАЛЬНИЙ АКТИВ
                 </h2>
                 <div className="w-32 h-[1px] bg-gradient-to-l from-transparent via-red-600 to-transparent" />
               </motion.div>

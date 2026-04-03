@@ -1,9 +1,9 @@
 /**
- * 🛰️ Semantic Radar Matrix | v55.2 Premium Vision
+ * 🛰️ Semantic Radar Matrix | v56.1.4 Premium Vision
  * PREDATOR Візуалізатор знаннєвого графа.
  * 
  * Виявлення прихованих зв'язків та семантичне картографування мереж.
- * © 2026 PREDATOR Analytics - Повна українізація v55.2
+ * © 2026 PREDATOR Analytics - Повна українізація v56.1.4
  */
 
 import React, { useState, useEffect, useRef } from 'react';

@@ -98,7 +98,7 @@ export default function ExecutiveBriefView() {
                   Суверенне Стратегічне Зведення
                 </h1>
                 <p className="text-slate-400 mt-2 font-mono text-xs tracking-widest uppercase">
-                  PREDATOR CORE: <span className="text-red-500 animate-pulse">SOVEREIGN MODE</span>  | Node: Kiev-Alpha | {new Date().toLocaleTimeString('uk-UA')}
+                  PREDATOR CORE: <span className="text-red-500 animate-pulse">SOVEREIGN MODE</span>  | Node: Kiev-Alpha | v56.1.4 | {new Date().toLocaleTimeString('uk-UA')}
                 </p>
               </div>
               <div className="text-right">
@@ -116,13 +116,13 @@ export default function ExecutiveBriefView() {
           <div className="lg:col-span-8 flex flex-col gap-6">
             
             {/* Area Chart Card */}
-            <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-3xl p-6 hover:border-indigo-500/30 transition-all duration-500 group relative">
+            <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-3xl p-6 hover:border-red-500/30 transition-all duration-500 group relative">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                  <Network className="text-indigo-400 h-5 w-5" />
+                  <Network className="text-red-400 h-5 w-5" />
                   Активність загроз мережі
                 </h2>
-                <span className="px-3 py-1 text-xs uppercase tracking-wider bg-indigo-500/10 text-indigo-300 rounded-full border border-indigo-500/20">Live</span>
+                <span className="px-3 py-1 text-xs uppercase tracking-wider bg-red-500/10 text-red-300 rounded-full border border-red-500/20">Live</span>
               </div>
               
               <div className="h-[280px] w-full">
@@ -134,8 +134,8 @@ export default function ExecutiveBriefView() {
                         <stop offset="95%" stopColor="#e11d48" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorBaseline" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
@@ -153,7 +153,7 @@ export default function ExecutiveBriefView() {
             </div>
 
             {/* Target Table Card */}
-            <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-3xl overflow-hidden hover:border-indigo-500/30 transition-all duration-500">
+            <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-3xl overflow-hidden hover:border-red-500/30 transition-all duration-500">
               <div className="p-6 border-b border-white/5 bg-slate-900/20">
                 <h2 className="text-xl font-semibold text-white flex items-center gap-2">
                   <Crosshair className="text-emerald-400 h-5 w-5" />
@@ -177,9 +177,9 @@ export default function ExecutiveBriefView() {
                       <tr 
                         key={target.id} 
                         onClick={() => handleTargetClick(target.id)}
-                        className={`group cursor-pointer hover:bg-indigo-500/5 transition-colors duration-200 ${loadingTarget === target.id ? 'bg-indigo-500/20 animate-pulse' : ''}`}
+                        className={`group cursor-pointer hover:bg-red-500/5 transition-colors duration-200 ${loadingTarget === target.id ? 'bg-red-500/20 animate-pulse' : ''}`}
                       >
-                        <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-slate-500 group-hover:text-indigo-400 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-slate-500 group-hover:text-red-400 transition-colors">
                           {target.id}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap font-medium text-white">
@@ -200,7 +200,7 @@ export default function ExecutiveBriefView() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <button className="text-xs font-semibold uppercase tracking-wider text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded transition-colors flex items-center gap-2 ml-auto">
+                          <button className="text-xs font-semibold uppercase tracking-wider text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded transition-colors flex items-center gap-2 ml-auto">
                             {loadingTarget === target.id ? (
                               <><Cpu className="w-4 h-4 animate-spin" /> Запит...</>
                             ) : (
@@ -225,7 +225,7 @@ export default function ExecutiveBriefView() {
               <div className="absolute inset-0 z-0">
                 <CyberGlobe />
               </div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-indigo-500/20 transition-colors" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-[60px] rounded-full pointer-events-none group-hover:bg-red-500/20 transition-colors" />
             </div>
 
             {/* Live Terminal Stream */}

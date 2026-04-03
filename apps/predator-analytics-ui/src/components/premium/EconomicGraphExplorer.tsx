@@ -34,7 +34,7 @@ const EconomicGraphExplorer: React.FC = () => {
                                 {t('graph.title')}
                             </CardTitle>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                                Neural Relations Engine v55.2
+                                Neural Relations Engine v56.1.4
                             </p>
                         </div>
                     </div>

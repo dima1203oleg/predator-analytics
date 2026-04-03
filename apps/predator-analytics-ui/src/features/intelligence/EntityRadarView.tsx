@@ -209,7 +209,7 @@ const EntityRadarView: React.FC = () => {
                 <div className="flex-1 text-center xl:text-left relative z-10">
                     <div className="inline-flex items-center gap-3 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full font-black text-[10px] uppercase tracking-[0.3em] text-indigo-400 mb-6 mx-auto xl:mx-0">
                         <Radiation className="w-4 h-4 animate-spin-slow" />
-                        PREDATOR AI RADAR ENGINE v55.8
+                        PREDATOR AI RADAR ENGINE v56.1.4
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-6 drop-shadow-2xl">
                         РАДАР <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-500">СУБ'ЄКТІВ</span>

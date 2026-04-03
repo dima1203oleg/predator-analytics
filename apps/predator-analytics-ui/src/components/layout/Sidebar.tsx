@@ -233,8 +233,8 @@ export const Sidebar: React.FC = () => {
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} // smooth spring-like curve
       className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col border-r border-white/5 bg-[#030712]/60 shadow-[8px_0_40px_rgba(2,6,23,0.7)] backdrop-blur-2xl"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.06),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.04),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.06),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(239,68,68,0.04),transparent_50%)]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-red-500/20 to-transparent" />
 
 
       <div
@@ -252,7 +252,7 @@ export const Sidebar: React.FC = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="min-w-0 flex-1 overflow-hidden"
               >
-                <div className="truncate text-[14px] font-black uppercase tracking-[0.2em] text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.4)]">PREDATOR</div>
+                <div className="truncate text-[14px] font-black uppercase tracking-[0.2em] text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]">PREDATOR</div>
                 <div className="truncate text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500">
                   NEXUS ANALYTICS
                 </div>
@@ -341,7 +341,7 @@ export const Sidebar: React.FC = () => {
                         className={cn(
                           'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition-all',
                           isActiveMode
-                            ? 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200'
+                            ? 'border-red-400/20 bg-red-500/10 text-red-200'
                             : 'border-white/[0.06] bg-white/[0.03] text-slate-300 hover:border-white/[0.12] hover:text-white',
                         )}
                       >
@@ -582,8 +582,8 @@ export const Sidebar: React.FC = () => {
             !isOpen && 'justify-center px-0',
           )}
         >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
-            <User className="h-4 w-4 text-indigo-300" />
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl border border-red-400/20 bg-red-500/10">
+            <User className="h-4 w-4 text-red-300" />
           </div>
           {isOpen && (
             <>
@@ -605,7 +605,7 @@ export const Sidebar: React.FC = () => {
 
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="card-depth absolute -right-3 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-slate-900/90 text-slate-300 shadow-[0_0_20px_rgba(2,6,23,0.8)] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-cyan-400/40 hover:bg-slate-800 hover:text-cyan-300"
+        className="card-depth absolute -right-3 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-slate-900/90 text-slate-300 shadow-[0_0_20px_rgba(2,6,23,0.8)] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-red-400/40 hover:bg-slate-800 hover:text-red-300"
         title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
         {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}

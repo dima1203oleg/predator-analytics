@@ -1,9 +1,9 @@
 /**
- * 🔮 Cognitive Insights Sanctum | v55.2 Premium Matrix
+ * 🔮 Cognitive Insights Sanctum | v56.1.4 Premium Matrix
  * PREDATOR Лабораторія ШІ-Гіпотез
  * 
  * Автономна генерація аналітичних висновків, виявлення аномалій та прогнозування.
- * © 2026 PREDATOR Analytics - Повна українізація v55.2
+ * © 2026 PREDATOR Analytics - Повна українізація v56.1.4
  */
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
@@ -190,7 +190,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                 </div>
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse">ЛАБОРАТОРІЯ_ІНСАЙТІВ_v55.2</span>
+                        <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse">ЛАБОРАТОРІЯ_ІНСАЙТІВ_v56.1.4</span>
                         <Badge variant="outline" className="text-[8px] bg-indigo-500/10 text-indigo-400 border-indigo-500/20">PREMIUM_ШІ</Badge>
                     </div>
                     <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-tight font-display">
