@@ -82,26 +82,28 @@ export default function ExecutiveBriefView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#010204] text-slate-300 p-6 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#010204] text-slate-300 p-6 font-sans selection:bg-red-500/30 relative overflow-hidden">
+      {/* Tactical Backdrop Overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] z-0" />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[radial-gradient(circle_at_50%_0%,rgba(220,38,38,0.2),transparent_50%)] z-0" />
       
       <div className="max-w-7xl mx-auto space-y-6">
         {/* HERO SECTION */}
         <header className="grid grid-cols-1 gap-6 md:grid-cols-4">
           <div className="md:col-span-4 rounded-xl border border-white/5 bg-slate-900/60 backdrop-blur-3xl p-6 relative overflow-hidden group">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-emerald-500 to-[#010204]" />
-            <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
-            
             <div className="flex justify-between items-start">
               <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-                  <Activity className="text-indigo-400 h-8 w-8 animate-pulse" />
-                  Ранкове Зведення Системи
+                <h1 className="text-3xl font-bold text-white tracking-tighter flex items-center gap-3 font-display uppercase">
+                  <Activity className="text-red-500 h-8 w-8 animate-pulse" />
+                  Суверенне Стратегічне Зведення
                 </h1>
-                <p className="text-slate-400 mt-2 font-medium">PREDATOR Cluster: <span className="text-emerald-400">ONLINE</span>  | Останнє оновлення: {new Date().toLocaleTimeString('uk-UA')}</p>
+                <p className="text-slate-400 mt-2 font-mono text-xs tracking-widest uppercase">
+                  PREDATOR CORE: <span className="text-red-500 animate-pulse">SOVEREIGN MODE</span>  | Node: Kiev-Alpha | {new Date().toLocaleTimeString('uk-UA')}
+                </p>
               </div>
               <div className="text-right">
-                <div className="text-4xl font-black text-white glow-text">14,204</div>
-                <div className="text-sm font-semibold uppercase tracking-widest text-indigo-400 mt-1">Оброблено об'єктів (24h)</div>
+                <div className="text-4xl font-black text-white glow-red-text font-display">14,204</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/80 mt-1">Оброблено об'єктів (24h)</div>
               </div>
             </div>
           </div>
@@ -140,11 +142,11 @@ export default function ExecutiveBriefView() {
                     <XAxis dataKey="time" stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} tickLine={false} axisLine={false} />
                     <YAxis stroke="#64748b" tick={{fill: '#64748b', fontSize: 12}} tickLine={false} axisLine={false} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc', borderRadius: '8px' }}
-                      itemStyle={{ color: '#e11d48' }}
+                      contentStyle={{ backgroundColor: '#05050a', borderColor: 'rgba(220,38,38,0.2)', color: '#f8fafc', borderRadius: '4px', border: '1px solid rgba(220,38,38,0.3)', backdropFilter: 'blur(10px)' }}
+                      itemStyle={{ color: '#ef4444' }}
                     />
-                    <Area type="monotone" dataKey="baseline" stroke="#6366f1" fillOpacity={1} fill="url(#colorBaseline)" strokeWidth={2} />
-                    <Area type="stepAfter" dataKey="events" stroke="#e11d48" fillOpacity={1} fill="url(#colorEvents)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="baseline" stroke="#475569" fillOpacity={1} fill="url(#colorBaseline)" strokeWidth={1} strokeDasharray="5 5" />
+                    <Area type="stepAfter" dataKey="events" stroke="#dc2626" fillOpacity={1} fill="url(#colorEvents)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

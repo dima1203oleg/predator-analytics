@@ -30,19 +30,18 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
 
     return (
         <div className={`relative ${className} group`}>
-            {/* Outer Glow Ring */}
-            <div className={`absolute inset-0 rounded-xl bg-cyan-400/20 blur-md group-hover:bg-cyan-400/40 transition-all duration-500 scale-110 opacity-0 group-hover:opacity-100 ${animated ? 'animate-pulse' : ''}`} />
+            {/* Outer Glow Ring (Nuclear Red) */}
+            <div className={`absolute inset-0 rounded-xl bg-red-600/20 blur-xl group-hover:bg-red-600/40 transition-all duration-700 scale-125 opacity-0 group-hover:opacity-100 ${animated ? 'animate-pulse' : ''}`} />
             
-            <div className={`${s.box} bg-black/80 rounded-xl border-2 border-cyan-500/50 flex items-center justify-center shadow-[0_0_20px_rgba(34,211,238,0.3)] relative overflow-hidden backdrop-blur-md transition-all duration-500 group-hover:border-cyan-400 group-hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] text-cyan-500`}>
+            <div className={`${s.box} bg-black/90 rounded-xl border-2 border-red-600/50 flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.2)] relative overflow-hidden backdrop-blur-xl transition-all duration-700 group-hover:border-red-500 group-hover:shadow-[0_0_50px_rgba(220,38,38,0.5)] text-red-600`}>
                 
                 {/* Geometric Vector Raptor */}
-                <GeometricRaptor className={`${s.img} drop-shadow-[0_0_8px_currentColor] transition-all duration-700 group-hover:scale-110 group-hover:text-cyan-300`} />
+                <GeometricRaptor className={`${s.img} drop-shadow-[0_0_12px_rgba(239,68,68,0.8)] transition-all duration-1000 group-hover:scale-110 group-hover:filter group-hover:brightness-125`} />
                 
-                {/* Scanline Effect */}
-
+                {/* Scanline Effect (Red) */}
                 {animated && (
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-[2px] bg-cyan-400/30 shadow-[0_0_10px_rgba(34,211,238,0.8)] animate-[scan_3s_linear_infinite]" />
+                        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-red-600/40 shadow-[0_0_15px_rgba(220,38,38,1)] animate-[scanline_2.5s_linear_infinite]" />
                     </div>
                 )}
                 
@@ -50,9 +49,9 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000" />
             </div>
 
-            {/* Version Badge - Cyberpunk style */}
-            <div className={`absolute ${s.badge} bg-cyan-950/80 px-1.5 py-0.5 text-cyan-400 border border-cyan-500/50 rounded-sm font-mono font-bold tracking-tight text-[8px] backdrop-blur-sm shadow-lg group-hover:border-cyan-400 transition-colors`}>
-                V56.1
+            {/* Version Badge - Sovereign style */}
+            <div className={`absolute ${s.badge} bg-red-950/90 px-2 py-0.5 text-red-500 border border-red-600/50 rounded-sm font-mono font-black tracking-widest text-[8px] backdrop-blur-md shadow-2xl group-hover:border-red-400 transition-colors uppercase`}>
+                SOVEREIGN v56.1.4
             </div>
         </div>
     );

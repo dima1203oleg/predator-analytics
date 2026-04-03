@@ -44,7 +44,9 @@ export type NavAccent =
   | 'sky'
   | 'violet'
   | 'rose'
-  | 'indigo';
+  | 'indigo'
+  | 'red'
+  | 'slate';
 
 export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
@@ -179,6 +181,24 @@ export const navAccentStyles: Record<
     sectionBorder: 'border-indigo-400/12',
     softText: 'text-indigo-200/85',
   },
+  red: {
+    badge: 'bg-red-500/15 text-red-300 border-red-400/20',
+    dot: 'bg-red-400',
+    glow: 'from-red-500/18 via-red-400/5 to-transparent',
+    icon: 'text-red-300',
+    iconBorder: 'border-red-400/20 bg-red-500/10',
+    sectionBorder: 'border-red-400/12',
+    softText: 'text-red-200/85',
+  },
+  slate: {
+    badge: 'bg-slate-500/15 text-slate-300 border-slate-400/20',
+    dot: 'bg-slate-400',
+    glow: 'from-slate-500/18 via-slate-400/5 to-transparent',
+    icon: 'text-slate-300',
+    iconBorder: 'border-slate-400/20 bg-slate-500/10',
+    sectionBorder: 'border-slate-400/12',
+    softText: 'text-slate-200/85',
+  },
 };
 
 const navigationAudienceAliases: Record<string, NavigationAudience> = {
@@ -251,10 +271,10 @@ export const globalNavigationActions: NavGlobalAction[] = [
 const baseNavigationConfig: NavSection[] = [
   {
     id: 'command',
-    label: 'Командний центр v11.5',
-    description: 'Оперативний контроль, ранкові зведення, реальний час і швидкий старт робочого дня.',
-    outcome: 'За 5 секунд показує стан бізнесу, головні сигнали й наступну дію з вимірюваним ROI.',
-    accent: 'amber',
+    label: 'Стратегічний Хаб v56.1.4',
+    description: 'Централізований суверенний контроль, оперативні зведення та квантовий огляд ризиків.',
+    outcome: 'Sovereign Command: Повний контроль над бізнес-периметром за 3 секунди з урахуванням глобальних загроз.',
+    accent: 'red',
     items: [
       {
         id: 'dashboard',
@@ -295,10 +315,10 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Morning Briefing v11.5',
+        label: 'Strategic Briefing v56.1',
         path: '/morning-brief',
         icon: Compass,
-        description: 'Короткий стратегічний брифінг з пріоритетами, ризиками та сигналами на день.',
+        description: 'Пріоритетний аналіз суверенних ризиків, ринкових аномалій та критичних цілей на день.',
         group: 'Оперативний огляд',
         priority: 92,
       },
@@ -315,9 +335,9 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'intelligence',
-    label: 'OSINT-Контур v11.5',
-    description: 'Ринки, ризики, OSINT, досьє, звіти та моделі в одному аналітичному контурі.',
-    outcome: 'Sovereign Apex: Дає відповідь на три питання: де заробити, кого перевірити і який сценарій завтра.',
+    label: 'OSINT-Контур v56.1',
+    description: 'Ринки, ризики, тотальне досьє та предиктивні моделі в єдиному розвідувальному контурі.',
+    outcome: 'Sovereign Apex: Предиктивна відповідь на виклики ринку через призму великих даних та ШІ.',
     accent: 'emerald',
     items: [
       {
@@ -505,7 +525,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'Торгівля та логістика',
     description: 'Митниця, ціни, логістичні потоки й ланцюги постачання в єдиному контурі.',
     outcome: 'Допомагає зменшити витрати на закупівлі, оптимізувати маршрути й зняти митні ризики до штрафів.',
-    accent: 'cyan',
+    accent: 'slate',
     items: [
       {
         id: 'customs-intel',
@@ -560,7 +580,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'Контрагенти',
     description: 'Клієнти, постачальники та повʼязані бізнес-екосистеми без розриву контексту.',
     outcome: 'Дає єдину точку входу для роботи з усіма контрагентами, перевірками й розвитком відносин.',
-    accent: 'rose',
+    accent: 'red',
     items: [
       {
         id: 'clients',
@@ -596,7 +616,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'ШІ та автоматизація',
     description: 'Агенти, інсайти, база знань і прихований інженерний контур моделей.',
     outcome: 'Автоматизує рутину, дає персоналізовані інсайти й поступово підлаштовує систему під бізнес-правила.',
-    accent: 'violet',
+    accent: 'amber',
     items: [
       {
         id: 'agents',
@@ -633,7 +653,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'Система',
     description: 'Безпека, налаштування, дані, пайплайни та фабричний контур, прихований від бізнес-користувача.',
     outcome: 'Дає прозорий контроль безпеки й налаштувань, а для адміністраторів відкриває повний технічний шар.',
-    accent: 'indigo',
+    accent: 'slate',
     items: [
       {
         id: 'security',

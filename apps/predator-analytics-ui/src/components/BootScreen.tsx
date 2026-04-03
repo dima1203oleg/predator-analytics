@@ -18,11 +18,11 @@ type Phase = 0 | 1 | 2 | 3 | 4;
 // 4: СИСТЕМА ГОТОВА (fade out)
 
 const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1200,
-  1: 1500,
-  2: 1200,
-  3: 4000,
-  4: 800,
+  0: 1600, // ВСТАНОВЛЕННЯ З'ЄДНАННЯ
+  1: 2200, // ГЛОБАЛЬНЕ СКАНУВАННЯ
+  2: 1400, // АВТОРИЗАЦІЯ
+  3: 4500, // REVEAL
+  4: 1000,
 };
 
 /* ─── Web Audio — синтезовані звуки без зовнішніх файлів ─── */
@@ -40,23 +40,30 @@ class SoundEngine {
     return this.ctx;
   }
 
-  /** Низький гул ядра (дрон) */
+  /** Низький гул ядра (глухий резонанс) */
   playCoreDrone() {
     const ctx = this.getCtx();
     if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.type = 'square'; // Жорсткіший звук
-    osc.frequency.setValueAtTime(45, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 1.5);
+    const filter = ctx.createBiquadFilter();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(32, ctx.currentTime); // Дуже низька частота
+    osc.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 2);
+    
+    filter.type = 'lowpass';
+    filter.frequency.value = 80;
+
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.5);
-    gain.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 1.5);
-    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.5);
-    osc.connect(gain);
+    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 1);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 3);
+
+    osc.connect(filter);
+    filter.connect(gain);
     gain.connect(ctx.destination);
     osc.start();
-    osc.stop(ctx.currentTime + 2.5);
+    osc.stop(ctx.currentTime + 3);
   }
 
   /** Жорсткий скан (radar ping) */
@@ -124,20 +131,31 @@ class SoundEngine {
     noise.start();
   }
 
-  /** Короткий телеметричний писк */
+  /** Короткий телеметричний писк (Premium feel) */
   playTelemetry(freq = 1200) {
     const ctx = this.getCtx();
     if (!ctx) return;
-    const osc = ctx.createOscillator();
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.03, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.05);
-    osc.connect(gain);
+    
+    osc1.type = 'square';
+    osc1.frequency.value = freq;
+    
+    osc2.type = 'sine';
+    osc2.frequency.value = freq * 1.5;
+    
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    
+    osc1.connect(gain);
+    osc2.connect(gain);
     gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.06);
+    
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 0.1);
+    osc2.stop(ctx.currentTime + 0.1);
   }
 
   startCoinSpin(): (() => void) | null {
@@ -271,18 +289,17 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     /* ФАЗА 1: РАДАР ТА СУПУТНИКОВЕ ПЕРЕХОПЛЕННЯ (ГЛОБАЛЬНИЙ МАСШТАБ) */
     if (currentPhase === 1) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
-      const globeRadius = Math.min(w, h) * 0.35;
+      const globeRadius = Math.min(w, h) * 0.38;
       
       ctx.save();
       ctx.translate(cx, cy);
 
-      // 1. Малюємо координатну сітку Землі (Глобус)
-      ctx.strokeStyle = `rgba(220, 38, 38, ${0.2 * p})`;
+      // 1. Координатна сітка Землі
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.15 * p})`;
       ctx.lineWidth = 1;
 
-      // Горизонтальні лінії (широти)
-      for (let i = -4; i <= 4; i++) {
-        const yOffset = (i / 4) * globeRadius;
+      for (let i = -6; i <= 6; i++) {
+        const yOffset = (i / 6) * globeRadius;
         const width = Math.sqrt(globeRadius * globeRadius - yOffset * yOffset);
         if (width > 0) {
           ctx.beginPath();
@@ -291,9 +308,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }
       }
 
-      // Вертикальні лінії (довготи), що обертаються
-      const numLongitudes = 12;
-      const rotationSpeed = now * 0.0007; // Швидкість обертання Землі
+      const numLongitudes = 16;
+      const rotationSpeed = now * 0.0004; 
       for (let i = 0; i < numLongitudes; i++) {
         const angle = (i / numLongitudes) * Math.PI * 2 + rotationSpeed;
         const cosA = Math.cos(angle);
@@ -301,60 +317,55 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         if (width > 0.5) {
           ctx.beginPath();
           ctx.ellipse(0, 0, width, globeRadius, 0, 0, Math.PI * 2);
-          // Робимо тильну сторону глобуса темнішою
-          if (Math.sin(angle) < 0) {
-            ctx.strokeStyle = `rgba(220, 38, 38, ${0.05 * p})`;
-          } else {
-            ctx.strokeStyle = `rgba(220, 38, 38, ${0.35 * p})`;
-          }
+          ctx.strokeStyle = Math.sin(angle) < 0 ? `rgba(220, 38, 38, ${0.05 * p})` : `rgba(220, 38, 38, ${0.4 * p})`;
           ctx.stroke();
         }
       }
 
-      // 2. Радарна лінія (Sweep), що сканує глобус
-      const angle = now * 0.003;
+      // Цифрові кільця навколо глобуса (Статус супутників)
+      ctx.setLineDash([5, 15]);
+      ctx.beginPath();
+      ctx.arc(0, 0, globeRadius * 1.2, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220, 38, 38, ${0.1 * p})`;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 2. Радарний промінь
+      const angle = now * 0.0025;
       ctx.rotate(angle);
-      
       const grad = ctx.createConicGradient(0, 0, 0);
       grad.addColorStop(0, 'rgba(220, 38, 38, 0)');
-      grad.addColorStop(0.1, `rgba(220, 38, 38, ${0.5 * p})`);
+      grad.addColorStop(0.08, `rgba(220, 38, 38, ${0.6 * p})`);
       grad.addColorStop(0.12, 'rgba(220, 38, 38, 0)');
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, globeRadius * 1.3, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
       
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.arc(0, 0, globeRadius, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-      
-      // Радарний промінь (чіткий)
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(globeRadius, 0);
-      ctx.strokeStyle = `rgba(220, 38, 38, ${0.8 * p})`;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(globeRadius * 1.3, 0);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.8 * p})`;
+      ctx.lineWidth = 1.5; ctx.stroke();
       ctx.rotate(-angle);
 
-      // 3. Геометричні 'цілі' на радарі
-      for (let i = 0; i < 6; i++) {
-        const tgtAngle = (i * Math.PI * 2) / 6 + (now * 0.0005 * (i % 2 === 0 ? 1 : -1));
-        const tgtDist = globeRadius * 0.4 + Math.sin(now * 0.001 + i) * globeRadius * 0.4;
+      // 3. 'Цілі' з лініями зв'язку
+      for (let i = 0; i < 8; i++) {
+        const tgtAngle = (i * Math.PI * 2) / 8 + (now * 0.0003);
+        const tgtDist = globeRadius * (0.3 + 0.6 * Math.abs(Math.sin(now * 0.0005 + i)));
         const tx = Math.cos(tgtAngle) * tgtDist;
         const ty = Math.sin(tgtAngle) * tgtDist;
         
-        ctx.strokeStyle = `rgba(255, 255, 255, ${0.7 * p})`; // Червоні цілі
-        ctx.lineWidth = 1;
-        ctx.strokeRect(tx - 4, ty - 4, 8, 8);
-        ctx.fillStyle = `rgba(255, 255, 255, ${0.3 * p})`;
-        ctx.fillRect(tx - 4, ty - 4, 8, 8);
-
-        // Хрест
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 * p})`;
+        ctx.strokeRect(tx - 3, ty - 3, 6, 6);
+        
+        // Лінія від цілі до центру (Uplink)
         ctx.beginPath();
-        ctx.moveTo(tx - 8, ty); ctx.lineTo(tx + 8, ty);
-        ctx.moveTo(tx, ty - 8); ctx.lineTo(tx, ty + 8);
-        ctx.strokeStyle = `rgba(220, 38, 38, ${0.5 * p})`;
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(0, 0);
+        ctx.strokeStyle = `rgba(220, 38, 38, ${0.1 * p})`;
         ctx.stroke();
+
+        // Координати цілі біля неї
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.5 * p})`;
+        ctx.font = '6px monospace';
+        ctx.fillText(`TGT-${i}: ${tx.toFixed(0)}:${ty.toFixed(0)}`, tx + 8, ty);
       }
       ctx.restore();
     }
@@ -546,12 +557,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             <div className="absolute top-6 left-6 text-red-500 space-y-1">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-red-600 animate-pulse shadow-[0_0_10px_#dc2626] rounded-full" />
-                <span className="text-[10px] font-black tracking-[0.4em]">
-                  ГЛОБАЛЬНИЙ НАГЛЯД / NEW WORLD ORDER
+                <span className="text-[10px] font-black tracking-[0.5em] text-red-600">
+                  STRATEGIC ASSET COMMAND / GLOBAL WATCHDOG v56.1
                 </span>
               </div>
-              <p className="text-[7px] text-red-400/60 uppercase tracking-widest pl-4">
-                СТРАТЕГІЧНЕ ЯДРО NEXUS v56.1
+              <p className="text-[7px] text-red-400/60 uppercase tracking-widest pl-4 font-bold">
+                LEVEL 5 CLEARANCE REQUIRED — SOVEREIGN ACCESS ONLY
               </p>
             </div>
 
@@ -572,9 +583,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                         key={`${code}-${idx}`}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1 - idx * 0.15, x: 0 }}
-                        className="text-[8px] text-red-500/70 font-mono tracking-wider"
+                        className="text-[8px] text-red-500 font-mono tracking-wider"
                     >
-                        [NSA.KERNEL] DECRYPT: {code} ... VALIDATED
+                        [P-NET.CORE] INJECT_KEY: {code} ... SYNCED
                     </motion.div>
                 ))}
             </div>
@@ -595,8 +606,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             </div>
             
             {/* Попередження по центру знизу */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[7px] text-red-500/40 tracking-[0.3em] uppercase">
-                НЕСАНКЦІОНОВАНИЙ ДОСТУП ПЕРЕСЛІДУЄТЬСЯ ЗАКОНОМ (СТ. 361 КК)
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-[8px] text-red-600 font-black tracking-[0.4em] uppercase bg-black/80 px-4 py-1 border border-red-950/50">
+                PROPRIETARY OSINT CORE — PROPERTY OF PREDATOR GROUP — TOP SECRET
             </div>
           </motion.div>
         )}
@@ -617,14 +628,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             className="relative z-30 text-center"
           >
             <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 0.5, repeat: Infinity }}
-              className="text-[12px] text-red-600 tracking-[0.5em] uppercase font-black"
+              animate={{ opacity: [0.7, 1, 0.7], scale: [1, 1.05, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="text-[14px] text-red-600 tracking-[0.6em] uppercase font-black"
             >
-              ВСТАНОВЛЕННЯ З'ЄДНАННЯ
+              ВСТАНОВЛЕННЯ З'ЄДНАННЯ З ЯДРОМ...
             </motion.div>
-            <div className="mt-2 text-[8px] text-red-600/50 tracking-widest uppercase">
-              ШИФРУВАННЯ ПОТОКІВ AES-512...
+            <div className="mt-2 text-[9px] text-red-600/60 tracking-widest uppercase font-bold">
+              QUANTUM-RESISTANT HANDSHAKE (AES-512-GCM)
             </div>
           </motion.div>
         )}
@@ -746,11 +757,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 transition={{ delay: 1.5, duration: 1 }}
                 className="flex items-center justify-center gap-3"
               >
-                <div className="w-16 h-[2px] bg-gradient-to-r from-transparent to-red-600" />
-                <h2 className="text-[12px] font-black tracking-[0.8em] text-white uppercase bg-red-600/30 px-4 py-1">
-                    СИСТЕМА НАЦІОНАЛЬНОЇ БЕЗПЕКИ
+                <div className="w-24 h-[2px] bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+                <h2 className="text-[14px] font-black tracking-[1em] text-white uppercase px-4 py-1">
+                    STRATEGIC INTEL ASSET
                 </h2>
-                <div className="w-16 h-[2px] bg-gradient-to-l from-transparent to-red-600" />
+                <div className="w-24 h-[2px] bg-gradient-to-l from-transparent via-red-600 to-transparent" />
               </motion.div>
 
               {/* ДОСТУП ДОЗВОЛЕНО — Безкомпромісний білий/червоний статус */}

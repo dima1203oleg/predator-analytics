@@ -111,23 +111,37 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             {/* ═══ ФОНОВИЙ ШАР: Сітка / Матриця ═══ */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* Глобальна сітка координат */}
-                <div className="absolute inset-0 opacity-[0.03]"
+                <div className="absolute inset-0 opacity-[0.04]"
                      style={{
-                         backgroundImage: 'linear-gradient(rgba(34,211,238,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.3) 1px, transparent 1px)',
-                         backgroundSize: '80px 80px'
+                         backgroundImage: 'linear-gradient(rgba(239,68,68,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(239,68,68,0.15) 1px, transparent 1px)',
+                         backgroundSize: '120px 120px'
                      }}
                 />
-                {/* Діагональні лінії */}
-                <div className="absolute inset-0 opacity-[0.015]"
+                {/* Micro mesh */}
+                <div className="absolute inset-0 opacity-[0.02]"
                      style={{
-                         backgroundImage: 'repeating-linear-gradient(45deg, rgba(239,68,68,0.4) 0px, rgba(239,68,68,0.4) 1px, transparent 1px, transparent 120px)',
+                         backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                         backgroundSize: '10px 10px'
                      }}
                 />
+                
+                {/* WORLD MAP SILHOUETTE */}
+                <div className="absolute inset-0 opacity-[0.03] flex items-center justify-center p-20 grayscale invert">
+                    <Globe size={1200} className="text-red-500 blur-sm" />
+                </div>
+
                 {/* Вертикальна смуга скану */}
                 <motion.div
                     animate={{ left: ['-10%', '110%'] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                    className="absolute top-0 bottom-0 w-[200px] bg-gradient-to-r from-transparent via-cyan-500/[0.03] to-transparent"
+                    transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+                    className="absolute top-0 bottom-0 w-[400px] bg-gradient-to-r from-transparent via-red-600/[0.04] to-transparent"
+                />
+                
+                {/* LASER SCAN LINE (Horizontal) */}
+                <motion.div
+                    animate={{ top: ['0%', '100%'] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                    className="absolute left-0 right-0 h-[1.5px] bg-red-600/20 shadow-[0_0_20px_rgba(220,38,38,0.8)] z-10"
                 />
             </div>
 
@@ -142,12 +156,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     {/* Ліва частина — класифікація */}
                     <div className="flex items-center gap-3">
                         <motion.div
-                            animate={{ opacity: threatPulse ? 1 : 0.3 }}
-                            className="flex items-center gap-1.5"
+                            animate={{ opacity: threatPulse ? 1 : 0.4 }}
+                            className="flex items-center gap-2"
                         >
-                            <div className="w-2 h-2 bg-red-500 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-                            <span className="text-[9px] font-black text-red-500 tracking-[0.4em]">
-                                ТАЄМНО / COSMIC
+                            <div className="w-2.5 h-2.5 bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,1)] animate-pulse" />
+                            <span className="text-[10px] font-black text-red-600 tracking-[0.5em] uppercase">
+                                TOP SECRET // SOVEREIGN UPLINK
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
@@ -158,7 +172,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                     {/* Центр — час */}
                     <div className="flex flex-col items-center">
-                        <div className="text-[10px] font-black text-cyan-500/60 tracking-[0.5em] tabular-nums">
+                        <div className="text-[10px] font-black text-red-500/60 tracking-[0.5em] tabular-nums">
                             {formatTime(clock)} UTC+3
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-[0.4em]">
@@ -176,8 +190,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </div>
                         <span className="text-[8px] text-slate-700">│</span>
                         <div className="flex items-center gap-1">
-                            <Globe size={9} className="text-cyan-600/60" />
-                            <span className="text-[8px] text-cyan-600/60 font-bold tracking-wider">
+                            <Globe size={9} className="text-red-600/60" />
+                            <span className="text-[8px] text-red-600/60 font-bold tracking-wider">
                                 {countriesMonitored} КРАЇН
                             </span>
                         </div>
@@ -215,10 +229,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <div className="h-[1px] w-16 bg-slate-800/50" />
 
                     <div className="space-y-1">
-                        <div className="text-[7px] text-cyan-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
+                        <div className="text-[7px] text-red-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
                             <Crosshair size={8} /> АКТИВНИХ
                         </div>
-                        <div className="text-lg font-black text-cyan-400/80 tabular-nums tracking-wider">
+                        <div className="text-lg font-black text-red-400/80 tabular-nums tracking-wider">
                             {activeOps.toLocaleString()}
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-wider">ОПЕРАЦІЙ У СВІТІ</div>
@@ -236,7 +250,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         { label: 'QUANTUM SHIELD', status: 'АКТИВНО', color: 'text-emerald-500', icon: Shield },
                         { label: 'DARKNET SCAN', status: 'АКТИВНО', color: 'text-emerald-500', icon: Radar },
                         { label: 'SAT UPLINK', status: 'ОНЛАЙН', color: 'text-emerald-500', icon: Satellite },
-                        { label: 'CRYPTO TRACE', status: 'АКТИВНО', color: 'text-cyan-500', icon: Radio },
+                        { label: 'CRYPTO TRACE', status: 'АКТИВНО', color: 'text-red-500', icon: Radio },
                         { label: 'БІОМЕТРІЯ', status: 'ОЧІКУЄ', color: 'text-amber-500', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
@@ -303,26 +317,26 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <motion.div
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                                className="absolute -inset-7 border border-cyan-500/[0.08] rounded-full border-dashed"
+                                className="absolute -inset-7 border border-red-500/[0.08] rounded-full border-dashed"
                             />
 
                             {/* Монета */}
                             <div
-                                className="w-36 h-36 rounded-full bg-black/60 border-2 border-cyan-500/30 shadow-[0_0_60px_rgba(34,211,238,0.15),0_0_120px_rgba(34,211,238,0.05)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_80px_rgba(34,211,238,0.3),0_0_160px_rgba(34,211,238,0.1)] group-hover:border-cyan-400/50"
+                                className="w-36 h-36 rounded-full bg-black/60 border-2 border-red-500/30 shadow-[0_0_60px_rgba(239,68,68,0.15),0_0_120px_rgba(239,68,68,0.05)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_80px_rgba(239,68,68,0.3),0_0_160px_rgba(239,68,68,0.1)] group-hover:border-red-400/50"
                                 style={{ perspective: '1000px', clipPath: 'circle(50% at 50% 50%)' }}
                             >
                                 <motion.div
                                     animate={{
                                         y: [0, -3, 0],
                                         rotateY: [0, 360],
-                                        filter: ['drop-shadow(0 0 8px rgba(34,211,238,0.2))', 'drop-shadow(0 0 20px rgba(34,211,238,0.5))', 'drop-shadow(0 0 8px rgba(34,211,238,0.2))']
+                                        filter: ['drop-shadow(0 0 8px rgba(239,68,68,0.2))', 'drop-shadow(0 0 20px rgba(239,68,68,0.5))', 'drop-shadow(0 0 8px rgba(239,68,68,0.2))']
                                     }}
                                     transition={{
                                         y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
                                         rotateY: { duration: 6, repeat: Infinity, ease: "linear" },
                                         filter: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                                     }}
-                                    className="w-[70%] h-[70%] text-cyan-500 flex items-center justify-center"
+                                    className="w-[70%] h-[70%] text-red-500 flex items-center justify-center"
                                     style={{ transformStyle: 'preserve-3d' }}
                                 >
                                     <GeometricRaptor className="w-full h-full object-contain" />
@@ -332,64 +346,70 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <motion.div
                                     animate={{ top: ['0%', '100%', '0%'] }}
                                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="absolute left-0 right-0 h-[1px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,1)] z-20 opacity-20"
+                                    className="absolute left-0 right-0 h-[1px] bg-red-400 shadow-[0_0_10px_rgba(239,68,68,1)] z-20 opacity-20"
                                 />
-                                <div className="absolute inset-[3px] rounded-full border border-cyan-500/10 pointer-events-none" />
+                                <div className="absolute inset-[3px] rounded-full border border-red-500/10 pointer-events-none" />
                             </div>
                         </div>
 
                         {/* НАЗВА + РОЗРЯД */}
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             <motion.h1
-                                animate={{ textShadow: ['0 0 30px rgba(34,211,238,0.3)', '0 0 60px rgba(34,211,238,0.5)', '0 0 30px rgba(34,211,238,0.3)'] }}
-                                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                                className="text-4xl md:text-5xl font-black tracking-[0.3em] text-white"
+                                animate={{ 
+                                    textShadow: [
+                                        '0 0 20px rgba(220,38,38,0.4)', 
+                                        '0 0 50px rgba(220,38,38,0.7)', 
+                                        '0 0 20px rgba(220,38,38,0.4)'
+                                    ] 
+                                }}
+                                transition={{ duration: 3, repeat: Infinity }}
+                                className="text-5xl md:text-7xl font-black tracking-[0.4em] text-white"
                             >
                                 PREDATOR
                             </motion.h1>
-                            <div className="flex items-center justify-center gap-3">
-                                <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-red-500/30" />
-                                <h2 className="text-[10px] font-black tracking-[0.6em] text-red-500/60 uppercase">
-                                    Глобальна Розвідувальна Мережа
+                            <div className="flex items-center justify-center gap-4">
+                                <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+                                <h2 className="text-[12px] font-black tracking-[1em] text-white uppercase bg-red-600/20 px-6 py-1.5 border border-red-600/30">
+                                    STRATEGIC INTEL NETWORK
                                 </h2>
-                                <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-red-500/30" />
+                                <div className="h-[2px] w-20 bg-gradient-to-l from-transparent via-red-600 to-transparent" />
                             </div>
-                            <p className="text-[8px] text-slate-700 tracking-[0.4em] uppercase">
-                                Несанкціонований доступ карається згідно Ст. 361 КК України
+                            <p className="text-[9px] text-red-600/60 tracking-[0.5em] uppercase font-bold">
+                                UNIFIED GLOBAL COMMAND TERMINAL v56.1
                             </p>
                         </div>
 
                         {/* ФОРМА АВТОРИЗАЦІЇ */}
                         <form className="w-72 space-y-2.5" onSubmit={(e) => { e.preventDefault(); setStep('scanning'); }}>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-700/40 group-focus-within:text-cyan-400/60 transition-colors">
-                                    <User size={14} />
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-red-700 group-focus-within:text-red-500 transition-colors">
+                                    <Fingerprint size={16} />
                                 </div>
                                 <input
                                     readOnly
-                                    placeholder="ID ОПЕРАТОРА"
-                                    className="w-full bg-slate-950/80 border border-slate-800/50 rounded py-2.5 pl-9 pr-4 text-[10px] tracking-[0.3em] font-bold text-cyan-100 placeholder:text-slate-700 focus:border-cyan-500/30 outline-none transition-all hover:border-slate-700"
+                                    placeholder="ОПЕРАТИВНИЙ КОД"
+                                    className="w-full bg-black/80 border border-red-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-red-900/50 focus:border-red-600/60 outline-none transition-all shadow-inner"
                                 />
                             </div>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-700/40 group-focus-within:text-cyan-400/60 transition-colors">
-                                    <Lock size={14} />
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-red-700 group-focus-within:text-red-500 transition-colors">
+                                    <Lock size={16} />
                                 </div>
                                 <input
                                     readOnly
                                     type="password"
-                                    placeholder="КРИПТО-КЛЮЧ ДОПУСКУ"
-                                    className="w-full bg-slate-950/80 border border-slate-800/50 rounded py-2.5 pl-9 pr-4 text-[10px] tracking-[0.3em] font-bold text-cyan-100 placeholder:text-slate-700 focus:border-cyan-500/30 outline-none transition-all hover:border-slate-700"
+                                    placeholder="КРИПТО-КЛЮЧ"
+                                    className="w-full bg-black/80 border border-red-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-red-900/50 focus:border-red-600/60 outline-none transition-all shadow-inner"
                                 />
                             </div>
 
                             <motion.button
                                 type="submit"
-                                whileHover={{ scale: 1.01, borderColor: 'rgba(239,68,68,0.4)', boxShadow: '0 0 30px rgba(239,68,68,0.15)' }}
-                                whileTap={{ scale: 0.99 }}
-                                className="w-full bg-red-950/20 border border-red-900/30 text-red-400 font-black py-3 rounded tracking-[0.5em] text-[10px] transition-all uppercase"
+                                whileHover={{ scale: 1.02, backgroundColor: 'rgba(220,38,38,0.1)' }}
+                                whileTap={{ scale: 0.98 }}
+                                className="w-full bg-red-600 text-white font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase shadow-[0_0_30px_rgba(220,38,38,0.3)] border border-red-400/50 mt-4"
                             >
-                                ІНІЦІЮВАТИ ДОСТУП
+                                УВІЙТИ В СИСТЕМУ
                             </motion.button>
 
                             <div className="text-center">
@@ -421,7 +441,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <motion.div
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-3 border-b-2 border-cyan-400/40 rounded-full"
+                                className="absolute inset-3 border-b-2 border-red-400/40 rounded-full"
                             />
                             {/* Перехрестя */}
                             <div className="absolute inset-6 border border-slate-800/30 rounded-full" />
@@ -453,7 +473,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         <div className="w-64 mx-auto space-y-1">
                             <div className="h-[2px] bg-slate-900 rounded-full overflow-hidden">
                                 <motion.div
-                                    className="h-full bg-gradient-to-r from-red-600 via-amber-500 to-cyan-400 rounded-full"
+                                    className="h-full bg-gradient-to-r from-red-800 via-red-600 to-red-500 rounded-full"
                                     animate={{ width: `${scanProgress}%` }}
                                     transition={{ duration: 0.2 }}
                                 />
@@ -526,11 +546,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     icon: Terminal,
                                     level: 'CONFID.',
                                     clearance: 'III',
-                                    borderColor: 'border-slate-700/30 hover:border-cyan-500/40',
-                                    glowColor: 'hover:shadow-[0_0_40px_rgba(34,211,238,0.1)]',
-                                    accentColor: 'text-cyan-500',
-                                    bgAccent: 'bg-cyan-950/10',
-                                    tagColor: 'text-cyan-600 border-cyan-600/30',
+                                    borderColor: 'border-slate-700/30 hover:border-slate-500/40',
+                                    glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.1)]',
+                                    accentColor: 'text-slate-400',
+                                    bgAccent: 'bg-slate-800/50',
+                                    tagColor: 'text-slate-400 border-slate-700',
                                 }
                             ].map((item, idx) => (
                                 <motion.button
@@ -598,30 +618,40 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 )}
             </AnimatePresence>
 
-            {/* ═══ НИЖНЯ ПАНЕЛЬ ═══ */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
-                <div className="h-[1px] bg-gradient-to-r from-transparent via-slate-800/40 to-transparent" />
-                <div className="flex items-center justify-between px-6 py-2.5">
-                    <div className="flex items-center gap-4">
+            {/* ═══ НИЖНЯ ПАНЕЛЬ: GLOBAL TICKER ═══ */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-red-900/30 backdrop-blur-md">
+                <div className="flex items-center">
+                    <div className="bg-red-600 text-white text-[10px] font-black px-4 py-2 z-10 tracking-widest whitespace-nowrap">
+                        LIVE INTEL FEED
+                    </div>
+                    <div className="relative flex-1 py-2 overflow-hidden items-center flex">
                         <motion.div
-                            animate={{ opacity: [0.3, 0.6, 0.3] }}
-                            transition={{ duration: 3, repeat: Infinity }}
-                            className="text-[7px] text-slate-800 tracking-[0.3em]"
+                            animate={{ x: [0, -2000] }}
+                            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                            className="flex gap-12 whitespace-nowrap"
                         >
-                            NODE_ALPHA-7 // ШИФР: AES-512 // ПРОТОКОЛ: SOVEREIGN_MESH
+                            <span className="text-[9px] text-red-500 font-bold tracking-widest">
+                                [ALERT] ПЕРЕХОПЛЕННЯ СИГНАЛУ В СЕКТОРІ GAMMA-4 ... МОНІТОРИНГ АКТИВНИЙ
+                            </span>
+                            <span className="text-[9px] text-emerald-500 font-bold tracking-widest">
+                                [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV_CORE_01)
+                            </span>
+                            <span className="text-[9px] text-amber-500 font-bold tracking-widest">
+                                [OVERSIGHT] ВИЯВЛЕНО ПІДОЗРІЛУ ТРАНЗАКЦІЮ: UEID-9472-BX ... АНАЛІЗУЄТЬСЯ
+                            </span>
+                            <span className="text-[9px] text-red-500 font-bold tracking-widest">
+                                [WARN] СПРОБА НЕСАНКЦІОНОВАНОГО ДОСТУПУ З IP 185.12.92.X ... БЛОКОВАНО
+                            </span>
+                            <span className="text-[9px] text-slate-400 font-bold tracking-widest">
+                                [SAT] СУПУТНИК SENTINEL-5 ОНЛАЙН ... ПЕРЕДАЧА ДАНИХ 4.2 GB/S
+                            </span>
                         </motion.div>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <span className="text-[7px] text-slate-800 tracking-[0.3em]">
-                            КООРДИНАТИ: 50.4501°N 30.5234°E
-                        </span>
-                        <span className="text-[7px] text-slate-800 tracking-[0.2em]">│</span>
-                        <span className="text-[7px] text-red-900/40 font-bold tracking-[0.4em]">
-                            PREDATOR v56.1.4
-                        </span>
+                    <div className="px-6 text-[10px] font-black text-red-600 tracking-[0.4em]">
+                        PREDATOR v56.1.4
                     </div>
                 </div>
-                <div className="h-[2px] bg-gradient-to-r from-transparent via-red-600/30 to-transparent" />
+                <div className="h-[3px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
             </div>
         </div>
     );

@@ -293,7 +293,7 @@ export default function MarketPage() {
         value: `$${(amount * 0.7).toLocaleString('uk-UA')}`,
         detail: 'Очікуваний прибуток від реалізації',
         icon: TrendingUp,
-        tone: 'cyan'
+        tone: 'slate'
       },
       {
         id: 'efficiency',
@@ -446,14 +446,14 @@ export default function MarketPage() {
       
       <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
         <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none transform rotate-12">
-          <Globe2 size={240} strokeWidth={0.5} className="text-cyan-400" />
+          <Globe2 size={240} strokeWidth={0.5} className="text-slate-400" />
         </div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_-20%,rgba(34,211,238,0.08),transparent_50%)] pointer-events-none" />
 
         <div className="flex flex-col gap-10 xl:flex-row xl:items-start xl:justify-between relative z-10">
           <div className="flex-1 space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <div className="badge-v2 badge-v2-cyan">
+              <div className="badge-v2 badge-v2-slate">
                 <span className="relative z-10">PREDATOR v11.5 | OSINT-HUB</span>
                 <div className="badge-v2-glimmer" />
               </div>
@@ -468,13 +468,13 @@ export default function MarketPage() {
             <div className="space-y-4">
               <h1 className="flex items-center gap-5 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
                 <div className="relative">
-                  <BarChart3 className="text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" size={52} />
-                  <div className="absolute -inset-2 bg-cyan-400/20 blur-xl rounded-full animate-pulse" />
+                  <BarChart3 className="text-slate-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" size={52} />
+                  <div className="absolute -inset-2 bg-slate-400/20 blur-xl rounded-full animate-pulse" />
                 </div>
                 <span>Ринок</span>
               </h1>
               <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
-                Глобальний моніторинг митних декларацій, стратегічних конкурентів та товарної номенклатури під захистом <span className="text-cyan-400 font-bold border-b border-cyan-400/30">Constitutional Shield</span>.
+                Глобальний моніторинг митних декларацій, стратегічних конкурентів та товарної номенклатури під захистом <span className="text-slate-400 font-bold border-b border-slate-400/30">Constitutional Shield</span>.
               </p>
             </div>
           </div>
@@ -482,8 +482,8 @@ export default function MarketPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
               <div className="flex items-center gap-2 mb-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Core Environment</span>
+                <div className="h-1.5 w-1.5 rounded-full bg-slate-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-slate-400/80 transition-colors">Core Environment</span>
               </div>
               <div className="text-base font-bold text-white tracking-tight">Cybercore P-60</div>
               <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
@@ -523,13 +523,13 @@ export default function MarketPage() {
             <div className="text-xs font-bold text-emerald-200">Перевірено OSINT-Контуром</div>
           </div>
         </div>
-        <div className="flex items-center gap-3 p-4 rounded-2xl border border-cyan-500/10 bg-cyan-500/5">
-          <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+        <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-500/10 bg-slate-500/5">
+          <div className="p-2 rounded-xl bg-slate-500/10 text-slate-400">
             <Activity size={18} />
           </div>
           <div>
             <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Пульс ринку</div>
-            <div className="text-xs font-bold text-cyan-200">Висока активність (v11.5)</div>
+            <div className="text-xs font-bold text-slate-200">Висока активність (v11.5)</div>
           </div>
         </div>
         <div className="flex items-center gap-3 p-4 rounded-2xl border border-amber-500/10 bg-amber-500/5">
@@ -552,7 +552,7 @@ export default function MarketPage() {
               className={cn(
                 'flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold transition-all',
                 activeTab === tab.key
-                  ? 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200'
+                  ? 'border-slate-400/20 bg-slate-500/10 text-slate-200'
                   : 'border-transparent text-slate-300 hover:border-white/[0.08] hover:bg-white/[0.04] hover:text-white',
               )}
             >
@@ -641,9 +641,9 @@ function MarketOverview({
         {(loading ? Array.from({ length: 4 }).map((_, index) => ({ title: `loading-${index}`, value: '', change: '', positive: true, icon: FileText })) : data.cards).map((card, index) => (
           <div
             key={card.title}
-            className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500 hover:border-cyan-500/40"
+            className="stat-card-v2 group relative overflow-hidden rounded-[32px] border border-white/[0.06] bg-black/20 p-6 shadow-2xl transition-all duration-500 hover:border-slate-500/40"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             
             {loading ? (
               <div className="space-y-4 relative z-10">
@@ -654,8 +654,8 @@ function MarketOverview({
             ) : (
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:scale-110 transition-transform duration-500">
-                    <card.icon className="h-6 w-6 text-cyan-300" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-400/20 bg-slate-500/10 shadow-[0_0_15px_rgba(34,211,238,0.1)] group-hover:scale-110 transition-transform duration-500">
+                    <card.icon className="h-6 w-6 text-slate-300" />
                   </div>
                   <div
                     className={cn(
@@ -671,15 +671,15 @@ function MarketOverview({
                 </div>
                 
                 <div className="space-y-1.5">
-                  <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 group-hover:text-cyan-400/60 transition-colors duration-300">{card.title}</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 group-hover:text-slate-400/60 transition-colors duration-300">{card.title}</div>
                   <div className="flex items-baseline gap-2">
-                    <div className="text-4xl font-black tracking-tight text-white drop-shadow-sm group-hover:text-cyan-50 transition-colors duration-300">{card.value}</div>
+                    <div className="text-4xl font-black tracking-tight text-white drop-shadow-sm group-hover:text-slate-50 transition-colors duration-300">{card.value}</div>
                   </div>
                 </div>
               </div>
             )}
             
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-slate-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           </div>
         ))}
       </div>
@@ -715,7 +715,7 @@ function MarketOverview({
                   transition={{ delay: index * 0.04 }}
                   className="text-sm transition-colors hover:bg-white/[0.03]"
                 >
-                  <td className="px-6 py-4 font-mono font-bold text-cyan-200">
+                  <td className="px-6 py-4 font-mono font-bold text-slate-200">
                     {loading ? <div className="h-4 w-16 animate-pulse rounded bg-white/[0.06]" /> : product.code}
                   </td>
                   <td className="px-6 py-4 text-slate-200">
@@ -747,7 +747,7 @@ function MarketOverview({
                         size="sm"
                         variant="ghost"
                         onClick={() => onSimulateValue(product.name)}
-                        className="h-8 border border-cyan-500/20 bg-cyan-500/5 text-cyan-200 hover:bg-cyan-500/20"
+                        className="h-8 border border-slate-500/20 bg-slate-500/5 text-slate-200 hover:bg-slate-500/20"
                       >
                         Аналіз ROI
                       </Button>
@@ -820,7 +820,7 @@ function DeclarationsTab({
                       <div className="mt-1 text-xs text-slate-500">{declaration.company_edrpou || '—'}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-mono font-bold text-cyan-200">{declaration.product_code}</div>
+                      <div className="font-mono font-bold text-slate-200">{declaration.product_code}</div>
                       <div className="mt-1 text-xs text-slate-500">
                         {declaration.product_name || 'Назва товару відсутня'}
                       </div>
@@ -890,7 +890,7 @@ function CompetitorsTab({
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-black text-cyan-200">
+                    <div className="text-lg font-black text-slate-200">
                       {(competitor.total_value_usd / 1_000_000).toFixed(1)}M
                     </div>
                     <div className="mt-1 text-[11px] text-slate-500">
@@ -909,9 +909,9 @@ function CompetitorsTab({
       </div>
 
       <div className="space-y-4">
-        <div className="rounded-[28px] border border-cyan-400/14 bg-cyan-500/8 p-5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/18 bg-cyan-500/10">
-            <Radar className="h-5 w-5 text-cyan-200" />
+        <div className="rounded-[28px] border border-slate-400/14 bg-slate-500/8 p-5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-400/18 bg-slate-500/10">
+            <Radar className="h-5 w-5 text-slate-200" />
           </div>
           <h4 className="mt-4 text-lg font-black text-white">Що корисного на вкладці</h4>
           <p className="mt-2 text-sm leading-6 text-slate-300">
