@@ -1298,3 +1298,36 @@ tbody tr:hover {
     box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
 }
 
+
+/* === PREMIUM DATA STREAM OVERLAY === */
+@keyframes op-data-stream {
+  0% { transform: translateY(-100%) scaleY(0.5); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(100vh) scaleY(1.5); opacity: 0; }
+}
+
+.op-data-streams {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.op-stream {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 15vh;
+  background: linear-gradient(to bottom, transparent, var(--op-primary), var(--op-glow), transparent);
+  animation: op-data-stream linear infinite;
+  opacity: 0;
+}
+
+.op-stream:nth-child(1) { left: 10%; animation-duration: 4s; animation-delay: 0s; }
+.op-stream:nth-child(2) { left: 25%; animation-duration: 3s; animation-delay: 1.5s; width: 2px; }
+.op-stream:nth-child(3) { left: 45%; animation-duration: 5s; animation-delay: 0.7s; }
+.op-stream:nth-child(4) { left: 65%; animation-duration: 2.5s; animation-delay: 2.1s; }
+.op-stream:nth-child(5) { left: 85%; animation-duration: 4.5s; animation-delay: 0.3s; width: 2px; }
+.op-stream:nth-child(6) { left: 95%; animation-duration: 6s; animation-delay: 1.1s; }

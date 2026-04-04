@@ -220,7 +220,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
       onClick={onClose}
     >
       <div
-        className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-2xl shadow-[0_0_100px_rgba(0,243,255,0.15)] flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-300 panel-3d overflow-hidden ${matrixMode ? 'bg-black border-cyan-500/50' : 'bg-[#010409] border-cyan-500/20'}`}
+        className={`w-full h-[100dvh] md:h-auto md:max-w-4xl border rounded-2xl shadow-[0_0_100px_var(--op-glow)] flex flex-col md:max-h-[700px] mt-0 md:mt-16 transition-all duration-500 terminal-card overflow-hidden ${matrixMode ? 'bg-black border-[var(--op-primary)]' : 'bg-[var(--op-bg-panel)] border-[var(--op-border)]'}`}
         onClick={e => e.stopPropagation()}
       >
         <div className="hud-corner-nexus hud-corner-tl" />

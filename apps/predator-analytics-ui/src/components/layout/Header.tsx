@@ -54,10 +54,10 @@ const Header: React.FC = () => {
   const shellV2Enabled = isShellV2Enabled();
 
   return (
-    <header className="tactical-header sticky top-0 z-40 border-b border-cyan-500/10 shadow-[0_32px_64px_-12px_rgba(2,6,23,0.8)]">
+    <header className="tactical-header sticky top-0 z-40 border-b border-[var(--op-border)] shadow-[0_32px_64px_-12px_var(--op-bg)] transition-colors duration-500">
       <div className="mx-auto grid max-w-[1920px] gap-6 px-2 sm:px-4 lg:px-6 py-4 xl:grid-cols-[1fr_340px] items-start">
-        <div className="surface-panel-strong rounded-[28px] px-6 py-6 border border-cyan-500/10 relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,0.05),transparent)]" />
+        <div className="terminal-card bg-[var(--op-bg-panel)] border-[var(--op-border)] rounded-[28px] px-6 py-6 relative overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_var(--op-glow)]">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,var(--op-primary)_0%,transparent)] opacity-10 transition-colors duration-500" />
           <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
             <span className={cn('rounded-full border px-2.5 py-1', accent.badge)}>
               {section?.label ?? 'Робочий простір'}

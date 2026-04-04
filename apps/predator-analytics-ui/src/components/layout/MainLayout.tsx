@@ -53,8 +53,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       className="relative flex min-h-screen overflow-hidden bg-[var(--shell-bg)] text-foreground op-mode-transition"
     >
       {/* ── Багатошаровий ambient-фон ── */}
-      {/* Шар 1: основні радіальні градієнти */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_10%,rgba(245,158,11,0.14),transparent_24%),radial-gradient(circle_at_90%_14%,rgba(34,211,238,0.12),transparent_26%),linear-gradient(180deg,rgba(4,8,16,0.98),rgba(5,10,19,0.96))]" />
+      {/* Шар 1: основні радіальні градієнти, адаптовані під operational mode */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_10%,var(--op-primary)_0%,transparent_24%),radial-gradient(circle_at_90%_14%,var(--op-glow)_0%,transparent_26%),linear-gradient(180deg,var(--op-bg)_0%,var(--op-bg-panel)_100%)] opacity-20" />
       {/* Шар 2: тактична сітка */}
       <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
       {/* Шар 3: бічна тінь для глибини sidebar */}
@@ -65,6 +65,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,rgba(2,6,23,0.40),transparent)]" />
       {/* Шар 6: операційний scanline */}
       <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
+      
+      {/* ── PREMIUM Шар 7: потоки даних (Matrix-like streams) ── */}
+      <div className="op-data-streams">
+        <div className="op-stream"></div>
+        <div className="op-stream"></div>
+        <div className="op-stream"></div>
+        <div className="op-stream"></div>
+        <div className="op-stream"></div>
+        <div className="op-stream"></div>
+      </div>
 
       {/* ── Адаптивний сайдбар ── */}
       {isMobile ? (
