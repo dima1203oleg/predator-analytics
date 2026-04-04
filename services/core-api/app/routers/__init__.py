@@ -40,6 +40,7 @@ from .graph import router as graph_router
 from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router
 from .maritime import router as maritime_router
+from .ml_studio import router as ml_studio_router
 from .newspaper import router as newspaper_router
 from .optimizer import router as optimizer_router
 from .osint import router as osint_router
@@ -52,10 +53,9 @@ from .registries_ui import router as registries_ui_router
 from .risk import router as risk_router
 from .search import router as search_router
 from .som import router as som_router
-from .warroom import router as warroom_router
-from .ml_studio import router as ml_studio_router
 from .system import router as system_router
 from .system import stats_router
+from .warroom import router as warroom_router
 
 __all__ = [
     "alerts_router",
@@ -72,6 +72,7 @@ __all__ = [
     "ingestion_router",
     "intelligence_router",
     "maritime_router",
+    "ml_studio_router",
     "newspaper_router",
     "optimizer_router",
     "osint_router",
@@ -84,8 +85,7 @@ __all__ = [
     "risk_router",
     "search_router",
     "som_router",
-    "warroom_router",
-    "ml_studio_router",
-    "system_router",
     "stats_router",
+    "system_router",
+    "warroom_router",
 ]

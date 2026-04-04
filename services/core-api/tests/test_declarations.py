@@ -1,12 +1,15 @@
-import pytest
 from datetime import date
-from httpx import ASGITransport, AsyncClient
 from unittest.mock import AsyncMock, MagicMock
-from app.main import app
-from app.database import get_db
+
+from httpx import ASGITransport, AsyncClient
+import pytest
+
 from app.core.security import get_current_user_payload
+from app.database import get_db
 from app.dependencies import get_tenant_id
-from app.models.orm import CustomsDeclaration, Company
+from app.main import app
+from app.models.orm import CustomsDeclaration
+
 
 @pytest.fixture
 async def async_client():
@@ -54,15 +57,15 @@ async def test_search_declarations_success(async_client, mock_db, mock_user):
     # Mock DB result for all()
     mock_result_set = MagicMock()
     mock_result_set.all.return_value = [mock_row]
-    
+
     # Mock result for count query
     mock_count_res = MagicMock()
     mock_count_res.scalar.return_value = 1
-    
+
     mock_db.execute.side_effect = [mock_count_res, mock_result_set]
 
     response = await async_client.get("/api/v1/declarations", params={"search": "100000001"})
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "data" in data
@@ -81,14 +84,14 @@ async def test_search_declarations_empty(async_client, mock_db, mock_user):
 
     mock_result_set = MagicMock()
     mock_result_set.all.return_value = []
-    
+
     mock_count_res = MagicMock()
     mock_count_res.scalar.return_value = 0
-    
+
     mock_db.execute.side_effect = [mock_count_res, mock_result_set]
 
     response = await async_client.get("/api/v1/declarations", params={"search": "NONEXISTENT"})
-    
+
     assert response.status_code == 200
     data = response.json()
     assert len(data["data"]) == 0

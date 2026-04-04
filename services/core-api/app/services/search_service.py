@@ -2,10 +2,10 @@
 
 Vector search (LanceDB) and full-text search (PostgreSQL/OpenSearch).
 """
-from typing import Any
 import logging
+from typing import Any
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.orm import Company
@@ -29,7 +29,7 @@ class SearchService:
             .limit(limit)
         )
         companies = result.scalars().all()
-        
+
         # TODO: Додати vector embedding з LanceDB для ребранкування результатів
         # Коли LanceDB буде інтегрований, відсортувати за семантичною близькістю
         return companies
@@ -47,15 +47,15 @@ class SearchService:
             stmt = select(Company).where(Company.ueid == ueid)
             result = await db.execute(stmt)
             company = result.scalars().first()
-            
+
             if not company:
                 logger.warning(f"Company not found for UEID: {ueid}")
                 return []
-            
+
             # TODO: Vector similarity query via LanceDB
             # Коли LanceDB готовий, використовувати embedding коompany.description
             # та шукати найближчі вектори в K-NN індексі
-            
+
             # Тимчасова реалізація: пошук схожих за галуззю
             stmt = select(Company).where(
                 (Company.industry == company.industry) &
@@ -63,7 +63,7 @@ class SearchService:
             ).limit(limit)
             result = await db.execute(stmt)
             similar = result.scalars().all()
-            
+
             return [
                 {
                     "id": c.id,
@@ -90,7 +90,7 @@ class SearchService:
             filters = []
             for keyword in keywords:
                 filters.append(Company.name.ilike(f"%{keyword}%"))
-            
+
             from sqlalchemy import or_
             stmt = select(Company).where(or_(*filters)).limit(limit)
             result = await db.execute(stmt)

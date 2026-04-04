@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 import logging
-from typing import Any, Dict # Додано Dict для більш точної типізації
+from typing import Any  # Додано Dict для більш точної типізації
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ class CompetitorsAnalysisService:
         # Mock дані для демонстрації
         self.companies_db = self._init_mock_companies()
 
-    def _init_mock_companies(self) -> Dict[str, CompanyProfile]: # Властивості словника можуть бути довільними
+    def _init_mock_companies(self) -> dict[str, CompanyProfile]: # Властивості словника можуть бути довільними
         """Ініціалізація mock даних компаній."""
         return {
             "12345678": CompanyProfile(
@@ -537,7 +537,7 @@ class CompetitorsAnalysisService:
         self,
         edrpou1: str,
         edrpou2: str,
-    ) -> Dict[str, Any]: # Властивості словника можуть бути довільними
+    ) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Порівняти дві компанії."""
         company1 = self.companies_db.get(edrpou1)
         company2 = self.companies_db.get(edrpou2)

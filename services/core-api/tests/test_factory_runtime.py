@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable, Generator
 from datetime import UTC, datetime
-from fastapi import FastAPI
 from unittest.mock import AsyncMock
 
+from fastapi import FastAPI
 import pytest
 
 from app.models.factory import ImprovementPhase, SystemImprovement

@@ -1,9 +1,11 @@
-import pytest
+
 from httpx import ASGITransport, AsyncClient
-from unittest.mock import AsyncMock, patch
-from app.main import app
+import pytest
+
 from app.core.security import get_current_user_payload
 from app.dependencies import get_tenant_id
+from app.main import app
+
 
 @pytest.fixture
 async def async_client():
@@ -37,7 +39,7 @@ async def test_calculate_aml_score_success(async_client, mock_user):
     }
 
     response = await async_client.post("/api/v1/analytics/aml/score", json=payload)
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["entity_id"] == "12345678"

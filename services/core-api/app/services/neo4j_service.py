@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 import os
-from typing import Any, Dict # Додано Dict для більш точної типізації
+from typing import Any  # Додано Dict для більш точної типізації
 
 from neo4j import AsyncDriver, AsyncGraphDatabase, AsyncSession
 from neo4j.exceptions import AuthError, ServiceUnavailable
@@ -167,7 +167,7 @@ class Neo4jService:
         labels = [node.type.value, *node.labels]
         labels_str = ":".join(labels)
 
-        props: Dict[str, Any] = {**node.properties, "name": node.name, "node_id": node.id} # Властивості словника можуть бути довільними
+        props: dict[str, Any] = {**node.properties, "name": node.name, "node_id": node.id} # Властивості словника можуть бути довільними
         props["created_at"] = datetime.now(UTC).isoformat()
 
         query = f"""
@@ -200,7 +200,7 @@ class Neo4jService:
             record = await result.single()
 
             if record:
-                node_data: Dict[str, Any] = dict(record["n"]) # Властивості словника можуть бути довільними
+                node_data: dict[str, Any] = dict(record["n"]) # Властивості словника можуть бути довільними
                 node_data["labels"] = record["labels"]
                 return GraphResult(success=True, nodes=[node_data])
 
@@ -215,7 +215,7 @@ class Neo4jService:
     ) -> GraphResult:
         """Пошук вузлів."""
         conditions = []
-        params: Dict[str, Any] = {"limit": limit} # Властивості словника можуть бути довільними
+        params: dict[str, Any] = {"limit": limit} # Властивості словника можуть бути довільними
 
         label = node_type.value if node_type else ""
 
@@ -478,9 +478,9 @@ class Neo4jService:
         status: str | None = None,
         address: str | None = None,
         kved: str | None = None,
-        founders: list[Dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
-        managers: list[Dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
-        beneficiaries: list[Dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
+        founders: list[dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
+        managers: list[dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
+        beneficiaries: list[dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
     ) -> GraphResult:
         """Імпорт компанії з ЄДР."""
         # Створюємо вузол компанії
@@ -603,7 +603,7 @@ class Neo4jService:
         case_number: str,
         court: str,
         date: str,
-        parties: list[Dict[str, Any]], # Властивості словника можуть бути довільними
+        parties: list[dict[str, Any]], # Властивості словника можуть бути довільними
         decision: str | None = None,
     ) -> GraphResult:
         """Імпорт судової справи."""
@@ -662,9 +662,9 @@ class Neo4jService:
         self,
         tender_id: str,
         title: str,
-        procuring_entity: Dict[str, Any], # Властивості словника можуть бути довільними
-        participants: list[Dict[str, Any]], # Властивості словника можуть бути довільними
-        winner: Dict[str, Any] | None = None, # Властивості словника можуть бути довільними
+        procuring_entity: dict[str, Any], # Властивості словника можуть бути довільними
+        participants: list[dict[str, Any]], # Властивості словника можуть бути довільними
+        winner: dict[str, Any] | None = None, # Властивості словника можуть бути довільними
         amount: float | None = None,
     ) -> GraphResult:
         """Імпорт тендера з Prozorro."""

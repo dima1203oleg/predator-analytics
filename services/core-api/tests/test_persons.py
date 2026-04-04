@@ -1,13 +1,15 @@
-import pytest
+from unittest.mock import AsyncMock, MagicMock
+
 from httpx import ASGITransport, AsyncClient
-from unittest.mock import AsyncMock, patch, MagicMock
-from app.main import app
+import pytest
+
 from app.core.security import get_current_user_payload
 from app.database import get_db
 from app.dependencies import get_tenant_id
-from app.core.permissions import Permission
+from app.main import app
 from app.models.orm import Person
-from app.models.schemas import RiskLevel, EntityStatus
+from app.models.schemas import EntityStatus, RiskLevel
+
 
 @pytest.fixture
 async def async_client():

@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 import logging
 import math
-from typing import Any, Dict # Додано Dict для більш точної типізації
+from typing import Any  # Додано Dict для більш точної типізації
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ class AnomalyDetectionService:
     def __init__(self) -> None:
         self.known_patterns = self._load_known_patterns()
 
-    def _load_known_patterns(self) -> Dict[PatternType, Dict[str, Any]]: # Властивості словника можуть бути довільними
+    def _load_known_patterns(self) -> dict[PatternType, dict[str, Any]]: # Властивості словника можуть бути довільними
         """Завантаження відомих паттернів шахрайства."""
         return {
             PatternType.VAT_CAROUSEL: {
@@ -277,8 +277,8 @@ class AnomalyDetectionService:
 
     def detect_patterns(
         self,
-        entity_data: Dict[str, Any], # Властивості словника можуть бути довільними
-        transactions: list[Dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
+        entity_data: dict[str, Any], # Властивості словника можуть бути довільними
+        transactions: list[dict[str, Any]] | None = None, # Властивості словника можуть бути довільними
     ) -> list[Anomaly]:
         """Виявлення відомих паттернів шахрайства."""
         anomalies = []
@@ -315,9 +315,9 @@ class AnomalyDetectionService:
     def _check_pattern(
         self,
         pattern_type: PatternType,
-        pattern_info: Dict[str, Any], # Властивості словника можуть бути довільними
-        entity_data: Dict[str, Any], # Властивості словника можуть бути довільними
-        transactions: list[Dict[str, Any]] | None, # Властивості словника можуть бути довільними
+        pattern_info: dict[str, Any], # Властивості словника можуть бути довільними
+        entity_data: dict[str, Any], # Властивості словника можуть бути довільними
+        transactions: list[dict[str, Any]] | None, # Властивості словника можуть бути довільними
     ) -> tuple[float, list[str]]:
         """Перевірка конкретного паттерну."""
         indicators = pattern_info["indicators"]
@@ -333,8 +333,8 @@ class AnomalyDetectionService:
     def _check_indicator(
         self,
         indicator: str,
-        entity_data: Dict[str, Any], # Властивості словника можуть бути довільними
-        transactions: list[Dict[str, Any]] | None, # Властивості словника можуть бути довільними
+        entity_data: dict[str, Any], # Властивості словника можуть бути довільними
+        transactions: list[dict[str, Any]] | None, # Властивості словника можуть бути довільними
     ) -> bool:
         """Перевірка конкретного індикатора."""
         # Циклічні транзакції
@@ -382,7 +382,7 @@ class AnomalyDetectionService:
 
         return False
 
-    def _check_circular_transactions(self, transactions: list[Dict[str, Any]] | None) -> bool: # Властивості словника можуть бути довільними
+    def _check_circular_transactions(self, transactions: list[dict[str, Any]] | None) -> bool: # Властивості словника можуть бути довільними
         """Перевірка на циклічні транзакції."""
         if not transactions or len(transactions) < 3:
             return False
@@ -480,9 +480,9 @@ class AnomalyDetectionService:
 
     def _find_dense_clusters(
         self,
-        entities: list[Dict[str, Any]], # Властивості словника можуть бути довільними
-        relations: list[Dict[str, Any]], # Властивості словника можуть бути довільними
-    ) -> list[Dict[str, Any]]: # Властивості словника можуть бути довільними
+        entities: list[dict[str, Any]], # Властивості словника можуть бути довільними
+        relations: list[dict[str, Any]], # Властивості словника можуть бути довільними
+    ) -> list[dict[str, Any]]: # Властивості словника можуть бути довільними
         """Пошук щільних кластерів."""
         # Спрощена реалізація — в реальності використовується Louvain або Label Propagation
         clusters = []
@@ -531,9 +531,9 @@ class AnomalyDetectionService:
 
     def _find_hubs(
         self,
-        entities: list[Dict[str, Any]], # Властивості словника можуть бути довільними
-        relations: list[Dict[str, Any]], # Властивості словника можуть бути довільними
-    ) -> list[Dict[str, Any]]: # Властивості словника можуть бути довільними
+        entities: list[dict[str, Any]], # Властивості словника можуть бути довільними
+        relations: list[dict[str, Any]], # Властивості словника можуть бути довільними
+    ) -> list[dict[str, Any]]: # Властивості словника можуть бути довільними
         """Пошук хабів (вузлів з великою кількістю зв'язків)."""
         degree_count = defaultdict(int)
         connections = defaultdict(list)
@@ -562,7 +562,7 @@ class AnomalyDetectionService:
 
         return hubs
 
-    def _find_shared_attributes(self, entities: list[Dict[str, Any]]) -> list[Dict[str, Any]]: # Властивості словника можуть бути довільними
+    def _find_shared_attributes(self, entities: list[dict[str, Any]]) -> list[dict[str, Any]]: # Властивості словника можуть бути довільними
         """Пошук спільних атрибутів."""
         # Групуємо за адресою
         by_address = defaultdict(list)

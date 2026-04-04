@@ -1,5 +1,7 @@
 from typing import Annotated, Any
+
 from fastapi import APIRouter, Depends
+
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
 

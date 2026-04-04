@@ -4,8 +4,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from enum import StrEnum
 import logging
-import os
-from typing import Any, Dict # Додано Dict для більш точної типізації
+from typing import Any  # Додано Dict для більш точної типізації
 
 import httpx
 
@@ -276,23 +275,23 @@ class UkraineRegistriesService:
         self.edr_api_key = settings.EDR_API_KEY
         self.court_api_key = settings.COURT_API_KEY
         self.dps_api_key = settings.DPS_API_KEY
-        
+
         self.edr_api_url = "https://nais.gov.ua/api/edr" # Example Prod URL
         self.court_api_url = "https://court.gov.ua/api/v1"
         self.prozorro_api_url = settings.PROZORRO_API_URL
         self.dps_api_url = "https://cabinet.tax.gov.ua/api"
 
-    async def get_registries_status(self) -> Dict[str, Any]: # Властивості словника можуть бути довільними
+    async def get_registries_status(self) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Отримати статус підключення до всіх реєстрів у форматі для UI."""
         edr_status = "online" if self.edr_api_key and "mock" not in self.edr_api_key.lower() else "mock"
         court_status = "online" if self.court_api_key and "mock" not in self.court_api_key.lower() else "mock"
-        
+
         categories = [
             {
-                "id": "EDR", 
-                "name": "Реєстрація юросіб", 
-                "icon": "Building2", 
-                "color": "#3b82f6", 
+                "id": "EDR",
+                "name": "Реєстрація юросіб",
+                "icon": "Building2",
+                "color": "#3b82f6",
                 "count": 4,
                 "registries": [
                     { "id": "edr", "name": "ЄДР — Юридичні особи", "status": edr_status, "records": "1.4M", "lastSync": "2хв тому", "api": "REST", "latency": 45 },
@@ -302,10 +301,10 @@ class UkraineRegistriesService:
                 ]
             },
             {
-                "id": "TAX", 
-                "name": "Податкова система", 
-                "icon": "Receipt", 
-                "color": "#ef4444", 
+                "id": "TAX",
+                "name": "Податкова система",
+                "icon": "Receipt",
+                "color": "#ef4444",
                 "count": 4,
                 "registries": [
                     { "id": "erpn", "name": "ЄРПН (ПДВ)", "status": "online", "records": "520K", "lastSync": "3хв тому", "api": "REST", "latency": 70 },
@@ -315,10 +314,10 @@ class UkraineRegistriesService:
                 ]
             },
             {
-                "id": "COURT", 
-                "name": "Судова система", 
-                "icon": "Scale", 
-                "color": "#8b5cf6", 
+                "id": "COURT",
+                "name": "Судова система",
+                "icon": "Scale",
+                "color": "#8b5cf6",
                 "count": 3,
                 "registries": [
                     { "id": "court-decisions", "name": "Судові рішення", "status": court_status, "records": "110M", "lastSync": "4хв тому", "api": "REST", "latency": 150 },
@@ -327,10 +326,10 @@ class UkraineRegistriesService:
                 ]
             },
             {
-                "id": "MVS", 
-                "name": "МВС та Транспорт", 
-                "icon": "Car", 
-                "color": "#10b981", 
+                "id": "MVS",
+                "name": "МВС та Транспорт",
+                "icon": "Car",
+                "color": "#10b981",
                 "count": 2,
                 "registries": [
                     { "id": "vehicles", "name": "Транспортні засоби", "status": "online", "records": "9.5M", "lastSync": "20хв тому", "api": "REST", "latency": 130 },
@@ -339,7 +338,7 @@ class UkraineRegistriesService:
             }
         ]
 
-        all_registries: list[Dict[str, Any]] = [] # Властивості словника можуть бути довільними
+        all_registries: list[dict[str, Any]] = [] # Властивості словника можуть бути довільними
         for cat in categories:
             reg_list = cat.get("registries", [])
             if isinstance(reg_list, list):
@@ -652,7 +651,7 @@ class UkraineRegistriesService:
 
     # ======================== КОМПЛЕКСНЕ РОЗСЛІДУВАННЯ ========================
 
-    async def investigate_company(self, edrpou: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
+    async def investigate_company(self, edrpou: str) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне розслідування компанії."""
         company = await self.get_company(edrpou)
         vat = await self.check_vat_status(edrpou)
@@ -710,7 +709,7 @@ class UkraineRegistriesService:
             },
         }
 
-    async def investigate_person(self, rnokpp: str, name: str) -> Dict[str, Any]: # Властивості словника можуть бути довільними
+    async def investigate_person(self, rnokpp: str, name: str) -> dict[str, Any]: # Властивості словника можуть бути довільними
         """Повне розслідування фізичної особи."""
         sanctions = await self.check_sanctions(name, rnokpp=rnokpp)
         real_estate = await self.search_real_estate(owner_rnokpp=rnokpp)

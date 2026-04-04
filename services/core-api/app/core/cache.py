@@ -1,12 +1,12 @@
 """Cache Core — Декоратор для кешування відповідей FastAPI в Redis.
 Покращує продуктивність аналітичних ендпоїнтів.
 """
+from collections.abc import Callable
 import functools
 import hashlib
-from typing import Any, Callable, TypeVar, ParamSpec
+from typing import ParamSpec, TypeVar
 
 from fastapi import Request
-from pydantic import BaseModel
 from pydantic_core import to_jsonable_python
 
 from app.services.redis_service import get_redis_service
@@ -17,10 +17,7 @@ logger = get_logger("core.cache")
 P = ParamSpec("P")
 R = TypeVar("R")
 
-from fastapi import Request
-from pydantic import BaseModel
 
-from app.services.redis_service import get_redis_service
 from predator_common.logging import get_logger
 
 logger = get_logger("core.cache")
@@ -84,13 +81,13 @@ def _generate_cache_key(request: Request, prefix: str, func_name: str) -> str:
     """Генерує детермінований ключ кешу на основі параметрів запиту."""
     path = request.url.path
     query_params = str(sorted(request.query_params.items()))
-    
+
     # TODO: Додати хешування тіла запиту, якщо воно є, для POST/PUT/PATCH запитів.
     # Наразі кешуємо тільки GET запити.
-    
+
     # Створюємо хеш від параметрів
     key_content = f"{func_name}:{path}:{query_params}"
     key_hash = hashlib.md5(key_content.encode()).hexdigest()
-    
+
     return f"{prefix}:{key_hash}"
 

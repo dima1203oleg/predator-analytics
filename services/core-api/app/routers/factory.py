@@ -2,24 +2,22 @@
 Endpoints для інгестії, звітів, OODA циклу автономного вдосконалення
 """
 
-from datetime import datetime, UTC
+import asyncio
+from datetime import UTC, datetime
 import logging
 import random
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 
-import asyncio
-from app.services.redis_service import get_redis_service
 from app.models.factory import (
     Bug,
-    BugStatus,
     BugSeverity,
+    BugStatus,
     ComponentType,
     FactoryStats,
     ImprovementPhase,
     Pattern,
-    PatternType,
     PipelineResult,
     SystemImprovement,
 )
@@ -34,6 +32,7 @@ from app.services.factory_scorer import (
     is_gold_pattern,
     should_create_pattern,
 )
+from app.services.redis_service import get_redis_service
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/factory", tags=["factory"])
@@ -227,15 +226,15 @@ async def _simulate_bug_fix(bug_id: str, repo: FactoryRepository):
     await asyncio.sleep(2)
     await repo.update_bug_status(bug_id, BugStatus.FIXING, 25)
     await repo.add_factory_log(f"Початок аналізу коду для бага {bug_id}", "system", "info")
-    
+
     await asyncio.sleep(2)
     await repo.update_bug_status(bug_id, BugStatus.FIXING, 50)
     await repo.add_factory_log(f"Генерація патчу для бага {bug_id}", "system", "info")
-    
+
     await asyncio.sleep(2)
     await repo.update_bug_status(bug_id, BugStatus.FIXING, 75)
     await repo.add_factory_log(f"Запуск тестів для бага {bug_id}", "system", "info")
-    
+
     await asyncio.sleep(3)
     await repo.update_bug_status(bug_id, BugStatus.RESOLVED, 100)
     await repo.add_factory_log(f"Баг {bug_id} успішно виправлено та перевірено", "system", "success")
@@ -358,7 +357,7 @@ async def _run_ooda_task(driver) -> None:
 
     while True:
         try:
-            # Спробуємо отримати статус. Якщо репозиторій повертає помилку (напр. Neo4j down), 
+            # Спробуємо отримати статус. Якщо репозиторій повертає помилку (напр. Neo4j down),
             # ми НЕ зупиняємо цикл, а використовуємо останній відомий стан або імітуємо "Running"
             try:
                 status = await repo.get_improvement()
@@ -380,7 +379,7 @@ async def _run_ooda_task(driver) -> None:
             # 2-3 рядки спостереження
             for tpl in random.sample(_OBSERVE_TEMPLATES, k=random.randint(2, 3)):
                 status.logs.append(f"[{ts()}] 🔍 OBSERVE: {_fmt(tpl)}")
-            
+
             try:
                 await repo.update_improvement(status)
             except Exception:

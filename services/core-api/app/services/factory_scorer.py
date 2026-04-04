@@ -1,14 +1,12 @@
-"""
-PREDATOR Factory Core — Scorer логіка
+"""PREDATOR Factory Core — Scorer логіка
 Розраховує Score для паттернів
 """
 
-from app.models.factory import Metrics, PipelineResult
+from app.models.factory import Metrics
 
 
 def calculate_score(metrics: Metrics) -> float:
-    """
-    Комплексна оцінка якості на основі метрик.
+    """Комплексна оцінка якості на основі метрик.
     
     Вагові коефіцієнти:
     - coverage: 20% (охоплення тестами)
@@ -19,6 +17,7 @@ def calculate_score(metrics: Metrics) -> float:
     
     Returns:
         float: Оцінка від 0 до 100
+
     """
     score = (
         metrics.coverage * 0.20 +
@@ -46,8 +45,6 @@ def classify_pattern_type(metrics: Metrics) -> str:
         return "performance"
     elif metrics.chaos_resilience > 85:
         return "stability"
-    elif metrics.pass_rate > 95:
-        return "integration"
-    elif metrics.business_kpi > 90:
+    elif metrics.pass_rate > 95 or metrics.business_kpi > 90:
         return "integration"
     return "other"

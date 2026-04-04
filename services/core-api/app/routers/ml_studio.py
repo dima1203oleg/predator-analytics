@@ -1,10 +1,10 @@
 """ML Studio Router — Управління тренуванням, моніторингом та LoRA адаптацією.
 """
 from datetime import UTC, datetime
-from typing import Any, Dict, List
 import random
+from typing import Any
 
-from fastapi import APIRouter, Body, Depends, Query, HTTPException
+from fastapi import APIRouter, Body, Depends, Query
 from pydantic import BaseModel, Field
 
 from app.core.permissions import Permission
@@ -22,7 +22,7 @@ class LoraConfigRequest(BaseModel):
     dataset_id: str = Field(..., description="ID датасету для навчання")
     rank: int = Field(default=8, ge=1, le=128, description="LoRA Rank (r)")
     alpha: int = Field(default=16, ge=1, le=256, description="LoRA Alpha")
-    target_modules: List[str] = Field(default_factory=lambda: ["q_proj", "v_proj"])
+    target_modules: list[str] = Field(default_factory=lambda: ["q_proj", "v_proj"])
     epochs: int = Field(default=3, ge=1, le=50)
     batch_size: int = Field(default=4, ge=1, le=64)
 
@@ -31,8 +31,8 @@ class MLRunInfo(BaseModel):
     experiment_name: str
     status: str
     start_time: datetime
-    metrics: Dict[str, float]
-    params: Dict[str, Any]
+    metrics: dict[str, float]
+    params: dict[str, Any]
 
 # ======================== ENDPOINTS ========================
 
@@ -71,7 +71,7 @@ async def get_ml_status(
         ]
     }
 
-@router.get("/runs", response_model=List[MLRunInfo], summary="Останні запуски MLflow")
+@router.get("/runs", response_model=list[MLRunInfo], summary="Останні запуски MLflow")
 async def get_mlflow_runs(
     limit: int = Query(default=10, ge=1, le=100),
     tenant_id: str = Depends(get_tenant_id),
@@ -98,10 +98,10 @@ async def start_lora_training(
 ):
     """Ініціалізація донавчання моделі через LoRA адаптери."""
     logger.info(f"Starting LoRA training for {config.model_name} on dataset {config.dataset_id}")
-    
+
     # Тут запускається Kubernetes Job або викликається Training Controller
     job_id = f"lora_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
+
     return {
         "status": "accepted",
         "job_id": job_id,

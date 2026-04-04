@@ -1,10 +1,11 @@
-import pytest
+
 from httpx import ASGITransport, AsyncClient
-from unittest.mock import AsyncMock, patch
-from app.main import app
+import pytest
+
 from app.core.security import get_current_user_payload
 from app.dependencies import get_tenant_id
-from app.services.ukraine_registries import UkraineRegistriesService, Company, CompanyStatus, Address
+from app.main import app
+
 
 @pytest.fixture
 async def async_client():
@@ -24,7 +25,7 @@ def mock_user():
 async def test_get_edr_company_success(async_client, mock_user):
     app.dependency_overrides[get_current_user_payload] = lambda: mock_user
     app.dependency_overrides[get_tenant_id] = lambda: "test-tenant"
-    
+
     # Permission check mock
     from app.dependencies import PermissionChecker
     app.dependency_overrides[PermissionChecker] = lambda *args, **kwargs: lambda: True

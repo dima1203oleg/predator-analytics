@@ -1,12 +1,12 @@
-from datetime import UTC, datetime, timedelta
-from typing import Any
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies import get_tenant_id
-from predator_common.models import Company, Declaration, RiskScore, Alert, Anomaly
+from predator_common.models import Alert, Anomaly, Company, Declaration, RiskScore
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -16,7 +16,6 @@ async def get_dashboard_overview(
     db: AsyncSession = Depends(get_db),
 ):
     """Повертає консолідовані дані для головної панелі PREDATOR Analytics v56.1.4."""
-    
     # 1. Загальна статистика (SQLAlchemy)
     companies_count = await db.scalar(select(func.count()).select_from(Company)) or 0
     declarations_count = await db.scalar(select(func.count()).select_from(Declaration)) or 0
@@ -24,15 +23,15 @@ async def get_dashboard_overview(
         select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 80)
     ) or 0
     medium_risk_count = 156 # Mock
-    
+
     # 2. Останні алерти
     last_alerts = (await db.execute(
         select(Alert).order_by(Alert.created_at.desc()).limit(10)
     )).scalars().all()
-    
+
     # 3. Аномалії
     anomalies_count = await db.scalar(select(func.count()).select_from(Anomaly)) or 0
-    
+
     # 4. Формуємо структуру DashboardOverview згідно з UI v56.1.4
     return {
         "summary": {

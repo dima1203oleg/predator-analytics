@@ -1,5 +1,7 @@
-from typing import Annotated, Any
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Query
+
 from app.dependencies import get_tenant_id
 from app.services.ukraine_registries import UkraineRegistriesService
 
@@ -26,7 +28,7 @@ async def search_registries_ui(
                         "address": company.address.full if company.address else None
                     }]
                 }
-        
+
         # Інакше повнотекстовий пошук за назвою
         companies, total = await service.search_companies(name=q, limit=20)
         return {
@@ -55,7 +57,7 @@ async def get_company_details_ui(
         company = await service.get_company(edrpou)
         if not company:
             return {"error": "Компанію не знайдено"}
-            
+
         return {
             "edrpou": company.edrpou,
             "name": company.name,

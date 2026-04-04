@@ -178,7 +178,7 @@ async def get_influence_metrics(
         """
         pr_result = await graph_db.run_query(pagerank_query, {"ueid": ueid})
         score = pr_result[0]['score'] if pr_result else 0.5
-        
+
         return {
             "centrality": round(score, 4),
             "closeness": 0.72,

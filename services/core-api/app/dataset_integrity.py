@@ -1,6 +1,4 @@
-import os
 import logging
-from typing import List, Dict
 
 # Placeholder imports – replace with actual DB clients in production
 # from sqlalchemy.ext.asyncio import create_async_engine
@@ -50,37 +48,37 @@ EXPECTED_MINIO_BUCKETS = {
     "processed-data": {"policy": "private"},
 }
 
-def run_query(query: str) -> List[Dict]:
+def run_query(query: str) -> list[dict]:
     """Placeholder for executing a query against a DB and returning rows as dicts."""
     logger.debug(f"Running query: {query}")
     return []
 
-def check_postgres_fk() -> List[str]:
-    errors: List[str] = []
+def check_postgres_fk() -> list[str]:
+    errors: list[str] = []
     for table, col, ref_table, ref_col in EXPECTED_POSTGRES_FK:
         q = f"SELECT 1 FROM {table} t LEFT JOIN {ref_table} r ON t.{col}=r.{ref_col} WHERE r.{ref_col} IS NULL LIMIT 1"
         if run_query(q):
             errors.append(f"Foreign key violation: {table}.{col} -> {ref_table}.{ref_col}")
     return errors
 
-def check_postgres_rls() -> List[str]:
-    errors: List[str] = []
+def check_postgres_rls() -> list[str]:
+    errors: list[str] = []
     for tbl in EXPECTED_POSTGRES_RLS:
         q = f"SELECT relname FROM pg_class WHERE relname = '{tbl}' AND relrowsecurity = true"
         if not run_query(q):
             errors.append(f"RLS not enabled on table {tbl}")
     return errors
 
-def check_postgres_indexes() -> List[str]:
-    errors: List[str] = []
+def check_postgres_indexes() -> list[str]:
+    errors: list[str] = []
     for tbl, col in EXPECTED_POSTGRES_INDEXES:
         q = f"SELECT indexname FROM pg_indexes WHERE tablename = '{tbl}' AND indexdef LIKE '%({col})%'"
         if not run_query(q):
             errors.append(f"Missing index on {tbl}({col})")
     return errors
 
-def check_clickhouse_partitions() -> List[str]:
-    errors: List[str] = []
+def check_clickhouse_partitions() -> list[str]:
+    errors: list[str] = []
     for tbl, expr in EXPECTED_CLICKHOUSE_PARTITIONS.items():
         q = f"SHOW CREATE TABLE {tbl}"
         rows = run_query(q)
@@ -88,27 +86,27 @@ def check_clickhouse_partitions() -> List[str]:
             errors.append(f"Partition expression '{expr}' missing in ClickHouse table {tbl}")
     return errors
 
-def check_neo4j_constraints() -> List[str]:
-    errors: List[str] = []
+def check_neo4j_constraints() -> list[str]:
+    errors: list[str] = []
     # Placeholder – in production query db.constraints()
     return errors
 
-def check_opensearch_indices() -> List[str]:
-    errors: List[str] = []
+def check_opensearch_indices() -> list[str]:
+    errors: list[str] = []
     # Placeholder – in production client.indices.get_settings()
     return errors
 
-def check_qdrant_collections() -> List[str]:
-    errors: List[str] = []
+def check_qdrant_collections() -> list[str]:
+    errors: list[str] = []
     # Placeholder – in production client.get_collection()
     return errors
 
-def check_minio_buckets() -> List[str]:
-    errors: List[str] = []
+def check_minio_buckets() -> list[str]:
+    errors: list[str] = []
     # Placeholder – in production client.list_buckets()
     return errors
 
-def run_all_checks() -> Dict[str, List[str]]:
+def run_all_checks() -> dict[str, list[str]]:
     return {
         "postgres_fk": check_postgres_fk(),
         "postgres_rls": check_postgres_rls(),

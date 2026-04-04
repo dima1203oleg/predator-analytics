@@ -1,7 +1,6 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
-from typing import Type
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -22,10 +21,6 @@ from app.core.middleware_optimization import (
     SecurityHeadersMiddleware,
 )
 from app.database import close_db, init_db
-from app.services.factory_runtime import (
-    cancel_factory_improvement_task,
-    ensure_factory_improvement_task,
-)
 
 # Імпортуємо всі роутери через __init__.py
 from app.routers import (
@@ -43,6 +38,7 @@ from app.routers import (
     ingestion_router,
     intelligence_router,
     maritime_router,
+    ml_studio_router,
     newspaper_router,
     optimizer_router,
     osint_router,
@@ -55,12 +51,15 @@ from app.routers import (
     risk_router,
     search_router,
     som_router,
-    warroom_router,
-    ml_studio_router,
-    system_router,
     stats_router,
+    system_router,
+    warroom_router,
 )
 from app.services.factory_repository import FactoryRepository
+from app.services.factory_runtime import (
+    cancel_factory_improvement_task,
+    ensure_factory_improvement_task,
+)
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
@@ -249,10 +248,10 @@ async def health_check() -> JSONResponse:
 @app.get("/health/ready", tags=["system"])
 async def readiness_check() -> JSONResponse:
     """Readiness probe - перевіряє готовність до прийому трафіку."""
-    from app.core.health import health_service
-    from app.config import get_settings
     import asyncpg
-    import os
+
+    from app.config import get_settings
+    from app.core.health import health_service
 
     try:
         # Пряма перевірка PostgreSQL з правильним DSN
@@ -261,7 +260,7 @@ async def readiness_check() -> JSONResponse:
         # Конвертуємо postgresql+asyncpg:// в postgres:// для прямого підключення
         dsn = dsn.replace("postgresql+asyncpg://", "postgres://")
         dsn = dsn.replace("postgresql://", "postgres://")
-        
+
         postgres_ok = False
         try:
             conn = await asyncpg.connect(dsn=dsn, command_timeout=3.0)
@@ -270,7 +269,7 @@ async def readiness_check() -> JSONResponse:
             postgres_ok = True
         except Exception:
             pass
-        
+
         # Перевірка Redis
         redis_status = await health_service.check_redis()
         redis_ok = redis_status.get("status") == "ok"

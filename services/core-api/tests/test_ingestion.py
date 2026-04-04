@@ -1,14 +1,15 @@
-import pytest
-from httpx import ASGITransport, AsyncClient
-from unittest.mock import AsyncMock, patch, MagicMock
-from app.main import app
-from app.core.security import get_current_user_payload
-from app.dependencies import get_tenant_id, get_current_active_user
-from app.database import get_db
-from app.services.kafka_service import get_kafka_service
-from app.services.minio_service import get_minio_service
-from predator_common.models import IngestionJob
+from unittest.mock import AsyncMock, MagicMock, patch
 import uuid
+
+from httpx import ASGITransport, AsyncClient
+import pytest
+
+from app.core.security import get_current_user_payload
+from app.database import get_db
+from app.dependencies import get_current_active_user, get_tenant_id
+from app.main import app
+from predator_common.models import IngestionJob
+
 
 @pytest.fixture
 async def async_client():
@@ -29,7 +30,7 @@ def mock_db():
     db = AsyncMock()
     db.add = MagicMock()
     db.commit = AsyncMock()
-    
+
     execute_result = MagicMock()
     db.execute.return_value = execute_result
     return db
@@ -45,9 +46,9 @@ async def test_upload_file_success(async_client, mock_user, mock_db):
     mock_minio = AsyncMock()
     mock_minio.upload_file.return_value = (True, "s3://path/to/file.csv", None)
     mock_minio.BUCKET_INGESTION = "ingestion"
-    
+
     mock_kafka = AsyncMock()
-    
+
     # Filesystem/Multipart mock
     file_content = b"edrpou,name\n12345678,Test Comp"
     files = {"file": ("test.csv", file_content, "text/csv")}
@@ -55,9 +56,9 @@ async def test_upload_file_success(async_client, mock_user, mock_db):
 
     with patch("app.routers.ingestion.get_minio_service", return_value=mock_minio), \
          patch("app.routers.ingestion.get_kafka_service", return_value=mock_kafka):
-        
+
         response = await async_client.post("/api/v1/ingestion/upload", files=files, data=data)
-        
+
     assert response.status_code == 202
     data = response.json()
     assert "job_id" in data

@@ -1,16 +1,14 @@
 from datetime import UTC, datetime, timedelta
-import random
-from typing import Any
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_db
-from app.dependencies import get_tenant_id, PermissionChecker
 from app.core.permissions import Permission
+from app.database import get_db
+from app.dependencies import PermissionChecker, get_tenant_id
 from app.services.ai_service import AIService
-from predator_common.models import Company, Declaration, RiskScore, Anomaly
+from predator_common.models import Anomaly, RiskScore
 
 router = APIRouter(prefix="/premium", tags=["premium features"])
 
@@ -26,16 +24,16 @@ async def get_premium_morning_brief(
         select(func.count()).select_from(RiskScore).where(RiskScore.cers >= 80)
     ) or 0
     anomalies_count = await db.scalar(select(func.count()).select_from(Anomaly)) or 0
-    
+
     stats = {
         "risks": risks_count,
         "anomalies": anomalies_count,
         "date": datetime.now(UTC).strftime("%Y-%m-%d"),
     }
-    
+
     prompt = "Згенеруй короткий аналітичний підсумок дня для PREDATOR Analytics. Використовуй українську мову."
     report = await AIService.generate_insight(prompt, stats)
-    
+
     return {
         "title": "Ранковий брифінг PREDATOR",
         "report": report,

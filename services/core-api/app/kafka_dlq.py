@@ -1,9 +1,8 @@
-import os
 import asyncio
 import logging
-from typing import List
+import os
 
-from aiokafka import AIOKafkaConsumer, AIOKafkaProducer, AIOKafkaAdminClient
+from aiokafka import AIOKafkaAdminClient, AIOKafkaConsumer, AIOKafkaProducer
 from aiokafka.errors import TopicAlreadyExistsError
 
 logger = logging.getLogger(__name__)

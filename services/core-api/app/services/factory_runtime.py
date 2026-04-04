@@ -61,21 +61,21 @@ def _get_repo(app: FastAPI) -> FactoryRepoProtocol | None:
     repo = getattr(app.state, "factory_repo", None)
     if repo is None:
         return None
-    return cast(FactoryRepoProtocol, repo)
+    return cast("FactoryRepoProtocol", repo)
 
 
 def _get_task(app: FastAPI) -> FactoryImprovementTaskProtocol | None:
     task = getattr(app.state, _TASK_ATTR, None)
     if task is None:
         return None
-    return cast(FactoryImprovementTaskProtocol, task)
+    return cast("FactoryImprovementTaskProtocol", task)
 
 
 def _get_runner(app: FastAPI) -> FactoryImprovementRunnerProtocol | None:
     runner = getattr(app.state, _RUNNER_ATTR, None)
     if runner is None:
         return None
-    return cast(FactoryImprovementRunnerProtocol, runner)
+    return cast("FactoryImprovementRunnerProtocol", runner)
 
 
 def _store_task(app: FastAPI, task: FactoryImprovementTaskProtocol) -> None:

@@ -12,7 +12,6 @@ from fastapi import APIRouter, Body, Depends, Query, Request
 from pydantic import BaseModel, Field
 
 from app.core.cache import cache_response
-
 from app.core.permissions import Permission
 from app.dependencies import PermissionChecker, get_tenant_id
 from app.services.aml_scoring import AMLScoringService

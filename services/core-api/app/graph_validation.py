@@ -1,6 +1,4 @@
-import os
 import logging
-from typing import List, Dict
 
 # Placeholder imports – replace with actual Neo4j driver in production
 # from neo4j import GraphDatabase
@@ -13,7 +11,7 @@ EXPECTED_UNIQUE_CONSTRAINTS = [
     "CREATE CONSTRAINT ON (u:User) ASSERT u.id IS UNIQUE",
 ]
 
-def run_query(query: str) -> List[Dict]:
+def run_query(query: str) -> list[dict]:
     """Execute a Cypher query and return list of records.
     In production replace with real driver session.
     """
@@ -21,8 +19,8 @@ def run_query(query: str) -> List[Dict]:
     # Placeholder: return empty list
     return []
 
-def check_unique_constraints() -> List[str]:
-    errors: List[str] = []
+def check_unique_constraints() -> list[str]:
+    errors: list[str] = []
     import re
     pattern = re.compile(r"ON\s+\((\w+):(\w+)\)\s+ASSERT\s+(\w+)\.(\w+)\s+IS\s+UNIQUE")
     for constraint in EXPECTED_UNIQUE_CONSTRAINTS:
@@ -39,8 +37,8 @@ def check_unique_constraints() -> List[str]:
                 errors.append(f"Duplicate {label} with {prop}={dup['key']} (count={dup['cnt']})")
     return errors
 
-def check_orphan_nodes() -> List[str]:
-    errors: List[str] = []
+def check_orphan_nodes() -> list[str]:
+    errors: list[str] = []
     # Example: find Company nodes without any relationships
     query = "MATCH (c:Company) WHERE NOT (c)--() RETURN c.ueid AS ueid"
     orphans = run_query(query)
@@ -48,8 +46,8 @@ def check_orphan_nodes() -> List[str]:
         errors.append(f"Orphan Company node ueid={node['ueid']}")
     return errors
 
-def check_self_cycles() -> List[str]:
-    errors: List[str] = []
+def check_self_cycles() -> list[str]:
+    errors: list[str] = []
     # Example: Company owned by itself
     query = "MATCH (c:Company)-[:OWNED_BY]->(c) RETURN c.ueid AS ueid"
     cycles = run_query(query)
@@ -57,7 +55,7 @@ def check_self_cycles() -> List[str]:
         errors.append(f"Self‑ownership cycle detected for Company ueid={node['ueid']}")
     return errors
 
-def run_all_checks() -> Dict[str, List[str]]:
+def run_all_checks() -> dict[str, list[str]]:
     return {
         "unique_constraints": check_unique_constraints(),
         "orphan_nodes": check_orphan_nodes(),

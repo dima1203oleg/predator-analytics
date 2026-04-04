@@ -1,13 +1,13 @@
-import pytest
+from unittest.mock import AsyncMock, patch
+
 from httpx import ASGITransport, AsyncClient
-from unittest.mock import AsyncMock, patch, MagicMock
-from app.main import app
+import pytest
+
 from app.core.security import get_current_user_payload
 from app.database import get_db
 from app.dependencies import get_tenant_id
-from app.core.permissions import Permission
-from predator_common.models import Company, RiskScore, Anomaly
-from datetime import datetime, UTC
+from app.main import app
+
 
 @pytest.fixture
 async def async_client():
@@ -38,7 +38,7 @@ async def test_generate_entity_report_success(async_client, mock_user, mock_db):
         with patch("app.routers.intelligence.get_shadow_map", AsyncMock(return_value=[])):
             with patch("app.routers.intelligence.get_beneficiaries", AsyncMock(return_value=[])):
                 with patch("app.services.ai_service.AIService.generate_insight", AsyncMock(return_value="Detailed Report Content")):
-                    
+
                     response = await async_client.get("/api/v1/intelligence/report/company-123")
                     assert response.status_code == 200
                     data = response.json()
@@ -71,7 +71,7 @@ async def test_get_morning_briefing(async_client, mock_user, mock_db):
 
     with patch("app.services.axiom_verifier.AxiomVerifier.verify_data_consistency", AsyncMock(return_value={"purity": 99})):
         mock_db.scalar = AsyncMock(side_effect=[5, 100, 2]) # risks_count, entities_count, anomalies_count
-        
+
         with patch("app.services.ai_service.AIService.generate_insight", AsyncMock(return_value="Morning report content")):
             response = await async_client.get("/api/v1/intelligence/morning-brief")
             assert response.status_code == 200

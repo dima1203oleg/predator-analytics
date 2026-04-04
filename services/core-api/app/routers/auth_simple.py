@@ -18,13 +18,13 @@
 
 Разработчикам: если нужна упрощенная версия без SQLAlchemy, обновите auth.py или создайте новый файл с явным именованием.
 """
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
+import os
 
+import asyncpg
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
-import asyncpg
-import os
 
 from app.config import get_settings
 from app.core.security import create_access_token, verify_password
@@ -35,6 +35,7 @@ settings = get_settings()
 
 class UserResponse(BaseModel):
     """Модель користувача для відповіді."""
+
     id: str
     email: str
     role: str
@@ -45,6 +46,7 @@ class UserResponse(BaseModel):
 
 class LoginResponse(BaseModel):
     """Відповідь на успішний логін."""
+
     access_token: str
     expires_in: int = Field(..., description="Час життя токена в секундах")
     token_type: str = "bearer"
@@ -53,6 +55,7 @@ class LoginResponse(BaseModel):
 
 class MeResponse(BaseModel):
     """Відповідь на GET /auth/me."""
+
     id: str
     email: str
     role: str
@@ -74,7 +77,7 @@ async def login_for_access_token(
 ):
     """Отримання JWT токену (OAuth2 compatible)."""
     conn = await get_db_connection()
-    
+
     try:
         # Пошук користувача в БД
         row = await conn.fetchrow(
@@ -124,7 +127,7 @@ async def get_current_user_profile():
     """Отримання профілю поточного користувача."""
     # Спрощена версія без JWT перевірки для тестування
     conn = await get_db_connection()
-    
+
     try:
         row = await conn.fetchrow(
             "SELECT id, email, role, tenant_id, full_name, is_active FROM users WHERE email = $1",
@@ -158,23 +161,23 @@ async def register_user(
 ):
     """Реєстрація нового користувача."""
     conn = await get_db_connection()
-    
+
     try:
         # Перевірка чи існує користувач
         existing = await conn.fetchrow(
             "SELECT id FROM users WHERE email = $1", email
         )
-        
+
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Користувач з таким email вже існує"
             )
-        
+
         # Створення користувача
         from app.core.security import get_password_hash
         password_hash = get_password_hash(password)
-        
+
         row = await conn.fetchrow(
             """
             INSERT INTO users (email, password_hash, role, full_name, tenant_id)
@@ -183,7 +186,7 @@ async def register_user(
             """,
             email, password_hash, full_name
         )
-        
+
         return UserResponse(
             id=str(row['id']),
             email=row['email'],

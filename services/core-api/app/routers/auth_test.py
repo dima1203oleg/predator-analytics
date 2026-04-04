@@ -1,9 +1,7 @@
 """Simple Auth Test - тимчасове вирішення проблем з auth."""
+
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
-import asyncio
-import asyncpg
-import os
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

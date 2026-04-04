@@ -1,7 +1,4 @@
-import os
-import json
 import logging
-from typing import List, Dict, Any
 
 # Database clients (placeholders – actual client imports should be added in production)
 # from sqlalchemy.ext.asyncio import create_async_engine
@@ -44,8 +41,8 @@ EXPECTED_MINIO_BUCKETS = {
 }
 
 
-def check_postgres_schema() -> List[str]:
-    errors: List[str] = []
+def check_postgres_schema() -> list[str]:
+    errors: list[str] = []
     # Placeholder: in production use async engine and reflect tables.
     logger.info("Checking PostgreSQL schema (placeholder)")
     # Simulate missing table detection
@@ -56,43 +53,43 @@ def check_postgres_schema() -> List[str]:
     return errors
 
 
-def check_clickhouse_schema() -> List[str]:
-    errors: List[str] = []
+def check_clickhouse_schema() -> list[str]:
+    errors: list[str] = []
     logger.info("Checking ClickHouse schema (placeholder)")
     # Placeholder logic – assume all good
     return errors
 
 
-def check_neo4j_constraints() -> List[str]:
-    errors: List[str] = []
+def check_neo4j_constraints() -> list[str]:
+    errors: list[str] = []
     logger.info("Checking Neo4j constraints (placeholder)")
     # In production, run CALL db.constraints() and compare
     return errors
 
 
-def check_opensearch_mappings() -> List[str]:
-    errors: List[str] = []
+def check_opensearch_mappings() -> list[str]:
+    errors: list[str] = []
     logger.info("Checking OpenSearch index mappings (placeholder)")
     # In production, get index mappings via client.indices.get_mapping()
     return errors
 
 
-def check_qdrant_collections() -> List[str]:
-    errors: List[str] = []
+def check_qdrant_collections() -> list[str]:
+    errors: list[str] = []
     logger.info("Checking Qdrant collections (placeholder)")
     # In production, list collections and compare vector size/distance
     return errors
 
 
-def check_minio_buckets() -> List[str]:
-    errors: List[str] = []
+def check_minio_buckets() -> list[str]:
+    errors: list[str] = []
     logger.info("Checking MinIO buckets (placeholder)")
     # In production, list buckets via client and compare policies
     return errors
 
 
-def run_all_checks() -> Dict[str, List[str]]:
-    results: Dict[str, List[str]] = {
+def run_all_checks() -> dict[str, list[str]]:
+    results: dict[str, list[str]] = {
         "postgres": check_postgres_schema(),
         "clickhouse": check_clickhouse_schema(),
         "neo4j": check_neo4j_constraints(),

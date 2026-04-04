@@ -1,16 +1,15 @@
 import os
-import json
-from typing import Dict, List, Any
+from typing import Any
 
 # Simple data lineage collector for Predator Analytics
 # Scans known pipeline components and builds a directed graph of data flow.
 
 class DataLineage:
     def __init__(self) -> None:
-        self.nodes: Dict[str, Dict[str, Any]] = {}
-        self.edges: List[Dict[str, str]] = []
+        self.nodes: dict[str, dict[str, Any]] = {}
+        self.edges: list[dict[str, str]] = []
 
-    def add_node(self, name: str, details: Dict[str, Any] | None = None) -> None:
+    def add_node(self, name: str, details: dict[str, Any] | None = None) -> None:
         if name not in self.nodes:
             self.nodes[name] = details or {}
 

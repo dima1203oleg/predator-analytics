@@ -2,7 +2,7 @@
 Персистентність паттернів у GraphDB
 """
 
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 import logging
 
 from app.models.factory import (
