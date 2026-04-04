@@ -34,6 +34,8 @@ import {
   Upload,
   Users,
   Zap,
+  ShieldX,
+  Fingerprint,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -484,6 +486,16 @@ const baseNavigationConfig: NavSection[] = [
         icon: Database,
         description: 'Консолідований доступ до офіційних реєстрів та корпоративних записів.',
         group: 'OSINT та розслідування',
+      },
+      {
+        id: 'zrada-control',
+        label: 'Зрада-Контроль',
+        path: '/zrada-control',
+        icon: ShieldX,
+        description: 'Преміальний контур виявлення та моніторингу субʼєктів із високим ризиком зради.',
+        group: 'OSINT та розслідування',
+        badge: 'v56.1',
+        priority: 95,
       },
       {
         id: 'tenders',
