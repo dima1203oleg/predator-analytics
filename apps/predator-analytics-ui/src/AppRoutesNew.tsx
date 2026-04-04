@@ -25,6 +25,7 @@ const DatabasesView = lazy(() => import('./features/platform/DatabasesView'));
 const MonitoringView = lazy(() => import('./features/dashboard/MonitoringView'));
 const SecurityView = lazy(() => import('./features/platform/SecurityView'));
 const LLMView = lazy(() => import('./features/ai/LLMView'));
+const PredictiveNexusView = lazy(() => import('./features/ai/PredictiveNexusView'));
 const DataView = lazy(() => import('./features/platform/DataView'));
 const AgentsView = lazy(() => import('./features/platform/AgentsView'));
 const DeploymentView = lazy(() => import('./features/platform/DeploymentView'));
@@ -205,6 +206,7 @@ export const AppRoutesNew = () => {
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
+            <Route path="/nexus" element={<PredictiveNexusView />} />
             <Route path="/forecast-view" element={<ForecastView />} />
             <Route path="/aml" element={<AMLScoringView />} />
             <Route path="/llm" element={onlyAdmin(<LLMView />)} />

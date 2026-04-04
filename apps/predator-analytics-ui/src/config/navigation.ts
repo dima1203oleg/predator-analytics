@@ -649,6 +649,16 @@ const baseNavigationConfig: NavSection[] = [
         priority: 86,
       },
       {
+        id: 'nexus',
+        label: 'Predictive Nexus',
+        path: '/nexus',
+        icon: Sparkles,
+        description: 'Центр предиктивного моделювання: сценарії, прогнози та випереджаючі інсайти.',
+        group: 'Користувацький контур',
+        badge: 'v56.1.4_PREDICTIVE',
+        priority: 100,
+      },
+      {
         id: 'knowledge',
         label: 'База знань',
         path: '/knowledge',
