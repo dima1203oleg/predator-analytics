@@ -80,7 +80,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
   return (
     <motion.div
-      className={`${containerClass} overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-900/40 backdrop-blur-md shadow-2xl shadow-cyan-900/20`}
+      className={`${containerClass} terminal-card overflow-hidden rounded-xl`}
       layout
       transition={{ duration: 0.3 }}
     >
@@ -160,7 +160,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/30 rounded-xl p-4"
+          className="power-metric bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-500/30 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Всього Запитів</span>
@@ -174,7 +174,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-500/30 rounded-xl p-4"
+          className="power-metric bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-500/30 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Success Rate</span>
@@ -188,7 +188,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-500/30 rounded-xl p-4"
+          className="power-metric bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-500/30 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Avg Latency</span>
@@ -204,7 +204,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-500/30 rounded-xl p-4"
+          className="power-metric bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-500/30 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Помилки</span>
@@ -220,7 +220,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       {/* Charts */}
       <div className="grid grid-cols-2 gap-6 p-6">
         {/* Requests Chart */}
-        <div className="bg-slate-800/50 border border-cyan-500/20 rounded-xl p-6">
+        <div className="terminal-card bg-slate-800/50 border border-cyan-500/20 rounded-xl p-6">
           <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <LineChart className="w-5 h-5 text-cyan-400" />
             Запити за Годинами
@@ -247,7 +247,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
 
         {/* Latency Chart */}
-        <div className="bg-slate-800/50 border border-purple-500/20 rounded-xl p-6">
+        <div className="terminal-card bg-slate-800/50 border border-purple-500/20 rounded-xl p-6">
           <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Activity className="w-5 h-5 text-purple-400" />
             Латентність (ms)
@@ -274,7 +274,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
 
         {/* Error Distribution */}
-        <div className="bg-slate-800/50 border border-red-500/20 rounded-xl p-6">
+        <div className="terminal-card bg-slate-800/50 border border-red-500/20 rounded-xl p-6">
           <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-red-400" />
             Розподіл Помилок
@@ -305,7 +305,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
 
         {/* Top Endpoints */}
-        <div className="bg-slate-800/50 border border-green-500/20 rounded-xl p-6">
+        <div className="terminal-card bg-slate-800/50 border border-green-500/20 rounded-xl p-6">
           <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-400" />
             Топ Endpoints

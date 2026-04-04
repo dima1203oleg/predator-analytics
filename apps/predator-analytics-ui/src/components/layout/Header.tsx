@@ -22,6 +22,7 @@ import { ROLE_DISPLAY_NAMES, UserRole } from '../../config/roles';
 import { useAtom } from 'jotai';
 import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
+import OperationalModeSwitch from '../premium/OperationalModeSwitch';
 
 const getRoleLabel = (role: string): string => {
   if (role === UserRole.ADMIN) {
@@ -53,7 +54,7 @@ const Header: React.FC = () => {
   const shellV2Enabled = isShellV2Enabled();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-cyan-500/10 bg-slate-950/40 backdrop-blur-2xl shadow-[0_32px_64px_-12px_rgba(2,6,23,0.8)]">
+    <header className="tactical-header sticky top-0 z-40 border-b border-cyan-500/10 shadow-[0_32px_64px_-12px_rgba(2,6,23,0.8)]">
       <div className="mx-auto grid max-w-[1920px] gap-6 px-2 sm:px-4 lg:px-6 py-4 xl:grid-cols-[1fr_340px] items-start">
         <div className="surface-panel-strong rounded-[28px] px-6 py-6 border border-cyan-500/10 relative overflow-hidden">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(34,211,238,0.05),transparent)]" />
@@ -157,6 +158,11 @@ const Header: React.FC = () => {
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
               <span>{isPaletteOpen ? 'Командний пошук відкритий' : 'Швидка навігація через командний пошук'}</span>
               <span className="font-mono uppercase tracking-[0.22em] text-slate-400">{shellV2Enabled ? 'Shell v2' : 'Ready'}</span>
+            </div>
+
+            {/* Перемикач операційного режиму */}
+            <div className="mt-3 flex justify-end">
+              <OperationalModeSwitch />
             </div>
           </div>
 

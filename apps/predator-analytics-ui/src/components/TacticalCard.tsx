@@ -95,10 +95,10 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
   const getVariantClass = () => {
     switch (variant) {
-      case 'glass': return 'glass-hud';
-      case 'minimal': return 'bg-transparent border-slate-800 hover:bg-slate-900/20 shadow-none';
-      case 'holographic': return 'bg-gradient-to-br from-slate-900/90 via-[#0a1224] to-slate-950/90 border-cyan-500/30 backdrop-blur-2xl shadow-[0_0_20px_rgba(6,182,212,0.05)]';
-      default: return 'bg-[#0a0f1c]/90 border-slate-800/80 backdrop-blur-3xl shadow-2xl glass-ultra'; // Cyber
+      case 'glass': return 'glass-hud bg-[var(--op-bg-panel)] border-[var(--op-border)]';
+      case 'minimal': return 'bg-transparent border-[var(--op-border)] hover:bg-[var(--op-bg-accent)] shadow-none';
+      case 'holographic': return 'terminal-card bg-[var(--op-bg-accent)] border-[var(--op-primary)] backdrop-blur-2xl shadow-[0_0_20px_var(--op-glow)]';
+      default: return 'terminal-card bg-[var(--op-bg-panel)] border-[var(--op-border)] backdrop-blur-3xl shadow-2xl'; // Cyber
     }
   };
 
@@ -153,16 +153,17 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       >
         {/* Active Indicator Line */}
         {effectiveGlow !== 'none' && (
-          <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-r transition-all duration-300 group-hover:h-8 ${effectiveGlow === 'red' ? 'bg-red-500 shadow-[0_0_8px_red]' :
+          <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-r transition-all duration-300 group-hover:h-8 ${
+            effectiveGlow === 'red' ? 'bg-red-500 shadow-[0_0_8px_red]' :
             effectiveGlow === 'purple' ? 'bg-purple-500 shadow-[0_0_8px_purple]' :
-              effectiveGlow === 'green' ? 'bg-green-500 shadow-[0_0_8px_green]' :
-                effectiveGlow === 'yellow' ? 'bg-yellow-500 shadow-[0_0_8px_yellow]' :
-                  effectiveGlow === 'cyan' ? 'bg-cyan-500 shadow-[0_0_8px_cyan]' :
-                    effectiveGlow === 'emerald' ? 'bg-emerald-500 shadow-[0_0_8px_emerald]' :
-                      effectiveGlow === 'indigo' ? 'bg-indigo-500 shadow-[0_0_8px_indigo]' :
-                        effectiveGlow === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_amber]' :
-                          'bg-blue-500 shadow-[0_0_8px_blue]'
-            }`}></div>
+            effectiveGlow === 'green' ? 'bg-green-500 shadow-[0_0_8px_green]' :
+            effectiveGlow === 'yellow' ? 'bg-yellow-500 shadow-[0_0_8px_yellow]' :
+            effectiveGlow === 'cyan' ? 'bg-cyan-500 shadow-[0_0_8px_cyan]' :
+            effectiveGlow === 'emerald' ? 'bg-emerald-500 shadow-[0_0_8px_emerald]' :
+            effectiveGlow === 'indigo' ? 'bg-indigo-500 shadow-[0_0_8px_indigo]' :
+            effectiveGlow === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_amber]' :
+            'bg-[var(--op-primary)] shadow-[0_0_8px_var(--op-glow)]'
+          }`}></div>
         )}
 
         <div className="flex items-center gap-3">

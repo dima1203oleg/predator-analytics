@@ -12,6 +12,7 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import { ConstitutionalShield } from '../shared/ConstitutionalShield';
+import { useTheme } from '../../context/ThemeContext';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
+  const { mode } = useTheme();
 
   useEffect(() => {
     if (isMobile) {
@@ -47,7 +49,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div
       data-testid="main-layout"
-      className="relative flex min-h-screen overflow-hidden bg-[var(--shell-bg)] text-foreground"
+      data-op-mode={mode}
+      className="relative flex min-h-screen overflow-hidden bg-[var(--shell-bg)] text-foreground op-mode-transition"
     >
       {/* ── Багатошаровий ambient-фон ── */}
       {/* Шар 1: основні радіальні градієнти */}
@@ -60,6 +63,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(2,6,23,0.60),transparent)]" />
       {/* Шар 5: нижній vignette */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,rgba(2,6,23,0.40),transparent)]" />
+      {/* Шар 6: операційний scanline */}
+      <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
 
       {/* ── Адаптивний сайдбар ── */}
       {isMobile ? (

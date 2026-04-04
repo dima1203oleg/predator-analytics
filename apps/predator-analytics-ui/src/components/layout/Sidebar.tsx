@@ -238,7 +238,7 @@ export const Sidebar: React.FC = () => {
 
 
       <div
-        className="relative border-b border-white/[0.06] px-4 py-2"
+        className="relative border-b border-white/[0.06] px-4 py-2 bg-[var(--op-bg-accent)] transition-colors duration-500"
         title={`Джерело: ${backendStatus.sourceLabel}. Роль: ${roleLabel}. Блоків: ${totals.sections}. Модулів: ${totals.items}.`}
       >
         <div className="flex items-center gap-3">
@@ -252,8 +252,8 @@ export const Sidebar: React.FC = () => {
                 exit={{ opacity: 0, x: -10 }}
                 className="min-w-0 flex-1 overflow-hidden"
               >
-                <div className="truncate text-[14px] font-black uppercase tracking-[0.2em] text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.4)]">PREDATOR</div>
-                <div className="truncate text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500">
+                <div className="truncate text-[14px] font-black uppercase tracking-[0.2em] text-[var(--op-primary)] drop-shadow-[0_0_10px_var(--op-glow)] transition-colors duration-500">PREDATOR</div>
+                <div className="truncate text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 group-hover:text-[var(--op-text)] transition-colors duration-500">
                   NEXUS ANALYTICS
                 </div>
               </motion.div>
