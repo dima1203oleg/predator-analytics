@@ -33,18 +33,22 @@ from .cases import router as cases_router
 from .companies import router as companies_router
 from .competitors import router as competitors_router
 from .copilot import router as copilot_router
+from .dashboard import router as dashboard_router
 from .declarations import router as declarations_router
 from .factory import router as factory_router
 from .graph import router as graph_router
 from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router
 from .maritime import router as maritime_router
+from .newspaper import router as newspaper_router
 from .optimizer import router as optimizer_router
 from .osint import router as osint_router
 from .osint_ua import router as osint_ua_router
 from .persons import router as persons_router
+from .premium import router as premium_router
 from .public_api import router as public_api_router
 from .registries import router as registries_router
+from .registries_ui import router as registries_ui_router
 from .risk import router as risk_router
 from .search import router as search_router
 from .som import router as som_router
@@ -61,18 +65,22 @@ __all__ = [
     "companies_router",
     "competitors_router",
     "copilot_router",
+    "dashboard_router",
     "declarations_router",
     "factory_router",
     "graph_router",
     "ingestion_router",
     "intelligence_router",
     "maritime_router",
+    "newspaper_router",
     "optimizer_router",
     "osint_router",
     "osint_ua_router",
     "persons_router",
+    "premium_router",
     "public_api_router",
     "registries_router",
+    "registries_ui_router",
     "risk_router",
     "search_router",
     "som_router",

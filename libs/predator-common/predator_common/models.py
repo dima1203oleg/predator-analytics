@@ -95,7 +95,7 @@ class Company(Base):
     updated_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
 
     # Relationships
-    declarations = relationship("Declaration", back_populates="importer", foreign_keys="[Declaration.importer_ueid]")
+    declarations = relationship("Declaration", back_populates="importer", foreign_keys="[Declaration.importer_ueid]", primaryjoin="Company.ueid == Declaration.importer_ueid")
 
     # Зворотна сумісність: property для коду, що використовує risk_score
     @property

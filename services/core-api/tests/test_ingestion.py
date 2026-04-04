@@ -2,8 +2,9 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from unittest.mock import AsyncMock, patch, MagicMock
 from app.main import app
-from app.core.security import get_current_user_payload, get_current_active_user
-from app.dependencies import get_tenant_id, get_db
+from app.core.security import get_current_user_payload
+from app.dependencies import get_tenant_id, get_current_active_user
+from app.database import get_db
 from app.services.kafka_service import get_kafka_service
 from app.services.minio_service import get_minio_service
 from predator_common.models import IngestionJob
@@ -26,6 +27,11 @@ def mock_user():
 @pytest.fixture
 def mock_db():
     db = AsyncMock()
+    db.add = MagicMock()
+    db.commit = AsyncMock()
+    
+    execute_result = MagicMock()
+    db.execute.return_value = execute_result
     return db
 
 @pytest.mark.asyncio
