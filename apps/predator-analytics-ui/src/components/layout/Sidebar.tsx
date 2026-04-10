@@ -230,11 +230,10 @@ export const Sidebar: React.FC = () => {
       data-testid="sidebar"
       initial={false}
       animate={{ width: isOpen ? 308 : 80 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }} // smooth spring-like curve
-      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col border-r border-white/5 bg-[#030712]/60 shadow-[8px_0_40px_rgba(2,6,23,0.7)] backdrop-blur-2xl"
+      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} 
+      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col border-r border-white/5 glass-elite shadow-2xl overflow-visible"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.06),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(239,68,68,0.04),transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-red-500/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--aura-blue),transparent_50%)] opacity-30" />
 
 
       <div

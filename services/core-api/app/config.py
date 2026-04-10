@@ -118,6 +118,7 @@ class Settings(BaseSettings):
     EDR_API_KEY: str = "mock"
     COURT_API_KEY: str = "mock"
     DPS_API_KEY: str = "mock"
+    YOUCONTROL_API_KEY: str = "mock"
     PROZORRO_API_URL: str = "https://public.api.openprocurement.org/api/2.5"
 
     # Моніторинг та спостереження

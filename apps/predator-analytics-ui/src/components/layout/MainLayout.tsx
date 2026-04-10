@@ -50,24 +50,19 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <div
       data-testid="main-layout"
       data-op-mode={mode}
-      className="relative flex min-h-screen overflow-hidden bg-[var(--shell-bg)] text-foreground op-mode-transition"
+      className="relative flex min-h-screen overflow-hidden bg-background text-foreground op-mode-transition"
     >
-      {/* ── Багатошаровий ambient-фон ── */}
-      {/* Шар 1: основні радіальні градієнти, адаптовані під operational mode */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_10%,var(--op-primary)_0%,transparent_24%),radial-gradient(circle_at_90%_14%,var(--op-glow)_0%,transparent_26%),linear-gradient(180deg,var(--op-bg)_0%,var(--op-bg-panel)_100%)] opacity-20" />
-      {/* Шар 2: тактична сітка */}
-      <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
-      {/* Шар 3: бічна тінь для глибини sidebar */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-[28rem] bg-[radial-gradient(circle_at_left,rgba(15,23,42,0.35),transparent_70%)]" />
-      {/* Шар 4: верхній vignette */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(2,6,23,0.60),transparent)]" />
-      {/* Шар 5: нижній vignette */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,rgba(2,6,23,0.40),transparent)]" />
-      {/* Шар 6: операційний scanline */}
+      {/* ── ПРЕМІАЛЬНА АУРА PREDATOR ELITE ── */}
+      <div className="aura-bg" />
+      
+      {/* Шар 1: тактична сітка */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(rgba(148,163,184,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.1)_1px,transparent_1px)] [background-size:40px_40px]" />
+      
+      {/* Шар 2: операційний scanline */}
       <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
       
-      {/* ── PREMIUM Шар 7: потоки даних (Matrix-like streams) ── */}
-      <div className="op-data-streams">
+      {/* ── PREMIUM Шар 3: потоки даних (Matrix-like streams) ── */}
+      <div className="op-data-streams opacity-20">
         <div className="op-stream"></div>
         <div className="op-stream"></div>
         <div className="op-stream"></div>

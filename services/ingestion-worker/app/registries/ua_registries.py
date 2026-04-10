@@ -1,37 +1,30 @@
-"""Клієнт для інтеграції з відкритими даними України (Опендатабот або Data.gov.ua)."""
+"""Клієнт для інтеграції з відкритими даними України (YouControl, Опендатабот)."""
 import logging
 from typing import Any
 
 from app.registries.base import БазовийРеєстрКлієнт
+from app.registries.youcontrol import YouControlClient, YouControlConfig
+from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
 class УкраїнськийРеєстр(БазовийРеєстрКлієнт):
-    """Інтеграція з агрегаторами відкритих державних реєстрів України (ЄДР, Суди, Податкова)."""
+    """Інтеграція з агрегаторами відкритих державних реєстрів України."""
+
+    def __init__(self):
+        settings = get_settings()
+        config = YouControlConfig(api_key=settings.YOUCONTROL_API_KEY)
+        self.youcontrol = YouControlClient(config)
 
     async def знайти_за_єдрпоу(self, edrpou: str) -> dict[str, Any]:
-        """Пошук даних про компанію за кодом ЄДРПОУ.
-
-        Включає статуси, борги, бенефіціарів та базову судову історію.
-        """
-        logger.info(f"Запит до реєстру для ЄДРПОУ: {edrpou}")
-
-        # Симуляція запиту (поки не підключено реальний API)
-        # у реальному застосунку:
-        # data = await self._зробити_запит(f"/api/v1/company/{edrpou}")
-        # return data
-
-        return {
-            "edrpou": edrpou,
-            "назва": "ТОВ 'АГРО-ІМПОРТ ПРЕДАТОР'",
-            "статус": "зареєстровано",
-            "дата_реєстрації": "2015-05-12T00:00:00",
-            "податковий_борг": False,
-            "судові_справи_кількість": 3,
-            "бенефіціари": ["Іваненко Іван Іванович"]
-        }
+        """Пошук даних про компанію за кодом ЄДРПОУ через YouControl."""
+        logger.info(f"Запит до YouControl для ЄДРПОУ: {edrpou}")
+        
+        # Отримуємо реальні дані через професійний конектор
+        return await self.youcontrol.get_company_full_card(edrpou)
 
     async def перевірити_санкції(self, назва_або_іпн: str) -> bool:
-        """Перевірка наявності особи чи компанії у санкційних списках РНБО."""
+        """Перевірка наявності особи чи компанії у санкційних списках."""
         logger.info(f"Перевірка санкцій для: {назва_або_іпн}")
+        # Тут можна додати виклик YouControl Sanctions API
         return False

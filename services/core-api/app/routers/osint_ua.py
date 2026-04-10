@@ -1,13 +1,22 @@
-
 from fastapi import APIRouter, HTTPException, Query
 
 from app.services.osint.datagov import DataGovUACollector
 from app.services.osint.prozorro import ProzorroCollector
+from app.services.osint.youcontrol import YouControlCollector
 
 router = APIRouter(prefix="/osint_ua", tags=["OSINT Ukraine"])
 
 datagov = DataGovUACollector()
 prozorro = ProzorroCollector()
+youcontrol = YouControlCollector()
+
+@router.get("/youcontrol/dossier/{edrpou}")
+async def search_youcontrol(edrpou: str):
+    """Пошук повного досьє компанії за ЄДРПОУ через YouControl API."""
+    result = await youcontrol.get_dossier(edrpou)
+    if "error" in result:
+        raise HTTPException(status_code=502, detail=result["error"])
+    return result
 
 @router.get("/datagov/search")
 async def search_datagov(

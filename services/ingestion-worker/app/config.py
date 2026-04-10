@@ -23,6 +23,7 @@ class WorkerSettings(BaseSettings):
 
     # OSINT Sources
     DATA_GOV_UA_API_KEY: str = ""
+    YOUCONTROL_API_KEY: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

@@ -23,6 +23,8 @@ import {
 import { api } from '../../services/api';
 import { TacticalCard } from '../TacticalCard';
 import { cn } from '../../lib/utils';
+import { PremiumRegistryMonitor } from './RegistryMonitor';
+import { IntelligenceFeed } from './IntelligenceFeed';
 import '../../styles/AnalyticsDashboard.css';
 
 interface SystemMetrics {
@@ -421,8 +423,12 @@ export const AnalyticsDashboard: React.FC = () => {
           color={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'emerald' : 'rose'}
           trend={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'down' : 'up'}
           loading={loading}
-          subValue={searchMetrics?.avg_latency_ms && searchMetrics.avg_latency_ms < 100 ? 'OPTIMAL_FLOW' : 'DEGRADED_STATE'}
         />
+      </div>
+
+      {/* 🌐 РЕЄСТРИ ТА ІНТЕЛІДЖЕНС (UA REGISTRY HUB) */}
+      <div className="grid grid-cols-1 gap-8 mb-12">
+           <PremiumRegistryMonitor />
       </div>
 
       {/* Main Analytical Section */}
@@ -518,42 +524,8 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
         </TacticalCard>
 
-        {/* Infrastructure Global Status Cluster */}
-        <TacticalCard variant="holographic" title="INFRASTRUCTURE_NODES_CLUSTER" className="p-1 border-white/5 bg-slate-950/20">
-          <div className="p-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { name: 'OpenSearch Cluster', status: 'online', icon: Search, color: 'text-orange-400', glow: 'shadow-orange-500/20', sub: 'SHARDS_INDEXED' },
-                { name: 'Qdrant Vector DB', status: 'online', icon: Brain, color: 'text-purple-400', glow: 'shadow-purple-500/20', sub: 'NEURAL_EMBEDDINGS' },
-                { name: 'PostgreSQL Primary', status: 'online', icon: Database, color: 'text-blue-400', glow: 'shadow-blue-500/20', sub: 'RELATIONAL_CORE' },
-                { name: 'Redis Neural Cache', status: 'online', icon: Zap, color: 'text-red-400', glow: 'shadow-red-500/20', sub: 'SESSION_BUFFER' },
-                { name: 'MinIO Registry', status: 'online', icon: HardDrive, color: 'text-emerald-400', glow: 'shadow-emerald-500/20', sub: 'OBJECT_ARCHIVE' },
-                { name: 'API Neural Gateway', status: 'online', icon: Globe, color: 'text-cyan-400', glow: 'shadow-cyan-500/20', sub: 'TRAFFIC_CONTROL' }
-              ].map((service, i) => (
-                <motion.div
-                  key={service.name}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="flex items-center gap-5 p-6 bg-slate-900/40 border border-white/5 rounded-[32px] hover:border-white/20 transition-all duration-500 shadow-xl group relative overflow-hidden"
-                >
-                  <div className={cn("p-4 rounded-2xl bg-slate-950 border border-white/5 transition-all duration-700 group-hover:scale-110", service.color, service.glow)}>
-                    <service.icon size={22} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[12px] font-black text-white uppercase tracking-widest font-display mb-1">{service.name}</div>
-                    <div className="text-[9px] text-slate-500 font-black uppercase tracking-widest italic opacity-60">{service.sub}</div>
-                  </div>
-                  <div className="flex flex-col items-end gap-2 pr-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]" />
-                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none">PROTECTED</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </TacticalCard>
+        {/* ── ЖИВА СТРІЧКА ПОДІЙ (REALTIME INTEL) ── */}
+        <IntelligenceFeed />
       </div>
 
       {/* Technical Footer Matrix */}
