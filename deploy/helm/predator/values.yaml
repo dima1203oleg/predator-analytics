@@ -245,23 +245,23 @@ monitoring:
 # Global defaults
 global:
   postgres:
-    host: predator-v55-postgresql
+    host: predator-postgresql
     port: 5432
     auth:
       database: predator
       username: predator
       password: predator_db_secret
   redis:
-    host: predator-v55-redis
+    host: predator-redis-master
     port: 6379
   neo4j:
-    host: predator-v55-neo4j
+    host: predator-neo4j
     port: 7687
   opensearch:
-    host: predator-v55-opensearch
+    host: opensearch-cluster-master
     port: 9200
   qdrant:
-    host: predator-v55-qdrant
+    host: predator-qdrant
     port: 6333
   minio:
     accessKey: minioadmin
