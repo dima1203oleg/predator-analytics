@@ -24,7 +24,7 @@ interface Toast {
 
 // Simple global store for toasts
 let toasts: Toast[] = [];
-let listeners: Set<() => void> = new Set();
+const listeners: Set<() => void> = new Set();
 
 const notifyListeners = () => {
   listeners.forEach(listener => listener());

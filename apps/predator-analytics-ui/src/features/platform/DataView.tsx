@@ -68,7 +68,7 @@ const DataView: React.FC = () => {
         const headers = lines[0].split(',');
         rows = lines.slice(1).map(l => {
           const vals = l.split(',');
-          let obj: any = {};
+          const obj: any = {};
           headers.forEach((h, i) => obj[h.trim()] = vals[i]?.trim());
           return obj;
         });

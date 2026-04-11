@@ -23,15 +23,20 @@ export const ConstitutionalShield: React.FC = () => {
             try {
                 // AZR статус — суверенний щит v56.1.4
                 const response = await fetch('/api/v1/azr/status');
-                const data = await response.json();
-                setStatus(data);
+                if (response.ok) {
+                    const text = await response.text();
+                    const data = text ? JSON.parse(text) : null;
+                    if (data) setStatus(data);
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 setLastUpdated(new Date());
             } catch (error) {
-                console.error("Constitutional Shield v56.1.4 Error:", error);
+                console.warn("Constitutional Shield v56.1.4 (FALLBACK_MODE):", error);
                 // Fallback for demo if API fails
                 setStatus({
                     is_running: true,
-                    message_uk: 'АКТИВНИЙ ЗАХИСТ',
+                    message_uk: 'АКТИВНИЙ ЗАХИСТ (A)',
                     rights_level: 'ULTRA_S',
                     axioms_total: 104,
                     cycle: 11502,

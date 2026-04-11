@@ -138,9 +138,12 @@ export enum TabView {
     EVOLUTION = 'evolution',
     AGENTS = 'agents',
     ANALYTICS = 'analytics',
+    /* Legacy mappings for backward compatibility - intentionally duplicate values */
+    /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
     DEVOPS = 'deployment',      // Mapping for legacy/command use
     SYSTEM_BRAIN = 'super_intelligence', // Mapping for legacy/command use
     USER_PORTAL = 'overview'     // Mapping for legacy/command use
+    /* eslint-enable @typescript-eslint/no-duplicate-enum-values */
 }
 
 // --- NAS & AUTOML TYPES ---

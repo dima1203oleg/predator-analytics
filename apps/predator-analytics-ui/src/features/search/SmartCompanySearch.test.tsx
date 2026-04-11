@@ -266,7 +266,7 @@ describe('SmartCompanySearch Component', () => {
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
 
-    let input = screen.getByPlaceholderText(/Введіть назву/);
+    const input = screen.getByPlaceholderText(/Введіть назву/);
     await user.type(input, 'АТ');
 
     // Очистити пошук
