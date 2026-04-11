@@ -228,11 +228,11 @@ export const SearchConsolePage: React.FC = () => {
                                 </div>
                                 <div>
                                     <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        SYNAPTIC <span className="text-indigo-500">DISCOVERY</span>
+                                        СИНАПТИЧНИЙ <span className="text-indigo-500">ПОШУК</span>
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-indigo-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Atom size={12} className="animate-spin-slow" /> 
-                                        NEURAL_SEARCH_CORE_v56.1.4
+                                        НЕЙРО_ПОШУК_v56.1.4
                                     </p>
                                 </div>
                             </div>
@@ -329,7 +329,7 @@ export const SearchConsolePage: React.FC = () => {
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#6366f1' },
                                 { id: 'rerank', label: 'НЕЙРО-РЕРЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
-                                { id: 'chat', label: 'NEXUS CO-PILOT', icon: MessageSquare, color: '#f59e0b', premium: true },
+                                { id: 'chat', label: 'ШІ-АСИСТЕНТ', icon: MessageSquare, color: '#f59e0b', premium: true },
                                 { id: 'truth', label: 'ТІЛЬКИ ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
                                 <motion.button
@@ -337,16 +337,16 @@ export const SearchConsolePage: React.FC = () => {
                                     whileHover={{ y: -5, scale: 1.02 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d",
+                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d shadow-xl backdrop-blur-3xl",
                                         (mode.active ?? (searchModes as any)[mode.id])
-                                            ? "bg-indigo-600/10 border-indigo-500/40 text-indigo-400 shadow-lg shadow-indigo-500/10"
-                                            : "bg-slate-900/40 border-white/5 text-slate-500 hover:text-slate-300"
+                                            ? "bg-indigo-600/10 border-indigo-500/40 text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)]"
+                                            : "bg-slate-900/60 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
                                     <mode.icon size={20} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
                                     <span className="text-[10px] font-black tracking-widest uppercase">{mode.label}</span>
                                     {mode.premium && (
-                                        <Badge className="ml-2 bg-amber-500 text-black text-[7px] font-black border-none px-2">PRO</Badge>
+                                        <Badge className="ml-2 bg-amber-500 text-black text-[7px] font-black border-none px-2 uppercase shadow-[0_0_10px_rgba(245,158,11,0.5)]">ПРО</Badge>
                                     )}
                                     {(mode.active ?? (searchModes as any)[mode.id]) && (
                                         <div className="absolute bottom-0 left-0 h-1 w-full" style={{ backgroundColor: mode.color }} />

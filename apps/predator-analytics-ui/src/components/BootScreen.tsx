@@ -479,6 +479,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.save();
       ctx.translate(cx, cy);
 
+      const rot = now * 0.0003;
+
       // Стилізовані континенти (хмари точок)
       const numPoints = 800;
       for (let i = 0; i < numPoints; i++) {
@@ -512,7 +514,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           ctx.stroke();
         }
       }
-      const rot = now * 0.0003;
       for (let i = 0; i < 14; i++) {
         const a = (i / 14) * Math.PI * 2 + rot;
         const cw = globeR * Math.abs(Math.cos(a));

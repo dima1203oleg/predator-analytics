@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 interface NeuralPulseProps {
     color?: string;
     size?: number;
+    speed?: number;
 }
 
 export const NeuralPulse: React.FC<NeuralPulseProps> = ({

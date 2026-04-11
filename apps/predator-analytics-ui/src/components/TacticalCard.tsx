@@ -26,7 +26,7 @@ interface TacticalCardProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   actions?: CardAction[];
   expandable?: boolean;
   glow?: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'cyan' | 'emerald' | 'indigo' | 'amber' | 'none';
-  variant?: 'cyber' | 'glass' | 'minimal' | 'holographic';
+  variant?: 'cyber' | 'glass' | 'minimal' | 'holographic' | 'premium';
   noPadding?: boolean;
   children?: React.ReactNode;
   action?: React.ReactNode; // Backward compatibility for single custom action
@@ -95,6 +95,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
   const getVariantClass = () => {
     switch (variant) {
+      case 'premium': return 'bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-slate-900/40 border-purple-600/30 shadow-[0_12px_40px_rgba(88,28,135,0.18)]';
       case 'glass': return 'glass-hud bg-[var(--op-bg-panel)] border-[var(--op-border)]';
       case 'minimal': return 'bg-transparent border-[var(--op-border)] hover:bg-[var(--op-bg-accent)] shadow-none';
       case 'holographic': return 'terminal-card bg-[var(--op-bg-accent)] border-[var(--op-primary)] backdrop-blur-2xl shadow-[0_0_20px_var(--op-glow)]';
@@ -138,7 +139,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
           <div className="absolute inset-0 bg-cyber-noise opacity-[0.05] pointer-events-none z-0 rounded-[inherit]"></div>
 
           {variant === 'cyber' && <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none z-0"></div>}
-          
+
           {/* v56 Nexus Scanline */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="scanline-nexus" />

@@ -2,7 +2,7 @@ import * as React from "react"
 import { cn } from "../../utils/cn"
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "secondary" | "destructive" | "outline" | "neon" | "cyber" | "holographic"
+  variant?: "default" | "secondary" | "destructive" | "outline" | "neon" | "cyber" | "holographic" | 'success' | 'warning'
 }
 
 function Badge({ className, variant = "default", ...props }: BadgeProps) {
@@ -15,6 +15,10 @@ function Badge({ className, variant = "default", ...props }: BadgeProps) {
     cyber: "border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 uppercase tracking-widest font-black shadow-[0_0_15px_rgba(16,185,129,0.2)]",
     holographic: "border border-cyan-500/40 bg-cyan-500/10 text-cyan-400 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.3)]"
   }
+
+  // Backwards-compatible variants
+  (variants as any).success = "border-transparent bg-emerald-500/10 text-emerald-400";
+  (variants as any).warning = "border-transparent bg-amber-500/10 text-amber-400";
 
   return (
     <div
