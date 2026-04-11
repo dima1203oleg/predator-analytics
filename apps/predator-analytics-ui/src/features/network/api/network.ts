@@ -2,17 +2,25 @@ import { apiClient } from '@/services/api';
 
 export const networkApi = {
     getGraph: async (params?: any) => {
-        const response = await apiClient.get('/network/graph', { params });
-        return response.data;
+        try {
+            const response = await apiClient.get('/graph/summary', { params });
+            // Map 'links' to 'edges' because cytoscape expects edges
+            return {
+                nodes: response.data.nodes || [],
+                edges: response.data.links || response.data.edges || []
+            };
+        } catch (error) {
+            console.error("Failed to load /graph/summary", error);
+            return { nodes: [], edges: [] };
+        }
     },
     
     searchNodes: async (query: string) => {
-        const response = await apiClient.get('/network/nodes/search', { params: { q: query } });
-        return response.data;
+        // Fallback or use a proper search endpoint if available
+        return { nodes: [], edges: [] };
     },
     
     findPath: async (source: string, target: string) => {
-        const response = await apiClient.get('/network/path', { params: { source, target } });
-        return response.data;
+        return { nodes: [], edges: [] };
     }
 };

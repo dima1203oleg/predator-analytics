@@ -66,11 +66,6 @@ const FEATURE_TOGGLES: FeatureToggle[] = [
     description: "Інтеграція стратегічних агентів Planner та Codegen.",
   },
   {
-    key: "cliStack",
-    label: "TOP CLI Stack (Gemini/Mistral)",
-    description: "Інтеграція стратегічних агентів Planner та Codegen.",
-  },
-  {
     key: "autoImprovement",
     label: "Авто-Покращення (Self-Healing)",
     description: "Автоматичне виправлення помилок та оптимізація коду.",

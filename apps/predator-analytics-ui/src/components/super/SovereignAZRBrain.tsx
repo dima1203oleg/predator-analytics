@@ -19,7 +19,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
   const [logs, setLogs] = useState<string[]>([]);
   const [isSynthesizing, setIsSynthesizing] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [voiceHint, setVoiceHint] = useState("Direct voice commands ready");
+  const [voiceHint, setVoiceHint] = useState("Голосовий нейроінтерфейс активовано");
 
   const [metrics, setMetrics] = useState({ load: 0 });
   const [decisions, setDecisions] = useState<any[]>([]);
@@ -39,7 +39,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
 
       if (audit && Array.isArray(audit)) {
         setCycle(audit.length > 0 ? (audit[0].sequence || audit.length) : cycle);
-        setLogs(audit.map(a => `[${a.action || 'OODA'}] ${a.details?.intent || a.details?.message || 'Processing...'}`));
+        setLogs(audit.map(a => `[${a.action || 'OODA'}] ${a.details?.intent || a.details?.message || 'ОБРОБКА...'}`));
       }
 
       if (sys) {
@@ -74,18 +74,18 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
               <BrainCircuit className="text-blue-400 animate-pulse" size={28} />
             </div>
             <div className="text-right">
-              <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Sovereign Version</div>
-              <div className="text-xl font-black text-white italic tracking-tighter">v46.0.0-BETA</div>
+              <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Версія Суверенітету</div>
+              <div className="text-xl font-black text-white italic tracking-tighter">v56.1.4-APEX</div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-black/40 p-4 rounded-2xl border border-white/5">
-              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">OODA Cycles</div>
+              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">Цикли OODA</div>
               <div className="text-2xl font-black text-blue-400 font-mono tracking-tighter">{cycle}</div>
             </div>
             <div className="bg-black/40 p-4 rounded-2xl border border-white/5">
-              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">System Load</div>
+              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">Навантаження</div>
               <div className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">{metrics.load.toFixed(0)}%</div>
             </div>
           </div>
@@ -94,7 +94,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
         {/* 🎤 Neural Voice Interface (v46) */}
         <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-emerald-500/20 rounded-[32px] shadow-[0_0_40px_rgba(16,185,129,0.05)]">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Neural Link</h3>
+            <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Нейронний Зв'язок</h3>
             <Volume2 size={14} className="text-emerald-500/50" />
           </div>
 
@@ -102,8 +102,8 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
             <button
               onClick={() => {
                 setIsListening(!isListening);
-                if (!isListening) setVoiceHint("Listening for 'Initiate Evolution'...");
-                else setVoiceHint("Direct voice commands ready");
+                if (!isListening) setVoiceHint("Слухаю команду 'Ініціювати Еволюцію'...");
+                else setVoiceHint("Голосовий нейроінтерфейс активовано");
               }}
               className={`relative p-5 rounded-full transition-all duration-500 ${isListening ? 'bg-emerald-500 shadow-[0_0_30px_#10b981]' : 'bg-slate-900 border border-white/10 hover:border-emerald-500/50'}`}
             >
@@ -136,7 +136,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
         <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-white/5 rounded-[32px] h-[300px] flex flex-col">
           <div className="flex items-center gap-3 mb-4">
             <Terminal className="text-slate-500" size={18} />
-            <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">Truth Ledger Stream</h3>
+            <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">Потік Реєстру Істини</h3>
           </div>
           <div className="flex-1 overflow-y-auto space-y-2 scrollbar-hide font-mono text-[10px]">
             {logs.map((log, i) => (
@@ -160,14 +160,14 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
               <div className="p-2 bg-indigo-500/10 rounded-lg">
                 <Sparkles className="text-indigo-400" size={16} />
               </div>
-              <h3 className="text-xs font-black text-white uppercase tracking-widest">Autonomous Reasoning</h3>
+              <h3 className="text-xs font-black text-white uppercase tracking-widest">Автономне Мислення</h3>
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
             {decisions.length === 0 && (
               <div className="text-slate-600 text-[10px] italic text-center py-20 font-black uppercase tracking-widest">
-                Awaiting next OODA cycle...
+                Очікування наступного циклу OODA...
               </div>
             )}
             {decisions.map((dec, i) => (
@@ -222,8 +222,8 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
                 <BarChart3 className="text-blue-400 animate-pulse" size={32} />
               </div>
               <div>
-                <h4 className="text-xl font-black text-white uppercase tracking-tight">MLOps Intelligence Hub</h4>
-                <p className="text-xs text-slate-500 font-mono tracking-widest uppercase italic">Direct Access to Modeling & Experiments</p>
+                <h4 className="text-xl font-black text-white uppercase tracking-tight">MLOps ЦЕНТР РОЗВІДКИ</h4>
+                <p className="text-xs text-slate-500 font-mono tracking-widest uppercase italic">Прямий доступ до моделювання та експеринентів</p>
               </div>
             </div>
 
@@ -232,7 +232,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
                 className="flex-1 md:flex-none flex items-center justify-between gap-6 px-8 py-5 bg-white/5 hover:bg-orange-500/10 border border-white/10 hover:border-orange-500/30 rounded-2xl transition-all group/btn"
               >
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-orange-500/50 uppercase tracking-[0.2em] mb-1">Infrastructure</span>
+                  <span className="text-[10px] font-black text-orange-500/50 uppercase tracking-[0.2em] mb-1">Інфраструктура</span>
                   <span className="text-sm font-bold text-slate-200">H2O STUDIO</span>
                 </div>
                 <ExternalLink size={18} className="text-slate-500 group-hover/btn:text-orange-400 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-all" />
@@ -242,7 +242,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
                 className="flex-1 md:flex-none flex items-center justify-between gap-6 px-8 py-5 bg-white/5 hover:bg-blue-500/10 border border-white/10 hover:border-blue-500/30 rounded-2xl transition-all group/btn"
               >
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-[0.2em] mb-1">Experimentation</span>
+                  <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-[0.2em] mb-1">Експерименти</span>
                   <span className="text-sm font-bold text-slate-200">MLFLOW SERVER</span>
                 </div>
                 <ExternalLink size={18} className="text-slate-500 group-hover/btn:text-blue-400 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-all" />

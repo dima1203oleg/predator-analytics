@@ -9,6 +9,7 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground",
+            highlight: "bg-gradient-to-r from-indigo-700/40 to-indigo-600/30 border-indigo-500/30 text-white shadow-lg",
         cyber: "bg-slate-950/80 border-white/5 shadow-2xl backdrop-blur-xl",
         holographic: "bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-black/80 border-indigo-500/20 shadow-[0_8px_32px_rgba(79,70,229,0.15)] backdrop-blur-2xl ring-1 ring-white/5",
         neon: "bg-black/40 border-fuchsia-500/30 text-white shadow-[0_0_30px_rgba(217,70,239,0.1)]",

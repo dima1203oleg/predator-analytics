@@ -80,7 +80,10 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
                   </div>
                   <div>
                     <div className="text-sm font-bold text-slate-200">{task.component}</div>
-                    <div className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">{task.type.toUpperCase()} {premiumLocales.evolution.forgeView.enhancement}</div>
+                    <div className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">
+                      {task.type === 'aesthetic' ? 'Естетичне' : 
+                       task.type === 'performance' ? 'Продуктивність' : 'Функціональне'} {premiumLocales.evolution.forgeView.enhancement}
+                    </div>
                   </div>
                 </div>
                 <div className={`px-3 py-1 rounded-lg text-[9px] font-black tracking-widest border ${
@@ -88,7 +91,9 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
                   task.status === 'crafting' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
                   'bg-slate-800 text-slate-400 border-slate-700'
                 }`}>
-                  {task.status.toUpperCase()}
+                  {task.status === 'deployed' ? 'ВПРОВАДЖЕНО' : 
+                   task.status === 'crafting' ? 'СТВОРЕННЯ' : 
+                   task.status === 'scanning' ? 'СКАНУВАННЯ' : 'ПЕРЕВІРКА'}
                 </div>
               </div>
 

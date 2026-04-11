@@ -20,8 +20,8 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        // Реальний API Server (порт 8000) замість Mock
-        target: 'http://localhost:9080',
+        // РЕАЛЬНИЙ NVIDIA API Server замість Mock
+        target: 'http://194.177.1.240:8000',
         changeOrigin: true,
         ws: true,
       }

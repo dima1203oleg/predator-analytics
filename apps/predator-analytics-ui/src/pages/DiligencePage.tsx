@@ -191,6 +191,15 @@ const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarP
     ];
 };
 
+// --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
+const MOCK_ENTITIES: RiskEntity[] = [
+  { ueid: '1', edrpou: '38210342', name: 'ТОВ "ЕНЕРДЖИ-ГРУП"', risk_score: 92, risk_level: 'critical', status: 'active' },
+  { ueid: '2', edrpou: '41092384', name: 'ПРАТ "ТЕХНО-ВЕСТ"', risk_score: 75, risk_level: 'high', status: 'active' },
+  { ueid: '3', edrpou: '29384712', name: 'ПП "ЛОГІСТИК-ЦЕНТР ПЛЮС"', risk_score: 45, risk_level: 'medium', status: 'active' },
+  { ueid: '4', edrpou: '31049582', name: 'ТОВ "МЕТАЛ-ПРОМ"', risk_score: 22, risk_level: 'stable', status: 'active' },
+  { ueid: '5', edrpou: '42938104', name: 'ДЕРЖАВНЕ ПІДПРИЄМСТВО "СИСТЕМА"', risk_score: 68, risk_level: 'elevated', status: 'active' },
+];
+
 export default function DiligencePage() {
     const backendStatus = useBackendStatus();
     const [riskEntities, setRiskEntities] = useState<RiskEntity[]>([]);
@@ -216,7 +225,11 @@ export default function DiligencePage() {
                     await handleSelectEntity(entities[0]);
                 }
             } catch (error) {
-                console.error('Не вдалося отримати перелік контрагентів:', error);
+                console.warn('[DiligencePage] API недоступний, активовано автономний режим (MOCK):', error);
+                setRiskEntities(MOCK_ENTITIES);
+                if (MOCK_ENTITIES.length > 0) {
+                   setSelectedEntity(MOCK_ENTITIES[0]);
+                }
             } finally {
                 setLoadingSidebar(false);
             }

@@ -51,7 +51,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
 
             {/* Version Badge - Sovereign style */}
             <div className={`absolute ${s.badge} bg-red-950/90 px-2 py-0.5 text-red-500 border border-red-600/50 rounded-sm font-mono font-black tracking-widest text-[8px] backdrop-blur-md shadow-2xl group-hover:border-red-400 transition-colors uppercase`}>
-                SOVEREIGN v56.1.4
+                СУВЕРЕН v56.1.4
             </div>
         </div>
     );

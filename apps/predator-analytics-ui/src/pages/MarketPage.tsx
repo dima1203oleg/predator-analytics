@@ -264,6 +264,28 @@ const buildCustomsChartOption = (declarations: DeclarationResponse[]) => {
   };
 };
 
+// --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
+const MOCK_MARKET_OVERVIEW: MarketOverviewPayload = {
+  overview: {
+    stats: {
+      total_declarations: 4218932,
+      declarations_change: 12.5,
+      total_value_usd: 12450000000,
+      value_change: 8.2,
+      active_companies: 15420,
+      companies_change: 4.1,
+      total_products: 89430,
+      products_change: 15.7,
+    },
+    top_products: [
+      { product_code: "8517", product_name: "Смартфони та обладнання зв'язку", total_value_usd: 450000000, growth_rate: 22.4 },
+      { product_code: "8703", product_name: "Легкові автомобілі", total_value_usd: 380000000, growth_rate: -5.2 },
+      { product_code: "2710", product_name: "Нафтопродукти", total_value_usd: 920000000, growth_rate: 12.8 },
+      { product_code: "8471", product_name: "Обчислювальні машини", total_value_usd: 150000000, growth_rate: 45.1 },
+    ]
+  }
+};
+
 export default function MarketPage() {
   const backendStatus = useBackendStatus();
   const [activeTab, setActiveTab] = useState<MarketTab>('overview');
@@ -293,7 +315,7 @@ export default function MarketPage() {
         value: `$${(amount * 0.7).toLocaleString('uk-UA')}`,
         detail: 'Очікуваний прибуток від реалізації',
         icon: TrendingUp,
-        tone: 'slate'
+        tone: 'indigo' as const
       },
       {
         id: 'efficiency',
@@ -323,8 +345,9 @@ export default function MarketPage() {
         const data = await dashboardApi.getOverview();
         setOverviewData(data as unknown as MarketOverviewPayload);
       } catch (error) {
-        console.error('Не вдалося завантажити огляд ринку:', error);
-        setOverviewError('Огляд ринку не отримано. Перевірте доступність Core API.');
+        console.warn('[MarketPage] API недоступний, активовано автономний режим (MOCK):', error);
+        setOverviewData(MOCK_MARKET_OVERVIEW);
+        setOverviewError('Працює в режимі автономної симуляції. Підключення до Core API відсутнє.');
       } finally {
         setLoadingOverview(false);
       }
@@ -479,36 +502,38 @@ export default function MarketPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
-            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-red-400/80 transition-colors italic">Core Environment</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 xl:w-[680px]">
+            <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(220,38,38,0.15)] hover:-translate-y-1 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">БАЗОВИЙ КОНТУР</span>
               </div>
-              <div className="text-base font-bold text-white tracking-tight">Cybercore P-60</div>
-              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
+              <div className="text-lg font-black text-white tracking-widest uppercase">КІБЕР-ЯДРО P-60</div>
+              <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">СЕРТИФІКОВАНА L4</div>
             </div>
 
-            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Intelligence Hub</span>
+            <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative overflow-hidden">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,1)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦЕНТР РОЗВІДКИ</span>
               </div>
-              <div className="text-base font-bold text-white tracking-tight">
+              <div className="text-lg font-black text-white tracking-widest uppercase">
                 {tabs.find((tab) => tab.key === activeTab)?.label}
               </div>
-              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Scenario {activeTab === 'overview' ? '01' : '02'}</div>
+              <div className="text-[9px] text-amber-500/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">СЦЕНАРІЙ {activeTab === 'overview' ? '01' : '02'}</div>
             </div>
 
-            <div className="card-depth rounded-[28px] border border-red-500/10 bg-red-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(220,38,38,0.05)] col-span-2 sm:col-span-1 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
-              <div className="flex items-center gap-2 mb-3">
-                <ShieldCheck className="h-3 w-3 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/60 italic">Verification</span>
+            <div className="card-depth rounded-[32px] border border-red-500/20 bg-red-500/[0.05] backdrop-blur-3xl p-6 shadow-[inset_0_0_30px_rgba(220,38,38,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-red-500/40 transition-all relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <ShieldCheck className="h-4 w-4 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500/80 italic">ВЕРИФІКАЦІЯ</span>
+                </div>
+                <div className="text-lg font-black text-red-500 tracking-widest uppercase leading-none italic">РИНКОВИЙ СУВЕРЕН</div>
               </div>
-              <div className="text-base font-black text-red-500 tracking-tighter uppercase leading-none italic">Market Sovereign</div>
-              <div className="text-[10px] text-red-500/40 mt-1 font-mono group-hover:animate-pulse uppercase tracking-[0.2em]">Trusted Node</div>
+              <div className="text-[9px] text-red-500/60 mt-3 font-mono tracking-widest uppercase bg-red-500/10 inline-block px-2 py-1 rounded-md w-max">ДОВІРЕНИЙ ВУЗОЛ</div>
             </div>
           </div>
         </div>

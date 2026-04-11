@@ -33,7 +33,7 @@ import {
 import { api } from '../../services/api';
 import '../../styles/SovereignGovernance.css';
 
-// --- TYPES ---
+// --- ТИПИ ---
 interface SOMStatus {
     active: boolean;
     operational: boolean;
@@ -68,7 +68,7 @@ interface Proposal {
     created_at: string;
 }
 
-// --- COMPONENTS ---
+// --- КОМПОНЕНТИ ---
 
 const StatusIndicator: React.FC<{ active: boolean; label: string }> = ({ active, label }) => (
     <div className="flex items-center gap-2">
@@ -79,10 +79,10 @@ const StatusIndicator: React.FC<{ active: boolean; label: string }> = ({ active,
 
 const RingPortal: React.FC<{ level: number }> = ({ level }) => {
     const configs = [
-        { label: "UNRESTRICTED", color: "#10b981", rings: 1, speed: "20s" },
-        { label: "INNER_CIRCLE", color: "#3b82f6", rings: 2, speed: "15s" },
-        { label: "MIDDLE_GROUND", color: "#f59e0b", rings: 3, speed: "10s" },
-        { label: "SOVEREIGN_OUTER", color: "#e11d48", rings: 4, speed: "5s" }
+        { label: "БЕЗ ОБМЕЖЕНЬ", color: "#10b981", rings: 1, speed: "20s" },
+        { label: "ВНУТРІШНЄ КОЛО", color: "#3b82f6", rings: 2, speed: "15s" },
+        { label: "СЕРЕДНЯ ЗОНА", color: "#f59e0b", rings: 3, speed: "10s" },
+        { label: "ЗОВНІШНІЙ КОНТУР", color: "#e11d48", rings: 4, speed: "5s" }
     ];
 
     const current = configs[level] || configs[0];
@@ -100,7 +100,7 @@ const RingPortal: React.FC<{ level: number }> = ({ level }) => {
                 <div className="relative z-10 w-4 h-4 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
             </div>
             <div className="flex flex-col">
-                <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">SOVEREIGNTY_RING</span>
+                <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">КІЛЬЦЕ СУВЕРЕНІТЕТУ</span>
                 <span className="text-lg font-black tracking-tight text-ring-color">{current.label}</span>
                 <div className="flex gap-1 mt-1.5">
                     {[0, 1, 2, 3].map(i => (
@@ -163,7 +163,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             await api.som.executeProposal(id, "operator-01");
             fetchData();
         } catch (err) {
-            alert("Execution failed compliance check!");
+            alert("Помилка комплаєнс-перевірки при виконанні!");
         }
     };
 
@@ -175,7 +175,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             setTargetComponent('');
             fetchData();
         } catch (err) {
-            alert("Failed to grant immunity");
+            alert("Не вдалося надати імунітет");
         }
     };
 
@@ -187,7 +187,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
             setOverruleReason('');
             fetchData();
         } catch (err) {
-            alert("Failed to overrule violation");
+            alert("Не вдалося скасувати порушення");
         }
     };
 
@@ -195,14 +195,14 @@ export const SovereignGovernanceDashboard: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 p-8 font-sans selection:bg-rose-500/30">
-            {/* Background Effects */}
-            <div className="fixed inset-0  pointer-events-none">
+            {/* Ефекти фону */}
+            <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[120px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px]" />
                 {isEmergency && <div className="absolute inset-0 bg-rose-900/10 animate-pulse" />}
             </div>
 
-            {/* Header Section */}
+            {/* Секція хедеру */}
             <header className="relative z-10 flex items-center justify-between mb-12">
                 <div className="flex items-center gap-6">
                     <div className={`p-4 rounded-3xl bg-gradient-to-br ${isEmergency ? 'from-rose-500 to-red-800' : 'from-indigo-500 to-blue-700'} shadow-2xl shadow-indigo-500/20`}>
@@ -210,10 +210,10 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Sovereign Governance</h1>
-                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v45.1-S</span>
+                            <h1 className="text-3xl font-black text-white tracking-tight uppercase">Суверенне Управління</h1>
+                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v56.1.4-S</span>
                         </div>
-                        <p className="text-slate-500 text-sm font-medium mt-1">Constitutional Oversight & Human Sovereignty Interface</p>
+                        <p className="text-slate-500 text-sm font-medium mt-1">Конституційний Нагляд та Інтерфейс Людського Суверенітету</p>
                     </div>
                 </div>
 
@@ -224,20 +224,20 @@ export const SovereignGovernanceDashboard: React.FC = () => {
 
             <div className="grid grid-cols-12 gap-8 relative z-10">
 
-                {/* Left Column: Proposals & Debates */}
+                {/* Ліва колонка: Пропозиції та дебати */}
                 <div className="col-span-12 lg:col-span-8 space-y-8">
 
-                    {/* Active Proposals Section */}
-                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] ">
-                        <div className="p-6 border-bottom border-white/5 flex items-center justify-between bg-white/5">
+                    {/* Секція активних пропозицій */}
+                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] overflow-hidden">
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between bg-white/5">
                             <div className="flex items-center gap-3">
                                 <GitBranch className="text-blue-400" size={20} />
-                                <h2 className="text-lg font-bold text-white uppercase tracking-widest">Evolution Proposals</h2>
+                                <h2 className="text-lg font-bold text-white uppercase tracking-widest">Пропозиції Еволюції</h2>
                             </div>
-                            <span className="text-[10px] text-slate-500 font-mono">{proposals.length} PENDING DECISIONS</span>
+                            <span className="text-[10px] text-slate-500 font-mono">{proposals.length} РІШЕНЬ ОЧІКУЄТЬСЯ</span>
                         </div>
 
-                        <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto">
+                        <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
                             <AnimatePresence mode="popLayout">
                                 {proposals.map(proposal => (
                                     <motion.div
@@ -270,7 +270,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                                         className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                                                     >
                                                         <Zap size={14} />
-                                                        Execute
+                                                        Виконати
                                                     </button>
                                                 )}
                                             </div>
@@ -281,27 +281,27 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                             {proposals.length === 0 && (
                                 <div className="text-center py-12 text-slate-600 bg-white/5 rounded-2xl border border-dashed border-slate-800">
                                     <RefreshCw className="mx-auto mb-4 animate-spin-slow opacity-20" size={48} />
-                                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No Active Proposals</h3>
-                                    <p className="text-xs text-slate-500 mb-6 max-w-xs mx-auto">The system is currently stable. You can trigger a new evolution cycle manually.</p>
+                                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Активних пропозицій немає</h3>
+                                    <p className="text-xs text-slate-500 mb-6 max-w-xs mx-auto">Система стабільна. Ви можете ініціювати новий цикл еволюції вручну.</p>
 
                                     <button
                                         onClick={async () => {
                                             try {
                                                 await api.ai.triggerSelfImprovement();
                                                 fetchData();
-                                                alert("Evolution cycle initiated.");
-                                            } catch(e) { alert("Failed to start evolution."); }
+                                                alert("Цикл еволюції ініційовано.");
+                                            } catch(e) { alert("Не вдалося почати еволюцію."); }
                                         }}
                                         className="px-6 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
                                     >
-                                        Initiate Cycle
+                                        Запустити Цикл
                                     </button>
                                 </div>
                             )}
                         </div>
                     </section>
 
-                    {/* Simulation & Debate Detail */}
+                    {/* Деталі симуляції та дебатів */}
                     <AnimatePresence>
                         {selectedProposal && (
                             <motion.section
@@ -309,24 +309,24 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="grid grid-cols-2 gap-6"
                             >
-                                {/* Digital Twin Results */}
+                                {/* Результати цифрового двійника */}
                                 <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6">
                                     <div className="flex items-center gap-3 mb-6">
                                         <Activity className="text-emerald-400" size={20} />
-                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Digital Twin Simulation</h3>
+                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Симуляція Цифрового Двійника</h3>
                                     </div>
 
                                     {selectedProposal.simulation_results?.technical ? (
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                                                <span className="text-xs text-slate-400">Stability Verdict</span>
+                                                <span className="text-xs text-slate-400">Вердикт Стабільності</span>
                                                 <span className={`text-xs font-bold ${selectedProposal.simulation_results.technical.risk_analysis?.is_safe ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                                    {selectedProposal.simulation_results.technical.risk_analysis?.is_safe ? '✓ STABLE' : '✗ RISKY'}
+                                                    {selectedProposal.simulation_results.technical.risk_analysis?.is_safe ? '✓ СТАБІЛЬНО' : '✗ РИЗИКОВАНО'}
                                                 </span>
                                             </div>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between text-[10px] text-slate-500 uppercase font-black">
-                                                    <span>Predicted CPU Impact</span>
+                                                    <span>Прогноз впливу на CPU</span>
                                                     <span>{Math.round(selectedProposal.simulation_results.technical.resource_prediction?.predicted_cpu * 100)}%</span>
                                                 </div>
                                                 <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -342,16 +342,16 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     ) : (
                                         <div className="h-32 flex flex-col items-center justify-center text-slate-600 italic text-xs">
                                             <Cpu className="mb-2 opacity-20 animate-pulse" />
-                                            Predicting system impact...
+                                            Прогнозування впливу на систему...
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Sovereign Debate Results */}
+                                {/* Результати суверенних дебатів */}
                                 <div className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6">
                                     <div className="flex items-center gap-3 mb-6">
                                         <Scale className="text-amber-400" size={20} />
-                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Dialectical Analysis</h3>
+                                        <h3 className="text-sm font-bold text-white uppercase tracking-wider">Діалектичний Аналіз</h3>
                                     </div>
 
                                     {selectedProposal.simulation_results?.debate ? (
@@ -359,7 +359,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                             <div className="p-3 bg-blue-500/5 rounded-xl border border-blue-500/10">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <Brain size={12} className="text-blue-400" />
-                                                    <span className="text-[10px] font-black text-blue-400 uppercase">The Architect</span>
+                                                    <span className="text-[10px] font-black text-blue-400 uppercase">Архітектор</span>
                                                 </div>
                                                 <p className="text-[11px] text-slate-300 leading-relaxed italic line-clamp-2">
                                                     "{selectedProposal.simulation_results.debate.architect_argument}"
@@ -368,7 +368,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                             <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/10">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <ShieldAlert size={12} className="text-amber-400" />
-                                                    <span className="text-[10px] font-black text-amber-400 uppercase">The Guardian</span>
+                                                    <span className="text-[10px] font-black text-amber-400 uppercase">Охоронець</span>
                                                 </div>
                                                 <p className="text-[11px] text-slate-300 leading-relaxed italic line-clamp-2">
                                                     "{selectedProposal.simulation_results.debate.guardian_argument}"
@@ -378,7 +378,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     ) : (
                                         <div className="h-32 flex flex-col items-center justify-center text-slate-600 italic text-xs">
                                             <Users className="mb-2 opacity-20 animate-pulse" />
-                                            Waiting for agent consensus...
+                                            Очікування консенсусу агентів...
                                         </div>
                                     )}
                                 </div>
@@ -387,18 +387,18 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                     </AnimatePresence>
                 </div>
 
-                {/* Right Column: Sovereignty & Shadow Mode */}
+                {/* Права колонка: Суверенітет та тіньовий режим */}
                 <div className="col-span-12 lg:col-span-4 space-y-8">
 
-                    {/* Ring 3 Sovereignty Controls */}
+                    {/* Керування суверенітетом 3-го кільця */}
                     <section className={`p-6 rounded-[32px] border transition-all duration-700 ${isEmergency ? 'bg-rose-950/40 border-rose-500/50 shadow-2xl shadow-rose-500/20' : 'bg-slate-900/40 border-white/5'}`}>
                         <div className="flex items-center gap-3 mb-8">
                             <Lock className={isEmergency ? 'text-rose-500' : 'text-slate-500'} size={24} />
-                            <h2 className={`text-lg font-black uppercase tracking-widest ${isEmergency ? 'text-rose-400' : 'text-white'}`}>Sovereignty Core</h2>
+                            <h2 className={`text-lg font-black uppercase tracking-widest ${isEmergency ? 'text-rose-400' : 'text-white'}`}>Ядро Суверенітету</h2>
                         </div>
 
                         <div className="space-y-6">
-                            {/* The Red Button Visual */}
+                            {/* Візуал червоної кнопки */}
                             <div className="relative aspect-square max-w-[200px] mx-auto group">
                                 <div className={`absolute inset-0 rounded-full blur-2xl opacity-20 transition-all ${isEmergency ? 'bg-rose-500 animate-pulse' : 'bg-indigo-500'}`} />
                                 <motion.button
@@ -409,13 +409,13 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 >
                                     <Flame size={48} className={isEmergency ? 'text-white' : 'text-slate-500 opacity-30'} />
                                     <span className="text-[10px] font-black uppercase tracking-tighter">
-                                        {isEmergency ? 'Deactivate' : 'Emergency'}
+                                        {isEmergency ? 'Деактивувати' : 'Екстрено'}
                                     </span>
                                 </motion.button>
                             </div>
 
                             <p className="text-center text-slate-500 text-xs leading-relaxed px-4">
-                                Ring Level 3 controls allow human operators to bypass all autonomous logic in case of catastrophic drift or axiom violations.
+                                Елементи керування 3-го кільця дозволяють операторам обходити всю автономну логіку в разі катастрофічного дрейфу або порушення аксіом.
                             </p>
 
                             <div className="grid grid-cols-2 gap-3">
@@ -424,7 +424,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     className="py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                                 >
                                     <ShieldCheck size={14} className="text-blue-400" />
-                                    Immunity
+                                    Імунітет
                                 </button>
                                 <button
                                     onClick={() => {
@@ -432,20 +432,20 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                             setSelectedViolation(violations[0]);
                                             setOverruleModal(true);
                                         } else {
-                                            alert("No active violations to overrule.");
+                                            alert("Немає активних порушень для скасування.");
                                         }
                                     }}
                                     className="py-3 bg-slate-800 hover:bg-slate-700 border border-white/5 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
                                 >
                                     <Unlock size={14} className="text-amber-400" />
-                                    Overrule
+                                    Скасувати
                                 </button>
                             </div>
                         </div>
                     </section>
 
-                    {/* Shadow Mode Monitor */}
-                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6 relative ">
+                    {/* Монітор тіньового режиму */}
+                    <section className="bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6 relative">
                         <div className="absolute top-0 right-0 p-4 opacity-5">
                             <Fingerprint size={120} />
                         </div>
@@ -453,10 +453,10 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-3">
                                 <Eye className="text-indigo-400" size={20} />
-                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Shadow Analytics</h2>
+                                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Тіньова Аналітика</h2>
                             </div>
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Model Drift</span>
+                                <span className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Дрейф Моделі</span>
                                 <span className={`text-lg font-black ${(driftScore * 100) > 30 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                     {(driftScore * 100).toFixed(1)}%
                                 </span>
@@ -471,7 +471,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                             <ArrowRightLeft size={14} className={metric.deviation_score > 0.3 ? 'text-rose-400' : 'text-emerald-400'} />
                                         </div>
                                         <div>
-                                            <div className="text-[9px] text-slate-500 uppercase font-black tracking-tighter">Candidate Verification</div>
+                                            <div className="text-[9px] text-slate-500 uppercase font-black tracking-tighter">Перевірка Кандидата</div>
                                             <div className="text-[10px] text-white font-mono">{metric.candidate_model}</div>
                                         </div>
                                     </div>
@@ -481,7 +481,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 </div>
                             ))}
                             <button className="w-full py-2 text-[10px] text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors">
-                                View Architectural Heatmap
+                                Переглянути Архітектурну Теплокарту
                                 <ChevronRight size={14} />
                             </button>
                         </div>
@@ -490,7 +490,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Emergency Modal */}
+            {/* Модальне вікно екстреної ситуації */}
             {emergencyModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
                     <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
@@ -508,15 +508,15 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 <AlertOctagon size={48} className="text-rose-500" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Sovereignty Override</h3>
+                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Перевизначення Суверенітету</h3>
                                 <p className="text-slate-400 text-sm mt-2">
-                                    You are about to activate the **Level 2 Emergency Isolate Protocol**. This will freeze all autonomous optimization and place agents in deterministic lock.
+                                    Ви збираєтеся активувати **Протокол Екстреної Ізоляції Рівня 2**. Це заморозить усі автономні оптимізації та переведе агентів у детерміноване блокування.
                                 </p>
                             </div>
 
                             <div className="w-full space-y-3">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center justify-between">
-                                    <span className="text-xs text-slate-500 font-bold uppercase">Auth Code</span>
+                                    <span className="text-xs text-slate-500 font-bold uppercase">Код доступу</span>
                                     <span className="text-lg font-mono text-white tracking-[0.5em] font-black">{isEmergency ? 'PAUSE_SOM_ALPHA' : 'PAUSE_SOM_ALPHA'}</span>
                                 </div>
                                 <button
@@ -531,7 +531,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                         fetchData();
                                     }}
                                 >
-                                    {isEmergency ? 'Deactivate Protocol' : 'Confirm Activation'}
+                                    {isEmergency ? 'Деактивувати Протокол' : 'Підтвердити Активацію'}
                                 </button>
                             </div>
                         </div>
@@ -539,7 +539,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                 </div>
             )}
 
-            {/* Immunity Modal */}
+            {/* Модальне вікно імунітету */}
             {immunityModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
                     <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
@@ -558,40 +558,40 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     <ShieldCheck size={32} className="text-blue-500" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Grant Immunity</h3>
-                                    <p className="text-slate-400 text-xs mt-1">Protect component from autonomous actions</p>
+                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Надати Імунітет</h3>
+                                    <p className="text-slate-400 text-xs mt-1">Захистити компонент від автономних дій</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Target Component</label>
+                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Цільовий Компонент</label>
                                     <input
                                         type="text"
-                                        placeholder="e.g. orchestrator, dataloader"
+                                        placeholder="напр. orchestrator, dataloader"
                                         className="w-full bg-slate-800 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all font-mono"
                                         value={targetComponent}
                                         onChange={(e) => setTargetComponent(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Duration (Minutes)</label>
+                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Тривалість (Хвилин)</label>
                                     <select
                                         className="w-full bg-slate-800 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all"
                                         value={immunityMinutes}
                                         onChange={(e) => setImmunityMinutes(parseInt(e.target.value))}
                                     >
-                                        <option value={15}>15 Minutes</option>
-                                        <option value={60}>1 Hour</option>
-                                        <option value={240}>4 Hours</option>
-                                        <option value={1440}>24 Hours</option>
+                                        <option value={15}>15 Хвилин</option>
+                                        <option value={60}>1 Година</option>
+                                        <option value={240}>4 Години</option>
+                                        <option value={1440}>24 Години</option>
                                     </select>
                                 </div>
                                 <button
                                     onClick={handleGrantImmunity}
                                     className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-600/20 transition-all border border-blue-400/30"
                                 >
-                                    Confirm Immunity
+                                    Підтвердити Імунітет
                                 </button>
                             </div>
                         </div>
@@ -599,7 +599,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                 </div>
             )}
 
-            {/* Overrule Modal */}
+            {/* Модальне вікно скасування */}
             {overruleModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-6 sm:p-0">
                     <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" />
@@ -618,20 +618,20 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     <Unlock size={32} className="text-amber-500" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Manual Overrule</h3>
-                                    <p className="text-slate-400 text-xs mt-1">Resolve and clear constitutional violations</p>
+                                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">Ручне Скасування</h3>
+                                    <p className="text-slate-400 text-xs mt-1">Вирішення та очищення конституційних порушень</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Select Violation</label>
+                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Оберіть Порушення</label>
                                     <select
                                         className="w-full bg-slate-800 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500/50 outline-none transition-all font-mono"
                                         value={selectedViolation?.id || ''}
                                         onChange={(e) => setSelectedViolation(violations.find(v => v.id === e.target.value))}
                                     >
-                                        <option value="">Select a violation...</option>
+                                        <option value="">Оберіть порушення...</option>
                                         {violations.filter(v => !v.resolved).map(v => (
                                             <option key={v.id} value={v.id}>
                                                 {v.axiom_id}: {v.violation_type} ({v.actor})
@@ -643,22 +643,22 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 {selectedViolation && (
                                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Details</span>
+                                            <span className="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Деталі</span>
                                             <span className="text-[9px] text-rose-400 font-mono italic">#{selectedViolation.id.substring(0, 8)}</span>
                                         </div>
                                         <p className="text-xs text-slate-300 leading-relaxed font-mono">
-                                            Actor: {selectedViolation.actor}<br/>
-                                            Action: {selectedViolation.action}<br/>
-                                            Severity: {selectedViolation.severity}
+                                            Дійова особа: {selectedViolation.actor}<br/>
+                                            Дія: {selectedViolation.action}<br/>
+                                            Критичність: {selectedViolation.severity}
                                         </p>
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Resolution Rationale</label>
+                                    <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest pl-2">Обґрунтування Вирішення</label>
                                     <textarea
                                         rows={3}
-                                        placeholder="Explain why this violation is being overruled..."
+                                        placeholder="Поясніть, чому це порушення скасовується..."
                                         className="w-full bg-slate-800 border border-white/5 rounded-2xl px-4 py-3 text-sm text-white focus:border-amber-500/50 outline-none transition-all resize-none"
                                         value={overruleReason}
                                         onChange={(e) => setOverruleReason(e.target.value)}
@@ -669,7 +669,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                     disabled={!selectedViolation || !overruleReason}
                                     className="w-full py-4 bg-amber-600 hover:bg-amber-500 disabled:opacity-30 disabled:hover:bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-amber-600/20 transition-all border border-amber-400/30"
                                 >
-                                    Execute Overrule
+                                    Виконати Скасування
                                 </button>
                             </div>
                         </div>

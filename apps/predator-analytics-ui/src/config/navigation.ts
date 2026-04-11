@@ -276,7 +276,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'Стратегічний Хаб v56.1.4',
     description: 'Централізований суверенний контроль, оперативні зведення та квантовий огляд ризиків.',
     outcome: 'Sovereign Command: Повний контроль над бізнес-периметром за 3 секунди з урахуванням глобальних загроз.',
-    accent: 'red',
+    accent: 'emerald',
     items: [
       {
         id: 'dashboard',
@@ -317,7 +317,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Strategic Briefing v56.1.4',
+        label: 'Стратегічний брифінг v56.1.4',
         path: '/morning-brief',
         icon: Compass,
         description: 'Пріоритетний аналіз суверенних ризиків, ринкових аномалій та критичних цілей на день.',
@@ -340,7 +340,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'OSINT-Контур v56.1.4',
     description: 'Ринки, ризики, тотальне досьє та предиктивні моделі в єдиному розвідувальному контурі.',
     outcome: 'Sovereign Apex: Предиктивна відповідь на виклики ринку через призму великих даних та ШІ.',
-    accent: 'rose',
+    accent: 'cyan',
     items: [
       {
         id: 'intelligence',
@@ -534,10 +534,10 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'trade-logistics',
-    label: 'Торгівля та логістика',
+    label: 'Торгівля та логістика v56',
     description: 'Митниця, ціни, логістичні потоки й ланцюги постачання в єдиному контурі.',
-    outcome: 'Допомагає зменшити витрати на закупівлі, оптимізувати маршрути й зняти митні ризики до штрафів.',
-    accent: 'slate',
+    outcome: 'Value Chain Optimization: Мінімізація витрат та зняття митних ризиків до виникнення штрафів.',
+    accent: 'amber',
     items: [
       {
         id: 'customs-intel',
@@ -589,10 +589,10 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'counterparties',
-    label: 'Контрагенти',
+    label: 'Екосистема контрагентів',
     description: 'Клієнти, постачальники та повʼязані бізнес-екосистеми без розриву контексту.',
-    outcome: 'Дає єдину точку входу для роботи з усіма контрагентами, перевірками й розвитком відносин.',
-    accent: 'red',
+    outcome: 'Sovereign Nexus: Єдина точка входу для роботи з усіма контрагентами та розвитком відносин.',
+    accent: 'indigo',
     items: [
       {
         id: 'clients',
@@ -625,10 +625,10 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'ai-automation',
-    label: 'ШІ та автоматизація',
+    label: 'ШІ та Автоматизація',
     description: 'Агенти, інсайти, база знань і прихований інженерний контур моделей.',
-    outcome: 'Автоматизує рутину, дає персоналізовані інсайти й поступово подлаштовує систему під бізнес-правила.',
-    accent: 'red',
+    outcome: 'Autonomous Intelligence: Автоматизація рутини та предиктивне підлаштування під бізнес-правила.',
+    accent: 'violet',
     items: [
       {
         id: 'agents',
@@ -650,7 +650,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'nexus',
-        label: 'Predictive Nexus',
+        label: 'Предиктивний Нексус',
         path: '/nexus',
         icon: Sparkles,
         description: 'Центр предиктивного моделювання: сценарії, прогнози та випереджаючі інсайти.',
@@ -672,9 +672,9 @@ const baseNavigationConfig: NavSection[] = [
   },
   {
     id: 'system',
-    label: 'Система',
-    description: 'Безпека, налаштування, дані, пайплайни та фабричний контур, прихований від бізнес-користувача.',
-    outcome: 'Дає прозорий контроль безпеки й налаштувань, а для адміністраторів відкриває повний технічний шар.',
+    label: 'Системне Ядро',
+    description: 'Безпека, налаштування, дані, пайплайни та фабричний контур ядра.',
+    outcome: 'Sovereign Stability: Прозорий контроль безпеки, деплойменту та адміністративного шару.',
     accent: 'slate',
     items: [
       {

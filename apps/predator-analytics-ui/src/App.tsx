@@ -115,30 +115,30 @@ function App() {
                     <ToastProvider>
                       <GlobalProvider>
                         <ThemeProvider>
-                        <SuperIntelligenceProvider>
-                        <AdvancedBackground />
-                        <NeuralPulse />
-                        {appState === 'BOOTING' && (
-                          <BootScreen onComplete={handleBootComplete} />
-                        )}
+                          <SuperIntelligenceProvider>
+                            <AdvancedBackground />
+                            <NeuralPulse />
+                            {appState === 'BOOTING' && (
+                              <BootScreen onComplete={handleBootComplete} />
+                            )}
 
-                        {appState === 'LOGIN' && (
-                          <LoginScreen onLogin={handleLogin} />
-                        )}
+                            {appState === 'LOGIN' && (
+                              <LoginScreen onLogin={handleLogin} />
+                            )}
 
-                        {appState === 'READY' && (
-                          <>
-                            <AppRoutes />
-                            {/* Global UI Components */}
-                            <QuickActionsBar />
-                            <ToasterProvider />
-                            <OnboardingWizard />
-                            <OfflineBanner />
-                            <Predator />
-                            <CyberTerminal />
-                          </>
-                        )}
-                        </SuperIntelligenceProvider>
+                            {appState === 'READY' && (
+                              <>
+                                <AppRoutes />
+                                {/* Глобальні UI компоненти */}
+                                <QuickActionsBar />
+                                <ToasterProvider />
+                                <OnboardingWizard />
+                                <OfflineBanner />
+                                <Predator />
+                                <CyberTerminal />
+                              </>
+                            )}
+                          </SuperIntelligenceProvider>
                         </ThemeProvider>
                       </GlobalProvider>
                     </ToastProvider>

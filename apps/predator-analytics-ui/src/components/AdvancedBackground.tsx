@@ -39,11 +39,9 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
 
             {/* Additional Cinematic Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(2,6,23,0.4)_100%)]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.8)_100%)]"></div>
 
-            {/* Nebula Glows */}
-            <div className="absolute -top-1/4 -left-1/4 w-full h-full bg-[var(--op-bg-accent)] blur-[200px] animate-pulse rounded-full opacity-80 mix-blend-screen transition-colors duration-1000" />
-            <div className="absolute -bottom-1/4 -right-1/4 w-full h-full bg-[var(--op-glow)] blur-[200px] animate-pulse-slow rounded-full opacity-60 mix-blend-screen transition-colors duration-1000" />
+            {/* Nebula Glows disabled for clean background */}
         </div>
     );
 };

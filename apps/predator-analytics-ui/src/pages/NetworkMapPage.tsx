@@ -145,7 +145,7 @@ const NetworkMapPage: React.FC = () => {
                     </div>
                     <div>
                         <h1 className="text-xl font-black tracking-tight italic uppercase">Мережевий аналіз</h1>
-                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Topology Visualization Engine v55</p>
+                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">РУШІЙ ВІЗУАЛІЗАЦІЇ ТОПОЛОГІЇ v55</p>
                     </div>
                 </div>
 
@@ -247,7 +247,7 @@ const NetworkMapPage: React.FC = () => {
                                         <div className="mt-4 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
                                             <div className="flex items-center gap-2 text-rose-400 mb-1">
                                                 <Shield size={14} />
-                                                <span className="text-[10px] font-black uppercase tracking-wider">OSINT Alert</span>
+                                                <span className="text-[10px] font-black uppercase tracking-wider">Сигнал OSINT</span>
                                             </div>
                                             <p className="text-xs text-slate-300 leading-5">
                                                 Вузол ідентифіковано як критичний елемент у ланцюгу ризику. Рекомендується перевірка через «Конституційний Щит».

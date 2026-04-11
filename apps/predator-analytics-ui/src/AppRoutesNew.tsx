@@ -113,6 +113,14 @@ const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
 const SystemPromptsView = lazy(() => import('./features/ai/SystemPromptsView'));
 const AIControlPlane = lazy(() => import('./features/ai/AIControlPlane'));
+const SmartCompanySearch = lazy(() => import('./features/search/SmartCompanySearch'));
+const FinancialDashboardPage = lazy(() => import('./features/analytics/FinancialDashboard'));
+const RealTimeMonitor = lazy(() => import('./features/monitoring/RealTimeMonitor'));
+const NetworkGraph = lazy(() => import('./features/network/NetworkGraph'));
+const ReportBuilder = lazy(() => import('./features/reports/ReportBuilder'));
+const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
+const MarketIntelligence = lazy(() => import('./features/intelligence/MarketAnalyticsPremium'));
+const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
 
 const LoadingFallback = () => (
@@ -179,6 +187,8 @@ export const AppRoutesNew = () => {
 
             {/* Discovery Routes */}
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/search-smart" element={<SmartCompanySearch />} />
+            <Route path="/companies-cers" element={<SmartCompanySearch />} />
             <Route path="/search-v2" element={<SearchConsole />} />
             <Route path="/documents" element={<DocumentsView />} />
             <Route path="/cases" element={<CasesView />} />
@@ -203,6 +213,9 @@ export const AppRoutesNew = () => {
 
             {/* Analytics & Intelligence */}
             <Route path="/analytics" element={<AnalyticsView />} />
+            <Route path="/financials/:ueid" element={<FinancialDashboardPage />} />
+            {/* Відокремлені шляхи моніторингу: загальна сторінка та realtime підшлях */}
+            <Route path="/monitoring/realtime" element={<RealTimeMonitor />} />
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
@@ -228,6 +241,12 @@ export const AppRoutesNew = () => {
             <Route path="/morning-brief" element={<ExecutiveBriefView />} />
 
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
+            <Route path="/network/:ueid" element={<NetworkGraph />} />
+            {/* Уникальний шлях для класичного билдера звітів */}
+            <Route path="/reports/builder" element={<ReportBuilder />} />
+            <Route path="/diligence/:ueid" element={<DueDiligence />} />
+            {/* /market вже визначено вище як канонічна сторінка (MarketPage). Видалено дубль */}
+            <Route path="/forecast/:ueid" element={<ForecastingEngine />} />
             <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
             <Route path="/autonomy" element={effectiveRole === UserRole.ADMIN ? <AutonomyDashboard /> : <Navigate to="/overview" replace />} />
             <Route path="/factory" element={<FactorsView />} />
@@ -247,7 +266,7 @@ export const AppRoutesNew = () => {
             <Route path="/price-compare" element={<PriceComparisonPremium />} />
             <Route path="/mobile" element={<MobileCommandCenter />} />
             <Route path="/api-docs" element={<ApiDocumentationView />} />
-            <Route path="/realtime" element={<RealTimeDashboard />} />
+            <Route path="/realtime/dashboard" element={<RealTimeDashboard />} />
             <Route path="/widgets" element={<WidgetLibrary />} />
             <Route path="/sanctions" element={<SanctionsScreening />} />
             <Route path="/ai-insights" element={<AIInsightsHub />} />

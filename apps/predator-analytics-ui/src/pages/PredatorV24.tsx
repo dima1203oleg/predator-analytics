@@ -53,6 +53,37 @@ const timeAgo = (timestamp?: string): string => {
   return `${Math.floor(diff / 86_400_000)} дн тому`;
 };
 
+// --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
+const MOCK_OVERVIEW: DashboardOverview = {
+  summary: {
+    total_declarations: 4218932,
+    total_value_usd: 12450000000,
+    high_risk_count: 142,
+    medium_risk_count: 854,
+    import_count: 2843102,
+    export_count: 1375830,
+    graph_nodes: 154200,
+    graph_edges: 892100,
+    search_documents: 14205000,
+    vectors: 14205000,
+    active_pipelines: 12,
+    completed_pipelines: 4580,
+  },
+  radar: [],
+  top_risk_companies: [],
+  alerts: [
+    { id: 'a1', type: 'risk', message: 'Аномальна активність у секторі паливно-мастильних матеріалів', severity: 'critical', timestamp: new Date().toISOString(), sector: 'Паливо', company: 'ТОВ "ЕНЕРДЖИ-ГРУП"', value: 45000000 },
+    { id: 'a2', type: 'market', message: 'Різке зростання імпорту електроніки з нових коридорів', severity: 'warning', timestamp: new Date().toISOString(), sector: 'Електроніка', company: 'Global Tech LLC', value: 12000000 },
+    { id: 'a3', type: 'info', message: 'Планове оновлення бази знань ШІ завершено успішно', severity: 'info', timestamp: new Date().toISOString(), sector: 'Система', company: 'PREDATOR AI', value: 0 },
+  ],
+  categories: {},
+  countries: {},
+  customs_offices: { '1': { count: 1, value: 100, highRisk: 0 }, '2': { count: 1, value: 100, highRisk: 0 } },
+  infrastructure: { 'os': { status: 'optimal' }, 'db': { status: 'optimal' } },
+  engines: {},
+  generated_at: new Date().toISOString(),
+};
+
 /* ── Анімаційні варіанти ── */
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -146,31 +177,28 @@ const PredatorV24 = () => {
   const [error, setError] = useState<string | null>(null);
   const [showBriefing, setShowBriefing] = useState(true);
 
-  const briefingItems: BriefingItem[] = [
-    {
-      id: 'b1',
-      type: 'market',
-      title: 'Різке зростання імпорту у секторі Consumer Tech',
-      description: 'Виявлено 14 нових контрагентів з аномальним обсягом поставок за останні 48 годин. Прогнозований вплив на ринок: +14%.',
-      impact: '2.4м',
-      trend: 'up'
-    },
-    {
-      id: 'b2',
-      type: 'risk',
-      title: 'Критична зміна структури власності ТОВ «МегаЛайн»',
-      description: 'Система зафіксувала появу підсанкційної особи у ланцюгу бенефіціарів. Рекомендується негайний аудит зв’язків.',
-      trend: 'down'
-    },
-    {
-      id: 'b3',
-      type: 'insight',
-      title: 'Оптимізація митних платежів через "Зелений Коридор"',
-      description: 'Новий алгоритм AI виявив потенціал економії на митних зборах для вантажів типу "Електроніка" через зміну класифікації коду УКТЗЕД.',
-      impact: '650к',
-      trend: 'up'
-    }
-  ];
+  // Завантажуємо реальні дані з бекенду замість хардкоду
+  const briefingItems: BriefingItem[] = useMemo(() => {
+    if (!overview?.alerts || overview.alerts.length === 0) return [];
+    
+    return overview.alerts.slice(0, 3).map((alert) => {
+      let type: 'market' | 'risk' | 'insight' = 'insight';
+      if (alert.severity === 'critical') type = 'risk';
+      if (alert.sector) type = 'market';
+      
+      const impact = alert.value && alert.value > 0 ? formatCurrency(alert.value) : undefined;
+      const trend = alert.severity === 'critical' ? 'down' : 'up';
+
+      return {
+        id: alert.id,
+        type,
+        title: `Сигнал: ${alert.company || alert.sector || 'Системний'}`,
+        description: alert.message,
+        impact,
+        trend
+      };
+    });
+  }, [overview]);
 
   useEffect(() => {
     let isMounted = true;
@@ -182,8 +210,9 @@ const PredatorV24 = () => {
         if (isMounted) setOverview(response);
       } catch (fetchError) {
         if (isMounted) {
-          console.error('[PredatorV24] Не вдалося завантажити дані:', fetchError);
-          setError('Головний огляд поки недоступний. Підтверджені дані не отримано від Core API.');
+          console.warn('[PredatorV24] API недоступний, активовано автономний режим (MOCK):', fetchError);
+          setOverview(MOCK_OVERVIEW);
+          setError('Працює в режимі автономної симуляції. Підключення до Core API відсутнє.');
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -269,7 +298,7 @@ const PredatorV24 = () => {
           <div className="flex-1 space-y-6">
             <div className="flex flex-wrap items-center gap-3">
               <div className="badge-v2 badge-v2-emerald text-[10px] font-black tracking-[0.2em]">
-                <span className="relative z-10">PREDATOR v56.1.4 | COMMAND CORE</span>
+                <span className="relative z-10">PREDATOR v56.1.4 | КОМАНДНИЙ ЦЕНТР</span>
                 <div className="badge-v2-glimmer" />
               </div>
               <div className={cn(
@@ -282,42 +311,44 @@ const PredatorV24 = () => {
 
             <div className="space-y-4">
               <h1 className="max-w-4xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]">
-                Інтерфейс, який показує <span className="text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.4)]">де заробити</span>, 
+                Інтерфейс, який показує <span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.8)]">де заробити</span>, 
                 що зекономити і який ризик зняти першим.
               </h1>
-              <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
-                Домашній екран зібраний навколо шести бізнес-блоків під захистом <span className="text-emerald-400 font-bold border-b border-emerald-400/30">Constitutional Shield</span>. 
-                Він відсікає технічний шум та підсвічує стратегічний ROI.
+              <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-300 drop-shadow-sm [text-wrap:balance]">
+                Домашній екран зібраний навколо шести бізнес-блоків під безпрецедентним захистом <span className="text-emerald-400 font-bold border-b border-emerald-400/30">Constitutional Shield</span>. 
+                Він відсікає технічний шум та підсвічує чистий стратегічний ROI.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[620px]">
-            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-emerald-400/80 transition-colors">OSINT-HUB Node</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 xl:w-[680px]">
+            <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] hover:-translate-y-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,1)]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-emerald-400 transition-colors">OSINT-ВУЗОЛ</span>
               </div>
-              <div className="text-base font-bold text-white tracking-tight">System v56.1.4 Apex</div>
-              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Full Sync Certified</div>
+              <div className="text-lg font-black text-white tracking-widest uppercase">СУВЕРЕННИЙ АПЕКС v56</div>
+              <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">Синхронізовано</div>
             </div>
 
-            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Synchronization</span>
+            <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(34,211,238,0.15)] hover:-translate-y-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,1)] animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-cyan-400 transition-colors">ЛАГ ДАНИХ</span>
               </div>
-              <div className="text-base font-bold text-white tracking-tight">{timeAgo(overview?.generated_at)}</div>
-              <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">L4 Connection</div>
+              <div className="text-lg font-black text-white tracking-widest">{timeAgo(overview?.generated_at)}</div>
+              <div className="text-[9px] text-cyan-400/50 mt-2 font-mono uppercase tracking-widest bg-cyan-500/10 inline-block px-2 py-1 rounded-md">ВУЗОЛ L4 | ШИФРОВАНО</div>
             </div>
 
-            <div className="card-depth rounded-[28px] border border-amber-400/10 bg-amber-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(251,191,36,0.05)] col-span-2 sm:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <ShieldCheck className="h-3 w-3 text-amber-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/60">Verification</span>
+            <div className="card-depth rounded-[32px] border border-amber-400/20 bg-amber-500/[0.05] backdrop-blur-3xl p-6 shadow-[inset_0_0_30px_rgba(251,191,36,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-amber-400/40 transition-all">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <ShieldCheck className="h-4 w-4 text-amber-400" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-400/80">ВЕРИФІКАЦІЯ</span>
+                </div>
+                <div className="text-lg font-black text-amber-400 tracking-widest uppercase leading-none">СЕРТИФІКОВАНО</div>
               </div>
-              <div className="text-base font-black text-amber-400 tracking-tighter uppercase leading-none">System Certified</div>
-              <div className="text-[10px] text-amber-500/40 mt-1 font-mono">PREDATOR MASTER</div>
+              <div className="text-[9px] text-amber-500/60 mt-3 font-mono tracking-widest uppercase bg-amber-500/10 inline-block px-2 py-1 rounded-md w-max">PREDATOR МАЙСТЕР</div>
             </div>
           </div>
         </div>

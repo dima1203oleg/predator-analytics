@@ -138,6 +138,26 @@ const createScenarioPoints = (points: ForecastPoint[], multiplier: number): Fore
         confidence_upper: Math.round(point.confidence_upper * multiplier),
     }));
 
+// --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
+const MOCK_FORECAST: ForecastResponse = {
+  product_code: '84713000',
+  months_ahead: 6,
+  model: 'prophet',
+  forecast: [
+    { date: '2026-05-01', predicted_volume: 1250, confidence_lower: 1100, confidence_upper: 1400 },
+    { date: '2026-06-01', predicted_volume: 1380, confidence_lower: 1200, confidence_upper: 1560 },
+    { date: '2026-07-01', predicted_volume: 1520, confidence_lower: 1350, confidence_upper: 1700 },
+    { date: '2026-08-01', predicted_volume: 1680, confidence_lower: 1480, confidence_upper: 1890 },
+    { date: '2026-09-01', predicted_volume: 1850, confidence_lower: 1620, confidence_upper: 2100 },
+    { date: '2026-10-01', predicted_volume: 2100, confidence_lower: 1850, confidence_upper: 2400 },
+  ],
+  metrics: {
+    mae: 42.5,
+    rmse: 61.2,
+    mape: 4.8
+  }
+};
+
 export default function ForecastPage() {
     const backendStatus = useBackendStatus();
     const [activeTab, setActiveTab] = useState<ForecastTab>('demand');
@@ -157,8 +177,9 @@ export default function ForecastPage() {
             const data = await forecastApi.getDemandForecast(params);
             setForecast(data);
         } catch (error) {
-            console.error('Не вдалося отримати прогноз:', error);
-            setForecastError('Не вдалося отримати прогноз. Спробуйте ще раз або перевірте бекенд.');
+            console.warn('[ForecastPage] API недоступний, активовано автономний режим (MOCK):', error);
+            setForecast(MOCK_FORECAST);
+            setForecastError('Працює в режимі автономної симуляції. Підключення до Core API відсутнє.');
         } finally {
             setForecastLoading(false);
         }
@@ -269,35 +290,37 @@ export default function ForecastPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl overflow-hidden relative">
-                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-red-400/80 transition-colors italic">Projective Core</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 xl:w-[680px]">
+                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(220,38,38,0.15)] hover:-translate-y-1 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">ПРОЕКТИВНЕ ЯДРО</span>
                             </div>
-                            <div className="text-base font-bold text-white tracking-tight">Active Model: {request.model}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v56.1.4 SOVEREIGN</div>
+                            <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model}</div>
+                            <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v56 SOVEREIGN</div>
                         </div>
 
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl overflow-hidden relative">
-                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-amber-500 to-transparent" />
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors italic">Target Sector</span>
+                        <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-amber-500 to-transparent" />
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,1)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВИЙ СЕКТОР</span>
                             </div>
-                            <div className="text-base font-bold text-white tracking-tight">{request.product_code}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase italic">Level 4 Certified</div>
+                            <div className="text-lg font-black text-white tracking-widest uppercase">{request.product_code}</div>
+                            <div className="text-[9px] text-amber-400/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">СЕРТИФІКОВАНА L4</div>
                         </div>
 
-                        <div className="card-depth rounded-[28px] border border-red-500/10 bg-red-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(220,38,38,0.05)] col-span-2 sm:col-span-1 border-r border-red-500/20 overflow-hidden relative">
-                            <div className="absolute top-0 right-0 w-16 h-px bg-gradient-to-l from-red-600 to-transparent" />
-                            <div className="flex items-center gap-2 mb-3">
-                                <ShieldCheck className="h-3 w-3 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/60 italic">Verification</span>
+                        <div className="card-depth rounded-[32px] border border-red-500/20 bg-red-500/[0.05] backdrop-blur-3xl p-6 shadow-[inset_0_0_30px_rgba(220,38,38,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-red-500/40 transition-all relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
+                            <div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <ShieldCheck className="h-4 w-4 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500/80 italic">ВЕРИФІКАЦІЯ</span>
+                                </div>
+                                <div className="text-lg font-black text-red-500 tracking-widest uppercase leading-none italic">СУВЕРЕННЕ ЯДРО</div>
                             </div>
-                            <div className="text-base font-black text-red-500 tracking-tighter uppercase leading-none italic">Sovereign Core</div>
-                            <div className="text-[10px] text-red-500/40 mt-1 font-mono uppercase tracking-[0.2em]">Trusted Node</div>
+                            <div className="text-[9px] text-red-500/60 mt-3 font-mono tracking-widest uppercase bg-red-500/10 inline-block px-2 py-1 rounded-md w-max">ДОВІРЕНИЙ ВУЗОЛ</div>
                         </div>
                     </div>
                 </div>

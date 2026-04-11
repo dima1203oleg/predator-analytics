@@ -21,8 +21,8 @@ export const ConstitutionalShield: React.FC = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                // In v56.1.4 we use the updated status endpoint
-                const response = await fetch('/api/v45/azr/status');
+                // AZR статус — суверенний щит v56.1.4
+                const response = await fetch('/api/v1/azr/status');
                 const data = await response.json();
                 setStatus(data);
                 setLastUpdated(new Date());
@@ -50,7 +50,7 @@ export const ConstitutionalShield: React.FC = () => {
     const integrity = status?.system_integrity || '100%';
 
     return (
-        <div className="fixed bottom-8 right-8 z-[100]">
+        <div className="fixed bottom-28 right-6 z-[100]">
             <motion.div
                 initial={{ scale: 0, opacity: 0, rotate: -45 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -121,11 +121,11 @@ export const ConstitutionalShield: React.FC = () => {
                                             <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v56.1.4</h4>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                <span className="text-[8px] font-mono text-emerald-400 uppercase">SYSTEM_SAFE</span>
+                                                <span className="text-[8px] font-mono text-emerald-400 uppercase">СИСТЕМА ТИХА</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <Badge className="bg-blue-500/10 text-blue-400 border-none text-[8px] font-black px-3 py-1 uppercase">{integrity} СТАБІЛЬНІСТЬ</Badge>
+                                    <Badge className="bg-blue-500/10 text-blue-400 border-none text-[8px] font-black px-3 py-1 uppercase">{integrity} СТАБІЛЬНО</Badge>
                                 </div>
                                 <p className="text-[10px] text-slate-400 leading-relaxed font-bold italic">
                                     Автоматизований захист суверенних даних та конституційних аксіом в режимі реального часу.
@@ -156,7 +156,7 @@ export const ConstitutionalShield: React.FC = () => {
                             <div className="px-6 py-4 bg-black/40 flex items-center justify-between border-t border-white/5">
                                 <div className="flex items-center gap-3">
                                     <Activity size={12} className="text-slate-600" />
-                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v56.1.4.0-STABLE</span>
+                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v56.1.4.0-СТАБІЛЬНО</span>
                                 </div>
                                 <div className="flex gap-1">
                                     {[1, 2, 3, 4, 5].map(i => (

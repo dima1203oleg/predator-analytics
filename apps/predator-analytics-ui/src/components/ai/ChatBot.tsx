@@ -82,10 +82,10 @@ const ChatBot = () => {
               <Bot className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-sm font-display font-bold text-foreground tracking-wide">AI COPILOT</div>
+              <div className="text-sm font-display font-bold text-foreground tracking-wide">AI КОПІЛОТ</div>
               <div className="flex items-center gap-1.5 text-[10px] text-primary font-mono uppercase tracking-widest">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                Ultra Router Online
+                Нейромережа активна
               </div>
             </div>
           </div>
@@ -171,7 +171,7 @@ const ChatBot = () => {
               <Terminal className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
               <ChevronDown className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
             </div>
-            <div className="text-[10px] font-mono tracking-tighter">PREDATOR AI ENGINE v2.4</div>
+            <div className="text-[10px] font-mono tracking-tighter">PREDATOR AI ДВИГУН v2.4</div>
           </div>
         </div>
       </div>

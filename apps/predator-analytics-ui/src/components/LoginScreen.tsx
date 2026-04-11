@@ -518,7 +518,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     label: 'КОМАНДИР',
                                     desc: 'Повний суверенітет платформи. Доступ до всіх секторів розвідки та управління.',
                                     icon: ShieldAlert,
-                                    level: 'COSMIC',
+                                    level: 'ОСОБЛИВО ВАЖЛИВО',
                                     clearance: 'V',
                                     borderColor: 'border-red-500/30 hover:border-red-400/60',
                                     glowColor: 'hover:shadow-[0_0_40px_rgba(239,68,68,0.15)]',
@@ -531,7 +531,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     label: 'СТАРШИЙ АНАЛІТИК',
                                     desc: 'Глобальна розвідка, AI-прогнози, графовий аналіз, фінансове стеження.',
                                     icon: Activity,
-                                    level: 'SECRET',
+                                    level: 'ЦІЛКОМ ТАЄМНО',
                                     clearance: 'IV',
                                     borderColor: 'border-amber-500/20 hover:border-amber-400/50',
                                     glowColor: 'hover:shadow-[0_0_40px_rgba(245,158,11,0.12)]',
@@ -544,7 +544,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     label: 'ОПЕРАТОР',
                                     desc: 'Стандартний моніторинг потоків даних та митних операцій.',
                                     icon: Terminal,
-                                    level: 'CONFID.',
+                                    level: 'ТАЄМНО',
                                     clearance: 'III',
                                     borderColor: 'border-slate-700/30 hover:border-slate-500/40',
                                     glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.1)]',
@@ -580,7 +580,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                                 {item.level}
                                             </span>
                                             <span className="text-[9px] font-black text-slate-800 tracking-wider">
-                                                LVL-{item.clearance}
+                                                РІВЕНЬ-{item.clearance}
                                             </span>
                                         </div>
                                     </div>
@@ -631,19 +631,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             className="flex gap-12 whitespace-nowrap"
                         >
                             <span className="text-[9px] text-red-500 font-bold tracking-widest">
-                                [ALERT] ПЕРЕХОПЛЕННЯ СИГНАЛУ В СЕКТОРІ GAMMA-4 ... МОНІТОРИНГ АКТИВНИЙ
+                                [ТРИВОГА] ПЕРЕХОПЛЕННЯ СИГНАЛУ В СЕКТОРІ GAMMA-4 ... МОНІТОРИНГ АКТИВНИЙ
                             </span>
                             <span className="text-[9px] text-emerald-500 font-bold tracking-widest">
                                 [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV_CORE_01)
                             </span>
                             <span className="text-[9px] text-amber-500 font-bold tracking-widest">
-                                [OVERSIGHT] ВИЯВЛЕНО ПІДОЗРІЛУ ТРАНЗАКЦІЮ: UEID-9472-BX ... АНАЛІЗУЄТЬСЯ
+                                [КОНТРОЛЬ] ВИЯВЛЕНО ПІДОЗРІЛУ ТРАНЗАКЦІЮ: UEID-9472-BX ... АНАЛІЗУЄТЬСЯ
                             </span>
                             <span className="text-[9px] text-red-500 font-bold tracking-widest">
-                                [WARN] СПРОБА НЕСАНКЦІОНОВАНОГО ДОСТУПУ З IP 185.12.92.X ... БЛОКОВАНО
+                                [УВАГА] СПРОБА НЕСАНКЦІОНОВАНОГО ДОСТУПУ З IP 185.12.92.X ... БЛОКОВАНО
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold tracking-widest">
-                                [SAT] СУПУТНИК SENTINEL-5 ОНЛАЙН ... ПЕРЕДАЧА ДАНИХ 4.2 GB/S
+                                [СУПУТНИК] СУПУТНИК SENTINEL-5 ОНЛАЙН ... ПЕРЕДАЧА ДАНИХ 4.2 GB/S
                             </span>
                         </motion.div>
                     </div>

@@ -21,7 +21,7 @@ interface SuperIntelligenceContextType {
     ragArtifacts: RAGArtifact[]; // Evidence Data
 }
 
-// Initial Brain Configuration - Models participating in Debate
+// Початкова конфігурація мозку - Моделі, що беруть участь у дебатах
 const INITIAL_BRAIN_NODES: BrainNodeState[] = [
     { id: 'gemini', name: 'Gemini 2.0 Flash', role: 'Архітектор', avatar: 'G', color: '#3b82f6', status: 'IDLE' },
     { id: 'deepseek-v3', name: 'DeepSeek V3', role: 'Аналітик', avatar: 'DV', color: '#a855f7', status: 'IDLE' },
@@ -32,7 +32,7 @@ const INITIAL_BRAIN_NODES: BrainNodeState[] = [
     { id: 'arbiter', name: 'Gemini 3 Ultra', role: 'АРБІТР', avatar: 'A', color: '#ffffff', status: 'IDLE' }
 ];
 
-// Initial Agents Configuration - Sensors and Executors
+// Початкова конфігурація агентів - Сенсори та виконавці
 const INITIAL_AGENTS: UnifiedAgentState[] = [
     { id: 'MON-01', name: 'Аналізатор Логів', role: 'SCANNER', status: 'IDLE' },
     { id: 'PERF-01', name: 'Perf-Сканер', role: 'SCANNER', status: 'IDLE' },
@@ -43,36 +43,36 @@ const INITIAL_AGENTS: UnifiedAgentState[] = [
 ];
 
 const INITIAL_GENOMES: AgentGenome[] = [
-    { agentId: 'MON-01', version: 'v1.0.4', generation: 4, capabilities: ['Log Pattern Recognition', 'Anomaly Detection'], evolutionStatus: 'STABLE' },
-    { agentId: 'PERF-01', version: 'v2.1.0', generation: 12, capabilities: ['Latency Profiling', 'Resource Forecasting'], evolutionStatus: 'STABLE' },
-    { agentId: 'SEC-01', version: 'v1.3.2', generation: 8, capabilities: ['Static Analysis', 'CVE Matching'], evolutionStatus: 'STABLE' },
-    { agentId: 'NAS-CODE', version: 'v3.0.0', generation: 25, capabilities: ['Polyglot Coding', 'Refactoring'], evolutionStatus: 'STABLE' },
-    { agentId: 'QA-TEST', version: 'v1.1.5', generation: 6, capabilities: ['E2E Testing', 'Fuzzing'], evolutionStatus: 'STABLE' },
-    { agentId: 'DEVOPS-01', version: 'v1.0.1', generation: 2, capabilities: ['Helm Templating', 'GitOps Sync'], evolutionStatus: 'STABLE' },
+    { agentId: 'MON-01', version: 'v1.0.4', generation: 4, capabilities: ['Розпізнавання патернів логів', 'Виявлення аномалій'], evolutionStatus: 'STABLE' },
+    { agentId: 'PERF-01', version: 'v2.1.0', generation: 12, capabilities: ['Профілювання затримок', 'Прогнозування ресурсів'], evolutionStatus: 'STABLE' },
+    { agentId: 'SEC-01', version: 'v1.3.2', generation: 8, capabilities: ['Статичний аналіз', 'Співставлення CVE'], evolutionStatus: 'STABLE' },
+    { agentId: 'NAS-CODE', version: 'v3.0.0', generation: 25, capabilities: ['Багатомовне програмування', 'Рефакторинг'], evolutionStatus: 'STABLE' },
+    { agentId: 'QA-TEST', version: 'v1.1.5', generation: 6, capabilities: ['E2E Тестування', 'Фазинг'], evolutionStatus: 'STABLE' },
+    { agentId: 'DEVOPS-01', version: 'v1.0.1', generation: 2, capabilities: ['Шаблонізація Helm', 'Синхронізація GitOps'], evolutionStatus: 'STABLE' },
 ];
 
-// Initial scores for visual filler before first run
+// Початкові оцінки для візуального наповнення перед першим запуском
 const INITIAL_SCORES: ArbitrationScore[] = [
     { modelId: 'gemini', modelName: 'Gemini 2.0', criteria: { safety: 0.8, performance: 0.7, cost: 0.9, logic: 0.8 }, totalScore: 0.8 },
     { modelId: 'deepseek', modelName: 'DeepSeek R1', criteria: { safety: 0.85, performance: 0.8, cost: 0.85, logic: 0.9 }, totalScore: 0.85 }
 ];
 
-// Seed Logs so the Stream isn't empty - MASSIVELY EXPANDED FOR VISUAL FILL
+// Початкові логи для візалізації потоку
 const INITIAL_LOGS: SIContextLog[] = [
-    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Booting Singularity Core v45.0...' },
-    { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Neural Core Initialized. Quantum Links Established.' },
-    { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Vector Database Connected (Shard 0-5). Indexing 14.2M vectors.' },
+    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v56.1.4...' },
+    { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Нейронне ядро ініціалізовано. Квантові зв\'язки встановлено.' },
+    { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Векторна база даних підключена (Шард 0-5). Індексація 14.2 млн векторів.' },
     { id: 'init-3', timestamp: '10:00:05', type: 'DEBATE', source: 'GEMINI', message: 'Архітектура системи стабільна. Очікую нових векторів загроз для аналізу.' },
     { id: 'init-4', timestamp: '10:00:06', type: 'DEBATE', source: 'DEEPSEEK', message: 'Підтверджую. Рекомендую провести превентивний скан вразливостей в модулі ua-sources.' },
     { id: 'init-5', timestamp: '10:00:07', type: 'DEBATE', source: 'ARBITER', message: 'Пропозицію прийнято. Агент SEC-01 переведений в режим пасивного сканування.' },
-    { id: 'init-6', timestamp: '10:00:10', type: 'INFO', source: 'NAS', message: 'AutoML Scheduler ready. 4 GPU workers idle.' },
-    { id: 'init-7', timestamp: '10:00:12', type: 'INFO', source: 'NETWORK', message: 'Mesh topology synchronized. Latency < 2ms.' },
-    { id: 'init-8', timestamp: '10:00:15', type: 'WARN', source: 'MEMORY', message: 'Garbage Collection hint: Heap fragmentation 12%.' },
+    { id: 'init-6', timestamp: '10:00:10', type: 'INFO', source: 'NAS', message: 'Планувальник AutoML готовий. 4 GPU воркери очікують.' },
+    { id: 'init-7', timestamp: '10:00:12', type: 'INFO', source: 'NETWORK', message: 'Mesh-топологія синхронізована. Затримка < 2мс.' },
+    { id: 'init-8', timestamp: '10:00:15', type: 'WARN', source: 'MEMORY', message: 'Порада підбирача сміття: Фрагментація купи 12%.' },
 ];
 
 const INITIAL_ARTIFACTS: RAGArtifact[] = [
-    { id: 'sys-doc', type: 'DOC', source: 'SYSTEM_MANIFEST', preview: 'Primary Directive: Truth-Only Protocol v2... Safety rails engaged.', relevance: 1.0 },
-    { id: 'sys-log-2', type: 'LOG', source: 'KERNEL_BOOT', preview: 'Memory initialized at 0x0000FFFF. Integrity check passed.', relevance: 0.8 },
+    { id: 'sys-doc', type: 'DOC', source: 'SYSTEM_MANIFEST', preview: 'Головна директива: Протокол Тільки-Істина v2... Рейки безпеки активовано.', relevance: 1.0 },
+    { id: 'sys-log-2', type: 'LOG', source: 'KERNEL_BOOT', preview: 'Пам\'ять ініціалізовано на 0x0000FFFF. Перевірку цілісності пройдено.', relevance: 0.8 },
     { id: 'sys-code-3', type: 'CODE', source: 'CORE_PY', preview: 'class PredatorEngine(BaseModel): def __init__(self): ...', relevance: 0.6 }
 ];
 
@@ -212,7 +212,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const [isActive, setIsActive] = useState(false);
     const [stage, setStage] = useState<SuperLoopStage>('IDLE');
     const [logs, setLogs] = useState<SIContextLog[]>([
-        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Connected to Predator v45 | Neural Analytics. Waiting for stream...' }
+        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Підключено до Predator v56 | Нейронна Аналітика. Очікування потоку...' }
     ]);
     const [brainNodes, setBrainNodes] = useState<BrainNodeState[]>(INITIAL_BRAIN_NODES);
     const [activeAgents, setActiveAgents] = useState<UnifiedAgentState[]>(INITIAL_AGENTS);
@@ -281,7 +281,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                     if (latestSession.id !== currentScenario?.id) {
                         setCurrentScenario({
                             id: latestSession.id,
-                            name: "Strategic Analysis (Real)",
+                            name: "Стратегічний аналіз (Real)",
                             type: 'STRATEGY',
                             triggerAgent: 'COUNCIL',
                             triggerMsg: latestSession.query,

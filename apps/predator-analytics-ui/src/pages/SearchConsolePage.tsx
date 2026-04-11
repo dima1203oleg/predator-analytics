@@ -421,7 +421,7 @@ export const SearchConsolePage: React.FC = () => {
                                                                         <Clock size={12} /> {result.date}
                                                                     </span>
                                                                     <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
-                                                                        <Fingerprint size={12} /> ІСТИННІСТЬ: {(result.truthScore || 0 * 100).toFixed(0)}%
+                                                                        <Fingerprint size={12} /> ІСТИННІСТЬ: {((result.truthScore || 0) * 100).toFixed(0)}%
                                                                     </span>
                                                                 </div>
                                                             </div>

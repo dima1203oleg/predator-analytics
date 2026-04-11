@@ -281,7 +281,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                   </div>
                   <div className="flex flex-col gap-2">
                      <p className="text-indigo-400 font-black tracking-[0.8em] uppercase text-xs animate-pulse">СИНТЕЗ_КОГНІТИВНИХ_ШАРІВ_v55</p>
-                     <p className="text-[10px] font-mono text-slate-600">PROCESSING_NEURAL_PATHWAYS...</p>
+                     <p className="text-[10px] font-mono text-slate-600">ОБРОБКА_НЕЙРОННИХ_ШЛЯХІВ...</p>
                   </div>
                 </div>
               ) : filtered.length > 0 ? (
@@ -416,10 +416,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               </h3>
               <div className="space-y-6">
                 {[
-                  { label: 'SEMANTIC_SCAN_v55', status: 'Optimal', val: '99.2%', color: 'emerald' },
-                  { label: 'PATTERN_DECRYPTOR', status: 'Active', val: '234/s', color: 'indigo' },
-                  { label: 'HYPOTHESIS_SYNTH', status: 'Deep', val: 'G45', color: 'violet' },
-                  { label: 'XAI_EXPLANATIONS', status: 'Ready', val: '100%', color: 'rose' }
+                  { label: 'СЕМАНТИЧНИЙ_СКАН_v55', status: 'ОПТИМАЛЬНО', val: '99.2%', color: 'emerald' },
+                  { label: 'ДЕШИФРАТОР_ПАТЕРНІВ', status: 'АКТИВНО', val: '234/с', color: 'indigo' },
+                  { label: 'СИНТЕЗ_ГІПОТЕЗ', status: 'ГЛИБОКИЙ', val: 'G45', color: 'violet' },
+                  { label: 'ПОЯСНЕННЯ_XAI', status: 'ГОТОВО', val: '100%', color: 'rose' }
                 ].map((item, idx) => (
                   <div key={item.label} className="p-5 bg-black/60 rounded-2xl border border-white/5 flex items-center justify-between group hover:border-indigo-500/20 transition-all">
                     <div className="flex items-center gap-4">
