@@ -1,5 +1,5 @@
 /**
- * BootScreen — PREDATOR NEXUS v56.3 — SOVEREIGN CLASSIFIED INTRO
+ * BootScreen — PREDATOR NEXUS v56.4 — SOVEREIGN CLASSIFIED INTRO
  * ===============================================================
  * Billion-dollar intelligence platform. Доступ виключно для авторизованого персоналу.
  * Кінематографічна заставка рівня державної розвідки.
@@ -143,6 +143,44 @@ class SoundEngine {
     }, 1100);
   }
 
+  /** Digital detonation — TARGET DESTROYED */
+  playDetonation() {
+    const ctx = this.getCtx(); if (!ctx) return;
+    // Вибух — широкополосний шум з компресором
+    const bufLen = ctx.sampleRate * 0.8;
+    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++)
+      d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufLen * 0.12));
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -24; comp.ratio.value = 20;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.7, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+    src.connect(comp); comp.connect(g); g.connect(ctx.destination); src.start();
+    // Низький sub-bass удар
+    const sub = ctx.createOscillator(); const sg = ctx.createGain();
+    sub.type = 'sine'; sub.frequency.setValueAtTime(45, ctx.currentTime);
+    sub.frequency.exponentialRampToValueAtTime(12, ctx.currentTime + 0.5);
+    sg.gain.setValueAtTime(0.8, ctx.currentTime);
+    sg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+    sub.connect(sg); sg.connect(ctx.destination); sub.start(); sub.stop(ctx.currentTime + 0.9);
+    // Тонкий alarm після детонації
+    setTimeout(() => {
+      const c = this.getCtx(); if (!c) return;
+      [880, 660, 880, 660].forEach((freq, i) => {
+        const o = c.createOscillator(); const gn = c.createGain();
+        o.type = 'square'; o.frequency.value = freq;
+        gn.gain.setValueAtTime(0, c.currentTime + i * 0.15);
+        gn.gain.linearRampToValueAtTime(0.06, c.currentTime + i * 0.15 + 0.04);
+        gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i * 0.15 + 0.14);
+        o.connect(gn); gn.connect(c.destination);
+        o.start(c.currentTime + i * 0.15); o.stop(c.currentTime + i * 0.15 + 0.18);
+      });
+    }, 400);
+  }
+
   /** Масивний sovereign удар */
   playImpact() {
     const ctx = this.getCtx(); if (!ctx) return;
@@ -251,18 +289,18 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   };
 
   const DB_SCAN_LINES = [
-    'INITIALIZING AI INFERENCE ENGINE...',
-    'SCANNING GLOBAL DATABASES [1.2 PB]...',
-    'LOADING CUSTOMS REGISTRY [UA/EU]...',
-    'PARSING FINANCIAL RECORDS [SWIFT]...',
-    'DECRYPTING SATELLITE SIGNALS [KEO-7]...',
-    'CROSS-REFERENCING OSINT FEEDS...',
-    'ANALYZING BENEFICIAL OWNERS...',
-    'NEURAL NETWORK: PATTERN MATCH 94.7%...',
-    'RISK VECTORS: 847 CORRELATIONS FOUND...',
-    'THREAT ASSESSMENT: PROCESSING...',
-    '▌ THREAT LEVEL: CRITICAL',
-    '▌ TARGET IDENTIFIED.',
+    'PARSING MULTI-JURISDICTIONAL DATABASES...',
+    'GLOBAL DATACENTERS ONLINE [4.8 EXABYTES]...',
+    'INTERCEPTING BANKING SWIFT/SEPA TRAFFIC...',
+    'SCANNING INTERPOL & OFAC RED NOTICES...',
+    'QUANTUM DECIPHERING SECURE COMM-LINKS...',
+    'CROSS-REFERENCING SHADOW REGISTRIES...',
+    'DE-ANONYMIZING OFFSHORE BENEFICIARIES...',
+    'AI HUNTER-KILLER PROTOCOL ENGAGED...',
+    'TARGET SIGNATURE MATCH: 99.98%...',
+    'LOCKING ON COORDINATES...',
+    '▌ PREPARING DIGITAL DETONATION...',
+    '▌ TARGET IDENTIFIED. NOWHERE TO HIDE.',
   ];
 
   /* ── Typewriter ── */
@@ -285,12 +323,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       if (idx >= DB_SCAN_LINES.length) return;
       const line = DB_SCAN_LINES[idx];
       setDbLines(p => [...p, line]);
-      if (line.includes('TARGET IDENTIFIED')) setTargetLocked(true);
+      if (line.includes('NOWHERE TO HIDE')) setTargetLocked(true);
       idx++;
       const delay =
-        line.includes('TARGET IDENTIFIED') ? 700 :
-        line.includes('CRITICAL')          ? 500 :
-        180 + Math.random() * 120;
+        line.includes('NOWHERE TO HIDE')   ? 700 :
+        line.includes('DETONATION')        ? 550 :
+        line.includes('HUNTER-KILLER')     ? 400 :
+        175 + Math.random() * 110;
       setTimeout(addLine, delay);
     };
     const t = setTimeout(addLine, 300);
@@ -327,6 +366,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     if (phase === 4) { soundEngine.playImpact(); droneStopRef.current = soundEngine.startDrone(); }
     if (phase === 5) { droneStopRef.current?.(); soundEngine.playTelemetry(350); }
   }, [phase]);
+
+  /* ── Детонація при lock-on ── */
+  useEffect(() => {
+    if (targetLocked) soundEngine.playDetonation();
+  }, [targetLocked]);
 
   /* ──────────────────────────────────────────────────────────────────────────
      CANVAS RENDER
@@ -1140,15 +1184,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <motion.div
                     animate={{
                       opacity:[0.85,1,0.85],
-                      textShadow:['0 0 20px rgba(255,0,0,0.5)','0 0 50px rgba(255,0,0,1)','0 0 20px rgba(255,0,0,0.5)'],
+                      textShadow:['0 0 40px rgba(255,0,0,0.8)','0 0 80px rgba(255,0,0,1)','0 0 40px rgba(255,0,0,0.8)'],
+                      scale:[1, 1.05, 1]
                     }}
-                    transition={{ duration:0.35, repeat:Infinity }}
-                    className="text-[18px] font-black tracking-[0.35em] text-red-500 uppercase"
+                    transition={{ duration:0.25, repeat:Infinity }}
+                    className="text-[24px] font-black tracking-[0.35em] text-red-600 uppercase"
                   >
-                    ◉ ЦІЛЬ ЗАХОПЛЕНА
+                    ✛ ЦІЛЬ ЗНИЩЕНО. ВІД НАС НЕ СХОВАЄШСЯ.
                   </motion.div>
-                  <div className="text-[8px] font-black tracking-[0.55em] text-white/75 uppercase">
-                    THREAT LEVEL: CRITICAL · CONFIRMED
+                  <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase animate-pulse">
+                    THREAT NEUTRALIZED · DIGITAL DETONATION CONFIRMED
                   </div>
                 </motion.div>
               ) : (
@@ -1322,16 +1367,27 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               >
                 <motion.p
                   animate={{
-                    opacity:[0.55,1,0.55],
-                    textShadow:['0 0 12px rgba(220,38,38,0.3)','0 0 25px rgba(220,38,38,0.8)','0 0 12px rgba(220,38,38,0.3)'],
+                    opacity:[0.6,1,0.6],
+                    textShadow:[
+                      '0 0 15px rgba(220,38,38,0.4),0 0 40px rgba(220,38,38,0.15)',
+                      '0 0 30px rgba(220,38,38,1),0 0 80px rgba(220,38,38,0.5)',
+                      '0 0 15px rgba(220,38,38,0.4),0 0 40px rgba(220,38,38,0.15)',
+                    ],
                   }}
-                  transition={{ duration:2.8, repeat:Infinity }}
-                  className="text-[12px] md:text-[14px] font-black tracking-[0.5em] text-red-600/90 uppercase"
+                  transition={{ duration:2.5, repeat:Infinity }}
+                  className="text-[14px] md:text-[17px] font-black tracking-[0.45em] text-red-600 uppercase"
                 >
-                  TOTAL VISIBILITY. ZERO UNCERTAINTY.
+                  NO ONE CAN HIDE. NO ONE EVER HAS.
+                </motion.p>
+                <motion.p
+                  animate={{ opacity:[0.4,0.8,0.4] }}
+                  transition={{ duration:3.5, repeat:Infinity, delay:0.8 }}
+                  className="text-[9px] text-red-800/70 tracking-[0.55em] uppercase font-black"
+                >
+                  TOTAL VISIBILITY &nbsp;◊&nbsp; ZERO UNCERTAINTY &nbsp;◊&nbsp; ABSOLUTE PRECISION
                 </motion.p>
                 <p className="text-[7px] text-slate-700 tracking-[0.5em] uppercase font-bold">
-                  FOR AUTHORIZED EYES ONLY · CLASSIFIED INTEL PLATFORM
+                  FOR AUTHORIZED EYES ONLY &nbsp;·&nbsp; CLASSIFIED INTEL PLATFORM &nbsp;·&nbsp; TIER-1
                 </p>
               </motion.div>
 
@@ -1340,35 +1396,48 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 initial={{ opacity:0, scale:0.9 }}
                 animate={{ opacity:[0,1,0,1,1], scale:[0.9,1.03,1] }}
                 transition={{ delay:2.9, duration:0.7 }}
-                className="pt-3 space-y-3"
+                className="pt-3 space-y-4"
               >
-                {/* Encrypted badge */}
-                <div className="flex items-center justify-center gap-3">
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent to-slate-800"/>
-                  <span className="text-[6px] text-slate-800 tracking-[0.5em] uppercase font-black">
+                {/* Encrypted badge — золото з анімацією */}
+                <motion.div
+                  animate={{ opacity:[0.5,1,0.5] }}
+                  transition={{ duration:2, repeat:Infinity }}
+                  className="flex items-center justify-center gap-3"
+                >
+                  <div className="h-px w-20 bg-gradient-to-r from-transparent to-yellow-800/40"/>
+                  <span className="text-[7px] text-yellow-700/70 tracking-[0.55em] uppercase font-black">
                     ■ CLASSIFIED — ACCESS GRANTED ■
                   </span>
-                  <div className="h-px w-16 bg-gradient-to-l from-transparent to-slate-800"/>
-                </div>
+                  <div className="h-px w-20 bg-gradient-to-l from-transparent to-yellow-800/40"/>
+                </motion.div>
 
                 {/* Кнопка входу */}
                 <div className="inline-block relative group" onClick={onComplete}>
-                  <div className="absolute inset-0 bg-red-700 blur-2xl opacity-25 group-hover:opacity-45 transition-opacity duration-500"/>
+                  <div className="absolute inset-0 bg-red-700 blur-2xl opacity-25 group-hover:opacity-55 transition-opacity duration-500"/>
                   {/* Золота рамка */}
-                  <div className="absolute -inset-px bg-gradient-to-r from-yellow-800/30 via-red-600/40 to-yellow-800/30"/>
+                  <div className="absolute -inset-px bg-gradient-to-r from-yellow-900/35 via-red-600/50 to-yellow-900/35"/>
                   <div
-                    className="relative text-[11px] text-white font-black tracking-[1.4em] uppercase px-12 py-4 bg-gradient-to-r from-slate-950 via-red-950 to-slate-950 cursor-pointer border border-red-800/50 group-hover:border-red-600/80 transition-all duration-500"
-                    style={{ boxShadow:'0 0 50px rgba(220,38,38,0.4),0 0 100px rgba(220,38,38,0.15),inset 0 1px 0 rgba(255,255,255,0.06)' }}
+                    className="relative text-[11px] text-white font-black tracking-[1.4em] uppercase px-14 py-4 bg-gradient-to-r from-slate-950 via-red-950/90 to-slate-950 cursor-pointer border border-red-700/60 group-hover:border-red-500/90 transition-all duration-400"
+                    style={{ boxShadow:'0 0 60px rgba(220,38,38,0.5),0 0 120px rgba(220,38,38,0.2),inset 0 1px 0 rgba(255,255,255,0.08)' }}
                   >
                     <motion.div
                       className="absolute inset-0"
-                      animate={{ opacity:[0,0.25,0] }}
-                      transition={{ duration:1.8, repeat:Infinity }}
-                      style={{ background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)' }}
+                      animate={{ opacity:[0,0.3,0] }}
+                      transition={{ duration:1.6, repeat:Infinity }}
+                      style={{ background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)' }}
                     />
                     УВІЙТИ ДО СИСТЕМИ
                   </div>
                 </div>
+
+                {/* Додатковий рядок — таємна мітка */}
+                <motion.div
+                  animate={{ opacity:[0.2,0.5,0.2] }}
+                  transition={{ duration:4, repeat:Infinity }}
+                  className="text-[5.5px] text-slate-900 tracking-[0.6em] uppercase font-black text-center"
+                >
+                  PREDATOR ANALYTICS · SOVEREIGN INTELLIGENCE CORE · BUILD {rndHex(6)} · TIER-1 CLASSIFIED
+                </motion.div>
               </motion.div>
             </motion.div>
           </motion.div>

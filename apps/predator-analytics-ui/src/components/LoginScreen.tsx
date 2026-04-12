@@ -1,7 +1,7 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.1.4
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.4
  * Екран авторизації глобальної розвідувальної платформи.
- * Атмосфера: строгість, страх, масштаб, багатство.
+ * Атмосфера: строгість, страх, масштаб, вартість. Юридичний кордон: 23 країни.
  */
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -55,6 +55,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const activeOps = useLiveCounter(342, 1, 8000);
     const countriesMonitored = 194;
     const nodesOnline = useLiveCounter(1247, 2, 5000);
+    const dataProcessedPb = useLiveCounter(1247, 8, 400); // GB processed
 
     // Пульсація загрози
     useEffect(() => {
@@ -247,11 +248,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute right-0 top-20 bottom-20 w-52 z-10 pointer-events-none flex flex-col justify-between py-4 pr-5 items-end text-right">
                 <div className="space-y-3">
                     {[
-                        { label: 'КВАНТОВИЙ ЗАХИСТ', status: 'АКТИВНО', color: 'text-emerald-500', icon: Shield },
-                        { label: 'ДАРКНЕТ СКАН', status: 'АКТИВНО', color: 'text-emerald-500', icon: Radar },
-                        { label: 'СУПУТН. ЗВ\'ЯЗОК', status: 'ОНЛАЙН', color: 'text-emerald-500', icon: Satellite },
-                        { label: 'КРИПТО-ТРЕЙС', status: 'АКТИВНО', color: 'text-red-500', icon: Radio },
-                        { label: 'БІОМЕТРІЯ', status: 'ОЧІКУЄ', color: 'text-amber-500', icon: Fingerprint },
+                        { label: 'CRYSTALS-KYBER-1024', status: 'АКТИВНО', color: 'text-emerald-500', icon: Shield },
+                        { label: 'ДАРКНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-emerald-500', icon: Radar },
+                        { label: 'СУПУТН. ЗВ\'ЯЗОК [47]', status: 'ОНЛАЙН', color: 'text-emerald-500', icon: Satellite },
+                        { label: 'SWIFT/SEPA ПЕРЕХВАТ', status: 'АКТИВНО', color: 'text-red-500', icon: Radio },
+                        { label: 'INTERPOL RED NOTICE', status: 'АКТИВНО', color: 'text-red-500', icon: Crosshair },
+                        { label: 'БІОМЕТРІЯ / СІТКІВКА', status: 'ОЧІКУЄ', color: 'text-amber-500', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
                             key={sys.label}
@@ -282,13 +284,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         {[1,2,3,4,5].map(i => (
                             <motion.div
                                 key={i}
-                                animate={i <= 4 ? { opacity: [0.6, 1, 0.6] } : {}}
-                                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
-                                className={`w-4 h-2 rounded-[2px] ${i <= 3 ? 'bg-amber-500' : i <= 4 ? 'bg-red-500' : 'bg-slate-800'}`}
+                                animate={i <= 5 ? { opacity: [0.6, 1, 0.6] } : {}}
+                                transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.08 }}
+                                className={`w-4 h-2 rounded-[2px] ${i <= 2 ? 'bg-amber-500' : i <= 4 ? 'bg-red-500' : 'bg-red-700'}`}
                             />
                         ))}
                     </div>
-                    <div className="text-[9px] font-black text-red-500 tracking-[0.3em]">ПІДВИЩЕНИЙ</div>
+                    <div className="text-[9px] font-black text-red-500 tracking-[0.3em]">КРИТИЧНИЙ</div>
+                    <div className="text-[7px] text-slate-700 tracking-[0.25em] mt-0.5">{(dataProcessedPb / 1000).toFixed(1)} TB ОБРОБЛЕНО</div>
                 </motion.div>
 
                 {/* Вертикальна лінія справа */}
@@ -370,13 +373,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <div className="flex items-center justify-center gap-4">
                                 <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
                             <h2 className="text-[12px] font-black tracking-[1em] text-white uppercase bg-red-600/20 px-6 py-1.5 border border-red-600/30">
-                                    СТРАТЕГІЧНА РОЗВІДУВАЛЬНА МЕРЕЖА
+                                    ГЛОБАЛЬНА СИСТЕМА ПРИМУСОВОГО КОНТРОЛЮ
                                 </h2>
                                 <div className="h-[2px] w-20 bg-gradient-to-l from-transparent via-red-600 to-transparent" />
                             </div>
                             <p className="text-[9px] text-red-600/60 tracking-[0.5em] uppercase font-bold">
-                                ЄДИНИЙ ГЛОБАЛЬНИЙ КОМАНДНИЙ ТЕРМІНАЛ v56.1.4
-                            </p>
+                            ЄДИНИЙ ГЛОБАЛЬНИЙ КОМАНДНИЙ ТЕРМІНАЛ v56.4 · TIER-1
+                        </p>
                         </div>
 
                         {/* ФОРМА АВТОРИЗАЦІЇ */}
@@ -626,29 +629,38 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     </div>
                     <div className="relative flex-1 py-2 overflow-hidden items-center flex">
                         <motion.div
-                            animate={{ x: [0, -2000] }}
-                            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                            animate={{ x: [0, -3000] }}
+                            transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
                             className="flex gap-12 whitespace-nowrap"
                         >
                             <span className="text-[9px] text-red-500 font-bold tracking-widest">
-                                [ТРИВОГА] ПЕРЕХОПЛЕННЯ СИГНАЛУ В СЕКТОРІ GAMMA-4 ... МОНІТОРИНГ АКТИВНИЙ
+                                [ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФРОВАНИХ ТРАНЗАКЦІЙ У СЕКТОРІ GAMMA-4 — АНАЛІЗ АКТИВНИЙ
+                            </span>
+                            <span className="text-[9px] text-red-600 font-bold tracking-widest">
+                                [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕРЕЖУ $47M ЧЕРЕЗ SHELL-КОМПАНІЇ У BVI — DE-ANONYMIZING...
                             </span>
                             <span className="text-[9px] text-emerald-500 font-bold tracking-widest">
-                                [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV_CORE_01)
+                                [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV-CORE-03 · POLYGON-7)
                             </span>
                             <span className="text-[9px] text-amber-500 font-bold tracking-widest">
-                                [КОНТРОЛЬ] ВИЯВЛЕНО ПІДОЗРІЛУ ТРАНЗАКЦІЮ: UEID-9472-BX ... АНАЛІЗУЄТЬСЯ
+                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — FREEZE INITIATED
                             </span>
                             <span className="text-[9px] text-red-500 font-bold tracking-widest">
-                                [УВАГА] СПРОБА НЕСАНКЦІОНОВАНОГО ДОСТУПУ З IP 185.12.92.X ... БЛОКОВАНО
+                                [УВАГА] INTERPOL RED NOTICE: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — MONITORING
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold tracking-widest">
-                                [СУПУТНИК] СУПУТНИК SENTINEL-5 ОНЛАЙН ... ПЕРЕДАЧА ДАНИХ 4.2 GB/S
+                                [СУПУТНИК] SENTINEL-47 ОНЛАЙН · {(dataProcessedPb / 100).toFixed(1)} GB/С · ІНТЕРЦЕПЦІЯ АКТИВНА
+                            </span>
+                            <span className="text-[9px] text-red-700 font-bold tracking-widest">
+                                [AI HUNTER] ЦІЛЬ ПІДТВЕРДЖЕНА: MATCH 99.97% — ПАКЕТ ПЕРЕДАНО ДО SBU/NABU — CASE #PRD-28847
+                            </span>
+                            <span className="text-[9px] text-amber-600 font-bold tracking-widest">
+                                [СПРБА ДОСТУПУ] НЕСАНКЦІОНОВАНА АВТОРИЗАЦІЯ З IP 185.12.92.X — ЗАБЛОКОВАНО — ORIGIN: TOR_EXIT
                             </span>
                         </motion.div>
                     </div>
                     <div className="px-6 text-[10px] font-black text-red-600 tracking-[0.4em]">
-                        PREDATOR v56.1.4
+                        PREDATOR v56.4
                     </div>
                 </div>
                 <div className="h-[3px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
@@ -656,5 +668,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
         </div>
     );
 };
+
 
 export default LoginScreen;
