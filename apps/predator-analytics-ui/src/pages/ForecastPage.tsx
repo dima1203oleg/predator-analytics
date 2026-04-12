@@ -141,6 +141,14 @@ const createScenarioPoints = (points: ForecastPoint[], multiplier: number): Fore
 // --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
 const MOCK_FORECAST: ForecastResponse = {
   product_code: '84713000',
+  product_name: 'Обчислювальні машини',
+  country_code: 'UA',
+  model_used: 'prophet',
+  source: 'synthetic',
+  confidence_score: 0.87,
+  mape: 0.048,
+  data_points_used: 180,
+  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців із помірним рівнем невизначеності. Рекомендовано посилений моніторинг імпортних потоків з Азійського регіону.',
   months_ahead: 6,
   model: 'prophet',
   forecast: [
@@ -500,13 +508,13 @@ function DemandForecastTab({
                     icon={<Target className="text-amber-400" />}
                     label="Впевненість"
                     tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
-                    value={`${(forecast.confidence_score * 100).toFixed(0)}%`}
+                    value={forecast.confidence_score != null ? `${(forecast.confidence_score * 100).toFixed(0)}%` : '—'}
                 />
                 <SummaryCard
                     icon={<Zap className="text-slate-400" />}
                     label="MAPE (похибка)"
                     tone="border-slate-400/20 bg-slate-500/10 text-slate-200"
-                    value={`${(forecast.mape * 100).toFixed(1)}%`}
+                    value={forecast.mape != null ? `${(forecast.mape * 100).toFixed(1)}%` : '—'}
                 />
             </div>
 

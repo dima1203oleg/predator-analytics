@@ -3173,6 +3173,76 @@ app.get(['/api/v45/monitoring/notifications', '/api/v1/monitoring/notifications'
 // =============================================
 // 📋 AZR AUDIT — Журнал аудиту для ActivityView
 // =============================================
+app.get(['/api/v45/azr/status', '/api/v1/azr/status', '/api/azr/status'], (req, res) => {
+  res.json({
+    engine: "AZR",
+    engine_version: "v32",
+    is_running: true,
+    is_frozen: false,
+    cycle_count: 1420,
+    health_score: 98.5,
+    health_details: {
+      cpu: 85,
+      memory: 90,
+      disk: 95,
+      api: 100,
+      db: 100,
+      ai: 99
+    },
+    metrics: {
+      total_executed: 51200,
+      total_blocked: 14,
+      total_rollbacks: 2,
+      constitutional_violations: 0
+    },
+    experience: {
+      total_experiences: 3140,
+      blacklisted_actions: 5,
+      success_patterns: {"fast_scan": 120},
+      failure_patterns: {"timeout": 3}
+    },
+    capabilities: ["Self-Healing", "Anomaly Detection"],
+    status_emoji: "🟢",
+    message_uk: "Двигун в оптимальному стані",
+    risk_level: "LOW"
+  });
+});
+
+app.post(['/api/v45/forecast/demand', '/api/v1/forecast/demand', '/api/forecast/demand'], (req, res) => {
+  res.json({
+    product_code: req.body?.product_code || "8517130000",
+    model_used: "prophet_v4",
+    confidence_score: 0.94,
+    mape: 4.25,
+    data_points_used: 10420,
+    interpretation_uk: "AI зафіксував стійкий висхідний тренд з ймовірними піками у наступному місяці через сезонність та зміни в логістичних маршрутах.",
+    feature_importance: {"Сезонність": 0.45, "Логістика": 0.35, "Курс валют": 0.20},
+    forecast: Array.from({ length: 6 }, (_, i) => {
+      const base = 400 + Math.random() * 200;
+      return {
+        date: `2024-0${4 + i}-01`,
+        predicted_volume: Math.round(base),
+        confidence_lower: Math.round(base * 0.85),
+        confidence_upper: Math.round(base * 1.15)
+      };
+    })
+  });
+});
+
+app.get(['/api/v45/market/overview', '/api/v1/market/overview', '/api/market/overview'], (req, res) => {
+  res.json({
+    total_declarations: 41250,
+    total_value_usd: 850400000,
+    total_companies: 3120,
+    top_products: [
+      { code: "8471300000", name: "Портативні комп'ютери", value_usd: 15000000, change_percent: 12.5 },
+      { code: "8517120000", name: "Телефони мобільні", value_usd: 24000000, change_percent: -5.2 },
+      { code: "2710192100", name: "Бензин моторний", value_usd: 48000000, change_percent: 8.4 }
+    ],
+    period: "last_30_days"
+  });
+});
+
 app.get(['/api/v45/azr/audit', '/api/v1/azr/audit'], (req, res) => {
   const limit = parseInt(req.query.limit) || 50;
   const auditEntries = [];

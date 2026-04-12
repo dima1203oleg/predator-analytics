@@ -20,10 +20,15 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        // РЕАЛЬНИЙ NVIDIA API Server замість Mock
-        target: 'http://194.177.1.240:8000',
+        // Локальний Mock API Server (порт 9080) — для локальної розробки
+        target: 'http://localhost:9080',
         changeOrigin: true,
         ws: true,
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
+            console.warn('[Vite Proxy] Mock API недоступний:', err.message);
+          });
+        },
       }
     }
   },

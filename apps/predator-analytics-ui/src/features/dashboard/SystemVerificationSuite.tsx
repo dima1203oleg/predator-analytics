@@ -146,7 +146,7 @@ const StorageMiniCard: React.FC<{ check: StorageCheck }> = ({ check }) => (
     </div>
 
     <div>
-      <p className="text-2xl font-black text-white font-display tracking-tighter tabular-nums mb-0.5">{check.count.toLocaleString()}</p>
+      <p className="text-2xl font-black text-white font-display tracking-tighter tabular-nums mb-0.5">{(check.count ?? 0).toLocaleString()}</p>
       <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{check.name}</p>
       <p className="text-[8px] text-slate-600 mt-1 uppercase italic">{check.details}</p>
     </div>
@@ -482,7 +482,7 @@ const SystemVerificationSuite: React.FC = () => {
                           <span className="font-mono text-[10px] text-slate-500">{decl.id}</span>
                           <span className="text-[10px] font-black text-slate-300 uppercase">{decl.date}</span>
                           <span className="text-[10px] font-black text-white uppercase tracking-widest">{decl.country}</span>
-                          <span className="text-sm font-black text-emerald-400 font-mono tracking-tighter">${decl.amount.toLocaleString()}</span>
+                          <span className="text-sm font-black text-emerald-400 font-mono tracking-tighter">${(decl.amount ?? 0).toLocaleString()}</span>
                         </div>
                       ))}
                     </div>
