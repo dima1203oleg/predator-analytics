@@ -1,28 +1,30 @@
 /**
- * BootScreen — PREDATOR NEXUS v56.1.4 — SOVEREIGN CORE INITIALIZATION
- * =======================================================================
- * Кінематографічна заставка рівня AAA. Створює атмосферу страху, влади
- * та абсолютного технічного домінування.
+ * BootScreen — PREDATOR NEXUS v56.2 — КІНЕМАТОГРАФІЧНА ЗАСТАВКА "CLASSIFIED INTRO"
+ * =================================================================================
+ * AAA-рівень кінематографічної заставки розвідувального агентства.
+ * Атмосфера таємності, технологічної могутності та абсолютного контролю.
  *
  * Фази:
- *  0 → РОЗРИВ ТИШІ    — темрява, низька частота, прорив крізь шум
+ *  0 → РОЗРИВ ТИШІ         — темрява, низька частота, прорив крізь шум
  *  1 → КВАНТОВЕ РУКОСТИСКАННЯ — математична геометрія, шифрування
- *  2 → ГЛОБАЛЬНЕ СКАНУВАННЯ  — радар, орбіти, перехоплення трафіку
- *  3 → SOVEREIGN REVEAL     — поява PREDATOR, кров'яне світіння
- *  4 → FADE OUT
+ *  2 → ГЛОБАЛЬНЕ СКАНУВАННЯ  — голографічна куля, перехоплення трафіку
+ *  3 → ЗАХОПЛЕННЯ ЦІЛІ       — TARGET IDENTIFIED, lock-on приціл
+ *  4 → SOVEREIGN REVEAL      — поява PREDATOR, кров'яне світіння, слоган
+ *  5 → FADE OUT
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GeometricRaptor } from './Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Phase = 0 | 1 | 2 | 3 | 4;
+type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 
 const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1600,  // РОЗРИВ ТИШІ     — стрімкий і агресивний
-  1: 2200,  // КВАНТОВЕ РУКОСТИСКАННЯ
-  2: 2800,  // ГЛОБАЛЬНЕ СКАНУВАННЯ — достатньо для радару
-  3: 5000,  // SOVEREIGN REVEAL — монументальний момент
-  4: 1000,  // FADE OUT
+  0: 1400,  // РОЗРИВ ТИШІ
+  1: 2000,  // КВАНТОВЕ РУКОСТИСКАННЯ
+  2: 3000,  // ГЛОБАЛЬНЕ СКАНУВАННЯ
+  3: 3200,  // ЗАХОПЛЕННЯ ЦІЛІ
+  4: 5500,  // SOVEREIGN REVEAL
+  5: 1200,  // FADE OUT
 };
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -50,7 +52,6 @@ class SoundEngine {
     const ctx = this.getCtx();
     if (!ctx) return;
 
-    // Низький sub-bass удар
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     const filter = ctx.createBiquadFilter();
@@ -68,7 +69,6 @@ class SoundEngine {
     osc.start();
     osc.stop(ctx.currentTime + 2.8);
 
-    // Glitch burst — короткий рандомний шум
     setTimeout(() => {
       const ctx2 = this.getCtx();
       if (!ctx2) return;
@@ -124,12 +124,47 @@ class SoundEngine {
     osc.stop(ctx.currentTime + 0.35);
   }
 
+  /** Електронний lock-on звук — захоплення цілі */
+  playLockOn() {
+    const ctx = this.getCtx();
+    if (!ctx) return;
+    // Серія висхідних пінгів
+    [800, 1000, 1300, 1800].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + i * 0.18 + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i * 0.18);
+      osc.stop(ctx.currentTime + i * 0.18 + 0.2);
+    });
+    // Фінальний lock-on бізнок
+    setTimeout(() => {
+      const c = this.getCtx();
+      if (!c) return;
+      const osc2 = c.createOscillator();
+      const g2 = c.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(2000, c.currentTime);
+      osc2.frequency.linearRampToValueAtTime(2000, c.currentTime + 0.6);
+      g2.gain.setValueAtTime(0.1, c.currentTime);
+      g2.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.8);
+      osc2.connect(g2);
+      g2.connect(c.destination);
+      osc2.start();
+      osc2.stop(c.currentTime + 0.9);
+    }, 900);
+  }
+
   /** Масивний удар — SOVEREIGN REVEAL */
   playImpact() {
     const ctx = this.getCtx();
     if (!ctx) return;
 
-    // Головний удар
     const osc = ctx.createOscillator();
     const osc2 = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -158,7 +193,6 @@ class SoundEngine {
     osc.stop(ctx.currentTime + 2.8);
     osc2.stop(ctx.currentTime + 2.8);
 
-    // Металевий клацання
     setTimeout(() => {
       const c = this.getCtx();
       if (!c) return;
@@ -240,13 +274,32 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [scanProgress, setScanProgress] = useState(0);
   const [hexStream, setHexStream] = useState<string[]>([]);
   const [typewriterText, setTypewriterText] = useState('');
+  const [targetLocked, setTargetLocked] = useState(false);
+  const [dbLines, setDbLines] = useState<string[]>([]);
 
   const PHASE_TEXTS: Record<number, string> = {
     0: '',
     1: '> ВСТАНОВЛЕННЯ КВАНТОВОГО КАНАЛУ [AES-512-GCM]...',
-    2: '> ГЛОБАЛЬНА РОЗВІДКА: ПЕРЕХОПЛЕННЯ АКТИВОВАНО',
-    3: '> СУВЕРЕННИЙ ДОСТУП ПІДТВЕРДЖЕНО — ЛАСКАВО ПРОСИМО',
+    2: '> ГЛОБАЛЬНА РОЗВІДКА: СКАНУВАННЯ БАЗ ДАНИХ...',
+    3: '> АНАЛІЗ РОЗВІДДАНИХ... ПЕРЕХРЕСНА ПЕРЕВІРКА ЗАПИСІВ...',
+    4: '> СУВЕРЕННИЙ ДОСТУП ПІДТВЕРДЖЕНО — ЛАСКАВО ПРОСИМО',
   };
+
+  /* ─ База даних рядків для фази 3 ─ */
+  const DB_SCAN_LINES = [
+    'SCANNING GLOBAL DATABASES...',
+    'ANALYZING INTELLIGENCE FEEDS...',
+    'CROSS-REFERENCING RECORDS...',
+    'PARSING FINANCIAL RECORDS...',
+    'DECRYPTING SATELLITE SIGNALS...',
+    'ACCESSING CLASSIFIED DOCUMENTS...',
+    'THREAT LEVEL: ANALYZING...',
+    'AI ALGORITHMS: PROCESSING...',
+    'NEURAL NETWORK: ACTIVE...',
+    'TARGET LOCK: INITIALIZING...',
+    'THREAT LEVEL: CONFIRMED.',
+    'TARGET IDENTIFIED.',
+  ];
 
   /* ─ Typewriter effect для кожної фази ─ */
   useEffect(() => {
@@ -262,11 +315,37 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  /* ─ DB scan lines для фази 3 ─ */
+  useEffect(() => {
+    if (phase !== 3) {
+      setDbLines([]);
+      setTargetLocked(false);
+      return;
+    }
+    let lineIdx = 0;
+    setDbLines([]);
+    const addLine = () => {
+      if (lineIdx < DB_SCAN_LINES.length) {
+        const line = DB_SCAN_LINES[lineIdx];
+        setDbLines(prev => [...prev, line]);
+        lineIdx++;
+        if (line === 'TARGET IDENTIFIED.') {
+          setTargetLocked(true);
+        }
+        const delay = line === 'TARGET IDENTIFIED.' ? 600 : 220 + Math.random() * 150;
+        setTimeout(addLine, delay);
+      }
+    };
+    const startTimer = setTimeout(addLine, 400);
+    return () => clearTimeout(startTimer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
+
   /* ─ HUD потоки ─ */
   useEffect(() => {
     const iInterval = setInterval(() => {
       setInterceptCount((p) => p + Math.floor(Math.random() * 12000 + 3000));
-      if (phase >= 1 && phase <= 2) soundEngine.playTelemetry(800 + Math.random() * 600);
+      if (phase >= 1 && phase <= 3) soundEngine.playTelemetry(800 + Math.random() * 600);
     }, 60);
     const sInterval = setInterval(() => {
       setScanProgress((p) => Math.min(100, p + Math.random() * 2.5 + 0.5));
@@ -287,11 +366,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     if (phase === 0) soundEngine.playAwaken();
     if (phase === 1) soundEngine.playQuantumTone();
     if (phase === 2) soundEngine.playRadarPing();
-    if (phase === 3) {
+    if (phase === 3) soundEngine.playLockOn();
+    if (phase === 4) {
       soundEngine.playImpact();
       droneStopRef.current = soundEngine.startDrone();
     }
-    if (phase === 4) {
+    if (phase === 5) {
       droneStopRef.current?.();
       soundEngine.playTelemetry(400);
     }
@@ -308,14 +388,18 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const h = canvas.height;
     const now = Date.now();
     const elapsed = now - phaseStartTimeMs.current;
-    const currentPhase = skipRef.current ? 4 : phase;
+    const currentPhase = skipRef.current ? 5 : phase;
     const rot = now * 0.0003;
 
-    /* ── Розрахунок Camera Shake ── */
+    /* ── Camera Shake ── */
     let shakeX = 0;
     let shakeY = 0;
-    if (currentPhase < 4) {
-      const shakeIntensity = currentPhase === 0 ? 0.3 : currentPhase === 1 ? 0.8 : currentPhase === 3 ? 1.5 : 0.2;
+    if (currentPhase < 5) {
+      const shakeIntensity =
+        currentPhase === 0 ? 0.3 :
+        currentPhase === 1 ? 0.8 :
+        currentPhase === 3 ? 2.5 :
+        currentPhase === 4 ? 1.5 : 0.2;
       shakeX = (Math.random() - 0.5) * shakeIntensity * 4;
       shakeY = (Math.random() - 0.5) * shakeIntensity * 4;
     }
@@ -330,9 +414,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const cx = w / 2;
     const cy = h / 2;
 
-    /* ── Атмосферне центральне червоне світіння (завжди) ── */
-    if (currentPhase < 4) {
-      const intensity = currentPhase === 3 ? 0.12 : 0.03;
+    /* ── Атмосферне центральне червоне світіння ── */
+    if (currentPhase < 5) {
+      const intensity =
+        currentPhase === 4 ? 0.14 :
+        currentPhase === 3 ? 0.08 : 0.03;
       const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.55);
       grd.addColorStop(0, `rgba(180, 10, 10, ${intensity})`);
       grd.addColorStop(0.5, `rgba(60, 5, 5, ${intensity * 0.3})`);
@@ -341,11 +427,20 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.fillRect(0, 0, w, h);
     }
 
-    /* ══ ФАЗА 0: РОЗРИВ ТИШІ ─ цифровий хаос що організується ══ */
+    /* ── Синя атмосфера (акцент) ── */
+    if (currentPhase >= 2 && currentPhase < 5) {
+      const blueIntensity = currentPhase === 3 ? 0.04 : 0.02;
+      const bgrd = ctx.createRadialGradient(w * 0.15, h * 0.2, 0, w * 0.15, h * 0.2, w * 0.4);
+      bgrd.addColorStop(0, `rgba(10, 40, 180, ${blueIntensity})`);
+      bgrd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = bgrd;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    /* ══ ФАЗА 0: РОЗРИВ ТИШІ ══ */
     if (currentPhase === 0) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[0]);
 
-      // Хаотичні глітч-рядки
       for (let i = 0; i < 30; i++) {
         const glitchY = Math.random() * h;
         const glitchH = Math.random() * 8 + 1;
@@ -355,7 +450,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.fillRect(glitchX, glitchY, glitchW, glitchH);
       }
 
-      // Бінарний дощ (вертикальні рядки цифр)
       ctx.font = '9px monospace';
       for (let col = 0; col < w; col += 18) {
         const chars = '01';
@@ -368,7 +462,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }
       }
 
-      // Геометрична сітка, що проявляється
       ctx.strokeStyle = `rgba(220, 38, 38, ${0.08 * p})`;
       ctx.lineWidth = 1;
       const gs = 60;
@@ -379,7 +472,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
       }
 
-      // Горизонтальна сканлінія — бляск
       const scanY = (elapsed / PHASE_DURATIONS[0]) * h;
       const scanGrd = ctx.createLinearGradient(0, scanY - 3, 0, scanY + 3);
       scanGrd.addColorStop(0, 'rgba(220,38,38,0)');
@@ -389,7 +481,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.fillRect(0, scanY - 3, w, 6);
     }
 
-    /* ══ ФАЗА 1: КВАНТОВЕ РУКОСТИСКАННЯ — математична краса ══ */
+    /* ══ ФАЗА 1: КВАНТОВЕ РУКОСТИСКАННЯ ══ */
     if (currentPhase === 1) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[1]);
 
@@ -411,7 +503,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       }
       ctx.stroke();
 
-      // Концентричні кільця з пульсацією
+      // Концентричні кільця
       for (let ring = 1; ring <= 6; ring++) {
         const rr = (maxR / 6) * ring;
         const pulse = Math.sin(now * 0.002 + ring * 0.5) * 0.5 + 0.5;
@@ -422,7 +514,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.stroke();
       }
 
-      // Обертальні зубчасті зовнішні позначки
+      // Зубчасті зовнішні позначки
       const numTicks = 64;
       for (let i = 0; i < numTicks; i++) {
         const angle = ((i / numTicks) * Math.PI * 2) + now * 0.001;
@@ -437,7 +529,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.stroke();
       }
 
-      // Хрест-прицільна мітка по центру
+      // Хрест-прицільна мітка
       const crossSize = 25;
       ctx.strokeStyle = `rgba(255, 255, 255, ${0.6 * p})`;
       ctx.lineWidth = 1;
@@ -449,7 +541,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.arc(0, 0, 8, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Шестикутники — нанорівень
+      // Шестикутники
       for (let row = -3; row <= 3; row++) {
         for (let col = -5; col <= 5; col++) {
           const hx = col * 45 + (row % 2) * 22;
@@ -475,28 +567,25 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     /* ══ ФАЗА 2: ГЛОБАЛЬНЕ СКАНУВАННЯ ══ */
     if (currentPhase === 2) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[2]);
-      const globeR = Math.min(w, h) * 0.35;
+      const globeR = Math.min(w, h) * 0.32;
 
       ctx.save();
       ctx.translate(cx, cy);
 
-      // Стилізовані континенти (хмари точок)
-      const numPoints = 800;
+      // Стилізовані континенти
+      const numPoints = 1000;
       for (let i = 0; i < numPoints; i++) {
         const phi = Math.acos(-1 + (2 * i) / numPoints);
         const theta = Math.sqrt(numPoints * Math.PI) * phi + rot * 10;
-        
-        // Математична маска континентів (симуляція)
         const continentMask = Math.sin(phi * 4) * Math.cos(theta * 3) + Math.sin(theta * 2);
         if (continentMask > 0.3) {
            const gx = globeR * Math.sin(phi) * Math.cos(theta - rot);
            const gy = globeR * Math.cos(phi);
            const gz = globeR * Math.sin(phi) * Math.sin(theta - rot);
-           
-           if (gz > 0) { // Лише видима сторона
-             const size = Math.random() * 1.5 + 0.5;
-             ctx.fillStyle = `rgba(220, 38, 38, ${0.4 * p})`;
-             ctx.fillRect(gx, gy, size, size);
+           if (gz > 0) {
+             const brightness = gz / globeR;
+             ctx.fillStyle = `rgba(220, 38, 38, ${(0.3 + brightness * 0.3) * p})`;
+             ctx.fillRect(gx, gy, 1.5, 1.5);
            }
         }
       }
@@ -533,9 +622,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.rotate(rotOffset);
         ctx.beginPath();
         ctx.ellipse(0, 0, globeR * factor, globeR * factor * 0.28, 0.3 * idx, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(220,38,38,${(0.12 - idx * 0.03) * p})`;
+        ctx.strokeStyle = `rgba(100,150,255,${(0.15 - idx * 0.03) * p})`;
         ctx.lineWidth = 1;
         ctx.stroke();
+        // Супутники
+        const satX = Math.cos(rotOffset * (idx + 1)) * globeR * factor;
+        const satY = Math.sin(rotOffset * (idx + 1)) * globeR * factor * 0.28;
+        ctx.fillStyle = `rgba(100,200,255,${0.8 * p})`;
+        ctx.fillRect(satX - 2, satY - 2, 4, 4);
         ctx.restore();
         ctx.setLineDash([]);
       });
@@ -550,13 +644,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       sweepGrd.addColorStop(0.15, 'rgba(220,38,38,0)');
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, globeR * 1.5, 0, Math.PI * 2);
+      ctx.arc(0, 0, globeR * 1.55, 0, Math.PI * 2);
       ctx.fillStyle = sweepGrd;
       ctx.fill();
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(globeR * 1.5, 0);
-      ctx.strokeStyle = `rgba(255,60,60,${0.85 * p})`;
+      ctx.lineTo(globeR * 1.55, 0);
+      ctx.strokeStyle = `rgba(255,60,60,${0.9 * p})`;
       ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.restore();
@@ -582,53 +676,167 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.fillText(`T${i.toString().padStart(2, '0')}`, tx + 7, ty + 2);
       }
 
-      // АКТИВНІ ВУЗЛИ (Hot-zones)
-      for (let i = 0; i < 6; i++) {
-        const ha = (i / 6) * Math.PI * 2 + rot * 0.5;
-        const hp = Math.sin(ha * 2);
-        const hx = Math.cos(ha) * globeR * 0.8;
-        const hy = Math.sin(ha) * globeR * 0.6;
-        const hSize = (Math.sin(now * 0.005 + i) * 0.5 + 0.5) * 8;
-        
-        ctx.fillStyle = `rgba(255, 0, 0, ${0.3 * p})`;
+      // ПОТОКИ ДАНИХ — лінії між вузлами
+      for (let i = 0; i < 8; i++) {
+        const aFrom = (i / 8) * Math.PI * 2 + rot;
+        const aTo = ((i + 3) / 8) * Math.PI * 2 + rot;
+        const r = globeR * 0.7;
+        const fromX = Math.cos(aFrom) * r;
+        const fromY = Math.sin(aFrom) * r * 0.6;
+        const toX = Math.cos(aTo) * r;
+        const toY = Math.sin(aTo) * r * 0.6;
+
+        const pulse = (now * 0.002 + i * 0.5) % 1;
+        const dpx = fromX + (toX - fromX) * pulse;
+        const dpy = fromY + (toY - fromY) * pulse;
+
+        ctx.strokeStyle = `rgba(100,150,255,${0.12 * p})`;
+        ctx.lineWidth = 0.5;
         ctx.beginPath();
-        ctx.arc(hx, hy, hSize, 0, Math.PI * 2);
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(100,200,255,${0.6 * p})`;
+        ctx.beginPath();
+        ctx.arc(dpx, dpy, 2, 0, Math.PI * 2);
         ctx.fill();
-        
-        // Індикатори активності
-        ctx.strokeStyle = `rgba(255, 60, 60, ${0.8 * p})`;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(hx - hSize, hy - hSize, hSize * 2, hSize * 2);
       }
 
       ctx.restore();
     }
 
-    /* ══ ФАЗА 3: SOVEREIGN REVEAL ══ */
+    /* ══ ФАЗА 3: ЗАХОПЛЕННЯ ЦІЛІ ══ */
     if (currentPhase === 3) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
+      const lockProgress = Math.min(1, elapsed / 2400);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      // Фоновий HUD — аналітичні панелі
+      ctx.strokeStyle = `rgba(220,38,38,${0.06 * p})`;
+      ctx.lineWidth = 0.5;
+      const gs = 40;
+      for (let x = -w / 2; x < w / 2; x += gs) {
+        ctx.beginPath(); ctx.moveTo(x, -h / 2); ctx.lineTo(x, h / 2); ctx.stroke();
+      }
+      for (let y = -h / 2; y < h / 2; y += gs) {
+        ctx.beginPath(); ctx.moveTo(-w / 2, y); ctx.lineTo(w / 2, y); ctx.stroke();
+      }
+
+      // Центральний прицільний хрест — ростучий
+      const crossScale = lockProgress;
+      const outerSize = 120 * crossScale;
+      const innerSize = 25;
+      const gapSize = 35;
+
+      // Чотири кути прицілу
+      const corners = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+      corners.forEach(([sx, sy]) => {
+        const bx = sx * outerSize;
+        const by = sy * outerSize;
+        const armLen = 30 * crossScale;
+        ctx.strokeStyle = `rgba(220,38,38,${0.85 * p})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx, by - sy * armLen);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.lineTo(bx - sx * armLen, by);
+        ctx.stroke();
+      });
+
+      // Внутрішнє кільце прицілу
+      ctx.beginPath();
+      ctx.arc(0, 0, innerSize, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220,38,38,${0.5 * p})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Зовнішнє кільце — що звужується
+      const outerRing = 150 - lockProgress * 90;
+      ctx.beginPath();
+      ctx.arc(0, 0, outerRing, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(220,38,38,${0.25 * p})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([8, 12]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Обертальні сегменти
+      ctx.save();
+      ctx.rotate(now * 0.002);
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        const ir2 = 60;
+        const or2 = 75;
+        if (i % 2 === 0) {
+          ctx.beginPath();
+          ctx.arc(0, 0, (ir2 + or2) / 2, a, a + Math.PI / 12);
+          ctx.strokeStyle = `rgba(220,38,38,${0.4 * lockProgress * p})`;
+          ctx.lineWidth = or2 - ir2;
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+
+      // Горизонтальні та вертикальні лінії прицілу
+      ctx.strokeStyle = `rgba(220,38,38,${0.3 * p})`;
+      ctx.lineWidth = 0.7;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.moveTo(-w / 2, 0); ctx.lineTo(-gapSize, 0);
+      ctx.moveTo(gapSize, 0); ctx.lineTo(w / 2, 0);
+      ctx.moveTo(0, -h / 2); ctx.lineTo(0, -gapSize);
+      ctx.moveTo(0, gapSize); ctx.lineTo(0, h / 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Пульсуюче червоне ядро при lock
+      if (lockProgress > 0.8) {
+        const lockAlpha = (lockProgress - 0.8) / 0.2;
+        const pulse = Math.sin(now * 0.01) * 0.5 + 0.5;
+        ctx.fillStyle = `rgba(220,38,38,${0.4 * lockAlpha * pulse})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, innerSize * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // TARGET IDENTIFIED спалах
+        const flashAlpha = Math.min(1, lockAlpha * 2) * (Math.sin(now * 0.015) * 0.3 + 0.7);
+        ctx.fillStyle = `rgba(255,0,0,${0.1 * flashAlpha})`;
+        ctx.fillRect(-w / 2, -h / 2, w, h);
+      }
+
+      ctx.restore();
+    }
+
+    /* ══ ФАЗА 4: SOVEREIGN REVEAL ══ */
+    if (currentPhase === 4) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[4]);
 
       // Спалах на початку
-      if (elapsed < 250) {
-        const fp = 1 - elapsed / 250;
-        ctx.fillStyle = `rgba(255,255,255,${fp * 0.75})`;
+      if (elapsed < 280) {
+        const fp = 1 - elapsed / 280;
+        ctx.fillStyle = `rgba(255,255,255,${fp * 0.8})`;
         ctx.fillRect(0, 0, w, h);
       }
 
-      // Ударні хвилі що розходяться
-      if (elapsed < 1500) {
-        const wp = elapsed / 1500;
+      // Ударні хвилі
+      if (elapsed < 1800) {
+        const wp = elapsed / 1800;
         for (let ring = 0; ring < 3; ring++) {
           const ringP = Math.max(0, (wp - ring * 0.15));
           if (ringP <= 0) continue;
           const r = ringP * Math.max(w, h) * 0.6;
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(220,38,38,${(1 - ringP) * 0.35})`;
+          ctx.strokeStyle = `rgba(220,38,38,${(1 - ringP) * 0.4})`;
           ctx.lineWidth = 2 - ring;
           ctx.stroke();
         }
-        // Хрестоподібні вектори
         ctx.strokeStyle = `rgba(220,38,38,${(1 - wp) * 0.4})`;
         ctx.lineWidth = 1.5;
         ctx.beginPath();
@@ -637,9 +845,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.stroke();
       }
 
-      // Потужне серцебиття (пульсуючий ореол)
+      // Пульсуючий ореол
       const heartbeat = (Math.sin(now * 0.005) * 0.5 + 0.5);
-      const glowR = 220 + heartbeat * 40;
+      const glowR = 200 + heartbeat * 40;
 
       const outerGrd = ctx.createRadialGradient(cx, cy, glowR * 0.2, cx, cy, glowR * 2.5);
       outerGrd.addColorStop(0, `rgba(220,38,38,${0.18 * p})`);
@@ -651,7 +859,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.arc(cx, cy, glowR * 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Декоративні промені з центру — силовий ефект
+      // Декоративні промені
       ctx.save();
       ctx.translate(cx, cy);
       const numRays = 24;
@@ -672,7 +880,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }
       }
 
-      // Зовнішнє обертальне кільце з засічками
+      // Обертальне зовнішнє кільце
       const rimR = glowR * 1.1 + heartbeat * 5;
       ctx.beginPath();
       ctx.arc(0, 0, rimR, 0, Math.PI * 2);
@@ -692,17 +900,17 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.restore();
     }
 
-    /* ══ ФАЗА 4: FADE OUT ══ */
-    if (currentPhase === 4) {
-      const p = Math.min(1, elapsed / PHASE_DURATIONS[4]);
+    /* ══ ФАЗА 5: FADE OUT ══ */
+    if (currentPhase === 5) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[5]);
       ctx.fillStyle = `rgba(1, 4, 9, ${p})`;
       ctx.fillRect(0, 0, w, h);
     }
 
-    ctx.restore(); // Закриття Camera Shake
+    ctx.restore(); // Camera Shake
 
-    /* ── Преміальне "Плівкове зерно" (Film Grain) ── */
-    if (currentPhase < 4) {
+    /* ── Плівкове зерно ── */
+    if (currentPhase < 5) {
       const grainOpacity = 0.012 + Math.random() * 0.008;
       ctx.fillStyle = `rgba(255, 255, 255, ${grainOpacity})`;
       for (let i = 0; i < 4000; i++) {
@@ -721,7 +929,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const dur = PHASE_DURATIONS[phase];
     if (!dur) return;
     const timer = setTimeout(() => {
-      if (phase < 4) {
+      if (phase < 5) {
         setPhase((p) => (p + 1) as Phase);
         phaseStartTimeMs.current = Date.now();
       } else {
@@ -765,7 +973,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     if (!skipAllowed) return;
     skipRef.current = true;
     droneStopRef.current?.();
-    setPhase(4);
+    setPhase(5);
   };
 
   const fadeVariants = {
@@ -773,7 +981,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
     exit: { opacity: 0, scale: 1.05, filter: 'blur(12px)' },
   };
-  const smooth = { duration: 0.7, ease: [0.22, 1, 0.36, 1] };
+  const smooth = { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] };
 
   /* ═══════════════════════════════════════════════════════════
      RENDER
@@ -810,9 +1018,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         }}
       />
 
-      {/* ══ HUD ОВЕРЛЕЙ (фази 0-3) ══ */}
+      {/* ══ HUD ОВЕРЛЕЙ (фази 1-4) ══ */}
       <AnimatePresence>
-        {phase >= 1 && phase < 4 && (
+        {phase >= 1 && phase < 5 && (
           <motion.div
             key="hud"
             initial={{ opacity: 0 }}
@@ -822,7 +1030,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             className="absolute inset-0 pointer-events-none z-[20]"
           >
             {/* ── Кутові маркери прицілу ── */}
-            {['top-0 left-0', 'top-0 right-0', 'bottom-0 left-0', 'bottom-0 right-0'].map((pos, i) => (
+            {(['top-0 left-0', 'top-0 right-0', 'bottom-0 left-0', 'bottom-0 right-0'] as const).map((pos, i) => (
               <div key={i} className={`absolute ${pos} w-20 h-20`}>
                 <div
                   className="absolute inset-3 border-red-700/50"
@@ -893,7 +1101,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   [{(() => {
                     const sources = ['P-NET.ЯДРО', 'КВАНТ.КАНАЛ', 'AZR.SENTINEL', 'OSINT.CORE', 'СATOM.FLOW'];
                     return sources[idx % sources.length];
-                  })()}] КЛЮ4: {code} ‣ ОК
+                  })()} ] КЛЮ4: {code} ‣ ОК
                 </motion.div>
               ))}
             </div>
@@ -911,7 +1119,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   animate={{ width: `${scanProgress}%` }}
                   transition={{ duration: 0.3, ease: 'linear' }}
                 />
-                {/* Shimmer */}
                 <motion.div
                   className="absolute inset-y-0 w-8 bg-gradient-to-r from-transparent via-white/40 to-transparent"
                   animate={{ left: ['-10%', '110%'] }}
@@ -923,7 +1130,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               </div>
             </div>
 
-            {/* ── Typewriter термінал (по центру знизу) ── */}
+            {/* ── Typewriter термінал ── */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
               <div className="inline-flex items-center gap-2 bg-black/80 border border-red-900/40 px-6 py-2 shadow-[0_0_30px_rgba(220,38,38,0.1),inset_0_0_20px_rgba(0,0,0,0.5)]">
                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
@@ -1039,10 +1246,116 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           </motion.div>
         )}
 
-        {/* ФАЗА 3 — SOVEREIGN REVEAL */}
+        {/* ФАЗА 3 — ЗАХОПЛЕННЯ ЦІЛІ */}
         {phase === 3 && (
           <motion.div
             key="p3"
+            variants={fadeVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={smooth}
+            className="absolute inset-0 flex items-center justify-center z-30"
+          >
+            {/* Блок статусу БД — лівий бік */}
+            <div className="absolute left-8 top-1/2 -translate-y-1/2 w-72 space-y-1 hidden lg:block">
+              <div className="text-[8px] text-red-700 uppercase tracking-[0.4em] mb-3 font-black border-b border-red-900/40 pb-2">
+                INTEL QUERY ENGINE
+              </div>
+              {dbLines.map((line, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`text-[8px] font-mono tracking-wider ${
+                    line === 'TARGET IDENTIFIED.'
+                      ? 'text-red-500 font-black drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] animate-pulse'
+                      : line === 'THREAT LEVEL: CONFIRMED.'
+                      ? 'text-orange-500 font-bold'
+                      : 'text-slate-600'
+                  }`}
+                >
+                  {line === 'TARGET IDENTIFIED.' ? '▶ ' : '› '}{line}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Центральне повідомлення */}
+            <div className="text-center space-y-4 z-10">
+              {targetLocked ? (
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-3"
+                >
+                  <motion.div
+                    animate={{
+                      opacity: [0.8, 1, 0.8],
+                      textShadow: [
+                        '0 0 20px rgba(255,0,0,0.5)',
+                        '0 0 40px rgba(255,0,0,1)',
+                        '0 0 20px rgba(255,0,0,0.5)',
+                      ],
+                    }}
+                    transition={{ duration: 0.4, repeat: Infinity }}
+                    className="text-[20px] font-black tracking-[0.4em] text-red-500 uppercase"
+                  >
+                    ⬛ЦІЛЬ ЗАХОПЛЕНА
+                  </motion.div>
+                  <div className="text-[9px] font-black tracking-[0.6em] text-white/80 uppercase">
+                    THREAT LEVEL: CONFIRMED
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 0.5, repeat: Infinity }}
+                  className="text-[13px] font-black tracking-[0.6em] text-red-700 uppercase"
+                >
+                  АНАЛІЗ РОЗВІДДАНИХ...
+                </motion.div>
+              )}
+            </div>
+
+            {/* Правий бік — нейронна мережа / AI */}
+            <div className="absolute right-8 top-1/2 -translate-y-1/2 w-64 space-y-1.5 hidden lg:block">
+              <div className="text-[8px] text-blue-700/80 uppercase tracking-[0.4em] mb-3 font-black border-b border-blue-900/30 pb-2">
+                AI / NEURAL ANALYTICS
+              </div>
+              {[
+                { label: 'MATCHING RATE', value: '97.4%', color: 'text-green-500' },
+                { label: 'RISK SCORE', value: '9.8/10', color: 'text-red-500' },
+                { label: 'DATA SOURCES', value: '1,847', color: 'text-blue-400' },
+                { label: 'CROSS-REFS', value: '12,394', color: 'text-slate-400' },
+                { label: 'AI CONFIDENCE', value: '99.1%', color: 'text-yellow-500' },
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.15 + 0.5 }}
+                  className="flex justify-between items-center"
+                >
+                  <span className="text-[7px] text-slate-700 uppercase tracking-wider">{item.label}</span>
+                  <motion.span
+                    animate={{ opacity: [0.7, 1, 0.7] }}
+                    transition={{ duration: 0.4, repeat: Infinity, delay: idx * 0.1 }}
+                    className={`text-[8px] font-black font-mono ${item.color}`}
+                  >
+                    {item.value}
+                  </motion.span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ФАЗА 4 — SOVEREIGN REVEAL */}
+        {phase === 4 && (
+          <motion.div
+            key="p4"
             variants={fadeVariants}
             initial="initial"
             animate="animate"
@@ -1070,7 +1383,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="absolute -inset-9 rounded-full border border-red-900/18"
                 style={{ borderStyle: 'dotted' }}
               />
-              {/* Пульсуюче зовнішнє світіння */}
+              {/* Пульсуюча аура */}
               <motion.div
                 animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.8, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -1088,9 +1401,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   boxShadow: '0 0 60px rgba(220,38,38,0.4), 0 0 120px rgba(220,38,38,0.2), inset 0 0 30px rgba(220,38,38,0.08)',
                 }}
               >
-                {/* Внутрішнє кільце */}
                 <div className="absolute inset-3 rounded-full border border-red-700/20" />
-                {/* Сканлінія */}
                 <motion.div
                   className="absolute inset-0 pointer-events-none"
                   style={{
@@ -1157,12 +1468,34 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 OSINT · МИТНА АНАЛІТИКА · СУВЕРЕННИЙ КОНТРОЛЬ
               </motion.div>
 
+              {/* Слоган */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.2, duration: 0.8 }}
+                className="space-y-1"
+              >
+                <motion.p
+                  animate={{
+                    opacity: [0.6, 1, 0.6],
+                    textShadow: ['0 0 10px rgba(220,38,38,0.3)', '0 0 20px rgba(220,38,38,0.7)', '0 0 10px rgba(220,38,38,0.3)'],
+                  }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                  className="text-[11px] font-black tracking-[0.45em] text-red-600/90 uppercase"
+                >
+                  TOTAL VISIBILITY. ZERO UNCERTAINTY.
+                </motion.p>
+                <p className="text-[8px] text-slate-700 tracking-[0.4em] uppercase">
+                  CLASSIFIED — ACCESS GRANTED
+                </p>
+              </motion.div>
+
               {/* ACCESS GRANTED блок */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.92 }}
                 animate={{ opacity: [0, 1, 0, 1, 1], scale: [0.92, 1.02, 1] }}
-                transition={{ delay: 2.5, duration: 0.7 }}
-                className="pt-6"
+                transition={{ delay: 2.8, duration: 0.7 }}
+                className="pt-4"
               >
                 <div className="inline-block relative group" onClick={onComplete}>
                   <div className="absolute inset-0 bg-red-600 blur-xl opacity-30 group-hover:opacity-50 transition-opacity" />
