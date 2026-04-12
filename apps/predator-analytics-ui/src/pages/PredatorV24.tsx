@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
 import { MorningBriefing, type BriefingItem } from '@/components/shared/MorningBriefing';
-import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
+
 import {
   getRecommendedNavigation,
   getVisibleNavigation,
@@ -722,7 +722,7 @@ const PredatorV24 = () => {
         </motion.div>
       </motion.section>
 
-      <ConstitutionalShield />
+      
     </motion.div>
   );
 };

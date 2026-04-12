@@ -19,7 +19,7 @@ import {
     Gavel,
     UserCheck
 } from 'lucide-react';
-import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
+
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import type {
     RiskEntity,
@@ -370,7 +370,7 @@ export default function DiligencePage() {
 
     return (
         <div className="space-y-6">
-            <ConstitutionalShield />
+            
             
             <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8 relative">
                 <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
@@ -405,6 +405,31 @@ export default function DiligencePage() {
                             Панель працює з підтвердженими профілями компаній, показує фактичний стан
                             ризику, CERS-компоненти та наявні службові записи під захистом <span className="text-emerald-400 font-bold">Constitutional Shield</span>.
                         </p>
+
+                        <AnimatePresence>
+                            {profileRiskLevel === 'critical' && (
+                                <motion.div 
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="mt-6 overflow-hidden"
+                                >
+                                    <div className="flex items-center gap-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 shadow-[0_0_30px_rgba(244,63,94,0.1)]">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)]">
+                                            <AlertTriangle size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-black uppercase tracking-widest text-white">КРИТИЧНИЙ РІВЕНЬ ЗАГРОЗИ</h4>
+                                            <p className="text-xs text-rose-200/80 mt-1 uppercase font-bold italic">Виявлено санкційні збіги або аномальну фінансову активність. Потрібен негайний аудит.</p>
+                                        </div>
+                                        <div className="ml-auto flex items-center gap-2 px-3 py-1 rounded-lg bg-rose-500/20 border border-rose-500/30">
+                                            <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+                                            <span className="text-[10px] font-black text-rose-500 uppercase">HIGH_ALERT</span>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
@@ -827,7 +852,7 @@ export default function DiligencePage() {
                 </div>
             </div>
 
-            <ConstitutionalShield />
+            
         </div>
     );
 }

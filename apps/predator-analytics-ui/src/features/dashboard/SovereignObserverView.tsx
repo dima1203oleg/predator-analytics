@@ -26,7 +26,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
-import { TacticalCard } from '@/components/TacticalCard';
+
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -159,13 +159,13 @@ const SOMView: React.FC = () => {
 
         {/* LEFT: Structural Sovereignty (The Rings) */}
         <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
-          <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
+          <section className="page-section section-slate h-[500px] flex flex-col items-center justify-center p-10 relative overflow-hidden shadow-xl">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
             <h2 className="absolute top-10 left-10 text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-              <Shield size={16} className="text-rose-500" /> Кільця Контролю
+              <Shield size={16} className="text-slate-400" /> Кільця Контролю
             </h2>
 
-            <div className="relative w-80 h-80 flex items-center justify-center">
+            <div className="relative w-80 h-80 flex items-center justify-center mt-10">
               <ControlRing
                 size={320} label="Рівень III: Людська Влада"
                 active={selectedRing === 3} color="#f43f5e"
@@ -202,21 +202,24 @@ const SOMView: React.FC = () => {
                 {selectedRing === 1 && "Автономний моніторинг. Виявлення аномалій та генерація теорій SOM-агентами."}
               </p>
             </div>
-          </TacticalCard>
+          </section>
 
-          <TacticalCard variant="glass" className="p-10 bg-rose-950/20 border-rose-500/30 relative group/emerg">
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/10 blur-[60px] rounded-full group-hover/emerg:scale-150 transition-transform" />
-            <h3 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-              <AlertOctagon size={18} /> Суверенний Екстрений Протокол
-            </h3>
-            <p className="text-xs text-rose-300/60 leading-relaxed mb-10">
+          <section className="page-section section-rose p-10 relative group/emerg shadow-xl mt-10">
+            <div className="section-header">
+              <div className="section-dot-rose" />
+              <div>
+                <h2 className="section-title">Суверенний Екстрений Протокол</h2>
+                <p className="section-subtitle">Рішення останньої інстанції</p>
+              </div>
+            </div>
+            <p className="text-xs text-rose-300/60 leading-relaxed mb-6 mt-4">
               Активація апаратної ізоляції SOM-модуля. Це призведе до фізичного розірвання зв'язків з усіма зовнішніми системами. Дія незворотна без фізичного втручання.
             </p>
 
             <button
               onClick={handleEmergencyProtocol}
               className={cn(
-                "w-full py-6 rounded-[24px] font-black tracking-[0.3em] text-[12px] uppercase flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl overflow-hidden relative",
+                "w-full mt-4 py-6 rounded-[24px] font-black tracking-[0.3em] text-[12px] uppercase flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl overflow-hidden relative",
                 emergencyMode
                   ? "bg-slate-900 text-slate-600 cursor-not-allowed border border-slate-800"
                   : "bg-gradient-to-r from-rose-600 to-rose-800 text-white border border-rose-400/30 hover:shadow-rose-500/40 hover:scale-[1.02]"
@@ -233,7 +236,7 @@ const SOMView: React.FC = () => {
                 </>
               )}
             </button>
-          </TacticalCard>
+          </section>
         </div>
 
         {/* CENTER: Organism Intelligence (Analytics & Twin) */}
@@ -317,11 +320,15 @@ const SOMView: React.FC = () => {
             </div>
           </HoloContainer>
 
-          <TacticalCard variant="glass" className="p-10 bg-slate-950/40 relative overflow-hidden">
+          <section className="page-section section-amber p-10 relative overflow-hidden shadow-xl mt-10">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
-                <Zap size={18} className="text-amber-500" /> Сад Гіпотез (Idea Garden)
-              </h3>
+              <div className="section-header !mb-0">
+                <div className="section-dot-amber" />
+                <div>
+                  <h2 className="section-title">Сад Гіпотез (Idea Garden)</h2>
+                  <p className="section-subtitle">Ситуативне моделювання</p>
+                </div>
+              </div>
               <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase font-mono">3_АКТИВНІ_ГІПОТЕЗИ</span>
             </div>
 
@@ -387,17 +394,21 @@ const SOMView: React.FC = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </TacticalCard>
+          </section>
         </div>
 
         {/* RIGHT: Agent Swarm & Logs */}
         <div className="col-span-12 xl:col-span-3 flex flex-col gap-10">
-          <TacticalCard variant="holographic" className="p-10 bg-slate-950/40 flex flex-col h-full">
-            <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
-              <Network size={18} className="text-cyan-400" /> Активний Рой Агентів
-            </h2>
+          <section className="page-section section-cyan p-10 flex flex-col h-full shadow-xl">
+            <div className="section-header">
+              <div className="section-dot-cyan" />
+              <div>
+                <h2 className="section-title">Активний Рой Агентів</h2>
+                <p className="section-subtitle">Системні спостерігачі</p>
+              </div>
+            </div>
 
-            <div className="space-y-6 flex-1">
+            <div className="space-y-6 flex-1 mt-4">
               {[
                 { name: 'Архітектор', status: 'СИНТЕЗУЄ', color: 'text-blue-400' },
                 { name: 'Інженер', status: 'РЕФАКТОРИТЬ', color: 'text-emerald-400' },
@@ -433,7 +444,7 @@ const SOMView: React.FC = () => {
                 <p className="opacity-40 animate-pulse text-[8px]">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>
               </div>
             </div>
-          </TacticalCard>
+          </section>
         </div>
       </main>
 

@@ -309,6 +309,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const now = Date.now();
     const elapsed = now - phaseStartTimeMs.current;
     const currentPhase = skipRef.current ? 4 : phase;
+    const rot = now * 0.0003;
 
     /* ── Розрахунок Camera Shake ── */
     let shakeX = 0;
@@ -478,8 +479,6 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
       ctx.save();
       ctx.translate(cx, cy);
-
-      const rot = now * 0.0003;
 
       // Стилізовані континенти (хмари точок)
       const numPoints = 800;
@@ -1165,10 +1164,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 transition={{ delay: 2.5, duration: 0.7 }}
                 className="pt-6"
               >
-                <div className="inline-block relative group">
+                <div className="inline-block relative group" onClick={onComplete}>
                   <div className="absolute inset-0 bg-red-600 blur-xl opacity-30 group-hover:opacity-50 transition-opacity" />
                   <div
-                    className="relative text-[12px] text-white font-black tracking-[1.2em] uppercase px-10 py-3.5 border border-red-500/60 bg-gradient-to-r from-red-900/80 via-red-700/90 to-red-900/80"
+                    className="relative text-[12px] text-white font-black tracking-[1.2em] uppercase px-10 py-3.5 border border-red-500/60 bg-gradient-to-r from-red-900/80 via-red-700/90 to-red-900/80 cursor-pointer"
                     style={{
                       boxShadow: '0 0 40px rgba(220,38,38,0.5), 0 0 80px rgba(220,38,38,0.2), inset 0 1px 0 rgba(255,255,255,0.1)',
                     }}

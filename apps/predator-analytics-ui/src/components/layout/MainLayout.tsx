@@ -56,7 +56,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <div className="aura-bg" />
       
       {/* Шар 1: тактична сітка */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:linear-gradient(rgba(148,163,184,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.1)_1px,transparent_1px)] [background-size:40px_40px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:linear-gradient(rgba(148,163,184,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.15)_1px,transparent_1px)] [background-size:50px_50px]" />
       
       {/* Шар 2: операційний scanline */}
       <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
@@ -123,7 +123,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {/* Внутрішній ambient для контенту */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(15,23,42,0.28),transparent_24%),radial-gradient(circle_at_100%_0%,rgba(8,47,73,0.18),transparent_30%)]" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(2,6,23,0.4))]" />
-          <div className="relative mx-auto max-w-[1920px] px-2 sm:px-4 lg:px-6 py-4 xl:px-10">
+
+          {/* ── ГОЛОВНА ОБЛАСТЬ КОНТЕНТУ ── */}
+          <div className="relative mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16">
             <div
               className={`grid gap-6 ${
                 shellV2Enabled && !isMobile && isContextRailOpen
@@ -162,7 +164,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             setIsSidebarExpanded(true);
             setIsMobileDrawerOpen((current) => !current);
           }}
-          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-[20px] border border-white/10 text-white shadow-[0_18px_42px_rgba(2,6,23,0.45)]"
+          className="fixed bottom-14 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-[20px] border border-white/10 text-white shadow-[0_18px_42px_rgba(2,6,23,0.45)]"
           style={{
             background: 'rgba(8, 15, 28, 0.90)',
             backdropFilter: 'blur(16px)',
@@ -187,8 +189,76 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
+
+      {/* ── STATUS BAR (нижня панель) ── */}
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: 0 }}
+        className="fixed bottom-0 left-0 right-0 z-[60] h-9 border-t border-white/[0.07] flex items-center px-4 justify-between overflow-hidden"
+        style={{
+          background: 'rgba(2,6,18,0.92)',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 -1px 0 rgba(255,255,255,0.04), 0 -4px 24px rgba(0,0,0,0.5)',
+        }}
+      >
+        {/* Ліва частина: статус + OSINT стрічка */}
+        <div className="flex items-center gap-5 min-w-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div
+              className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"
+              style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }}
+            />
+            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-emerald-400/80">СИСТЕМА_ОПТИМАЛЬНА</span>
+          </div>
+          <div className="h-3.5 w-px bg-white/10 shrink-0" />
+          <div className="flex items-center gap-3 overflow-hidden min-w-0">
+            <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest whitespace-nowrap shrink-0">OSINT:</span>
+            <div className="flex gap-6 animate-[marquee_55s_linear_infinite] whitespace-nowrap">
+              {[
+                "Аналіз митних декларацій (UA-EU) — ЗАВЕРШЕНО",
+                "Індекс ризику ТОВ 'ЕНЕРДЖИ' — ПІДВИЩЕНО",
+                "Синхронізація з YouControl — АКТИВНО",
+                "Виявлено нові зв'язки в секторі ВПК",
+                "Нейро-прогноз попиту оновлено",
+                "Сенсорний моніторинг кордону — ONLINE",
+                "НАБУ: оновлення даних про активи — ЗАВЕРШЕНО",
+                "Ринок металу: зміна тренду +12.4%",
+              ].map((text, i) => (
+                <span key={i} className="text-[8px] font-medium text-slate-500 uppercase tracking-widest">
+                  ◆ {text}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Права частина: метрики */}
+        <div className="flex items-center gap-4 shrink-0 pl-4">
+          <div className="h-3.5 w-px bg-white/10" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-[7px] font-black text-slate-600 uppercase tracking-tighter">ЗАТРИМКА:</span>
+            <span className="text-[9px] font-mono font-bold text-cyan-400/90">12мс</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[7px] font-black text-slate-600 uppercase tracking-tighter">ПРОПУСКНА:</span>
+            <span className="text-[9px] font-mono font-bold text-indigo-400/90">8.4 ГБ/с</span>
+          </div>
+          <div className="h-3.5 w-px bg-white/10" />
+          <div className="text-[8px] font-black uppercase tracking-[0.25em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            PREDATOR <span style={{ color: 'rgba(239,68,68,0.7)' }}>ELITE</span> v56.1.4
+          </div>
+        </div>
+      </motion.div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}} />
     </div>
   );
 };
+
 
 export default MainLayout;

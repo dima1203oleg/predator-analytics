@@ -13,6 +13,7 @@ import {
   Search,
   ShieldCheck,
   UserCircle,
+  ChevronRight,
 } from 'lucide-react';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
@@ -24,19 +25,49 @@ import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../sto
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import OperationalModeSwitch from '../premium/OperationalModeSwitch';
 
+// Кольорові акценти для кожного типу розділу
+const sectionGlowMap: Record<string, { gradient: string; glow: string; border: string }> = {
+  emerald: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(16,185,129,0.1) 0%, transparent 60%)',
+    glow: 'rgba(16,185,129,0.15)',
+    border: 'rgba(16,185,129,0.18)',
+  },
+  cyan: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(6,182,212,0.1) 0%, transparent 60%)',
+    glow: 'rgba(6,182,212,0.15)',
+    border: 'rgba(6,182,212,0.18)',
+  },
+  amber: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(245,158,11,0.1) 0%, transparent 60%)',
+    glow: 'rgba(245,158,11,0.15)',
+    border: 'rgba(245,158,11,0.18)',
+  },
+  indigo: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(99,102,241,0.1) 0%, transparent 60%)',
+    glow: 'rgba(99,102,241,0.15)',
+    border: 'rgba(99,102,241,0.18)',
+  },
+  violet: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(139,92,246,0.1) 0%, transparent 60%)',
+    glow: 'rgba(139,92,246,0.15)',
+    border: 'rgba(139,92,246,0.18)',
+  },
+  rose: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(244,63,94,0.1) 0%, transparent 60%)',
+    glow: 'rgba(244,63,94,0.15)',
+    border: 'rgba(244,63,94,0.18)',
+  },
+  slate: {
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(100,116,139,0.08) 0%, transparent 60%)',
+    glow: 'rgba(100,116,139,0.12)',
+    border: 'rgba(100,116,139,0.16)',
+  },
+};
+
 const getRoleLabel = (role: string): string => {
-  if (role === UserRole.ADMIN) {
-    return ROLE_DISPLAY_NAMES[UserRole.ADMIN];
-  }
-
-  if (role === UserRole.CLIENT_PREMIUM) {
-    return ROLE_DISPLAY_NAMES[UserRole.CLIENT_PREMIUM];
-  }
-
-  if (role === UserRole.CLIENT_BASIC) {
-    return 'Бізнес-контур';
-  }
-
+  if (role === UserRole.ADMIN) return ROLE_DISPLAY_NAMES[UserRole.ADMIN];
+  if (role === UserRole.CLIENT_PREMIUM) return ROLE_DISPLAY_NAMES[UserRole.CLIENT_PREMIUM];
+  if (role === UserRole.CLIENT_BASIC) return 'Бізнес-контур';
   return 'Режим перегляду';
 };
 
@@ -48,144 +79,239 @@ const Header: React.FC = () => {
   const currentRole = user?.role ?? 'viewer';
   const { item, section } = getNavigationContext(location.pathname, currentRole);
   const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
+  const sectionGlow = section ? (sectionGlowMap[section.accent] ?? sectionGlowMap.amber) : sectionGlowMap.amber;
   const roleLabel = getRoleLabel(currentRole);
   const [isPaletteOpen, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const shellV2Enabled = isShellV2Enabled();
 
   return (
-    <header className="tactical-header sticky top-0 z-40 border-b border-[var(--op-border)] shadow-[0_32px_64px_-12px_var(--op-bg)] transition-colors duration-500">
-      <div className="mx-auto grid max-w-[1920px] gap-6 px-2 sm:px-4 lg:px-6 py-4 xl:grid-cols-[1fr_340px] items-start">
-        <div className="terminal-card bg-[var(--op-bg-panel)] border-[var(--op-border)] rounded-[28px] px-6 py-6 relative overflow-hidden transition-all duration-500 hover:shadow-[0_0_30px_var(--op-glow)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,var(--op-primary)_0%,transparent)] opacity-10 transition-colors duration-500" />
-          <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
-            <span className={cn('rounded-full border px-2.5 py-1', accent.badge)}>
-              {section?.label ?? 'Робочий простір'}
-            </span>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300">{item?.label ?? 'Огляд'}</span>
-          </div>
+    <header
+      className="sticky top-0 z-40 border-b op-mode-transition"
+      style={{
+        background: 'rgba(2,6,18,0.88)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        borderColor: 'rgba(255,255,255,0.07)',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
+      }}
+    >
+      {/* Верхня акцентна лінія розділу */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none"
+        style={{
+          background: `linear-gradient(90deg, transparent 0%, ${sectionGlow.glow} 40%, ${sectionGlow.glow} 60%, transparent 100%)`,
+        }}
+      />
 
-          <div className="mt-4 flex items-start gap-4">
-            <div
-              className={cn(
-                'mt-1 hidden h-12 w-12 shrink-0 items-center justify-center rounded-[18px] border shadow-[0_12px_32px_rgba(2,6,23,0.28)] lg:flex bg-cyan-950/20 backdrop-blur-md',
-                accent.iconBorder,
-              )}
-            >
-              {section ? (
-                <Layers3 className={cn('h-5 w-5 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]', accent.icon)} />
-              ) : (
-                <ShieldCheck className={cn('h-5 w-5 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]', accent.icon)} />
-              )}
+      <div className="mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 xl:px-10">
+        <div className="flex items-center gap-4 py-3">
+
+          {/* ── ЛІВА ЧАСТИНА: Breadcrumb + Title ── */}
+          <div className="flex-1 min-w-0">
+            {/* Breadcrumb навігація */}
+            <div className="flex items-center gap-2 mb-2">
+              {/* Іконка розділу */}
+              <div
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
+                style={{
+                  background: sectionGlow.gradient,
+                  border: `1px solid ${sectionGlow.border}`,
+                }}
+              >
+                {section ? (
+                  <Layers3 className={cn('h-3.5 w-3.5', accent.icon)} />
+                ) : (
+                  <ShieldCheck className={cn('h-3.5 w-3.5', accent.icon)} />
+                )}
+              </div>
+
+              {/* Breadcrumb path */}
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em]">
+                <span
+                  className="rounded-full border px-2 py-0.5"
+                  style={{
+                    background: `${sectionGlow.glow.replace('0.15', '0.08')}`,
+                    borderColor: sectionGlow.border,
+                    color: accent.icon.includes('emerald') ? '#6ee7b7' :
+                           accent.icon.includes('cyan')    ? '#67e8f9' :
+                           accent.icon.includes('amber')   ? '#fcd34d' :
+                           accent.icon.includes('indigo')  ? '#a5b4fc' :
+                           accent.icon.includes('violet')  ? '#c4b5fd' :
+                           accent.icon.includes('rose')    ? '#fda4af' :
+                           '#94a3b8',
+                  }}
+                >
+                  {section?.label ?? 'Платформа'}
+                </span>
+                {item && (
+                  <>
+                    <ChevronRight className="h-3 w-3 text-slate-600" />
+                    <span className="text-slate-400">{item.label}</span>
+                  </>
+                )}
+              </div>
             </div>
 
-            <div className="min-w-0">
-              <h1 className="truncate text-2xl font-black tracking-tight text-white sm:text-[2rem]">
-                {item?.label ?? 'Панель управління'}
-              </h1>
-              <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-300 sm:text-[15px]">
-                {item?.description ??
-                  section?.description ??
-                  'Операційний контекст не визначено для поточного маршруту.'}
-              </p>
+            {/* Головний заголовок сторінки */}
+            <div className="flex items-end gap-4">
+              <div className="min-w-0">
+                <h1
+                  className="text-[1.5rem] font-black tracking-tight leading-none truncate"
+                  style={{ color: '#f8fafc', letterSpacing: '-0.025em' }}
+                >
+                  {item?.label ?? 'Панель управління'}
+                </h1>
+                <p
+                  className="mt-1.5 text-sm leading-relaxed line-clamp-1 max-w-2xl"
+                  style={{ color: '#64748b' }}
+                >
+                  {item?.description ??
+                    section?.description ??
+                    'Операційний контекст не визначено для поточного маршруту.'}
+                </p>
+              </div>
+            </div>
 
-              <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-slate-300">
-                <span className="status-pill">
-                  <Calendar className="h-3.5 w-3.5 text-slate-500" />
-                  {currentDate}
-                </span>
+            {/* Мета-рядок: дата, статус, режим */}
+            <div className="mt-2.5 flex flex-wrap items-center gap-2">
+              <div
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  borderColor: 'rgba(255,255,255,0.08)',
+                  color: '#64748b',
+                }}
+              >
+                <Calendar className="h-3 w-3 text-slate-600" />
+                {currentDate}
+              </div>
+
+              <div
+                className={cn(
+                  'flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold',
+                  backendStatus.isOffline
+                    ? 'border-rose-400/20 bg-rose-500/08 text-rose-300'
+                    : 'border-emerald-400/20 bg-emerald-500/08 text-emerald-300',
+                )}
+              >
                 <span
                   className={cn(
-                    'status-pill',
-                    backendStatus.isOffline
-                      ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
-                      : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
+                    'h-1.5 w-1.5 rounded-full',
+                    backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse',
                   )}
-                >
-                  <Radio className="h-3.5 w-3.5" />
-                  {backendStatus.statusLabel}
-                </span>
-                <span className="status-pill">
-                  <Command className="h-3.5 w-3.5 text-slate-500" />
-                  {backendStatus.modeLabel}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid gap-4">
-          <div className="surface-panel rounded-[28px] p-4">
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="search"
-                  readOnly
-                  value=""
-                  onFocus={() => setIsPaletteOpen(true)}
-                  onClick={() => setIsPaletteOpen(true)}
-                  placeholder="Командний пошук: модуль, сутність або дія..."
-                  aria-label="Відкрити командний пошук"
-                  className="h-12 w-full cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-16 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-cyan-400/30 focus:bg-white/[0.06]"
+                  style={{
+                    boxShadow: backendStatus.isOffline
+                      ? '0 0 5px rgba(248,113,113,0.7)'
+                      : '0 0 5px rgba(52,211,153,0.7)',
+                  }}
                 />
-                <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1 text-[10px] text-slate-500">
-                  <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">⌘</kbd>
-                  <kbd className="rounded border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono">K</kbd>
-                </div>
+                {backendStatus.statusLabel}
               </div>
 
-              {shellV2Enabled && (
-                <button
-                  title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
-                  onClick={() => setIsContextRailOpen((current) => !current)}
-                  className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
-                >
-                  {isContextRailOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
-                </button>
-              )}
-
-              <button
-                title="Сповіщення"
-                className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] text-slate-300 transition-all hover:border-white/[0.14] hover:bg-white/[0.06] hover:text-white"
+              <div
+                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  borderColor: 'rgba(255,255,255,0.08)',
+                  color: '#64748b',
+                }}
               >
-                <Bell className="h-4 w-4" />
-                <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-rose-400" />
-              </button>
-            </div>
-
-            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
-              <span>{isPaletteOpen ? 'Командний пошук відкритий' : 'Швидка навігація через командний пошук'}</span>
-              <span className="font-mono uppercase tracking-[0.22em] text-slate-400">{shellV2Enabled ? 'Shell v2' : 'Ready'}</span>
-            </div>
-
-            {/* Перемикач операційного режиму */}
-            <div className="mt-3 flex justify-end">
-              <OperationalModeSwitch />
+                <Command className="h-3 w-3" />
+                {backendStatus.modeLabel}
+              </div>
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="surface-panel flex flex-col justify-between rounded-[24px] px-4 py-4 min-h-[96px]">
-              <div className="tactical-label">Поточний профіль</div>
-              <div className="mt-auto flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-indigo-400/20 bg-indigo-500/10">
-                  <UserCircle className="h-5 w-5 text-indigo-300" />
-                </div>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-bold text-white">{user?.name || 'Адміністратор'}</div>
-                  <div className="mt-1 truncate text-[11px] text-slate-400">{roleLabel}</div>
-                </div>
+          {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Командний пошук */}
+            <div
+              className="relative hidden sm:block"
+              onClick={() => setIsPaletteOpen(true)}
+            >
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-600" />
+              <input
+                type="search"
+                readOnly
+                value=""
+                onFocus={() => setIsPaletteOpen(true)}
+                placeholder="Пошук модулів та дій..."
+                aria-label="Відкрити командний пошук"
+                className="h-9 w-52 lg:w-64 cursor-pointer rounded-xl border text-sm text-slate-500 outline-none transition-all placeholder:text-slate-600"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  borderColor: 'rgba(255,255,255,0.08)',
+                  paddingLeft: '2.25rem',
+                  paddingRight: '3.5rem',
+                }}
+              />
+              <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+                <kbd
+                  className="rounded border px-1 py-0.5 text-[8px] font-mono"
+                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)', color: '#64748b' }}
+                >⌘K</kbd>
               </div>
             </div>
 
-            <div className="surface-panel flex flex-col justify-between rounded-[24px] px-4 py-4 min-h-[96px]">
-              <div className="tactical-label">Джерело даних</div>
-              <div className="mt-auto">
-                <div className="text-sm font-semibold text-white truncate">{backendStatus.sourceLabel}</div>
-                <div className="mt-1 text-[11px] text-slate-400 truncate">{backendStatus.modeLabel}</div>
+            {/* Контекстна панель */}
+            {shellV2Enabled && (
+              <button
+                title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
+                onClick={() => setIsContextRailOpen((current) => !current)}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
+                style={{
+                  background: isContextRailOpen ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.04)',
+                  borderColor: isContextRailOpen ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.08)',
+                  color: isContextRailOpen ? '#a5b4fc' : '#64748b',
+                }}
+              >
+                {isContextRailOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
+              </button>
+            )}
+
+            {/* Сповіщення */}
+            <button
+              title="Сповіщення"
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                borderColor: 'rgba(255,255,255,0.08)',
+                color: '#64748b',
+              }}
+            >
+              <Bell className="h-4 w-4" />
+              <span
+                className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-400"
+                style={{ boxShadow: '0 0 6px rgba(244,63,94,0.8)' }}
+              />
+            </button>
+
+            {/* Профіль та операційний режим */}
+            <div className="hidden md:flex items-center gap-2.5">
+              <div className="h-7 w-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+
+              {/* Профіль */}
+              <div
+                className="flex items-center gap-2.5 rounded-xl border px-3 py-1.5 cursor-pointer transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  borderColor: 'rgba(255,255,255,0.08)',
+                }}
+              >
+                <div
+                  className="flex h-6 w-6 items-center justify-center rounded-lg"
+                  style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)' }}
+                >
+                  <UserCircle className="h-3.5 w-3.5 text-indigo-300" />
+                </div>
+                <div className="hidden lg:block">
+                  <div className="text-[11px] font-bold text-white leading-none">{user?.name || 'Адміністратор'}</div>
+                  <div className="text-[9px] text-slate-500 mt-0.5 leading-none">{roleLabel}</div>
+                </div>
               </div>
+
+              {/* Операційний режим */}
+              <OperationalModeSwitch />
             </div>
           </div>
         </div>

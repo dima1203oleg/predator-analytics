@@ -53,10 +53,10 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
   // Map status to colors
   const statusColors = {
-    success: 'text-green-400',
+    success: 'text-emerald-400',
     warning: 'text-amber-400',
-    error: 'text-red-400',
-    info: 'text-blue-400',
+    error: 'text-rose-400',
+    info: 'text-cyan-400',
     neutral: 'text-slate-300'
   };
 
@@ -70,7 +70,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
     }
   };
 
-  // Determine glow based on status if not explicitly set
+  // Determine section color
   const effectiveGlow = glow !== 'none' ? glow : (
     status === 'error' || priority === 'critical' ? 'red' :
       status === 'warning' || priority === 'high' ? 'yellow' :
@@ -78,125 +78,73 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
           status === 'info' ? 'blue' : 'none'
   );
 
-  const getGlowClass = () => {
+  const getSectionColor = () => {
     switch (effectiveGlow) {
-      case 'blue': return 'hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] hover:border-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.05)]';
-      case 'red': return 'hover:shadow-[0_0_30px_rgba(239,68,68,0.15)] hover:border-red-500/50 shadow-[0_0_10px_rgba(239,68,68,0.05)]';
-      case 'green': return 'hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] hover:border-success-500/50 shadow-[0_0_10px_rgba(34,197,94,0.05)]';
-      case 'purple': return 'hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:border-purple-500/50 shadow-[0_0_10px_rgba(168,85,247,0.05)]';
-      case 'yellow': return 'hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] hover:border-yellow-500/50 shadow-[0_0_10px_rgba(234,179,8,0.05)]';
-      case 'cyan': return 'hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.05)]';
-      case 'emerald': return 'hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.05)]';
-      case 'indigo': return 'hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] hover:border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.05)]';
-      case 'amber': return 'hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] hover:border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.05)]';
-      default: return 'hover:shadow-[0_0_20px_rgba(6,182,212,0.1)] hover:border-primary-500/30';
+      case 'blue': return 'cyan';
+      case 'cyan': return 'cyan';
+      case 'red': return 'rose';
+      case 'green': return 'emerald';
+      case 'emerald': return 'emerald';
+      case 'yellow': return 'amber';
+      case 'amber': return 'amber';
+      case 'purple': return 'violet';
+      case 'indigo': return 'indigo';
+      default: return 'slate';
     }
   };
 
-  const getVariantClass = () => {
-    switch (variant) {
-      case 'premium': return 'bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-slate-900/40 border-purple-600/30 shadow-[0_12px_40px_rgba(88,28,135,0.18)]';
-      case 'glass': return 'glass-hud bg-[var(--op-bg-panel)] border-[var(--op-border)]';
-      case 'minimal': return 'bg-transparent border-[var(--op-border)] hover:bg-[var(--op-bg-accent)] shadow-none';
-      case 'holographic': return 'terminal-card bg-[var(--op-bg-accent)] border-[var(--op-primary)] backdrop-blur-2xl shadow-[0_0_20px_var(--op-glow)]';
-      default: return 'terminal-card bg-[var(--op-bg-panel)] border-[var(--op-border)] backdrop-blur-3xl shadow-2xl'; // Cyber
-    }
-  };
+  const sectionColor = getSectionColor();
+  const sectionClass = `section-${sectionColor}`;
+  const dotClass = `section-dot-${sectionColor}`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`
-        flex flex-col transition-all duration-300 group
-        rounded-xl border
-        ${getGlowClass()}
-        ${getVariantClass()}
-        ${className}
-        relative
-      `}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={`page-section ${sectionClass} ${noPadding ? 'p-0' : ''} ${className}`}
       {...rest}
     >
-      {/* Decorative Elements */}
-      {(variant === 'cyber' || variant === 'holographic') && (
-        <>
-          {/* Nexus Corner Brackets */}
-          <div className="hud-corner-nexus hud-corner-tl" />
-          <div className="hud-corner-nexus hud-corner-tr" />
-          <div className="hud-corner-nexus hud-corner-bl" />
-          <div className="hud-corner-nexus hud-corner-br" />
-
-          {/* Sweeping Reflective Stripe */}
-          <motion.div
-            initial={{ left: '-100%' }}
-            whileHover={{ left: '200%' }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            className="absolute top-0 bottom-0 w-1/4 bg-white/5 skew-x-[35deg] pointer-events-none z-10 blur-xl"
-          />
-
-          {/* Micro-Noise Texture */}
-          <div className="absolute inset-0 bg-cyber-noise opacity-[0.05] pointer-events-none z-0 rounded-[inherit]"></div>
-
-          {variant === 'cyber' && <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none z-0"></div>}
-
-          {/* v56 Nexus Scanline */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="scanline-nexus" />
-          </div>
-        </>
-      )}
-
       {/* Header */}
-      <div
-        className={`px-5 py-4 flex justify-between items-center relative z-10 ${expandable ? 'cursor-pointer' : ''} ${variant === 'minimal' ? 'border-b border-transparent' : 'border-b border-slate-800/50 bg-slate-950/20'}`}
-        onClick={() => expandable && setIsExpanded(!isExpanded)}
-      >
-        {/* Active Indicator Line */}
-        {effectiveGlow !== 'none' && (
-          <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-r transition-all duration-300 group-hover:h-8 ${
-            effectiveGlow === 'red' ? 'bg-red-500 shadow-[0_0_8px_red]' :
-            effectiveGlow === 'purple' ? 'bg-purple-500 shadow-[0_0_8px_purple]' :
-            effectiveGlow === 'green' ? 'bg-green-500 shadow-[0_0_8px_green]' :
-            effectiveGlow === 'yellow' ? 'bg-yellow-500 shadow-[0_0_8px_yellow]' :
-            effectiveGlow === 'cyan' ? 'bg-cyan-500 shadow-[0_0_8px_cyan]' :
-            effectiveGlow === 'emerald' ? 'bg-emerald-500 shadow-[0_0_8px_emerald]' :
-            effectiveGlow === 'indigo' ? 'bg-indigo-500 shadow-[0_0_8px_indigo]' :
-            effectiveGlow === 'amber' ? 'bg-amber-500 shadow-[0_0_8px_amber]' :
-            'bg-[var(--op-primary)] shadow-[0_0_8px_var(--op-glow)]'
-          }`}></div>
-        )}
+      {(title || icon || status || action || expandable) && (
+        <div
+          className={`section-header ${expandable ? 'cursor-pointer hover:bg-white/[0.02] transition-colors rounded-t-2xl' : ''} ${noPadding ? 'p-6 pb-2' : ''}`}
+          onClick={() => expandable && setIsExpanded(!isExpanded)}
+        >
+          <div className={dotClass} />
+          
+          <div className="flex-1 min-w-0 pr-4">
+            <div className="flex items-center gap-3">
+              {icon && <div className={`text-${sectionColor}-400 shrink-0`}>{icon}</div>}
+              <div>
+                <h2 className="section-title flex items-center gap-2">
+                  {title}
+                  {priority && (
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${priority === 'critical' ? 'border-rose-500 text-rose-400 bg-rose-500/10' :
+                      priority === 'high' ? 'border-orange-500 text-orange-400 bg-orange-500/10' :
+                        priority === 'medium' ? 'border-amber-500 text-amber-400 bg-amber-500/10' :
+                          'border-cyan-500 text-cyan-400 bg-cyan-500/10'
+                      }`}>
+                      {priority}
+                    </span>
+                  )}
+                </h2>
+                {subtitle && <p className="section-subtitle mt-0.5">{subtitle}</p>}
+              </div>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-3">
-          {icon && <div className="text-slate-400 group-hover:text-cyan-300 transition-colors">{icon}</div>}
-          <div className="flex flex-col">
-            <h3 className={`text-sm font-bold uppercase tracking-wider font-display transition-colors flex items-center gap-2 ${variant === 'minimal' ? 'text-slate-400 group-hover:text-slate-200' : 'text-slate-100 group-hover:text-cyan-50'
-              }`}>
-              {title}
-              {priority && (
-                <span className={`text-[9px] px-1.5 py-0.5 rounded border ${priority === 'critical' ? 'border-red-500 text-red-400 bg-red-500/10' :
-                  priority === 'high' ? 'border-orange-500 text-orange-400 bg-orange-500/10' :
-                    priority === 'medium' ? 'border-yellow-500 text-yellow-400 bg-yellow-500/10' :
-                      'border-blue-500 text-blue-400 bg-blue-500/10'
-                  }`}>
-                  {priority}
-                </span>
-              )}
-            </h3>
-            {subtitle && <p className="text-[10px] text-slate-400 font-mono tracking-tight mt-0.5">{subtitle}</p>}
+          <div className="flex items-center gap-3 shrink-0 relative z-20">
+            {action}
+            {status && getStatusIcon()}
+            {expandable && (
+              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} className="text-slate-400 hover:text-white transition-colors">
+                <ChevronDown size={16} />
+              </motion.div>
+            )}
           </div>
         </div>
-
-        <div className="flex items-center gap-3 relative z-20">
-          {action}
-          {status && getStatusIcon()}
-          {expandable && (
-            <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
-              <ChevronDown size={16} className="text-slate-300" />
-            </motion.div>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Content */}
       <AnimatePresence>
@@ -205,22 +153,22 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className=" relative z-10"
+            className={`relative z-10 ${!noPadding && (title || icon || status || action || expandable) ? 'pt-2' : ''}`}
           >
-            <div className={`${noPadding ? '' : 'p-5'} flex flex-col gap-4`}>
+            <div className={`${!noPadding && !title ? 'p-5' : ''} flex flex-col gap-4`}>
               {children}
 
               {/* Metrics Section */}
               {metrics && metrics.length > 0 && (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-800/50">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-white/5">
                   {metrics.map((metric, idx) => (
-                    <div key={idx} className="bg-slate-900/30 rounded p-2 border border-slate-800/30">
+                    <div key={idx} className={`bg-${sectionColor}-950/10 rounded-xl p-3 border border-${sectionColor}-500/10`}>
                       <p className="text-[10px] text-slate-400 uppercase tracking-widest">{metric.label}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-slate-200">{metric.value}</span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-sm font-bold text-white">{metric.value}</span>
                         {metric.trend && (
-                          <div className={`flex items-center text-[10px] ${metric.trend === 'up' ? 'text-green-400' :
-                            metric.trend === 'down' ? 'text-red-400' : 'text-slate-400'
+                          <div className={`flex items-center text-[10px] ${metric.trend === 'up' ? 'text-emerald-400' :
+                            metric.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
                             }`}>
                             {metric.trend === 'up' ? <ArrowUp size={10} /> :
                               metric.trend === 'down' ? <ArrowDown size={10} /> :
@@ -236,16 +184,16 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
               {/* Actions Section */}
               {actions && actions.length > 0 && (
-                <div className="flex gap-2 justify-end pt-2 border-t border-slate-800/50">
+                <div className="flex gap-2 justify-end pt-4 border-t border-white/5">
                   {actions.map((act, idx) => (
                     <button
                       key={idx}
                       onClick={act.onClick}
                       className={`
-                              flex items-center gap-2 px-3 py-1.5 rounded text-xs font-bold transition-all
-                              ${act.variant === 'primary' ? 'bg-cyan-500 text-black hover:bg-cyan-400' :
-                          act.variant === 'danger' ? 'bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20' :
-                            'bg-slate-800 text-slate-300 hover:bg-slate-700'}
+                              flex items-center gap-2 px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all
+                              ${act.variant === 'primary' ? `bg-${sectionColor}-500 text-black hover:bg-${sectionColor}-400 shadow-[0_0_15px_rgba(var(--color-${sectionColor}-500),0.3)]` :
+                          act.variant === 'danger' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20' :
+                            'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-white/5'}
                             `}
                     >
                       {act.icon}

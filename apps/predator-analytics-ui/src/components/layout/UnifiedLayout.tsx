@@ -3,7 +3,7 @@ import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { useDisplayMode, DisplayMode } from '../../context/DisplayModeContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ConstitutionalShield } from '../shared/ConstitutionalShield';
+
 import { useLocation } from 'react-router-dom';
 
 interface UnifiedLayoutProps {
@@ -135,7 +135,7 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
           </div>
         </main>
       </div>
-      <ConstitutionalShield />
+      
     </div>
   );
 };

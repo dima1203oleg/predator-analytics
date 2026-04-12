@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -944,7 +944,11 @@ export default function SystemFactoryView() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Technical Column */}
                     {(improvementMode === 'tech' || improvementMode === 'complex') && (
-                      <TacticalCard title="ТЕХНОЛОГІЧНИЙ СТЕК" variant="cyber" className="border-indigo-500/30">
+                      <section className="page-section section-indigo border-indigo-500/30 shadow-xl overflow-hidden">
+                        <div className="section-header">
+                          <div className="section-dot-indigo" />
+                          <h2 className="section-title">Технологічний Стек</h2>
+                        </div>
                         <div className="p-4 space-y-4">
                           <div className="grid grid-cols-1 gap-2">
                              {techOptions.map(opt => (
@@ -966,12 +970,16 @@ export default function SystemFactoryView() {
                              </div>
                           </div>
                         </div>
-                      </TacticalCard>
+                      </section>
                     )}
 
                     {/* Analytical Column */}
                     {(improvementMode === 'analytic' || improvementMode === 'complex') && (
-                      <TacticalCard title="АНАЛІТИЧНИЙ ІНТЕЛЕКТ" variant="cyber" className="border-amber-500/30">
+                      <section className="page-section section-amber border-amber-500/30 shadow-xl overflow-hidden">
+                        <div className="section-header">
+                          <div className="section-dot-amber" />
+                          <h2 className="section-title">Аналітичний Інтелект</h2>
+                        </div>
                         <div className="p-4 space-y-4">
                           <div className="grid grid-cols-1 gap-2">
                              {analyticOptions.map(opt => (
@@ -990,10 +998,14 @@ export default function SystemFactoryView() {
                              <Button onClick={handleUpdateKnowledgeMap} variant="cyber" className="w-full text-[10px] h-11"><RotateCcw size={14} className="mr-2"/> Синхронізувати Гравітацію Фактів</Button>
                           </div>
                         </div>
-                      </TacticalCard>
+                      </section>
                     )}
 
-                    <TacticalCard title="СУВЕРЕННІ ІНТЕГРАЦІЇ" variant="holographic" className="border-emerald-500/30 bg-emerald-500/5">
+                    <section className="page-section section-emerald border-emerald-500/30 bg-emerald-500/5 shadow-xl overflow-hidden mt-6 md:mt-0">
+                      <div className="section-header">
+                        <div className="section-dot-emerald" />
+                        <h2 className="section-title">Суверенні Інтеграції</h2>
+                      </div>
                       <div className="p-4 space-y-4">
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-emerald-500/20">
                            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
@@ -1034,12 +1046,16 @@ export default function SystemFactoryView() {
                           </div>
                         </div>
                       </div>
-                    </TacticalCard>
+                    </section>
                   </div>
 
                   {/* Realtime Progress & Results UI */}
                   {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
-                    <TacticalCard title="КАНАЛ ПОДІЙ ЗАВОДУ (EVENTS)" variant="cyber" className="border-fuchsia-500/20">
+                    <section className="page-section section-fuchsia border-fuchsia-500/20 shadow-xl overflow-hidden mt-6">
+                      <div className="section-header">
+                        <div className="section-dot-fuchsia" />
+                        <h2 className="section-title">Канал Подій Заводу (Events)</h2>
+                      </div>
                       <div className="p-6">
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
                           <div>
@@ -1125,7 +1141,7 @@ export default function SystemFactoryView() {
                           </div>
                         )}
                       </div>
-                    </TacticalCard>
+                    </section>
                   )}
                 </motion.div>
              )}
@@ -1133,7 +1149,11 @@ export default function SystemFactoryView() {
              {activeTab === 'k8s' && (
                <motion.div key="k8s" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   
-                  <TacticalCard title="ІНТЕРАКТИВНА ТОПОЛОГІЯ ПОДІВ (PODS)" variant="cyber">
+                  <section className="page-section section-slate shadow-xl overflow-hidden mt-2">
+                     <div className="section-header">
+                       <div className="section-dot-slate" />
+                       <h2 className="section-title">Інтерактивна Топологія Подів (Pods)</h2>
+                     </div>
                      <div className="p-0">
                         <table className="w-full text-left border-collapse">
                            <thead>
@@ -1224,7 +1244,7 @@ export default function SystemFactoryView() {
                            </tbody>
                         </table>
                      </div>
-                  </TacticalCard>
+                  </section>
 
                   {/* LIVE LOGS OVERLAY PANEL */}
                   <AnimatePresence>
@@ -1266,7 +1286,11 @@ export default function SystemFactoryView() {
              {activeTab === 'network' && (
                <motion.div key="network" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <RegistryStats stats={registryStats} />
-                  <TacticalCard title="ТОПОЛОГІЯ МЕРЕЖІ ТА ІНФРАСТРУКТУРА" variant="cyber">
+                  <section className="page-section section-cyan shadow-xl overflow-hidden mt-6">
+                     <div className="section-header">
+                       <div className="section-dot-cyan" />
+                       <h2 className="section-title">Топологія Мережі та Інфраструктура</h2>
+                     </div>
                      <div className="p-8 relative min-h-[300px] flex items-center justify-center">
                         <div className="absolute inset-0 bg-cyber-grid opacity-20 pointer-events-none" />
                         
@@ -1338,13 +1362,17 @@ export default function SystemFactoryView() {
                            <span className="text-xs font-mono text-white">Непідтверджено</span>
                         </div>
                      </div>
-                  </TacticalCard>
+                  </section>
                </motion.div>
              )}
 
              {activeTab === 'cicd' && (
                <motion.div key="cicd" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                  <TacticalCard title="КОНВЕЄР ВДОСКОНАЛЕННЯ СИСТЕМИ" variant="cyber">
+                  <section className="page-section section-violet shadow-xl overflow-hidden mt-6">
+                    <div className="section-header">
+                      <div className="section-dot-violet" />
+                      <h2 className="section-title">Конвеєр Вдосконалення Системи</h2>
+                    </div>
                     <div className="p-6 relative overflow-hidden">
                        <div className="absolute inset-0 bg-cyber-grid opacity-10 pointer-events-none" />
                        <div className="relative z-10 grid grid-cols-4 gap-4 items-center">
@@ -1393,7 +1421,7 @@ export default function SystemFactoryView() {
                           </div>
                        </div>
                     </div>
-                  </TacticalCard>
+                  </section>
                </motion.div>
              )}
 
@@ -1560,8 +1588,12 @@ export default function SystemFactoryView() {
              {activeTab === 'ingestion' && (
                <motion.div key="ingestion" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                  <RegistryStats stats={registryStats} />
-                 <TacticalCard title="КОНТРОЛЕР ПАРСИНГУ ТА ІНГЕСТІЇ" variant="cyber">
-                   <div className="grid grid-cols-3 gap-4 mb-6">
+                 <section className="page-section section-orange shadow-xl overflow-hidden mt-6">
+                    <div className="section-header">
+                      <div className="section-dot-orange" />
+                      <h2 className="section-title">Контролер Парсингу та Інгестії</h2>
+                    </div>
+                   <div className="grid grid-cols-3 gap-4 mb-6 mt-4">
                      <div className="bg-slate-900/50 border border-orange-500/20 p-4 rounded-xl flex items-center justify-between">
                        <div>
                          <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Пропускна здатність</div>
@@ -1616,7 +1648,7 @@ export default function SystemFactoryView() {
                        ))}
                      </div>
                    </div>
-                 </TacticalCard>
+                 </section>
                </motion.div>
              )}
 
@@ -1877,14 +1909,15 @@ export default function SystemFactoryView() {
 
           {/* AI Coordinator Terminal */}
           <div className="lg:w-2/3">
-             <TacticalCard 
-               title="ІНТЕРФЕЙС AI-КООРДИНАТОРА" 
-               subtitle="Прямий канал управління OODA-ядро"
-               variant="holographic" 
-               noPadding
-               className="h-[500px] flex flex-col border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.05)]"
-             >
-               <div className="flex flex-col h-full">
+             <section className="page-section section-cyan h-[500px] flex flex-col p-0 border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.05)]">
+               <div className="section-header px-6 pt-6 mb-2">
+                 <div className="section-dot-cyan" />
+                 <div>
+                   <h2 className="section-title">Інтерфейс AI-Координатора</h2>
+                   <p className="section-subtitle">Прямий канал управління OODA-ядро</p>
+                 </div>
+               </div>
+               <div className="flex flex-col h-full bg-black/40 overflow-hidden">
                   {/* Messages Feed */}
                   <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-slate-950/20">
                     <AnimatePresence initial={false}>
@@ -1978,7 +2011,7 @@ export default function SystemFactoryView() {
                      </div>
                   </div>
                </div>
-             </TacticalCard>
+             </section>
           </div>
         </div>
       </footer>

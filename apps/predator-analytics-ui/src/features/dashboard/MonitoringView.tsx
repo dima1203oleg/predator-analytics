@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -560,13 +560,16 @@ const MonitoringView: React.FC = () => {
                                         className="space-y-8"
                                     >
                                         <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.6fr_1fr]">
-                                            <TacticalCard variant="holographic" className="rounded-[36px] border border-sky-500/15 bg-sky-500/[0.03] p-6">
-                                                <div className="mb-6 flex items-center justify-between gap-4">
+                                            <section className="page-section section-cyan shadow-xl">
+                                                <div className="section-header">
+                                                    <div className="section-dot-cyan" />
                                                     <div>
-                                                        <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">ЦП / ОЗП</div>
-                                                        <h3 className="mt-2 text-2xl font-black text-white">Жива динаміка ресурсів</h3>
+                                                        <h2 className="section-title">ЦП / ОЗП</h2>
+                                                        <p className="section-subtitle">Жива динаміка ресурсів</p>
                                                     </div>
-                                                    {refreshing && <Loader2 className="h-5 w-5 animate-spin text-sky-300" />}
+                                                </div>
+                                                <div className="mb-6 flex justify-end">
+                                                    {refreshing && <Loader2 className="h-5 w-5 animate-spin text-cyan-300" />}
                                                 </div>
 
                                                 {cpuHistory.length > 0 || memoryHistory.length > 0 ? (
@@ -577,15 +580,18 @@ const MonitoringView: React.FC = () => {
                                                         description="Після появи даних із `/system/stats` тут буде відображено історію навантаження ЦП та памʼяті."
                                                     />
                                                 )}
-                                            </TacticalCard>
+                                            </section>
 
-                                            <TacticalCard variant="glass" className="rounded-[36px] border border-white/10 bg-white/[0.03] p-6">
-                                                <div className="mb-6">
-                                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Ресурси</div>
-                                                    <h3 className="mt-2 text-2xl font-black text-white">Поточне навантаження</h3>
+                                            <section className="page-section section-amber shadow-xl">
+                                                <div className="section-header">
+                                                    <div className="section-dot-amber" />
+                                                    <div>
+                                                        <h2 className="section-title">Ресурси</h2>
+                                                        <p className="section-subtitle">Поточне навантаження</p>
+                                                    </div>
                                                 </div>
 
-                                                <div className="space-y-5">
+                                                <div className="space-y-5 mt-4">
                                                     <ResourceBar
                                                         label="ЦП"
                                                         value={systemStats?.cpu_percent ?? null}
@@ -605,7 +611,7 @@ const MonitoringView: React.FC = () => {
                                                         tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'rose' : 'emerald'}
                                                     />
                                                 </div>
-                                            </TacticalCard>
+                                            </section>
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -667,8 +673,8 @@ const MonitoringView: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <TacticalCard variant="holographic" className="rounded-[36px] border border-white/10 bg-black/50 p-0">
-                                            <div className="border-b border-white/5 px-6 py-4 text-sm text-slate-400">
+                                        <section className="page-section section-slate shadow-xl !p-0">
+                                            <div className="border-b border-white/5 bg-black/20 px-6 py-4 text-sm text-slate-400">
                                                 Логи завантажуються з `/system/logs/stream`. Якщо бекенд не повертає події, інтерфейс не домальовує жодних рядків.
                                             </div>
                                             <div className="max-h-[720px] overflow-y-auto p-6">
@@ -710,7 +716,7 @@ const MonitoringView: React.FC = () => {
                                                     />
                                                 )}
                                             </div>
-                                        </TacticalCard>
+                                        </section>
                                     </motion.div>
                                 )}
 
@@ -746,14 +752,17 @@ const MonitoringView: React.FC = () => {
                                             />
                                         </div>
 
-                                            <TacticalCard variant="glass" className="rounded-[36px] border border-white/10 bg-white/[0.03] p-6">
-                                                <div className="mb-6">
-                                                <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Потоки інгесту</div>
-                                                <h3 className="mt-2 text-2xl font-black text-white">Останні етапи обробки</h3>
-                                            </div>
+                                            <section className="page-section section-indigo shadow-xl">
+                                                <div className="section-header">
+                                                    <div className="section-dot-indigo" />
+                                                    <div>
+                                                        <h2 className="section-title">ПОТОКИ_ІНГЕСТУ</h2>
+                                                        <p className="section-subtitle">Останні етапи обробки</p>
+                                                    </div>
+                                                </div>
 
                                             {pipelineJobs.length > 0 ? (
-                                                <div className="space-y-4">
+                                                <div className="space-y-4 mt-4">
                                                     {pipelineJobs.map((job) => (
                                                         <div
                                                             key={job.id}
@@ -802,7 +811,7 @@ const MonitoringView: React.FC = () => {
                                                     description="Ендпоїнт `/ingestion/jobs` не надав підтверджених завдань. Якщо jobs відсутні, список залишається порожнім."
                                                 />
                                             )}
-                                        </TacticalCard>
+                                        </section>
                                     </motion.div>
                                 )}
 
@@ -815,14 +824,17 @@ const MonitoringView: React.FC = () => {
                                         className="space-y-8"
                                     >
                                         <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.2fr_0.8fr]">
-                                            <TacticalCard variant="holographic" className="rounded-[36px] border border-white/10 bg-slate-950/45 p-6">
-                                                <div className="mb-6">
-                                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Сервіси</div>
-                                                    <h3 className="mt-2 text-2xl font-black text-white">Стан компонентів платформи</h3>
+                                            <section className="page-section section-emerald shadow-xl">
+                                                <div className="section-header">
+                                                    <div className="section-dot-emerald" />
+                                                    <div>
+                                                        <h2 className="section-title">Сервіси</h2>
+                                                        <p className="section-subtitle">Стан компонентів платформи</p>
+                                                    </div>
                                                 </div>
 
                                                 {servicesBySeverity.length > 0 ? (
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-4 mt-4">
                                                         {servicesBySeverity.map((service) => {
                                                             const meta = getStatusMeta(service.status);
                                                             return (
@@ -857,16 +869,19 @@ const MonitoringView: React.FC = () => {
                                                         description="`/system/status` не повернув список сервісів. Коли відповідь зʼявиться, тут буде деталізація по кожному компоненту."
                                                     />
                                                 )}
-                                            </TacticalCard>
+                                            </section>
 
-                                            <TacticalCard variant="glass" className="rounded-[36px] border border-white/10 bg-white/[0.03] p-6">
-                                                <div className="mb-6">
-                                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Кластер</div>
-                                                    <h3 className="mt-2 text-2xl font-black text-white">Вузли та поди</h3>
+                                            <section className="page-section section-cyan shadow-xl">
+                                                <div className="section-header">
+                                                    <div className="section-dot-cyan" />
+                                                    <div>
+                                                        <h2 className="section-title">Кластер</h2>
+                                                        <p className="section-subtitle">Вузли та поди</p>
+                                                    </div>
                                                 </div>
 
                                                 {hasVisibleClusterData(cluster) ? (
-                                                    <div className="space-y-6">
+                                                    <div className="space-y-6 mt-4">
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <MetricTile
                                                                 label="Вузли"
@@ -924,7 +939,7 @@ const MonitoringView: React.FC = () => {
                                                         description="Ендпоїнт `/system/cluster` не повернув вузли або поди. Блок залишається чесно порожнім, доки бекенд не надасть структуру."
                                                     />
                                                 )}
-                                            </TacticalCard>
+                                            </section>
                                         </div>
                                     </motion.div>
                                 )}
@@ -932,13 +947,16 @@ const MonitoringView: React.FC = () => {
                         </div>
 
                         <div className="space-y-8 lg:col-span-4 xl:col-span-3">
-                            <TacticalCard variant="glass" className="rounded-[36px] border border-white/10 bg-white/[0.03] p-6">
-                                <div className="mb-6">
-                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Контур даних</div>
-                                    <h3 className="mt-2 text-2xl font-black text-white">Джерело і режим</h3>
+                            <section className="page-section section-slate shadow-xl mb-8">
+                                <div className="section-header">
+                                    <div className="section-dot-slate" />
+                                    <div>
+                                        <h2 className="section-title">Контур даних</h2>
+                                        <p className="section-subtitle">Джерело і режим</p>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-4 text-sm text-slate-300">
+                                <div className="space-y-4 text-sm text-slate-300 mt-4">
                                     <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
                                         <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Статус підключення</div>
                                         <div className="mt-2 text-base font-black text-white">{backendStatus.statusLabel}</div>
@@ -958,15 +976,18 @@ const MonitoringView: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </section>
 
-                            <TacticalCard variant="holographic" className="rounded-[36px] border border-white/10 bg-slate-950/45 p-6">
-                                <div className="mb-6">
-                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Огляд стану</div>
-                                    <h3 className="mt-2 text-2xl font-black text-white">Підсумок сервісів</h3>
+                            <section className="page-section section-rose shadow-xl mb-8">
+                                <div className="section-header">
+                                    <div className="section-dot-rose" />
+                                    <div>
+                                        <h2 className="section-title">Огляд стану</h2>
+                                        <p className="section-subtitle">Підсумок сервісів</p>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     <MetricTile
                                         label="Справні"
                                         value={formatCount(serviceSummary.healthy)}
@@ -996,15 +1017,18 @@ const MonitoringView: React.FC = () => {
                                         tone={activeJobsCount > 0 ? 'sky' : 'slate'}
                                     />
                                 </div>
-                            </TacticalCard>
+                            </section>
 
-                            <TacticalCard variant="glass" className="rounded-[36px] border border-white/10 bg-white/[0.03] p-6">
-                                <div className="mb-6">
-                                    <div className="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Інвентар</div>
-                                    <h3 className="mt-2 text-2xl font-black text-white">Версія середовища</h3>
+                            <section className="page-section section-slate shadow-xl mb-8">
+                                <div className="section-header">
+                                    <div className="section-dot-slate" />
+                                    <div>
+                                        <h2 className="section-title">Інвентар</h2>
+                                        <p className="section-subtitle">Версія середовища</p>
+                                    </div>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-4 mt-4">
                                     <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
                                         <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Версія</div>
                                         <div className="mt-2 text-base font-black text-white">{systemStatus?.version ?? 'Н/д'}</div>
@@ -1024,7 +1048,7 @@ const MonitoringView: React.FC = () => {
                                         <div className="mt-2 text-base font-black text-white">{formatCount(logs.length)}</div>
                                     </div>
                                 </div>
-                            </TacticalCard>
+                            </section>
                         </div>
                     </div>
 

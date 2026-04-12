@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
 import * as echarts from 'echarts';
-import { TacticalCard } from '@/components/TacticalCard';
+
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
@@ -363,7 +363,14 @@ const DashboardView: React.FC = () => {
             
                 {/* ЛІВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-4 space-y-12">
-                  <TacticalCard title="ДВИГУНИ_АНАЛІЗУ" icon={<Cpu size={22} className="text-red-500" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                  <section className="page-section section-emerald shadow-2xl">
+                    <div className="section-header">
+                      <div className="section-dot-emerald" />
+                      <div>
+                        <h2 className="section-title">ДВИГУНИ_АНАЛІЗУ</h2>
+                        <p className="section-subtitle">Стан аналітичного ядра</p>
+                      </div>
+                    </div>
                     <div className="space-y-8">
                       {Object.entries(overview!.engines).map(([key, data], idx) => (
                         <motion.div 
@@ -371,12 +378,12 @@ const DashboardView: React.FC = () => {
                           initial={{ opacity: 0, x: -40 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.1 }}
-                          className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] group hover:border-indigo-500/40 transition-all relative overflow-hidden shadow-2xl"
+                          className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] group hover:border-emerald-500/40 transition-all relative overflow-hidden shadow-2xl"
                         >
-                          <div className="absolute inset-0 bg-indigo-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="flex justify-between items-center mb-8 relative z-10">
                             <span className="text-[12px] font-black text-slate-200 uppercase tracking-[0.3em] italic flex items-center gap-4">
-                              <Terminal size={16} className="text-red-500" /> {data.name || key}
+                              <Terminal size={16} className="text-emerald-500" /> {data.name || key}
                             </span>
                             <Badge variant="outline" className={cn(
                               "text-[9px] font-black px-5 py-1.5 tracking-widest rounded-xl border-2 italic",
@@ -392,11 +399,11 @@ const DashboardView: React.FC = () => {
                             </div>
                             <div className="space-y-1">
                               <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">НАТИВА</p>
-                              <p className="text-2xl font-mono font-black text-indigo-400 italic">{data.latency}мс</p>
+                              <p className="text-2xl font-mono font-black text-emerald-400 italic">{data.latency}мс</p>
                             </div>
                             <div className="space-y-1">
                               <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЯКІСТЬ</p>
-                              <p className="text-2xl font-mono font-black text-emerald-400 italic">{data.score}%</p>
+                              <p className="text-2xl font-mono font-black text-cyan-400 italic">{data.score}%</p>
                             </div>
                           </div>
                           <div className="mt-8 h-1.5 w-full bg-slate-900 rounded-full overflow-hidden relative z-10">
@@ -404,8 +411,8 @@ const DashboardView: React.FC = () => {
                               initial={{ width: 0 }}
                               animate={{ width: `${data.load}%` }}
                               className={cn(
-                                "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(99,102,241,0.5)]",
-                                data.load > 85 ? "bg-rose-500 shadow-rose-500/50" : "bg-gradient-to-r from-indigo-600 to-cyan-400"
+                                "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(16,185,129,0.5)]",
+                                data.load > 85 ? "bg-rose-500 shadow-rose-500/50" : "bg-gradient-to-r from-emerald-600 to-cyan-400"
                               )}
                             />
                           </div>
@@ -416,16 +423,23 @@ const DashboardView: React.FC = () => {
                         </motion.div>
                       ))}
                     </div>
-                  </TacticalCard>
+                  </section>
 
-                  <TacticalCard title="МАТРИЦЯ_РИЗИКІВ" icon={<Radar size={22} className="text-rose-500" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                  <section className="page-section section-cyan shadow-3xl">
+                    <div className="section-header">
+                      <div className="section-dot-cyan" />
+                      <div>
+                        <h2 className="section-title">МАТРИЦЯ_РИЗИКІВ</h2>
+                        <p className="section-subtitle">Багатовимірний аналіз загроз</p>
+                      </div>
+                    </div>
                     <StrategicRadarMatrix data={overview!.radar} />
                     <div className="mt-12 grid grid-cols-2 gap-8">
                       {overview!.radar.map((s, idx) => {
-                        const colors = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#f43f5e', '#ec4899'];
+                        const colors = ['#06b6d4', '#6366f1', '#10b981', '#f59e0b', '#f43f5e', '#ec4899'];
                         const color = colors[idx % colors.length];
                         return (
-                          <div key={s.name} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] hover:border-white/15 transition-all flex flex-col gap-4 group/radaritem overflow-hidden relative shadow-xl">
+                          <div key={s.name} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] hover:border-cyan-500/30 transition-all flex flex-col gap-4 group/radaritem overflow-hidden relative shadow-xl">
                             <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover/radaritem:opacity-[0.08] transition-opacity">
                                <ShieldAlert size={80} style={{ color }} />
                             </div>
@@ -441,19 +455,22 @@ const DashboardView: React.FC = () => {
                         );
                       })}
                     </div>
-                  </TacticalCard>
+                  </section>
                 </div>
 
                 {/* ЦЕНТРАЛЬНА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-5 space-y-12">
-                   <TacticalCard 
-                     title="ОПЕРАТИВНА_ПРОЕКЦІЯ" 
-                     icon={<Globe size={22} className="text-indigo-400" />} 
-                     variant="holographic" 
-                     className="rounded-[4rem] shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] border-indigo-500/10 min-h-[720px]"
-                     noPadding
-                   >
-                     <div className="absolute top-12 left-12 z-20">
+                   <section className="page-section section-indigo shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0">
+                     <div className="p-6 pb-0 max-w-xl">
+                       <div className="section-header">
+                         <div className="section-dot-indigo" />
+                         <div>
+                           <h2 className="section-title">ОПЕРАТИВНА_ПРОЕКЦІЯ</h2>
+                           <p className="section-subtitle">Глобальний транзит</p>
+                         </div>
+                       </div>
+                     </div>
+                     <div className="absolute top-24 left-12 z-20">
                        <div className="flex items-center gap-8 bg-slate-950/80 backdrop-blur-3xl border border-white/10 p-8 rounded-[3rem] shadow-3xl">
                          <div className="p-5 bg-indigo-500/10 rounded-2xl relative">
                            <div className="absolute inset-0 bg-indigo-500/20 blur-xl animate-pulse rounded-full" />
@@ -468,7 +485,7 @@ const DashboardView: React.FC = () => {
                        </div>
                      </div>
 
-                     <div className="w-full h-full relative p-12">
+                     <div className="w-full h-full relative p-12 pt-0">
                         <GlobalSituationProjection countries={overview!.countries} />
                      </div>
 
@@ -479,9 +496,16 @@ const DashboardView: React.FC = () => {
                            </button>
                         ))}
                      </div>
-                   </TacticalCard>
+                   </section>
 
-                   <TacticalCard title="ТАКТИЧНІ_АЛЕРТИ" icon={<Radio size={22} className="text-rose-500" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                   <section className="page-section section-rose shadow-3xl">
+                      <div className="section-header">
+                        <div className="section-dot-rose" />
+                        <div>
+                          <h2 className="section-title">ТАКТИЧНІ_АЛЕРТИ</h2>
+                          <p className="section-subtitle">Критичні інциденти та сповіщення</p>
+                        </div>
+                      </div>
                       <div className="space-y-8 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
                         <AnimatePresence mode="popLayout">
                           {overview!.alerts.map((alert, idx) => (
@@ -535,12 +559,19 @@ const DashboardView: React.FC = () => {
                           ))}
                         </AnimatePresence>
                       </div>
-                   </TacticalCard>
+                   </section>
                 </div>
 
                 {/* ПРАВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-3 space-y-12">
-                   <TacticalCard title="ВЕРТИКАЛЬ_РИЗИКІВ" icon={<Building2 size={22} className="text-rose-500" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                   <section className="page-section section-amber shadow-3xl">
+                      <div className="section-header">
+                        <div className="section-dot-amber" />
+                        <div>
+                          <h2 className="section-title">ВЕРТИКАЛЬ_РИЗИКІВ</h2>
+                          <p className="section-subtitle">Топ суб'єкти високого ризику</p>
+                        </div>
+                      </div>
                       <div className="space-y-6">
                         {overview!.top_risk_companies?.map((company, idx) => (
                           <motion.div
@@ -548,14 +579,14 @@ const DashboardView: React.FC = () => {
                              initial={{ opacity: 0, x: 50 }}
                              animate={{ opacity: 1, x: 0 }}
                              transition={{ delay: idx * 0.08 }}
-                             className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-rose-500/40 transition-all group cursor-pointer relative overflow-hidden shadow-xl"
+                             className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-amber-500/40 transition-all group cursor-pointer relative overflow-hidden shadow-xl"
                           >
                              <div className="absolute -right-4 -top-4 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                                <Fingerprint size={120} className="text-rose-400" />
+                                <Fingerprint size={120} className="text-amber-400" />
                              </div>
                              <div className="flex justify-between items-start mb-8 relative z-10">
                                 <div className="flex-1 min-w-0">
-                                   <p className="text-[14px] font-black text-white italic uppercase tracking-tighter truncate leading-none group-hover:text-rose-400 transition-colors">{company.name}</p>
+                                   <p className="text-[14px] font-black text-white italic uppercase tracking-tighter truncate leading-none group-hover:text-amber-400 transition-colors">{company.name}</p>
                                    <p className="text-[10px] font-mono text-slate-600 mt-2 font-black italic uppercase">ID: {company.edrpou}</p>
                                 </div>
                                 <div className={cn(
@@ -574,7 +605,7 @@ const DashboardView: React.FC = () => {
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                                    <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">ОБ\'ЄМ_USD</span>
-                                   <span className="text-sm font-black text-indigo-400 italic">{formatCurrency(company.totalValue)}</span>
+                                   <span className="text-sm font-black text-amber-400 italic">{formatCurrency(company.totalValue)}</span>
                                 </div>
                              </div>
                              <div className="mt-8 h-2 w-full bg-slate-900 rounded-full overflow-hidden relative z-10">
@@ -590,9 +621,16 @@ const DashboardView: React.FC = () => {
                           </motion.div>
                         ))}
                       </div>
-                   </TacticalCard>
+                   </section>
 
-                   <TacticalCard title="ІНФРА_МАТРИЦЯ" icon={<Database size={22} className="text-emerald-400" />} variant="holographic" className="rounded-[3rem] shadow-3xl">
+                   <section className="page-section section-slate shadow-3xl">
+                      <div className="section-header">
+                        <div className="section-dot-slate" />
+                        <div>
+                          <h2 className="section-title">ІНФРА_МАТРИЦЯ</h2>
+                          <p className="section-subtitle">Стан базової інфраструктури</p>
+                        </div>
+                      </div>
                       <div className="space-y-6">
                         {[
                           { key: 'POSTGRESQL', label: 'Relational_Core', status: 'UP', count: overview!.infrastructure.postgresql.records, icon: Database, color: 'emerald' },
@@ -601,7 +639,7 @@ const DashboardView: React.FC = () => {
                           { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: overview!.infrastructure.neo4j.nodes, icon: Network, color: 'indigo' },
                           { key: 'MINIO', label: 'Object_Nexus', status: 'UP', count: overview!.infrastructure.minio.files, icon: HardDrive, color: 'cyan' },
                         ].map((item) => (
-                          <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-emerald-500/30 transition-all flex items-center justify-between group shadow-xl">
+                          <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-slate-500/30 transition-all flex items-center justify-between group shadow-xl">
                              <div className="flex items-center gap-6">
                                 <div className={cn(
                                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all bg-slate-900 border border-white/5 group-hover:scale-110",
@@ -621,7 +659,7 @@ const DashboardView: React.FC = () => {
                           </div>
                         ))}
                       </div>
-                   </TacticalCard>
+                   </section>
                 </div>
               </div>
             </>

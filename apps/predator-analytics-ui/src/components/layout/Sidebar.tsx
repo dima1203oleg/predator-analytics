@@ -32,21 +32,154 @@ import { cn } from '../../lib/utils';
 
 const COLLAPSED_STORAGE_KEY = 'predator-nav-collapsed';
 
+// Кольорова система для кожного розділу — максимальна візуальна відмінність
+const sectionColorMap: Record<string, {
+  bg: string;
+  border: string;
+  headerBg: string;
+  headerText: string;
+  dotColor: string;
+  glowColor: string;
+  activeItemBg: string;
+  activeItemBorder: string;
+  activeIconBg: string;
+  activeIconColor: string;
+  activeIndicator: string;
+  hoverBg: string;
+}> = {
+  emerald: {
+    bg: 'rgba(16,185,129,0.04)',
+    border: 'rgba(16,185,129,0.18)',
+    headerBg: 'rgba(16,185,129,0.08)',
+    headerText: '#6ee7b7',
+    dotColor: '#10b981',
+    glowColor: 'rgba(16,185,129,0.4)',
+    activeItemBg: 'rgba(16,185,129,0.08)',
+    activeItemBorder: 'rgba(16,185,129,0.25)',
+    activeIconBg: 'rgba(16,185,129,0.15)',
+    activeIconColor: '#6ee7b7',
+    activeIndicator: 'from-emerald-500/80 to-emerald-400/20',
+    hoverBg: 'rgba(16,185,129,0.05)',
+  },
+  cyan: {
+    bg: 'rgba(6,182,212,0.04)',
+    border: 'rgba(6,182,212,0.18)',
+    headerBg: 'rgba(6,182,212,0.08)',
+    headerText: '#67e8f9',
+    dotColor: '#06b6d4',
+    glowColor: 'rgba(6,182,212,0.4)',
+    activeItemBg: 'rgba(6,182,212,0.08)',
+    activeItemBorder: 'rgba(6,182,212,0.25)',
+    activeIconBg: 'rgba(6,182,212,0.15)',
+    activeIconColor: '#67e8f9',
+    activeIndicator: 'from-cyan-500/80 to-cyan-400/20',
+    hoverBg: 'rgba(6,182,212,0.05)',
+  },
+  amber: {
+    bg: 'rgba(245,158,11,0.04)',
+    border: 'rgba(245,158,11,0.18)',
+    headerBg: 'rgba(245,158,11,0.08)',
+    headerText: '#fcd34d',
+    dotColor: '#f59e0b',
+    glowColor: 'rgba(245,158,11,0.4)',
+    activeItemBg: 'rgba(245,158,11,0.08)',
+    activeItemBorder: 'rgba(245,158,11,0.25)',
+    activeIconBg: 'rgba(245,158,11,0.15)',
+    activeIconColor: '#fcd34d',
+    activeIndicator: 'from-amber-500/80 to-amber-400/20',
+    hoverBg: 'rgba(245,158,11,0.05)',
+  },
+  indigo: {
+    bg: 'rgba(99,102,241,0.04)',
+    border: 'rgba(99,102,241,0.18)',
+    headerBg: 'rgba(99,102,241,0.08)',
+    headerText: '#a5b4fc',
+    dotColor: '#6366f1',
+    glowColor: 'rgba(99,102,241,0.4)',
+    activeItemBg: 'rgba(99,102,241,0.08)',
+    activeItemBorder: 'rgba(99,102,241,0.25)',
+    activeIconBg: 'rgba(99,102,241,0.15)',
+    activeIconColor: '#a5b4fc',
+    activeIndicator: 'from-indigo-500/80 to-indigo-400/20',
+    hoverBg: 'rgba(99,102,241,0.05)',
+  },
+  violet: {
+    bg: 'rgba(139,92,246,0.04)',
+    border: 'rgba(139,92,246,0.18)',
+    headerBg: 'rgba(139,92,246,0.08)',
+    headerText: '#c4b5fd',
+    dotColor: '#8b5cf6',
+    glowColor: 'rgba(139,92,246,0.4)',
+    activeItemBg: 'rgba(139,92,246,0.08)',
+    activeItemBorder: 'rgba(139,92,246,0.25)',
+    activeIconBg: 'rgba(139,92,246,0.15)',
+    activeIconColor: '#c4b5fd',
+    activeIndicator: 'from-violet-500/80 to-violet-400/20',
+    hoverBg: 'rgba(139,92,246,0.05)',
+  },
+  rose: {
+    bg: 'rgba(244,63,94,0.04)',
+    border: 'rgba(244,63,94,0.18)',
+    headerBg: 'rgba(244,63,94,0.08)',
+    headerText: '#fda4af',
+    dotColor: '#f43f5e',
+    glowColor: 'rgba(244,63,94,0.4)',
+    activeItemBg: 'rgba(244,63,94,0.08)',
+    activeItemBorder: 'rgba(244,63,94,0.25)',
+    activeIconBg: 'rgba(244,63,94,0.15)',
+    activeIconColor: '#fda4af',
+    activeIndicator: 'from-rose-500/80 to-rose-400/20',
+    hoverBg: 'rgba(244,63,94,0.05)',
+  },
+  slate: {
+    bg: 'rgba(71,85,105,0.05)',
+    border: 'rgba(71,85,105,0.22)',
+    headerBg: 'rgba(71,85,105,0.10)',
+    headerText: '#94a3b8',
+    dotColor: '#64748b',
+    glowColor: 'rgba(100,116,139,0.3)',
+    activeItemBg: 'rgba(71,85,105,0.12)',
+    activeItemBorder: 'rgba(71,85,105,0.30)',
+    activeIconBg: 'rgba(71,85,105,0.20)',
+    activeIconColor: '#94a3b8',
+    activeIndicator: 'from-slate-500/80 to-slate-400/20',
+    hoverBg: 'rgba(71,85,105,0.07)',
+  },
+  sky: {
+    bg: 'rgba(56,189,248,0.04)',
+    border: 'rgba(56,189,248,0.18)',
+    headerBg: 'rgba(56,189,248,0.08)',
+    headerText: '#7dd3fc',
+    dotColor: '#38bdf8',
+    glowColor: 'rgba(56,189,248,0.4)',
+    activeItemBg: 'rgba(56,189,248,0.08)',
+    activeItemBorder: 'rgba(56,189,248,0.25)',
+    activeIconBg: 'rgba(56,189,248,0.15)',
+    activeIconColor: '#7dd3fc',
+    activeIndicator: 'from-sky-500/80 to-sky-400/20',
+    hoverBg: 'rgba(56,189,248,0.05)',
+  },
+  red: {
+    bg: 'rgba(239,68,68,0.04)',
+    border: 'rgba(239,68,68,0.18)',
+    headerBg: 'rgba(239,68,68,0.08)',
+    headerText: '#fca5a5',
+    dotColor: '#ef4444',
+    glowColor: 'rgba(239,68,68,0.4)',
+    activeItemBg: 'rgba(239,68,68,0.08)',
+    activeItemBorder: 'rgba(239,68,68,0.25)',
+    activeIconBg: 'rgba(239,68,68,0.15)',
+    activeIconColor: '#fca5a5',
+    activeIndicator: 'from-red-500/80 to-red-400/20',
+    hoverBg: 'rgba(239,68,68,0.05)',
+  },
+};
+
 const getRoleLabel = (role: string): string => {
   const audience = resolveNavigationAudience(role);
-
-  if (audience === 'admin') {
-    return 'Адміністрування системи';
-  }
-
-  if (audience === 'analyst') {
-    return 'Аналітичний контур';
-  }
-
-  if (audience === 'supply_chain') {
-    return 'Контур логістики';
-  }
-
+  if (audience === 'admin') return 'Адміністрування системи';
+  if (audience === 'analyst') return 'Аналітичний контур';
+  if (audience === 'supply_chain') return 'Контур логістики';
   return 'Бізнес-контур';
 };
 
@@ -60,18 +193,9 @@ const getInitialCollapsed = (): Record<string, boolean> => {
 };
 
 const getModeLabel = (mode: NavWorkspaceMode): string => {
-  if (mode === 'favorites') {
-    return 'Обране';
-  }
-
-  if (mode === 'recent') {
-    return 'Нещодавнє';
-  }
-
-  if (mode === 'recommended') {
-    return 'ШІ-рекомендації';
-  }
-
+  if (mode === 'favorites') return 'Обране';
+  if (mode === 'recent') return 'Нещодавнє';
+  if (mode === 'recommended') return 'ШІ-рекомендації';
   return 'Уся навігація';
 };
 
@@ -126,30 +250,15 @@ export const Sidebar: React.FC = () => {
     const recommendedOrder = new Map(recommendedItems.map((item, index) => [item.id, index]));
 
     const getModeWeight = (itemId: string): number => {
-      if (workspaceMode === 'recent') {
-        return recentOrder.get(itemId) ?? Number.MAX_SAFE_INTEGER;
-      }
-
-      if (workspaceMode === 'recommended') {
-        return recommendedOrder.get(itemId) ?? Number.MAX_SAFE_INTEGER;
-      }
-
+      if (workspaceMode === 'recent') return recentOrder.get(itemId) ?? Number.MAX_SAFE_INTEGER;
+      if (workspaceMode === 'recommended') return recommendedOrder.get(itemId) ?? Number.MAX_SAFE_INTEGER;
       return 0;
     };
 
     const matchesMode = (itemId: string): boolean => {
-      if (workspaceMode === 'favorites') {
-        return favoriteIdSet.has(itemId);
-      }
-
-      if (workspaceMode === 'recent') {
-        return recentIdSet.has(itemId);
-      }
-
-      if (workspaceMode === 'recommended') {
-        return recommendedIdSet.has(itemId);
-      }
-
+      if (workspaceMode === 'favorites') return favoriteIdSet.has(itemId);
+      if (workspaceMode === 'recent') return recentIdSet.has(itemId);
+      if (workspaceMode === 'recommended') return recommendedIdSet.has(itemId);
       return true;
     };
 
@@ -160,14 +269,8 @@ export const Sidebar: React.FC = () => {
             ...group,
             items: group.items
               .filter((item) => {
-                if (!matchesMode(item.id)) {
-                  return false;
-                }
-
-                if (!query) {
-                  return true;
-                }
-
+                if (!matchesMode(item.id)) return false;
+                if (!query) return true;
                 return (
                   item.label.toLowerCase().includes(query) ||
                   item.description.toLowerCase().includes(query) ||
@@ -206,22 +309,10 @@ export const Sidebar: React.FC = () => {
   ]);
 
   const emptyStateMessage = useMemo(() => {
-    if (search.trim()) {
-      return `Нічого не знайдено у режимі «${getModeLabel(workspaceMode)}».`;
-    }
-
-    if (workspaceMode === 'favorites') {
-      return 'Тут зʼявляться закріплені маршрути після натискання на зірку біля модуля.';
-    }
-
-    if (workspaceMode === 'recent') {
-      return 'Нещодавні переходи зʼявляться після відкриття перших модулів.';
-    }
-
-    if (workspaceMode === 'recommended') {
-      return 'Рекомендації зʼявляться, щойно система визначить пріоритетні маршрути для ролі.';
-    }
-
+    if (search.trim()) return `Нічого не знайдено у режимі «${getModeLabel(workspaceMode)}».`;
+    if (workspaceMode === 'favorites') return 'Тут зʼявляться закріплені маршрути після натискання на зірку біля модуля.';
+    if (workspaceMode === 'recent') return 'Нещодавні переходи зʼявляться після відкриття перших модулів.';
+    if (workspaceMode === 'recommended') return 'Рекомендації зʼявляться, щойно система визначить пріоритетні маршрути для ролі.';
     return 'Доступних маршрутів зараз немає.';
   }, [search, workspaceMode]);
 
@@ -229,30 +320,64 @@ export const Sidebar: React.FC = () => {
     <motion.aside
       data-testid="sidebar"
       initial={false}
-      animate={{ width: isOpen ? 308 : 80 }}
-      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} 
-      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col border-r border-white/5 glass-elite shadow-2xl overflow-visible"
+      animate={{ width: isOpen ? 296 : 72 }}
+      transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+      className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
+      style={{
+        background: 'linear-gradient(180deg, rgba(2,8,20,0.98) 0%, rgba(4,10,24,0.97) 100%)',
+        borderRight: '1px solid rgba(255,255,255,0.07)',
+        boxShadow: '4px 0 32px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.03)',
+      }}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--aura-blue),transparent_50%)] opacity-30" />
+      {/* Ambient фоновий ефект */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute top-0 left-0 right-0 h-[40%]"
+          style={{
+            background: 'radial-gradient(ellipse at 50% -20%, rgba(16,185,129,0.05) 0%, transparent 70%)',
+          }}
+        />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[30%]"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 120%, rgba(99,102,241,0.05) 0%, transparent 70%)',
+          }}
+        />
+      </div>
 
-
+      {/* ── HEADER: Лого + статус ── */}
       <div
-        className="relative border-b border-white/[0.06] px-4 py-2 bg-[var(--op-bg-accent)] transition-colors duration-500"
+        className="relative shrink-0 border-b overflow-hidden"
+        style={{ borderColor: 'rgba(255,255,255,0.07)', borderBottomWidth: '1px' }}
         title={`Джерело: ${backendStatus.sourceLabel}. Роль: ${roleLabel}. Блоків: ${totals.sections}. Модулів: ${totals.items}.`}
       >
-        <div className="flex items-center gap-3">
-          <Logo size="sm" animated={false} className="shrink-0 mr-1" />
+        {/* Верхня лінія акценту */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.6) 50%, transparent 100%)' }}
+        />
+        <div className="flex items-center gap-3 px-3 py-3">
+          <Logo size="sm" animated={false} className="shrink-0" />
 
           <AnimatePresence initial={false}>
             {isOpen && (
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.2 }}
                 className="min-w-0 flex-1 overflow-hidden"
               >
-                <div className="truncate text-[14px] font-black uppercase tracking-[0.2em] text-[var(--op-primary)] drop-shadow-[0_0_10px_var(--op-glow)] transition-colors duration-500">PREDATOR</div>
-                <div className="truncate text-[9px] font-bold uppercase tracking-[0.15em] text-slate-500 group-hover:text-[var(--op-text)] transition-colors duration-500">
+                <div
+                  className="text-[13px] font-black uppercase tracking-[0.18em] leading-none"
+                  style={{ color: '#10b981', textShadow: '0 0 12px rgba(16,185,129,0.5)' }}
+                >
+                  PREDATOR
+                </div>
+                <div
+                  className="text-[8px] font-bold uppercase tracking-[0.12em] mt-0.5"
+                  style={{ color: '#475569' }}
+                >
                   NEXUS ANALYTICS
                 </div>
               </motion.div>
@@ -260,354 +385,471 @@ export const Sidebar: React.FC = () => {
           </AnimatePresence>
 
           {isOpen && (
-            <span
-              className={cn(
-                'ml-auto h-2 w-2 shrink-0 rounded-full',
-                backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400',
-              )}
-            />
-          )}
-
-          {isOpen && (
-            <div
-              className={cn(
-                'max-w-[84px] truncate text-[9px] font-black',
-                backendStatus.isOffline ? 'text-rose-200' : 'text-emerald-200',
-              )}
-            >
-              {backendStatus.statusLabel}
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full',
+                    backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse',
+                  )}
+                  style={{
+                    boxShadow: backendStatus.isOffline
+                      ? '0 0 6px rgba(248,113,113,0.8)'
+                      : '0 0 6px rgba(52,211,153,0.8)',
+                  }}
+                />
+                <span
+                  className={cn(
+                    'text-[9px] font-black uppercase tracking-[0.14em]',
+                    backendStatus.isOffline ? 'text-rose-300' : 'text-emerald-300',
+                  )}
+                >
+                  {backendStatus.statusLabel}
+                </span>
+              </div>
+              <span
+                className={cn(
+                  'rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.12em]',
+                  backendStatus.isOffline
+                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-300'
+                    : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-300',
+                )}
+              >
+                {backendStatus.isTruthOnly ? 'Правда' : 'Проксі'}
+              </span>
             </div>
-          )}
-
-          {isOpen && (
-            <span
-              className={cn(
-                'shrink-0 rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em]',
-                backendStatus.isOffline
-                  ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
-                  : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
-              )}
-            >
-              {backendStatus.isTruthOnly ? 'Правда' : 'Проксі'}
-            </span>
           )}
         </div>
       </div>
-          {isOpen && (
-            <div className="relative border-b border-white/[0.04] px-4 py-2">
-              <div className="pb-1">
-                <div className="flex flex-wrap gap-1.5">
-                  {globalActions.map((action) => {
-                    const Icon = action.icon;
-                    const isActiveMode = action.kind === 'mode' && action.mode === workspaceMode;
 
-                    if (action.kind === 'link' && action.path) {
-                      return (
-                        <NavLink
-                          key={action.id}
-                          to={action.path}
-                          className={({ isActive }) =>
-                            cn(
-                              'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition-all',
-                              isActive
-                                ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
-                                : 'border-white/[0.06] bg-white/[0.03] text-slate-300 hover:border-white/[0.12] hover:text-white',
-                            )
-                          }
-                          title={action.description}
-                        >
-                          <Icon className="h-3.5 w-3.5" />
-                          <span>{action.label}</span>
-                        </NavLink>
-                      );
+      {/* ── РЕЖИМИ + ПОШУК (тільки у відкритому стані) ── */}
+      {isOpen && (
+        <div
+          className="shrink-0 border-b px-3 py-2"
+          style={{ borderColor: 'rgba(255,255,255,0.05)' }}
+        >
+          {/* Кнопки режимів */}
+          <div className="flex flex-wrap gap-1 mb-2">
+            {globalActions.map((action) => {
+              const Icon = action.icon;
+              const isActiveMode = action.kind === 'mode' && action.mode === workspaceMode;
+
+              if (action.kind === 'link' && action.path) {
+                return (
+                  <NavLink
+                    key={action.id}
+                    to={action.path}
+                    className={({ isActive }) =>
+                      cn(
+                        'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[9px] font-bold uppercase tracking-[0.1em] transition-all',
+                        isActive
+                          ? 'border-emerald-400/30 bg-emerald-500/15 text-emerald-300'
+                          : 'border-white/[0.07] bg-white/[0.03] text-slate-400 hover:border-white/[0.12] hover:text-white',
+                      )
                     }
-
-                    return (
-                      <button
-                        key={action.id}
-                        type="button"
-                        onClick={() => {
-                          if (action.kind === 'focus-search') {
-                            focusSearch();
-                            return;
-                          }
-
-                          if (action.mode) {
-                            setWorkspaceMode((currentMode) => (currentMode === action.mode ? 'all' : (action.mode ?? 'all')));
-                          }
-                        }}
-                        title={action.description}
-                        className={cn(
-                          'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition-all',
-                          isActiveMode
-                            ? 'border-red-400/20 bg-red-500/10 text-red-200'
-                            : 'border-white/[0.06] bg-white/[0.03] text-slate-300 hover:border-white/[0.12] hover:text-white',
-                        )}
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                        <span>{action.label}</span>
-                        {action.id === 'search' && (
-                          <span className="rounded-full border border-white/[0.08] px-1.5 py-0.5 text-[8px] text-slate-500">
-                            ⌘K
-                          </span>
-                        )}
-                        {action.id === 'favorites' && visibleFavoriteIds.length > 0 && (
-                          <span className="rounded-full border border-white/[0.08] px-1.5 py-0.5 text-[8px] text-slate-400">
-                            {visibleFavoriteIds.length}
-                          </span>
-                        )}
-                        {action.id === 'recent' && visibleRecentIds.length > 0 && (
-                          <span className="rounded-full border border-white/[0.08] px-1.5 py-0.5 text-[8px] text-slate-400">
-                            {visibleRecentIds.length}
-                          </span>
-                        )}
-                        {action.id === 'recommended' && recommendedItems.length > 0 && (
-                          <span className="rounded-full border border-white/[0.08] px-1.5 py-0.5 text-[8px] text-slate-400">
-                            {recommendedItems.length}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="group relative mt-1">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-emerald-300" />
-                <input
-                  ref={searchInputRef}
-                  type="search"
-                  placeholder="Фільтр меню..."
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  className="h-8 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] pl-9 pr-16 text-xs text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30 focus:bg-white/[0.06]"
-                />
-                <div className="pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1 text-[9px] text-slate-500">
-                  <Command className="h-3 w-3" />
-                  <span>K</span>
-                </div>
-                {search && (
-                  <button
-                    title="Очистити пошук"
-                    onClick={() => setSearch('')}
-                    className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-white"
+                    title={action.description}
                   >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
+                    <Icon className="h-3 w-3" />
+                    <span>{action.label}</span>
+                  </NavLink>
+                );
+              }
 
-      <nav className="relative flex-1 overflow-y-auto overflow-x-hidden px-2 pb-1 custom-scrollbar">
+              return (
+                <button
+                  key={action.id}
+                  type="button"
+                  onClick={() => {
+                    if (action.kind === 'focus-search') {
+                      focusSearch();
+                      return;
+                    }
+                    if (action.mode) {
+                      setWorkspaceMode((currentMode) => (currentMode === action.mode ? 'all' : (action.mode ?? 'all')));
+                    }
+                  }}
+                  title={action.description}
+                  className={cn(
+                    'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[9px] font-bold uppercase tracking-[0.1em] transition-all',
+                    isActiveMode
+                      ? 'border-amber-400/30 bg-amber-500/15 text-amber-300'
+                      : 'border-white/[0.07] bg-white/[0.03] text-slate-400 hover:border-white/[0.12] hover:text-white',
+                  )}
+                >
+                  <Icon className="h-3 w-3" />
+                  <span>{action.label}</span>
+                  {action.id === 'favorites' && visibleFavoriteIds.length > 0 && (
+                    <span className="ml-0.5 rounded-full bg-amber-500/20 px-1 py-0.5 text-[7px] text-amber-300">
+                      {visibleFavoriteIds.length}
+                    </span>
+                  )}
+                  {action.id === 'recent' && visibleRecentIds.length > 0 && (
+                    <span className="ml-0.5 rounded-full bg-white/10 px-1 py-0.5 text-[7px] text-slate-400">
+                      {visibleRecentIds.length}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Рядок пошуку */}
+          <div className="group relative">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-emerald-400" />
+            <input
+              ref={searchInputRef}
+              type="search"
+              placeholder="Пошук модулів..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              className="h-7 w-full rounded-lg border text-xs text-white outline-none transition-all placeholder:text-slate-600"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                borderColor: search ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)',
+                paddingLeft: '2rem',
+                paddingRight: '2.5rem',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = search ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+              }}
+            />
+            <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5 text-[8px] text-slate-600">
+              <Command className="h-2.5 w-2.5" />
+              <span>K</span>
+            </div>
+            {search && (
+              <button
+                title="Очистити пошук"
+                onClick={() => setSearch('')}
+                className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-white"
+              >
+                <X size={10} />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── НАВІГАЦІЙНА ОБЛАСТЬ ── */}
+      <nav className="relative flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar" style={{ scrollbarWidth: 'thin' }}>
         {filteredSections.length === 0 ? (
-          <div className="surface-panel mt-3 rounded-[24px] p-4 text-sm text-slate-300">
-            <div className="text-sm font-bold text-white">{getModeLabel(workspaceMode)}</div>
-            <p className="mt-2 text-xs leading-5 text-slate-400">{emptyStateMessage}</p>
+          <div className="mx-2 mt-2 rounded-xl p-3 text-sm" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="text-xs font-bold text-white">{getModeLabel(workspaceMode)}</div>
+            <p className="mt-1.5 text-[10px] leading-4 text-slate-500">{emptyStateMessage}</p>
             <button
               type="button"
               onClick={() => {
                 setWorkspaceMode('all');
                 setSearch('');
               }}
-              className="mt-3 rounded-full border border-white/[0.08] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-300 transition-colors hover:border-white/[0.12] hover:text-white"
+              className="mt-2 rounded-full border border-white/[0.08] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400 transition-colors hover:border-white/[0.12] hover:text-white"
             >
               Показати всю навігацію
             </button>
           </div>
         ) : (
-          filteredSections.map((section) => {
-            const accent = navAccentStyles[section.accent];
-            const isCollapsed = collapsedSections[section.id] && !search;
+          <div className="space-y-1 px-2">
+            {filteredSections.map((section, sectionIdx) => {
+              const colors = sectionColorMap[section.accent] ?? sectionColorMap.slate;
+              const isCollapsed = collapsedSections[section.id] && !search;
 
-            return (
-              <div
-                key={section.id}
-                className={cn(
-                  'mb-1 overflow-hidden rounded-[18px]',
-                  isOpen ? 'bg-transparent' : 'border-transparent bg-transparent',
-                )}
-              >
-                {isOpen ? (
-                  <button
-                    onClick={() => toggleSection(section.id)}
-                    title={`${section.description} ${section.outcome}`}
-                    className="w-full px-2 py-1.5 text-left transition-colors hover:bg-white/[0.04] active:bg-white/[0.06]"
-                  >
-                    <div className="flex items-start gap-2">
-                      <span className={cn('mt-1 h-2 w-2 rounded-full', accent.dot)} />
-                      <div className="min-w-0">
-                        <div className="truncate text-[8px] font-black uppercase tracking-[0.18em] text-white/90">
-                          {section.label}
+              return (
+                <div key={section.id} className="overflow-hidden rounded-xl" style={{ marginBottom: '4px' }}>
+                  {/* Заголовок секції */}
+                  {isOpen ? (
+                    <button
+                      onClick={() => toggleSection(section.id)}
+                      title={`${section.description} ${section.outcome}`}
+                      className="w-full rounded-xl px-2.5 py-2 text-left transition-all"
+                      style={{
+                        background: isCollapsed ? 'transparent' : colors.headerBg,
+                        border: `1px solid ${isCollapsed ? 'transparent' : colors.border}`,
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        {/* Кольоровий індикатор секції */}
+                        <div
+                          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md"
+                          style={{
+                            background: colors.headerBg,
+                            border: `1px solid ${colors.border}`,
+                          }}
+                        >
+                          <span
+                            className="h-1.5 w-1.5 rounded-full"
+                            style={{
+                              background: colors.dotColor,
+                              boxShadow: `0 0 6px ${colors.glowColor}`,
+                            }}
+                          />
                         </div>
-                        {(workspaceMode !== 'all' || search) && (
-                          <div className="mt-0.5 truncate text-[9px] text-slate-500">{section.outcome}</div>
-                        )}
+                        <div className="min-w-0 flex-1">
+                          <div
+                            className="truncate text-[9px] font-black uppercase tracking-[0.16em] leading-none"
+                            style={{ color: isCollapsed ? '#64748b' : colors.headerText }}
+                          >
+                            {section.label}
+                          </div>
+                          {!isCollapsed && (workspaceMode !== 'all' || search) && (
+                            <div className="mt-0.5 truncate text-[8px] text-slate-500">{section.outcome}</div>
+                          )}
+                        </div>
+                        <ChevronDown
+                          size={10}
+                          className={cn('shrink-0 transition-transform', isCollapsed && '-rotate-90')}
+                          style={{ color: colors.headerText, opacity: 0.6 }}
+                        />
                       </div>
-                      <ChevronDown
-                        size={10}
-                        className={cn('ml-auto mt-0.5 shrink-0 text-slate-500 transition-transform', isCollapsed && '-rotate-90')}
+                    </button>
+                  ) : (
+                    /* Згорнутий вигляд — тільки кольоровий маркер */
+                    <div
+                      className="mx-auto my-1 flex h-8 w-8 items-center justify-center rounded-xl"
+                      style={{
+                        background: colors.headerBg,
+                        border: `1px solid ${colors.border}`,
+                      }}
+                      title={section.label}
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{
+                          background: colors.dotColor,
+                          boxShadow: `0 0 8px ${colors.glowColor}`,
+                        }}
                       />
                     </div>
-                  </button>
-                ) : (
-                  <div className="mx-auto my-1.5 flex h-8 w-8 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.04]">
-                    <span className={cn('h-2 w-2 rounded-full', accent.dot)} />
-                  </div>
-                )}
+                  )}
 
-                <AnimatePresence initial={false}>
-                  {(!isCollapsed || !isOpen) && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className={cn('space-y-0.5 px-1 pb-0.5', !isOpen && 'px-0 pb-0')}>
-                        {(section.groups ?? []).map((group) => (
-                          <div key={`${section.id}-${group.title ?? 'group'}`} className="space-y-0.5">
-                            {isOpen && group.title && (
-                              <div className="px-2 pt-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                                {group.title}
-                              </div>
-                            )}
+                  {/* Елементи секції */}
+                  <AnimatePresence initial={false}>
+                    {(!isCollapsed || !isOpen) && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div
+                          className={cn('space-y-0.5 py-1', isOpen ? 'px-1' : 'px-0')}
+                          style={{
+                            background: isOpen ? colors.bg : 'transparent',
+                            borderRadius: '0 0 12px 12px',
+                          }}
+                        >
+                          {(section.groups ?? []).map((group) => (
+                            <div key={`${section.id}-${group.title ?? 'group'}`} className="space-y-0.5">
+                              {/* Заголовок підгрупи */}
+                              {isOpen && group.title && (
+                                <div
+                                  className="px-2 pt-1.5 pb-0.5 text-[7px] font-black uppercase tracking-[0.18em]"
+                                  style={{ color: colors.headerText, opacity: 0.5 }}
+                                >
+                                  {group.title}
+                                </div>
+                              )}
 
-                            {group.items.map((item) => {
-                              const isFavorite = favoriteIdSet.has(item.id);
+                              {group.items.map((item) => {
+                                const isFavorite = favoriteIdSet.has(item.id);
 
-                              return (
-                                <div key={item.id} className="group/item relative">
-                                  <NavLink
-                                    to={item.path}
-                                    title={!isOpen ? item.label : undefined}
-                                    onClick={() => pushRecent(item.id)}
-                                    className={({ isActive }) =>
-                                      cn(
-                                        'group relative flex items-center gap-2.5 rounded-2xl border border-transparent transition-all duration-300',
-                                        isOpen ? 'px-2 py-1.5 pr-10' : 'mx-auto h-9 w-9 justify-center',
-                                        isActive
-                                          ? 'border-white/[0.08] bg-white/[0.04] text-white shadow-[0_12px_30px_rgba(2,6,23,0.3)] backdrop-blur-md'
-                                          : 'text-slate-400 hover:border-white/[0.06] hover:bg-white/[0.02] hover:text-white',
-                                        'active:scale-[0.98]'
-                                      )
-                                    }
-                                  >
-                                    {({ isActive }) => (
-                                      <>
-                                        <div
-                                          className={cn(
-                                            'flex h-7 w-7 shrink-0 items-center justify-center rounded-[12px] border transition-colors',
-                                            isActive ? accent.iconBorder : 'border-white/[0.06] bg-black/20',
-                                          )}
-                                        >
-                                          <item.icon
-                                            className={cn(
-                                              'h-4 w-4 transition-colors',
-                                              isActive ? accent.icon : 'text-slate-400 group-hover:text-white',
-                                            )}
-                                          />
-                                        </div>
+                                return (
+                                  <div key={item.id} className="group/item relative">
+                                    <NavLink
+                                      to={item.path}
+                                      title={!isOpen ? item.label : undefined}
+                                      onClick={() => pushRecent(item.id)}
+                                      className={({ isActive }) =>
+                                        cn(
+                                          'group relative flex items-center gap-2 rounded-lg border transition-all duration-200',
+                                          isOpen ? 'px-2 py-1.5 pr-8' : 'mx-auto h-8 w-8 justify-center',
+                                          isActive
+                                            ? 'text-white'
+                                            : 'text-slate-400 hover:text-white active:scale-[0.98]',
+                                        )
+                                      }
+                                      style={({ isActive }) => ({
+                                        background: isActive ? colors.activeItemBg : 'transparent',
+                                        borderColor: isActive ? colors.activeItemBorder : 'transparent',
+                                        boxShadow: isActive ? `0 0 12px ${colors.glowColor.replace('0.4', '0.1')}` : 'none',
+                                      })}
+                                    >
+                                      {({ isActive }) => (
+                                        <>
+                                          {/* Іконка */}
+                                          <div
+                                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"
+                                            style={{
+                                              background: isActive ? colors.activeIconBg : 'rgba(255,255,255,0.04)',
+                                              border: `1px solid ${isActive ? colors.activeItemBorder : 'rgba(255,255,255,0.06)'}`,
+                                            }}
+                                          >
+                                            <item.icon
+                                              className="h-3.5 w-3.5 transition-colors"
+                                              style={{ color: isActive ? colors.activeIconColor : '#64748b' }}
+                                            />
+                                          </div>
 
-                                        {isOpen && (
-                                          <div className="min-w-0 flex-1">
-                                            <div className="flex items-center gap-2">
-                                              <span className="truncate text-xs font-semibold">{item.label}</span>
-                                              {item.badge && (
+                                          {/* Текст (тільки у відкритому стані) */}
+                                          {isOpen && (
+                                            <div className="min-w-0 flex-1">
+                                              <div className="flex items-center gap-1.5">
                                                 <span
-                                                  className={cn(
-                                                    'rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em]',
-                                                    accent.badge,
-                                                  )}
+                                                  className="truncate text-[11px] font-semibold leading-none"
+                                                  style={{ color: isActive ? '#f8fafc' : '#94a3b8' }}
                                                 >
-                                                  {item.badge}
+                                                  {item.label}
                                                 </span>
+                                                {item.badge && (
+                                                  <span
+                                                    className="shrink-0 rounded-full border px-1 py-0.5 text-[7px] font-black uppercase tracking-[0.1em] leading-none"
+                                                    style={{
+                                                      background: colors.activeIconBg,
+                                                      borderColor: colors.activeItemBorder,
+                                                      color: colors.activeIconColor,
+                                                    }}
+                                                  >
+                                                    {item.badge}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              {(search || workspaceMode !== 'all') && (
+                                                <p className="mt-0.5 line-clamp-1 text-[8px] leading-3 text-slate-600">
+                                                  {item.description}
+                                                </p>
                                               )}
                                             </div>
-                                            {(search || workspaceMode !== 'all') && (
-                                              <p className="mt-0.5 line-clamp-1 text-[9px] leading-3.5 text-slate-500">
-                                                {item.description}
-                                              </p>
-                                            )}
-                                          </div>
-                                        )}
+                                          )}
 
-                                        {isOpen && isActive && (
-                                          <div className={cn('absolute inset-y-2 right-1.5 w-1 rounded-full bg-gradient-to-b', accent.glow)} />
-                                        )}
-                                      </>
-                                    )}
-                                  </NavLink>
-
-                                  {isOpen && (
-                                    <button
-                                      type="button"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        toggleFavorite(item.id);
-                                      }}
-                                      title={isFavorite ? 'Прибрати з обраного' : 'Додати в обране'}
-                                      className={cn(
-                                        'absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full p-1 transition-all',
-                                        isFavorite
-                                          ? 'opacity-100 text-amber-300'
-                                          : 'opacity-0 text-slate-500 group-hover/item:opacity-100 hover:text-white',
+                                          {/* Активний індикатор (вертикальна лінія) */}
+                                          {isOpen && isActive && (
+                                            <div
+                                              className={cn(
+                                                'absolute inset-y-1.5 right-1 w-[3px] rounded-full bg-gradient-to-b',
+                                                colors.activeIndicator,
+                                              )}
+                                            />
+                                          )}
+                                        </>
                                       )}
-                                    >
-                                      <Star className={cn('h-3.5 w-3.5', isFavorite && 'fill-current')} />
-                                    </button>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })
+                                    </NavLink>
+
+                                    {/* Кнопка Обране */}
+                                    {isOpen && (
+                                      <button
+                                        type="button"
+                                        onClick={(event) => {
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          toggleFavorite(item.id);
+                                        }}
+                                        title={isFavorite ? 'Прибрати з обраного' : 'Додати в обране'}
+                                        className={cn(
+                                          'absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full p-1 transition-all',
+                                          isFavorite
+                                            ? 'opacity-100 text-amber-400'
+                                            : 'opacity-0 text-slate-600 group-hover/item:opacity-100 hover:text-amber-400',
+                                        )}
+                                      >
+                                        <Star className={cn('h-3 w-3', isFavorite && 'fill-current')} />
+                                      </button>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         )}
       </nav>
 
-      <div className="relative border-t border-white/[0.06] px-3 py-0.5">
+      {/* ── НИЖНЯ ПАНЕЛЬ: Профіль користувача ── */}
+      <div
+        className="relative shrink-0 border-t px-2 py-2"
+        style={{ borderColor: 'rgba(255,255,255,0.07)' }}
+      >
+        {/* Горизонтальна лінія градієнту */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent)' }}
+        />
         <div
           className={cn(
-            'surface-panel flex items-center gap-2 rounded-[18px] p-1',
-            !isOpen && 'justify-center px-0',
+            'flex items-center gap-2 rounded-xl p-1.5',
+            !isOpen && 'justify-center',
           )}
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
         >
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl border border-red-400/20 bg-red-500/10">
-            <User className="h-4 w-4 text-red-300" />
+          {/* Аватар */}
+          <div
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)' }}
+          >
+            <User className="h-3.5 w-3.5" style={{ color: '#a5b4fc' }} />
           </div>
+
           {isOpen && (
             <>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-xs font-bold text-white">{user?.name || 'Адміністратор'}</div>
-                <div className="truncate text-[10px] text-slate-500">{roleLabel}</div>
+                <div className="truncate text-[11px] font-bold text-white">{user?.name || 'Адміністратор'}</div>
+                <div className="truncate text-[9px]" style={{ color: '#475569' }}>{roleLabel}</div>
               </div>
               <button
                 onClick={logout}
-                className="flex h-6 w-6 items-center justify-center rounded-2xl text-slate-500 transition-colors hover:bg-rose-500/10 hover:text-rose-200"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-all"
+                style={{ color: '#475569' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(244,63,94,0.12)';
+                  e.currentTarget.style.color = '#fda4af';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = '#475569';
+                }}
                 title="Вийти з системи"
               >
-                <LogOut size={14} />
+                <LogOut size={13} />
               </button>
             </>
           )}
         </div>
       </div>
 
+      {/* ── КНОПКА РОЗГОРТАННЯ/ЗГОРТАННЯ ── */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="card-depth absolute -right-3 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-slate-900/90 text-slate-300 shadow-[0_0_20px_rgba(2,6,23,0.8)] backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-red-400/40 hover:bg-slate-800 hover:text-red-300"
+        className="absolute -right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full transition-all duration-300"
+        style={{
+          background: 'rgba(4,12,28,0.95)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          boxShadow: '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)',
+          color: '#64748b',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)';
+          e.currentTarget.style.color = '#6ee7b7';
+          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 8px rgba(16,185,129,0.2)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+          e.currentTarget.style.color = '#64748b';
+          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)';
+        }}
         title={isOpen ? 'Згорнути навігацію' : 'Розгорнути навігацію'}
       >
-        {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+        {isOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
       </button>
     </motion.aside>
   );

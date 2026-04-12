@@ -16,7 +16,7 @@ import {
     Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
+
 
 const NetworkMapPage: React.FC = () => {
     const cyRef = useRef<HTMLDivElement>(null);
@@ -265,7 +265,7 @@ const NetworkMapPage: React.FC = () => {
                 </AnimatePresence>
             </div>
 
-            <ConstitutionalShield />
+            
         </div>
     );
 };

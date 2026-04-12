@@ -23,7 +23,7 @@ import {
     ShieldCheck,
     AlertTriangle
 } from 'lucide-react';
-import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
+
 
 type ForecastTab = 'demand' | 'models' | 'scenarios';
 
@@ -253,7 +253,7 @@ export default function ForecastPage() {
 
     return (
         <div className="space-y-6">
-            <ConstitutionalShield />
+            
             
             <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#020408] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none transform -rotate-6">
@@ -448,7 +448,7 @@ export default function ForecastPage() {
                 </motion.div>
             </AnimatePresence>
 
-            <ConstitutionalShield />
+            
         </div>
     );
 }

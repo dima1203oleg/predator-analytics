@@ -20,7 +20,7 @@ import {
     ShieldAlert,
     Brain,
 } from 'lucide-react';
-import { ConstitutionalShield } from '@/components/shared/ConstitutionalShield';
+
 
 type OpportunityTab = 'insights' | 'recommendations' | 'executive';
 
@@ -178,7 +178,7 @@ export default function OpportunitiesPage() {
 
     return (
         <div className="space-y-6">
-            <ConstitutionalShield />
+            
             
             <section className="relative overflow-hidden rounded-[40px] border border-white/[0.08] bg-[#03080f] p-8 shadow-[0_45px_100px_rgba(0,0,0,0.6)] sm:p-10">
                 <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none animate-pulse-slow">
@@ -216,32 +216,32 @@ export default function OpportunitiesPage() {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 xl:w-[600px]">
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Strategic Node</span>
+                            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Стратегічний Вузол</span>
+                                </div>
+                                <div className="text-base font-bold text-white tracking-tight">Активні сигнали: {insights.length}</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v56.1.4 OSINT-HUB</div>
                             </div>
-                            <div className="text-base font-bold text-white tracking-tight">Active Signals: {insights.length}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Node v56.1.4 OSINT-HUB</div>
-                        </div>
 
-                        <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Intelligence Hub</span>
+                            <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Хаб розвідки</span>
+                                </div>
+                                <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Рівень 4 Сертифіковано</div>
                             </div>
-                            <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
-                            <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Level 4 Certified</div>
-                        </div>
 
-                        <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
-                            <div className="flex items-center gap-2 mb-3">
-                                <ShieldCheck className="h-3 w-3 text-emerald-400" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Verification</span>
+                            <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Верифікація</span>
+                                </div>
+                                <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Ядро можливостей</div>
+                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">ДОВІРЕНИЙ СЕКТОР</div>
                             </div>
-                            <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Opportunity Core</div>
-                            <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">TRUSTED SECTOR</div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -284,7 +284,7 @@ export default function OpportunitiesPage() {
                 </motion.div>
             </AnimatePresence>
 
-            <ConstitutionalShield />
+            
         </div>
     );
 }

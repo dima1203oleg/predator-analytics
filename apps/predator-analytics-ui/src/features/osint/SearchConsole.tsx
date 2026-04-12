@@ -478,19 +478,69 @@ const SearchConsole: React.FC = () => {
                                     { title: 'ФІНАНСОВІ ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
                                     { title: 'ВПК СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
-                                    <div key={i} className="p-10 border border-white/5 rounded-[40px] bg-slate-900/20 space-y-6 group hover:border-indigo-500/30 transition-all">
-                                        <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                                    <div key={i} className="p-10 border border-white/5 rounded-[40px] bg-slate-900/40 space-y-6 group hover:border-indigo-500/30 transition-all relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-6 opacity-5">
+                                            <item.icon size={120} />
+                                        </div>
+                                        <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform relative z-10 border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
                                             <item.icon size={32} />
                                         </div>
-                                        <div className="space-y-2">
-                                            <h4 className="font-black text-white tracking-widest uppercase">{item.title}</h4>
-                                            <p className="text-xs text-slate-500 font-medium italic">{item.desc}</p>
+                                        <div className="space-y-4 relative z-10">
+                                            <h4 className="font-black text-white text-xl tracking-widest uppercase italic skew-x-[-2deg]">{item.title}</h4>
+                                            <p className="text-xs text-slate-500 font-medium italic leading-relaxed">{item.desc}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
+
+                    {/* ── LIVE NEURAL FEED (v56.1.4 UX) ── */}
+                    {!isLoading && (
+                        <div className="max-w-6xl mx-auto mt-20">
+                            <div className="flex items-center gap-4 mb-8">
+                                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+                                <div className="flex items-center gap-3 px-6 py-2 rounded-full border border-indigo-500/20 bg-indigo-500/5 backdrop-blur-md">
+                                    <Activity size={14} className="text-indigo-400 animate-pulse" />
+                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">LIVE_NEURAL_INSIGHTS</span>
+                                </div>
+                                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {[
+                                    { label: 'ФІН_АНАЛІЗ', text: 'Виявлено патерн обходу санкцій у секторі електроніки', tone: 'danger' },
+                                    { label: 'МИТНИЦЯ', text: 'Аномальна концентрація вантажів на кордоні (Чернівці)', tone: 'warning' },
+                                    { label: 'РЕЄСТРИ', text: 'Масова зміна бенефіціарів у групі ТОВ "Енерго"', tone: 'info' },
+                                    { label: 'OSINT', text: 'Детекція нових логістичних вузлів у Балтійському регіоні', tone: 'success' }
+                                ].map((insight, i) => (
+                                    <motion.div 
+                                        key={i}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 1 + i * 0.1 }}
+                                        className="p-5 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group"
+                                    >
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className={cn(
+                                                "text-[8px] font-black px-2 py-0.5 rounded border uppercase tracking-widest",
+                                                insight.tone === 'danger' ? "border-rose-500/30 text-rose-400 bg-rose-500/10" :
+                                                insight.tone === 'warning' ? "border-amber-500/30 text-amber-400 bg-amber-500/10" :
+                                                insight.tone === 'info' ? "border-indigo-500/30 text-indigo-400 bg-indigo-500/10" :
+                                                "border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
+                                            )}>
+                                                {insight.label}
+                                            </span>
+                                            <span className="text-[8px] font-mono text-slate-600">JUST NOW</span>
+                                        </div>
+                                        <p className="text-[11px] font-medium text-slate-400 leading-relaxed group-hover:text-slate-200 transition-colors">
+                                            {insight.text}
+                                        </p>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <style dangerouslySetInnerHTML={{
