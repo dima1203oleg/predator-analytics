@@ -372,11 +372,12 @@ const MonitoringView: React.FC = () => {
     );
     const averageLatency = systemStats?.avg_latency ?? toMetricNumber(systemStatus?.metrics?.avg_latency);
     const uptimeLabel = systemStatus?.uptime ?? systemStats?.uptime ?? 'Н/д';
+    const services = systemStatus?.services ?? [];
     const serviceSummary = systemStatus?.summary ?? {
-        total: systemStatus?.services.length ?? 0,
-        healthy: systemStatus?.services.filter((service) => getStatusMeta(service.status).tone === 'emerald').length ?? 0,
-        degraded: systemStatus?.services.filter((service) => getStatusMeta(service.status).tone === 'amber').length ?? 0,
-        failed: systemStatus?.services.filter((service) => getStatusMeta(service.status).tone === 'rose').length ?? 0,
+        total: services.length,
+        healthy: services.filter((service) => getStatusMeta(service.status).tone === 'emerald').length,
+        degraded: services.filter((service) => getStatusMeta(service.status).tone === 'amber').length,
+        failed: services.filter((service) => getStatusMeta(service.status).tone === 'rose').length,
     };
     const activeJobsCount = pipelineJobs.filter((job) => job.isActive).length;
     const failedJobsCount = pipelineJobs.filter((job) => job.tone === 'rose').length;

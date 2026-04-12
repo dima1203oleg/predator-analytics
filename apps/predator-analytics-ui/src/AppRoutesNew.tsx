@@ -122,6 +122,9 @@ const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
 const MarketIntelligence = lazy(() => import('./features/intelligence/MarketAnalyticsPremium'));
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
+// ✅ Нові бізнес-розвідувальні модулі v56.4
+const FinancialSigintView   = lazy(() => import('./features/intelligence/FinancialSigintView'));
+const UBOMapView            = lazy(() => import('./features/intelligence/UBOMapView'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -298,6 +301,23 @@ export const AppRoutesNew = () => {
             <Route path="/compromat-firm" element={<FirmDossierView />} />
             <Route path="/power-structure" element={<PowerStructureView />} />
             <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
+
+            {/* ✅ НОВІ МОДУЛІ v56.4 — Бізнес-орієнтована розвідка */}
+            <Route path="/financial-sigint"   element={<FinancialSigintView />} />
+            <Route path="/swift-monitor"      element={<FinancialSigintView />} />
+            <Route path="/offshore-detector"  element={<FinancialSigintView />} />
+            <Route path="/contract-price-check" element={<FinancialSigintView />} />
+            <Route path="/asset-freeze-tracker" element={<FinancialSigintView />} />
+            <Route path="/ubo-map"            element={<UBOMapView />} />
+            <Route path="/pep-tracker"        element={<UBOMapView />} />
+            <Route path="/shadow-director"    element={<UBOMapView />} />
+            {/* Нові сторінки з redirect на існуючі аналоги */}
+            <Route path="/portfolio-risk"     element={<RiskScoringPremium />} />
+            <Route path="/geopolitical-radar" element={<IntelligenceView />} />
+            <Route path="/ma-scanner"         element={<OpportunitiesPage />} />
+            <Route path="/market-entry"       element={<MarketAnalyticsPremium />} />
+            <Route path="/ai-hypothesis"      element={<PredictiveNexusView />} />
+            <Route path="/conversation-intel" element={<SearchConsole />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

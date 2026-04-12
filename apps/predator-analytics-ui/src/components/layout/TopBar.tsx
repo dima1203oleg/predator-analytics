@@ -91,34 +91,34 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   }, []);
 
   return (
-    <div className="h-16 border-b border-cyan-500/10 bg-[#010409]/95 backdrop-blur-2xl flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50 overflow-hidden font-mono">
+    <div className="h-16 border-b border-amber-500/10 bg-[#010409]/95 backdrop-blur-2xl flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50 overflow-hidden font-mono">
       {/* Tactical scanline */}
       <div className="absolute inset-0 pointer-events-none opacity-10 scanline-tactical" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent shadow-[0_0_10px_rgba(6,182,212,0.3)]" />
 
       {/* ── LEFT: Logo & Command Hub ── */}
       <div className="flex items-center gap-6">
         <button
           onClick={onMenuClick || toggleSidebar}
-          className="p-2 hover:bg-cyan-500/5 rounded-lg transition-all border border-transparent hover:border-cyan-500/20 group relative overflow-hidden"
+          className="p-2 hover:bg-amber-500/5 rounded-lg transition-all border border-transparent hover:border-amber-500/20 group relative overflow-hidden"
           aria-label="Перемикач меню"
         >
-          <Menu className="w-5 h-5 text-cyan-500 group-hover:text-cyan-300 transition-colors" />
-          <div className="absolute inset-0 bg-cyan-400/5 -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+          <Menu className="w-5 h-5 text-amber-500 group-hover:text-amber-300 transition-colors" />
+          <div className="absolute inset-0 bg-amber-400/5 -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
         </button>
 
         <div className="flex items-center gap-4 group cursor-pointer">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="w-10 h-10 bg-slate-900 border border-cyan-500/30 rounded flex items-center justify-center relative overflow-hidden group-hover:border-cyan-400 transition-colors shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+            className="w-10 h-10 bg-slate-900 border border-amber-500/30 rounded flex items-center justify-center relative overflow-hidden group-hover:border-amber-400 transition-colors shadow-[0_0_15px_rgba(6,182,212,0.1)]"
           >
-            <Skull size={22} className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-cyan-400 rounded-bl animate-pulse" />
+            <Skull size={22} className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-amber-400 rounded-bl animate-pulse" />
           </motion.div>
 
           <div className="hidden sm:block">
             <div className="font-black text-[16px] text-white leading-none tracking-[0.1em] flex items-center gap-2">
-              PREDATOR <span className="text-cyan-400 font-bold opacity-80">NEXUS</span>
+              PREDATOR <span className="text-amber-400 font-bold opacity-80">NEXUS</span>
               <div className="h-4 w-px bg-slate-800 mx-1" />
               <div className="text-[10px] text-slate-500 font-black tracking-widest bg-slate-900/50 px-2 py-0.5 rounded border border-white/5">v56</div>
             </div>
@@ -133,15 +133,15 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
       {/* ── CENTER: Tactical HUD Groups ── */}
       <div className="flex items-center gap-8">
         {/* Tenant Insight */}
-        <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-slate-900/40 border border-white/5 rounded transition-all hover:bg-slate-900/60 hover:border-cyan-500/20 cursor-pointer group group-hover:shadow-[0_0_15px_rgba(6,182,212,0.05)]">
-          <div className="p-1.5 bg-cyan-500/10 rounded border border-cyan-500/20 text-cyan-400">
+        <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-slate-900/40 border border-white/5 rounded transition-all hover:bg-slate-900/60 hover:border-amber-500/20 cursor-pointer group group-hover:shadow-[0_0_15px_rgba(6,182,212,0.05)]">
+          <div className="p-1.5 bg-amber-500/10 rounded border border-amber-500/20 text-amber-400">
             <Crosshair size={14} />
           </div>
           <div className="flex flex-col">
             <span className="text-[7px] text-slate-500 font-black uppercase tracking-[0.2em] leading-none mb-1">Сектор_Управління</span>
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-black text-slate-200 tracking-wider transition-colors group-hover:text-cyan-300">{tenant}</span>
-              <ChevronDown size={12} className="text-slate-600 group-hover:text-cyan-500 transition-colors" />
+              <span className="text-[11px] font-black text-slate-200 tracking-wider transition-colors group-hover:text-amber-300">{tenant}</span>
+              <ChevronDown size={12} className="text-slate-600 group-hover:text-amber-500 transition-colors" />
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             onClick={() => setPlanMode(true)}
             className={cn(
               "flex items-center gap-2 px-4 py-1.5 rounded transition-all relative overflow-hidden",
-              isPlanMode ? "bg-cyan-500 text-black font-black shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-500 hover:text-slate-300"
+              isPlanMode ? "bg-amber-500 text-black font-black shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-500 hover:text-slate-300"
             )}
           >
             <Brain size={14} className={isPlanMode ? "animate-pulse" : ""} />
@@ -188,14 +188,14 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
         {/* CPU */}
         <div className="flex items-center gap-3 group cursor-pointer hover:bg-white/5 p-1 px-2 rounded transition-colors">
-          <div className="p-1.5 bg-cyan-500/10 rounded border border-cyan-500/20 text-cyan-500 group-hover:text-cyan-400">
+          <div className="p-1.5 bg-amber-500/10 rounded border border-amber-500/20 text-amber-500 group-hover:text-amber-400">
             <Fan size={14} className="animate-spin-slow" />
           </div>
           <div>
             <div className="text-[7px] text-slate-500 font-black uppercase tracking-widest mb-0.5">ЦП_ЯДРА</div>
-            <div className="text-[12px] font-black text-cyan-400 tabular-nums leading-none tracking-tighter">{cpuDisplay}%</div>
+            <div className="text-[12px] font-black text-amber-400 tabular-nums leading-none tracking-tighter">{cpuDisplay}%</div>
           </div>
-          <Sparkline data={cpuHistory} color="#22d3ee" />
+          <Sparkline data={cpuHistory} color="#fbbf24" />
         </div>
 
         {/* Memory */}
@@ -231,11 +231,11 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
             window.dispatchEvent(event);
           }}
-          className="hidden lg:flex items-center gap-3 bg-slate-900 border border-white/5 hover:border-cyan-500/40 text-slate-300 px-4 py-2 rounded transition-all group hover:bg-slate-800"
+          className="hidden lg:flex items-center gap-3 bg-slate-900 border border-white/5 hover:border-amber-500/40 text-slate-300 px-4 py-2 rounded transition-all group hover:bg-slate-800"
         >
-          <Search className="w-4 h-4 group-hover:text-cyan-400 transition-colors" />
+          <Search className="w-4 h-4 group-hover:text-amber-400 transition-colors" />
           <span className="text-[10px] font-black uppercase tracking-widest hidden xl:inline group-hover:text-white">ПОШУК...</span>
-          <kbd className="hidden 2xl:inline-block bg-black rounded-sm px-2 py-0.5 text-[8px] text-cyan-700 border border-cyan-900/50 font-black">CMD+K</kbd>
+          <kbd className="hidden 2xl:inline-block bg-black rounded-sm px-2 py-0.5 text-[8px] text-amber-700 border border-amber-900/50 font-black">CMD+K</kbd>
         </button>
 
         <SystemClock />
@@ -255,7 +255,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 className={cn(
                   "w-8 h-8 rounded flex flex-col items-center justify-center transition-all",
                   deviceMode === mode
-                    ? "bg-cyan-500 text-black font-black"
+                    ? "bg-amber-500 text-black font-black"
                     : "text-slate-600 hover:text-slate-400 hover:bg-white/5"
                 )}
                 title={mode.toUpperCase()}
@@ -280,7 +280,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 className={cn(
                   "px-2 py-1 text-[8px] font-black tracking-tighter uppercase rounded border transition-all",
                   persona === key
-                    ? color === 'cyan' ? 'border-cyan-500 bg-cyan-500/20 text-cyan-400' :
+                    ? color === 'cyan' ? 'border-amber-500 bg-amber-500/20 text-amber-400' :
                       color === 'rose' ? 'border-rose-500 bg-rose-500/20 text-rose-400' :
                       'border-amber-500 bg-amber-500/20 text-amber-400'
                     : 'border-transparent text-slate-600 hover:text-slate-300'
@@ -300,13 +300,13 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             className={cn(
               "w-10 h-10 rounded border transition-all flex items-center justify-center relative",
               isCopilotOpen 
-                ? "bg-cyan-500/20 border-cyan-500 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]" 
-                : "bg-white/5 border-white/10 text-slate-500 hover:border-cyan-500/40 hover:text-cyan-400"
+                ? "bg-amber-500/20 border-amber-500 text-amber-400 shadow-[0_0_20px_rgba(6,182,212,0.4)]" 
+                : "bg-white/5 border-white/10 text-slate-500 hover:border-amber-500/40 hover:text-amber-400"
             )}
           >
             <Sparkles size={18} className={cn(isCopilotOpen && "animate-pulse")} />
             {isCopilotOpen && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-cyan-400 rounded-full border border-black animate-ping" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-amber-400 rounded-full border border-black animate-ping" />
             )}
           </button>
 

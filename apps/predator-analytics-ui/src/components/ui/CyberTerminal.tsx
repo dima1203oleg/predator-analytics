@@ -94,11 +94,11 @@ export const CyberTerminal: React.FC = () => {
                 <motion.button
                     onClick={() => navigate('/autonomy')}
                     whileHover={{ scale: 1.02 }}
-                    className="group flex items-center gap-3 pl-4 pr-3 py-2 bg-slate-900/95 backdrop-blur-md border border-cyan-500/30 rounded-full shadow-xl hover:border-cyan-500/60 transition-all"
+                    className="group flex items-center gap-3 pl-4 pr-3 py-2 bg-slate-900/95 backdrop-blur-md border border-amber-500/30 rounded-full shadow-xl hover:border-amber-500/60 transition-all"
                 >
                     <div className="flex flex-col items-end">
-                        <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-1">
-                            АЗР СИСТЕМА <Zap size={10} className="fill-cyan-400" />
+                        <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest flex items-center gap-1">
+                            АЗР СИСТЕМА <Zap size={10} className="fill-amber-400" />
                         </span>
                         <span className="text-xs font-bold text-white flex items-center gap-1">
                             ГЕН {azrStatus.generation}

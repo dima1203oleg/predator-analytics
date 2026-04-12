@@ -60,7 +60,7 @@ const ForecastView: React.FC = () => {
     }, []);
 
     const chartData = useMemo(() => {
-        if (!forecast) return [];
+        if (!forecast || !forecast.forecast) return [];
         return forecast.forecast.map(p => ({
             name: p.date,
             value: p.predicted_volume,
