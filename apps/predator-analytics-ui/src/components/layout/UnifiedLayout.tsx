@@ -34,74 +34,77 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500/30">
 
-      {/* Багатошаровий Ambient Glow — динамічний, пульсуючий фон */}
+      {/* ────────────────────────────────────────────────────────── */}
+      {/* SOVEREIGN AMBIENT — Щильний червоний/кримсон фон для відчуття џлітарності */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Основний градієнт — теплий блакитний */}
+        {/* Основний градієнт — глибокий кримсон знизу ліворуч */}
         <motion.div
-          className="absolute w-[50%] h-[50%] rounded-full"
+          className="absolute w-[55%] h-[55%] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
-            filter: 'blur(100px)',
-            top: '-5%',
-            left: '-5%',
+            background: 'radial-gradient(circle, rgba(185,10,10,0.07) 0%, transparent 70%)',
+            filter: 'blur(130px)',
+            bottom: '-10%',
+            left: '-8%',
           }}
           animate={{
-            x: [0, 30, 0],
-            y: [0, 20, 0],
-            scale: [1, 1.1, 1],
+            x: [0, 25, 0],
+            y: [0, -15, 0],
+            scale: [1, 1.08, 1],
           }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Акцентний градієнт — індіго */}
+        {/* Акцентний градієнт — темно-червоний зверху праворуч */}
         <motion.div
-          className="absolute w-[45%] h-[45%] rounded-full"
+          className="absolute w-[40%] h-[40%] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%)',
-            filter: 'blur(120px)',
-            bottom: '-8%',
+            background: 'radial-gradient(circle, rgba(120,5,5,0.06) 0%, transparent 70%)',
+            filter: 'blur(110px)',
+            top: '-5%',
             right: '-5%',
           }}
           animate={{
-            x: [0, -25, 0],
-            y: [0, -15, 0],
-            scale: [1, 1.15, 1],
+            x: [0, -20, 0],
+            y: [0, 18, 0],
+            scale: [1, 1.12, 1],
           }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Додатковий акцент — ціан, менший */}
+        {/* Холодний синій акцент — сателітний подтекст */}
         <motion.div
-          className="absolute w-[30%] h-[30%] rounded-full"
+          className="absolute w-[28%] h-[28%] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, transparent 70%)',
-            filter: 'blur(80px)',
-            top: '40%',
-            right: '20%',
+            background: 'radial-gradient(circle, rgba(5,15,80,0.04) 0%, transparent 70%)',
+            filter: 'blur(90px)',
+            top: '38%',
+            right: '18%',
           }}
           animate={{
-            x: [0, 15, -10, 0],
-            y: [0, -20, 10, 0],
+            x: [0, 12, -8, 0],
+            y: [0, -18, 10, 0],
           }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+          transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Тонка сітка — дає тактильну текстуру */}
+        {/* Суверенна віньєтка — кінематографічна рамка */}
         <div
-          className="absolute inset-0 opacity-[0.015]"
+          className="absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)' }}
+        />
+        {/* Тонка координатна сітка */}
+        <div
+          className="absolute inset-0 opacity-[0.018]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(148, 163, 184, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.4) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+              'linear-gradient(rgba(220, 38, 38, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(220, 38, 38, 0.25) 1px, transparent 1px)',
+            backgroundSize: '65px 65px',
+          }}
+        />
+        {/* Мікро-сітка */}
+        <div
+          className="absolute inset-0 opacity-[0.012]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.15) 1px, transparent 1px)',
+            backgroundSize: '12px 12px',
           }}
         />
       </div>

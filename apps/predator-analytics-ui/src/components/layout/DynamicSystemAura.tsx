@@ -32,10 +32,10 @@ const DynamicSystemAura: React.FC = () => {
 
   const getColors = () => {
     switch (systemState) {
-      case 'learning': return ['rgba(16, 185, 129, 0.4)', 'rgba(59, 130, 246, 0.2)']; // Green-Blue
-      case 'evolving': return ['rgba(139, 92, 246, 0.4)', 'rgba(236, 72, 153, 0.2)']; // Purple-Pink
-      case 'alert': return ['rgba(239, 68, 68, 0.4)', 'rgba(245, 158, 11, 0.2)'];    // Red-Orange
-      default: return ['rgba(59, 130, 246, 0.3)', 'rgba(30, 41, 59, 0.1)'];        // Default Blue-Slate
+      case 'learning': return ['rgba(180, 12, 12, 0.45)', 'rgba(100, 5, 5, 0.25)'];     // Кримсон — активне навчання
+      case 'evolving': return ['rgba(140, 8, 8, 0.38)', 'rgba(60, 2, 80, 0.18)'];       // Темний кримсон/фіолет — еволюція
+      case 'alert':   return ['rgba(220, 15, 15, 0.55)', 'rgba(180, 80, 5, 0.25)'];    // Яскравий червоний/помаранч — тривога
+      default:        return ['rgba(120, 5, 5, 0.30)', 'rgba(2, 6, 40, 0.12)'];         // Тихий кримсон/темний фон
     }
   };
 
@@ -77,8 +77,11 @@ const DynamicSystemAura: React.FC = () => {
         }}
       />
 
-      {/* Noise Texture */}
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+      {/* Noise Texture — вбудований SVG без зовнішніх URL */}
+      <div
+        className="absolute inset-0 opacity-[0.025] mix-blend-overlay pointer-events-none"
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundSize: '200px 200px' }}
+      />
     </div>
   );
 };

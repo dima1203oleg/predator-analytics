@@ -30,11 +30,11 @@ import type {
 } from '@/types/shell';
 
 const toneClasses = {
-  neutral: 'border-white/[0.08] bg-white/[0.03] text-slate-300',
-  info: 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
-  success: 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
-  warning: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
-  danger: 'border-rose-400/20 bg-rose-500/10 text-rose-200',
+  neutral: 'border-red-900/20 bg-red-950/10 text-slate-300',
+  info:    'border-amber-500/25 bg-amber-950/15 text-amber-200',
+  success: 'border-emerald-500/25 bg-emerald-950/15 text-emerald-200',
+  warning: 'border-red-500/35 bg-red-900/20 text-red-300',
+  danger:  'border-red-600/50 bg-red-900/25 text-red-400',
 } as const;
 
 const SectionList = ({
@@ -225,35 +225,51 @@ export const ContextRail: React.FC = () => {
   return (
     <aside
       data-testid="context-rail"
-      className="surface-panel-strong sticky top-[5.5rem] z-[60] hidden h-[calc(100vh-7rem)] overflow-hidden rounded-[30px] border border-white/[0.06] shadow-[0_20px_50px_rgba(2,6,23,0.5)] xl:flex xl:flex-col"
+      className="surface-panel-strong sticky top-[5.5rem] z-[60] hidden h-[calc(100vh-7rem)] overflow-hidden border border-red-900/30 shadow-[0_0_60px_rgba(220,38,38,0.06),0_20px_50px_rgba(2,6,23,0.6)] xl:flex xl:flex-col"
+      style={{ background: 'linear-gradient(180deg,rgba(5,2,2,0.97) 0%,rgba(8,3,3,0.95) 100%)' }}
     >
-      <div className="border-b border-white/[0.06] px-5 py-5">
+      {/* Ред top accent лінія */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-red-700/50 to-transparent" />
+
+      <div className="border-b border-red-900/25 px-5 py-4">
+        {/* заголовок панелі */}
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">
-              Контекстна панель
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1.5 h-1.5 bg-red-600 rounded-full shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
+              <div className="text-[7px] font-black uppercase tracking-[0.55em] text-red-700/80">
+                INTEL · CLASSIFIED CONTEXT
+              </div>
             </div>
-            <div className="mt-2 text-xl font-black tracking-tight text-white">{effectivePayload.title}</div>
-            <div className="mt-2 text-sm leading-6 text-slate-400">{effectivePayload.subtitle}</div>
+            <div className="text-[13px] font-black tracking-tight text-white leading-snug">{effectivePayload.title}</div>
+            <div className="mt-1.5 text-[11px] leading-5 text-slate-500">{effectivePayload.subtitle}</div>
           </div>
           <button
             type="button"
             aria-label="Згорнути контекстну панель"
             onClick={() => setIsOpen(false)}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[18px] border border-white/[0.08] bg-white/[0.03] text-slate-400 transition hover:border-white/[0.14] hover:bg-white/[0.05] hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center border border-red-900/40 bg-red-950/20 text-red-800 transition hover:border-red-700/60 hover:bg-red-900/30 hover:text-red-500"
           >
-            <PanelRightClose className="h-4 w-4" />
+            <PanelRightClose className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className={cn('mt-4 inline-flex rounded-full border px-3 py-1 text-[11px] font-bold', toneClasses[effectivePayload.status.tone])}>
+        <div className={cn(
+          'mt-3 inline-flex items-center gap-1.5 border px-2.5 py-1 text-[8px] font-black tracking-[0.3em] uppercase',
+          toneClasses[effectivePayload.status.tone]
+        )}>
+          <div className="w-1 h-1 rounded-full bg-current opacity-70" />
           {effectivePayload.status.label}
         </div>
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5 custom-scrollbar">
-        <section className="space-y-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Дії</div>
+      <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4 custom-scrollbar">
+        <section className="space-y-2">
+          <div className="text-[7px] font-black uppercase tracking-[0.5em] text-red-800/70 flex items-center gap-2">
+            <div className="h-px flex-1 bg-red-900/30" />
+            ДІЇ
+            <div className="h-px flex-1 bg-red-900/30" />
+          </div>
           <div className="space-y-2">
             {effectivePayload.actions.map((action) => (
               <button
@@ -261,17 +277,17 @@ export const ContextRail: React.FC = () => {
                 type="button"
                 onClick={() => handleAction(action)}
                 className={cn(
-                  'flex w-full items-center justify-between gap-3 rounded-[20px] border px-4 py-3 text-left transition hover:border-white/[0.14] hover:bg-white/[0.05]',
+                  'flex w-full items-center justify-between gap-3 border px-4 py-3 text-left transition hover:border-red-700/40 hover:bg-red-950/20',
                   toneClasses[action.tone ?? 'neutral'],
                 )}
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] border border-white/[0.08] bg-black/20">
-                    <action.icon className="h-4 w-4" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-red-900/40 bg-red-950/20 text-red-700">
+                    <action.icon className="h-3.5 w-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-white">{action.label}</div>
-                    <div className="mt-1 text-xs leading-5 text-slate-400">{action.description}</div>
+                    <div className="truncate text-[11px] font-black text-white tracking-wide">{action.label}</div>
+                    <div className="mt-0.5 text-[9px] leading-4 text-slate-600">{action.description}</div>
                   </div>
                 </div>
                 <ArrowRight className="h-4 w-4 shrink-0 text-slate-600" />
@@ -312,13 +328,12 @@ export const ContextRail: React.FC = () => {
 
         <SectionList title="Ризики" items={effectivePayload.risks} />
 
-        <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-sm leading-6 text-slate-300">
-          <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">
-            <Network className="h-3.5 w-3.5" />
-            Shell v2
-          </div>
-          Права панель тримає контекст поруч із дією, щоб користувач не перемикався між розділами під час рішення.
+      {/* Sovereign Footer */}
+      <div className="border-t border-red-900/20 px-5 py-4">
+        <div className="text-[6px] font-black uppercase tracking-[0.55em] text-red-900/50 text-center">
+          PREDATOR · INTEL CONTEXT RAIL · CLASSIFIED
         </div>
+      </div>
       </div>
     </aside>
   );
