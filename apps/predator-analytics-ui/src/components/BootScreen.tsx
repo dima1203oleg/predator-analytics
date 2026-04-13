@@ -8,53 +8,24 @@
  *  0 → VOID ACTIVATION      — темрява, ультра-низька частота, пробудження ядра
  *  1 → CRYPTOGRAPHIC INIT   — квантова геометрія, шифрування рівня TOP SECRET
  *  2 → GLOBAL DOMINANCE     — планетарне сканування, 47 супутників
- *  3 → DATABASE SEARCH      — сканування БД, поява об'єктів, лінії зв'язків, фіксація цілі
- *  4 → TARGET ACQUISITION   — lock-on приціл, AI аналіз, THREAT CONFIRMED
- *  5 → SOVEREIGN REVEAL     — PREDATOR logo, золото + кров, ELITE ACCESS
- *  6 → FADE INTO SYSTEM
+ *  3 → TARGET ACQUISITION   — lock-on приціл, AI аналіз, THREAT CONFIRMED
+ *  4 → SOVEREIGN REVEAL     — PREDATOR logo, золото + кров, ELITE ACCESS
+ *  5 → FADE INTO SYSTEM
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { GeometricRaptor } from './Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Phase = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 
 const PHASE_DURATIONS: Record<Phase, number> = {
   0: 1800,  // VOID ACTIVATION
   1: 2200,  // CRYPTOGRAPHIC INIT
   2: 3200,  // GLOBAL DOMINANCE
-  3: 4200,  // DATABASE SEARCH
-  4: 3500,  // TARGET ACQUISITION
-  5: 6000,  // SOVEREIGN REVEAL
-  6: 1400,  // FADE OUT
+  3: 3500,  // TARGET ACQUISITION
+  4: 6000,  // SOVEREIGN REVEAL
+  5: 1400,  // FADE OUT
 };
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   DATABASE SEARCH — структури даних для анімації
-   ─────────────────────────────────────────────────────────────────────────── */
-interface SearchNode {
-  id: number;
-  x: number;
-  y: number;
-  label: string;
-  sublabel: string;
-  type: 'db' | 'entity' | 'target' | 'link';
-  bornAt: number;    // ms від початку фази
-  pulseOffset: number;
-}
-
-const SEARCH_NODES: Omit<SearchNode, 'bornAt' | 'pulseOffset'>[] = [
-  { id:0,  x:-0.38, y:-0.22, label:'ЄДР',          sublabel:'28.4M компаній',    type:'db'     },
-  { id:1,  x: 0.38, y:-0.22, label:'НАЗК',          sublabel:'Декларації ФОП',    type:'db'     },
-  { id:2,  x:-0.38, y: 0.22, label:'МВС / ІНТЕРПОЛ',sublabel:'Стоп-реєстри',      type:'db'     },
-  { id:3,  x: 0.38, y: 0.22, label:'Митниця',       sublabel:'Вантажі 2019-2024', type:'db'     },
-  { id:4,  x: 0.00, y:-0.30, label:'SWIFT / SEPA',  sublabel:'Фін. потоки',       type:'db'     },
-  { id:5,  x:-0.18, y: 0.00, label:'Офшор ТОВ',     sublabel:'ЗБРУЧ ТРЕЙД ЛТД',   type:'entity' },
-  { id:6,  x: 0.18, y: 0.00, label:'Бенефіціар',    sublabel:'PETROV I.V.',       type:'entity' },
-  { id:7,  x: 0.00, y: 0.00, label:'ЦІЛЬ',          sublabel:'ІДЕНТИФІКОВАНО',     type:'target' },
-  { id:8,  x:-0.28, y:-0.10, label:'Shell Corp',    sublabel:'BVI · 2021',        type:'link'   },
-  { id:9,  x: 0.28, y:-0.10, label:'Рахунок',       sublabel:'LT89 3250 0...42',  type:'link'   },
-];
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WEB AUDIO ENGINE — Синтезовані звуки без зовнішніх файлів
@@ -313,24 +284,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     0: '',
     1: '> ІНІЦІАЛІЗАЦІЯ КВАНТОВОГО ПРОТОКОЛУ [CRYSTALS-KYBER-1024]...',
     2: '> ГЛОБАЛЬНА МЕРЕЖА: 47 СУПУТНИКІВ / 892 ВУЗЛІВ / 23 КРАЇНИ',
-    3: '> PREDATOR DB ENGINE: СКАНУВАННЯ 28.4M ЗАПИСІВ... ОБ’ЄКТ ВИЯВЛЕНО',
-    4: '> AI ENGINE: ПЕРЕХРЕСНА ВЕРИФІКАЦІЯ ЦІЛІ... РІВЕНЬ ЗАГРОЗИ: КРИТИЧНИЙ',
-    5: '> SOVEREIGN CORE: ДОСТУП ПІДТВЕРДЖЕНО — ЛАСКАВО ПРОСИМО ДО PREDATOR',
+    3: '> AI ENGINE: ПЕРЕХРЕСНА ВЕРИФІКАЦІЯ ЦІЛІ... РІВЕНЬ ЗАГРОЗИ: КРИТИЧНИЙ',
+    4: '> SOVEREIGN CORE: ДОСТУП ПІДТВЕРДЖЕНО — ЛАСКАВО ПРОСИМО ДО PREDATOR',
   };
-
-  // Рядки для фази 3 (DATABASE SEARCH)
-  const DB_SEARCH_LINES = [
-    '▸ ПІДКЛЮЧЕННЯ ДО ЄДР [28.4M ЗАПИСІВ]...',
-    '▸ ПІДКЛЮЧЕННЯ ДО НАЗК [ДЕКЛАРАЦІЇ]...',
-    '▸ СКАНУВАННЯ МВС / ІНТЕРПОЛ СТОП-РЕЄСТРІВ...',
-    '▸ ЗАПИТ ДО МИТНИЦІ [ВАНТАЖІ 2019-2024]...',
-    '▸ АНАЛІЗ SWIFT / SEPA ТРАНЗАКЦІЙ...',
-    '● ЗБІГ: ОФШОР ТОВ «ЗБРУЧ ТРЕЙД ЛТД» — BVI',
-    '● ЗБІГ: БЕНЕФІЦІАР PETROV I.V. — ІДЕНТИФІКОВАНО',
-    '● ВСТАНОВЛЕННЯ ЗОВНІШНІХ ЗВ\u2019ЯЗКІВ...',
-    '▌ РИЗИК-ПРОФІЛЬ: КРИТИЧНИЙ · РОЗКРИТТЯ: $42.7M',
-    '▌ ЦІЛЬ ЗАФІКСОВАНА. ЗВІТ ГОТУЄТЬСЯ.',
-  ];
 
   const DB_SCAN_LINES = [
     'PARSING MULTI-JURISDICTIONAL DATABASES...',
@@ -359,45 +315,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  /* ── DB search lines (фаза 3 — DATABASE SEARCH) ── */
-  const [dbSearchLines, setDbSearchLines] = useState<string[]>([]);
-  const [searchNodesBorn, setSearchNodesBorn] = useState<number[]>([]); // індекси вже показаних вузлів
-  const [searchComplete, setSearchComplete] = useState(false);
-  const searchPhaseStart = useRef(0);
-
+  /* ── DB scan lines (фаза 3) ── */
   useEffect(() => {
-    if (phase !== 3) {
-      setDbSearchLines([]);
-      setSearchNodesBorn([]);
-      setSearchComplete(false);
-      return;
-    }
-    searchPhaseStart.current = Date.now();
-    let idx = 0;
-    setDbSearchLines([]);
-    const addLine = () => {
-      if (idx >= DB_SEARCH_LINES.length) return;
-      const line = DB_SEARCH_LINES[idx];
-      setDbSearchLines(p => [...p, line]);
-      if (line.includes('ЦІЛЬ ЗАФІКСОВАНА')) setSearchComplete(true);
-      // Поступово відкриваємо вузли графа
-      if (idx < SEARCH_NODES.length) setSearchNodesBorn(p => [...p, idx]);
-      idx++;
-      const delay =
-        line.includes('ЦІЛЬ ЗАФІКСОВАНА') ? 800 :
-        line.includes('РИЗИК-ПРОФІЛЬ')    ? 600 :
-        line.includes('●')                ? 350 :
-        280 + Math.random() * 140;
-      setTimeout(addLine, delay);
-    };
-    const t = setTimeout(addLine, 400);
-    return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
-
-  /* ── DB scan lines (фаза 4 — TARGET ACQUISITION) ── */
-  useEffect(() => {
-    if (phase !== 4) { setDbLines([]); setTargetLocked(false); setThreatLevel(0); return; }
+    if (phase !== 3) { setDbLines([]); setTargetLocked(false); setThreatLevel(0); return; }
     let idx = 0; setDbLines([]);
     const addLine = () => {
       if (idx >= DB_SCAN_LINES.length) return;
@@ -417,9 +337,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  /* ── Threat level (фаза 4) ── */
+  /* ── Threat level (фаза 3) ── */
   useEffect(() => {
-    if (phase !== 4) return;
+    if (phase !== 3) return;
     const id = setInterval(() => setThreatLevel(p => Math.min(100, p + 2.5)), 60);
     return () => clearInterval(id);
   }, [phase]);
@@ -442,21 +362,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     if (phase === 0) soundEngine.playAwaken();
     if (phase === 1) soundEngine.playQuantumTone();
     if (phase === 2) soundEngine.playRadarPing();
-    if (phase === 3) soundEngine.playRadarPing(); // DATABASE SEARCH — легкий пінг на початку
-    if (phase === 4) soundEngine.playLockOn();
-    if (phase === 5) { soundEngine.playImpact(); droneStopRef.current = soundEngine.startDrone(); }
-    if (phase === 6) { droneStopRef.current?.(); soundEngine.playTelemetry(350); }
+    if (phase === 3) soundEngine.playLockOn();
+    if (phase === 4) { soundEngine.playImpact(); droneStopRef.current = soundEngine.startDrone(); }
+    if (phase === 5) { droneStopRef.current?.(); soundEngine.playTelemetry(350); }
   }, [phase]);
 
-  /* ── Детонація при lock-on (фаза 4) ── */
+  /* ── Детонація при lock-on ── */
   useEffect(() => {
     if (targetLocked) soundEngine.playDetonation();
   }, [targetLocked]);
-
-  /* ── Пінг при появі нових вузлів у фазі 3 ── */
-  useEffect(() => {
-    if (searchNodesBorn.length > 0) soundEngine.playTelemetry(900 + searchNodesBorn.length * 80);
-  }, [searchNodesBorn]);
 
   /* ──────────────────────────────────────────────────────────────────────────
      CANVAS RENDER
@@ -468,13 +382,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const W = canvas.width, H = canvas.height;
     const now = Date.now();
     const elapsed = now - phaseStart.current;
-    const cp = skipRef.current ? 6 : phase;
+    const cp = skipRef.current ? 5 : phase;
     const rot = now * 0.00028;
 
     // Camera shake
     let sx = 0, sy = 0;
-    if (cp < 6) {
-      const si = cp === 0 ? 0.4 : cp === 1 ? 1.0 : cp === 4 ? 3.2 : cp === 5 ? 1.8 : 0.3;
+    if (cp < 5) {
+      const si = cp === 0 ? 0.4 : cp === 1 ? 1.0 : cp === 3 ? 3.2 : cp === 4 ? 1.8 : 0.3;
       sx = (Math.random() - 0.5) * si * 3.5;
       sy = (Math.random() - 0.5) * si * 3.5;
     }
@@ -489,9 +403,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const cx = W / 2, cy = H / 2;
 
     /* ── Атмосферне світіння (завжди) ── */
-    if (cp < 6) {
+    if (cp < 5) {
       // Червоне центральне
-      const ri = cp === 5 ? 0.18 : cp === 4 ? 0.1 : 0.04;
+      const ri = cp === 4 ? 0.18 : cp === 3 ? 0.1 : 0.04;
       const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.6);
       rg.addColorStop(0, `rgba(200,15,15,${ri})`);
       rg.addColorStop(0.5, `rgba(80,5,5,${ri * 0.25})`);
@@ -500,12 +414,12 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       // Холодний синій акцент зверху
       if (cp >= 2) {
         const bg = ctx.createRadialGradient(W * 0.12, H * 0.12, 0, W * 0.12, H * 0.12, W * 0.45);
-        bg.addColorStop(0, `rgba(5,20,120,${cp === 4 ? 0.05 : 0.025})`);
+        bg.addColorStop(0, `rgba(5,20,120,${cp === 3 ? 0.05 : 0.025})`);
         bg.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
       }
       // Золотий мерехтливий ефект (фаза 4)
-      if (cp === 5) {
+      if (cp === 4) {
         const t = (Math.sin(now * 0.0008) * 0.5 + 0.5);
         const gg = ctx.createRadialGradient(cx, cy - H * 0.25, 0, cx, cy, H * 0.7);
         gg.addColorStop(0, `rgba(180,140,20,${t * 0.06})`);
@@ -712,177 +626,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.restore();
     }
 
-    /* ══ ФАЗА 3: DATABASE SEARCH ══ */
+    /* ══ ФАЗА 3: TARGET ACQUISITION ══ */
     if (cp === 3) {
-      const p    = Math.min(1, elapsed / PHASE_DURATIONS[3]);
-      ctx.save(); ctx.translate(cx, cy);
-
-      // Фонова сітка (пунктир)
-      ctx.strokeStyle = `rgba(200,15,15,${0.04 * p})`; ctx.lineWidth = 0.5;
-      for (let x = -W/2; x < W/2; x += 70) { ctx.beginPath(); ctx.moveTo(x,-H/2); ctx.lineTo(x,H/2); ctx.stroke(); }
-      for (let y = -H/2; y < H/2; y += 70) { ctx.beginPath(); ctx.moveTo(-W/2,y); ctx.lineTo(W/2,y); ctx.stroke(); }
-
-      // Сканлінія DB — горизонтальна лінія що проходить зверху вниз
-      const scanLineY = ((elapsed * 0.28) % H) - H/2;
-      const slg = ctx.createLinearGradient(0, scanLineY - 3, 0, scanLineY + 3);
-      slg.addColorStop(0, 'rgba(220,38,38,0)');
-      slg.addColorStop(0.5, `rgba(220,38,38,${0.55 * p})`);
-      slg.addColorStop(1, 'rgba(220,38,38,0)');
-      ctx.fillStyle = slg; ctx.fillRect(-W/2, scanLineY - 3, W, 6);
-
-      // Вузли графа поступово появляються в міру проходження фази (searchNodesBorn не використовується в Canvas)
-      const nodesVisible = Math.min(SEARCH_NODES.length, Math.floor(elapsed / 400));
-
-      // Лінії зв'язків: малюємо прогрес появи вузла
-      const CONNECTIONS: [number, number][] = [
-        [0, 5], [1, 6], [2, 5], [3, 5], [4, 6],
-        [5, 7], [6, 7], [5, 8], [6, 9], [8, 7], [9, 7],
-      ];
-      const aW = Math.min(W, 1080), aH = Math.min(H, 680);
-
-      CONNECTIONS.forEach(([from, to]) => {
-        if (from >= nodesVisible || to >= nodesVisible) return;
-        const fn = SEARCH_NODES[from],  tn = SEARCH_NODES[to];
-        const fx = fn.x * aW * 0.44,   fy = fn.y * aH * 0.44;
-        const tx = tn.x * aW * 0.44,   ty = tn.y * aH * 0.44;
-        const isToTarget = to === 7;
-        const lineAlpha  = isToTarget ? 0.55 : 0.22;
-        // Сама лінія
-        ctx.strokeStyle = isToTarget
-          ? `rgba(220,38,38,${lineAlpha * p})`
-          : `rgba(180,20,20,${lineAlpha * p})`;
-        ctx.lineWidth = isToTarget ? 1.2 : 0.7;
-        if (!isToTarget) ctx.setLineDash([4, 6]);
-        ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(tx, ty); ctx.stroke();
-        ctx.setLineDash([]);
-        // Анімована крапля по лінії
-        if (nodesVisible >= Math.max(from, to) + 1) {
-          const t2 = ((now * 0.0012 + from * 0.37 + to * 0.19) % 1);
-          const dpx = fx + (tx - fx) * t2,  dpy = fy + (ty - fy) * t2;
-          ctx.fillStyle = isToTarget ? `rgba(255,80,80,${0.9 * p})` : `rgba(220,60,60,${0.6 * p})`;
-          ctx.beginPath(); ctx.arc(dpx, dpy, isToTarget ? 2.5 : 1.8, 0, Math.PI * 2); ctx.fill();
-        }
-      });
-
-      // Самі вузли
-      for (let ni = 0; ni < nodesVisible; ni++) {
-        const nd  = SEARCH_NODES[ni];
-        const nx  = nd.x * aW * 0.44,  ny = nd.y * aH * 0.44;
-        const pulse = Math.sin(now * 0.005 + ni * 0.8) * 0.5 + 0.5;
-        const nodeAge = Math.min(1, (elapsed - ni * 400) / 500); // 0→1 після появи
-
-        if (nd.type === 'db') {
-          // База даних — ромб
-          const hs = 10 * nodeAge;
-          ctx.strokeStyle = `rgba(150,20,20,${0.7 * nodeAge * p})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(nx, ny - hs); ctx.lineTo(nx + hs, ny);
-          ctx.lineTo(nx, ny + hs); ctx.lineTo(nx - hs, ny); ctx.closePath(); ctx.stroke();
-          // Пульс навколо
-          const pR = 18 * nodeAge + pulse * 4;
-          ctx.strokeStyle = `rgba(150,20,20,${0.2 * nodeAge * p})`;
-          ctx.beginPath(); ctx.arc(nx, ny, pR, 0, Math.PI * 2); ctx.stroke();
-        } else if (nd.type === 'entity') {
-          // Ентитет — коло з пульсацією
-          const eR = 11 * nodeAge;
-          ctx.strokeStyle = `rgba(200,50,50,${0.75 * nodeAge * p})`; ctx.lineWidth = 1.4;
-          ctx.beginPath(); ctx.arc(nx, ny, eR, 0, Math.PI * 2); ctx.stroke();
-          ctx.fillStyle = `rgba(220,38,38,${0.15 * nodeAge * p})`;
-          ctx.beginPath(); ctx.arc(nx, ny, eR, 0, Math.PI * 2); ctx.fill();
-          // Пульс
-          const epR = eR + pulse * 8;
-          ctx.strokeStyle = `rgba(220,38,38,${0.12 * nodeAge * (1 - pulse) * p})`;
-          ctx.beginPath(); ctx.arc(nx, ny, epR, 0, Math.PI * 2); ctx.stroke();
-        } else if (nd.type === 'target') {
-          // Ціль — великий приціл + пульсація
-          const tR = 22 * nodeAge;
-          const flashA = nodeAge > 0.5 ? (Math.sin(now * 0.015) * 0.5 + 0.5) : 0;
-          ctx.strokeStyle = `rgba(255,30,30,${(0.85 + flashA * 0.15) * nodeAge * p})`;
-          ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.arc(nx, ny, tR, 0, Math.PI * 2); ctx.stroke();
-          // Хрест
-          ctx.lineWidth = 1.5; ctx.strokeStyle = `rgba(255,30,30,${0.7 * nodeAge * p})`;
-          ctx.beginPath(); ctx.moveTo(nx - tR, ny); ctx.lineTo(nx + tR, ny); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(nx, ny - tR); ctx.lineTo(nx, ny + tR); ctx.stroke();
-          // Радіусі пульсу
-          [0.5, 0.75, 1.0].forEach((m) => {
-            const rpR = tR * m + pulse * 12 * m;
-            ctx.strokeStyle = `rgba(255,30,30,${0.15 * (1.1 - m) * nodeAge * p})`;
-            ctx.lineWidth = 0.7;
-            ctx.beginPath(); ctx.arc(nx, ny, rpR, 0, Math.PI * 2); ctx.stroke();
-          });
-          // Спалах оверлей
-          if (nodeAge > 0.6) {
-            ctx.fillStyle = `rgba(220,38,38,${flashA * 0.05 * p})`;
-            ctx.fillRect(-W/2, -H/2, W, H);
-          }
-        } else {
-          // link — маленький квадрат
-          const qs = 7 * nodeAge;
-          ctx.strokeStyle = `rgba(170,30,30,${0.6 * nodeAge * p})`; ctx.lineWidth = 0.9;
-          ctx.strokeRect(nx - qs/2, ny - qs/2, qs, qs);
-          const ipR = qs + pulse * 6;
-          ctx.strokeStyle = `rgba(170,30,30,${0.15 * nodeAge * p})`;
-          ctx.beginPath(); ctx.arc(nx, ny, ipR, 0, Math.PI * 2); ctx.stroke();
-        }
-
-        // Підпис над вузлом (проявляється разом з вузлом)
-        if (nodeAge > 0.3) {
-          const textAlpha = Math.min(1, (nodeAge - 0.3) / 0.5) * p;
-          ctx.save();
-          // Фонова плашка підпису
-          const labelY     = ny - 32;
-          const lw         = ctx.measureText(nd.label).width + 14;
-          ctx.fillStyle= `rgba(4,0,0,${0.75 * textAlpha})`;
-          ctx.fillRect(nx - lw/2, labelY - 10, lw, 20);
-          ctx.strokeStyle = nd.type === 'target'
-            ? `rgba(255,30,30,${0.6 * textAlpha})`
-            : `rgba(150,20,20,${0.35 * textAlpha})`;
-          ctx.lineWidth = 0.7;
-          ctx.strokeRect(nx - lw/2, labelY - 10, lw, 20);
-          // Основний підпис
-          ctx.font = `bold ${nd.type === 'target' ? 9 : 8}px monospace`;
-          ctx.fillStyle = nd.type === 'target'
-            ? `rgba(255,60,60,${textAlpha})`
-            : nd.type === 'db'
-            ? `rgba(200,80,80,${textAlpha})`
-            : `rgba(220,160,160,${textAlpha})`;
-          ctx.textAlign = 'center';
-          ctx.fillText(nd.label, nx, labelY - 0.5);
-          // Підлегенд
-          ctx.font = '6px monospace';
-          ctx.fillStyle = `rgba(140,60,60,${textAlpha * 0.8})`;
-          ctx.fillText(nd.sublabel, nx, labelY + 8);
-          // Вертикальна лінія від плашки до вузла
-          ctx.strokeStyle = nd.type === 'target'
-            ? `rgba(255,30,30,${0.4 * textAlpha})`
-            : `rgba(150,20,20,${0.2 * textAlpha})`;
-          ctx.lineWidth = 0.6;
-          ctx.setLineDash([2, 3]);
-          ctx.beginPath(); ctx.moveTo(nx, labelY + 10); ctx.lineTo(nx, ny - 25); ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.restore();
-        }
-      }
-
-      // Пульсуючий текст пошуку посередині (до появи цілі)
-      if (nodesVisible < 7) {
-        const dots = '.'.repeat(Math.floor((now / 400) % 4));
-        ctx.save();
-        ctx.font = 'bold 11px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = `rgba(180,30,30,${0.6 * p})`;
-        ctx.fillText(`СКАНУВАННЯ${dots}`, 0, H/2 * 0.55);
-        ctx.restore();
-      }
-
-      ctx.restore();
-    }
-
-    /* ══ ФАЗА 4: TARGET ACQUISITION ══ */
-    if (cp === 4) {
-      const p = Math.min(1, elapsed / PHASE_DURATIONS[4]);
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
       const lockP = Math.min(1, elapsed / 2800);
 
       ctx.save(); ctx.translate(cx, cy);
@@ -961,9 +707,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.restore();
     }
 
-    /* ══ ФАЗА 5: SOVEREIGN REVEAL ══ */
-    if (cp === 5) {
-      const p = Math.min(1, elapsed / PHASE_DURATIONS[5]);
+    /* ══ ФАЗА 4: SOVEREIGN REVEAL ══ */
+    if (cp === 4) {
+      const p = Math.min(1, elapsed / PHASE_DURATIONS[4]);
 
       // Вхідний спалах
       if (elapsed < 320) {
@@ -1036,16 +782,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.restore();
     }
 
-    /* ══ ФАЗА 6: FADE OUT ══ */
-    if (cp === 6) {
-      const p=Math.min(1,elapsed/PHASE_DURATIONS[6]);
+    /* ══ ФАЗА 5: FADE OUT ══ */
+    if (cp === 5) {
+      const p=Math.min(1,elapsed/PHASE_DURATIONS[5]);
       ctx.fillStyle=`rgba(1,4,9,${p})`; ctx.fillRect(0,0,W,H);
     }
 
     ctx.restore();
 
     /* ── Плівкове зерно ── */
-    if (cp < 6) {
+    if (cp < 5) {
       ctx.fillStyle=`rgba(255,255,255,${0.011+Math.random()*0.007})`;
       for (let i=0;i<4500;i++) ctx.fillRect(Math.random()*W, Math.random()*H, 1, 1);
     }
@@ -1059,7 +805,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     const dur = PHASE_DURATIONS[phase];
     if (!dur) return;
     const t = setTimeout(() => {
-      if (phase < 6) { setPhase(p => (p + 1) as Phase); phaseStart.current = Date.now(); }
+      if (phase < 5) { setPhase(p => (p + 1) as Phase); phaseStart.current = Date.now(); }
       else { droneStopRef.current?.(); onComplete(); }
     }, dur);
     return () => clearTimeout(t);
@@ -1086,7 +832,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   useEffect(() => { const t = setTimeout(() => setSkipAllowed(true), 1500); return () => clearTimeout(t); }, []);
   const handleSkip = () => {
     if (!skipAllowed) return;
-    skipRef.current = true; droneStopRef.current?.(); setPhase(6);
+    skipRef.current = true; droneStopRef.current?.(); setPhase(5);
   };
 
   const fadeV = {
@@ -1125,7 +871,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
       {/* ══ HUD ОВЕРЛЕЙ (фази 1-4) ══ */}
       <AnimatePresence>
-        {phase >= 1 && phase < 6 && (
+        {phase >= 1 && phase < 5 && (
           <motion.div
             key="hud"
             initial={{ opacity: 0 }}
@@ -1386,131 +1132,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           </motion.div>
         )}
 
-        {/* ▌ФАЗА 3 — DATABASE SEARCH */}
+        {/* ▌ФАЗА 3 — TARGET ACQUISITION */}
         {phase === 3 && (
-          <motion.div key="p3" variants={fadeV} initial="initial" animate="animate" exit="exit"
-            transition={smooth} className="absolute inset-0 flex items-center justify-center z-30">
-
-            {/* Ліва панель — термінал запитів */}
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 w-72 hidden lg:block">
-              <div className="border border-red-900/35 bg-black/70 p-4 space-y-[5px]"
-                style={{ backdropFilter:'blur(10px)', boxShadow:'0 0 20px rgba(220,38,38,0.06)' }}>
-                <div className="flex items-center gap-2 pb-2 border-b border-red-900/30 mb-2">
-                  <motion.div
-                    className="w-1.5 h-1.5 bg-red-600 rounded-full"
-                    animate={{ opacity:[1,0.3,1] }}
-                    transition={{ duration:0.8, repeat:Infinity }}
-                  />
-                  <span className="text-[7px] font-black text-red-700 tracking-[0.4em] uppercase">
-                    PREDATOR DB ENGINE
-                  </span>
-                </div>
-                {dbSearchLines.map((line, idx) => (
-                  <motion.div key={idx}
-                    initial={{ opacity:0, x:-8 }}
-                    animate={{ opacity:1, x:0 }}
-                    transition={{ duration:0.2 }}
-                    className={`text-[7px] font-mono tracking-wider flex items-start gap-1.5 ${
-                      line.includes('ЦІЛЬ ЗАФІКСОВАНА')
-                        ? 'text-red-400 font-black'
-                        : line.includes('РИЗИК-ПРОФІЛЬ')
-                        ? 'text-orange-500 font-bold'
-                        : line.includes('●')
-                        ? 'text-red-500/80'
-                        : 'text-slate-600'
-                    }`}
-                  >
-                    <span className="opacity-40 text-[6px] mt-px">
-                      {line.startsWith('▌') ? '▌' : line.startsWith('●') ? '●' : '›'}
-                    </span>
-                    <span style={line.includes('ЦІЛЬ ЗАФІК') ? {textShadow:'0 0 10px rgba(255,30,30,0.8)'} : {}}>
-                      {line.replace(/^[▌●]/,'').trim()}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Центральний повідомляючий текст */}
-            <div className="text-center space-y-3 z-10">
-              {searchComplete ? (
-                <motion.div
-                  initial={{ scale:0.8, opacity:0 }}
-                  animate={{ scale:1, opacity:1 }}
-                  transition={{ duration:0.3, ease:'backOut' }}
-                  className="space-y-2"
-                >
-                  <motion.div
-                    animate={{
-                      opacity:[0.8,1,0.8],
-                      textShadow:[
-                        '0 0 20px rgba(255,0,0,0.6)',
-                        '0 0 50px rgba(255,0,0,1)',
-                        '0 0 20px rgba(255,0,0,0.6)',
-                      ],
-                    }}
-                    transition={{ duration:0.4, repeat:Infinity }}
-                    className="text-[18px] font-black tracking-[0.3em] text-red-500 uppercase"
-                  >
-                    ✓ ОБ'ЄКТ ЗНАЙДЕНО
-                  </motion.div>
-                  <div className="text-[8px] font-black tracking-[0.55em] text-red-700/80 uppercase animate-pulse">
-                    ІДЕНТИФІКАЦІЯ ПІДТВЕРДЖЕНА · ЗВІТ ГОТУЄТЬСЯ
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  animate={{ opacity:[0.4,0.9,0.4] }}
-                  transition={{ duration:0.7, repeat:Infinity }}
-                  className="text-[10px] font-black tracking-[0.55em] text-red-900 uppercase"
-                >СКАНУВАННЯ БАЗ ДАНИХ...
-                </motion.div>
-              )}
-            </div>
-
-            {/* Права панель — метрики знахідка */}
-            <div className="absolute right-6 top-1/2 -translate-y-1/2 w-64 hidden lg:block">
-              <div className="border border-red-900/25 bg-black/70 p-4 space-y-3"
-                style={{ backdropFilter:'blur(10px)' }}>
-                <div className="flex items-center gap-2 pb-2 border-b border-red-900/20">
-                  <motion.div
-                    className="w-1.5 h-1.5 bg-red-800 rounded-full"
-                    animate={{ scale:[1,1.4,1], opacity:[1,0.5,1] }}
-                    transition={{ duration:1.2, repeat:Infinity }}
-                  />
-                  <span className="text-[7px] font-black text-red-900/80 tracking-[0.4em] uppercase">
-                    РЕЗУЛЬТАТИ ПОШУКУ
-                  </span>
-                </div>
-                {([
-                  { l:'ЗБІГІВ У ЄДР',      v: searchNodesBorn.length > 1 ? '28.4M' : '---',  c:'text-red-600' },
-                  { l:'ЗБІГІВ У НАЗК',     v: searchNodesBorn.length > 2 ? '14'     : '---',  c:'text-orange-500' },
-                  { l:'ІНТЕРПОЛ/МВС',      v: searchNodesBorn.length > 3 ? '3'      : '---',  c:'text-slate-400' },
-                  { l:'ФІН. ТРАНЗАКЦІЇ',   v: searchNodesBorn.length > 5 ? '$42.7M' : '---',  c:'text-red-500' },
-                  { l:'СТАТУС',           v: searchComplete ? 'ЗНАЙДЕНО'  : 'АНАЛІЗ...', c: searchComplete ? 'text-red-400' : 'text-slate-600' },
-                ] as {l:string,v:string,c:string}[]).map((item,idx) => (
-                  <motion.div key={idx}
-                    initial={{ opacity:0, x:8 }}
-                    animate={{ opacity:1, x:0 }}
-                    transition={{ delay:idx*0.2+0.5 }}
-                    className="flex justify-between items-center"
-                  >
-                    <span className="text-[6.5px] text-slate-700 uppercase tracking-wider">{item.l}</span>
-                    <motion.span
-                      animate={{ opacity:item.v === '---' ? [0.3,0.6,0.3] : 1 }}
-                      transition={{ duration:0.45, repeat:item.v==='---'?Infinity:0 }}
-                      className={`text-[8px] font-black font-mono tracking-wider ${item.c}`}
-                      style={item.v !== '---' && item.c.includes('red') ? {textShadow:'0 0 8px rgba(220,38,38,0.6)'} : {}}
-                    >{item.v}</motion.span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ▌ФАЗА 4 — TARGET ACQUISITION */}
-        {phase === 4 && (
           <motion.div key="p3" variants={fadeV} initial="initial" animate="animate" exit="exit"
             transition={smooth} className="absolute inset-0 flex items-center justify-center z-30">
 
@@ -1620,8 +1243,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           </motion.div>
         )}
 
-        {/* ▌ФАЗА 5 — SOVEREIGN REVEAL */}
-        {phase === 5 && (
+        {/* ▌ФАЗА 4 — SOVEREIGN REVEAL */}
+        {phase === 4 && (
           <motion.div key="p4" variants={fadeV} initial="initial" animate="animate" exit="exit"
             transition={{ duration:0.5 }}
             className="absolute inset-0 flex flex-col items-center justify-center z-30">

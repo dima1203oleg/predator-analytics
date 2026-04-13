@@ -123,12 +123,14 @@ const MarketIntelligence = lazy(() => import('./features/intelligence/MarketAnal
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
 // ✅ Нові бізнес-розвідувальні модулі v56.4
-const FinancialSigintView   = lazy(() => import('./features/intelligence/FinancialSigintView'));
-const UBOMapView            = lazy(() => import('./features/intelligence/UBOMapView'));
-const GeopoliticalRadarView = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
-const MATargetScannerView   = lazy(() => import('./features/intelligence/MATargetScannerView'));
-const PortfolioRiskView     = lazy(() => import('./features/dashboard/PortfolioRiskView'));
-const HypothesisEngineView  = lazy(() => import('./features/ai/HypothesisEngineView'));
+const FinancialSigintView    = lazy(() => import('./features/intelligence/FinancialSigintView'));
+const UBOMapView             = lazy(() => import('./features/intelligence/UBOMapView'));
+const GeopoliticalRadarView  = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
+const MATargetScannerView    = lazy(() => import('./features/intelligence/MATargetScannerView'));
+const PortfolioRiskView      = lazy(() => import('./features/dashboard/PortfolioRiskView'));
+const HypothesisEngineView   = lazy(() => import('./features/ai/HypothesisEngineView'));
+const ConversationIntelView  = lazy(() => import('./features/osint/ConversationIntelView'));
+const MarketEntryView        = lazy(() => import('./features/intelligence/MarketEntryView'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -315,13 +317,13 @@ export const AppRoutesNew = () => {
             <Route path="/ubo-map"            element={<UBOMapView />} />
             <Route path="/pep-tracker"        element={<UBOMapView />} />
             <Route path="/shadow-director"    element={<UBOMapView />} />
-            {/* Нові сторінки v56.4 — повні реалізації */}
+            {/* ✅ НОВІ МОДУЛІ v56.4 — всі реальні вью */}
             <Route path="/portfolio-risk"     element={<PortfolioRiskView />} />
             <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
             <Route path="/ma-scanner"         element={<MATargetScannerView />} />
-            <Route path="/market-entry"       element={<MarketAnalyticsPremium />} />
+            <Route path="/market-entry"       element={<MarketEntryView />} />
             <Route path="/ai-hypothesis"      element={<HypothesisEngineView />} />
-            <Route path="/conversation-intel" element={<SearchConsole />} />
+            <Route path="/conversation-intel" element={<ConversationIntelView />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

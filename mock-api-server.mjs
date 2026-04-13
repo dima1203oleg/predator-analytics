@@ -1646,6 +1646,230 @@ app.get('/api/v1/ai/agents', (req, res) => {
 });
 
 // =============================================
+// 💰 v56.4 НОВІ МОДУЛІ — MOCK API ENDPOINTS
+// =============================================
+
+// 🔴 FINANCIAL SIGINT — транзакції, офшори, заморожені активи
+app.get('/api/v1/financial/swift-transactions', (req, res) => {
+  res.json({
+    summary: { total_suspicious: 370, alert_count: 4 + Math.floor(Math.random()*2), last_update: new Date().toISOString() },
+    transactions: [
+      { id:'TX-8821', from:'ТОВ "АГРО-ЛІДЕР"', to:'Kyoto Holdings Ltd (BVI)', amount: 4700000, currency:'USD', time: new Date().toISOString(), risk:'КРИТИЧНИЙ', type:'Shell Company', route:'UA → BVI → ОАЕ', flagged: true },
+      { id:'TX-7203', from:'БФ "ВІДРОДЖЕННЯ"', to:'Sunrise Capital Ltd (CY)',amount: 2100000, currency:'USD', time: new Date(Date.now()-3600000).toISOString(), risk:'ВИСОКИЙ', type:'Layering', route:'UA → CY → MT', flagged: true },
+      { id:'TX-6654', from:'ПРАТ "СХІД-ТРЕЙД"', to:'Nordic Consult AB', amount: 890000, currency:'EUR', time: new Date(Date.now()-7200000).toISOString(), risk:'СЕРЕДНІЙ', type:'Structuring', route:'UA → SE → LU', flagged: false },
+      { id:'TX-5509', from:'ФОП ТКАЧЕНКО В.М.', to:'Gulf Meridian FZCO (UAE)', amount: 1400000, currency:'AED', time: new Date(Date.now()-10800000).toISOString(), risk:'КРИТИЧНИЙ', type:'PEP Exposure', route:'UA → AE → SA', flagged: true },
+    ]
+  });
+});
+
+app.get('/api/v1/financial/offshore-entities', (req, res) => {
+  res.json({
+    total: 247,
+    by_jurisdiction: [
+      { jur:'BVI', count: 94, amount: 142000000 },
+      { jur:'Кіпр', count: 67, amount: 98000000 },
+      { jur:'ОАЕ', count: 45, amount: 67000000 },
+      { jur:'Белізе', count: 27, amount: 41000000 },
+      { jur:'Інші', count: 14, amount: 22000000 },
+    ],
+    top_risk: [
+      { name:'Kyoto Holdings Ltd', jur:'BVI', links: 14, risk: 97, amount: 47000000, ubo:'ВСТАНОВЛЕНО' },
+      { name:'Gulf Meridian FZCO', jur:'ОАЕ', links: 11, risk: 94, amount: 31000000, ubo:'ВСТАНОВЛЕНО' },
+      { name:'Sunrise Capital Ltd', jur:'Кіпр', links: 8, risk: 89, amount: 21000000, ubo:'ЧАСТКОВО' },
+    ]
+  });
+});
+
+app.get('/api/v1/financial/frozen-assets', (req, res) => {
+  res.json({
+    total_amount: 41800000,
+    count: 4,
+    assets: [
+      { entity:'ПУМБ Рахунок 4521', amount: 12400000, date:'2024-12-01', authority:'РНБО', reason:'Санкційний список', status:'ЗАМОРОЖЕНО' },
+      { entity:'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: 7800000, date:'2025-01-15', authority:'EU SDN', reason:'Фінансування агресії', status:'ЗАМОРОЖЕНО' },
+      { entity:'Нерухомість вул. Хрещатик 14А', amount: 3100000, date:'2025-02-20', authority:'НАБУ', reason:'Справа 1042/2025', status:'В РОЗГЛЯДІ' },
+      { entity:'Яхта "SOVEREIGN"', amount: 18500000, date:'2025-03-08', authority:'MAS', reason:'Ухилення від санкцій', status:'КОНФІСКОВАНО' },
+    ]
+  });
+});
+
+app.get('/api/v1/financial/contract-anomalies', (req, res) => {
+  res.json({
+    total_anomalies: 18,
+    items: [
+      { item:'Ліки (Paracetamol 1000mg)', contract_price: 310, market_price: 95, overprice_pct: 226, risk:'КРИТИЧНИЙ' },
+      { item:'Боєприпаси 7.62mm', contract_price: 4700, market_price: 2100, overprice_pct: 124, risk:'КРИТИЧНИЙ' },
+      { item:'Пальне ДП-Євро5', contract_price: 1280, market_price: 720, overprice_pct: 78, risk:'ВИСОКИЙ' },
+      { item:'Пшениця 2 сорт', contract_price: 540, market_price: 320, overprice_pct: 69, risk:'ВИСОКИЙ' },
+    ]
+  });
+});
+
+// 🔵 UBO / БЕНЕФІЦІАРНА КАРТА
+app.get('/api/v1/ubo/map/:edrpou', (req, res) => {
+  const { edrpou } = req.params;
+  res.json({
+    edrpou,
+    company: 'ТОВ "АГРО-ЛІДЕР ГРУП"',
+    ubo_tree: {
+      id:'root', name:'ТОВ "АГРО-ЛІДЕР ГРУП"', type:'company', risk: 87,
+      children: [
+        { id:'c1', name:'Kyoto Holdings Ltd', type:'offshore', share: 60, risk: 94, country:'BVI',
+          children: [{ id:'p1', name:'Ткаченко В.М.', type:'person', share: 100, risk: 91, pep: true }] },
+        { id:'c2', name:'Держчастка', type:'state', share: 10, risk: 20 }
+      ]
+    },
+    pep_alerts: 2,
+    offshore_levels: 2,
+    confidence: 94
+  });
+});
+
+app.get('/api/v1/ubo/pep-database', (req, res) => {
+  res.json([
+    { name:'Ткаченко В.М.', position:'Нар. депутат III скликання', risk: 91, links: 8, status:'АКТИВНИЙ' },
+    { name:'Петренко М.О.', position:'Заст. міністра (2018-2021)', risk: 88, links: 12, status:'АКТИВНИЙ' },
+    { name:'Коваль Д.С.', position:'Голова ДФСУ (2019-2022)', risk: 76, links: 6, status:'ЗАВЕРШЕНО' },
+  ]);
+});
+
+// 💼 PORTFOLIO RISK / P&L
+app.get('/api/v1/portfolio/risk-positions', (req, res) => {
+  const baseRisk = 127.4 + (Math.random() - 0.5) * 2;
+  res.json({
+    summary: {
+      total_exposure: 847000000,
+      at_risk: Math.round(baseRisk * 1e6),
+      at_risk_pct: Number(((baseRisk / 847) * 100).toFixed(1)),
+      critical_risk: 41800000,
+      high_risk: 58200000,
+      change_24h: 4200000,
+      last_update: new Date().toISOString()
+    },
+    positions: [
+      { id:'POS-001', counterparty:'KYOTO HOLDINGS LTD (BVI)', type:'Торговий кредит', exposure: 18400000, at_risk: 18400000, risk_pct: 100, risk_level:'critical', trigger:'SDN List hit — OFAC 2025-03-15', days_to_maturity: 12 },
+      { id:'POS-002', counterparty:'ТОВ "МЕТАЛУРГ-ІНВЕСТ"', type:'Дебіторська заборгованість', exposure: 12100000, at_risk: 9700000, risk_pct: 80, risk_level:'critical', trigger:'Відкрито банкрутство (справа №910/4521/25)', days_to_maturity: 0 },
+      { id:'POS-003', counterparty:'SUNRISE CAPITAL (CY)', type:'Інвестиційна угода', exposure: 8200000, at_risk: 6100000, risk_pct: 74, risk_level:'high', trigger:'Власник під слідством ФБР (PEP + INTERPOL)', days_to_maturity: 45 },
+      { id:'POS-004', counterparty:'АГРО-ЛІДЕР ГРУП', type:'Контракт на поставку', exposure: 22500000, at_risk: 5800000, risk_pct: 26, risk_level:'high', trigger:'UBO через офшор · Shell структура виявлена', days_to_maturity: 88 },
+    ]
+  });
+});
+
+// 🧠 AI HYPOTHESES
+app.get('/api/v1/ai/hypotheses', (req, res) => {
+  res.json([
+    { id:'HYP-0821', title:'Схема виведення активів через BVI-структуру', category:'financial', status:'confirmed', confidence: 94, impact_value: 18400000, created_at: new Date(Date.now()-7200000).toISOString(), ai_model:'PREDATOR-SIGINT-7B', processing_ms: 2400 },
+    { id:'HYP-0734', title:'Картельна змова на тендерах Міноборони', category:'corruption', status:'probable', confidence: 81, impact_value: 67000000, created_at: new Date(Date.now()-14400000).toISOString(), ai_model:'PREDATOR-GRAPH-4B', processing_ms: 3100 },
+    { id:'HYP-0698', title:'Санкційне ухилення через ланцюг ОАЕ → UA', category:'sanctions', status:'probable', confidence: 77, impact_value: 23000000, created_at: new Date(Date.now()-21600000).toISOString(), ai_model:'PREDATOR-SANCTIONS-3B', processing_ms: 1800 },
+  ]);
+});
+
+app.post('/api/v1/ai/hypotheses/generate', (req, res) => {
+  const { prompt } = req.body;
+  setTimeout(() => {
+    res.json({
+      id: `HYP-${Math.floor(Math.random()*9000)+1000}`,
+      title: `Автогенерована гіпотеза: ${prompt?.slice(0, 60) || 'Аналіз аномалій'}`,
+      category: 'financial',
+      status: 'possible',
+      confidence: 60 + Math.floor(Math.random()*25),
+      impact_value: Math.floor(Math.random()*50)*1000000,
+      ai_model: 'PREDATOR-ENSEMBLE-v56',
+      processing_ms: 800 + Math.floor(Math.random()*2000),
+      evidence_count: 2 + Math.floor(Math.random()*4),
+      created_at: new Date().toISOString()
+    });
+  }, 800);
+});
+
+// 🗺️ GEOPOLITICAL RADAR
+app.get('/api/v1/geo/risk-events', (req, res) => {
+  res.json({
+    global_risk_index: 82 + Math.floor(Math.random()*5),
+    active_zones: 7,
+    sanctions_2025: 1580,
+    events: [
+      { time:'04:12', region:'Близький Схід', event:'Хоуті атакували контейнеровоз PACIFIC STAR', level:'КРИТИЧНИЙ' },
+      { time:'03:47', region:'Схід Європи', event:'ЄС погодив нові обмеження на рос. банки', level:'ВАЖЛИВИЙ' },
+      { time:'02:18', region:'Тих. Дуга', event:'Китай провів навчання біля Тайваню', level:'ВАЖЛИВИЙ' },
+      { time:'01:55', region:'Тих. Дуга', event:'КНДР запустила 2 балістичні ракети', level:'КРИТИЧНИЙ' },
+    ],
+    regions: [
+      { id:'ua-ru', name:'Схід Європи', risk_level: 98, events: 14, sanction_count: 847, trend:'up' },
+      { id:'cn-tw', name:'Тихоокеанська Дуга', risk_level: 74, events: 8, sanction_count: 213, trend:'up' },
+      { id:'me', name:'Близький Схід', risk_level: 81, events: 11, sanction_count: 421, trend:'stable' },
+      { id:'af', name:'Африканський Вектор', risk_level: 56, events: 5, sanction_count: 87, trend:'up' },
+      { id:'eu', name:'Центральна Європа', risk_level: 31, events: 3, sanction_count: 12, trend:'down' },
+    ]
+  });
+});
+
+// 🎯 M&A TARGET SCANNER
+app.get('/api/v1/ma/targets', (req, res) => {
+  const { status, min_score, sector } = req.query;
+  res.json({
+    total: 127,
+    top_targets: [
+      { id:'ma-001', name:'ТОВ "АгроМаш-Схід"', sector:'Сільгоспмашинобудування', opportunity_score: 91, distress_score: 87, price_target_min: 3200000, price_target_max: 5500000, recommendation:'acquisition', location:'Дніпро', status:'distress' },
+      { id:'ma-002', name:'ПАТ "КАРГО-ТРАНС"', sector:'Вантажні перевезення', opportunity_score: 84, distress_score: 61, price_target_min: 9000000, price_target_max: 14000000, recommendation:'equity', location:'Одеса', status:'restructuring' },
+      { id:'ma-003', name:'ТОВ "МедТех Україна"', sector:'Медичне обладнання', opportunity_score: 96, distress_score: 38, price_target_min: 4500000, price_target_max: 7800000, recommendation:'acquisition', location:'Харків', status:'opportunity' },
+      { id:'ma-005', name:'ТОВ "ЕкоЕнерго Захід"', sector:'Відновлювана енергетика', opportunity_score: 98, distress_score: 28, price_target_min: 18000000, price_target_max: 28000000, recommendation:'equity', location:'Львів', status:'watch' },
+    ]
+  });
+});
+
+// 🌍 MARKET ENTRY
+app.get('/api/v1/market/entry-scores', (req, res) => {
+  res.json([
+    { country:'Польща', flag:'🇵🇱', region:'ЦСЄ', sector:'Агро / Логістика', entry_score: 88, market_size_eur: 42e9, growth_rate: 6.2, recommendation:'strong-buy', capex_min_eur: 800000, time_to_revenue:'6-9 місяців' },
+    { country:'Румунія', flag:'🇷🇴', region:'ЦСЄ', sector:'IT / Аутсорсинг', entry_score: 82, market_size_eur: 18e9, growth_rate: 11.2, recommendation:'strong-buy', capex_min_eur: 120000, time_to_revenue:'3-6 місяців' },
+    { country:'Німеччина', flag:'🇩🇪', region:'ЗА', sector:'Технології / B2B', entry_score: 79, market_size_eur: 210e9, growth_rate: 3.1, recommendation:'buy', capex_min_eur: 2100000, time_to_revenue:'12-18 місяців' },
+    { country:'ОАЕ', flag:'🇦🇪', region:'MENA', sector:'Фінтек / Нерухомість', entry_score: 73, market_size_eur: 180e9, growth_rate: 8.4, recommendation:'buy', capex_min_eur: 450000, time_to_revenue:'4-8 місяців' },
+    { country:'Казахстан', flag:'🇰🇿', region:'ЦА', sector:'Сировина / Агро', entry_score: 61, market_size_eur: 28e9, growth_rate: 4.7, recommendation:'hold', capex_min_eur: 280000, time_to_revenue:'12-24 місяці' },
+  ]);
+});
+
+// 📡 CONVERSATION INTEL
+app.get('/api/v1/intel/channels', (req, res) => {
+  res.json([
+    { id:'ch-001', name:'Rezident UA', handle:'@rezident_ua', platform:'telegram', subscribers: 1200000, posts_per_day: 24, risk_score: 78, influence: 91, is_monitored: true },
+    { id:'ch-003', name:'Legitimniy', handle:'@legitimniy', platform:'telegram', subscribers: 2100000, posts_per_day: 38, risk_score: 85, influence: 94, is_monitored: true },
+    { id:'ch-006', name:'Dark UA Intel', handle:'@dark_ua_intel', platform:'forum', subscribers: 45000, posts_per_day: 8, risk_score: 94, influence: 43, is_monitored: true },
+  ]);
+});
+
+app.get('/api/v1/intel/messages', (req, res) => {
+  const { platform, risk_level, limit = 20 } = req.query;
+  res.json({
+    total_today: 8234 + Math.floor(Math.random()*50),
+    messages: [
+      { id:'msg-001', channel:'@legitimniy', platform:'telegram', text:'АГРО-ЛІДЕР ГРУП отримало $47M з держбюджету. Власники — в Дубаї.', time: new Date(Date.now()-300000).toISOString(), views: 142000, risk_level:'critical', is_disinfo: false, entities:['АГРО-ЛІДЕР ГРУП','Ткаченко В.М.'] },
+      { id:'msg-003', channel:'@dark_ua_intel', platform:'forum', text:'ЗЛИВ: база даних рахунків ПАТ "КАРГО-ТРАНС". 847 транзакцій на $22M.', time: new Date(Date.now()-1800000).toISOString(), views: 12000, risk_level:'critical', is_disinfo: false, entities:['КАРГО-ТРАНС'] },
+      { id:'msg-004', channel:'@legitimniy', platform:'telegram', text:'Зеленський передав Залужному список. (Фейк — не підтверджено)', time: new Date(Date.now()-2700000).toISOString(), views: 310000, risk_level:'high', is_disinfo: true, entities:['Зеленський','Залужний'] },
+    ].slice(0, Number(limit))
+  });
+});
+
+app.get('/api/v1/intel/hot-topics', (req, res) => {
+  res.json([
+    { topic:'НАБУ розслідування', mentions: 1240, trend:'up', risk:'high' },
+    { topic:'Офшорні виведення', mentions: 890, trend:'up', risk:'critical' },
+    { topic:'Ткаченко В.М.', mentions: 541, trend:'up', risk:'critical' },
+    { topic:'Дезінформація РФ', mentions: 1890, trend:'up', risk:'high' },
+    { topic:'BVI структури', mentions: 423, trend:'up', risk:'critical' },
+  ]);
+});
+
+app.get('/api/v1/intel/disinfo-alerts', (req, res) => {
+  res.json({
+    total_detected: 3,
+    alerts: [
+      { id:'dis-001', channel:'@legitimniy', text:'Зеленський передав Залужному список...', views: 310000, detected_at: new Date(Date.now()-2700000).toISOString(), ai_confidence: 0.94 },
+    ]
+  });
+});
+
+// =============================================
 // 🧠 AI QUERY — ЗАЧІПАЄ РЕАЛЬНІ ДАНІ З БАЗИ
 // =============================================
 
