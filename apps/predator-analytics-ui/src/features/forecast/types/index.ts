@@ -21,13 +21,20 @@ export interface ForecastResponse {
     product_name: string;
     country_code?: string;
     model_used: string;
+    model?: string;
     source: 'real' | 'synthetic';
     confidence_score: number;
     mape: number;
     data_points_used: number;
+    months_ahead?: number;
     forecast: ForecastPoint[];
     feature_importance?: Record<string, number>;
     interpretation_uk: string;
+    metrics?: {
+        mae?: number;
+        rmse?: number;
+        mape?: number;
+    };
 }
 
 export interface ForecastModel {

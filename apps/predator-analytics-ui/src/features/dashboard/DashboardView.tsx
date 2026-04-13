@@ -41,7 +41,10 @@ const formatCurrency = (val: number): string => {
   return `$${val}`;
 };
 
-const formatNumber = (val: number): string => val.toLocaleString('uk-UA');
+const formatNumber = (val: number | undefined | null): string => {
+  if (val == null || typeof val !== 'number' || isNaN(val)) return '—';
+  return val.toLocaleString('uk-UA');
+};
 
 const timeAgo = (ts: string): string => {
   const diff = Date.now() - new Date(ts).getTime();
@@ -633,11 +636,11 @@ const DashboardView: React.FC = () => {
                       </div>
                       <div className="space-y-6">
                         {[
-                          { key: 'POSTGRESQL', label: 'Relational_Core', status: 'UP', count: overview!.infrastructure.postgresql.records, icon: Database, color: 'emerald' },
-                          { key: 'OPENSEARCH', label: 'Neural_Search', status: 'UP', count: overview!.infrastructure.opensearch.documents, icon: Search, color: 'blue' },
-                          { key: 'QDRANT', label: 'Vector_Space', status: 'UP', count: overview!.infrastructure.qdrant.vectors, icon: Brain, color: 'purple' },
-                          { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: overview!.infrastructure.neo4j.nodes, icon: Network, color: 'indigo' },
-                          { key: 'MINIO', label: 'Object_Nexus', status: 'UP', count: overview!.infrastructure.minio.files, icon: HardDrive, color: 'cyan' },
+                          { key: 'POSTGRESQL', label: 'Relational_Core', status: 'UP', count: (overview!.infrastructure as any)?.postgresql?.records ?? 0, icon: Database, color: 'emerald' },
+                          { key: 'OPENSEARCH', label: 'Neural_Search', status: 'UP', count: (overview!.infrastructure as any)?.opensearch?.documents ?? 0, icon: Search, color: 'blue' },
+                          { key: 'QDRANT', label: 'Vector_Space', status: 'UP', count: (overview!.infrastructure as any)?.qdrant?.vectors ?? 0, icon: Brain, color: 'purple' },
+                          { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: (overview!.infrastructure as any)?.neo4j?.nodes ?? 0, icon: Network, color: 'indigo' },
+                          { key: 'MINIO', label: 'Object_Nexus', status: 'UP', count: (overview!.infrastructure as any)?.minio?.files ?? 0, icon: HardDrive, color: 'cyan' },
                         ].map((item) => (
                           <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-slate-500/30 transition-all flex items-center justify-between group shadow-xl">
                              <div className="flex items-center gap-6">
@@ -682,11 +685,11 @@ const DashboardView: React.FC = () => {
             >
               {[
                 `СИСТЕМА: v56.1.4 NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
-                `ГРАФ: ${formatNumber(overview?.summary.graph_nodes!)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges!)} ЗВ'ЯЗКІВ`,
-                `ТОП РИЗИК: ${stats?.topRisk}% [${overview?.top_risk_companies?.[0]?.name}]`,
-                `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents!)} ДОКУМЕНТІВ`,
+                `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
+                `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
+                `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,
                 `НЕЙРО-АКТИВНІСТЬ: 78% | OODA_LATENCY: 5.8ms`,
-                `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd!)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations!)}`
+                `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">
                   <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse shadow-[0_0_15px_#dc2626]" />
