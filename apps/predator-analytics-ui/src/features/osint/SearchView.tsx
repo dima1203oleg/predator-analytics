@@ -238,13 +238,15 @@ const CompanyCard = ({
                 icon={
                     <div
                         className={cn(
-                            'flex h-14 w-14 items-center justify-center rounded-2xl border text-cyan-300',
+                            'flex h-14 w-14 items-center justify-center rounded-2xl border transition-all duration-500 group-hover:scale-110',
                             company.risk === 'critical'
                                 ? 'border-rose-500/30 bg-rose-500/10 text-rose-300'
-                                : 'border-cyan-500/20 bg-cyan-500/10',
+                                : company.type === 'person'
+                                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
+                                    : 'border-cyan-500/20 bg-cyan-500/10 text-cyan-300',
                         )}
                     >
-                        <Building2 size={28} />
+                        {company.type === 'person' ? <User size={28} /> : <Building2 size={28} />}
                     </div>
                 }
                 status={company.status === 'active' ? 'success' : 'warning'}
@@ -505,7 +507,7 @@ const CompanyCard = ({
                                     entityName={company.name}
                                     decision={buildDecisionSummary(company)}
                                     riskScore={company.riskScore}
-                                    explanation={company.explanation}
+                                    explanation={company.explanation as any}
                                 />
 
                                 <div className="mt-8 flex flex-wrap gap-3 border-t border-white/5 pt-6 text-xs text-slate-500">

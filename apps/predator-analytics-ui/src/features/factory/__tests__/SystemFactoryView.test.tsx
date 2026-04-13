@@ -56,7 +56,7 @@ vi.mock('lucide-react', async (importOriginal) => {
   return new Proxy(actual, {
     get: (target, prop) => {
       if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
-        return (props: React.SVGProps<SVGSVGElement>) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+        return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
       }
       return Reflect.get(target, prop);
     },

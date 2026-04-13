@@ -41,7 +41,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { factoryApi } from '@/services/api/factory';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import {
   normalizeAutoFactorySnapshot,
   type AutoFactoryBugRecord,

@@ -22,7 +22,7 @@ const PHASE_DURATIONS: Record<Phase, number> = {
   0: 1800,  // VOID ACTIVATION
   1: 2200,  // CRYPTOGRAPHIC INIT
   2: 3200,  // GLOBAL DOMINANCE
-  3: 3500,  // TARGET ACQUISITION
+  3: 5600,  // TARGET ACQUISITION (SEARCH + LOCK)
   4: 6000,  // SOVEREIGN REVEAL
   5: 1400,  // FADE OUT
 };
@@ -290,17 +290,17 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
   const DB_SCAN_LINES = [
     'PARSING MULTI-JURISDICTIONAL DATABASES...',
-    'GLOBAL DATACENTERS ONLINE [4.8 EXABYTES]...',
+    'GLOBAL DATACENTERS ONLINE [12.4 EXABYTES]...',
+    'SCANNING UA_CUSTOMS_ASYCUDA: SEARCHING...',
     'INTERCEPTING BANKING SWIFT/SEPA TRAFFIC...',
     'SCANNING INTERPOL & OFAC RED NOTICES...',
-    'QUANTUM DECIPHERING SECURE COMM-LINKS...',
-    'CROSS-REFERENCING SHADOW REGISTRIES...',
+    'NEO4J_GRAPH: DEEP TRAVERSAL [L15]...',
     'DE-ANONYMIZING OFFSHORE BENEFICIARIES...',
-    'AI HUNTER-KILLER PROTOCOL ENGAGED...',
-    'TARGET SIGNATURE MATCH: 99.98%...',
-    'LOCKING ON COORDINATES...',
+    'AI HUNTER-KILLER PROTOCOL: LOCKING...',
+    'TARGET SIGNATURE MATCH: 99.99%',
+    'COORDINATES: LAT 50.4501 LON 30.5234',
     '▌ PREPARING DIGITAL DETONATION...',
-    '▌ TARGET IDENTIFIED. NOWHERE TO HIDE.',
+    '▌ TARGET IDENTIFIED. ВІД НАС НЕ СХОВАЄШСЯ.',
   ];
 
   /* ── Typewriter ── */
@@ -323,13 +323,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       if (idx >= DB_SCAN_LINES.length) return;
       const line = DB_SCAN_LINES[idx];
       setDbLines(p => [...p, line]);
-      if (line.includes('NOWHERE TO HIDE')) setTargetLocked(true);
+      if (line.includes('ВІД НАС НЕ СХОВАЄШСЯ')) setTargetLocked(true);
       idx++;
       const delay =
         line.includes('NOWHERE TO HIDE')   ? 700 :
         line.includes('DETONATION')        ? 550 :
         line.includes('HUNTER-KILLER')     ? 400 :
-        175 + Math.random() * 110;
+        280 + Math.random() * 180;
       setTimeout(addLine, delay);
     };
     const t = setTimeout(addLine, 300);
@@ -399,6 +399,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
     ctx.save();
     ctx.translate(sx, sy);
+
+    // Detonation Flash
+    if (targetLocked) {
+      const flashAlpha = Math.sin(now * 0.05) * 0.3 + 0.4;
+      ctx.fillStyle = `rgba(255, 0, 0, ${flashAlpha})`;
+      ctx.fillRect(0, 0, W, H);
+      // Chromatic anomaly
+      ctx.translate((Math.random()-0.5)*15, (Math.random()-0.5)*15);
+    }
 
     const cx = W / 2, cy = H / 2;
 
@@ -629,7 +638,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     /* ══ ФАЗА 3: TARGET ACQUISITION ══ */
     if (cp === 3) {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[3]);
-      const lockP = Math.min(1, elapsed / 2800);
+      const lockP = Math.min(1, elapsed / 4400);
 
       ctx.save(); ctx.translate(cx, cy);
 
@@ -693,6 +702,90 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       ctx.moveTo(0,-H/2); ctx.lineTo(0,-gap);
       ctx.moveTo(0,gap);  ctx.lineTo(0,H/2);
       ctx.stroke(); ctx.setLineDash([]);
+
+      // ─── NEW: SEARCH VISUALIZATION (DYNAMIC GRAPH) ───
+      const numNodes = 14;
+      ctx.save();
+      for (let i = 0; i < numNodes; i++) {
+        const appearT = i * 280; // Each node appears over time
+        if (elapsed > appearT) {
+           const np = Math.min(1, (elapsed - appearT) / 500); // 0 to 1 scale
+           const ang = (i * 137.5) * (Math.PI / 180) + now * 0.00015;
+           const dist = 45 + (i % 6) * 45;
+           const isTarget = i === numNodes - 1;
+           const randOsc = Math.sin(now * 0.002 + i) * 15;
+           
+           const nx = Math.cos(ang) * (dist + randOsc);
+           const ny = Math.sin(ang) * (dist + randOsc);
+           
+           const tnX = isTarget ? 0 : nx;
+           const tnY = isTarget ? 0 : ny;
+
+           // Links to previous nodes
+           if (i > 0 && !isTarget) {
+             const prevAng = ((i - 1) * 137.5) * (Math.PI / 180) + now * 0.00015;
+             const prevDist = 45 + ((i - 1) % 6) * 45;
+             const pRand = Math.sin(now * 0.002 + (i - 1)) * 15;
+             const px = Math.cos(prevAng) * (prevDist + pRand);
+             const py = Math.sin(prevAng) * (prevDist + pRand);
+
+             ctx.strokeStyle = `rgba(220, 20, 20, ${0.35 * np})`;
+             ctx.lineWidth = 0.8;
+             if (Math.random() > 0.03) { // Slight flicker
+               ctx.beginPath();
+               ctx.moveTo(px, py);
+               ctx.lineTo(tnX, tnY);
+               ctx.stroke();
+             }
+           }
+
+           if (isTarget && lockP > 0.85) {
+               // Final fixation connection lines
+               for(let j = 0; j < numNodes - 1; j++) {
+                   const jAng = (j * 137.5) * (Math.PI / 180) + now * 0.00015;
+                   const jDist = 45 + (j % 6) * 45;
+                   const jRand = Math.sin(now * 0.002 + j) * 15;
+                   const jx = Math.cos(jAng) * (jDist + jRand);
+                   const jy = Math.sin(jAng) * (jDist + jRand);
+
+                   const flash = Math.random() > 0.2 ? 0.8 : 0.2;
+                   ctx.strokeStyle = `rgba(255, 30, 30, ${flash * np})`;
+                   ctx.lineWidth = 1.2;
+                   ctx.beginPath();
+                   ctx.moveTo(jx, jy);
+                   ctx.lineTo(tnX, tnY);
+                   ctx.stroke();
+               }
+           }
+           
+           // Node circle
+           const pulse = (Math.sin(now * 0.006 + i * 2) * 0.5 + 0.5) * 0.5;
+           ctx.fillStyle = isTarget ? `rgba(255, 0, 0, ${0.45 * np + pulse})` : `rgba(200, 15, 15, ${0.15 * np + pulse*0.5})`;
+           ctx.beginPath();
+           ctx.arc(tnX, tnY, isTarget ? 15 + pulse*12 : 3.5 + pulse*3, 0, Math.PI * 2);
+           ctx.fill();
+           ctx.strokeStyle = `rgba(255, 40, 40, ${np})`;
+           ctx.lineWidth = isTarget ? 2 : 1;
+           ctx.stroke();
+
+           // Floating signatures overlay
+           if (np > 0.5) {
+             const lblA = (np - 0.5) * 2;
+             ctx.fillStyle = isTarget ? `rgba(255, 255, 255, ${lblA})` : `rgba(255, 100, 100, ${lblA * 0.65})`;
+             ctx.font = isTarget ? '8px monospace' : '5px monospace';
+             const scrmbl = Math.random() > 0.85 ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) : '0';
+             const sigId = `O.ID-${(i * 991).toString(16).toUpperCase()}-${scrmbl}`;
+             const sig = isTarget ? `[ TGT-LOCK / MATCH ]` : sigId;
+             
+             ctx.fillText(sig, tnX + (isTarget ? -38 : 7), tnY - (isTarget ? 38 : 5));
+             if (isTarget) {
+                 ctx.fillStyle = `rgba(255, 80, 80, ${lblA})`;
+                 ctx.fillText(`CONFIDENCE: 99.98%`, tnX - 38, tnY - 26);
+             }
+           }
+        }
+      }
+      ctx.restore();
 
       // Пульсуюче ядро при lock
       if (lockP > 0.75) {
@@ -828,7 +921,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   }, [render]);
 
   /* ── Skip ── */
-  const [skipAllowed, setSkipAllowed] = useState(false);
+  const [skipAllowed, setSkipAllowed] = useState(true); // Always allowed in dev/mirror mode
   useEffect(() => { const t = setTimeout(() => setSkipAllowed(true), 1500); return () => clearTimeout(t); }, []);
   const handleSkip = () => {
     if (!skipAllowed) return;
@@ -1351,10 +1444,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="space-y-1.5"
               >
                 <div className="text-[9px] text-slate-600 tracking-[0.55em] uppercase">
-                  OSINT · МИТНА АНАЛІТИКА · КОРПОРАТИВНА РОЗВІДКА · СУВЕРЕННИЙ КОНТРОЛЬ
+                  OSINT · МИТНА РОЗВІДКА · КОРПОРАТИВНИЙ КОНТРОЛЬ · СУВЕРЕННИЙ ПРЕДАТОР
                 </div>
                 <div className="text-[7px] text-slate-800 tracking-[0.4em] uppercase">
-                  1.2 PETABYTE · 47 SATELLITE FEEDS · 23 STATE REGISTRIES · AI INFERENCE
+                  12.4 EXABYTE · 47 SATELLITE FEEDS · 23 STATE REGISTRIES · NEURAL CORE v56.4
                 </div>
               </motion.div>
 
@@ -1363,22 +1456,33 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 initial={{ opacity:0, y:12 }}
                 animate={{ opacity:1, y:0 }}
                 transition={{ delay:2.3, duration:0.9 }}
-                className="space-y-2"
+                className="space-y-4"
               >
                 <motion.p
                   animate={{
-                    opacity:[0.6,1,0.6],
+                    opacity:[0.8,1,0.8],
                     textShadow:[
-                      '0 0 15px rgba(220,38,38,0.4),0 0 40px rgba(220,38,38,0.15)',
-                      '0 0 30px rgba(220,38,38,1),0 0 80px rgba(220,38,38,0.5)',
-                      '0 0 15px rgba(220,38,38,0.4),0 0 40px rgba(220,38,38,0.15)',
+                      '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.25)',
+                      '0 0 40px rgba(220,38,38,1),0 0 120px rgba(220,38,38,0.6)',
+                      '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.25)',
                     ],
                   }}
-                  transition={{ duration:2.5, repeat:Infinity }}
-                  className="text-[14px] md:text-[17px] font-black tracking-[0.45em] text-red-600 uppercase"
+                  transition={{ duration:1.8, repeat:Infinity }}
+                  className="text-[16px] md:text-[22px] font-black tracking-[0.55em] text-red-600 uppercase italic"
                 >
-                  NO ONE CAN HIDE. NO ONE EVER HAS.
+                  ВІД НАС НЕ СХОВАЄШСЯ. НІХТО НЕ ЗМІГ.
                 </motion.p>
+                <div className="flex items-center justify-center gap-6">
+                  <div className="h-px w-20 bg-red-900/30"/>
+                  <motion.p
+                    animate={{ opacity:[0.4,0.9,0.4] }}
+                    transition={{ duration:3, repeat:Infinity, delay:0.8 }}
+                    className="text-[10px] text-red-100 tracking-[0.65em] uppercase font-black italic"
+                  >
+                    TOTAL VISIBILITY · ZERO UNCERTAINTY
+                  </motion.p>
+                  <div className="h-px w-20 bg-red-900/30"/>
+                </div>
                 <motion.p
                   animate={{ opacity:[0.4,0.8,0.4] }}
                   transition={{ duration:3.5, repeat:Infinity, delay:0.8 }}

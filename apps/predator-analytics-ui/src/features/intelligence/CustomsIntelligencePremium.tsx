@@ -1,67 +1,31 @@
 /**
- * 💎 Premium Customs Intelligence Dashboard
- *
- * Комерційна платформа аналітики митних даних
- * Для бізнесу та контролюючих органів
+ * 💎 CUSTOMS PREMIUM // МИТНИЙ ПРО | v56.2-TITAN
+ * PREDATOR Analytics — Commercial Intelligence & Deep Market Analysis
+ * 
+ * Глибока аналітика для бізнесу: Аналіз конкурентів, ринкові ніші,
+ * прогнози цін та ШІ-інсайти.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  TrendingUp,
-  TrendingDown,
-  Package,
-  DollarSign,
-  Globe,
-  Building2,
-  Users,
-  ShieldAlert,
-  Eye,
-  Search,
-  Filter,
-  Download,
-  Star,
-  Crown,
-  Lock,
-  Zap,
-  Target,
-  AlertTriangle,
-  ArrowUpRight,
-  ArrowDownRight,
-  BarChart3,
-  PieChart,
-  Map,
-  FileText,
-  Bell,
-  Sparkles,
-  ChevronRight
+  TrendingUp, TrendingDown, Package, DollarSign, Globe,
+  Building2, Users, ShieldAlert, Eye, Search, Filter,
+  Download, Crown, Zap, Target, AlertTriangle, ArrowUpRight,
+  ArrowDownRight, BarChart3, PieChart, Map, FileText, Bell,
+  Sparkles, ChevronRight, Lock, ShieldCheck, Cpu, Database,
+  Layers, Scan, Microscope, Box, Factory, Truck
 } from 'lucide-react';
-
-// ========================
-// Types
-// ========================
-
-interface UserRole {
-  type: 'business' | 'government' | 'premium';
-  title: string;
-  icon: typeof Crown;
-  color: string;
-  features: string[];
-}
-
-interface CustomsRecord {
-  id: string;
-  company: string;
-  product: string;
-  amount: number;
-  value: number;
-  country: string;
-  date: string;
-  type: 'import' | 'export';
-  taxCode: string;
-  riskScore?: number;
-}
+import { cn } from '@/lib/utils';
+import { apiClient as api } from '@/services/api/config';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { TacticalCard } from '@/components/TacticalCard';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { CyberOrb } from '@/components/CyberOrb';
+import { ViewHeader } from '@/components/ViewHeader';
 
 interface CompetitorData {
   name: string;
@@ -73,537 +37,183 @@ interface CompetitorData {
   marketShare: number;
 }
 
-// ========================
-// User Roles Config
-// ========================
-
-const userRoles: UserRole[] = [
-  {
-    type: 'business',
-    title: 'Бізнес Аналітика',
-    icon: Building2,
-    color: 'cyan',
-    features: [
-      'Аналіз конкурентів',
-      'Ринкові тренди',
-      'Пошук постачальників',
-      'Цінова аналітика'
-    ]
-  },
-  {
-    type: 'government',
-    title: 'Контроль та Моніторинг',
-    icon: ShieldAlert,
-    color: 'rose',
-    features: [
-      'Виявлення порушень',
-      'Ризик-моніторинг',
-      'Схеми ухилення',
-      'Компроматні зв\'язки'
-    ]
-  },
-  {
-    type: 'premium',
-    title: 'Premium Intelligence',
-    icon: Crown,
-    color: 'amber',
-    features: [
-      'AI прогнози',
-      'Інсайдерські дані',
-      'Власні дашборди',
-      'API доступ'
-    ]
-  }
+const TOP_IMPORTERS: CompetitorData[] = [
+  { name: 'ТОВ "МЕТАЛ-ТРЕЙД ОПТ"', imports: 14200000, exports: 2100000, topProducts: ['Сталь h10', 'Арматура'], countries: ['Китай', 'Туреччина'], trend: 'up', marketShare: 12 },
+  { name: 'ПРАТ "ЕНЕРГО-СИСТЕМИ"', imports: 9800000, exports: 500000, topProducts: ['Трансформатори'], countries: ['Німеччина', 'Польща'], trend: 'up', marketShare: 8 },
+  { name: 'ТОВ "АГРО-ІМПОРТ ПЛЮС"', imports: 7400000, exports: 12000000, topProducts: ['Добрива'], countries: ['Нідерланди'], trend: 'down', marketShare: 6 },
 ];
 
-// ========================
-// Mock data removed in favor of real API
-// ========================
-// Premium KPI Cards
-// ========================
-
-interface KPICardProps {
-  title: string;
-  value: string;
-  change: number;
-  icon: typeof TrendingUp;
-  color: string;
-  premium?: boolean;
-}
-
-const KPICard: React.FC<KPICardProps> = ({ title, value, change, icon: Icon, color, premium }) => (
-  <motion.div
-    whileHover={{ scale: 1.02, y: -4 }}
-    className={`
-      relative overflow-hidden rounded-2xl p-6
-      bg-gradient-to-br from-slate-900/90 to-slate-950/90
-      border border-white/10 backdrop-blur-xl
-      ${premium ? 'ring-2 ring-amber-500/50' : ''}
-    `}
-  >
-    {/* Glow effect */}
-    <div className={`absolute -top-20 -right-20 w-40 h-40 bg-${color}-500/20 rounded-full blur-3xl`} />
-
-    {premium && (
-      <div className="absolute top-3 right-3">
-        <Crown size={16} className="text-amber-400" />
-      </div>
-    )}
-
-    <div className="relative z-10">
-      <div className={`inline-flex p-3 rounded-xl bg-${color}-500/20 mb-4`}>
-        <Icon className={`text-${color}-400`} size={24} />
-      </div>
-
-      <p className="text-slate-400 text-sm mb-1">{title}</p>
-      <p className="text-3xl font-black text-white mb-2">{value}</p>
-
-      <div className={`inline-flex items-center gap-1 text-sm ${change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-        {change >= 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-        <span className="font-bold">{Math.abs(change)}%</span>
-        <span className="text-slate-500">vs минулий місяць</span>
-      </div>
-    </div>
-  </motion.div>
-);
-
-// ========================
-// Competitor Analysis Card
-// ========================
-
-const CompetitorCard: React.FC<{ data: CompetitorData; rank: number }> = ({ data, rank }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ delay: rank * 0.1 }}
-    className="group relative overflow-hidden rounded-xl bg-slate-900/60 border border-white/5 p-4 hover:border-cyan-500/30 transition-all duration-300"
-  >
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <div className={`
-          w-10 h-10 rounded-full flex items-center justify-center font-black text-lg
-          ${rank === 0 ? 'bg-amber-500/20 text-amber-400' :
-            rank === 1 ? 'bg-slate-400/20 text-slate-300' :
-              rank === 2 ? 'bg-orange-600/20 text-orange-400' :
-                'bg-slate-800 text-slate-500'}
-        `}>
-          {rank + 1}
-        </div>
-
-        <div>
-          <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors">
-            {data.name}
-          </h4>
-          <p className="text-xs text-slate-500">
-            {data.topProducts.join(' • ')}
-          </p>
-        </div>
-      </div>
-
-      <div className="text-right">
-        <p className="text-lg font-black text-white">
-          ${(data.imports / 1000000).toFixed(1)}M
-        </p>
-        <div className={`flex items-center justify-end gap-1 text-xs ${data.trend === 'up' ? 'text-emerald-400' :
-          data.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
-          }`}>
-          {data.trend === 'up' ? <TrendingUp size={12} /> :
-            data.trend === 'down' ? <TrendingDown size={12} /> : null}
-          <span>{data.marketShare}% ринку</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Hover reveal - more details */}
-    <motion.div
-      className="mt-4 pt-4 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-opacity"
-    >
-      <div className="flex gap-4 text-xs">
-        <div>
-          <span className="text-slate-500">Країни:</span>
-          <span className="ml-2 text-slate-300">{data.countries.join(', ')}</span>
-        </div>
-        <div>
-          <span className="text-slate-500">Експорт:</span>
-          <span className="ml-2 text-emerald-400">${(data.exports / 1000000).toFixed(1)}M</span>
-        </div>
-      </div>
-    </motion.div>
-  </motion.div>
-);
-
-// ========================
-// Risk Alert Card
-// ========================
-
-const RiskAlertCard: React.FC<{ alert: any }> = ({ alert }) => (
-  <motion.div
-    whileHover={{ x: 4 }}
-    className={`
-      p-4 rounded-xl border-l-4 bg-slate-900/60
-      ${alert.risk === 'high' ? 'border-rose-500' : 'border-amber-500'}
-    `}
-  >
-    <div className="flex items-start justify-between">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <AlertTriangle size={14} className={alert.risk === 'high' ? 'text-rose-400' : 'text-amber-400'} />
-          <span className={`text-xs font-bold uppercase ${alert.risk === 'high' ? 'text-rose-400' : 'text-amber-400'}`}>
-            {alert.risk === 'high' ? 'Високий ризик' : 'Середній ризик'}
-          </span>
-        </div>
-        <p className="font-bold text-white">{alert.company}</p>
-        <p className="text-sm text-slate-400 mt-1">{alert.reason}</p>
-      </div>
-      <div className="text-right">
-        <p className="text-lg font-black text-white">
-          {alert.amount ? `₴${(alert.amount / 1000).toFixed(0)}K` : 'Різке збільшення імпорту'}
-        </p>
-        <button className="mt-2 text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
-          Розслідувати <ChevronRight size={12} />
-        </button>
-      </div>
-    </div>
-  </motion.div>
-);
-
-// ========================
-// Premium Feature Lock
-// ========================
-
-const PremiumLock: React.FC<{ title: string; description: string }> = ({ title, description }) => (
-  <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-950/80 border border-amber-500/20 p-8">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,191,36,0.1),transparent)] pointer-events-none" />
-
-    <div className="relative z-10 text-center">
-      <div className="inline-flex p-4 rounded-2xl bg-amber-500/10 mb-4">
-        <Lock className="text-amber-400" size={32} />
-      </div>
-
-      <h3 className="text-xl font-black text-white mb-2">{title}</h3>
-      <p className="text-slate-400 mb-6 max-w-md mx-auto">{description}</p>
-
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black rounded-xl flex items-center gap-2 mx-auto"
-      >
-        <Crown size={18} />
-        Отримати Premium
-      </motion.button>
-    </div>
-  </div>
-);
-
-// ========================
-// Main Dashboard Component
-// ========================
-
-const CustomsIntelligencePremium: React.FC = () => {
-  const [activeRole, setActiveRole] = useState<'business' | 'government' | 'premium'>('business');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isPremium] = useState(true); // Toggle for premium access
-  const [topImporters, setTopImporters] = useState<CompetitorData[]>([]);
-  const [riskAlerts, setRiskAlerts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [competitors, alerts] = await Promise.all([
-          api.premium.getCompetitors(),
-          api.premium.getIntelligenceAlerts()
-        ]);
-        setTopImporters(competitors);
-        setRiskAlerts(alerts.map((a: any) => ({
-          id: a.id,
-          company: a.title.replace('Ризикова декларація: ', ''),
-          risk: a.severity === 'high' ? 'high' : 'medium',
-          reason: a.description,
-          amount: 0 // Mock value as API returns severity and desc
-        })));
-      } catch (err) {
-        console.error('Failed to fetch customs data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+export default function CustomsIntelligencePremium() {
+  const [loading, setLoading] = useState(false);
+  const [activeRole, setActiveRole] = useState<'business' | 'government' | 'premium'>('premium');
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px]" />
+    <PageTransition>
+      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(245, 158, 11, 0.04)" />
+        
+        <div className="relative z-10 max-w-[1700px] mx-auto p-6 lg:p-12 space-y-12 h-screen flex flex-col">
+           
+           {/* HEADER HUD */}
+           <ViewHeader
+             title={
+               <div className="flex items-center gap-10">
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-amber-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border border-amber-900/40 rounded-[2.5rem] shadow-2xl">
+                        <Crown size={42} className="text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                     </div>
+                  </div>
+                  <div className="space-y-2">
+                     <div className="flex items-center gap-3">
+                        <span className="badge-v2 bg-amber-600/10 border border-amber-600/20 text-amber-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                          PREMIUM_QUOTA // CUSTOMS_PRO_v56.2
+                        </span>
+                        <div className="h-px w-10 bg-amber-600/20" />
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">TITAN ACCESS</span>
+                     </div>
+                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
+                       МИТНИЙ <span className="text-amber-500 underline decoration-amber-600/20 decoration-8 italic uppercase">PROJECT</span>
+                     </h1>
+                     <div className="flex items-center gap-4 text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                        <Zap size={14} className="text-amber-500" /> 
+                        <span>РОЗШИРЕНА БІЗНЕС-АНАЛІТИКА ТА ШІ-ГЕНЕРАЦІЯ ИНСАЙТІВ</span>
+                     </div>
+                  </div>
+               </div>
+             }
+             stats={[
+               { label: 'РИНКОВА_ЧАСТКА', value: '42%', icon: <Target size={14} />, color: 'warning' },
+               { label: 'ШІ_ПРОГНОЗИ', value: '247', icon: <Sparkles size={14} />, color: 'primary', animate: true },
+               { label: 'VIP_STATUS', value: 'ELITE', icon: <Crown size={14} />, color: 'warning' }
+             ]}
+             actions={
+               <div className="flex gap-4">
+                  <button className="px-10 py-5 bg-amber-700 text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-amber-600 shadow-2xl transition-all flex items-center gap-4">
+                     <Crown size={20} /> ПОВНИЙ_ДОСТУП_ELITE
+                  </button>
+               </div>
+             }
+           />
+
+           <div className="grid grid-cols-12 gap-10 flex-1 min-h-0">
+              
+              {/* LEFT: COMPETITORS & KPI */}
+              <section className="col-span-12 xl:col-span-8 space-y-10 overflow-y-auto no-scrollbar">
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {[
+                      { l: 'ЗАГАЛЬНИЙ_ІМПОРТ', v: '$847M', c: '+12.4%', i: Package, cl: 'text-amber-500' },
+                      { l: 'УНІКАЛЬНИХ_ГРАВЦІВ', v: '12,847', c: '+8.2%', i: Factory, cl: 'text-indigo-500' },
+                      { l: 'МИТНІ_ПЛАТЕЖІ', v: '₴2.4B', c: '-3.1%', i: DollarSign, cl: 'text-emerald-500' },
+                    ].map((k, i) => (
+                      <div key={i} className="p-8 rounded-[2.5rem] bg-black border border-white/[0.04] shadow-3xl hover:border-amber-500/30 transition-all group">
+                         <div className="flex items-center justify-between mb-4">
+                            <div className={cn("p-4 rounded-xl bg-black border border-white/5", k.cl)}>
+                               <k.i size={24} />
+                            </div>
+                            <span className="text-[10px] font-black text-emerald-500 italic font-mono">{k.c} ▲</span>
+                         </div>
+                         <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mb-1">{k.l}</p>
+                         <h3 className="text-4xl font-black text-white italic font-mono tracking-tighter">{k.v}</h3>
+                      </div>
+                    ))}
+                 </div>
+
+                 <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
+                    <div className="flex items-center justify-between border-b border-white/[0.04] pb-8">
+                       <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
+                          <BarChart3 size={24} className="text-amber-500" /> АНАЛІЗ_КОНКУРЕНТНОГО_СЕРЕДОВИЩА
+                       </h3>
+                       <button className="text-[10px] font-black text-amber-500 uppercase italic tracking-widest hover:underline">ВСІ_КОМПАНІЇ_v56</button>
+                    </div>
+                    <div className="space-y-6">
+                       {TOP_IMPORTERS.map((data, i) => (
+                         <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/[0.04] hover:bg-amber-600/[0.03] hover:border-amber-600/30 transition-all group relative overflow-hidden">
+                            <div className="flex items-center justify-between">
+                               <div className="flex items-center gap-8">
+                                  <div className="text-4xl font-black italic text-slate-800 font-mono">0{i+1}</div>
+                                  <div className="space-y-1">
+                                     <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter group-hover:text-amber-400 transition-colors leading-none">{data.name}</h4>
+                                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">{data.topProducts.join(' • ')}</p>
+                                  </div>
+                               </div>
+                               <div className="text-right">
+                                  <p className="text-3xl font-black text-white italic font-mono tracking-tighter leading-none mb-1">${(data.imports / 1000000).toFixed(1)}M</p>
+                                  <div className="flex items-center justify-end gap-2 text-[9px] font-black text-emerald-500 uppercase italic">
+                                     <TrendingUp size={12} /> {data.marketShare}% РИНКУ
+                                  </div>
+                               </div>
+                            </div>
+                            <div className="mt-8 pt-8 border-t border-white/[0.02] flex gap-10 opacity-0 group-hover:opacity-100 transition-all">
+                               <div className="space-y-1">
+                                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">ОСНОВНІ_КРАЇНИ</p>
+                                  <p className="text-[10px] font-black text-slate-400 italic">{data.countries.join(', ')}</p>
+                               </div>
+                               <div className="space-y-1">
+                                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">ОБСЯГ_ЕКСПОРТУ</p>
+                                  <p className="text-[10px] font-black text-emerald-400 italic">${(data.exports / 1000000).toFixed(1)}M</p>
+                               </div>
+                            </div>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+              </section>
+
+              {/* RIGHT: AI INSIGHTS & QUICK ACTIONS */}
+              <section className="col-span-12 xl:col-span-4 space-y-10 overflow-y-auto no-scrollbar">
+                 <div className="p-10 rounded-[3.5rem] bg-gradient-to-br from-amber-600/10 to-orange-600/10 border-2 border-amber-600/20 shadow-3xl space-y-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                       <Sparkles size={120} className="text-amber-500 animate-pulse" />
+                    </div>
+                    <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
+                       <Cpu size={24} className="text-amber-500" /> AI_INSIGHTS_ENGINE
+                    </h3>
+                    <div className="space-y-6">
+                       {[
+                         { t: 'ХАБ_ДЕТЕКЦІЯ', v: 'Імпорт електроніки з Китаю зріс на 34% за останній тиждень.', cl: 'text-amber-400' },
+                         { t: 'УВАГА_РИЗИК', v: '15 компаній змінили код УКТЗЕД на товари з меншим митом.', cl: 'text-rose-500' },
+                         { t: 'ОПТИМІЗАЦІЯ', v: 'Нові постачальники добрив з Польщі пропонують ціни на 12% нижче.', cl: 'text-emerald-500' },
+                       ].map((ins, i) => (
+                         <div key={i} className="p-6 rounded-3xl bg-black/40 border border-white/5 space-y-2 group hover:bg-black transition-all">
+                            <p className={cn("text-[9px] font-black uppercase tracking-widest", ins.cl)}>{ins.t}</p>
+                            <p className="text-sm font-black text-slate-300 italic leading-snug">"{ins.v}"</p>
+                         </div>
+                       ))}
+                    </div>
+                    <button className="w-full py-5 bg-white text-black rounded-[1.2rem] text-[10px] font-black uppercase tracking-[0.4em] italic shadow-2xl hover:bg-slate-200 transition-all">АКТИВУВАТИ_НЕЙРО-ПРОГНОЗ</button>
+                 </div>
+
+                 <div className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8">
+                    <h3 className="text-[12px] font-black text-slate-500 italic uppercase tracking-[0.4em] mb-4">ШВИДКІ_ДІЇ_ELITE</h3>
+                    <div className="space-y-4">
+                       {[
+                         { i: Search, l: 'ЗНАЙТИ_КОНКУРЕНТІВ', c: 'text-amber-500' },
+                         { i: Target, l: 'АНАЛІЗ_ПОСТАЧАЛЬНИКА', c: 'text-indigo-500' },
+                         { i: BarChart3, l: 'ПОБУДУВАТИ_VIP_ЗВІТ', c: 'text-emerald-500' },
+                         { i: Bell, l: 'НАЛАШТУВАТИ_SMART_ALERT', c: 'text-orange-500' },
+                       ].map((a, i) => (
+                         <button key={i} className="w-full flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-white/[0.03] hover:border-white/10 transition-all group">
+                            <div className="flex items-center gap-6">
+                               <a.i size={20} className={a.c} />
+                               <span className="text-[11px] font-black text-slate-400 uppercase italic tracking-widest group-hover:text-white transition-colors">{a.l}</span>
+                            </div>
+                            <ChevronRight size={16} className="text-slate-800" />
+                         </button>
+                       ))}
+                    </div>
+                 </div>
+              </section>
+
+           </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+        `}} />
       </div>
-
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                  <Target className="text-white" size={20} />
-                </div>
-                <div>
-                  <h1 className="text-lg font-black text-white tracking-tight">
-                    CUSTOMS INTELLIGENCE
-                  </h1>
-                  <p className="text-xs text-slate-500">Аналітика митних даних • Січень 2026</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Role Switcher */}
-            <div className="flex items-center gap-2 p-1 bg-slate-900/60 rounded-xl border border-white/5">
-              {userRoles.map((role) => (
-                <button
-                  key={role.type}
-                  onClick={() => setActiveRole(role.type)}
-                  className={`
-                    flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all
-                    ${activeRole === role.type
-                      ? `bg-${role.color}-500/20 text-${role.color}-400 border border-${role.color}-500/30`
-                      : 'text-slate-500 hover:text-slate-300'}
-                  `}
-                >
-                  <role.icon size={16} />
-                  <span className="hidden md:inline">{role.title}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Premium Badge */}
-            {isPremium && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30 rounded-xl">
-                <Crown className="text-amber-400" size={16} />
-                <span className="text-amber-400 font-bold text-sm">Premium</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-8">
-
-        {/* Search & Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <input
-              type="text"
-              placeholder="Пошук компанії, товару, коду УКТЗЕД..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-slate-300 hover:bg-slate-800/60 transition-colors">
-              <Filter size={18} />
-              <span>Фільтри</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-3 bg-cyan-500/20 border border-cyan-500/30 rounded-xl text-cyan-400 hover:bg-cyan-500/30 transition-colors">
-              <Download size={18} />
-              <span>Експорт</span>
-            </button>
-          </div>
-        </div>
-
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <KPICard
-            title="Загальний імпорт"
-            value="$847M"
-            change={12.4}
-            icon={Package}
-            color="cyan"
-          />
-          <KPICard
-            title="Унікальних компаній"
-            value="12,847"
-            change={8.2}
-            icon={Building2}
-            color="purple"
-          />
-          <KPICard
-            title="Митні платежі"
-            value="₴2.4B"
-            change={-3.1}
-            icon={DollarSign}
-            color="emerald"
-          />
-          <KPICard
-            title="Ризикові операції"
-            value="847"
-            change={24.5}
-            icon={AlertTriangle}
-            color="rose"
-            premium
-          />
-        </div>
-
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-          {/* Left Column - Competitor Analysis */}
-          <div className="lg:col-span-2 space-y-6">
-
-            {/* Top Importers */}
-            <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-lg font-black text-white flex items-center gap-2">
-                    <BarChart3 className="text-cyan-400" size={20} />
-                    ТОП Імпортери
-                  </h2>
-                  <p className="text-sm text-slate-500">За обсягом імпорту за місяць</p>
-                </div>
-                <button className="text-cyan-400 text-sm hover:text-cyan-300 flex items-center gap-1">
-                  Всі компанії <ChevronRight size={14} />
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {loading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin w-6 h-6 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto" />
-                  </div>
-                ) : (
-                  topImporters.map((company, index) => (
-                    <CompetitorCard key={company.name} data={company} rank={index} />
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Market Map (Premium) */}
-            {activeRole === 'premium' && isPremium ? (
-              <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-black text-white flex items-center gap-2">
-                      <Globe className="text-purple-400" size={20} />
-                      Геокарта торгівлі
-                      <span className="ml-2 px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs rounded-full">Premium</span>
-                    </h2>
-                    <p className="text-sm text-slate-500">Візуалізація торгових потоків</p>
-                  </div>
-                </div>
-
-                {/* Placeholder for map */}
-                <div className="h-[300px] bg-slate-800/50 rounded-xl flex items-center justify-center border border-white/5">
-                  <div className="text-center">
-                    <Map className="text-slate-600 mx-auto mb-2" size={48} />
-                    <p className="text-slate-500">Інтерактивна карта торгівлі</p>
-                    <p className="text-xs text-slate-600">Реальні торгові потоки між країнами</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <PremiumLock
-                title="Геокарта торгівлі"
-                description="Інтерактивна візуалізація торгових потоків між країнами з аналітикою обсягів та трендів"
-              />
-            )}
-          </div>
-
-          {/* Right Column - Alerts & Insights */}
-          <div className="space-y-6">
-
-            {/* Risk Alerts (Government) */}
-            {activeRole === 'government' || activeRole === 'premium' ? (
-              <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-black text-white flex items-center gap-2">
-                      <ShieldAlert className="text-rose-400" size={20} />
-                      Ризик-алерти
-                    </h2>
-                    <p className="text-sm text-slate-500">Підозрілі операції</p>
-                  </div>
-                  <span className="px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-bold rounded-full">
-                    {riskAlerts.length} нових
-                  </span>
-                </div>
-
-                {loading ? (
-                  <div className="text-center py-4">
-                    <div className="animate-spin w-6 h-6 border-4 border-rose-500 border-t-transparent rounded-full mx-auto" />
-                  </div>
-                ) : riskAlerts.length > 0 ? (
-                  riskAlerts.map((alert) => (
-                    <RiskAlertCard key={alert.id} alert={alert} />
-                  ))
-                ) : (
-                  <p className="text-sm text-slate-500 text-center py-4">Немає нових алертів</p>
-                )}
-              </div>
-            ) : (
-              <PremiumLock
-                title="Ризик-моніторинг"
-                description="Автоматичне виявлення підозрілих схем, заниження вартості та порушень митного законодавства"
-              />
-            )}
-
-            {/* AI Insights */}
-            <div className="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="text-purple-400" size={20} />
-                <h2 className="text-lg font-black text-white">AI Інсайти</h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="p-4 bg-slate-900/60 rounded-xl">
-                  <p className="text-sm text-slate-300">
-                    <span className="text-cyan-400 font-bold">Тренд:</span> Імпорт електроніки з Китаю зріс на 34% за останній тиждень
-                  </p>
-                </div>
-                <div className="p-4 bg-slate-900/60 rounded-xl">
-                  <p className="text-sm text-slate-300">
-                    <span className="text-amber-400 font-bold">Увага:</span> 15 компаній змінили код УКТЗЕД на товари з меншим митом
-                  </p>
-                </div>
-                <div className="p-4 bg-slate-900/60 rounded-xl">
-                  <p className="text-sm text-slate-300">
-                    <span className="text-emerald-400 font-bold">Можливість:</span> Нові постачальники добрив з Польщі пропонують ціни на 12% нижче
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-6">
-              <h2 className="text-lg font-black text-white mb-4">Швидкі дії</h2>
-
-              <div className="space-y-2">
-                {[
-                  { icon: Search, label: 'Знайти конкурентів', color: 'cyan' },
-                  { icon: Target, label: 'Аналіз постачальника', color: 'purple' },
-                  { icon: BarChart3, label: 'Побудувати звіт', color: 'emerald' },
-                  { icon: Bell, label: 'Налаштувати алерти', color: 'amber' },
-                ].map((action) => (
-                  <motion.button
-                    key={action.label}
-                    whileHover={{ x: 4 }}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl bg-slate-800/50 hover:bg-${action.color}-500/10 border border-transparent hover:border-${action.color}-500/30 transition-all text-left`}
-                  >
-                    <action.icon size={18} className={`text-${action.color}-400`} />
-                    <span className="text-slate-300 text-sm">{action.label}</span>
-                    <ChevronRight size={14} className="ml-auto text-slate-600" />
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+    </PageTransition>
   );
-};
-
-export default CustomsIntelligencePremium;
+}

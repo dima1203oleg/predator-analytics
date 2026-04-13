@@ -11,8 +11,10 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { PageTransition } from '@/components/layout/PageTransition';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -575,7 +577,7 @@ export default function SystemFactoryView() {
         
         try {
           await factoryApi.startInfinite();
-          pushSystemMessage('✅ OODA LOOP АКТИВОВАНО.', 'bot');
+          pushSystemMessage('✅ OODA LOOP АКТИВОВАНО.', 'analyze');
         } catch (e) {
           pushSystemMessage('📡 Бекенд недоступний. Цикл перейшов у режим очікування з\'єднання.', 'analyze');
           setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Очікування підключення до бекенду...`]);
@@ -618,10 +620,10 @@ export default function SystemFactoryView() {
       if (!currentRunning) {
         setInfiniteRunning(true);
         setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 🚀 SYSTEM: Синхронізація OODA циклу з бекендом...`]);
-        pushSystemMessage('🚀 Ініційовано підключення до OODA циклу...', 'bot');
+        pushSystemMessage('🚀 Ініційовано підключення до OODA циклу...', 'analyze');
         try {
           await factoryApi.startInfinite();
-          pushSystemMessage('✅ ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО НА БЕКЕНДІ.', 'bot');
+          pushSystemMessage('✅ ВДОСКОНАЛЕННЯ PREDATOR ЗАПУЩЕНО НА БЕКЕНДІ.', 'analyze');
         } catch(e) {
           pushSystemMessage('📡 Не вдалося підключитися до сервера. Очікування на появу бекенду...', 'analyze');
           setInfiniteLogs(prev => [...prev.slice(-49), `[${time}] 📡 SYSTEM: Відсутній зв'язок із сервером. Автономне очікування...`]);
@@ -673,7 +675,7 @@ export default function SystemFactoryView() {
         
         try {
            await factoryApi.startInfinite();
-           pushSystemMessage('✅ MASTER START: OODA Loop АКТИВОВАНО.', 'bot');
+           pushSystemMessage('✅ MASTER START: OODA Loop АКТИВОВАНО.', 'analyze');
         } catch (e) {
            pushSystemMessage('📡 MASTER START: Сервер недоступний, але OODA Loop у режимі очікування.', 'analyze');
         }
@@ -708,8 +710,10 @@ export default function SystemFactoryView() {
   ] as const;
 
   return (
-    <div className="min-h-screen pb-20 animate-in fade-in duration-700">
-      <AdvancedBackground />
+    <PageTransition>
+      <div className="min-h-screen pb-20 bg-[#020617] text-slate-200 relative overflow-hidden font-sans">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(139, 92, 246, 0.03)" />
       
       <ViewHeader 
         title="СУВЕРЕННИЙ ЗАВОД PREDATOR"
@@ -2018,5 +2022,6 @@ export default function SystemFactoryView() {
 
 
     </div>
+  </PageTransition>
   );
 }

@@ -1,10 +1,12 @@
 /**
- * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v56.4
+ * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v56.2-TITAN
  * PREDATOR Analytics — Portfolio Risk Management
  *
  * Скільки $ у зоні ризику прямо зараз:
  * контрагенти, санкції, ланцюги постачання, фін. ризики.
  * CEO-рівень · Sovereign Power Design · LIVE · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -13,14 +15,15 @@ import {
   DollarSign, TrendingDown, TrendingUp, AlertTriangle,
   Shield, Activity, Building2, Globe, Lock, Zap,
   RefreshCw, Download, Eye, BarChart3, Target,
-  ChevronRight, ChevronDown, Clock, Flame, Star
+  ChevronRight, ChevronDown, Clock, Flame, Star,
+  ArrowUpRight, AlertOctagon, TrendingUp as TrendUpIcon
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, ReferenceLine
 } from 'recharts';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
 
@@ -45,10 +48,10 @@ const RISK_TIMELINE = [
 ];
 
 const RISK_BREAKDOWN = [
-  { name: 'Санкційний',   value: 33, amount: '$41.8M',  color: '#ef4444' },
-  { name: 'Контрагент',  value: 26, amount: '$33.1M',  color: '#dc2626' },
-  { name: 'Ланцюг пост.',value: 20, amount: '$25.5M',  color: '#f59e0b' },
-  { name: 'FX / Валютний',value: 14, amount: '$17.8M', color: '#b45309' },
+  { name: 'Санкційний',   value: 33, amount: '$41.8M',  color: '#dc2626' },
+  { name: 'Контрагент',  value: 26, amount: '$33.1M',  color: '#991b1b' },
+  { name: 'Ланцюг пост.',value: 20, amount: '$25.5M',  color: '#d97706' },
+  { name: 'FX / Валютний',value: 14, amount: '$17.8M', color: '#92400e' },
   { name: 'Операційний', value: 7, amount: '$9.2M',    color: '#475569' },
 ];
 
@@ -166,10 +169,10 @@ const SECTOR_RISK = [
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 
 const RISK_COLOR = {
-  critical: '#ef4444',
-  high:     '#f59e0b',
+  critical: '#dc2626',
+  high:     '#ea580c',
   medium:   '#b45309',
-  low:      '#0891b2',
+  low:      '#3f6212',
 };
 
 const RISK_LABEL = {
@@ -186,13 +189,13 @@ const PortfolioRiskView: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [pulse, setPulse] = useState(false);
 
-  // Live P&L tick
+  // Live P&L tick simulation
   useEffect(() => {
     const id = setInterval(() => {
       const delta = (Math.random() - 0.48) * 0.3;
       setLiveRisk(r => Math.max(120, Math.min(135, +(r + delta).toFixed(1))));
-      if (Math.random() > 0.7) setPulse(p => !p);
-    }, 2800);
+      if (Math.random() > 0.6) setPulse(p => !p);
+    }, 3000);
     return () => clearInterval(id);
   }, []);
 
@@ -202,128 +205,145 @@ const PortfolioRiskView: React.FC = () => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1200));
+    await new Promise(r => setTimeout(r, 1000));
     setRefreshing(false);
   };
 
   return (
-    <div className="min-h-screen text-slate-200 font-sans pb-24 relative overflow-hidden">
-      {/* Суверенний фон */}
+    <div className="min-h-screen text-slate-200 font-sans pb-24 relative overflow-hidden bg-[#020617]">
+      {/* Sovereign Background Layers */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 60% 10%, rgba(220,38,38,0.05) 0%, transparent 55%)' }} />
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 10% 80%, rgba(245,158,11,0.03) 0%, transparent 45%)' }} />
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% -20%, rgba(220,38,38,0.1), transparent 70%)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-[500px]" style={{ background: 'linear-gradient(to top, rgba(2,6,23,1), transparent)' }} />
       </div>
 
-      <div className="relative z-10 max-w-[1800px] mx-auto p-6 space-y-8">
+      <div className="relative z-10 max-w-[1700px] mx-auto p-6 space-y-8">
 
-        {/* ── ЗАГОЛОВОК ── */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-700/20 blur-2xl rounded-full" />
-              <div className="relative p-5 bg-black border border-red-900/50">
-                <DollarSign size={38} className="text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
-                <motion.span
-                  animate={{ scale: [1, 1.6, 1], opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 0.9, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full"
-                />
-              </div>
+        {/* ── HEADER CONTOUR ── */}
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 py-4 border-b border-white/[0.04]">
+          <div className="flex items-center gap-8">
+            <div className="relative group/orb scale-110">
+               <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+               <div className="relative p-6 rounded-[2rem] bg-black/80 border border-red-900/40 shadow-2xl flex items-center justify-center">
+                 <DollarSign size={42} className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.6)]" />
+                 <motion.div
+                   animate={{ scale: [1, 1.4, 1], opacity: [1, 0.4, 1] }}
+                   transition={{ duration: 1.2, repeat: Infinity }}
+                   className="absolute top-4 right-4 w-3.5 h-3.5 bg-red-600 rounded-full shadow-[0_0_12px_#dc2626]"
+                 />
+               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <motion.span
-                  animate={{ opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 0.7, repeat: Infinity }}
-                  className="w-1.5 h-1.5 bg-red-600 rounded-full"
-                />
-                <span className="text-[8px] font-black text-red-700/70 uppercase tracking-[0.5em]">
-                  PORTFOLIO RISK · LIVE P&L · CEO-РІВЕНЬ · v56.4
-                </span>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                 <span className="badge-v2 badge-v2-rose px-3 py-0.5 text-[9px] font-black tracking-[0.3em] uppercase italic">
+                   TITAN_CORE // P&L ANALYTICS
+                 </span>
+                 <div className="h-0.5 w-16 bg-gradient-to-r from-red-600 to-transparent" />
+                 <span className="text-[9px] font-mono font-black text-slate-600 uppercase tracking-widest">v56.2 TITAN</span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-                P&L{' '}
-                <span className="text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]">РИЗИКІВ</span>
-                {' '}ПОРТФЕЛЮ
+              <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
+                P&L <span className="text-red-600">РИЗИКІВ</span> ПОРТФЕЛЮ
               </h1>
-              <p className="text-[10px] text-slate-700 font-black uppercase tracking-[0.3em] mt-1">
-                КОНТРАГЕНТИ · САНКЦІЇ · ЛАНЦЮГИ · FX · ОПЕРАЦІЙНІ
+              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80">
+                Контрагенти • Санкції • Ланцюги • FX/Ops
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Live counter */}
-            <div className="px-6 py-4 bg-black border border-red-900/40 text-center min-w-[160px]">
-              <p className="text-[7px] font-black text-slate-700 uppercase tracking-widest mb-1">У ЗОНІ РИЗИКУ ЗАРАЗ</p>
-              <motion.p
-                key={liveRisk}
-                initial={{ scale: 1.08 }} animate={{ scale: 1 }}
-                className="text-[26px] font-black text-red-400 font-mono leading-none"
-                style={{ textShadow: '0 0 20px rgba(239,68,68,0.4)' }}
-              >
-                ${liveRisk}M
-              </motion.p>
-              <p className="text-[7px] font-mono text-red-800 mt-1">▲ +$4.2M за 24г</p>
+          <div className="flex items-center gap-4">
+            {/* Real-time Ticker Display */}
+            <div className="px-8 py-5 rounded-[2rem] bg-black/40 border border-red-900/30 text-center min-w-[200px] shadow-2xl relative overflow-hidden group">
+              <div className="absolute inset-0 bg-red-600/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+              <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-2 italic">У ЗОНІ РИЗИКУ [24Г]</p>
+              <div className="flex items-center justify-center gap-3">
+                <motion.span
+                  key={liveRisk}
+                  initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                  className="text-4xl font-black text-red-500 font-mono italic tracking-tighter"
+                  style={{ textShadow: '0 0 25px rgba(220,38,38,0.4)' }}
+                >
+                  ${liveRisk}M
+                </motion.span>
+                <div className="text-left">
+                  <p className="text-[10px] font-black text-emerald-500/80 italic flex items-center gap-1">
+                    <TrendingUp size={10} /> +3.4%
+                  </p>
+                  <p className="text-[8px] font-mono text-slate-700 font-black">UTC {new Date().getHours()}:00</p>
+                </div>
+              </div>
             </div>
 
             <button
               onClick={handleRefresh}
-              className="p-4 bg-black border border-slate-800/50 text-slate-600 hover:text-white hover:border-slate-600 transition-all"
+              className="p-5 rounded-2xl bg-white/[0.03] border border-white/5 text-slate-500 hover:text-red-500 hover:border-red-500/30 transition-all hover:bg-black/60 shadow-xl"
             >
-              <RefreshCw size={18} className={refreshing ? 'animate-spin text-red-500' : ''} />
+              <RefreshCw size={22} className={refreshing ? 'animate-spin text-red-500' : ''} />
             </button>
-            <button className="px-8 py-4 bg-red-700 text-white text-[9px] font-black uppercase tracking-wider hover:bg-red-600 transition-colors border border-red-500/40 flex items-center gap-2 shadow-[0_0_25px_rgba(239,68,68,0.3)]">
-              <Download size={14} />
-              BOARD REPORT
+            <button className="px-10 py-5 bg-red-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:bg-red-600 transition-all border border-red-500/40 flex items-center gap-4 shadow-[0_15px_40px_rgba(220,38,38,0.25)] italic group">
+              <Download size={18} className="group-hover:translate-y-0.5 transition-transform" />
+              BOARD_REPORT
             </button>
           </div>
         </div>
 
-        {/* ── КРИТИЧНИЙ АЛЕРТ (якщо є критичні позиції) ── */}
-        <motion.div
-          animate={{ borderColor: pulse ? 'rgba(239,68,68,0.6)' : 'rgba(239,68,68,0.2)' }}
-          className="border bg-red-950/10 p-5 flex items-center gap-5"
-        >
+        {/* ── CRITICAL ALERT BANNER ── */}
+        <AnimatePresence>
           <motion.div
-            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-            transition={{ duration: 0.8, repeat: Infinity }}
-            className="w-3 h-3 bg-red-600 rounded-full shrink-0 shadow-[0_0_12px_rgba(239,68,68,0.8)]"
-          />
-          <div className="flex-1">
-            <p className="text-[9px] font-black text-red-500 uppercase tracking-[0.3em]">⚠ КРИТИЧНИЙ СИГНАЛ — ВИМАГАЄ НЕГАЙНИХ ДІЙ</p>
-            <p className="text-[11px] text-slate-400 mt-1 font-black">
-              2 позиції (POS-001, POS-002) перейшли в критичний статус.
-              Загальний ризик: <span className="text-red-400">$28.1M</span> · Рекомендована дія: заморозка розрахунків та подання кредиторських вимог.
-            </p>
-          </div>
-          <button className="px-5 py-2.5 bg-red-700 text-white text-[8px] font-black uppercase tracking-wider whitespace-nowrap flex items-center gap-2 hover:bg-red-600 transition-colors">
-            <Zap size={12} /> ДІЯТИ ЗАРАЗ
-          </button>
-        </motion.div>
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            className="overflow-hidden"
+          >
+            <div className={cn(
+              "rounded-[2.5rem] border-2 bg-rose-500/[0.03] p-6 flex flex-col md:flex-row items-center gap-8 shadow-2xl transition-all duration-1000",
+              pulse ? "border-red-600/40 shadow-[0_0_40px_rgba(220,38,38,0.1)]" : "border-red-600/20"
+            )}>
+              <div className="relative shrink-0">
+                <div className="absolute inset-0 bg-red-600 blur-2xl opacity-20 animate-pulse" />
+                <div className="relative w-16 h-16 rounded-[1.5rem] bg-red-600 flex items-center justify-center text-white shadow-lg">
+                  <AlertOctagon size={32} className="animate-pulse" />
+                </div>
+              </div>
+              <div className="flex-1 space-y-2 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-4">
+                   <p className="text-[12px] font-black text-red-500 uppercase tracking-[0.4em] italic animate-pulse">КРИТИЧНА ЕКСКАЛАЦІЯ // ТРИВОГА-ЧЕРВОНА</p>
+                   <div className="h-0.5 w-12 bg-red-600/30" />
+                </div>
+                <p className="text-[15px] text-slate-300 font-bold uppercase tracking-tight leading-relaxed italic">
+                  2 ПРІОРИТЕТНІ ПОЗИЦІЇ [<span className="text-red-500 underline decoration-red-500/30">POS-001</span>, <span className="text-red-500 underline decoration-red-500/30">POS-002</span>] ПЕРЕЙШЛИ В КАТЕГОРІЮ EXTREME.
+                  СУМАРНИЙ РИЗИК ДЕФОЛТУ: <span className="text-red-400 font-black tracking-widest">$28,150,000</span>.
+                </p>
+              </div>
+              <button className="px-10 py-5 bg-red-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-red-500 transition-all flex items-center gap-4 italic group shadow-xl">
+                <Zap size={18} /> ДІЯТИ_ЗАРАЗ <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* ── МЕТРИКИ ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* ── KPI GRID ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-5">
           {[
-            { l: 'ЗАГАЛЬНИЙ ПОРТФЕЛЬ', v: '$847M',    c: '#ffffff',  bar: 100 },
-            { l: 'У ЗОНІ РИЗИКУ',       v: `$${liveRisk}M`, c: '#ef4444', bar: 15.1 },
-            { l: 'КРИТИЧНИЙ РИЗИК',     v: '$41.8M',  c: '#dc2626',  bar: 33 },
-            { l: 'ВІДКРИТИХ ПОЗИЦІЙ',   v: '6',       c: '#f59e0b',  bar: null },
-            { l: 'ЗМІН ЗА 24Г',         v: '+$4.2M',  c: '#ef4444',  bar: null },
+            { label: 'ЗАГАЛЬНИЙ ПОРТФЕЛЬ', value: '$847M', color: 'text-white', bar: 100, accent: 'bg-white/10' },
+            { label: 'РИЗИКОВА ЕКСПОЗИЦІЯ', value: `$${liveRisk}M`, color: 'text-red-500', bar: 15.1, accent: 'bg-red-500/10' },
+            { label: 'КРИТИЧНИЙ СЕКТОР', value: '$41.8M', color: 'text-rose-600', bar: 33, accent: 'bg-rose-500/10' },
+            { label: 'АКТИВНИХ ЛОТІВ', value: '6', color: 'text-amber-500', bar: null, accent: 'bg-amber-500/10' },
+            { label: 'ДИНАМІКА 24Г', value: '+$4.2M', color: 'text-red-500', bar: null, accent: 'bg-red-500/10' },
           ].map((m, i) => (
             <motion.div
-              key={m.l}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
-              className="p-6 bg-black border border-slate-800/50 hover:border-slate-700/60 transition-all"
+              key={m.label}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
+              className="p-8 rounded-[2rem] bg-black/40 border border-white/[0.05] hover:border-white/[0.1] transition-all relative overflow-hidden group/kpi shadow-xl"
             >
-              <p className="text-[7px] font-black text-slate-700 uppercase tracking-[0.4em] mb-2">{m.l}</p>
-              <p className="text-[22px] font-black font-mono" style={{ color: m.c }}>{m.v}</p>
+              <div className={cn("absolute top-0 left-0 w-1 h-full opacity-0 group-hover/kpi:opacity-100 transition-opacity", m.accent)} />
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-4 italic leading-none">{m.label}</p>
+              <p className={cn("text-3xl font-black font-mono italic tracking-tighter leading-none mb-4", m.color)}>{m.value}</p>
               {m.bar !== null && (
-                <div className="h-0.5 bg-slate-900 mt-3 overflow-hidden">
+                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }} animate={{ width: `${m.bar}%` }}
-                    transition={{ delay: 0.4 + i * 0.07 }}
-                    className="h-full" style={{ backgroundColor: m.c }}
+                    transition={{ duration: 1.5, delay: 0.5 + i * 0.1 }}
+                    className={cn("h-full rounded-full shadow-[0_0_10px]", m.color.replace('text-', 'bg-'))}
                   />
                 </div>
               )}
@@ -331,268 +351,293 @@ const PortfolioRiskView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ОСНОВНИЙ КОНТЕНТ ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── MAIN CONTENT MATRIX ── */}
+        <div className="grid grid-cols-12 gap-8">
 
-          {/* Ліва: список позицій */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Фільтр */}
-            <div className="flex items-center gap-2 p-1.5 bg-black border border-slate-800/50 w-fit">
+          {/* LEFT: POSITION FEED (8/12) */}
+          <div className="col-span-12 xl:col-span-8 space-y-6">
+            
+            {/* TACTICAL FILTER */}
+            <div className="flex items-center gap-3 p-2 bg-black/60 rounded-[1.5rem] border border-white/[0.05] w-fit shadow-2xl">
               {([['all', 'УСІ'], ['critical', 'КРИТИЧНІ'], ['high', 'ВИСОКІ'], ['medium', 'СЕРЕДНІ']] as const).map(([v, l]) => (
                 <button
                   key={v}
                   onClick={() => setFilter(v)}
                   className={cn(
-                    "px-4 py-2 text-[8px] font-black uppercase tracking-wider transition-all border border-transparent",
+                    "px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all italic flex items-center gap-3",
                     filter === v
-                      ? v === 'critical' ? "bg-red-700 text-white"
-                        : v === 'high'   ? "bg-amber-700/70 text-amber-100"
-                        : v === 'medium' ? "bg-amber-900/40 text-amber-400"
+                      ? v === 'critical' ? "bg-red-600 text-white shadow-lg shadow-red-600/20"
+                        : v === 'high'   ? "bg-amber-600/80 text-white shadow-lg shadow-amber-600/20"
+                        : v === 'medium' ? "bg-amber-900/60 text-amber-400"
                         : "bg-slate-800 text-white"
-                      : "text-slate-600 hover:text-slate-300"
+                      : "text-slate-600 hover:text-slate-300 hover:bg-white/5"
                   )}
                 >
                   {l}
-                  <span className={cn("ml-2 px-1.5 py-0.5 text-[7px] rounded-sm",
-                    v === 'all'      ? "bg-slate-800 text-slate-500" :
-                    v === 'critical' ? "bg-red-900/40 text-red-400" :
-                    v === 'high'     ? "bg-amber-900/30 text-amber-500" :
-                                       "bg-amber-950/20 text-amber-700"
+                  <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-mono",
+                    filter === v ? "bg-black/20 text-white/80" : "bg-white/5 text-slate-700"
                   )}>
-                    {v === 'all' ? RISK_POSITIONS.length :
-                     RISK_POSITIONS.filter(p => p.riskLevel === v).length}
+                    {v === 'all' ? RISK_POSITIONS.length : RISK_POSITIONS.filter(p => p.riskLevel === v).length}
                   </span>
                 </button>
               ))}
             </div>
 
-            {/* Позиції */}
-            {filtered.map((pos, i) => (
-              <motion.div
-                key={pos.id}
-                initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                onClick={() => setSelectedPos(pos)}
-                className={cn(
-                  "p-6 border cursor-pointer transition-all relative overflow-hidden group",
-                  selectedPos?.id === pos.id
-                    ? "bg-red-950/10 border-red-800/50"
-                    : "bg-black border-slate-800/40 hover:border-slate-700/60 hover:bg-slate-950/30"
-                )}
-              >
-                {/* Ризик-індикатор зліва */}
-                <div
-                  className="absolute left-0 inset-y-0 w-1 transition-all"
-                  style={{ backgroundColor: RISK_COLOR[pos.riskLevel], boxShadow: selectedPos?.id === pos.id ? `0 0 8px ${RISK_COLOR[pos.riskLevel]}60` : 'none' }}
-                />
+            {/* POSITION CARDS LIST */}
+            <div className="space-y-4">
+              {filtered.map((pos, i) => (
+                <motion.div
+                  key={pos.id}
+                  initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
+                  onClick={() => setSelectedPos(pos)}
+                  className={cn(
+                    "p-8 rounded-[2.5rem] border-2 cursor-pointer transition-all relative overflow-hidden group shadow-2xl",
+                    selectedPos?.id === pos.id
+                      ? "bg-red-600/[0.02] border-red-600/40"
+                      : "bg-black/40 border-white/[0.05] hover:border-white/[0.12] hover:bg-black/60"
+                  )}
+                >
+                  {/* Vertical Risk Accent */}
+                  <div
+                    className={cn("absolute left-0 inset-y-0 w-2 transition-all duration-500", 
+                      selectedPos?.id === pos.id ? "opacity-100" : "opacity-30 group-hover:opacity-100"
+                    )}
+                    style={{ backgroundColor: RISK_COLOR[pos.riskLevel], boxShadow: `0 0 20px ${RISK_COLOR[pos.riskLevel]}40` }}
+                  />
 
-                <div className="flex items-start gap-5 pl-3">
-                  {/* Ризик % */}
-                  <div className="text-center w-16 shrink-0">
-                    <div className="text-[22px] font-black font-mono leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
-                      {pos.riskPct}%
-                    </div>
-                    <div className="text-[7px] font-black uppercase mt-0.5" style={{ color: RISK_COLOR[pos.riskLevel] }}>
-                      РИЗИК
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-[8px] font-black font-mono text-slate-600">{pos.id}</span>
-                      <span className={cn("text-[7px] font-black px-2 py-0.5 uppercase tracking-wider border",
-                        pos.riskLevel === 'critical' ? "bg-red-900/25 text-red-500 border-red-800/40"   :
-                        pos.riskLevel === 'high'     ? "bg-amber-900/20 text-amber-500 border-amber-800/30" :
-                                                        "bg-amber-950/10 text-amber-700 border-amber-900/20"
-                      )}>
-                        {RISK_LABEL[pos.riskLevel]}
-                      </span>
-                      <span className="text-[7px] text-slate-700 font-mono">{pos.country}</span>
-                    </div>
-
-                    <h3 className="text-[13px] font-black text-white group-hover:text-red-300 transition-colors uppercase mb-1">
-                      {pos.counterparty}
-                    </h3>
-
-                    <div className="flex items-center gap-4 text-[8px] font-mono text-slate-600 mb-3">
-                      <span>{pos.type}</span>
-                      {pos.daysToMaturity > 0 ? (
-                        <span className="flex items-center gap-1">
-                          <Clock size={9} />
-                          {pos.daysToMaturity}д до матуриті
-                        </span>
-                      ) : (
-                        <span className="text-red-600 font-black flex items-center gap-1">
-                          <AlertTriangle size={9} /> ПРОСТРОЧЕНО
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                      <div>
-                        <p className="text-[7px] text-slate-700 uppercase tracking-wider">Експозиція</p>
-                        <p className="text-[13px] font-black text-white font-mono">{pos.exposure}</p>
+                  <div className="flex items-start gap-8 pl-4">
+                    {/* RISK BOX */}
+                    <div className="text-center w-24 shrink-0 p-4 rounded-3xl bg-black/60 border border-white/5 shadow-inner">
+                      <div className="text-3xl font-black font-mono italic tracking-tighter leading-none" style={{ color: RISK_COLOR[pos.riskLevel] }}>
+                        {pos.riskPct}%
                       </div>
-                      <div>
-                        <p className="text-[7px] text-slate-700 uppercase tracking-wider">Під ризиком</p>
-                        <p className="text-[13px] font-black font-mono" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
+                      <div className="text-[9px] font-black uppercase tracking-widest mt-2 opacity-60 italic" style={{ color: RISK_COLOR[pos.riskLevel] }}>
+                        РИЗИК
                       </div>
                     </div>
 
-                    <div className="mt-3 p-3 border border-slate-800/40 flex items-center gap-2">
-                      <AlertTriangle size={11} className="text-amber-600 shrink-0" />
-                      <span className="text-[9px] font-black text-slate-500">{pos.trigger}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="text-[10px] font-black font-mono text-slate-700 italic tracking-[0.2em]">{pos.id}</span>
+                        <div className={cn("px-4 py-1 rounded-full border text-[9px] font-black italic tracking-widest uppercase",
+                          pos.riskLevel === 'critical' ? "bg-red-600/10 text-red-500 border-red-600/20" :
+                          pos.riskLevel === 'high'     ? "bg-amber-600/10 text-amber-500 border-amber-600/20" :
+                                                          "bg-indigo-600/10 text-indigo-400 border-indigo-600/20"
+                        )}>
+                          {RISK_LABEL[pos.riskLevel]}
+                        </div>
+                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest italic">{pos.country}</span>
+                      </div>
+
+                      <h3 className="text-2xl font-black text-white group-hover:text-red-500 transition-colors uppercase italic tracking-tighter mb-2">
+                        {pos.counterparty}
+                      </h3>
+
+                      <div className="flex items-center gap-8 text-[11px] font-bold text-slate-500 uppercase tracking-tight italic mb-6">
+                         <span className="flex items-center gap-2">
+                            <Building2 size={14} className="text-slate-700" /> {pos.type}
+                         </span>
+                         {pos.daysToMaturity > 0 ? (
+                            <span className="flex items-center gap-2 text-slate-600">
+                               <Clock size={14} /> {pos.daysToMaturity} ДН ДО ГАРАНТІЇ
+                            </span>
+                         ) : (
+                            <span className="flex items-center gap-2 text-red-600 animate-pulse font-black">
+                               <AlertTriangle size={14} /> ПРОСТРОЧЕНО
+                            </span>
+                         )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-8 border-t border-white/[0.04] pt-6">
+                        <div>
+                          <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.2em] mb-1 italic">ЕКСПОРТНА ЕКСПОЗИЦІЯ</p>
+                          <p className="text-xl font-black text-white font-mono italic tracking-tighter">{pos.exposure}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.2em] mb-1 italic">У ЧИСТОМУ РИЗИКУ</p>
+                          <p className="text-xl font-black font-mono italic tracking-tighter" style={{ color: RISK_COLOR[pos.riskLevel] }}>{pos.atRisk}</p>
+                        </div>
+                      </div>
+
+                      {/* RISK TRIGGER TAG */}
+                      <div className="mt-6 flex items-center gap-4 p-4 rounded-2xl bg-black/40 border border-white/5 opacity-80 group-hover:opacity-100 transition-opacity">
+                        <Flame size={18} className="text-red-600" />
+                        <span className="text-[11px] font-bold text-slate-500 italic uppercase leading-none tracking-tight">{pos.trigger}</span>
+                      </div>
+                    </div>
+
+                    {/* STATUS DECORATION */}
+                    <div className="shrink-0 flex flex-col items-center justify-center p-6 bg-white/[0.02] rounded-full">
+                      {pos.trend === 'up'
+                        ? <TrendUpIcon size={24} className="text-red-600 animate-bounce" />
+                        : pos.trend === 'down'
+                        ? <TrendingDown size={24} className="text-emerald-500" />
+                        : <Activity size={24} className="text-slate-700" />}
                     </div>
                   </div>
-
-                  {/* Тренд */}
-                  <div className="shrink-0">
-                    {pos.trend === 'up'
-                      ? <TrendingUp size={20} className="text-red-600" />
-                      : pos.trend === 'down'
-                      ? <TrendingDown size={20} className="text-emerald-600" />
-                      : <Activity size={20} className="text-amber-700" />}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
 
-          {/* Права панель */}
-          <div className="lg:col-span-5 space-y-5">
+          {/* RIGHT: DETAILS PANEL (4/12) */}
+          <div className="col-span-12 xl:col-span-4 space-y-8">
 
-            {/* Деталі позиції */}
+            {/* POSITION INTEL HUD */}
             <AnimatePresence mode="wait">
               {selectedPos && (
                 <motion.div
                   key={selectedPos.id}
-                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  className="bg-black border border-red-900/30 p-6 space-y-5"
+                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                  className="rounded-[3rem] bg-black border-2 border-red-900/40 p-10 space-y-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] sticky top-6"
                 >
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[8px] font-black font-mono text-slate-700">{selectedPos.id}</span>
-                      <span className="text-[7px] font-black px-2 py-0.5 uppercase" style={{ color: RISK_COLOR[selectedPos.riskLevel], borderColor: RISK_COLOR[selectedPos.riskLevel] + '40', backgroundColor: RISK_COLOR[selectedPos.riskLevel] + '15' }}>
-                        {RISK_LABEL[selectedPos.riskLevel]}
-                      </span>
+                  <div className="relative overflow-hidden rounded-[2.5rem] p-8 border border-white/[0.05] bg-slate-950/50">
+                    <div className="absolute top-0 right-0 p-6 opacity-[0.05]">
+                       <Shield size={100} className="text-red-600" />
                     </div>
-                    <h2 className="text-[14px] font-black text-white uppercase">{selectedPos.counterparty}</h2>
-                    <p className="text-[9px] text-slate-600 mt-0.5">{selectedPos.country} · {selectedPos.type}</p>
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="text-[11px] font-mono text-slate-600 font-bold tracking-[0.3em] uppercase">{selectedPos.id}</span>
+                        <div className="px-3 py-1 rounded-lg text-[9px] font-black italic tracking-widest uppercase" style={{ color: RISK_COLOR[selectedPos.riskLevel], border: `1px solid ${RISK_COLOR[selectedPos.riskLevel]}40`, backgroundColor: `${RISK_COLOR[selectedPos.riskLevel]}10` }}>
+                          {RISK_LABEL[selectedPos.riskLevel]}
+                        </div>
+                      </div>
+                      <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">{selectedPos.counterparty}</h2>
+                      <p className="text-[12px] font-bold text-slate-500 mt-4 uppercase italic tracking-widest leading-none">
+                        {selectedPos.country} // {selectedPos.type}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { l: 'Загальна експозиція', v: selectedPos.exposure, c: 'text-white' },
-                      { l: 'Під ризиком',         v: selectedPos.atRisk,   c: 'text-red-400' },
-                      { l: 'Ризик %',             v: `${selectedPos.riskPct}%`, c: 'text-red-400' },
-                      { l: 'Днів до матуриті',    v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity}д` : 'ПРОСТРОЧЕНО', c: selectedPos.daysToMaturity > 0 ? 'text-slate-300' : 'text-red-500' },
+                      { l: 'ЕКСПОЗИЦІЯ', v: selectedPos.exposure, c: 'text-white' },
+                      { l: 'РИЗИК_NET',   v: selectedPos.atRisk,   c: 'text-red-500' },
+                      { l: 'ІНДЕКС_X',     v: `${selectedPos.riskPct}%`, c: 'text-red-500' },
+                      { l: 'МАРАТОРІЙ',    v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity}Д` : 'АКТИВНО', c: selectedPos.daysToMaturity > 0 ? 'text-slate-400' : 'text-red-600' },
                     ].map((f, i) => (
-                      <div key={i} className="p-4 border border-slate-800/40 bg-slate-950/40">
-                        <p className="text-[7px] text-slate-700 uppercase font-black">{f.l}</p>
-                        <p className={cn("text-[16px] font-black font-mono mt-1", f.c)}>{f.v}</p>
+                      <div key={i} className="p-6 rounded-[2rem] border border-white/[0.04] bg-white/[0.02] flex flex-col justify-center gap-2">
+                        <p className="text-[9px] text-slate-700 uppercase font-black tracking-widest italic leading-none">{f.l}</p>
+                        <p className={cn("text-2xl font-black font-mono mt-1 italic tracking-tighter leading-none", f.c)}>{f.v}</p>
                       </div>
                     ))}
                   </div>
 
-                  {/* Тригер */}
-                  <div className="p-4 border border-red-900/30 bg-red-950/10">
-                    <p className="text-[7px] font-black text-red-700 uppercase tracking-widest mb-2">ТРИГЕР РИЗИКУ</p>
-                    <p className="text-[11px] font-black text-red-400">{selectedPos.trigger}</p>
+                  {/* ACTION TRIGGER CARDS */}
+                  <div className="space-y-4">
+                     <div className="p-6 rounded-[2rem] border-2 border-red-900/40 bg-red-600/[0.03] space-y-3">
+                        <div className="flex items-center gap-3">
+                           <AlertTriangle size={18} className="text-red-500" />
+                           <p className="text-[10px] font-black text-red-700 uppercase tracking-widest italic leading-none">ТРИГЕР ЕКСKALАЦІЇ</p>
+                        </div>
+                        <p className="text-[13px] font-bold text-red-200/90 italic leading-snug tracking-tight">{selectedPos.trigger}</p>
+                     </div>
+
+                     <div className="p-6 rounded-[2rem] border-2 border-amber-900/40 bg-amber-600/[0.03] space-y-3">
+                        <div className="flex items-center gap-3">
+                           <Zap size={18} className="text-amber-500" />
+                           <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest italic leading-none">ПРЕДИКТИВНА ДІЯ</p>
+                        </div>
+                        <p className="text-[13px] font-bold text-amber-200/90 italic leading-snug tracking-tight">{selectedPos.action}</p>
+                     </div>
                   </div>
 
-                  {/* Рекомендована дія */}
-                  <div className="p-4 border border-amber-900/30 bg-amber-950/10">
-                    <p className="text-[7px] font-black text-amber-700 uppercase tracking-widest mb-2">РЕКОМЕНДОВАНА ДІЯ</p>
-                    <p className="text-[11px] font-black text-amber-400">{selectedPos.action}</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="py-3 bg-red-700 text-white text-[8px] font-black uppercase tracking-wider hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
-                      <Zap size={12} /> ЕСКАЛАЦІЯ
+                  <div className="grid grid-cols-2 gap-4">
+                    <button className="py-5 bg-red-600 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] hover:bg-red-500 transition-all shadow-xl shadow-red-600/20 italic">
+                      ЕСКАЛУВАТИ_V5
                     </button>
-                    <button className="py-3 bg-slate-900 border border-slate-700/50 text-slate-300 text-[8px] font-black uppercase tracking-wider hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
-                      <Eye size={12} /> ПОВНЕ ДОСЬЄ
+                    <button className="py-5 bg-slate-900 text-slate-300 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] border border-white/[0.05] hover:bg-slate-800 transition-all italic">
+                      ДОСЬЄ_360°
                     </button>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* P&L Динаміка */}
-            <div className="bg-black border border-slate-800/50 p-6">
-              <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.45em] mb-5 flex items-center gap-2">
-                <Activity size={12} className="text-red-700" />
-                РИЗИК 24г · $M
-              </h3>
-              <div className="h-[160px]">
+            {/* P&L HISTORY HUD */}
+            <div className="rounded-[2.5rem] bg-black/40 border border-white/[0.05] p-8 shadow-2xl space-y-8">
+              <div className="flex items-center justify-between">
+                 <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                    <Activity size={16} className="text-red-600 animate-pulse" />
+                    ДИНАМІКА РИЗИКУ [24Г]
+                 </h3>
+                 <div className="h-0.5 w-12 bg-white/5" />
+              </div>
+              <div className="h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={RISK_TIMELINE} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
+                  <AreaChart data={RISK_TIMELINE} margin={{ top: 10, right: 0, left: -25, bottom: 0 }}>
                     <defs>
                       <linearGradient id="riskGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor="#ef4444" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                        <stop offset="5%"  stopColor="#dc2626" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="t" tick={{ fill: '#475569', fontSize: 8 }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fill: '#475569', fontSize: 9 }} tickLine={false} axisLine={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
+                    <XAxis dataKey="t" tick={{ fill: '#475569', fontSize: 9, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
                     <Tooltip
-                      contentStyle={{ background: '#020008', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 0 }}
-                      formatter={(v: number) => [`$${v}M`, 'Ризик']}
+                      contentStyle={{ background: '#050a14', border: '1px solid rgba(220,38,38,0.3)', borderRadius: '16px', color: '#fff' }}
+                      itemStyle={{ color: '#ef4444', fontWeight: 'bold' }}
                     />
-                    <ReferenceLine y={130} stroke="#ef4444" strokeDasharray="4 4" strokeWidth={0.8} />
-                    <Area type="monotone" dataKey="risk" stroke="#ef4444" strokeWidth={2} fill="url(#riskGrad)" />
+                    <ReferenceLine y={125} stroke="#dc2626" strokeDasharray="6 6" strokeWidth={1} label={{ value: 'THREASHOLD', position: 'insideTopRight', fill: '#dc2626', fontSize: 8, fontWeight: 'black' }} />
+                    <Area type="monotone" dataKey="risk" stroke="#dc2626" strokeWidth={3} fill="url(#riskGrad)" animationDuration={2000} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Розподіл ризику pie */}
-            <div className="bg-black border border-slate-800/50 p-6">
-              <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.45em] mb-4">
-                РОЗПОДІЛ РИЗИКУ ЗА ТИПОМ
-              </h3>
-              <div className="flex items-center gap-6">
-                <PieChart width={120} height={120}>
-                  <Pie data={RISK_BREAKDOWN} innerRadius={35} outerRadius={55} paddingAngle={2} dataKey="value" cx="50%" cy="50%">
-                    {RISK_BREAKDOWN.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
-                  </Pie>
-                </PieChart>
-                <div className="space-y-2 flex-1">
+            {/* RISK TYPE DISTRIBUTION */}
+            <div className="rounded-[2.5rem] bg-black/40 border border-white/[0.05] p-8 shadow-2xl space-y-8">
+              <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">РОЗПОДІЛ ЗА ВЕКТОРАМИ</h3>
+              <div className="flex items-center gap-10">
+                <div className="relative shrink-0">
+                   <div className="absolute inset-0 bg-red-600/10 blur-2xl rounded-full" />
+                   <PieChart width={140} height={140}>
+                      <Pie data={RISK_BREAKDOWN} innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value" cx="50%" cy="50%">
+                        {RISK_BREAKDOWN.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
+                      </Pie>
+                   </PieChart>
+                </div>
+                <div className="space-y-3 flex-1">
                   {RISK_BREAKDOWN.map((r, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: r.color }} />
-                        <span className="text-[9px] font-black text-slate-500">{r.name}</span>
+                    <div key={i} className="flex items-center justify-between group/legend">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.2)]" style={{ backgroundColor: r.color }} />
+                        <span className="text-[10px] font-black text-slate-500 uppercase italic tracking-tight group-hover/legend:text-slate-300 transition-colors">{r.name}</span>
                       </div>
-                      <span className="text-[9px] font-black text-white font-mono">{r.amount}</span>
+                      <span className="text-[11px] font-black text-white font-mono italic">{r.amount}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Ризик по секторах */}
-            <div className="bg-black border border-slate-800/50 p-6">
-              <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.45em] mb-5 flex items-center gap-2">
-                <BarChart3 size={12} className="text-amber-700" />
-                РИЗИК ПО СЕКТОРАХ ($M)
-              </h3>
-              <div className="h-[150px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={SECTOR_RISK} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="sector" tick={{ fill: '#475569', fontSize: 8 }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fill: '#475569', fontSize: 9 }} tickLine={false} axisLine={false} />
-                    <Tooltip contentStyle={{ background: '#020008', border: '1px solid rgba(239,68,68,0.18)', borderRadius: 0 }} />
-                    <Bar dataKey="exposure" name="Портфель" fill="#1e293b" radius={[2, 2, 0, 0]} />
-                    <Bar dataKey="risk"     name="Ризик"    fill="#ef4444" radius={[2, 2, 0, 0]} opacity={0.9} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
           </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        .badge-v2 {
+           display: inline-flex;
+           align-items: center;
+           border-radius: 8px;
+        }
+        .badge-v2-rose {
+           background: rgba(220, 38, 38, 0.1);
+           border: 1px solid rgba(220, 38, 38, 0.2);
+           color: #ef4444;
+        }
+        .shadow-3xl {
+           box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
+        }
+        .animate-spin-slow {
+           animation: spin 10s linear infinite;
+        }
+        @keyframes spin {
+           from { transform: rotate(0deg); }
+           to { transform: rotate(360deg); }
+        }
+      `}} />
     </div>
   );
 };

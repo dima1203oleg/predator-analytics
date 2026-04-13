@@ -21,7 +21,7 @@ import {
     Database, Crosshair, Flame, Box, Boxes, ShieldAlert, ZapOff, Search
 } from 'lucide-react';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';

@@ -25,7 +25,7 @@ export const useSystemStats = () => {
     queryKey: queryKeys.systemStats,
     queryFn: async (): Promise<SystemStats> => {
       const response = await api.stats.getSystemStats();
-      return response.data || response;
+      return (response as any).data || response;
     },
     staleTime: 10 * 1000, // 10 seconds for system stats
     refetchInterval: 30 * 1000, // Refetch every 30 seconds

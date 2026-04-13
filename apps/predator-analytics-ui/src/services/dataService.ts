@@ -43,9 +43,17 @@ export interface DeploymentEnvironment {
 export interface SystemMetrics {
   cpu_percent: number;
   memory_percent: number;
-  disk_usage: number;
-  active_containers: number;
-  uptime: string;
+  disk_usage?: number;
+  active_containers?: number;
+  uptime?: string;
+  status?: string;
+  healthy?: boolean;
+  overall_status?: string;
+  cluster_health?: string;
+  rps?: number;
+  latency?: { p50: number; };
+  errorRate?: number;
+  services?: any[];
 }
 
 export interface ServiceStatus {

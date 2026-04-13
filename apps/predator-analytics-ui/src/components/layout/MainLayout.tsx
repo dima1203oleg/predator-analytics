@@ -13,6 +13,16 @@ import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import { ConstitutionalShield } from '../shared/ConstitutionalShield';
 import { useTheme } from '../../context/ThemeContext';
+import { Activity, Server } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface BackendNode {
+  id: string;
+  name: string;
+  url: string;
+  active: boolean;
+  status: 'online' | 'offline' | 'checking';
+}
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -28,9 +38,29 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useAtom(isSidebarOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [backendNodes, setBackendNodes] = useState<BackendNode[]>([]);
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
   const { mode } = useTheme();
+
+  useEffect(() => {
+    // Initial load
+    if (typeof window !== 'undefined') {
+        const globalWindow = window as any;
+        if (globalWindow.__BACKEND_NODES__) {
+            setBackendNodes(globalWindow.__BACKEND_NODES__);
+        }
+    }
+
+    const handleStatusChange = (e: any) => {
+        if (e.detail && e.detail.nodes) {
+            setBackendNodes(e.detail.nodes);
+        }
+    };
+
+    window.addEventListener('predator-backend-status-change', handleStatusChange);
+    return () => window.removeEventListener('predator-backend-status-change', handleStatusChange);
+  }, []);
 
   useEffect(() => {
     if (isMobile) {
@@ -232,12 +262,46 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
         </div>
 
-        {/* Права частина: метрики */}
+        {/* Права частина: метрики + КЛАСТЕР */}
         <div className="flex items-center gap-4 shrink-0 pl-4">
+          {/* ВУЗЛИ БЕКЕНДУ */}
+          <div className="flex items-center gap-3 pr-2">
+            <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest italic flex items-center gap-1">
+              <Server size={8} /> КЛАСТЕР:
+            </span>
+            <div className="flex items-center gap-2">
+              {backendNodes.length > 0 ? backendNodes.map(node => (
+                <div 
+                  key={node.id}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2 py-0.5 rounded-sm border transition-all duration-500",
+                    node.active 
+                      ? "bg-amber-500/10 border-amber-500/30 ring-1 ring-amber-500/20" 
+                      : "bg-black/40 border-white/5 opacity-40 grayscale"
+                  )}
+                >
+                  <div className={cn(
+                    "w-1 h-1 rounded-full",
+                    node.status === 'online' ? "bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.8)]" : "bg-rose-500",
+                    node.active && node.status === 'online' && "animate-pulse"
+                  )} />
+                  <span className={cn(
+                    "text-[7px] font-black uppercase tracking-tight",
+                    node.active ? "text-amber-500" : "text-white/40"
+                  )}>
+                    {node.name.replace('_', ' ')}
+                  </span>
+                </div>
+              )) : (
+                <div className="text-[7px] font-mono text-slate-700 italic">INITIALIZING_NODES...</div>
+              )}
+            </div>
+          </div>
+
           <div className="h-3.5 w-px bg-white/10" />
           <div className="flex items-center gap-1.5">
             <span className="text-[7px] font-black text-slate-600 uppercase tracking-tighter">ЗАТРИМКА:</span>
-            <span className="text-[9px] font-mono font-bold text-cyan-400/90">12мс</span>
+            <span className="text-[9px] font-mono font-bold text-cyan-400/90 italic">12мс</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-[7px] font-black text-slate-600 uppercase tracking-tighter">ПРОПУСКНА:</span>

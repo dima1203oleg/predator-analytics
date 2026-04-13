@@ -15,7 +15,7 @@ import {
   DollarSign, ArrowRight, Download, Filter, Fingerprint,
   Crosshair, Zap, Lock, Star, Target
 } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ─── MOCK DATA ────────────────────────────────────────────
 

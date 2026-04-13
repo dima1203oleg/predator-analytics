@@ -6,10 +6,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { FinancialDashboard } from '../FinancialDashboard';
-import * as cersService from '@/services/cersService';
+import { FinancialDashboard } from './FinancialDashboard';
+import { cersService } from '@/services/unified/cers.service';
 
-vi.mock('@/services/cersService');
+vi.mock('@/services/unified/cers.service');
 
 const mockMetrics = [
   {
@@ -58,7 +58,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should render dashboard title', () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -66,7 +66,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should display loading state', () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockImplementation(() => new Promise(() => {}));
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -74,7 +74,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should display error message on failed fetch', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockRejectedValue(new Error('Network error'));
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -85,7 +85,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should display warning when no metrics', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue([]);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -96,7 +96,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should render KPI cards with correct values', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -110,7 +110,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should display historical data table', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -124,7 +124,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should show revenue in millions', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -136,17 +136,17 @@ describe('FinancialDashboard', () => {
   });
 
   it('should fetch metrics with correct UEID', () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="87654321" />, { wrapper: createWrapper() });
 
-    expect(vi.mocked(cersService.cersService.getFinancialMetrics))
+    expect(vi.mocked(cersService.getFinancialMetrics))
       .toHaveBeenCalledWith('87654321');
   });
 
   it('should cache metrics for 24 hours', () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     const { rerender } = render(
@@ -157,12 +157,12 @@ describe('FinancialDashboard', () => {
     // Перевірити, що при повторному render не перекликається API
     rerender(<FinancialDashboard ueid="12345678" />);
 
-    expect(vi.mocked(cersService.cersService.getFinancialMetrics))
+    expect(vi.mocked(cersService.getFinancialMetrics))
       .toHaveBeenCalledTimes(1);
   });
 
   it('should handle metrics with ROA and ROE', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -174,7 +174,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should calculate year-over-year trends correctly', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
@@ -186,7 +186,7 @@ describe('FinancialDashboard', () => {
   });
 
   it('should sort metrics by year in descending order', async () => {
-    vi.mocked(cersService.cersService.getFinancialMetrics)
+    vi.mocked(cersService.getFinancialMetrics)
       .mockResolvedValue(mockMetrics);
 
     render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });

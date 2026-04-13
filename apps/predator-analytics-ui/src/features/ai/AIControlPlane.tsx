@@ -25,7 +25,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import {
   normalizeAIControlPlaneSnapshot,
   type AIControlEngineRecord,

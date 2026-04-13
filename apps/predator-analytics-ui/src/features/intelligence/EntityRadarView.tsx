@@ -25,7 +25,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import ReactECharts from '@/components/ECharts';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { api } from '@/services/api';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // --- TYPES ---
 

@@ -3,8 +3,7 @@ import { apiClient } from '@/services/api';
 export const networkApi = {
     getGraph: async (params?: any) => {
         try {
-            const response = await apiClient.get('/graph/summary', { params });
-            // Map 'links' to 'edges' because cytoscape expects edges
+            const response = await apiClient.get('/graph/topology', { params });
             return {
                 nodes: response.data.nodes || [],
                 edges: response.data.links || response.data.edges || []
@@ -16,8 +15,16 @@ export const networkApi = {
     },
     
     searchNodes: async (query: string) => {
-        // Fallback or use a proper search endpoint if available
-        return { nodes: [], edges: [] };
+        try {
+            const response = await apiClient.get('/graph/search', { params: { query } });
+            return {
+                nodes: response.data.nodes || [],
+                edges: response.data.links || response.data.edges || []
+            };
+        } catch (error) {
+            console.error("Failed to search nodes", error);
+            return { nodes: [], edges: [] };
+        }
     },
     
     findPath: async (source: string, target: string) => {

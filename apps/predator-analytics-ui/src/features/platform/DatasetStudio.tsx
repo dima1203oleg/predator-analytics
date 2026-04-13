@@ -13,7 +13,9 @@ import {
     Clock, Cpu, HardDrive, Activity, Shield, Target, Binary, Microscope,
     ScanLine, BrainCircuit, Globe, GitBranch, Layers, Network, Radar, Radio
 } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { CyberGrid } from '@/components/CyberGrid';
+import { cn } from '@/lib/utils';
 import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -100,8 +102,10 @@ const DatasetStudio: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen animate-in fade-in duration-700 pb-20">
-            <AdvancedBackground />
+        <PageTransition>
+            <div className="min-h-screen pb-20 bg-[#020617] text-slate-200 relative overflow-hidden font-sans">
+                <AdvancedBackground />
+                <CyberGrid color="rgba(16, 185, 129, 0.03)" />
 
             <ViewHeader
                 title="OSINT КОМАНДНИЙ ЦЕНТР"
@@ -529,6 +533,7 @@ const DatasetStudio: React.FC = () => {
                 </AnimatePresence>
             </div>
         </div>
+    </PageTransition>
     );
 };
 

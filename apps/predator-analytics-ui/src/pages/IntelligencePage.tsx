@@ -25,7 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { dataService } from '@/services/dataService';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberOrb } from '@/components/CyberOrb';
 

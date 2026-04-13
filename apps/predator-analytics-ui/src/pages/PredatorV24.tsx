@@ -428,7 +428,7 @@ const PredatorV24 = () => {
             <div className="grid grid-cols-2 gap-2">
               {[
                 { label: 'Пошук', path: '/search', icon: Search, accent: 'cyan' },
-                { label: 'Ризики', path: '/diligence', icon: target, accent: 'rose' },
+                { label: 'Ризики', path: '/diligence', icon: Target, accent: 'rose' },
                 { label: 'Ринок', path: '/market', icon: TrendingUp, accent: 'emerald' },
                 { label: 'Брифінг', path: '/morning-brief', icon: Eye, accent: 'amber' },
               ].map((action) => (

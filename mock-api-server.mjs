@@ -197,6 +197,13 @@ const COMPANIES = [
   { name: 'ТОВ "БетаЕкспрес"', edrpou: '89012345', risk: 'high' },
 ];
 
+const PEOPLE = [
+  { name: 'Петренко Іван Васильович', ipn: '2547802511', position: 'Бенефіціар', risk: 'high', connections: 12 },
+  { name: 'Коваленко Олег Ігорович', ipn: '3214567890', position: 'Директор', risk: 'medium', connections: 5 },
+  { name: 'Сидоренко Ганна Миколаївна', ipn: '2876543210', position: 'Засновник', risk: 'low', connections: 8 },
+  { name: 'Бондаренко Віталій Сергійович', ipn: '3098765432', position: 'Керівник ВЕЗ', risk: 'critical', connections: 24 }
+];
+
 const HS_CODES = [
   { code: '8471300000', desc: 'Портативні комп\'ютери масою не більше 10 кг', category: 'Електроніка' },
   { code: '8517120000', desc: 'Телефони мобільні', category: 'Електроніка' },
@@ -2398,31 +2405,80 @@ app.get(['/api/v1/ingestion/stream/:jobId', '/api/v1/data-hub/stream/:jobId'], (
 
 app.get('/api/v1/search', (req, res) => {
   const q = (req.query.q || '').toLowerCase();
+  executeSearch(q, res);
+});
+
+app.post('/api/v1/search', (req, res) => {
+  const q = (req.body.q || '').toLowerCase();
+  executeSearch(q, res);
+});
+
+function executeSearch(q, res) {
   const queryWords = q.split(/\s+/).filter(Boolean);
 
-  if (!q || DB_SEARCH_INDEX.length === 0) {
+  if (!q) {
     return res.json({ results: [], total: 0, query: q });
   }
 
-  const results = DB_SEARCH_INDEX
-    .filter(doc => {
-      const text = doc.text.toLowerCase();
-      // Match if ANY word from the query is in the text
-      return queryWords.some(word => word.length > 2 && text.includes(word));
-    })
-    .slice(0, 20)
-    .map((doc, i) => ({
-      id: doc.declaration.id,
-      title: `[${doc.declaration.country_origin}] ${doc.declaration.declaration_number}: ${doc.declaration.goods_description}`,
-      snippet: `${doc.declaration.company_name} | ${doc.declaration.customs_office} | $${doc.declaration.customs_value_usd.toLocaleString()}`,
-      score: 0.95 - (i * 0.02),
-      source: doc.declaration.country_origin === 'TELEGRAM' ? 'telegram' : 'customs-registry',
-      category: doc.declaration.country_origin === 'TELEGRAM' ? 'intelligence' : 'customs',
-      searchType: 'semantic-mock'
+  // 1. Пошук по людях
+  const peopleResults = PEOPLE.filter(p => p.name.toLowerCase().includes(q) || p.ipn.includes(q))
+    .map(p => ({
+      id: `person-${p.ipn}`,
+      name: p.name,
+      identifier: p.ipn,
+      type: 'person',
+      director: p.position,
+      status: 'active',
+      statusLabel: 'ВЕРИФІКОВАНО',
+      risk: p.risk,
+      riskLabel: p.risk === 'critical' ? 'КРИТИЧНИЙ РИЗИК' : p.risk.toUpperCase(),
+      riskScore: p.risk === 'critical' ? 98 : p.risk === 'high' ? 82 : 15,
+      capital: 'Н/Д (Фізична особа)',
+      address: 'Дані захищено RLS',
+      source: 'ДЕРЖ_РЕЄСТР_ФО',
+      tags: ['PEP', 'Звʼязки з ВПК', 'Офшорний_слід'],
+      beneficiaries: [],
+      connections: p.connections,
+      matchScore: 99,
+      completenessScore: 88,
+      updatedAt: new Date().toISOString()
     }));
 
-  res.json({ results, total: results.length, query: q });
-});
+  // 2. Пошук по деклараціях (індекс)
+  const indexResults = DB_SEARCH_INDEX
+    .filter(doc => {
+      const text = doc.text.toLowerCase();
+      return queryWords.some(word => word.length > 2 && text.includes(word));
+    })
+    .slice(0, 10);
+
+  const results = [
+    ...peopleResults,
+    ...indexResults.map((doc, i) => ({
+      id: doc.declaration.id,
+      name: doc.declaration.company_name,
+      identifier: doc.declaration.declaration_number,
+      type: 'company',
+      director: 'Петренко І.В.',
+      status: 'active',
+      statusLabel: 'АКТИВНА',
+      risk: doc.declaration.country_origin === 'CHINA' ? 'medium' : 'low',
+      riskLabel: 'НОРМА',
+      riskScore: 24,
+      capital: '10,000,000 UAH',
+      address: 'м. Київ, вул. Дегтярівська, 15',
+      source: 'МИТНИЦЯ_UA',
+      tags: ['Митний_оформлення', 'Спец_імпорт'],
+      beneficiaries: ['Порошенко П.А.'],
+      connections: 4,
+      matchScore: 0.95 - (i * 0.02),
+      completenessScore: 92,
+      updatedAt: doc.declaration.date
+    }))
+  ];
+
+  res.json(results);
+}
 
 app.post('/api/v1/search/customs', (req, res) => {
   const q = (req.body.query || '').toLowerCase();
@@ -2537,6 +2593,33 @@ app.get('/api/v1/graph/summary', (req, res) => {
 });
 
 
+// Повна топологія графу для TopologyVisualizer (NetworkMapPage)
+app.get('/api/v1/graph/topology', (req, res) => {
+  // Форматуємо для Cytoscape: { data: { ... } }
+  const nodes = DB_GRAPH.nodes.map(n => ({
+    data: {
+      id: n.id,
+      label: n.label,
+      type: (n.type || 'unknown').toLowerCase(),
+      primary_risk: n.risk ? (n.risk > 50 ? 'high' : 'medium') : 'low',
+      ...n
+    }
+  }));
+
+  const edges = DB_GRAPH.edges.map((e, idx) => ({
+    data: {
+      id: `edge-${idx}`,
+      source: e.from,
+      target: e.to,
+      type: e.label || 'LINKED_TO',
+      ...e
+    }
+  }));
+
+  res.json({ nodes, edges });
+});
+
+
 // Connectors / Sources — тепер повертає ВСІ типи джерел
 app.get(['/api/v1/sources/connectors', '/api/v1/ingest/connectors'], (req, res) => {
   // Map all etlJobs to connectors
@@ -2559,8 +2642,7 @@ app.get(['/api/v1/sources/connectors', '/api/v1/ingest/connectors'], (req, res) 
     };
   });
 
-  // Built-in demo sources (shown when no jobs have been run yet)
-  const builtInSources = DB_FACTS.length > 0 ? [
+  const matchedConnectors = DB_FACTS.length > 0 ? [
     {
       id: 'src-customs-registry', name: 'Березень_2024.xlsx', type: 'excel',
       status: 'active', itemsCount: DB_FACTS.length,
@@ -2569,14 +2651,36 @@ app.get(['/api/v1/sources/connectors', '/api/v1/ingest/connectors'], (req, res) 
     },
   ] : [];
 
-  // Merge: etlJobs first, then built-in (filtering duplicates)
   const existingIds = new Set(jobConnectors.map(c => c.id));
   const mergedConnectors = [
     ...jobConnectors,
-    ...builtInSources.filter(s => !existingIds.has(s.id))
+    ...matchedConnectors.filter(s => !existingIds.has(s.id))
   ];
 
   res.json(mergedConnectors);
+});
+
+
+// Пошук вузлів у графі
+app.get('/api/v1/graph/search', (req, res) => {
+  const { query } = req.query;
+  if (!query) return res.json({ nodes: [], edges: [] });
+
+  const searchLower = query.toString().toLowerCase();
+  const matchedNodes = DB_GRAPH.nodes.filter(n => 
+    n.label.toLowerCase().includes(searchLower) || 
+    (n.edrpou && n.edrpou.includes(searchLower))
+  ).map(n => ({
+    data: {
+      id: n.id,
+      label: n.label,
+      type: (n.type || 'unknown').toLowerCase(),
+      primary_risk: n.risk ? (n.risk > 50 ? 'high' : 'medium') : 'low',
+      ...n
+    }
+  }));
+
+  res.json({ nodes: matchedNodes, edges: [] });
 });
 app.get('/api/v1/sources/', (req, res) => { res.json([]); });
 

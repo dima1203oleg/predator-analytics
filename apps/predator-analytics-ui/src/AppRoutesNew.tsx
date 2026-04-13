@@ -71,6 +71,7 @@ const TradeFlowMapPremium = lazy(() => import('./features/intelligence/TradeFlow
 const AdvancedChartsPremium = lazy(() => import('./features/intelligence/AdvancedChartsPremium'));
 const AlertCenterPremium = lazy(() => import('./features/platform/AlertCenterPremium'));
 const PriceComparisonPremium = lazy(() => import('./features/intelligence/PriceComparisonPremium'));
+const CargoManifestPremium = lazy(() => import('./features/intelligence/CargoManifestPremium'));
 const MobileCommandCenter = lazy(() => import('./features/dashboard/MobileCommandCenter'));
 const ApiDocumentationView = lazy(() => import('./features/reports/ApiDocumentationView'));
 const RealTimeDashboard = lazy(() => import('./features/dashboard/RealTimeDashboard'));
@@ -131,6 +132,7 @@ const PortfolioRiskView      = lazy(() => import('./features/dashboard/Portfolio
 const HypothesisEngineView   = lazy(() => import('./features/ai/HypothesisEngineView'));
 const ConversationIntelView  = lazy(() => import('./features/osint/ConversationIntelView'));
 const MarketEntryView        = lazy(() => import('./features/intelligence/MarketEntryView'));
+const WarRoomView            = lazy(() => import('./features/dashboard/WarRoomView'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -270,6 +272,7 @@ export const AppRoutesNew = () => {
             <Route path="/risk-scoring" element={<RiskScoringPremium />} />
             <Route path="/suppliers" element={<SupplierDiscoveryPremium />} />
             <Route path="/trade-map" element={<TradeFlowMapPremium />} />
+            <Route path="/cargo-manifest" element={<CargoManifestPremium />} />
             <Route path="/charts" element={<AdvancedChartsPremium />} />
             <Route path="/alerts" element={<AlertCenterPremium />} />
             <Route path="/price-compare" element={<PriceComparisonPremium />} />
@@ -324,6 +327,7 @@ export const AppRoutesNew = () => {
             <Route path="/market-entry"       element={<MarketEntryView />} />
             <Route path="/ai-hypothesis"      element={<HypothesisEngineView />} />
             <Route path="/conversation-intel" element={<ConversationIntelView />} />
+            <Route path="/war-room"           element={<WarRoomView />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

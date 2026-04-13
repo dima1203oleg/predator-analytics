@@ -35,5 +35,13 @@ export const cersService = {
     getDecisionArtifacts: async (edrpou: string): Promise<any[]> => {
         const response = await apiClient.get(`/cers/company/${edrpou}/artifacts`);
         return response.data;
+    },
+    
+    /**
+     * Отримує фінансові показники компанії за останні роки
+     */
+    getFinancialMetrics: async (edrpou: string): Promise<any[]> => {
+        const response = await apiClient.get(`/cers/company/${edrpou}/financials`);
+        return response.data;
     }
 };

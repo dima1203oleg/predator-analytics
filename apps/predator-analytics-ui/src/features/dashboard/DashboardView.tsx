@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR STRATEGIC NEXUS | v56.1.4
+ * 🦅 PREDATOR STRATEGIC NEXUS | v56.2.0-TITAN
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митних ризиків та торговельних потоків.
@@ -25,7 +25,7 @@ import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { dashboardApi } from '@/services/api/dashboard';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
@@ -253,7 +253,7 @@ const DashboardView: React.FC = () => {
           <div className="flex flex-col items-center gap-12">
             <CyberOrb size="xl" status="processing" pulsing />
             <div className="text-center space-y-4">
-               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V56</h2>
+               <h2 className="text-3xl font-black text-white italic uppercase tracking-[0.4em] animate-pulse">АКТИВАЦІЯ_ЯДРА_V56.2</h2>
                <p className="text-red-500/60 text-[10px] font-mono font-black uppercase tracking-[0.8em]">Синхронізація суверенних метрик...</p>
             </div>
           </div>
@@ -288,7 +288,7 @@ const DashboardView: React.FC = () => {
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
                     <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                      PREDATOR_CENTRAL_COMMAND // v56.1.4
+                      PREDATOR_CENTRAL_COMMAND // v56.2.0-TITAN
                     </span>
                   </div>
                 </div>
@@ -684,7 +684,7 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v56.1.4 NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
+                `СИСТЕМА: v56.2.0 TITAN NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,

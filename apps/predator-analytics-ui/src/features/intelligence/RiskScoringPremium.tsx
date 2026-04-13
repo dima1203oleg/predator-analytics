@@ -16,7 +16,7 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { Cers5LayerGauge } from '@/components/risk/Cers5LayerGauge';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import {
   ShieldAlert,
   AlertTriangle,
@@ -296,8 +296,8 @@ const RiskScoringPremium: React.FC = () => {
       try {
         setLoading(true);
         // Using canonical diligenceApi
-        const response = await diligenceApi.searchCompanies();
-        const entitiesData = response.items || [];
+        const response = await diligenceApi.searchCompanies() as any;
+        const entitiesData = response.items || response.results || [];
 
         // Map backend companies to UI RiskEntity
         const mappedEntities: RiskEntity[] = (entitiesData as any[]).map(e => ({

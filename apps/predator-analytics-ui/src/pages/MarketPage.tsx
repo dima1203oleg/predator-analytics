@@ -265,7 +265,7 @@ const buildCustomsChartOption = (declarations: DeclarationResponse[]) => {
 };
 
 // --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
-const MOCK_MARKET_OVERVIEW: MarketOverviewPayload = {
+const MOCK_MARKET_OVERVIEW = {
   overview: {
     stats: {
       total_declarations: 4218932,
@@ -284,7 +284,7 @@ const MOCK_MARKET_OVERVIEW: MarketOverviewPayload = {
       { product_code: "8471", product_name: "Обчислювальні машини", total_value_usd: 150000000, growth_rate: 45.1 },
     ]
   }
-};
+} as MarketOverviewPayload;
 
 export default function MarketPage() {
   const backendStatus = useBackendStatus();
@@ -652,6 +652,7 @@ function MarketOverview({
   data,
   loading,
   error,
+  onSimulateValue,
 }: {
   data: NormalizedMarketOverview;
   loading: boolean;

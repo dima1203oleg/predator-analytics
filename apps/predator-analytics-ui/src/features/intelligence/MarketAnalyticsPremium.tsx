@@ -44,7 +44,7 @@ import { premiumLocales } from '@/locales/uk/premium';
 import { HoloContainer } from '@/components/HoloContainer';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ========================
 // Types

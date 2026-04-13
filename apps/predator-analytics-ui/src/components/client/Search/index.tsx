@@ -20,7 +20,7 @@ export const Search: React.FC = () => {
     setResults([]);
 
     try {
-      const response = await diligenceApi.searchCompanies(query);
+      const response = await diligenceApi.searchCompanies(query) as any;
       if (response && response.results) {
         setResults(response.results);
       } else if (Array.isArray(response)) {

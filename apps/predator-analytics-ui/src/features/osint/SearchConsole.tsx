@@ -1,13 +1,11 @@
 /**
- * PREDATOR v56.1.4 | Synaptic Discovery Matrix — Консоль Надглибинного Пошуку
+ * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v56.2-TITAN
+ * PREDATOR Analytics — Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
- * - Величезний пошуковий рядок з градієнтним бордером та внутрішнім світінням
- * - Нейронний Listening Visualizer (Хвильова форма)
- * - XAI пояснення (GNN Interpretability)
- * - Truth-Only Filter Mode (Індекс Істини)
- * - Динамічні частинки семантичного поля
- * - Повна українська локалізація (HR-04)
+ * Використовує GNN (Graph Neural Networks) для детекції прихованих зв'язків.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
@@ -19,23 +17,19 @@ import {
     ChevronDown, ExternalLink, Layers, Database, AlertCircle, Volume2, VolumeX, RefreshCw,
     ShieldCheck, Eye, Terminal, Waves, Activity, Target, Fingerprint, Cpu,
     Dna, Atom, Radio, Key, Globe, Layout, Maximize2, Minimize2,
-    ArrowUpRight, ListFilter, HelpCircle
+    ArrowUpRight, ListFilter, HelpCircle, Scan, Radar, Siren, RefreshCcw
 } from 'lucide-react';
-import { api } from '@/services/api';
+import { apiClient } from '@/services/api/config';
 import ReactECharts from '@/components/ECharts';
-import * as echarts from 'echarts';
-import { useVoiceControl, InteractionStatus } from '@/hooks/useVoiceControl';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { useAppStore } from '@/store/useAppStore';
-import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ========================
 // Types & Defaults
@@ -55,28 +49,10 @@ interface SearchResult {
     tags?: string[];
 }
 
-interface XAIExplanation {
-    method: string;
-    query_coverage: number;
-    top_features: { token: string; importance: number }[];
-    interpretation: string;
-}
-
-interface SearchFilters {
-    dateFrom?: string;
-    dateTo?: string;
-    category?: string;
-    source?: string;
-    language?: string;
-}
-
 // ========================
 // Sub-Components
 // ========================
 
-/**
- * Neural Waveform Visualizer for Voice
- */
 const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
     <div className="flex items-center gap-1.5 h-10 px-6">
         {[...Array(16)].map((_, i) => (
@@ -99,44 +75,11 @@ const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
     </div>
 );
 
-/**
- * Animated Particle Background for Search results
- */
-const SemanticFieldParticles: React.FC = () => {
-    return (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-20">
-            {[...Array(20)].map((_, i) => (
-                <motion.div
-                    key={i}
-                    initial={{ 
-                        x: Math.random() * 2000, 
-                        y: Math.random() * 1000,
-                        scale: Math.random() * 0.5 + 0.5,
-                        opacity: 0
-                    }}
-                    animate={{ 
-                        y: [null, Math.random() * 1000],
-                        opacity: [0, 0.5, 0],
-                        scale: [0.5, 1, 0.5]
-                    }}
-                    transition={{ 
-                        duration: Math.random() * 10 + 20, 
-                        repeat: Infinity, 
-                        ease: "linear" 
-                    }}
-                    className="absolute w-1 h-1 bg-indigo-500 rounded-full blur-[1px]"
-                />
-            ))}
-        </div>
-    );
-};
-
 // ========================
 // Main Component
 // ========================
 
-const SearchConsole: React.FC = () => {
-    const { userRole } = useAppStore();
+export default function SearchConsole() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -144,8 +87,6 @@ const SearchConsole: React.FC = () => {
     const [searchTime, setSearchTime] = useState<number | null>(null);
     const [history, setHistory] = useState<string[]>(JSON.parse(localStorage.getItem('search_history') || '[]'));
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedExplanation, setSelectedExplanation] = useState<XAIExplanation | null>(null);
-    const [isMuted, setIsMuted] = useState(false);
     
     // Search mode configuration
     const [searchModes, setSearchModes] = useState({
@@ -153,15 +94,6 @@ const SearchConsole: React.FC = () => {
         rerank: true,
         explain: false,
         chat: false
-    });
-
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    // Voice control hook
-    const [voiceStatus, setVoiceStatus] = useState<InteractionStatus>('IDLE');
-    const { startListening, stopListening, speak } = useVoiceControl(voiceStatus, setVoiceStatus, (text) => {
-        setQuery(text);
-        if (text.length > 5) handleSearch(text);
     });
 
     const handleSearch = useCallback(async (forcedQuery?: string) => {
@@ -177,23 +109,29 @@ const SearchConsole: React.FC = () => {
 
         try {
             // Simulated deep semantic fetch
-            const apiResults = await api.search.query({
+            const apiRes = await apiClient.post('/search/synaptic', {
                 q: activeQuery,
                 rerank: searchModes.rerank,
                 mode: searchModes.semantic ? 'hybrid' : 'text'
             });
+            const apiResults = apiRes.data;
 
-            // Fallback for demo if API returns empty
-            const processed = apiResults.length > 0 ? apiResults : [
-                { id: '1', title: 'ДП "АНТОНОВ" — Реєстр Експортних Операцій', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99 },
-                { id: '2', title: 'ТОВ "ЕНЕРГО-ПОТІК" — Аномальна активність', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕРГЕТИКА', truthScore: 0.88 },
-                { id: '3', title: 'Аналіз санкційних списків — Пакет №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0 }
+            // Fallback for demo
+            const processed = apiResults?.length > 0 ? apiResults : [
+                { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
+                { id: '2', title: 'ТОВ "ЕНЕРГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕРГЕТИКА', truthScore: 0.88, tags: ['ЕНЕРГЕТИКА', 'ОФШОРИ', 'РИЗИК'] },
+                { id: '3', title: 'АНАЛІЗ САНКЦІЙНИХ СПИСКІВ — ПАКЕТ №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0, tags: ['САНКЦІЇ', 'ВПК', 'БЕЗПЕКА'] }
             ];
 
             const final = truthMode ? processed.filter((r: any) => (r.truthScore || 0) > 0.9) : processed;
             setResults(final);
         } catch (error) {
             console.error("Discovery error:", error);
+            // Fallback for mock environment
+            setResults([
+                { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-04-12', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
+                { id: '2', title: 'ТОВ "ЕНЕРГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-04-11', category: 'ЕНЕРГЕТИКА', truthScore: 0.88, tags: ['ЕНЕРГЕТИКА', 'ОФШОРИ', 'РИЗИК'] }
+            ]);
         } finally {
             setSearchTime(Date.now() - startTime);
             setIsLoading(false);
@@ -206,116 +144,95 @@ const SearchConsole: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.08)" />
-                <SemanticFieldParticles />
+                <CyberGrid color="rgba(99, 102, 241, 0.05)" />
                 
-                {/* Visual Accent */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[400px] bg-indigo-500/5 blur-[150px] rounded-full" />
-                
-                <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
+                <div className="relative z-10 max-w-[1780px] mx-auto p-4 sm:p-12 space-y-16">
                     
-                    {/* View Header v56.1.4 */}
                     <ViewHeader
                         title={
-                            <div className="flex items-center gap-8">
+                            <div className="flex items-center gap-10">
                                 <div className="relative group">
                                     <div className="absolute inset-0 bg-indigo-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
                                     <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
                                         <Search size={32} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
                                     </div>
                                 </div>
-                                <div>
-                                    <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        SYNAPTIC <span className="text-indigo-500">DISCOVERY</span>
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-3">
+                                        <span className="badge-v2 bg-indigo-600/10 border border-indigo-600/20 text-indigo-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v56.2
+                                        </span>
+                                        <div className="h-px w-10 bg-indigo-600/20" />
+                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                    </div>
+                                    <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
+                                        SYNAPTIC <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">DISCOVERY</span>
                                     </h1>
-                                    <p className="text-[10px] font-mono font-black text-indigo-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                        <Atom size={12} className="animate-spin-slow" /> 
-                                        NEURAL_SEARCH_CORE_v56.1.4
+                                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic mt-2 opacity-80 leading-none">
+                                        ЯДРО СЕМАНТИЧНОГО ПОШУКУ ТА КВАНТОВОГО АНАЛІЗУ ДАНИХ
                                     </p>
                                 </div>
                             </div>
                         }
-                        icon={<Search size={22} className="text-indigo-400" />}
-                        breadcrumbs={['ЯДРО', 'СЕМАНТИКА', 'MATРИЦЯ_ПОШУКУ']}
                         stats={[
                             { label: 'ІНДЕКС_ІСТИНИ', value: '99.9%', color: 'success', icon: <Fingerprint size={14} />, animate: true },
                             { label: 'ЛАТЕНТНІСТЬ', value: searchTime ? `${searchTime}мс` : '0мс', color: 'primary', icon: <Zap size={14} /> },
-                            { label: 'АКТИВНІСТЬ', value: 'ONLINE', color: 'success', icon: <Radio size={14} /> }
+                            { label: 'СТАН_МАТРИЦІ', value: 'ONLINE', color: 'success', icon: <Radio size={14} /> }
                         ]}
+                        actions={
+                            <div className="flex gap-4">
+                               <button onClick={() => {setQuery(''); setResults([]);}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
+                                  <RefreshCcw size={24} />
+                               </button>
+                               <button className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4">
+                                  <Database size={18} /> ЗАВАНТАЖИТИ_ДАТАСЕТ
+                               </button>
+                            </div>
+                        }
                     />
 
-                    {/* Massive Search Console Input (v56.1.4 UX) */}
+                    {/* MASSIVE SEARCH CONSOLE */}
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="relative group p-1.5 rounded-[56px] bg-gradient-to-tr from-indigo-500/30 via-transparent to-emerald-500/30 shadow-[0_0_100px_rgba(0,0,0,0.8)]"
+                            initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                            className="relative group p-1.5 rounded-[4rem] bg-gradient-to-tr from-indigo-500/30 via-transparent to-emerald-500/30 shadow-[0_0_100px_rgba(0,0,0,0.8)]"
                         >
-                            <div className="relative bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[50px] border border-white/5 overflow-hidden">
-                                <div className="flex items-center px-12 py-10 gap-8">
-                                    <button 
-                                        onClick={() => setShowFilters(!showFilters)}
-                                        className={cn(
-                                            "p-5 rounded-[28px] transition-all panel-3d border border-white/5",
-                                            showFilters ? "bg-indigo-600 text-white shadow-indigo-500/40" : "bg-white/5 text-slate-500 hover:text-white"
-                                        )}
-                                    >
+                            <div className="relative bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[3.8rem] border border-white/5 overflow-hidden">
+                                <div className="flex items-center px-10 py-8 gap-8">
+                                    <button onClick={() => setShowFilters(!showFilters)} className={cn("p-6 rounded-[2rem] transition-all border border-white/5", showFilters ? "bg-indigo-600 text-white shadow-indigo-500/40" : "bg-white/5 text-slate-500 hover:text-white")}>
                                         <ListFilter size={28} />
                                     </button>
 
                                     <div className="flex-1 relative">
                                         <input
-                                            ref={inputRef}
-                                            value={query}
-                                            onChange={(e) => setQuery(e.target.value)}
+                                            value={query} onChange={(e) => setQuery(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                             placeholder="ЗАПИТАЙТЕ У МАТРИЦІ... (напр. 'Експорт титану 2026')"
-                                            className="w-full bg-transparent text-3xl font-bold text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg]"
+                                            className="w-full bg-transparent text-3xl font-black text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg] uppercase"
                                         />
                                         <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-indigo-500 group-focus-within:w-full transition-all duration-700" />
                                     </div>
 
                                     <div className="flex items-center gap-6">
-                                        <NeuralWaveform active={voiceStatus === 'LISTENING'} />
-                                        
-                                        <button 
-                                            onClick={() => voiceStatus === 'LISTENING' ? stopListening() : startListening()}
-                                            className={cn(
-                                                "p-5 rounded-[28px] transition-all panel-3d border-2",
-                                                voiceStatus === 'LISTENING' ? "bg-rose-500 border-rose-400 text-white animate-pulse" : "bg-white/5 border-transparent text-slate-500 hover:text-indigo-400"
-                                            )}
-                                        >
+                                        <button className="p-6 rounded-[2rem] bg-white/5 border border-transparent text-slate-500 hover:text-indigo-400 transition-all">
                                             <Mic size={28} />
                                         </button>
-
-                                        <button 
-                                            onClick={() => handleSearch()}
-                                            disabled={isLoading}
-                                            className="px-14 py-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[32px] text-xs font-black uppercase tracking-[0.3em] flex items-center gap-4 shadow-3xl shadow-indigo-900/40 relative group overflow-hidden panel-3d border border-indigo-400/30"
-                                        >
-                                            {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Search size={24} className="group-hover:scale-110 transition-transform" />}
+                                        <button onClick={() => handleSearch()} disabled={isLoading} className="px-14 py-7 bg-indigo-700 hover:bg-indigo-600 text-white rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-3xl shadow-indigo-900/40 relative group overflow-hidden border border-indigo-400/30 transition-all">
+                                            {isLoading ? <RefreshCw className="animate-spin" size={24} /> : <Scan size={24} className="group-hover:scale-110 transition-transform" />}
                                             <span>ЗНАЙТИ</span>
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Intelligent History Ticker */}
                                 {history.length > 0 && !results.length && !isLoading && (
-                                    <motion.div 
-                                        initial={{ height: 0 }} animate={{ height: 'auto' }}
-                                        className="px-12 py-6 border-t border-white/5 bg-white/[0.02] flex items-center gap-6 overflow-x-auto no-scrollbar"
-                                    >
-                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest shrink-0 flex items-center gap-2">
-                                            <Clock size={12} /> ІСТОРІЯ:
+                                    <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-12 py-6 border-t border-white/5 bg-white/[0.01] flex items-center gap-6 overflow-x-auto no-scrollbar">
+                                        <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest shrink-0 flex items-center gap-2 italic">
+                                            <Clock size={12} /> ІСТОРІЯ_ЗАПИТІВ:
                                         </span>
                                         {history.map((h, i) => (
-                                            <button 
-                                                key={i} 
-                                                onClick={() => { setQuery(h); handleSearch(h); }}
-                                                className="px-5 py-2.5 bg-white/5 hover:bg-indigo-500/10 border border-white/5 rounded-2xl text-[10px] font-bold text-slate-500 hover:text-indigo-400 transition-all whitespace-nowrap"
-                                            >
+                                            <button key={i} onClick={() => { setQuery(h); handleSearch(h); }} className="px-5 py-2.5 bg-white/5 hover:bg-indigo-500/10 border border-white/5 rounded-2xl text-[10px] font-black text-slate-600 hover:text-indigo-400 transition-all whitespace-nowrap uppercase italic tracking-tighter">
                                                 {h}
                                             </button>
                                         ))}
@@ -324,251 +241,155 @@ const SearchConsole: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Search Modes (v56.1.4 Visuals) */}
+                        {/* MODE SELECTORS */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
-                                { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#6366f1' },
-                                { id: 'rerank', label: 'НЕЙРО-РЕРЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
-                                { id: 'chat', label: 'NEXUS CO-PILOT', icon: MessageSquare, color: '#f59e0b', premium: true },
-                                { id: 'truth', label: 'ТІЛЬКИ ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
+                                { id: 'semantic', label: 'СЕМАНТИЧНИЙ_ПОШУК', icon: Sparkles, color: '#6366f1' },
+                                { id: 'rerank', label: 'НЕЙРО_РЕРЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
+                                { id: 'chat', label: 'NEXUS_CO_PILOT', icon: MessageSquare, color: '#f59e0b', premium: true },
+                                { id: 'truth', label: 'ТІЛЬКИ_ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
                                 <motion.button
-                                    key={mode.id}
-                                    whileHover={{ y: -5, scale: 1.02 }}
+                                    key={mode.id} whileHover={{ y: -5, scale: 1.02 }}
                                     onClick={mode.onToggle || (() => setSearchModes(s => ({ ...s, [mode.id]: !s[mode.id as keyof typeof s] })))}
                                     className={cn(
-                                        "px-8 py-4 rounded-[28px] border transition-all flex items-center gap-4 relative overflow-hidden panel-3d",
+                                        "px-8 py-4 rounded-[2.5rem] border transition-all flex items-center gap-4 relative overflow-hidden shadow-xl",
                                         (mode.active ?? (searchModes as any)[mode.id])
-                                            ? "bg-indigo-600/10 border-indigo-500/40 text-indigo-400 shadow-lg shadow-indigo-500/10"
+                                            ? "bg-indigo-600/10 border-indigo-500/40 text-indigo-400 shadow-indigo-500/10"
                                             : "bg-slate-900/40 border-white/5 text-slate-500 hover:text-slate-300"
                                     )}
                                 >
                                     <mode.icon size={20} style={{ color: (mode.active ?? (searchModes as any)[mode.id]) ? mode.color : undefined }} />
-                                    <span className="text-[10px] font-black tracking-widest uppercase">{mode.label}</span>
-                                    {mode.premium && (
-                                        <Badge className="ml-2 bg-amber-500 text-black text-[7px] font-black border-none px-2">PRO</Badge>
-                                    )}
-                                    {(mode.active ?? (searchModes as any)[mode.id]) && (
-                                        <div className="absolute bottom-0 left-0 h-1 w-full" style={{ backgroundColor: mode.color }} />
-                                    )}
+                                    <span className="text-[10px] font-black tracking-widest uppercase italic">{mode.label}</span>
+                                    {mode.premium && <Badge className="ml-2 bg-amber-500 text-black text-[7px] font-black border-none px-2 shadow-lg">PRO</Badge>}
                                 </motion.button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Results / Empty State / Loading */}
-                    <div className="max-w-5xl mx-auto">
+                    {/* RESULTS / LOADING / EMPTY */}
+                    <div className="max-w-6xl mx-auto">
                         {isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-40 gap-12">
-                                <div className="relative">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[120px] rounded-full animate-pulse" />
-                                    <CyberOrb size={180} color="#6366f1" intensity={0.8} pulse />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <Brain size={48} className="text-white animate-pulse" />
-                                    </div>
-                                </div>
-                                <div className="text-center space-y-4">
-                                    <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] animate-pulse">КВАНТОВИЙ АНАЛІЗ</h3>
-                                    <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v55...</p>
+                            <div className="flex flex-col items-center justify-center py-40 gap-12 text-center">
+                                <CyberOrb size={220} variant="scan" color="#6366f1" />
+                                <div className="space-y-4">
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em] animate-pulse italic">КВАНТОВИЙ_АНАЛІЗ_МАТРИЦІ</h3>
+                                    <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v56_TITAN...</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (
                             <div className="space-y-12 pb-40">
-                                <div className="flex items-center justify-between border-b border-white/5 pb-8">
-                                    <div className="flex items-center gap-6">
-                                        <div className="px-5 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-xl">
-                                            <span className="text-2xl font-black text-white">{results.length}</span>
+                                <div className="flex items-center justify-between border-b border-white/5 pb-10">
+                                    <div className="flex items-center gap-8">
+                                        <div className="px-6 py-3 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl shadow-2xl">
+                                            <span className="text-3xl font-black text-indigo-400 font-mono tracking-tighter">{results.length}</span>
                                         </div>
-                                        <span className="text-xs font-black text-slate-500 uppercase tracking-widest">РЕЗУЛЬТАТІВ ВИЯВЛЕНО</span>
+                                        <span className="text-sm font-black text-slate-500 uppercase tracking-[0.4em] italic">РЕЗУЛЬТАТІВ_ВИЯВЛЕНО</span>
                                     </div>
                                     <div className="flex gap-4">
-                                        <button className="p-4 bg-slate-900 border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all"><Layout size={20} /></button>
-                                        <button className="p-4 bg-slate-900 border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all"><RefreshCw size={20} /></button>
+                                        <button className="p-5 bg-black border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><Layout size={20} /></button>
+                                        <button className="p-5 bg-black border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl"><RefreshCw size={20} /></button>
                                     </div>
                                 </div>
 
                                 <div className="space-y-8">
                                     {results.map((result, i) => (
                                         <motion.div 
-                                            key={result.id}
-                                            initial={{ opacity: 0, x: -30 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: i * 0.1 }}
-                                            className="group relative p-1 rounded-[40px] bg-white/[0.02] hover:bg-gradient-to-r hover:from-indigo-500/30 hover:to-emerald-500/10 transition-all duration-500 shadow-2xl"
+                                            key={result.id} initial={{ opacity: 0, scale: 0.98, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                                            className="group relative p-1 rounded-[4rem] bg-white/[0.01] hover:bg-gradient-to-r hover:from-indigo-600/30 hover:to-emerald-600/10 transition-all duration-700 shadow-3xl"
                                         >
-                                            <div className="bg-[#0b0f1a]/90 backdrop-blur-3xl rounded-[39px] p-8 relative overflow-hidden">
-                                                <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/5 blur-[50px] pointer-events-none" />
+                                            <div className="bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[3.9rem] p-10 relative overflow-hidden border border-white/5">
+                                                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 blur-[80px] pointer-events-none group-hover:bg-indigo-600/10 transition-colors" />
                                                 
-                                                <div className="flex items-start gap-8">
-                                                    <div className="flex flex-col items-center gap-4">
-                                                        <div className="w-16 h-16 bg-slate-900 border border-white/5 rounded-2xl flex items-center justify-center text-xl font-black text-slate-600 group-hover:text-indigo-400 group-hover:border-indigo-500/30 transition-all shadow-inner">
+                                                <div className="flex items-start gap-10 relative z-10">
+                                                    <div className="flex flex-col items-center gap-6">
+                                                        <div className="w-16 h-16 bg-slate-900 border border-white/5 rounded-[1.2rem] flex items-center justify-center text-xl font-black text-slate-700 group-hover:text-indigo-400 group-hover:border-indigo-500/40 transition-all shadow-2xl skew-x-[-2deg]">
                                                             #{i+1}
                                                         </div>
-                                                        <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-500 border border-indigo-500/10">
-                                                            {result.searchType === 'semantic' ? <Brain size={20} /> : <Database size={20} />}
+                                                        <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-500 border border-indigo-500/20 shadow-inner">
+                                                            {result.searchType === 'semantic' ? <Brain size={24} /> : <Database size={24} />}
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex-1 space-y-4">
+                                                    <div className="flex-1 space-y-6">
                                                         <div className="flex justify-between items-start">
-                                                            <div className="space-y-2">
-                                                                <div className="flex items-center gap-4">
-                                                                    <h4 className="text-2xl font-black text-white tracking-tight group-hover:text-indigo-400 transition-colors uppercase">{result.title}</h4>
-                                                                    <Badge variant="outline" className="text-[8px] font-black tracking-widest border-indigo-500/30 text-indigo-400">{result.source}</Badge>
-                                                                </div>
+                                                            <div className="space-y-3">
                                                                 <div className="flex items-center gap-6">
-                                                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
-                                                                        <Clock size={12} /> {result.date}
-                                                                    </span>
-                                                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
-                                                                        <Fingerprint size={12} /> ІСТИННІСТЬ: {(result.truthScore || 0 * 100).toFixed(0)}%
-                                                                    </span>
+                                                                    <h4 className="text-3xl font-black text-white tracking-tighter group-hover:text-indigo-400 transition-colors uppercase italic leading-none">{result.title}</h4>
+                                                                    <Badge className="bg-indigo-600/10 text-indigo-400 border-indigo-500/30 uppercase italic font-black py-1 px-4 text-[10px] tracking-widest">{result.source}</Badge>
+                                                                </div>
+                                                                <div className="flex items-center gap-8 text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] italic">
+                                                                    <span className="flex items-center gap-2"><Clock size={14} /> {result.date}</span>
+                                                                    <span className="flex items-center gap-2 text-emerald-500"><Fingerprint size={14} /> ТOЧНІСТЬ: {(result.truthScore || 0 * 100).toFixed(0)}%</span>
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-3xl font-mono font-black text-indigo-500">{(result.score * 100).toFixed(1)}%</div>
-                                                                <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest">РЕЙТИНГ AI</div>
+                                                                <div className="text-4xl font-mono font-black text-indigo-500 italic tracking-tighter drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">{(result.score * 100).toFixed(1)}%</div>
+                                                                <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mt-1">AI_RATING_SCORE</div>
                                                             </div>
                                                         </div>
 
-                                                        <p className="text-lg text-slate-400 leading-relaxed font-medium italic group-hover:text-slate-200 transition-colors">
+                                                        <p className="text-[17px] text-slate-400 leading-relaxed font-black italic group-hover:text-slate-200 transition-colors border-l-4 border-indigo-600/20 pl-8">
                                                             "{result.snippet}"
                                                         </p>
 
-                                                        <div className="flex items-center justify-between pt-4">
+                                                        <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">
                                                             <div className="flex gap-4">
                                                                 {result.tags?.map(tag => (
-                                                                    <span key={tag} className="text-[9px] font-black text-indigo-500/60 uppercase tracking-widest">#{tag}</span>
+                                                                    <span key={tag} className="text-[10px] font-black text-indigo-500/50 uppercase tracking-[0.4em] italic">#{tag}</span>
                                                                 ))}
                                                             </div>
-                                                            <div className="flex gap-3">
-                                                                <button className="px-6 py-2.5 bg-indigo-500/10 hover:bg-indigo-600 border border-indigo-500/20 text-indigo-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3">
-                                                                    <Brain size={14} /> АНАЛІЗ
+                                                            <div className="flex gap-4">
+                                                                <button className="px-8 py-4 bg-indigo-700/10 hover:bg-indigo-700 border border-indigo-500/30 text-indigo-400 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-3">
+                                                                    <Brain size={18} /> СЕМАНТИЧНИЙ_ГРАФ
                                                                 </button>
-                                                                <button className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-slate-500 hover:text-white transition-all">
-                                                                    <Volume2 size={16} />
-                                                                </button>
-                                                                <button className="p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-slate-500 hover:text-white transition-all">
-                                                                    <Share2 size={16} />
+                                                                <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
+                                                                    <Share2 size={18} />
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
-                                                {/* Left accent strip */}
-                                                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-indigo-600 to-transparent opacity-40" />
                                             </div>
                                         </motion.div>
                                     ))}
                                 </div>
                             </div>
                         ) : query && !isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-40 gap-8 bg-slate-900/20 border border-dashed border-white/5 rounded-[48px]">
-                                <HelpCircle size={64} className="text-slate-800" />
-                                <div className="text-center">
-                                    <h3 className="text-xl font-black text-white uppercase tracking-widest">ОБ'ЄКТІВ НЕ ВИЯВЛЕНО</h3>
-                                    <p className="text-sm text-slate-600 mt-2 italic font-medium">Спробуйте розширити семантичне поле запиту</p>
+                            <div className="flex flex-col items-center justify-center py-40 gap-10 bg-slate-950/40 border-2 border-dashed border-white/[0.03] rounded-[4rem] text-center shadow-inner">
+                                <HelpCircle size={80} className="text-slate-800 animate-pulse" />
+                                <div>
+                                    <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_EMPTY_SET</h3>
+                                    <p className="text-slate-800 mt-3 italic font-black text-xs tracking-widest uppercase">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО_В_ЦЬОМУ_СЕКТОРІ_МАТРИЦІ</p>
                                 </div>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 opacity-60">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 opacity-70">
                                 {[
-                                    { title: 'ГЛОБАЛЬНА ТОРГІВЛЯ', icon: Globe, desc: 'Аналіз морських та наземних шляхів' },
-                                    { title: 'ФІНАНСОВІ ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
-                                    { title: 'ВПК СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
+                                    { title: 'ГЛОБАЛЬНА_ТОРГІВЛЯ', icon: Globe, desc: 'Аналіз морських та наземних шляхів' },
+                                    { title: 'ФІНАНСОВІ_ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
+                                    { title: 'ВПК_СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
-                                    <div key={i} className="p-10 border border-white/5 rounded-[40px] bg-slate-900/40 space-y-6 group hover:border-indigo-500/30 transition-all relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 p-6 opacity-5">
-                                            <item.icon size={120} />
-                                        </div>
-                                        <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform relative z-10 border border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                                    <TacticalCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-indigo-500/40 transition-all rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl">
+                                        <div className="w-16 h-16 bg-indigo-600/10 rounded-2xl border border-indigo-600/30 flex items-center justify-center text-indigo-500 shadow-2xl">
                                             <item.icon size={32} />
                                         </div>
-                                        <div className="space-y-4 relative z-10">
-                                            <h4 className="font-black text-white text-xl tracking-widest uppercase italic skew-x-[-2deg]">{item.title}</h4>
-                                            <p className="text-xs text-slate-500 font-medium italic leading-relaxed">{item.desc}</p>
+                                        <div className="space-y-4">
+                                            <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg] leading-none">{item.title}</h4>
+                                            <p className="text-[11px] text-slate-500 font-black uppercase tracking-widest italic leading-relaxed opacity-60">{item.desc}</p>
                                         </div>
-                                    </div>
+                                    </TacticalCard>
                                 ))}
                             </div>
                         )}
                     </div>
-
-                    {/* ── LIVE NEURAL FEED (v56.1.4 UX) ── */}
-                    {!isLoading && (
-                        <div className="max-w-6xl mx-auto mt-20">
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
-                                <div className="flex items-center gap-3 px-6 py-2 rounded-full border border-indigo-500/20 bg-indigo-500/5 backdrop-blur-md">
-                                    <Activity size={14} className="text-indigo-400 animate-pulse" />
-                                    <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">LIVE_NEURAL_INSIGHTS</span>
-                                </div>
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {[
-                                    { label: 'ФІН_АНАЛІЗ', text: 'Виявлено патерн обходу санкцій у секторі електроніки', tone: 'danger' },
-                                    { label: 'МИТНИЦЯ', text: 'Аномальна концентрація вантажів на кордоні (Чернівці)', tone: 'warning' },
-                                    { label: 'РЕЄСТРИ', text: 'Масова зміна бенефіціарів у групі ТОВ "Енерго"', tone: 'info' },
-                                    { label: 'OSINT', text: 'Детекція нових логістичних вузлів у Балтійському регіоні', tone: 'success' }
-                                ].map((insight, i) => (
-                                    <motion.div 
-                                        key={i}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 1 + i * 0.1 }}
-                                        className="p-5 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all group"
-                                    >
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className={cn(
-                                                "text-[8px] font-black px-2 py-0.5 rounded border uppercase tracking-widest",
-                                                insight.tone === 'danger' ? "border-rose-500/30 text-rose-400 bg-rose-500/10" :
-                                                insight.tone === 'warning' ? "border-amber-500/30 text-amber-400 bg-amber-500/10" :
-                                                insight.tone === 'info' ? "border-indigo-500/30 text-indigo-400 bg-indigo-500/10" :
-                                                "border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
-                                            )}>
-                                                {insight.label}
-                                            </span>
-                                            <span className="text-[8px] font-mono text-slate-600">JUST NOW</span>
-                                        </div>
-                                        <p className="text-[11px] font-medium text-slate-400 leading-relaxed group-hover:text-slate-200 transition-colors">
-                                            {insight.text}
-                                        </p>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                    .panel-3d {
-                        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                    }
-                    .panel-3d:hover {
-                        transform: translateY(-8px) scale(1.02);
-                        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
-                    }
-                    .no-scrollbar::-webkit-scrollbar {
-                        display: none;
-                    }
-                    .skew-text {
-                        transform: skewX(-4deg);
-                    }
-                    .animate-spin-slow {
-                        animation: spin 8s linear infinite;
-                    }
-                    @keyframes spin {
-                        from { transform: rotate(0deg); }
-                        to { transform: rotate(360deg); }
-                    }
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+                    .no-scrollbar::-webkit-scrollbar { display: none; }
                 `}} />
             </div>
         </PageTransition>
     );
-};
-
-export default SearchConsole;
+}

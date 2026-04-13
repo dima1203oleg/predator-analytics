@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Shield, AlertTriangle, Crosshair, Eye } from 'lucide-react';
 import { useTheme, type OperationalMode } from '../../context/ThemeContext';
 
-const MODE_ICONS: Record<OperationalMode, React.FC<{ size?: number; className?: string }>> = {
+const MODE_ICONS: Record<OperationalMode, any> = {
   sovereign: Shield,
   vigilance: AlertTriangle,
   threat: Crosshair,

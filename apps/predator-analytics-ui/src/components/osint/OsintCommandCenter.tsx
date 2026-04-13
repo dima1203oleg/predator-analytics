@@ -15,7 +15,7 @@ import {
 import { useOsintNexus } from './sub/useOsintNexus';
 import { RadarBackground, RiskHeatmapBar, FeedItemRow } from './sub/OsintVisuals';
 import { CATEGORY_ICONS } from './sub/OsintTypes';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 export const OsintCommandCenter: React.FC = () => {
     const { 

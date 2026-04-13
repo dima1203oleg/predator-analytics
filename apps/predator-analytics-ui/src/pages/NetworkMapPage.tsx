@@ -13,9 +13,16 @@ import {
     Share2,
     ShieldAlert,
     Info,
-    Shield
+    Shield,
+    Target,
+    Zap,
+    Cpu,
+    Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { TacticalCard } from '@/components/TacticalCard';
+import { CyberGrid } from '@/components/CyberGrid';
 
 
 const NetworkMapPage: React.FC = () => {
@@ -39,31 +46,40 @@ const NetworkMapPage: React.FC = () => {
                 {
                     selector: 'node',
                     style: {
-                        'background-color': '#6366f1',
+                        'background-color': '#1e293b',
                         'label': 'data(label)',
-                        'color': '#fff',
-                        'font-size': '10px',
-                        'text-valign': 'center',
+                        'color': '#94a3b8',
+                        'font-size': '9px',
+                        'font-family': 'Inter, sans-serif',
+                        'font-weight': 'bold',
+                        'text-valign': 'bottom',
                         'text-halign': 'center',
-                        'width': 40,
-                        'height': 40,
+                        'text-margin-y': 5,
+                        'width': 35,
+                        'height': 35,
                         'border-width': 2,
-                        'border-color': '#4338ca'
+                        'border-color': 'rgba(255,255,255,0.05)',
+                        'text-outline-color': '#000',
+                        'text-outline-width': 2
                     }
                 },
                 {
                     selector: 'node[type="company"]',
                     style: {
-                        'background-color': '#10b981',
-                        'border-color': '#059669',
-                        'shape': 'round-rectangle'
+                        'background-color': '#020617',
+                        'border-color': '#10b981',
+                        'border-opacity': 0.4,
+                        'shape': 'round-rectangle',
+                        'width': 45,
+                        'height': 45
                     }
                 },
                 {
                     selector: 'node[type="person"]',
                     style: {
-                        'background-color': '#f59e0b',
-                        'border-color': '#d97706',
+                        'background-color': '#020617',
+                        'border-color': '#f59e0b',
+                        'border-opacity': 0.4,
                         'shape': 'ellipse'
                     }
                 },
@@ -71,21 +87,30 @@ const NetworkMapPage: React.FC = () => {
                     selector: 'node[primary_risk="high"]',
                     style: {
                         'border-color': '#ef4444',
-                        'border-width': 4
+                        'border-width': 4,
+                        'border-opacity': 1,
+                        'overlay-color': '#ef4444',
+                        'overlay-opacity': 0.1,
+                        'overlay-padding': 10
                     }
                 },
                 {
                     selector: 'edge',
                     style: {
-                        'width': 2,
-                        'line-color': '#475569',
-                        'target-arrow-color': '#475569',
+                        'width': 1.5,
+                        'line-color': 'rgba(255,255,255,0.05)',
+                        'target-arrow-color': 'rgba(255,255,255,0.1)',
                         'target-arrow-shape': 'triangle',
                         'curve-style': 'bezier',
                         'label': 'data(type)',
-                        'font-size': '8px',
-                        'color': '#94a3b8',
-                        'text-rotation': 'autorotate'
+                        'font-size': '7px',
+                        'font-weight': 'bold',
+                        'font-family': 'monospace',
+                        'color': '#475569',
+                        'text-rotation': 'autorotate',
+                        'text-background-color': '#000',
+                        'text-background-opacity': 0.8,
+                        'text-background-padding': '2px'
                     }
                 },
                 {
@@ -93,13 +118,18 @@ const NetworkMapPage: React.FC = () => {
                     style: {
                         'border-color': '#fff',
                         'border-width': 4,
-                        'line-color': '#fff'
+                        'line-color': 'rgba(255,255,255,0.3)',
+                        'background-color': '#fff',
+                        'color': '#fff'
                     }
                 }
             ],
             layout: {
                 name: 'cose',
-                animate: true
+                animate: true,
+                randomize: false,
+                idealEdgeLength: (edge: any) => 100,
+                nodeOverlap: 20
             }
         });
 
@@ -124,11 +154,11 @@ const NetworkMapPage: React.FC = () => {
         if (!searchQuery) return;
         const results = await networkApi.searchNodes(searchQuery);
         if (results.nodes && results.nodes.length > 0) {
-            const firstNodeId = results.nodes[0].data.id;
+            const firstNodeId = (results as any).nodes[0].data.id;
             const node = cy?.getElementById(firstNodeId);
             if (node) {
                 cy?.center(node);
-                cy?.zoom(2);
+                cy?.zoom(1.5);
                 node.select();
                 setSelectedNode(node.data());
             }
@@ -136,42 +166,57 @@ const NetworkMapPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-slate-950 text-white overflow-hidden">
-            {/* Header */}
-            <div className="p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-500/20 rounded-lg">
-                        <Network className="text-indigo-400" size={24} />
+        <div className="flex flex-col h-screen bg-[#02040a] text-white overflow-hidden relative">
+            <CyberGrid color="rgba(245, 158, 11, 0.03)" />
+            
+            {/* Header HUD */}
+            <div className="p-8 border-b border-white/[0.03] bg-black/40 backdrop-blur-3xl flex items-center justify-between z-30">
+                <div className="flex items-center gap-6">
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-amber-500/10 blur-2xl rounded-full scale-150 animate-pulse" />
+                        <div className="relative p-5 bg-black border border-amber-900/30 rounded-2xl shadow-2xl">
+                            <Network className="text-amber-500" size={28} />
+                        </div>
                     </div>
                     <div>
-                        <h1 className="text-xl font-black tracking-tight italic uppercase">Мережевий аналіз</h1>
-                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">РУШІЙ ВІЗУАЛІЗАЦІЇ ТОПОЛОГІЇ v55</p>
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v55.4</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        </div>
+                        <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕРЕЖЕВИЙ <span className="text-amber-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative">
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 px-6 py-2 bg-black/40 border border-white/5 rounded-2xl">
+                        <div className="text-right">
+                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">ВУЗЛІВ_В_ПАМʼЯТІ</p>
+                            <p className="text-xs font-mono font-black text-emerald-500">{(graphData?.nodes?.length || 0) + (graphData?.edges?.length || 0)}</p>
+                        </div>
+                        <div className="w-px h-8 bg-white/5 mx-2" />
+                        <div className="text-right">
+                            <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕРА</p>
+                            <p className="text-xs font-mono font-black text-amber-500 uppercase">READY</p>
+                        </div>
+                    </div>
+
+                    <div className="relative group/search">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/search:text-amber-500 transition-colors" size={20} />
                         <input 
                             type="text" 
-                            placeholder="Пошук вузлів (ЄДРПОУ, ПІБ)..."
-                            className="bg-slate-800 border border-slate-700 rounded-full px-4 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                            placeholder="ВВЕДІТЬ_ЄДРПОУ_АБО_ПІБ"
+                            className="bg-black border-2 border-white/5 rounded-[2rem] pl-16 pr-8 py-5 text-sm w-96 focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/5 transition-all font-mono italic uppercase tracking-widest placeholder:text-slate-800"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
-                        <button 
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-                            onClick={handleSearch}
-                            aria-label="search"
-                        >
-                            <Search size={16} />
-                        </button>
                     </div>
+                    
                     <button 
                         onClick={() => refetch()}
-                        className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors border border-slate-700"
+                        className="p-5 bg-black border border-white/5 rounded-2xl hover:border-amber-500/40 transition-all text-slate-500 hover:text-amber-500 group"
                     >
-                        <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
+                        <RefreshCw size={24} className={cn("transition-transform duration-1000", isLoading && "animate-spin")} />
                     </button>
                 </div>
             </div>
@@ -180,92 +225,120 @@ const NetworkMapPage: React.FC = () => {
                 {/* Cytoscape Container */}
                 <div ref={cyRef} className="absolute inset-0" />
 
-                {/* Controls */}
-                <div className="absolute bottom-6 left-6 flex flex-col gap-2 z-10">
-                    <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-3 bg-slate-900/80 border border-slate-700 rounded-xl hover:bg-indigo-500/20 transition-all">
-                        <ZoomIn size={20} />
-                    </button>
-                    <button onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="p-3 bg-slate-900/80 border border-slate-700 rounded-xl hover:bg-indigo-500/20 transition-all">
-                        <ZoomOut size={20} />
-                    </button>
-                    <button onClick={() => cy?.fit()} className="p-3 bg-slate-900/80 border border-slate-700 rounded-xl hover:bg-indigo-500/20 transition-all">
-                        <Maximize size={20} />
-                    </button>
-                </div>
+                {/* HUD Overlay Elements */}
+                <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10 border-double opacity-20" />
+                <div className="absolute top-1/2 left-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-amber-500/40 to-transparent z-20" />
+                <div className="absolute top-1/2 right-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-amber-500/40 to-transparent z-20" />
 
-                {/* Legends */}
-                <div className="absolute top-6 left-6 bg-slate-900/80 backdrop-blur-md border border-slate-700 p-4 rounded-2xl z-10">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Легенда</h3>
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-emerald-500 rounded-sm" />
-                            <span className="text-[10px] uppercase font-bold">Компанія</span>
+                {/* Controls HUD */}
+                <div className="absolute bottom-10 left-10 flex items-center gap-4 z-30">
+                    <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl backdrop-blur-xl">
+                        <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-4 text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded-xl transition-all">
+                            <ZoomIn size={24} />
+                        </button>
+                        <button onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="p-4 text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded-xl transition-all">
+                            <ZoomOut size={24} />
+                        </button>
+                    </div>
+                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-amber-500 backdrop-blur-xl transition-all shadow-2xl">
+                        <Maximize size={28} />
+                    </button>
+                    <div className="ml-10 space-y-2">
+                        <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">ОРГАНІЗАЦІЇ</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-amber-500 rounded-full" />
-                            <span className="text-[10px] uppercase font-bold">Особа</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 border-2 border-rose-500 rounded-sm" />
-                            <span className="text-[10px] uppercase font-bold">Високий ризик</span>
+                        <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
+                            <div className="w-2 h-2 rounded-full bg-amber-500" />
+                            <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">ФІЗИЧНІ_ОСОБИ</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Info Panel */}
+                {/* Info & Intelligence HUD Panel */}
                 <AnimatePresence>
                     {selectedNode && (
                         <motion.div 
-                            initial={{ x: 300, opacity: 0 }}
+                            initial={{ x: 400, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: 300, opacity: 0 }}
-                            className="absolute top-6 right-6 bottom-6 w-80 bg-slate-900/90 backdrop-blur-xl border border-indigo-500/30 rounded-3xl p-6 z-20 shadow-2xl flex flex-col"
+                            exit={{ x: 400, opacity: 0 }}
+                            className="absolute top-10 right-10 bottom-10 w-[450px] z-40"
                         >
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="p-2 bg-indigo-500/20 rounded-lg">
-                                    <Info className="text-indigo-400" size={20} />
-                                </div>
-                                <button onClick={() => setSelectedNode(null)} className="text-slate-400 hover:text-white">
-                                    <Maximize className="rotate-45" size={20} />
-                                </button>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto no-scrollbar">
-                                <h2 className="text-xl font-black italic uppercase mb-2">{selectedNode.label}</h2>
-                                <div className="flex gap-2 mb-6">
-                                    <span className="text-[10px] font-bold bg-slate-800 px-2 py-1 rounded uppercase">{selectedNode.type}</span>
-                                    {selectedNode.primary_risk === 'high' && (
-                                        <span className="text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-1 rounded uppercase flex items-center gap-1">
-                                            <ShieldAlert size={10} /> Ризик: Високий
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className="space-y-4">
-                                    {/* Additional node properties */}
-                                    {selectedNode.primary_risk === 'high' && (
-                                        <div className="mt-4 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-                                            <div className="flex items-center gap-2 text-rose-400 mb-1">
-                                                <Shield size={14} />
-                                                <span className="text-[10px] font-black uppercase tracking-wider">Сигнал OSINT</span>
+                            <TacticalCard 
+                                variant="cyber" 
+                                className="h-full bg-black/90 border-amber-500/30 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden"
+                                noPadding
+                            >
+                                <div className="p-10 space-y-10 h-full flex flex-col">
+                                    <div className="flex items-center justify-between border-b border-white/5 pb-8">
+                                        <div className="flex items-center gap-5">
+                                            <div className="p-4 bg-amber-500/10 rounded-2xl">
+                                                <Target size={24} className="text-amber-500" />
                                             </div>
-                                            <p className="text-xs text-slate-300 leading-5">
-                                                Вузол ідентифіковано як критичний елемент у ланцюгу ризику. Рекомендується перевірка через «Конституційний Щит».
+                                            <div>
+                                                <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.4em] italic leading-none">TARGET_SCAN</h4>
+                                                <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ID: {selectedNode.id}</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => setSelectedNode(null)} className="p-4 text-slate-700 hover:text-white transition-colors">
+                                            <Maximize className="rotate-45" size={24} />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto no-scrollbar space-y-10">
+                                        <div className="space-y-4">
+                                            <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-tight drop-shadow-2xl">
+                                                {selectedNode.label}
+                                            </h2>
+                                            <div className="flex flex-wrap gap-4">
+                                                <span className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                                    ENTITY://{selectedNode.type?.toUpperCase()}
+                                                </span>
+                                                {selectedNode.primary_risk === 'high' && (
+                                                    <span className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500 animate-pulse flex items-center gap-3">
+                                                        <ShieldAlert size={14} /> КРИТИЧНИЙ_РИЗИК
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[3rem] space-y-6">
+                                            <div className="flex items-center gap-4 text-emerald-500">
+                                                <Zap size={20} />
+                                                <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙРО-ВИСНОВОК v4</span>
+                                            </div>
+                                            <p className="text-sm font-black text-slate-300 leading-relaxed italic opacity-80">
+                                                Об'єкт ідентифіковано як {selectedNode.type === 'company' ? 'центральний вузол холдингової структури' : 'пов'язану особу з правом вирішального впливу'}.
+                                                Мережевий аналіз вказує на непрямий зв'язок з {selectedNode.primary_risk === 'high' ? 'санкційними списками' : 'прозорими капіталами'}.
                                             </p>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
 
-                            <button className="mt-6 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2">
-                                <Share2 size={14} /> Переглянути зв'язки
-                            </button>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="p-6 bg-black border border-white/5 rounded-2xl space-y-2">
+                                                <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">DEGREE_CENTRALITY</p>
+                                                <p className="text-3xl font-black text-white italic font-mono">0.842</p>
+                                            </div>
+                                            <div className="p-6 bg-black border border-white/5 rounded-2xl space-y-2">
+                                                <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">RELIANCE_INDEX</p>
+                                                <p className="text-3xl font-black text-amber-500 italic font-mono">{selectedNode.primary_risk === 'high' ? 'CRIT' : 'STBL'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">
+                                        <button className="w-full py-6 bg-amber-500 hover:bg-white text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
+                                            <Share2 size={20} /> ВІДКРИТИ_CERS_ДОСЬЄ
+                                        </button>
+                                        <button className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-500 font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5">
+                                            <Radio size={20} /> МОНІТОРИНГ_ЗВʼЯЗКІВ
+                                        </button>
+                                    </div>
+                                </div>
+                            </TacticalCard>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
-
-            
         </div>
     );
 };

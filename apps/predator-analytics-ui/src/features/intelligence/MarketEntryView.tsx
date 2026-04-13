@@ -21,7 +21,15 @@ import {
   PolarRadiusAxis, ResponsiveContainer, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip
 } from 'recharts';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { CyberOrb } from '@/components/CyberOrb';
+import { TacticalCard } from '@/components/TacticalCard';
+import { apiClient } from '@/services/api/config';
+import { useQuery } from '@tanstack/react-query';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
 
@@ -132,18 +140,42 @@ const RADAR_DIMENSIONS = [
 ];
 
 const RECOMMENDATION_CFG = {
-  'strong-buy': { label: 'АКТИВНИЙ ВХІД', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: Star },
-  'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#22c55e', bg: 'bg-emerald-900/15', border: 'border-emerald-800/30', icon: CheckCircle },
-  'hold':       { label: 'МОНІТОРИНГ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: Activity },
-  'avoid':      { label: 'УНИКАТИ',      color: '#ef4444', bg: 'bg-red-900/20',     border: 'border-red-800/40',    icon: AlertTriangle },
+  'strong-buy': { label: 'АКТИВНИЙ ВХІД', color: '#f59e0b', bg: 'bg-amber-950/20', border: 'border-amber-500/40', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]', icon: Star },
+  'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#10b981', bg: 'bg-emerald-950/20', border: 'border-emerald-800/30', shadow: 'shadow-none', icon: CheckCircle },
+  'hold':       { label: 'МОНІТОРИНГ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
+  'avoid':      { label: 'УНИКАТИ',      color: '#ef4444', bg: 'bg-red-950/20',     border: 'border-red-900/30',  shadow: 'shadow-none', icon: AlertTriangle },
 };
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 
 const MarketEntryView: React.FC = () => {
-  const [selected, setSelected] = useState<MarketEntry>(MARKETS[0]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'score' | 'growth' | 'size'>('score');
   const [filterRec, setFilterRec] = useState<'all' | 'strong-buy' | 'buy' | 'hold'>('all');
+
+  const { data: markets = [], isLoading } = useQuery({
+    queryKey: ['market-entry-scores'],
+    queryFn: async () => {
+      const res = await apiClient.get('/market/entry-scores');
+      return Array.isArray(res.data) ? res.data : [];
+    }
+  });
+
+  const sorted = [...markets]
+    .filter((m: any) => filterRec === 'all' || m.recommendation === filterRec)
+    .sort((a: any, b: any) => {
+      if (sortBy === 'score')  return b.entryScore - a.entryScore;
+      if (sortBy === 'growth') return parseFloat(b.growthRate) - parseFloat(a.growthRate);
+      return 0;
+    });
+
+  const selected = sorted.find((m: any) => m.id === selectedId) || sorted[0];
+
+  React.useEffect(() => {
+    if (sorted.length > 0 && !selectedId) {
+        setSelectedId(sorted[0].id);
+    }
+  }, [sorted, selectedId]);
 
   const radarData = [
     { subject: 'Регуляторика',   value: selected.regulatory },
@@ -166,12 +198,12 @@ const MarketEntryView: React.FC = () => {
     s >= 80 ? '#10b981' : s >= 65 ? '#f59e0b' : '#ef4444';
 
   return (
-    <div className="min-h-screen text-slate-200 font-sans pb-24 relative overflow-hidden">
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 20% 20%, rgba(16,185,129,0.04) 0%, transparent 55%)' }} />
-      </div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020617] text-slate-200 font-sans pb-24 relative overflow-hidden">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(16, 185, 129, 0.03)" />
 
-      <div className="relative z-10 max-w-[1800px] mx-auto p-6 space-y-8">
+        <div className="relative z-10 max-w-[1800px] mx-auto p-6 sm:p-12 space-y-8">
 
         {/* ── ЗАГОЛОВОК ── */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
@@ -205,7 +237,7 @@ const MarketEntryView: React.FC = () => {
               <TrendingUp size={15} className="text-emerald-600" />
               <div>
                 <p className="text-[7px] text-slate-700 uppercase font-black">Ринків проаналізовано</p>
-                <p className="text-[14px] font-black text-emerald-400 font-mono">{MARKETS.length} АКТИВНИХ</p>
+                <p className="text-[14px] font-black text-emerald-400 font-mono">{markets.length} АКТИВНИХ</p>
               </div>
             </div>
             <button className="px-8 py-3 bg-emerald-700 text-white text-[9px] font-black uppercase tracking-wider hover:bg-emerald-600 transition-colors border border-emerald-500/30 flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
@@ -218,10 +250,10 @@ const MarketEntryView: React.FC = () => {
         {/* ── МЕТРИКИ ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { l: 'АКТИВНИЙ ВХІД',    v: `${MARKETS.filter(m => m.recommendation === 'strong-buy').length}`, sub: 'Ринків', c: '#10b981' },
-            { l: 'РЕКОМЕНДОВАНО',    v: `${MARKETS.filter(m => m.recommendation === 'buy').length}`,         sub: 'Ринків', c: '#22c55e' },
-            { l: 'КРАЩИЙ РИНОК',     v: sorted[0]?.country ?? '—',  sub: `Score ${sorted[0]?.entryScore}`, c: '#10b981' },
-            { l: 'ШВИДКИЙ СТАРТ',    v: 'Румунія',                   sub: '3-6 місяців',                    c: '#f59e0b' },
+            { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter((m: any) => m.recommendation === 'strong-buy').length}`, sub: 'Ринків', c: '#f59e0b' },
+            { l: 'РЕКОМЕНДОВАНО',    v: `${markets.filter((m: any) => m.recommendation === 'buy').length}`,         sub: 'Ринків', c: '#10b981' },
+            { l: 'КРАЩИЙ РИНОК',     v: sorted[0]?.country ?? '—',  sub: `Score ${sorted[0]?.entryScore ?? 0}`, c: '#10b981' },
+            { l: 'ШВИДКИЙ СТАРТ',    v: sorted.find((m:any)=>m.id==='mkt-004')?.country || 'Румунія',                   sub: '3-6 місяців',                    c: '#f59e0b' },
           ].map((m, i) => (
             <motion.div
               key={m.l}
@@ -270,15 +302,15 @@ const MarketEntryView: React.FC = () => {
                 <motion.div
                   key={mkt.id}
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                  onClick={() => setSelected(mkt)}
+                  onClick={() => setSelectedId(mkt.id)}
                   className={cn(
                     "p-6 border cursor-pointer transition-all relative overflow-hidden group",
-                    selected.id === mkt.id
+                    selected?.id === mkt.id
                       ? "bg-emerald-950/10 border-emerald-800/50"
                       : "bg-black border-slate-800/40 hover:border-slate-700/60"
                   )}
                 >
-                  {selected.id === mkt.id && (
+                  {selected?.id === mkt.id && (
                     <div className="absolute left-0 inset-y-0 w-0.5 bg-emerald-600 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
                   )}
 
@@ -316,7 +348,7 @@ const MarketEntryView: React.FC = () => {
                     </div>
 
                     <div className="shrink-0">
-                      <div className={cn("flex items-center gap-1 px-2.5 py-1.5 border text-[7px] font-black uppercase", rc.bg, rc.border)} style={{ color: rc.color }}>
+                      <div className={cn("flex items-center gap-1 px-2.5 py-1.5 border text-[7px] font-black uppercase", rc.bg, rc.border, rc.shadow)} style={{ color: rc.color }}>
                         <RIcon size={10} />
                         {rc.label}
                       </div>
@@ -350,7 +382,7 @@ const MarketEntryView: React.FC = () => {
                       {selected.entryScore}
                     </p>
                     <p className="text-[8px] text-slate-600 uppercase font-black">ENTRY SCORE / 100</p>
-                    <div className={cn("mt-2 flex items-center gap-1.5 px-3 py-1.5 border justify-end", RECOMMENDATION_CFG[selected.recommendation].bg, RECOMMENDATION_CFG[selected.recommendation].border)}>
+                    <div className={cn("mt-2 flex items-center gap-1.5 px-3 py-1.5 border justify-end", RECOMMENDATION_CFG[selected.recommendation].bg, RECOMMENDATION_CFG[selected.recommendation].border, RECOMMENDATION_CFG[selected.recommendation].shadow)}>
                       {React.createElement(RECOMMENDATION_CFG[selected.recommendation].icon, { size: 11, style: { color: RECOMMENDATION_CFG[selected.recommendation].color } })}
                       <span className="text-[8px] font-black uppercase" style={{ color: RECOMMENDATION_CFG[selected.recommendation].color }}>
                         {RECOMMENDATION_CFG[selected.recommendation].label}
@@ -430,13 +462,13 @@ const MarketEntryView: React.FC = () => {
                     <Building2 size={12} className="text-emerald-700" />
                     ПОТЕНЦІЙНІ ПАРТНЕРИ
                   </h3>
-                  {selected.localPartners.map((p, i) => (
+                  {selected ? selected.localPartners.map((p: string, i: number) => (
                     <div key={i} className="flex items-center gap-3 p-3 border border-slate-800/40 mb-2 hover:border-emerald-900/40 transition-all cursor-pointer group">
                       <Building2 size={13} className="text-slate-600 group-hover:text-emerald-600 transition-colors" />
                       <span className="text-[10px] font-black text-slate-400 group-hover:text-white transition-colors">{p}</span>
                       <ArrowUpRight size={12} className="ml-auto text-slate-700 group-hover:text-emerald-500 transition-colors" />
                     </div>
-                  ))}
+                  )) : <Skeleton className="h-20 w-full" />}
                 </div>
                 <div>
                   <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-4 flex items-center gap-2">
@@ -461,7 +493,8 @@ const MarketEntryView: React.FC = () => {
         </div>
       </div>
     </div>
-  );
+  </PageTransition>
+);
 };
 
 export default MarketEntryView;

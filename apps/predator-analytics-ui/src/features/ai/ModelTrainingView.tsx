@@ -378,7 +378,7 @@ export default function ModelTrainingView() {
                                                         borderRadius: '18px',
                                                         color: '#fff',
                                                     }}
-                                                    formatter={(value: number | null, name: string) => {
+                                                    formatter={(value: any, name: string) => {
                                                         if (value == null) {
                                                             return ['Н/д', name];
                                                         }

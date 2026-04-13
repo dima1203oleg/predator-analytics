@@ -7,14 +7,14 @@ import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import SmartCompanySearch from '../SmartCompanySearch';
-import * as cersService from '../../cersService';
+import SmartCompanySearch from './SmartCompanySearch';
+import { cersService } from '@/services/unified/cers.service';
 
 // ──────────────────────────────────────────────────────────────
 // Setup
 // ──────────────────────────────────────────────────────────────
 
-vi.mock('../../cersService');
+vi.mock('@/services/unified/cers.service');
 
 const mockCompanies = [
   {
@@ -80,7 +80,7 @@ describe('SmartCompanySearch Component', () => {
 
   it('should fetch results when typing min 2 characters', async () => {
     const mockSearch = vi.fn().mockResolvedValue(mockCompanies);
-    vi.mocked(cersService.cersService.searchCompanies).mockImplementation(mockSearch);
+    vi.mocked(cersService.searchCompanies).mockImplementation(mockSearch);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -96,7 +96,7 @@ describe('SmartCompanySearch Component', () => {
     const mockSearch = vi.fn().mockImplementation(
       () => new Promise(resolve => setTimeout(() => resolve(mockCompanies), 100))
     );
-    vi.mocked(cersService.cersService.searchCompanies).mockImplementation(mockSearch);
+    vi.mocked(cersService.searchCompanies).mockImplementation(mockSearch);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -110,7 +110,7 @@ describe('SmartCompanySearch Component', () => {
 
   it('should display error message on failed search', async () => {
     const mockSearch = vi.fn().mockRejectedValue(new Error('Network error'));
-    vi.mocked(cersService.cersService.searchCompanies).mockImplementation(mockSearch);
+    vi.mocked(cersService.searchCompanies).mockImplementation(mockSearch);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -123,7 +123,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should display no results message when search returns empty', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue([]);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue([]);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -151,7 +151,7 @@ describe('SmartCompanySearch Component', () => {
 
   it('should apply filters', async () => {
     const mockSearch = vi.fn().mockResolvedValue(mockCompanies);
-    vi.mocked(cersService.cersService.searchCompanies).mockImplementation(mockSearch);
+    vi.mocked(cersService.searchCompanies).mockImplementation(mockSearch);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -172,7 +172,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should export results to CSV', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue(mockCompanies);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue(mockCompanies);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -195,7 +195,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should display results count', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue(mockCompanies);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue(mockCompanies);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -208,7 +208,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should display company details in table', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue(mockCompanies);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue(mockCompanies);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -223,7 +223,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should display status badges with correct colors', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue(mockCompanies);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue(mockCompanies);
 
     const user = userEvent.setup();
     render(<SmartCompanySearch/>, {wrapper: createWrapper()});
@@ -237,7 +237,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should navigate to company detail on row click', async () => {
-    vi.mocked(cersService.cersService.searchCompanies).mockResolvedValue(mockCompanies);
+    vi.mocked(cersService.searchCompanies).mockResolvedValue(mockCompanies);
 
     const user = userEvent.setup();
     const mockHref = vi.fn();
@@ -259,7 +259,7 @@ describe('SmartCompanySearch Component', () => {
   });
 
   it('should reset pagination on new search', async () => {
-    vi.mocked(cersService.cersService.searchCompanies)
+    vi.mocked(cersService.searchCompanies)
       .mockResolvedValueOnce(mockCompanies)
       .mockResolvedValueOnce([mockCompanies[0]]);
 
@@ -274,7 +274,7 @@ describe('SmartCompanySearch Component', () => {
     await user.type(input, 'ПриватБанк');
 
     // Перевіримо, що другий пошук був зроблено
-    expect(vi.mocked(cersService.cersService.searchCompanies)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(cersService.searchCompanies)).toHaveBeenCalledTimes(2);
   });
 });
 

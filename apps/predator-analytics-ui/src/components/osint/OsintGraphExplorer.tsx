@@ -14,7 +14,7 @@ import {
     History, Bookmark, FileText, Activity, ChevronDown, ServerCrash,
     Bot, Database, Zap
 } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 // Власні компоненти та сервіси

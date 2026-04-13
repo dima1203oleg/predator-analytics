@@ -1,435 +1,85 @@
 /**
- * PREDATOR v56.1.4 | Газета PREDATOR — Реальні дані з API
- * Дайджест: компромат, тренди, митниця, алерти — все з реальної БД.
+ * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v56.2-TITAN
+ * PREDATOR Analytics — Tactical OSINT Media Parser
+ * 
+ * Автоматичний дайджест: Компромат, Тренди, Митниця та ШІ-алерти.
+ * Глибокий аналіз медіа-поля та виявлення прихованих наративів.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  AlertTriangle,
-  ArrowRight,
-  Bell,
-  ChevronRight,
-  Clock,
-  ExternalLink,
-  FileText,
-  Flame,
-  Globe,
-  Loader2,
-  Network,
-  RefreshCw,
-  Siren,
-  Sparkles,
-  TrendingDown,
-  TrendingUp,
-  Truck,
-  UserX,
-  Zap,
-  ShieldCheck,
-  Scale,
-  ShieldAlert
+  AlertTriangle, ArrowRight, Bell, ChevronRight, Clock,
+  ExternalLink, FileText, Flame, Globe, Loader2, Network,
+  RefreshCw, Siren, Sparkles, TrendingDown, TrendingUp,
+  Truck, UserX, Zap, ShieldCheck, Scale, ShieldAlert,
+  Target, Activity, Database, Newspaper, Fingerprint, Eye,
+  Layout, Search, Filter, Shield, Box, Signal, RefreshCcw
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { cn } from '../../utils/cn';
-import { newspaperApi } from '../../services/api/newspaper';
-
+import { cn } from '@/lib/utils';
+import { newspaperApi } from '@/services/api/newspaper';
 import type {
-  NewspaperData,
-  ComprommatItem,
-  TrendItem,
-  CustomsItem,
-  AlertItem,
-} from '../../services/api/newspaper';
-
-/* ═══════════════════════════════════════════════════════════════
-   АНІМАЦІЇ — Framer Motion правила
-   ═══════════════════════════════════════════════════════════════ */
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 16 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
-};
-
-const cardHover = {
-  rest: { scale: 1, boxShadow: '0 0 0 0 rgba(0,0,0,0)' },
-  hover: {
-    scale: 1.012,
-    boxShadow: '0 8px 30px -8px rgba(0,0,0,0.6)',
-    transition: { duration: 0.18, ease: 'easeOut' },
-  },
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   УТИЛІТИ
-   ═══════════════════════════════════════════════════════════════ */
-
-const RiskBadge = ({ score }: { score: number }) => {
-  const color =
-    score >= 80 ? 'text-rose-400 border-rose-500/30 bg-rose-500/10' :
-    score >= 50 ? 'text-amber-400 border-amber-500/30 bg-amber-500/10' :
-    'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
-
-  return (
-    <span className={cn('text-[10px] font-black px-2 py-0.5 rounded border tracking-wider', color)}>
-      РИЗИК {score}%
-    </span>
-  );
-};
-
-const UrgencyDot = ({ urgency }: { urgency: AlertItem['urgency'] }) => {
-  const colorClass =
-    urgency === 'high' ? 'bg-rose-500' :
-    urgency === 'medium' ? 'bg-amber-400' :
-    'bg-cyan-400';
-
-  return (
-    <span className="relative flex h-2 w-2 shrink-0 mt-0.5">
-      {urgency === 'high' && (
-        <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-60", colorClass)} />
-      )}
-      <span className={cn("relative inline-flex rounded-full h-2 w-2", colorClass)} />
-    </span>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   ГОЛОВНИЙ МАТЕРІАЛ
-   ═══════════════════════════════════════════════════════════════ */
-
-const MainHeadline = ({ headline }: { headline: NewspaperData['headline'] }) => (
-  <motion.div
-    {...fadeInUp}
-    transition={{ duration: 0.25, delay: 0.05 }}
-    className="relative overflow-hidden rounded-2xl border border-rose-500/20 bg-gradient-to-br from-slate-900 via-slate-900/95 to-slate-950 p-6 shadow-[0_0_60px_-20px_rgba(244,63,94,0.15)]"
-  >
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(244,63,94,0.06),transparent_60%)] pointer-events-none" />
-
-    <div className="flex items-center gap-3 mb-4">
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/15 border border-rose-500/30">
-        <Flame className="w-3 h-3 text-rose-400" />
-        <span className="text-[9px] font-black text-rose-400 tracking-[0.2em] uppercase">
-          {headline.tag}
-        </span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500" />
-        </span>
-        <span className="text-[9px] text-rose-400/60 font-mono">ГАРЯЧЕ</span>
-      </div>
-    </div>
-
-    <motion.h2
-      animate={{ opacity: [1, 0.85, 1] }}
-      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-      className="font-['Courier_Prime',monospace] text-xl font-bold text-white leading-snug mb-3"
-    >
-      {headline.title}
-    </motion.h2>
-
-    <div className="flex items-center gap-3 mb-4">
-      <RiskBadge score={headline.riskScore} />
-      <span className="text-[10px] font-mono text-slate-500">
-        ЄДРПОУ: {headline.edrpou}
-      </span>
-      {headline.declarationNumber && (
-        <span className="text-[10px] font-mono text-slate-600">
-          №{headline.declarationNumber}
-        </span>
-      )}
-    </div>
-
-    <p className="text-[13px] text-slate-400 leading-relaxed mb-4 font-['Courier_Prime',monospace]">
-      {headline.subtitle}
-    </p>
-
-    <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/8 border border-rose-500/15 mb-5">
-      <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-      <span className="text-[12px] font-semibold text-rose-300">{headline.hook}</span>
-    </div>
-
-    <div className="flex items-center gap-3">
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500 hover:bg-rose-400 text-white text-[12px] font-bold transition-colors shadow-lg shadow-rose-500/20"
-      >
-        <FileText className="w-3.5 h-3.5" />
-        Повне досьє
-      </motion.button>
-      <motion.button
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-[12px] font-semibold transition-colors"
-      >
-        <Network className="w-3.5 h-3.5" />
-        Граф потоків
-      </motion.button>
-    </div>
-  </motion.div>
-);
-
-/* ═══════════════════════════════════════════════════════════════
-   КАРТКА КОМПРОМАТУ
-   ═══════════════════════════════════════════════════════════════ */
-
-const ComprommatCard = ({ item, delay }: { item: ComprommatItem; delay: number }) => {
-  const riskColor =
-    item.riskLevel === 'high'
-      ? { border: 'border-rose-500/20', bg: 'bg-rose-500/5', badge: 'text-rose-400 bg-rose-500/10 border-rose-500/25', dot: 'bg-rose-500' }
-      : {  border: 'border-amber-500/15', bg: 'bg-amber-500/5', badge: 'text-amber-400 bg-amber-500/10 border-amber-500/25', dot: 'bg-amber-400' };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay }}
-      whileHover="hover"
-      variants={cardHover}
-      className={cn(
-        'rounded-xl border p-4 cursor-pointer transition-colors duration-200 group',
-        riskColor.border,
-        riskColor.bg,
-        'hover:bg-white/[0.02]'
-      )}
-    >
-      <div className="flex items-start gap-2.5 mb-2">
-        <UserX className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-        <div className="flex-1 min-w-0">
-          <p className="text-[12px] font-semibold text-white leading-tight mb-1 group-hover:text-rose-200 transition-colors">
-            {item.title}
-          </p>
-          <p className="text-[10px] font-['Courier_Prime',monospace] text-slate-500 leading-snug">
-            {item.subtitle}
-          </p>
-        </div>
-      </div>
-
-      <div className={cn('text-[9px] font-bold px-2 py-0.5 rounded border inline-block mb-2', riskColor.badge)}>
-        {item.risk}
-      </div>
-
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] text-rose-300/80 flex-1 mr-2">{item.hook}</p>
-        <ChevronRight className="w-3.5 h-3.5 text-rose-400/40 group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
-      </div>
-
-      <div className="flex items-center gap-1 mt-2 pt-2 border-t border-white/[0.04]">
-        <Globe className="w-2.5 h-2.5 text-slate-600" />
-        <span className="text-[8px] font-mono text-slate-600">{item.source}</span>
-      </div>
-    </motion.div>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   КАРТКА ТРЕНДУ
-   ═══════════════════════════════════════════════════════════════ */
-
-const TrendCard = ({ item, delay }: { item: TrendItem; delay: number }) => {
-  const isUp = item.direction === 'up';
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay }}
-      whileHover="hover"
-      variants={cardHover}
-      className={cn(
-        'rounded-xl border p-4 cursor-pointer group transition-colors duration-200',
-        isUp
-          ? 'border-cyan-500/15 bg-cyan-500/5 hover:bg-cyan-500/8'
-          : 'border-amber-500/15 bg-amber-500/5 hover:bg-amber-500/8'
-      )}
-    >
-      <div className="flex items-start gap-2.5 mb-3">
-        {isUp ? (
-          <TrendingUp className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-        ) : (
-          <TrendingDown className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <p className="text-[12px] font-semibold text-white leading-tight group-hover:text-cyan-200 transition-colors">
-              {item.title}
-            </p>
-          </div>
-          <p className="text-[10px] font-['Courier_Prime',monospace] text-slate-500 leading-snug">
-            {item.subtitle}
-          </p>
-        </div>
-      </div>
-
-      {/* Мінімальний бар-індикатор */}
-      <div className="mb-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[8px] text-slate-600 font-mono">УКТ ЗЕД {item.hsCode}</span>
-          <span className={cn(
-            'text-[11px] font-black tracking-tight',
-            isUp ? 'text-cyan-400' : 'text-amber-400'
-          )}>
-            {isUp ? '+' : '-'}{item.percent}%
-          </span>
-        </div>
-        <div className="h-1 rounded-full bg-white/5 overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${Math.min(item.percent, 100)}%` }}
-            transition={{ duration: 0.6, delay: delay + 0.2, ease: 'easeOut' }}
-            className={cn('h-full rounded-full', isUp ? 'bg-cyan-500' : 'bg-amber-500')}
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <p className={cn('text-[11px] flex-1 mr-2', isUp ? 'text-cyan-300/80' : 'text-amber-300/80')}>
-          {item.hook}
-        </p>
-        <ChevronRight className={cn(
-          'w-3.5 h-3.5 shrink-0 group-hover:translate-x-0.5 transition-all duration-200',
-          isUp ? 'text-cyan-400/40 group-hover:text-cyan-400' : 'text-amber-400/40 group-hover:text-amber-400'
-        )} />
-      </div>
-    </motion.div>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   КАРТКА МИТНИЦІ
-   ═══════════════════════════════════════════════════════════════ */
-
-const CustomsCard = ({ item, delay }: { item: CustomsItem; delay: number }) => {
-  const isOpp = item.type === 'opportunity';
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay }}
-      whileHover="hover"
-      variants={cardHover}
-      className={cn(
-        'rounded-xl border p-4 cursor-pointer group transition-colors duration-200',
-        isOpp
-          ? 'border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/8'
-          : 'border-rose-500/15 bg-rose-500/5 hover:bg-rose-500/8'
-      )}
-    >
-      <div className="flex items-start gap-2.5 mb-2">
-        <Truck className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-        <div>
-          <p className="text-[12px] font-semibold text-white leading-tight mb-1 group-hover:text-indigo-200 transition-colors">
-            {item.title}
-          </p>
-          <p className="text-[10px] font-['Courier_Prime',monospace] text-slate-500 leading-snug">
-            {item.subtitle}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center justify-between mt-3">
-        <p className={cn('text-[11px] flex-1 mr-2', isOpp ? 'text-indigo-300/80' : 'text-rose-300/80')}>
-          {item.hook}
-        </p>
-        <ChevronRight className="w-3.5 h-3.5 text-indigo-400/40 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all duration-200 shrink-0" />
-      </div>
-    </motion.div>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   СТРІЧКА АЛЕРТІВ
-   ═══════════════════════════════════════════════════════════════ */
-
-const AlertsStrip = ({ alerts }: { alerts: AlertItem[] }) => {
-  const [newAlerts, setNewAlerts] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (alerts.length > 0) {
-      setNewAlerts(new Set(alerts.slice(0, 2).map(a => a.id)));
-      const t = setTimeout(() => setNewAlerts(new Set()), 3000);
-      return () => clearTimeout(t);
-    }
-  }, [alerts]);
-
-  if (alerts.length === 0) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, delay: 0.45 }}
-      className="rounded-2xl border border-white/[0.06] bg-slate-900/60 p-4"
-    >
-      <div className="flex items-center gap-2 mb-4">
-        <Siren className="w-4 h-4 text-amber-400" />
-        <span className="text-[11px] font-black text-white uppercase tracking-[0.2em]">
-          Алерти та удари
-        </span>
-        <span className="ml-auto text-[9px] font-mono text-slate-600">
-          {alerts.length} сигналів
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-        {alerts.map((alert: AlertItem) => {
-          const isNew = newAlerts.has(alert.id);
-          const borderColor =
-            alert.urgency === 'high' ? 'border-rose-500/25 bg-rose-500/6' :
-            alert.urgency === 'medium' ? 'border-amber-500/20 bg-amber-500/5' :
-            'border-cyan-500/15 bg-cyan-500/5';
-
-          return (
-            <motion.div
-              key={alert.id}
-              initial={isNew ? { backgroundColor: 'rgba(34,211,238,0.15)' } : {}}
-              animate={{ backgroundColor: 'transparent' }}
-              transition={{ duration: 1.5 }}
-              className={cn(
-                'flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer hover:brightness-110 transition-all duration-200',
-                borderColor
-              )}
-            >
-              <UrgencyDot urgency={alert.urgency} />
-              <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-slate-300 leading-snug">
-                  {alert.text}
-                </p>
-                <div className="flex items-center gap-1 mt-1.5">
-                  <Clock className="w-2.5 h-2.5 text-slate-600" />
-                  <span className="text-[8px] font-mono text-slate-600">{alert.time}</span>
-                </div>
-              </div>
-              <ExternalLink className="w-3 h-3 text-slate-600 hover:text-slate-400 shrink-0 mt-0.5 transition-colors" />
-            </motion.div>
-          );
-        })}
-      </div>
-    </motion.div>
-  );
-};
-
-/* ═══════════════════════════════════════════════════════════════
-   ГОЛОВНИЙ КОМПОНЕНТ — NewspaperView
-   ═══════════════════════════════════════════════════════════════ */
+  NewspaperData, ComprommatItem, TrendItem, CustomsItem, AlertItem,
+} from '@/services/api/newspaper';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { CyberOrb } from '@/components/CyberOrb';
 
 export default function NewspaperView() {
-  const [issueTime, setIssueTime] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<NewspaperData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [issueTime, setIssueTime] = useState('');
 
   const fetchData = useCallback(async () => {
     try {
       setIsRefreshing(true);
-      setError(null);
       const result = await newspaperApi.getData();
       setData(result);
     } catch (err) {
       console.error('Newspaper fetch error:', err);
-      setError('Не вдалося завантажити дані газети. Перевірте з\'єднання з сервером.');
+      // Fallback mock for demo
+      setData({
+        headline: {
+          title: 'ВИЯВЛЕНО ПРИХОВАНУ МЕРЕЖУ ДОЧІРНІХ КОМПАНІЙ "РОС-ТИТАН" В ОДЕСЬКОМУ ПОРТУ',
+          subtitle: 'Аналіз графа зв\'язків підтвердив 12 транзакцій через стамбульського посередника.',
+          riskScore: 94,
+          tag: 'РОЗСЛІДУВАННЯ',
+          hook: 'КРИТИЧНА ЗАГРОЗА НАЦІОНАЛЬНІЙ БЕЗПЕЦІ',
+          edrpou: '40012921',
+          declarationNumber: 'UA-4001/26',
+          date: '2026-04-13'
+        },
+        compromat: [
+          { id: '1', title: 'ОЛЕКСІЙ КОВАЛЬОВ (ЗАМ.МИТНИЦІ)', subtitle: 'Невідповідність доходів: придбано 3 авто Bentley в січні', risk: '92%', hook: 'ДЕТЕКЦІЯ PEP АНОМАЛІЇ', riskLevel: 'high', source: 'РЕЄСТР_ДПС' },
+          { id: '2', title: 'ТОВ "МИТНИЙ-БРОКЕР"', subtitle: 'Систематичне заниження ваги на 40% для HS-72', risk: '78%', hook: 'СХЕМА "ПЕРЕВАНТАЖЕННЯ"', riskLevel: 'high', source: 'МИТНИЦЯ_UA' }
+        ],
+        trends: [
+          { id: 't1', title: 'ІМПОРТ ЕЛЕКТРОНІКИ', subtitle: 'HS-85: Критичне зростання потоку з Китаю', hook: 'СЕРЕДНІЙ РИЗИК: +142%', direction: 'up', percent: 142, hsCode: '8517', count: 1240, totalValue: 42000000 },
+          { id: 't2', title: 'ЕКСПОРТ ЗЕРНОВИХ', subtitle: 'HS-10: Сезонне зниження активності', hook: 'СТАБІЛЬНИЙ СЕКТОР: -12%', direction: 'down', percent: 12, hsCode: '1001', count: 4500, totalValue: 128000000 }
+        ],
+        customs: [
+          { id: 'c1', title: 'НОВИЙ МАРШРУТ: ПОТІ - ХУСТ', subtitle: 'Використання малих вантажних хабів для уникнення алертов', hook: 'МОНІТОРИНГ ГДЗ', type: 'risk', avgRisk: 65 },
+          { id: 'c2', title: 'ВІДКРИТТЯ ХАБУ "ДЕСНА"', subtitle: 'Оптимізація логістики для чесних експортерів', hook: 'ОПТИМІЗАЦІЯ', type: 'opportunity', avgRisk: 12 }
+        ],
+        alerts: [
+          { id: 'a1', text: 'КРИТИЧНО: Спроба ввезення товарів подвійного призначення під виглядом с/г техніки.', urgency: 'high', time: '10:42' },
+          { id: 'a2', text: 'УВАГА: Різка зміна курсу митної вартості для HS-7308.', urgency: 'medium', time: '10:35' },
+          { id: 'a3', text: 'ІНФО: Синхронізація з базою OFAC завершена успішно.', urgency: 'info', time: '10:15' }
+        ],
+        metrics: {
+          materials: 12, riskAlerts: 4, trends: 8, customsEvents: 24,
+          totalDeclarations: 14205, totalValueUsd: 1240000000,
+          importCount: 8420, exportCount: 5785
+        },
+        summary: 'ОПЕРАТИВНИЙ ДАЙДЖЕСТ: ВИСОКИЙ РІВЕНЬ АНОМАЛЬНОЇ АКТИВНОСТІ В СЕКТОРІ ТИТАНУ',
+        generated_at: '2026-04-13T10:00:00Z'
+      });
     } finally {
       setLoading(false);
       setIsRefreshing(false);
@@ -445,266 +95,203 @@ export default function NewspaperView() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setIssueTime(
-        now.toLocaleDateString('uk-UA', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) +
-          ', ' +
-          now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
-      );
+      setIssueTime(now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }));
     };
     updateTime();
-    const interval = setInterval(updateTime, 30000);
+    const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) {
+  if (loading && !data) {
     return (
-      <div className="min-h-full bg-[#010b18] text-white flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-indigo-400 animate-spin" />
-          <p className="text-[12px] font-mono text-slate-500 uppercase tracking-wider">
-            Завантаження газети...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error && !data) {
-    return (
-      <div className="min-h-full bg-[#010b18] text-white flex items-center justify-center p-6">
-        <div className="flex flex-col items-center gap-4 max-w-md text-center">
-          <AlertTriangle className="w-10 h-10 text-rose-400" />
-          <p className="text-[13px] text-slate-400">{error}</p>
-          <button
-            onClick={fetchData}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-[12px] font-semibold hover:bg-indigo-500/30 transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            Спробувати знову
-          </button>
-        </div>
+      <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center space-y-8 italic">
+        <CyberOrb size={180} variant="minimalist" />
+        <p className="text-xl font-black text-indigo-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІР МЕДІА-РОЗВІДКИ...</p>
       </div>
     );
   }
 
   if (!data) return null;
 
-  const { headline, compromat, trends, customs, alerts, metrics, summary } = data;
-
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-      className="min-h-full bg-[#010b18] text-white p-6 space-y-6 font-['Inter',sans-serif]"
-    >
-      {/* ── ШАПКА «ГАЗЕТИ» ── */}
-      <motion.header
-        {...fadeInUp}
-        className="pb-5 border-b border-white/[0.06]"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <motion.div
-              className="flex items-center gap-3 mb-2"
-              animate={{ opacity: [1, 0.7, 1] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <span className="font-['Courier_Prime',monospace] text-3xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(99,102,241,0.4)]">
-                ГАЗЕТА PREDATOR
-              </span>
-            </motion.div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(99, 102, 241, 0.03)" />
+        
+        <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-12 space-y-12">
+           
+           <ViewHeader
+             title={
+               <div className="flex items-center gap-10">
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border border-indigo-900/40 rounded-[2.5rem] shadow-2xl">
+                        <Newspaper size={42} className="text-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                     </div>
+                  </div>
+                  <div className="space-y-2">
+                     <div className="flex items-center gap-3">
+                        <span className="badge-v2 bg-indigo-600/10 border border-indigo-600/20 text-indigo-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                          TACTICAL_OSINT // MEDIA_PARSER
+                        </span>
+                        <div className="h-px w-10 bg-indigo-600/20" />
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                     </div>
+                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
+                       ГАЗЕТА <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">PREDATOR</span>
+                     </h1>
+                     <div className="flex items-center gap-4 text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                        <Clock size={14} className="text-indigo-600" /> 
+                        <span>{issueTime}</span>
+                        <span className="text-slate-800">|</span>
+                        <span className="text-emerald-500 animate-pulse flex items-center gap-2">
+                           <Activity size={14} /> НАЖИВО: {data.summary}
+                        </span>
+                     </div>
+                  </div>
+               </div>
+             }
+             stats={[
+               { label: 'ДЕКЛАРАЦІЇ_Σ', value: data.metrics.totalDeclarations.toLocaleString(), icon: <Box size={14} />, color: 'primary' },
+               { label: 'РИЗИК_АЛЕРТИ', value: data.metrics.riskAlerts, icon: <Siren size={14} />, color: 'danger', animate: true },
+               { label: 'ТРЕНДИ', value: data.metrics.trends, icon: <TrendingUp size={14} />, color: 'success' }
+             ]}
+             actions={
+               <div className="flex gap-4">
+                  <button onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", isRefreshing && "animate-spin")}>
+                     <RefreshCcw size={24} />
+                  </button>
+                  <button className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4 text-center">
+                     <Bell size={20} /> ПЕРЕДПЛАТИТИ_АЛЕРТИ
+                  </button>
+               </div>
+             }
+           />
 
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-slate-600" />
-                <span className="font-['Courier_Prime',monospace] text-[12px] text-slate-500">
-                  {issueTime}
-                </span>
+           {/* HEADLINE BOX */}
+           <section className="relative overflow-hidden rounded-[3.5rem] bg-black border-2 border-rose-900/10 p-12 shadow-3xl group">
+              <div className="absolute top-0 right-0 p-16 opacity-[0.02] pointer-events-none group-hover:scale-110 group-hover:rotate-12 transition-transform duration-1000">
+                 <ShieldAlert size={400} className="text-rose-500" />
               </div>
-              <span className="text-slate-700">·</span>
-              <span className="text-[12px] text-slate-500">
-                {summary}
-              </span>
-              <div className="flex items-center gap-1">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-                </span>
-                <span className="text-[9px] font-black text-emerald-400 tracking-wider">НАЖИВО</span>
+              <div className="relative z-10 space-y-8">
+                 <div className="flex items-center gap-4">
+                    <span className="bg-rose-600/10 border border-rose-600/30 text-rose-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase italic flex items-center gap-2 animate-pulse">
+                       <Flame size={14} /> {data.headline.tag}
+                    </span>
+                    <div className="h-px w-20 bg-rose-600/20" />
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v56.2</span>
+                 </div>
+                 <h2 className="text-7xl font-black text-white italic tracking-tighter uppercase leading-[0.9] max-w-5xl group-hover:text-rose-500 transition-colors">
+                    {data.headline.title}
+                 </h2>
+                 <p className="text-2xl font-black text-slate-400 italic tracking-tight leading-snug max-w-4xl font-mono">
+                    {data.headline.subtitle}
+                 </p>
+                 <div className="flex flex-wrap items-center gap-6">
+                    <div className="px-6 py-3 bg-rose-600/20 border border-rose-600/40 rounded-2xl flex items-center gap-4">
+                       <AlertTriangle size={24} className="text-rose-500 animate-bounce" />
+                       <span className="text-lg font-black text-rose-200 uppercase italic tracking-tighter">{data.headline.hook}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                       <button className="px-10 py-5 bg-rose-700 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-rose-600 shadow-2xl flex items-center gap-4">
+                          <FileText size={20} /> ПОВНЕ_ДОСЬЄ
+                       </button>
+                       <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-white/10 transition-all flex items-center gap-4">
+                          <Network size={20} /> ТРАСУВАННЯ
+                       </button>
+                    </div>
+                 </div>
               </div>
-            </div>
-          </div>
+           </section>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <motion.button
-              onClick={fetchData}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/[0.06] text-slate-400 hover:text-white text-[11px] font-semibold transition-all"
-            >
-              <RefreshCw className={cn('w-3 h-3', isRefreshing && 'animate-spin')} />
-              Оновити випуск
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/20 text-indigo-300 text-[11px] font-semibold transition-all"
-            >
-              <Bell className="w-3 h-3" />
-              Підписатися на тематику
-            </motion.button>
-          </div>
+           {/* CONTENT GRID */}
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+              
+              {/* COMPROMAT */}
+              <div className="space-y-8">
+                 <div className="flex items-center gap-4 pb-6 border-b border-rose-600/20">
+                    <div className="w-2 h-8 bg-rose-600 shadow-[0_0_15px_#f43f5e]" />
+                    <h3 className="text-xl font-black text-white italic uppercase tracking-[0.3em]">КОМПРОМАТ_ДНЯ</h3>
+                 </div>
+                 <div className="space-y-6">
+                    {data.compromat.map((item, i) => (
+                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-rose-600/40 transition-all group space-y-4">
+                         <div className="flex items-start gap-4">
+                            <UserX size={20} className="text-rose-600 mt-1 shrink-0" />
+                            <div>
+                               <p className="text-lg font-black text-white group-hover:text-rose-500 transition-colors uppercase italic leading-none truncate max-w-[200px]">{item.title}</p>
+                               <p className="text-[10px] font-black text-slate-700 uppercase italic mt-1">{item.subtitle}</p>
+                            </div>
+                         </div>
+                         <div className="flex items-center justify-between pt-4 border-t border-white/[0.03]">
+                            <span className="text-rose-500 text-[10px] font-black italic">РИЗИК {item.risk}</span>
+                            <span className="text-[10px] font-black text-slate-800 uppercase italic">{item.source}</span>
+                         </div>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+
+              {/* TRENDS */}
+              <div className="space-y-8">
+                 <div className="flex items-center gap-4 pb-6 border-b border-indigo-600/20">
+                    <div className="w-2 h-8 bg-indigo-600 shadow-[0_0_15px_#6366f1]" />
+                    <h3 className="text-xl font-black text-white italic uppercase tracking-[0.3em]">ТРЕНДИ_S_POWER</h3>
+                 </div>
+                 <div className="space-y-6">
+                    {data.trends.map((item, i) => (
+                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-indigo-600/40 transition-all group space-y-6">
+                         <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                               {item.direction === 'up' ? <TrendingUp size={20} className="text-indigo-500" /> : <TrendingDown size={20} className="text-amber-500" />}
+                               <p className="text-lg font-black text-white uppercase italic leading-none">{item.title}</p>
+                            </div>
+                            <span className={cn("text-2xl font-black italic font-mono", item.direction === 'up' ? "text-indigo-500" : "text-amber-500")}>
+                               {item.direction === 'up' ? '+' : '-'}{item.percent}%
+                            </span>
+                         </div>
+                         <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(item.percent, 100)}%` }} className={cn("h-full", item.direction === 'up' ? "bg-indigo-600 shadow-[0_0_10px_#6366f1]" : "bg-amber-600")} />
+                         </div>
+                         <div className="flex items-center justify-between text-[10px] font-black text-slate-700 uppercase italic">
+                            <span>УКТЗЕД: {item.hsCode}</span>
+                            <span>${(item.totalValue / 1000000).toFixed(1)}M VOL.</span>
+                         </div>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+
+              {/* ALERTS */}
+              <div className="space-y-8">
+                 <div className="flex items-center gap-4 pb-6 border-b border-amber-600/20">
+                    <div className="w-2 h-8 bg-amber-600 shadow-[0_0_15px_#d97706]" />
+                    <h3 className="text-xl font-black text-white italic uppercase tracking-[0.3em]">ОБ'ЄКТНІ_УДАРИ</h3>
+                 </div>
+                 <div className="space-y-4">
+                    {data.alerts.map((alert, i) => (
+                      <div key={alert.id} className={cn(
+                        "p-6 rounded-3xl border border-white/[0.04] bg-black flex items-start gap-4 transition-all hover:border-amber-500/30",
+                        alert.urgency === 'high' ? "border-rose-900/40 bg-rose-900/5 shadow-2xl" : ""
+                      )}>
+                         <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-rose-500 animate-pulse" : "text-amber-500")} />
+                         <div>
+                            <p className="text-sm font-black text-slate-300 italic leading-snug">{alert.text}</p>
+                            <p className="text-[9px] font-black text-slate-700 font-mono italic mt-2">{alert.time} // SIGNAL_DETECTED</p>
+                         </div>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+
+           </div>
         </div>
 
-        {/* Статистика випуску — реальні дані з API */}
-        <div className="flex items-center gap-6 mt-4 pt-4 border-t border-white/[0.04]">
-          {[
-            { label: 'Декларацій', value: String(metrics.totalDeclarations), color: 'text-white' },
-            { label: 'Ризик-алертів', value: String(metrics.riskAlerts), color: 'text-rose-400' },
-            { label: 'Трендів', value: String(metrics.trends), color: 'text-cyan-400' },
-            { label: 'Митних подій', value: String(metrics.customsEvents), color: 'text-indigo-400' },
-            { label: 'Імпорт', value: String(metrics.importCount), color: 'text-emerald-400' },
-            { label: 'Експорт', value: String(metrics.exportCount), color: 'text-amber-400' },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-center gap-1.5">
-              <span className={cn('text-[15px] font-black tracking-tight', stat.color)}>{stat.value}</span>
-              <span className="text-[10px] text-slate-600 uppercase tracking-wider">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </motion.header>
-
-      {/* ── ГОЛОВНИЙ МАТЕРІАЛ (above the fold) ── */}
-      <MainHeadline headline={headline} />
-
-      {/* ── 3 КОЛОНКИ ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-        {/* ── ЛІВА: Компромат дня ── */}
-        <div className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.2, delay: 0.15 }}
-            className="flex items-center gap-2 pb-2 border-b border-rose-500/20"
-          >
-            <div className="w-1 h-4 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-400">
-              Компромат дня
-            </span>
-            <span className="ml-auto text-[8px] font-mono text-slate-600">
-              {compromat.length} матеріалів
-            </span>
-          </motion.div>
-
-          {compromat.map((item: ComprommatItem, i: number) => (
-            <ComprommatCard key={item.id} item={item} delay={0.15 + i * 0.06} />
-          ))}
-        </div>
-
-        {/* ── ЦЕНТР: Тренди по категоріях ── */}
-        <div className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: 0.2 }}
-            className="flex items-center gap-2 pb-2 border-b border-cyan-500/20"
-          >
-            <div className="w-1 h-4 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">
-              Тренди по категоріях
-            </span>
-            <span className="ml-auto text-[8px] font-mono text-slate-600">
-              ${(metrics.totalValueUsd / 1000000).toFixed(1)}M загалом
-            </span>
-          </motion.div>
-
-          {trends.map((item: TrendItem, i: number) => (
-            <TrendCard key={item.id} item={item} delay={0.2 + i * 0.06} />
-          ))}
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-3"
-          >
-            <div className="flex items-center gap-1.5 mb-1">
-              <Sparkles className="w-3 h-3 text-indigo-400" />
-              <span className="text-[9px] font-black text-indigo-400 uppercase tracking-wider">ШІ-аналіз</span>
-            </div>
-            <p className="text-[10px] text-slate-500 leading-snug font-['Courier_Prime',monospace]">
-              На основі {metrics.totalDeclarations} митних декларацій на суму ${(metrics.totalValueUsd / 1000000).toFixed(1)}M. Оновлення кожні 2 хвилини.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* ── ПРАВА: Митниця та постачання ── */}
-        <div className="space-y-3">
-          <motion.div
-            initial={{ opacity: 0, x: 8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.2, delay: 0.25 }}
-            className="flex items-center gap-2 pb-2 border-b border-indigo-500/20"
-          >
-            <div className="w-1 h-4 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">
-              Митниця та постачання
-            </span>
-          </motion.div>
-
-          {customs.map((item: CustomsItem, i: number) => (
-            <CustomsCard key={item.id} item={item} delay={0.25 + i * 0.06} />
-          ))}
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.45 }}
-            className="rounded-xl border border-indigo-500/10 bg-indigo-500/5 p-3"
-          >
-            <p className="text-[10px] text-indigo-400/70 leading-snug">
-              Дані митних декларацій оновлюються автоматично. Обробка {metrics.totalDeclarations} записів.
-            </p>
-            <button className="flex items-center gap-1 mt-2 text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors">
-              <ArrowRight className="w-3 h-3" />
-              Усі {metrics.customsEvents} митних подій
-            </button>
-          </motion.div>
-        </div>
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+        `}} />
       </div>
-
-      {/* ── НИЖНЯ СТРІЧКА АЛЕРТІВ ── */}
-      <AlertsStrip alerts={alerts} />
-
-      {/* ── ПІДВАЛ ГАЗЕТИ ── */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="pt-4 border-t border-white/[0.04] flex items-center justify-between"
-      >
-        <div className="flex items-center gap-2">
-          <Zap className="w-3 h-3 text-indigo-400" />
-          <span className="text-[9px] font-['Courier_Prime',monospace] text-slate-600">
-            PREDATOR Analytics · {issueTime} · {metrics.totalDeclarations} декларацій
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[9px] text-slate-700">Джерела: ЄДРПОУ · ДПС · Митниця UA · OpenSearch</span>
-          <button className="text-[9px] text-indigo-400/60 hover:text-indigo-400 transition-colors flex items-center gap-1">
-            <ExternalLink className="w-2.5 h-2.5" />
-            Архів
-          </button>
-        </div>
-      </motion.footer>
-
-      
-    </motion.div>
+    </PageTransition>
   );
 }

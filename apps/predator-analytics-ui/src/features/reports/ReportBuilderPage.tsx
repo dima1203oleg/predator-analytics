@@ -182,7 +182,7 @@ const buildCopilotPrompt = (templateId: TemplateId, ueid: string, report: string
 
     return [
         `UEID: ${ueid}.`,
-        tasks[templateId],
+        tasks[templateId as keyof typeof tasks] || 'Проаналізуй і підготуй звіт українською мовою у Markdown.',
         '',
         'Базовий звіт для обробки:',
         report,

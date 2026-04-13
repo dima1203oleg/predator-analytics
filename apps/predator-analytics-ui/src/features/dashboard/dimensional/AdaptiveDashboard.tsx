@@ -94,17 +94,17 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
       try {
         if (isCommander || isOperator) {
            // Reuse existing data fetching logic...
-           const status = await api.v45.getSystemStatus().catch(() => ({}));
-           const alerts = await api.v45.getNotifications().catch(() => []);
-           const health = await api.v45.getLiveHealth().catch(() => ({}));
+           const status = (await api.v45.getSystemStatus().catch(() => ({}))) as any;
+           const alerts = (await api.v45.getNotifications().catch(() => [])) as any[];
+           const health = (await api.v45.getLiveHealth().catch(() => ({}))) as any;
 
            setMetrics(prev => ({
             ...prev,
             health: status.health_score || 98.5,
-            cpu: health?.cpu?.percent || prev.cpu,
-            memory: health?.memory?.percent || prev.memory,
+            cpu: health?.cpu_percent || prev.cpu,
+            memory: health?.memory_percent || prev.memory,
             network: 0,
-            activeContainers: Object.keys(health?.services || {}).length || prev.activeContainers,
+            activeContainers: health?.services?.length || prev.activeContainers,
             documentsTotal: status.opensearch?.opensearch_docs || prev.documentsTotal,
             vectorsCount: status.qdrant?.qdrant_vectors || prev.vectorsCount,
            }));

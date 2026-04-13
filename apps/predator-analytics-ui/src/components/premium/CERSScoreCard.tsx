@@ -4,7 +4,7 @@ import { Shield, ShieldAlert, ShieldCheck, Activity, Target, RefreshCw, Layers, 
 import { TacticalCard } from '@/components/TacticalCard';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { CERSCompany, CERSScoreSegment } from '@/types';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 interface CERSScoreCardProps {
     edrpou: string;

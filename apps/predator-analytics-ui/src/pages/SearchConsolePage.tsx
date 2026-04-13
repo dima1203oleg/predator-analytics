@@ -35,7 +35,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ========================
 // Types & Defaults

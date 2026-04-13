@@ -283,10 +283,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               <div className="space-y-3 relative z-10">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-1 rounded-full" style={{ backgroundColor: stat.color }} />
-                  <p className="text-[8px] font-black text-slate-600 tracking-[0.4em] uppercase">{stat.label}</p>
+                  <p className="text-[8px] font-black text-slate-600 tracking-[0.4em] uppercase">{stat.label || '-'}</p>
                 </div>
                 <h3 className="text-3xl font-black text-white tracking-tighter font-mono">{stat.value}</h3>
-                <p className="text-[9px] text-slate-600 font-black uppercase tracking-wider">{stat.sub}</p>
+                <p className="text-[9px] text-slate-600 font-black uppercase tracking-wider">{stat.sub || '-'}</p>
               </div>
             </TacticalCard>
           ))}
@@ -319,7 +319,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               )}
             >
               <config.icon size={13} />
-              {config.label}
+              {config?.label || 'UNKNOWN'}
             </button>
           ))}
         </div>
@@ -371,15 +371,15 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                               className="w-20 h-20 flex items-center justify-center border shadow-[0_0_20px_rgba(220,38,38,0.15)] transition-all group-hover:scale-105 bg-black overflow-hidden"
                               style={{ borderColor: `${TYPE_CONFIG[insight.type]?.color}35` }}
                             >
-                              {React.createElement(TYPE_CONFIG[insight.type].icon, {
+                              {TYPE_CONFIG[insight.type]?.icon ? React.createElement(TYPE_CONFIG[insight.type]!.icon, {
                                 size: 34,
                                 style: { color: TYPE_CONFIG[insight.type]?.color }
-                              })}
+                              }) : <Target size={34} />}
                               <div className="absolute inset-x-0 bottom-0 h-0.5 opacity-40" style={{ backgroundColor: TYPE_CONFIG[insight.type]?.color }} />
                             </div>
                           </div>
                           <span className="text-[8px] font-black uppercase tracking-[0.2em]" style={{ color: TYPE_CONFIG[insight.type]?.color }}>
-                            {TYPE_CONFIG[insight.type].label}
+                            {TYPE_CONFIG[insight.type]?.label || insight.type}
                           </span>
                         </div>
 
@@ -391,7 +391,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                               className="text-[8px] font-black px-3 py-1 uppercase tracking-[0.3em] border"
                               style={{ color: PRIORITY_CONFIG[insight.priority]?.color, borderColor: `${PRIORITY_CONFIG[insight.priority]?.color}30` }}
                             >
-                              {PRIORITY_CONFIG[insight.priority].label}
+                              {PRIORITY_CONFIG[insight.priority]?.label || insight.priority}
                             </span>
                             <div className="flex items-center gap-2 px-3 py-1 bg-black border border-red-900/20">
                               <Target size={11} className="text-red-700" />
@@ -439,7 +439,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                                       ? "bg-red-700 text-white border-transparent hover:bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.3)]"
                                       : "bg-black text-slate-500 border-red-900/30 hover:bg-red-950/20 hover:text-slate-300"
                                   )}>
-                                    {act.label}
+                                    {act.label || 'Action'}
                                   </button>
                                 ))}
                               </div>
@@ -495,8 +495,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           <div className="lg:col-span-4 space-y-8">
 
             {/* CyberOrb — sovereign red */}
-            <HoloContainer className="flex items-center justify-center p-4 min-h-[380px] relative overflow-hidden border-red-900/25"
-                            style={{ background: 'rgba(5,0,0,0.95)' } as React.CSSProperties}>
+            <HoloContainer className="flex items-center justify-center p-4 min-h-[380px] relative overflow-hidden border-red-900/25 bg-[#050000]/95">
               <CyberOrb size={280} color="#dc2626" className="opacity-60" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
                 <div className="text-[8px] font-black text-red-800/60 uppercase tracking-[0.8em] mb-3">SOVEREIGN_NEXUS_v56</div>
@@ -551,8 +550,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             </TacticalCard>
 
             {/* Глобальний радар — sovereign */}
-            <HoloContainer className="p-8 h-[300px] flex flex-col items-center justify-center overflow-hidden border-red-900/25 group"
-                            style={{ background: 'rgba(5,0,0,0.95)' } as React.CSSProperties}>
+            <HoloContainer className="p-8 h-[300px] flex flex-col items-center justify-center overflow-hidden border-red-900/25 group bg-[#050000]/95">
               <div className="relative w-48 h-48">
                 <div className="absolute inset-0 border border-red-900/30 rounded-full group-hover:border-red-700/40 transition-all duration-1000" />
                 <div className="absolute inset-5 border border-red-900/20 rounded-full animate-pulse" />

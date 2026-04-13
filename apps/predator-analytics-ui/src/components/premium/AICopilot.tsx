@@ -72,26 +72,24 @@ export const Predator: React.FC = () => {
 
         const dynamicSuggestions: Suggestion[] = [];
 
-        // Статистика фабрики
         if (stats && stats.total_patterns !== undefined) {
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
-            title: 'Аналітика Фабрики оновлена',
-            description: `У базі ${stats.total_patterns} патернів, ${stats.gold_patterns} золотих. Середній бал: ${stats.avg_score?.toFixed(1) || 0}%.`,
+            title: 'АНАЛІТИКА ФАБРИКИ v56.4',
+            description: `У базі ${stats.total_patterns} патернів. Золотий фонд: ${stats.gold_patterns}. Середній бал: ${stats.avg_score?.toFixed(1) || 0}%.`,
             confidence: 0.95,
             impact: 'medium'
           });
         }
 
-        // Останній золотий патерн
         if (goldPatterns && goldPatterns.length > 0) {
           const topPattern = goldPatterns[0];
           dynamicSuggestions.push({
             id: `gold-${Date.now()}`,
             type: 'action',
-            title: 'Виявлено критичний патерн',
-            description: `Патерн "${topPattern.name}" має score ${topPattern.score}. Рекомендується аналіз у Knowledge Map.`,
+            title: 'АКТИВАЦІЯ ЗОЛОТОГО ПАТЕРНУ',
+            description: `Патерн "${topPattern.name}" має score ${topPattern.score}. Необхідне негайне втручання.`,
             confidence: topPattern.score / 100,
             impact: 'high'
           });
@@ -101,8 +99,8 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `default-${Date.now()}`,
             type: 'opportunity',
-            title: 'Система готова до роботи',
-            description: 'AI Copilot підключено до Neural Core. Очікую нових даних з Фабрики.',
+            title: 'SOVEREIGN NEXUS ГОТОВИЙ',
+            description: 'AI Copilot підключено до суверенного ядра. Очікування цілі...',
             confidence: 0.99,
             impact: 'low'
           });
@@ -115,8 +113,8 @@ export const Predator: React.FC = () => {
            setSuggestions([{
               id: `error-${Date.now()}`,
               type: 'warning',
-              title: 'Фабрика недоступна',
-              description: 'Спроба підключення до Knowledge Map завершилась помилкою.',
+              title: 'СИСТЕМНА ПОМИЛКА D-102',
+              description: 'Спроба підключення до Knowledge Map завершилась тайм-аутом.',
               confidence: 0.5,
               impact: 'medium'
            }]);
@@ -125,7 +123,7 @@ export const Predator: React.FC = () => {
     };
 
     fetchInsights();
-    const interval = setInterval(fetchInsights, 15000); // Опитуємо кожні 15 секунд
+    const interval = setInterval(fetchInsights, 20000);
 
     return () => {
       mounted = false;
@@ -135,42 +133,23 @@ export const Predator: React.FC = () => {
 
   const speak = async (text: string) => {
     try {
-      console.log("🔊 Predator attempting to speak:", text.substring(0, 50) + "...");
-
-      // Stop and clear previous audio to prevent overlapping
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
-
       const currentSpeakId = ++speakIdRef.current;
-
       const response = await fetch('/api/v1/ai/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })
       });
       if (!response.ok) throw new Error('TTS Failed');
-
-      // If a new speak call was made while we were fetching this one, abort playback
-      if (speakIdRef.current !== currentSpeakId) {
-        console.log("⏭️ Skipping outdated audio playback");
-        return;
-      }
-
+      if (speakIdRef.current !== currentSpeakId) return;
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-
-      if (!audioRef.current) {
-        audioRef.current = new Audio();
-      }
-
+      if (!audioRef.current) audioRef.current = new Audio();
       audioRef.current.src = url;
-      audioRef.current.play().catch(e => {
-        console.warn("Autoplay prevented, retrying with new Audio:", e);
-        audioRef.current = new Audio(url);
-        audioRef.current.play().catch(err => console.error("Playback failed completely:", err));
-      });
+      audioRef.current.play().catch(() => {});
     } catch (e) {
       console.error("TTS Error:", e);
     }
@@ -179,40 +158,32 @@ export const Predator: React.FC = () => {
   const handleSend = async (forcedQuery?: string) => {
     const query = forcedQuery || message;
     if (!query.trim()) return;
-
     if (!forcedQuery) setMessage('');
-    setAiResponse('Аналізую ваші дані через Neural Core...');
-    setActiveAgent('Активація каскаду агентів...');
-
+    setAiResponse('СКАНУВАННЯ СУВЕРЕННИМ ЯДРОМ...');
+    setActiveAgent('АГЕНТ: ТИТАН-АЛЬФА');
     try {
       const res = await api.premium.query(query);
       const answer = res.answer || res.response || res.result;
-
       if (answer) {
         setAiResponse(answer);
-        setActiveAgent(res.agent || 'Neural Alpha');
-        // Автоматично озвучуємо відповідь для інтерактивності
+        setActiveAgent(res.agent || 'PREDATOR_CORE');
         speak(answer);
       } else {
-        setAiResponse(`✨ Запит оброблено. Результат зафіксовано в системі.`);
+        setAiResponse(`✨ ЗАПИТ ВИКОНАНО. ДАНІ ІНТЕГРОВАНО.`);
       }
     } catch (e: any) {
-      console.error("AI Copilot Error:", e);
-      setAiResponse(`Помилка: ${e?.message}. Можливо, сервер Ollama або API недоступні.`);
+      setAiResponse(`ПОМИЛКА КЛАСТЕРА: ${e?.message}. ПЕРЕВІРТЕ СТАТУС ВІРТУАЛЬНОЇ МАШИНИ.`);
     }
   };
 
   const handleVoiceToggle = () => {
     if (!isListening) {
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognitionRef.current = recognition;
-
         recognition.lang = 'uk-UA';
-        recognition.continuous = isInteractiveMode; // Use continuous if in interactive mode
-        recognition.interimResults = false;
-
+        recognition.continuous = isInteractiveMode;
         recognition.onstart = () => setIsListening(true);
         recognition.onresult = (event: any) => {
           const transcript = event.results[event.results.length - 1][0].transcript;
@@ -220,16 +191,8 @@ export const Predator: React.FC = () => {
           handleSend(transcript);
         };
         recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => {
-          if (isInteractiveMode && isListening) {
-            recognition.start(); // Restart if in interactive mode
-          } else {
-            setIsListening(false);
-          }
-        };
+        recognition.onend = () => isInteractiveMode && isListening ? recognition.start() : setIsListening(false);
         recognition.start();
-      } else {
-        alert('Browser speech recognition not supported.');
       }
     } else {
       setIsListening(false);
@@ -237,257 +200,140 @@ export const Predator: React.FC = () => {
     }
   };
 
-  const handlePulseRead = () => {
-    setIsPulseActive(true);
-    const summary = suggestions.map(s => `${s.title}. ${s.description}`).join('... ');
-    const fullText = `Звіт Predator. ${summary}. Чекаю на ваші вказівки.`;
-    speak(fullText);
-    setTimeout(() => setIsPulseActive(false), 5000);
-  };
-
   const getSuggestionIcon = (type: string) => {
     switch (type) {
-      case 'insight': return <Lightbulb className="w-5 h-5 text-yellow-400" />;
-      case 'warning': return <AlertTriangle className="w-5 h-5 text-red-400" />;
-      case 'opportunity': return <TrendingUp className="w-5 h-5 text-green-400" />;
-      case 'action': return <Target className="w-5 h-5 text-blue-400" />;
-      default: return <Sparkles className="w-5 h-5 text-purple-400" />;
+      case 'insight': return <Cpu className="w-5 h-5 text-amber-500" />;
+      case 'warning': return <ShieldAlert className="w-5 h-5 text-rose-500" />;
+      case 'opportunity': return <Zap className="w-5 h-5 text-emerald-500" />;
+      case 'action': return <Target className="w-5 h-5 text-amber-600" />;
+      default: return <Activity className="w-5 h-5 text-amber-400" />;
     }
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'high': return 'text-red-400 bg-red-500/20';
-      case 'medium': return 'text-yellow-400 bg-yellow-500/20';
-      case 'low': return 'text-green-400 bg-green-500/20';
-      default: return 'text-gray-400 bg-gray-500/20';
+      case 'high': return 'text-rose-500 border-rose-500/30 bg-rose-500/10';
+      case 'medium': return 'text-amber-500 border-amber-500/30 bg-amber-500/10';
+      case 'low': return 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10';
+      default: return 'text-slate-500 border-slate-500/30 bg-slate-500/10';
     }
   };
 
   return (
     <>
-      {/* Floating AI Button */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-10 right-6 z-[60] w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600 shadow-[0_0_30px_rgba(147,51,234,0.3)] flex items-center justify-center group"
+            className="fixed bottom-10 right-10 z-[60] w-20 h-20 rounded-3xl bg-black border-2 border-amber-500/40 shadow-[0_0_50px_rgba(245,158,11,0.3)] flex items-center justify-center group overflow-hidden"
           >
-            <Brain className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
-            <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-600"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0, 0.5]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
-            {suggestions.length > 0 && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold"
-              >
-                {suggestions.length}
-              </motion.div>
-            )}
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent" />
+            <Brain className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform relative z-10" />
+            <motion.div className="absolute inset-0 border-2 border-amber-500/40 rounded-3xl" animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* AI Copilot Panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`fixed z-[150] bg-gradient-to-br from-slate-900/95 via-purple-900/95 to-slate-900/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-2xl ${isExpanded
-              ? 'inset-4'
-              : 'bottom-6 right-6 w-[450px] h-[600px]'
-              }`}
+            initial={{ opacity: 0, scale: 0.95, y: 40 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 40 }}
+            className={cn(
+              "fixed z-[150] bg-black/90 backdrop-blur-3xl border-2 border-amber-500/20 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col",
+              isExpanded ? "inset-10 rounded-[3rem]" : "bottom-10 right-10 w-[450px] h-[750px] rounded-[2.5rem]"
+            )}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-cyan-500/30 bg-black/40">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Activity className="w-8 h-8 text-cyan-400" />
-                  <motion.div
-                    className="absolute inset-0"
-                    animate={{ rotate: 360, scale: [1, 1.2, 1] }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  >
-                    <div className="w-full h-full border border-cyan-500/30 border-dashed rounded-full" />
-                  </motion.div>
+            <div className="p-8 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="relative p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
+                  <Activity className="w-8 h-8 text-amber-500 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tighter text-white uppercase italic">PREDATOR</h3>
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <p className="text-[10px] text-cyan-300 font-bold uppercase tracking-widest">Neural Core v45.0</p>
+                  <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">PREDATOR AI</h3>
+                  <div className="flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                    <p className="text-[9px] text-amber-500/60 font-black uppercase tracking-[0.3em] font-mono">SOVEREIGN_CORE_v56.4</p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handlePulseRead}
-                  className={`p-2 rounded-lg transition-all ${isPulseActive ? 'bg-cyan-500/30 text-cyan-400' : 'hover:bg-cyan-500/10 text-cyan-300'}`}
-                  title="Прочитати звіт"
-                >
-                  <Volume2 className={`w-5 h-5 ${isPulseActive ? 'animate-bounce' : ''}`} />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setIsInteractiveMode(!isInteractiveMode);
-                    if (!isInteractiveMode && !isListening) {
-                      setTimeout(handleVoiceToggle, 100); // Auto-start listening when enabling
-                    }
-                  }}
-                  className={`p-2 rounded-lg transition-all ${isInteractiveMode ? 'bg-cyan-500/30 text-cyan-400 border border-cyan-500/50' : 'hover:bg-cyan-500/10 text-cyan-300'}`}
-                  title="Інтерактивний режим (Predator Ear)"
-                >
-                  <Ear className={`w-5 h-5 ${isInteractiveMode ? 'animate-pulse text-cyan-400' : ''}`} />
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                >
-                  {isExpanded ? (
-                    <Minimize2 className="w-5 h-5 text-gray-300" />
-                  ) : (
-                    <Maximize2 className="w-5 h-5 text-gray-300" />
-                  )}
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-red-400" />
-                </motion.button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="p-3 bg-white/5 border border-white/5 rounded-xl hover:text-amber-500 transition-colors">
+                  {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                </button>
+                <button onClick={() => setIsOpen(false)} className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all">
+                  <X size={20} />
+                </button>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="flex flex-col h-[calc(100%-80px)]">
-              {/* AI Suggestions */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                <h4 className="text-sm font-semibold text-purple-300 mb-3">
-                  <Zap className="w-4 h-4 inline mr-2" />
-                  Рекомендації AI
-                </h4>
-
-                {suggestions.map((suggestion, index) => (
-                  <motion.div
-                    key={suggestion.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-slate-800/50 border border-purple-500/20 rounded-xl p-4 hover:border-purple-500/40 transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1">
-                        {getSuggestionIcon(suggestion.type)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h5 className="font-semibold text-white group-hover:text-purple-300 transition-colors">
-                            {suggestion.title}
-                          </h5>
-                          <span className={`text-xs px-2 py-1 rounded-full ${getImpactColor(suggestion.impact)}`}>
-                            {suggestion.impact === 'high' ? 'Високий' : suggestion.impact === 'medium' ? 'Середній' : 'Низький'}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-400 mb-2">{suggestion.description}</p>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-slate-700/50 rounded-full h-2">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${suggestion.confidence * 100}%` }}
-                              className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full"
-                            />
-                          </div>
-                          <span className="text-xs text-gray-400">
-                            {Math.round(suggestion.confidence * 100)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-
-                {aiResponse && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/30 rounded-xl p-4"
-                  >
-                    <div className="flex items-start gap-3">
-                      <Brain className="w-6 h-6 text-purple-400 mt-1" />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] uppercase tracking-wider text-cyan-400 font-bold">
-                            {activeAgent || 'Neural Core'}
-                          </span>
-                          <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                        </div>
-                        <p className="text-sm text-white whitespace-pre-line leading-relaxed">{aiResponse}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+            {/* Suggestions & Response Area */}
+            <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
+              <div className="space-y-4">
+                 <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic flex items-center gap-3">
+                   <Target size={14} className="text-amber-500" /> ТАКТИЧНИЙ_ФІД
+                 </h4>
+                 {suggestions.map((s) => (
+                   <motion.div key={s.id} className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-amber-500/30 transition-all cursor-pointer group">
+                     <div className="flex items-start gap-5">
+                       <div className="p-3 bg-black border border-white/10 rounded-xl group-hover:border-amber-500/40 transition-colors">
+                         {getSuggestionIcon(s.type)}
+                       </div>
+                       <div className="flex-1">
+                         <div className="flex items-center justify-between mb-2">
+                            <h5 className="text-[14px] font-black text-white uppercase italic tracking-tight">{s.title}</h5>
+                            <span className={cn("text-[8px] font-black uppercase px-2 py-1 border rounded-lg", getImpactColor(s.impact))}>{s.impact}</span>
+                         </div>
+                         <p className="text-[12px] text-slate-500 font-medium leading-relaxed italic">{s.description}</p>
+                         <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
+                           <motion.div initial={{ width: 0 }} animate={{ width: `${s.confidence * 100}%` }} className="h-full bg-amber-500" />
+                         </div>
+                       </div>
+                     </div>
+                   </motion.div>
+                 ))}
               </div>
 
-              {/* Input Area */}
-              <div className="p-4 border-t border-cyan-500/30 bg-black/40">
-                <div className="flex items-center gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleVoiceToggle}
-                    className={`p-3 rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] ${isListening
-                      ? 'bg-red-600 text-white animate-pulse'
-                      : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30'
-                      }`}
-                  >
-                    {isListening ? <Activity className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                  </motion.button>
+              {aiResponse && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-8 bg-amber-500/5 border-2 border-amber-500/20 rounded-[2rem] relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Brain size={120} className="text-amber-500" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-5">
+                       <Zap size={20} className="text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+                       <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{activeAgent}</span>
+                    </div>
+                    <p className="text-lg font-black text-white italic leading-relaxed tracking-tight">{aiResponse}</p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
 
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                    placeholder={isInteractiveMode ? "Predator слухає активне середовище..." : "Введіть команду для Predator..."}
-                    className="flex-1 bg-black/60 border border-cyan-500/30 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cyan-500/60 transition-all font-mono text-sm"
-                  />
-
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleSend()}
-                    className="p-3 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-xl text-white shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all"
-                  >
-                    <Zap className="w-5 h-5" />
-                  </motion.button>
-                </div>
+            {/* Input Area */}
+            <div className="p-8 bg-white/[0.02] border-t border-white/5">
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={handleVoiceToggle} 
+                  className={cn(
+                    "p-6 rounded-3xl transition-all shadow-2xl",
+                    isListening ? "bg-rose-600 text-white animate-pulse" : "bg-black border border-white/10 text-amber-500 hover:text-white"
+                  )}
+                >
+                  {isListening ? <Activity size={24} /> : <Mic size={24} />}
+                </button>
+                <input 
+                  type="text" 
+                  value={message} 
+                  onChange={(e) => setMessage(e.target.value)} 
+                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="ВВЕДІТЬ_КОМАНДУ_ДЛЯ_PREDATOR..."
+                  className="flex-1 bg-black border-2 border-white/5 rounded-3xl px-8 py-6 text-white font-mono text-[14px] uppercase italic tracking-widest focus:outline-none focus:border-amber-500/40 transition-all placeholder:text-slate-800"
+                />
+                <button onClick={() => handleSend()} className="p-6 bg-amber-500 text-black rounded-3xl font-black shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:scale-105 transition-all">
+                  <Zap size={24} />
+                </button>
               </div>
             </div>
             <audio ref={audioRef} style={{ display: 'none' }} />

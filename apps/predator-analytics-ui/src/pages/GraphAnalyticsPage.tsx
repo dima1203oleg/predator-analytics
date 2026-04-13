@@ -25,7 +25,7 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { useAppStore } from '@/store/useAppStore';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberOrb } from '@/components/CyberOrb';
 

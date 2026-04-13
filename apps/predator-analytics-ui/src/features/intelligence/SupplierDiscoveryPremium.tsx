@@ -377,7 +377,7 @@ const SupplierDiscoveryPremium: React.FC = () => {
       subtitle: `${focusSupplier.country} • ${focusSupplier.city} • ${focusSupplier.products.slice(0, 2).join(', ')}`,
       status: {
         label: focusSupplier.verified ? 'Верифікований постачальник' : 'Потребує перевірки',
-        tone: focusSupplier.verified ? 'success' : 'warning',
+        tone: (focusSupplier.verified ? 'success' : 'warning') as any,
       },
       actions: createStandardContextActions({
         auditPath: '/diligence',

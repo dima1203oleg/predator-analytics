@@ -10,7 +10,7 @@
 
 import React, {useCallback, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
-import {AlertCircle, ChevronDown, Download, Loader} from 'lucide-react';
+import {AlertCircle, ChevronDown, Download, Loader, Search} from 'lucide-react';
 import {useNavigate} from 'react-router-dom';
 import {cersService} from '@/services/unified/cers.service';
 import {Card} from '@/components/ui/card';
@@ -64,7 +64,7 @@ export const SmartCompanySearch: React.FC = () => {
   const {data: results, isPending, error} = useQuery({
     queryKey: ['companies', searchTerm, filters],
     queryFn: () =>
-      cersService.searchCompanies(searchTerm, {
+      (cersService as any).searchCompanies(searchTerm, {
         ...filters,
         limit: 50,
         offset: pageIndex * 50
@@ -93,7 +93,7 @@ export const SmartCompanySearch: React.FC = () => {
 
     // Convert to CSV
     const headers = ['УЕІД', 'Назва', 'Регіон', 'Статус', 'Тип', 'Працівники', 'Дохід'];
-    const rows = results.map(c => [
+    const rows = results.map((c: any) => [
       c.ueid,
       c.name,
       c.region,
@@ -130,27 +130,27 @@ export const SmartCompanySearch: React.FC = () => {
 
       {/* Search Input */}
       <Card
-        variant="highlight"
-        className="p-4"
+        variant="amber"
+        className="p-4 bg-black/40 border-amber-500/20 backdrop-blur-xl shadow-[0_0_50px_rgba(245,158,11,0.1)]"
       >
         <div className="space-y-3">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder="🔍 Введіть назву компанії, УЕІД, ІПН..."
-            className="w-full px-4 py-3 bg-slate-800 border-2 border-slate-600 rounded-lg text-white text-lg focus:border-indigo-500 focus:outline-none transition-colors"
-          />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search size={20} className="text-amber-500/50 group-focus-within:text-amber-500" />
+            </div>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="🔍 Введіть назву компанії, УЕІД, ІПН або ПІБ..."
+              className="w-full pl-12 pr-4 py-4 bg-black/60 border-2 border-amber-900/30 rounded-2xl text-white text-xl placeholder-amber-900/50 focus:border-amber-500 focus:shadow-[0_0_30px_rgba(245,158,11,0.15)] focus:outline-none transition-all duration-300 font-mono italic"
+            />
+          </div>
 
           {/* Quick Suggestions */}
           {searchTerm.length < 2 && (
-            <div className="text-sm text-gray-400">
-              💡 Примери пошуку:
-              <ul className="mt-2 space-y-1">
-                <li>• АТ Укрнафта</li>
-                <li>• 25478025</li>
-                <li>• ПриватБанк</li>
-              </ul>
+            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-500/40 px-2">
+              💡 Приклади: АТ Укрнафта · 25478025 · Петренко Іван
             </div>
           )}
         </div>

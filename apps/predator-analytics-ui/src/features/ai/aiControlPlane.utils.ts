@@ -177,7 +177,7 @@ const normalizeEngineEntries = (value: unknown): Array<{ key: string; engine: En
       .filter(([, engine]) => isRecord(engine))
       .map(([key, engine]) => ({
         key,
-        engine,
+        engine: engine as UnknownRecord,
       }));
   }
 

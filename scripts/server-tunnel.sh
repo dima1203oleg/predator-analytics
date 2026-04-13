@@ -16,7 +16,7 @@ NC='\033[0m'
 PORTS=(
     "9001:3001:Grafana"
     "9080:80:Frontend"
-    "9090:8090:Backend API"
+    "9090:8000:Backend API"
     "9432:5432:PostgreSQL"
     "9379:6379:Redis"
     # Kubernetes API (додається при бажанні)

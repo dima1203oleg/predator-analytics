@@ -32,7 +32,7 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ViewHeader } from '@/components/ViewHeader';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 // --- Types ---
@@ -110,7 +110,6 @@ const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
   <TacticalCard
     variant="premium"
     className="group relative overflow-hidden"
-    hoverEffect="glow"
   >
     <div className="absolute top-0 right-0 p-4">
       <div className={cn(
@@ -197,8 +196,12 @@ const PredictiveNexusView: React.FC = () => {
       </div>
 
       <ViewHeader
-        title="Predictive Nexus v56.1"
-        description="Квантовий контур стратегічного прогнозування. Система бачить аномалії до того, як вони стають подіями."
+        title={
+          <div>
+            <div className="text-3xl font-black">Predictive Nexus v56.1</div>
+            <div className="text-sm font-normal text-slate-400 mt-2">Квантовий контур стратегічного прогнозування. Система бачить аномалії до того, як вони стають подіями.</div>
+          </div>
+        }
         badges={[
           { label: 'ORACLE_CORE_v1.4', color: 'rose', icon: <Cpu size={10} /> },
           { label: 'NEURAL_NETWORK_ACTIVE', color: 'primary', icon: <Brain size={10} /> },

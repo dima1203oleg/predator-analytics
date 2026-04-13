@@ -43,7 +43,7 @@ const TARGETS = [
 // --- SUBCOMPONENTS ---
 
 function Globe() {
-  const globeRef = useRef<THREE.Mesh>(null);
+  const globeRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
     if (globeRef.current) {

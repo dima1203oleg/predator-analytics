@@ -295,7 +295,7 @@ export default function ClientsHubView() {
       subtitle: activeSegment.subtitle,
       status: {
         label: `Режим: ${personaLabel(persona)}`,
-        tone: backendStatus.isOffline ? 'warning' : 'info',
+        tone: (backendStatus.isOffline ? 'warning' : 'info') as any,
       },
       actions: createStandardContextActions({
         auditPath: '/diligence',

@@ -15,7 +15,7 @@ import {
   Filter, ChevronRight, Network, DollarSign, Globe,
   Activity, Lock, FileText, Send, Loader2, Star
 } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 
 // ─── ТИПИ ────────────────────────────────────────────────────────────
 

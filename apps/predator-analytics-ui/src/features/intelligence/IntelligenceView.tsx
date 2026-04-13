@@ -1,34 +1,32 @@
 /**
- * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v56.1.4
- * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ v56.1.4 (SOVEREIGN MATRIX)
+ * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v56.2-TITAN
+ * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ (INTEL NEXUS)
  * 
- * Централізація семантичного графу, нейро-інсайтів та глибинної аналітики.
- * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
+ * Центральна точка розвідувального циклу:
+ * Глобальний аналіз ринків, стратегічні пріоритети,
+ * шанси для експансії та виявлення прихованих загроз.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect } from 'react';
 import {
-    Activity, Brain, Radio, Share2, Shield, Sparkles, Zap, Network, Target,
+    Activity, Brain, Radio, Shield, Sparkles, Zap, Network, Target,
     ShieldCheck, Cpu, Database, Binary, Search, Globe, RadioTower, Eye, Crosshair,
     ChevronRight, Info, Layers, Workflow, Terminal, Boxes, Fingerprint,
-    TrendingUp, AlertCircle, RefreshCw, Lock, Orbit, Activity as ActivityIcon
+    TrendingUp, AlertCircle, RefreshCw, Lock, Orbit, BarChart3, TrendingDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { SemanticRadar } from '@/components/graph/SemanticRadar';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
-import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { Badge } from '@/components/ui/badge';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
-import { HoloContainer } from '@/components/HoloContainer';
-import { CyberOrb } from '@/components/CyberOrb';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { SearchWidget } from '@/components/search/SearchWidget';
-import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 
 const IntelligenceView: React.FC = () => {
@@ -43,278 +41,208 @@ const IntelligenceView: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#010204] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(220, 38, 38, 0.05)" />
-                <NeuralPulse color="rgba(220, 38, 38, 0.03)" size={1500} />
-                <div className="fixed left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-transparent via-red-600 to-transparent z-50 opacity-30 shadow-[0_0_20px_rgba(220,38,38,0.5)]" />
+                <CyberGrid color="rgba(220, 38, 38, 0.04)" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(220,38,38,0.06),transparent_70%)] pointer-events-none" />
 
-                <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-12 space-y-16">
-                    <SearchWidget className="mb-16 scale-105" />
-                    {/* View Header with more premium touch */}
+                <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-16">
+                    
+                    {/* Tactical Search Entry */}
+                    <div className="max-w-4xl mx-auto mb-16">
+                        <SearchWidget className="scale-105 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]" />
+                    </div>
+
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-red-500/30 blur-[80px] rounded-full scale-150 opacity-40 animate-pulse group-hover:opacity-70 transition-opacity" />
-                                    <div className="relative p-8 bg-slate-900/80 border border-red-500/30 rounded-[3rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] backdrop-blur-3xl group-hover:border-red-400 transition-all">
-                                        <Brain size={48} className="text-red-500 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="relative p-7 bg-black border border-red-900/40 rounded-[2.5rem] shadow-2xl">
+                                        <Brain size={42} className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" />
                                     </div>
                                 </div>
-                                <div>
-                                    <h1 className="text-6xl font-black text-white tracking-[0.05em] uppercase leading-none font-display italic skew-x-[-2.5deg]">
-                                        ХАБ <span className="text-red-600">ОСІНТ-РОЗВІДКИ</span>
-                                    </h1>
-                                    <div className="flex items-center gap-6 mt-6">
-                                        <div className="h-0.5 w-16 bg-gradient-to-r from-red-600 to-transparent" />
-                                        <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                                            СУВЕРЕННЕ_КОГНІТИВНЕ_ЯДРО // v56.1.4
-                                        </span>
-                                        <Badge variant="outline" className="border-red-500/40 text-red-500 text-[9px] tracking-[0.3em] bg-red-500/5 py-1 px-4 font-black">SOVEREIGN_MATRIX</Badge>
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-3">
+                                       <span className="badge-v2 bg-red-600/10 border border-red-600/20 text-red-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                                         INTEL_NEXUS // GLOBAL_RECON
+                                       </span>
+                                       <div className="h-px w-10 bg-red-600/20" />
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
                                     </div>
+                                    <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
+                                        ЦЕНТР <span className="text-red-600 underline decoration-red-600/20 decoration-8">РОЗВІДКИ</span>
+                                    </h1>
+                                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                                        Аналіз Ринку • Оперативні Шанси • Пріоритети Суверенітету
+                                    </p>
                                 </div>
                             </div>
                         }
                         stats={[
-                            { label: 'НЕЙРО_НАВАНТАЖЕННЯ', value: '72%', color: 'success', icon: <Activity size={14} />, animate: true },
-                            { label: 'РІВЕНЬ_ГРАФА', value: 'L15', color: 'primary', icon: <Network size={14} /> },
-                            { label: 'OODA_ЦИКЛ', value: '6ms', color: 'success', icon: <Zap size={14} />, animate: true }
+                            { label: 'COGNITIVE_LOAD', value: '72%', color: 'danger', icon: <Activity size={14} />, animate: true },
+                            { label: 'GRAPH_DEPTH', value: 'L15', color: 'primary', icon: <Network size={14} /> },
+                            { label: 'REACTION_TIME', value: '6ms', color: 'success', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['АРХІТЕКТУРА', 'РОЗВІДКА', 'КОГНІТИВНЕ_ЯДРО']}
+                        breadcrumbs={['STRATEGY', 'NEXUS', 'RECON_HUB']}
                         actions={
-                            <div className="flex gap-6">
-                                <motion.button 
-                                    whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(220, 38, 38, 0.4)' }}
-                                    whileTap={{ scale: 0.95 }}
+                            <div className="flex gap-4">
+                                <button
                                     onClick={triggerCognitiveRefresh}
-                                    className="px-10 py-5 bg-red-700 text-white font-black rounded-3xl text-[10px] uppercase tracking-[0.3em] shadow-3xl hover:bg-red-600 transition-all flex items-center gap-4 italic group"
+                                    className="px-10 py-5 bg-red-700 text-white font-black rounded-2xl text-[11px] uppercase tracking-[0.3em] shadow-xl hover:bg-red-600 transition-all flex items-center gap-4 italic group"
                                 >
-                                    {isThinking ? <RefreshCw className="animate-spin" size={20} /> : <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />}
+                                    {isThinking ? <RefreshCw className="animate-spin" size={18} /> : <Sparkles size={18} />}
                                     ОПТИМІЗУВАТИ_ЯДРО
-                                </motion.button>
-                                <button className="p-5 bg-slate-900/80 border border-white/10 rounded-3xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all shadow-2xl">
-                                    <RadioTower size={24} className="animate-pulse text-red-500" />
+                                </button>
+                                <button className="p-5 bg-black/60 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
+                                    <RadioTower size={22} className="animate-pulse text-red-600" />
                                 </button>
                             </div>
                         }
                     />
 
-                    <div className="grid grid-cols-12 gap-16 relative z-10">
-                        {/* Main Interaction Cluster */}
-                        <div className="col-span-12 xl:col-span-8 flex flex-col gap-12">
-                            {/* Semantic Radar Matrix - The Grand Visualization */}
-                            <TacticalCard variant="holographic" className="overflow-hidden min-h-[750px] bg-slate-900/40 relative group/radar rounded-[4rem] border-white/5 shadow-[0_60px_150px_-30px_rgba(0,0,0,1)]" noPadding>
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.08),transparent_70%)]" />
-                                
-                                <div className="absolute top-12 left-12 z-20 flex items-center gap-10">
-                                    <div className="p-6 bg-red-500/10 rounded-3xl border border-red-500/20 text-red-500 shadow-3xl backdrop-blur-3xl group-hover/radar:border-red-400/40 transition-all">
-                                        <Layers size={32} className="animate-pulse" />
+                    <div className="grid grid-cols-12 gap-12">
+                        
+                        {/* MAIN OPERATIONAL AREA */}
+                        <div className="col-span-12 xl:col-span-8 space-y-12">
+                            
+                            {/* Semantic Matrix HUD */}
+                            <section className="relative rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl overflow-hidden group">
+                                <div className="absolute inset-0 bg-red-600/[0.01] pointer-events-none" />
+                                <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04] relative z-20">
+                                    <div className="flex items-center gap-6">
+                                        <div className="p-4 rounded-2xl bg-red-600/10 text-red-600 border border-red-600/20">
+                                            <Layers size={24} className="animate-pulse" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТРИЦЯ</h3>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v56.2</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-4xl font-black text-white uppercase tracking-tighter italic skew-x-[-3deg]">СЕМАНТИЧНА <span className="text-red-500">МАТРИЦЯ</span></h3>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] mt-2 italic border-l-2 border-red-500/40 pl-4">VISUAL_TOPOLOGY_v56.1.4</p>
-                                    </div>
-                                </div>
-
-                                <div className="absolute top-12 right-12 z-30 flex gap-6">
-                                     <div className="flex bg-black/60 rounded-[2rem] p-2 border border-white/10 backdrop-blur-3xl shadow-3xl">
-                                         <button 
+                                    <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 backdrop-blur-3xl">
+                                        <button 
                                             onClick={() => setActiveLayer('graph')}
-                                            className={cn("px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)]' : 'text-slate-500 hover:text-slate-300')}
-                                         >ГРАФ_PRO</button>
-                                         <button 
+                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-300')}
+                                        >GRAPH_SCAN</button>
+                                        <button 
                                             onClick={() => setActiveLayer('radar')}
-                                            className={cn("px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'radar' ? 'bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.5)]' : 'text-slate-500 hover:text-slate-300')}
-                                         >РАДАР_X</button>
-                                     </div>
-                                </div>
-
-                                <div className="absolute inset-0 z-0 opacity-40">
-                                    <CyberGrid color="rgba(220, 38, 38, 0.15)" />
-                                </div>
-
-                                <div className="flex-1 h-full pt-48 pb-16 px-12">
-                                    <SemanticRadar className="h-full w-full opacity-90 transition-opacity duration-1000 scale-105" />
-                                </div>
-
-                                <div className="absolute bottom-12 left-12 z-20">
-                                    <div className="flex items-center gap-16 bg-black/60 p-10 rounded-[3rem] border border-white/5 backdrop-blur-3xl shadow-3xl">
-                                        <div className="flex flex-col gap-2">
-                                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic leading-none">ЗАТРИМКА_CORE</span>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_#ef4444]" />
-                                                <span className="text-3xl font-black text-white font-mono italic tracking-tighter">6.2ms</span>
-                                            </div>
-                                        </div>
-                                        <div className="w-px h-16 bg-white/10" />
-                                        <div className="flex flex-col gap-2">
-                                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic leading-none">ІНДЕКС_ЕНТРОПІЇ</span>
-                                            <span className="text-3xl font-black text-amber-500 font-mono italic tracking-tighter">0.084</span>
-                                        </div>
-                                        <div className="w-px h-16 bg-white/10" />
-                                        <div className="flex flex-col gap-2">
-                                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic leading-none">ГЛИБИНА_АНАЛІЗУ</span>
-                                            <span className="text-3xl font-black text-red-500 font-mono italic tracking-tighter">SOVEREIGN</span>
-                                        </div>
+                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'radar' ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-300')}
+                                        >RADAR_OSINT</button>
                                     </div>
                                 </div>
-                            </TacticalCard>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                <HoloContainer className="p-12 min-h-[500px] flex flex-col relative overflow-hidden group/pipe bg-slate-900/60 rounded-[4rem] border-white/5 shadow-3xl">
-                                    <div className="flex items-center justify-between mb-10 relative z-10 border-b border-white/5 pb-8">
-                                        <div className="flex items-center gap-6">
-                                            <div className="p-4 bg-emerald-500/10 rounded-2xl shadow-inner">
-                                                <Database size={28} className="text-emerald-400" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-black text-white uppercase tracking-tighter italic italic">ПАЙПЛАЙНИ <span className="text-emerald-400">ДИНАМІКИ</span></h3>
-                                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mt-2 italic">SYNC_ACTIVE_PROTOCOL</p>
-                                            </div>
-                                        </div>
-                                        <Badge variant="outline" className="text-[10px] bg-emerald-500/10 border-emerald-500/30 text-emerald-400 uppercase tracking-[0.2em] font-black py-1.5 px-4 rounded-xl">LIVE</Badge>
-                                    </div>
-                                    <div className="flex-1 overflow-y-auto pr-6 no-scrollbar relative z-10">
-                                        <DatabasePipelineMonitor />
-                                    </div>
-                                    <div className="absolute -bottom-24 -right-24 opacity-[0.03] group-hover/pipe:opacity-[0.08] transition-all duration-1000 transform group-hover/pipe:rotate-12 group-hover/pipe:scale-110">
-                                        <Workflow size={350} className="text-emerald-500" />
-                                    </div>
-                                </HoloContainer>
-
-                                <TacticalCard
-                                    variant="cyber"
-                                    className="p-12 min-h-[500px] border-red-500/20 bg-red-500/[0.02] relative overflow-hidden rounded-[4rem] group/ops shadow-3xl"
-                                >
-                                    <div className="flex items-center justify-between mb-10 border-b border-white/5 pb-8">
-                                        <div className="flex items-center gap-6">
-                                            <div className="p-4 bg-red-500/20 rounded-2xl shadow-2xl">
-                                                <Terminal size={28} className="text-red-500" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">КОГНІТИВНІ <span className="text-red-600">ОПЕРАЦІЇ</span></h3>
-                                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mt-2 italic">SOVEREIGN_NODE_v56.1.4</p>
-                                            </div>
-                                        </div>
-                                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.8)]" />
-                                    </div>
-
-                                    <div className="space-y-10 flex-1 overflow-y-auto no-scrollbar pr-4 italic">
-                                        <div className="p-10 bg-black/60 border border-white/5 rounded-[3rem] relative group/sub overflow-hidden hover:border-red-500/40 transition-all shadow-2xl">
-                                            <div className="absolute inset-0 bg-red-500/5 blur-3xl opacity-0 group-hover/sub:opacity-100 transition-opacity" />
-                                            <p className="text-[15px] text-slate-300 leading-relaxed font-black relative z-10">
-                                                Ядро <span className="text-red-500 text-xl font-display">AZR-V56.GEN</span> успішно завершило <span className="text-red-400">14.2M</span> циклів дедукції.
-                                            </p>
-                                            <div className="flex items-center gap-4 mt-8 relative z-10 opacity-60">
-                                                <Info size={16} className="text-red-400" />
-                                                <span className="text-[10px] text-slate-500 uppercase font-black tracking-[0.2em]">Виявлено 32 нові паттерни санкційного комплаєнсу.</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-8">
-                                            <div className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-red-500/30 transition-all shadow-xl group/stat">
-                                                <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em] mb-4 group-hover/stat:text-red-500 transition-colors">ІНДЕКС_ДОВІРИ</div>
-                                                <div className="text-4xl font-mono font-black text-red-500 tracking-tighter italic">0.9999</div>
-                                            </div>
-                                            <div className="p-8 bg-black/40 border border-white/5 rounded-[2.5rem] hover:border-red-500/30 transition-all shadow-xl group/stat">
-                                                <div className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em] mb-4 group-hover/stat:text-red-500 transition-colors">ПІК_ОПЕРАЦІЙ</div>
-                                                <div className="text-4xl font-mono font-black text-red-400 tracking-tighter italic">4ms</div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-4 pt-6">
-                                            {['СУВЕРЕННИЙ', 'НЕЙРО-v56', 'ДЕТЕРМІНІСТИЧНИЙ', 'АВТОНОМНИЙ', 'ГЛОБАЛЬНИЙ'].map(tag => (
-                                                <span key={tag} className="px-6 py-3 bg-black/80 border border-white/10 rounded-2xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:text-red-400 hover:border-red-500/50 transition-all cursor-crosshair hover:bg-slate-900">
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="absolute -right-16 -bottom-16 opacity-[0.02] group-hover/ops:opacity-[0.06] transition-all duration-1000 transform group-hover/ops:rotate-[-10deg] group-hover/ops:scale-110">
-                                        <Cpu size={380} className="text-red-500" />
-                                    </div>
-                                </TacticalCard>
-                            </div>
-                        </div>
-
-                        {/* Intelligence & Insights Sidebar */}
-                        <div className="col-span-12 xl:col-span-4 flex flex-col gap-12">
-                            {/* Neural Insights Panel */}
-                            <div className="relative group/insights h-[650px]">
-                                <div className="absolute -inset-2 bg-gradient-to-b from-red-600/40 to-transparent blur-[100px] opacity-20 group-hover/insights:opacity-40 transition-opacity" />
-                                <div className="relative h-full bg-[#030712]/90 backdrop-blur-3xl border border-white/10 rounded-[4rem] overflow-hidden shadow-[0_60px_120px_-20px_rgba(0,0,0,1)]">
-                                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-red-600/40 to-transparent" />
-                                    <AIInsightsHub isWidgetMode={true} />
+                                <div className="h-[550px] relative z-10">
+                                    <SemanticRadar className="h-full w-full opacity-90 scale-105" />
                                 </div>
-                            </div>
 
-                            {/* Sovereign Report Matrix */}
-                            {selectedUeid && (
-                                <SovereignReportWidget
-                                    ueid={selectedUeid}
-                                    className="min-h-[550px] border-red-500/20 bg-slate-900/60 rounded-[4rem] shadow-3xl"
-                                />
-                            )}
-
-                            {/* Diagnostics Cluster */}
-                            <TacticalCard variant="glass" className="p-12 bg-slate-950/80 border border-white/5 rounded-[4rem] group hover:border-red-500/40 transition-all shadow-3xl overflow-hidden relative">
-                                <div className="absolute top-0 right-0 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                                    <Orbit size={240} className="text-red-500" />
-                                </div>
-                                <div className="flex items-center gap-6 mb-12 relative z-10 border-b border-white/5 pb-8">
-                                    <div className="p-5 bg-red-500/10 rounded-3xl shadow-2xl">
-                                        <Boxes size={28} className="text-red-500" />
-                                    </div>
-                                    <div>
-                                        <h4 className="text-lg font-black text-white uppercase tracking-[0.4em] italic leading-none">ЗГІДНІСТЬ_ЯДРА</h4>
-                                        <p className="text-[10px] font-mono text-slate-600 mt-3 uppercase tracking-widest italic">DIAGNOSTIC_PROTOCOL_v55</p>
-                                    </div>
-                                </div>
-                                
-                                <div className="space-y-8 relative z-10">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-12 pt-10 border-t border-white/[0.04]">
                                     {[
-                                        { label: 'АСИНХРОННИЙ_ІНДЕКС', val: '99.99%', sub: 'ОПТИМАЛЬНО', icon: ShieldCheck, color: 'text-red-500' },
-                                        { label: 'ВЕКТОРНИЙ_ДРЕЙФ', val: '0.002', sub: 'МІНІМАЛЬНИЙ', icon: TrendingUp, color: 'text-amber-500' },
-                                        { label: 'СИГНАЛЬНИЙ_ШУМ', val: '0.09dB', sub: 'ІЗОЛЬОВАНО', icon: Radio, color: 'text-red-400' }
-                                    ].map(stat => (
-                                        <div key={stat.label} className="flex items-center justify-between p-8 bg-white/[0.03] border border-white/5 rounded-[2.5rem] hover:bg-white/5 transition-all group/it shadow-xl">
-                                            <div className="flex items-center gap-6">
-                                                <stat.icon size={22} className={cn("transition-transform group-hover/it:scale-125 group-hover/it:rotate-6", stat.color)} />
-                                                <div>
-                                                    <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-2 italic">{stat.label}</p>
-                                                    <p className={cn("text-[9px] font-black uppercase tracking-tighter opacity-60 italic", stat.color)}>{stat.sub}</p>
-                                                </div>
-                                            </div>
-                                            <span className="text-3xl font-black text-white font-mono italic tracking-tighter">{stat.val}</span>
+                                        { label: 'SYNAPSE_DELAY', value: '6.2ms', sub: 'OPTIMIZED', c: 'text-red-500' },
+                                        { label: 'ENTROPY_IDX', value: '0.084', sub: 'STABLE', c: 'text-amber-500' },
+                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'TITAN-01', c: 'text-emerald-500' },
+                                        { label: 'ACTIVE_AGENTS', value: '14/14', sub: 'DEPLOYED', c: 'text-sky-500' },
+                                    ].map((s, i) => (
+                                        <div key={i} className="text-left font-black italic">
+                                            <p className="text-[9px] text-slate-700 uppercase tracking-widest mb-1">{s.label}</p>
+                                            <p className={cn("text-2xl font-mono tracking-tighter leading-none", s.c)}>{s.val || s.value}</p>
+                                            <p className="text-[8px] text-slate-800 uppercase tracking-[0.2em] mt-1">{s.sub}</p>
                                         </div>
                                     ))}
                                 </div>
-                                
-                                <motion.button 
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full mt-12 py-8 bg-red-500/5 border border-red-500/30 rounded-[2.5rem] text-[11px] font-black text-red-500 uppercase tracking-[0.5em] hover:text-white hover:bg-red-600 hover:border-red-400 transition-all flex items-center justify-center gap-6 shadow-2xl group italic"
-                                >
-                                     <Fingerprint size={20} className="group-hover:rotate-12 transition-transform" /> ПЕРЕВІРИТИ_ЦІЛІСНІСТЬ
-                                </motion.button>
-                            </TacticalCard>
+                            </section>
+
+                            {/* Secondary Hubs */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                <section className="p-10 rounded-[3rem] bg-black/60 border border-white/[0.05] shadow-2xl relative overflow-hidden group">
+                                     <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
+                                        <div className="flex items-center gap-5">
+                                           <Database size={24} className="text-emerald-500" />
+                                           <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">ПОТОКИ ІНГЕСТІЇ</h4>
+                                        </div>
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                     </div>
+                                     <div className="h-[300px] overflow-y-auto no-scrollbar">
+                                        <DatabasePipelineMonitor />
+                                     </div>
+                                </section>
+
+                                <section className="p-10 rounded-[3rem] bg-black border-2 border-red-900/10 shadow-2xl relative overflow-hidden group">
+                                     <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
+                                        <div className="flex items-center gap-5">
+                                           <Terminal size={24} className="text-red-600" />
+                                           <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">КОГНІТИВНІ ОПЕРАЦІЇ</h4>
+                                        </div>
+                                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                                     </div>
+                                     <div className="space-y-6">
+                                        <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] space-y-4">
+                                            <p className="text-[13px] font-black text-slate-300 italic leading-snug">Ядро AZR-V56.GEN завершило 14.2M циклів дедукції.</p>
+                                            <div className="flex items-center gap-3">
+                                               <Info size={12} className="text-red-500" />
+                                               <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">32 НОВІ САНКЦІЙНІ ПАТТЕРНИ</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="p-4 rounded-xl bg-black border border-white/5">
+                                               <p className="text-[8px] font-black text-slate-700 uppercase mb-1">TRUST_INDEX</p>
+                                               <p className="text-xl font-black text-red-500 font-mono italic">0.9999</p>
+                                            </div>
+                                            <div className="p-4 rounded-xl bg-black border border-white/5">
+                                               <p className="text-[8px] font-black text-slate-700 uppercase mb-1">REACTION</p>
+                                               <p className="text-xl font-black text-red-400 font-mono italic">4ms</p>
+                                            </div>
+                                        </div>
+                                     </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        {/* SIDEBAR INTELLIGENCE */}
+                        <div className="col-span-12 xl:col-span-4 space-y-12">
+                            
+                            {/* Neural Pulse Area */}
+                            <div className="rounded-[3rem] bg-black/60 border border-white/[0.05] overflow-hidden shadow-3xl h-[650px] relative">
+                                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.05),transparent_70%)] pointer-events-none" />
+                                <AIInsightsHub isWidgetMode={true} />
+                            </div>
+
+                            {/* Tactical Focus Dashboard */}
+                            <div className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl space-y-8 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
+                                   <Orbit size={240} className="text-red-500" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-8 flex items-center gap-4">
+                                   <Target size={16} className="text-red-600" /> ТАКТИЧНИЙ ФОКУС
+                                </h3>
+                                <div className="space-y-4 relative z-10">
+                                   {[
+                                      { l: 'ШАНСИ РИНКУ', v: '12 АКТИВНИХ', c: 'text-emerald-500', icon: BarChart3 },
+                                      { l: 'ПРИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-red-500', icon: AlertCircle },
+                                      { l: 'ПРІОРИТЕТИ_CEO', v: '03 КРИТИЧНІ', c: 'text-white', icon: Star },
+                                   ].map((m, i) => (
+                                      <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-white/10 transition-all cursor-pointer group">
+                                         <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl group-hover:bg-red-600/10 group-hover:text-red-500 transition-all">
+                                               <m.icon size={18} />
+                                            </div>
+                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic group-hover:text-slate-300 transition-colors">{m.l}</span>
+                                         </div>
+                                         <p className={cn("text-lg font-black italic tracking-tighter leading-none", m.c)}>{m.v}</p>
+                                      </div>
+                                   ))}
+                                </div>
+                                <button className="w-full py-5 bg-red-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-600 transition-all shadow-xl italic mt-6">
+                                   ПОВНИЙ СИСТЕМНИЙ АУДИТ
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-
-                <style dangerouslySetInnerHTML={{
-                    __html: `
-                        .no-scrollbar::-webkit-scrollbar {
-                            display: none;
-                        }
-                        .font-display {
-                            font-family: 'Inter', sans-serif;
-                        }
-                    `
-                }} />
-
-                <AudioSanctuary />
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .no-scrollbar::-webkit-scrollbar { display: none; }
+                    .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+                `}} />
             </div>
         </PageTransition>
     );

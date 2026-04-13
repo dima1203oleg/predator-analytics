@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { api } from '@/services/api';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { premiumLocales } from '@/locales/uk/premium';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';

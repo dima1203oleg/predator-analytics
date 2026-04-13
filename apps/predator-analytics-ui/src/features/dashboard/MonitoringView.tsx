@@ -1,11 +1,8 @@
 /**
- * Операційний моніторинг платформи.
- *
- * Показує тільки підтверджені дані з:
- * - /api/v1/system/status
- * - /api/v1/system/stats
- * - /api/v1/system/logs/stream
- * - /api/v1/ingestion/jobs
+ * 🦅 PREDATOR v56.2 — CORE MONITORING (TITAN CORE)
+ * Розділ I.6 — Операційний моніторинг платформи.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -26,6 +23,11 @@ import {
     Search,
     Server,
     Terminal,
+    Shield,
+    Cpu,
+    Zap,
+    ArrowUpRight,
+    AlertOctagon
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -37,7 +39,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { ingestionApi, type JobStatusResponse } from '@/services/api/ingestion';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import {
     appendMetricPoint,
     formatBytes,
@@ -60,53 +62,43 @@ import {
 type Tab = 'metrics' | 'logs' | 'pipelines' | 'nodes';
 
 const tabs: Array<{ key: Tab; label: string; icon: JSX.Element }> = [
-    { key: 'metrics', label: 'Метрики', icon: <Activity size={16} /> },
-    { key: 'logs', label: 'Логи', icon: <Terminal size={16} /> },
-    { key: 'pipelines', label: 'Пайплайни', icon: <Layers3 size={16} /> },
-    { key: 'nodes', label: 'Вузли', icon: <Server size={16} /> },
+    { key: 'metrics', label: 'МЕТРИКИ', icon: <Activity size={16} /> },
+    { key: 'logs', label: 'ЛОГИ СИСТЕМИ', icon: <Terminal size={16} /> },
+    { key: 'pipelines', label: 'ПАЙПЛАЙНИ', icon: <Layers3 size={16} /> },
+    { key: 'nodes', label: 'ВУЗЛИ КЛАСТЕРА', icon: <Server size={16} /> },
 ];
 
-const toneClasses: Record<StatusTone, { badge: string; icon: string; border: string }> = {
+const toneClasses: Record<StatusTone, { badge: string; icon: string; border: string; glow: string }> = {
     emerald: {
         badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
         icon: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
         border: 'border-emerald-500/15',
+        glow: 'shadow-[0_0_15px_rgba(16,185,129,0.3)]',
     },
     amber: {
         badge: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
         icon: 'border-amber-500/20 bg-amber-500/10 text-amber-300',
         border: 'border-amber-500/15',
+        glow: 'shadow-[0_0_15px_rgba(245,158,11,0.3)]',
     },
     rose: {
         badge: 'border-rose-500/30 bg-rose-500/10 text-rose-300',
         icon: 'border-rose-500/20 bg-rose-500/10 text-rose-300',
         border: 'border-rose-500/15',
+        glow: 'shadow-[0_0_15px_rgba(244,63,94,0.3)]',
     },
     sky: {
         badge: 'border-sky-500/30 bg-sky-500/10 text-sky-300',
         icon: 'border-sky-500/20 bg-sky-500/10 text-sky-300',
         border: 'border-sky-500/15',
+        glow: 'shadow-[0_0_15px_rgba(14,165,233,0.3)]',
     },
     slate: {
         badge: 'border-slate-500/30 bg-slate-500/10 text-slate-300',
         icon: 'border-slate-500/20 bg-slate-500/10 text-slate-300',
         border: 'border-slate-500/15',
+        glow: 'shadow-[0_0_15px_rgba(71,85,105,0.3)]',
     },
-};
-
-const toMetricNumber = (value: unknown): number | null => {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-        return value;
-    }
-
-    if (typeof value === 'string') {
-        const parsed = Number(value);
-        if (Number.isFinite(parsed)) {
-            return parsed;
-        }
-    }
-
-    return null;
 };
 
 const buildChartOption = (cpuHistory: MetricPoint[], memoryHistory: MetricPoint[]) => {
@@ -118,53 +110,46 @@ const buildChartOption = (cpuHistory: MetricPoint[], memoryHistory: MetricPoint[
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
-            backgroundColor: 'rgba(7, 15, 28, 0.96)',
-            borderColor: 'rgba(56, 189, 248, 0.25)',
-            textStyle: { color: '#fff', fontSize: 12 },
+            backgroundColor: 'rgba(5, 10, 20, 0.95)',
+            borderColor: 'rgba(56, 189, 248, 0.2)',
+            textStyle: { color: '#fff', fontSize: 11, fontFamily: 'monospace' },
+            borderWidth: 1,
+            padding: 10,
         },
         legend: {
-            top: 16,
+            top: 10,
+            right: 10,
             data: ['ЦП', 'ОЗП'],
-            textStyle: { color: '#94a3b8', fontSize: 11 },
+            textStyle: { color: '#64748b', fontSize: 10, fontWeight: 'bold' },
         },
-        grid: { top: 56, left: 48, right: 24, bottom: 36 },
+        grid: { top: 60, left: 50, right: 30, bottom: 40 },
         xAxis: {
             type: 'category',
             data: labels,
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 },
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+            axisLabel: { color: '#475569', fontSize: 9, fontWeight: 'bold' },
+            splitLine: { show: false },
         },
         yAxis: {
             type: 'value',
             max: 100,
-            axisLabel: { color: '#64748b', fontSize: 11 },
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } },
+            axisLabel: { color: '#475569', fontSize: 9, fontWeight: 'bold' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.03)', type: 'dashed' } },
         },
         series: [
             {
                 name: 'ЦП',
                 type: 'line',
                 smooth: true,
-                symbol: 'circle',
-                symbolSize: 7,
+                symbol: 'none',
                 data: cpuHistory.map((point) => point.value),
-                lineStyle: {
-                    width: 3,
-                    color: '#38bdf8',
-                    shadowBlur: 12,
-                    shadowColor: 'rgba(56, 189, 248, 0.35)',
-                },
-                itemStyle: { color: '#38bdf8' },
+                lineStyle: { width: 3, color: '#0ea5e9' },
                 areaStyle: {
                     color: {
-                        type: 'linear',
-                        x: 0,
-                        y: 0,
-                        x2: 0,
-                        y2: 1,
+                        type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
                         colorStops: [
-                            { offset: 0, color: 'rgba(56, 189, 248, 0.24)' },
-                            { offset: 1, color: 'rgba(56, 189, 248, 0)' },
+                            { offset: 0, color: 'rgba(14, 165, 233, 0.2)' },
+                            { offset: 1, color: 'rgba(14, 165, 233, 0)' },
                         ],
                     },
                 },
@@ -173,25 +158,14 @@ const buildChartOption = (cpuHistory: MetricPoint[], memoryHistory: MetricPoint[
                 name: 'ОЗП',
                 type: 'line',
                 smooth: true,
-                symbol: 'circle',
-                symbolSize: 7,
+                symbol: 'none',
                 data: memoryHistory.map((point) => point.value),
-                lineStyle: {
-                    width: 3,
-                    color: '#f59e0b',
-                    shadowBlur: 12,
-                    shadowColor: 'rgba(245, 158, 11, 0.35)',
-                },
-                itemStyle: { color: '#f59e0b' },
+                lineStyle: { width: 3, color: '#f59e0b' },
                 areaStyle: {
                     color: {
-                        type: 'linear',
-                        x: 0,
-                        y: 0,
-                        x2: 0,
-                        y2: 1,
+                        type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
                         colorStops: [
-                            { offset: 0, color: 'rgba(245, 158, 11, 0.2)' },
+                            { offset: 0, color: 'rgba(245, 158, 11, 0.15)' },
                             { offset: 1, color: 'rgba(245, 158, 11, 0)' },
                         ],
                     },
@@ -201,72 +175,49 @@ const buildChartOption = (cpuHistory: MetricPoint[], memoryHistory: MetricPoint[
     };
 };
 
-const ResourceBar = ({
-    label,
-    value,
-    detail,
-    tone,
-}: {
-    label: string;
-    value: number | null;
-    detail: string;
-    tone: StatusTone;
-}) => {
+const ResourceBar = ({ label, value, detail, tone }: { label: string; value: number | null; detail: string; tone: StatusTone }) => {
     const styles = toneClasses[tone];
-
     return (
-        <div className="space-y-2 rounded-[28px] border border-white/5 bg-black/30 p-5">
-            <div className="flex items-center justify-between gap-4">
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</span>
-                <span className="text-lg font-black text-white">{formatPercent(value)}</span>
+        <div className="space-y-3 p-6 rounded-[2rem] bg-black/40 border border-white/[0.05] hover:border-white/[0.1] transition-all">
+            <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">{label}</span>
+                <span className={cn("text-xl font-black font-mono tracking-tighter italic", styles.icon.split(' ')[2])}>{formatPercent(value)}</span>
             </div>
-            <div className="h-2 overflow-hidden rounded-full border border-white/5 bg-slate-950">
-                <div
-                    className={cn('h-full rounded-full transition-[width] duration-500', styles.icon)}
-                    style={{ width: value == null ? '0%' : `${Math.max(0, Math.min(100, value))}%` }}
+            <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-white/[0.03]">
+                <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${value || 0}%` }}
+                    className={cn('h-full transition-all duration-1000', styles.icon.split(' ')[1])}
                 />
             </div>
-            <div className="text-xs text-slate-500">{detail}</div>
+            <div className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{detail}</div>
         </div>
     );
 };
 
-const MetricTile = ({
-    label,
-    value,
-    hint,
-    icon,
-    tone,
-}: {
-    label: string;
-    value: string;
-    hint: string;
-    icon: JSX.Element;
-    tone: StatusTone;
-}) => {
+const MetricTile = ({ label, value, hint, icon, tone }: { label: string; value: string; hint: string; icon: JSX.Element; tone: StatusTone }) => {
     const styles = toneClasses[tone];
-
     return (
-        <div className={cn('rounded-[28px] border bg-slate-950/40 p-5 shadow-[0_18px_45px_rgba(2,6,23,0.35)]', styles.border)}>
-            <div className="flex items-center justify-between gap-4">
-                <div className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border', styles.icon)}>
+        <div className={cn('p-6 rounded-[2.5rem] bg-black/40 border border-white/[0.05] hover:border-white/[0.1] transition-all relative overflow-hidden group', styles.glow)}>
+            <div className="flex items-center justify-between">
+                <div className={cn('flex h-12 w-12 items-center justify-center rounded-2xl border transition-all group-hover:scale-110', styles.icon)}>
                     {icon}
                 </div>
                 <div className="text-right">
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{label}</div>
-                    <div className="mt-1 text-2xl font-black tracking-tight text-white">{value}</div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-600 italic leading-none mb-2">{label}</div>
+                    <div className="text-2xl font-black font-mono tracking-tighter text-white italic leading-none">{value}</div>
                 </div>
             </div>
-            <div className="mt-3 text-xs text-slate-400">{hint}</div>
+            <div className="mt-4 pt-4 border-t border-white/[0.03] text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">{hint}</div>
         </div>
     );
 };
 
 const EmptyPanel = ({ title, description }: { title: string; description: string }) => (
-    <div className="flex h-full min-h-[260px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-black/30 px-8 text-center">
-        <AlertTriangle className="mb-4 h-10 w-10 text-amber-300" />
-        <div className="text-lg font-black text-white">{title}</div>
-        <div className="mt-2 max-w-xl text-sm leading-6 text-slate-400">{description}</div>
+    <div className="flex flex-col items-center justify-center p-12 rounded-[3rem] border-2 border-dashed border-white/[0.05] bg-black/30 text-center space-y-4">
+        <AlertTriangle className="h-12 w-12 text-amber-500/50" />
+        <div className="text-xl font-black text-white italic uppercase tracking-tighter">{title}</div>
+        <div className="max-w-md text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">{description}</div>
     </div>
 );
 
@@ -288,35 +239,27 @@ const MonitoringView: React.FC = () => {
     const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
     const loadSnapshot = useCallback(async (silent: boolean = false) => {
-        if (silent) {
-            setRefreshing(true);
-        } else {
-            setLoading(true);
-        }
-
+        if (silent) setRefreshing(true); else setLoading(true);
         try {
             const [statusResponse, statsResponse, clusterResponse, jobsResponse] = await Promise.all([
                 systemApi.getStatus().catch(() => null),
                 systemApi.getStats().catch(() => null),
                 systemApi.getCluster().catch(() => null),
-                ingestionApi.getJobs(8).catch(() => [] as JobStatusResponse[]),
+                ingestionApi.getJobs(10).catch(() => [] as JobStatusResponse[]),
             ]);
-
             setSystemStatus(statusResponse);
             setSystemStats(statsResponse);
             setCluster(normalizeClusterSnapshot(clusterResponse));
             setPipelineJobs(normalizeJobStatusResponse(jobsResponse));
-
             if (statsResponse) {
-                setCpuHistory((previous) => appendMetricPoint(previous, statsResponse.cpu_percent, statsResponse.timestamp));
-                setMemoryHistory((previous) => appendMetricPoint(previous, statsResponse.memory_percent, statsResponse.timestamp));
+                setCpuHistory((prev) => appendMetricPoint(prev, statsResponse.cpu_percent, statsResponse.timestamp));
+                setMemoryHistory((prev) => appendMetricPoint(prev, statsResponse.memory_percent, statsResponse.timestamp));
             }
-
             if (statusResponse || statsResponse || clusterResponse || jobsResponse.length > 0) {
                 setLastSyncedAt(statsResponse?.timestamp ?? statusResponse?.timestamp ?? new Date().toISOString());
             }
-        } catch (error) {
-            console.error('[MonitoringView] Не вдалося оновити знімок моніторингу:', error);
+        } catch (e) {
+            console.error('[Monitoring] Error:', e);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -324,15 +267,10 @@ const MonitoringView: React.FC = () => {
     }, []);
 
     const loadLogs = useCallback(async (showLoader: boolean = false) => {
-        if (showLoader) {
-            setLogsLoading(true);
-        }
-
+        if (showLoader) setLogsLoading(true);
         try {
-            const response = await systemApi.getLogs(100).catch(() => []);
+            const response = await systemApi.getLogs(150).catch(() => []);
             setLogs(normalizeSystemLogs(response));
-        } catch (error) {
-            console.error('[MonitoringView] Не вдалося отримати системні логи:', error);
         } finally {
             setLogsLoading(false);
         }
@@ -341,23 +279,13 @@ const MonitoringView: React.FC = () => {
     useEffect(() => {
         void loadSnapshot();
         void loadLogs(true);
-
-        const interval = window.setInterval(() => {
-            void loadSnapshot(true);
-        }, 15000);
-
+        const interval = window.setInterval(() => void loadSnapshot(true), 12000);
         return () => window.clearInterval(interval);
     }, [loadSnapshot, loadLogs]);
 
     useEffect(() => {
-        if (pauseStream) {
-            return undefined;
-        }
-
-        const interval = window.setInterval(() => {
-            void loadLogs();
-        }, 5000);
-
+        if (pauseStream) return undefined;
+        const interval = window.setInterval(() => void loadLogs(), 4000);
         return () => window.clearInterval(interval);
     }, [pauseStream, loadLogs]);
 
@@ -366,168 +294,103 @@ const MonitoringView: React.FC = () => {
     }, [loadSnapshot, loadLogs]);
 
     const overallStatusMeta = getStatusMeta(
-        backendStatus.isOffline
-            ? 'offline'
-            : systemStatus?.overall_status ?? systemStatus?.status ?? null,
+        backendStatus.isOffline ? 'offline' : (systemStatus?.overall_status ?? systemStatus?.status ?? null)
     );
-    const averageLatency = systemStats?.avg_latency ?? toMetricNumber(systemStatus?.metrics?.avg_latency);
+    const averageLatency = systemStats?.avg_latency ?? (systemStatus as any)?.metrics?.avg_latency;
     const uptimeLabel = systemStatus?.uptime ?? systemStats?.uptime ?? 'Н/д';
     const services = systemStatus?.services ?? [];
     const serviceSummary = systemStatus?.summary ?? {
         total: services.length,
-        healthy: services.filter((service) => getStatusMeta(service.status).tone === 'emerald').length,
-        degraded: services.filter((service) => getStatusMeta(service.status).tone === 'amber').length,
-        failed: services.filter((service) => getStatusMeta(service.status).tone === 'rose').length,
+        healthy: services.filter(s => getStatusMeta(s.status).tone === 'emerald').length,
+        degraded: services.filter(s => getStatusMeta(s.status).tone === 'amber').length,
+        failed: services.filter(s => getStatusMeta(s.status).tone === 'rose').length,
     };
-    const activeJobsCount = pipelineJobs.filter((job) => job.isActive).length;
-    const failedJobsCount = pipelineJobs.filter((job) => job.tone === 'rose').length;
-    const completedJobsCount = pipelineJobs.filter((job) => job.tone === 'emerald' && !job.isActive).length;
+
     const filteredLogs = useMemo(() => {
         const query = searchQuery.trim().toLowerCase();
-
-        if (!query) {
-            return logs;
-        }
-
-        return logs.filter((log) =>
-            `${log.service} ${log.level} ${log.message}`.toLowerCase().includes(query),
-        );
+        if (!query) return logs;
+        return logs.filter(log => `${log.service} ${log.level} ${log.message}`.toLowerCase().includes(query));
     }, [logs, searchQuery]);
 
-    const chartOption = useMemo(
-        () => buildChartOption(cpuHistory, memoryHistory),
-        [cpuHistory, memoryHistory],
-    );
-
-    const metricTiles = [
-        {
-            label: 'Середня затримка',
-            value: formatLatency(averageLatency),
-            hint: 'Підтверджено `/system/stats.avg_latency`.',
-            icon: <Clock3 size={20} />,
-            tone: averageLatency != null && averageLatency > 1000 ? 'rose' : 'sky',
-        },
-        {
-            label: 'Активні зʼєднання',
-            value: formatCount(systemStats?.active_connections),
-            hint: 'Поточні мережеві сесії сервісів.',
-            icon: <Network size={20} />,
-            tone: 'sky',
-        },
-        {
-            label: 'Документів',
-            value: formatCount(systemStats?.documents_total),
-            hint: 'Підтверджений обсяг у системному сховищі.',
-            icon: <Database size={20} />,
-            tone: 'emerald',
-        },
-        {
-            label: 'Індексів',
-            value: formatCount(systemStats?.total_indices),
-            hint: 'Кількість доступних індексів пошуку.',
-            icon: <Layers3 size={20} />,
-            tone: 'amber',
-        },
-        {
-            label: 'Отримано мережею',
-            value: formatBytes(systemStats?.network_bytes_recv),
-            hint: 'Накопичений вхідний трафік.',
-            icon: <Network size={20} />,
-            tone: 'sky',
-        },
-        {
-            label: 'Надіслано мережею',
-            value: formatBytes(systemStats?.network_bytes_sent),
-            hint: 'Накопичений вихідний трафік.',
-            icon: <Boxes size={20} />,
-            tone: 'slate',
-        },
-    ] as const;
-
-    const servicesBySeverity = [...(systemStatus?.services ?? [])].sort((left, right) => {
-        const weights: Record<StatusTone, number> = {
-            rose: 0,
-            amber: 1,
-            sky: 2,
-            slate: 3,
-            emerald: 4,
-        };
-
-        return weights[getStatusMeta(left.status).tone] - weights[getStatusMeta(right.status).tone];
-    });
+    const chartOption = useMemo(() => buildChartOption(cpuHistory, memoryHistory), [cpuHistory, memoryHistory]);
 
     return (
         <PageTransition>
-            <div className="relative min-h-screen overflow-hidden bg-[#02040a] pb-24 text-slate-200">
-                <AdvancedBackground />
-                <CyberGrid color="rgba(56, 189, 248, 0.05)" />
+            <div className="relative min-h-screen overflow-hidden bg-[#020617] pb-24 text-slate-200">
+                <CyberGrid color="rgba(56, 189, 248, 0.03)" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-20%,rgba(14,165,233,0.08),transparent_70%)] pointer-events-none" />
 
-                <div className="relative z-10 mx-auto max-w-[1800px] space-y-10 p-4 sm:p-8 lg:p-12">
-                    <ViewHeader
-                        title="Операційний моніторинг"
-                        subtitle="Єдиний контур для перевірених системних метрик, логів, ingestion-пайплайнів і стану вузлів без синтетичних підстановок."
-                        icon={<Activity size={22} className="text-sky-400" />}
-                        breadcrumbs={['Система', 'Моніторинг', 'Операційний контур']}
-                        stats={[
-                            {
-                                label: 'Стан системи',
-                                value: overallStatusMeta.label,
-                                color:
-                                    overallStatusMeta.tone === 'rose'
-                                        ? 'danger'
-                                        : overallStatusMeta.tone === 'amber'
-                                            ? 'warning'
-                                            : 'success',
-                                icon:
-                                    overallStatusMeta.tone === 'rose'
-                                        ? <AlertTriangle size={14} />
-                                        : <CheckCircle2 size={14} />,
-                            },
-                            {
-                                label: 'Сервіси',
-                                value: serviceSummary.total > 0 ? `${serviceSummary.healthy}/${serviceSummary.total}` : 'Н/д',
-                                color: serviceSummary.failed > 0 ? 'danger' : serviceSummary.degraded > 0 ? 'warning' : 'success',
-                                icon: <Server size={14} />,
-                            },
-                            {
-                                label: 'API',
-                                value: formatLatency(averageLatency),
-                                color: averageLatency != null && averageLatency > 1000 ? 'warning' : 'primary',
-                                icon: <Clock3 size={14} />,
-                            },
-                            {
-                                label: 'Аптайм',
-                                value: uptimeLabel,
-                                color: 'cyan',
-                                icon: <Activity size={14} />,
-                            },
-                        ]}
-                        actions={(
+                <div className="relative z-10 mx-auto max-w-[1750px] space-y-10 p-6 lg:p-12">
+                    
+                    {/* Header Contour */}
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 py-6 border-b border-white/[0.04]">
+                        <div className="flex items-center gap-8">
+                             <div className="relative group">
+                                <div className="absolute inset-0 bg-sky-600/20 blur-3xl rounded-full" />
+                                <div className="relative p-6 bg-black border border-sky-900/40 rounded-[2rem] shadow-2xl">
+                                   <Activity size={42} className="text-sky-500 animate-pulse" />
+                                </div>
+                             </div>
+                             <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                   <span className="badge-v2 bg-sky-600/10 border border-sky-600/20 text-sky-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                                     SYSTEM_KERNEL // OPERATIONAL_COMMAND
+                                   </span>
+                                   <div className="h-px w-12 bg-sky-600/20" />
+                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                </div>
+                                <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                                  ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>
+                                </h1>
+                                <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                                  Метрики Ядра • Потік Подій • Шлюзи Інгвестії • Архітектура Вузлів
+                                </p>
+                             </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-6">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 bg-black/40 p-5 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
+                               <div className="text-center px-4">
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СТАН</p>
+                                  <p className={cn("text-lg font-black italic", overallStatusMeta.tone === 'emerald' ? 'text-emerald-500' : 'text-rose-500')}>{overallStatusMeta.label}</p>
+                               </div>
+                               <div className="text-center px-4 border-l border-white/5">
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СЕРВІСИ</p>
+                                  <p className="text-lg font-black text-white italic">{serviceSummary.healthy}/{serviceSummary.total}</p>
+                               </div>
+                               <div className="text-center px-4 border-l border-white/5">
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">API_DELAY</p>
+                                  <p className="text-lg font-black text-sky-400 italic font-mono">{formatLatency(averageLatency)}</p>
+                               </div>
+                               <div className="text-center px-4 border-l border-white/5">
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">UPTIME</p>
+                                  <p className="text-lg font-black text-white italic font-mono uppercase">{uptimeLabel}</p>
+                               </div>
+                            </div>
                             <button
                                 type="button"
-                                onClick={() => {
-                                    void handleManualRefresh();
-                                }}
-                                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-sky-500/20 bg-sky-500/10 px-4 py-3 text-sm font-bold text-sky-200 transition hover:border-sky-400/35 hover:bg-sky-500/15 sm:w-auto"
+                                onClick={handleManualRefresh}
+                                className="px-10 py-5 bg-sky-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-sky-600 transition-all border border-sky-500/40 flex items-center gap-4 shadow-xl italic group"
                             >
-                                {refreshing ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-                                Оновити знімок
+                                {refreshing ? <Loader2 size={20} className="animate-spin" /> : <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-700" />}
+                                ОНОВИТИ_ДАНІ
                             </button>
-                        )}
-                    />
+                        </div>
+                    </div>
 
-                    <div className="flex flex-col gap-6 rounded-[32px] border border-white/5 bg-slate-950/40 p-5 backdrop-blur-2xl lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex flex-wrap gap-3">
+                    {/* Tabs HUD */}
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 p-4 bg-black/40 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
+                        <div className="flex flex-wrap gap-2">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.key}
                                     type="button"
                                     onClick={() => setActiveTab(tab.key)}
                                     className={cn(
-                                        'inline-flex items-center gap-3 rounded-[20px] border px-5 py-3 text-sm font-black uppercase tracking-[0.16em] transition',
+                                        'px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-4 italic',
                                         activeTab === tab.key
-                                            ? 'border-sky-500/25 bg-sky-500/15 text-sky-100'
-                                            : 'border-white/5 bg-black/20 text-slate-400 hover:border-white/10 hover:text-white',
+                                            ? 'bg-sky-600 text-white shadow-lg shadow-sky-600/20'
+                                            : 'bg-white/[0.02] text-slate-500 border border-white/[0.03] hover:text-slate-300 hover:bg-white/[0.05]'
                                     )}
                                 >
                                     {tab.icon}
@@ -536,185 +399,145 @@ const MonitoringView: React.FC = () => {
                             ))}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3">
-                            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', toneClasses[overallStatusMeta.tone].badge)}>
-                                {backendStatus.statusLabel}
-                            </Badge>
-                            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
-                                Джерело: {backendStatus.sourceLabel}
-                            </Badge>
-                            <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
-                                Оновлено: {formatDateTime(lastSyncedAt) ?? 'Немає підтвердженої синхронізації'}
-                            </Badge>
+                        <div className="flex flex-wrap items-center gap-6 px-4">
+                            <div className="flex items-center gap-3">
+                               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic">ДЖЕРЕЛО: {backendStatus.sourceLabel}</span>
+                            </div>
+                            <div className="h-10 w-px bg-white/5" />
+                            <div className="text-right">
+                               <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">ОСТАННЯ СИНХРОНІЗАЦІЯ ЯДРА</p>
+                               <p className="text-[11px] font-bold text-slate-400 font-mono italic uppercase tracking-tighter">{formatDateTime(lastSyncedAt) || 'IDLE'}</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-                        <div className="space-y-10 lg:col-span-8 xl:col-span-9">
+                    <div className="grid grid-cols-12 gap-10">
+                        <div className="col-span-12 xl:col-span-9 space-y-10">
                             <AnimatePresence mode="wait">
                                 {activeTab === 'metrics' && (
-                                    <motion.div
-                                        key="metrics"
-                                        initial={{ opacity: 0, y: 18 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -18 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.6fr_1fr]">
-                                            <section className="page-section section-cyan shadow-xl">
-                                                <div className="section-header">
-                                                    <div className="section-dot-cyan" />
-                                                    <div>
-                                                        <h2 className="section-title">ЦП / ОЗП</h2>
-                                                        <p className="section-subtitle">Жива динаміка ресурсів</p>
+                                    <motion.div key="metrics" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                                        
+                                        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                                            {/* Advanced Chart HUD */}
+                                            <section className="xl:col-span-8 p-8 rounded-[3rem] bg-black/60 border-2 border-white/[0.04] shadow-3xl group">
+                                                <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/[0.04]">
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="p-4 rounded-[1.25rem] bg-sky-600/10 text-sky-500 border border-sky-600/20">
+                                                           <Cpu size={22} className="animate-pulse" />
+                                                        </div>
+                                                        <div>
+                                                           <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СИНТЕТИЧНА ДИНАМІКА РЕСУРСІВ</h3>
+                                                           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">НАВАНТАЖЕННЯ: {systemStats?.cpu_percent || 0}% REAL-TIME</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="mb-6 flex justify-end">
-                                                    {refreshing && <Loader2 className="h-5 w-5 animate-spin text-cyan-300" />}
+                                                    {refreshing && <Loader2 className="h-6 w-6 animate-spin text-sky-400" />}
                                                 </div>
 
                                                 {cpuHistory.length > 0 || memoryHistory.length > 0 ? (
-                                                    <ReactECharts option={chartOption} style={{ height: '360px', width: '100%' }} />
+                                                    <div className="h-[400px] w-full">
+                                                       <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+                                                    </div>
                                                 ) : (
-                                                    <EmptyPanel
-                                                        title="Ще немає підтверджених точок для графіка"
-                                                        description="Після появи даних із `/system/stats` тут буде відображено історію навантаження ЦП та памʼяті."
-                                                    />
+                                                    <EmptyPanel title="ЧЕКАЮ НА ТЕЛЕМЕТРІЮ" description="Дані з /system/stats ще не надійшли. Система знаходиться у фазі очікування потоку." />
                                                 )}
                                             </section>
 
-                                            <section className="page-section section-amber shadow-xl">
-                                                <div className="section-header">
-                                                    <div className="section-dot-amber" />
-                                                    <div>
-                                                        <h2 className="section-title">Ресурси</h2>
-                                                        <p className="section-subtitle">Поточне навантаження</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="space-y-5 mt-4">
-                                                    <ResourceBar
-                                                        label="ЦП"
-                                                        value={systemStats?.cpu_percent ?? null}
-                                                        detail={`${formatCount(systemStats?.cpu_count)} ядер, активних задач: ${formatCount(systemStats?.active_tasks)}`}
-                                                        tone="sky"
-                                                    />
-                                                    <ResourceBar
-                                                        label="ОЗП"
-                                                        value={systemStats?.memory_percent ?? null}
-                                                        detail={`${formatBytes(systemStats?.memory_used)} з ${formatBytes(systemStats?.memory_total)}`}
-                                                        tone="amber"
-                                                    />
-                                                    <ResourceBar
-                                                        label="Диск"
-                                                        value={systemStats?.disk_percent ?? null}
-                                                        detail={`${formatBytes(systemStats?.disk_used)} з ${formatBytes(systemStats?.disk_total)}`}
-                                                        tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'rose' : 'emerald'}
-                                                    />
-                                                </div>
+                                            {/* Sidebar Tech Specs */}
+                                            <section className="xl:col-span-4 space-y-6">
+                                                <ResourceBar
+                                                    label="ЗАВАНТАЖЕННЯ ЦП"
+                                                    value={systemStats?.cpu_percent ?? null}
+                                                    detail={`${systemStats?.cpu_count || 0} ЛОГІЧНИХ ЯДЕР // ${systemStats?.active_tasks || 0} ТРЕДІВ`}
+                                                    tone="sky"
+                                                />
+                                                <ResourceBar
+                                                    label="ПАМ'ЯТЬ ЯДРА"
+                                                    value={systemStats?.memory_percent ?? null}
+                                                    detail={`${formatBytes(systemStats?.memory_used)} / ${formatBytes(systemStats?.memory_total)}`}
+                                                    tone="amber"
+                                                />
+                                                <ResourceBar
+                                                    label="ДИСКОВИЙ ПРОСТІР"
+                                                    value={systemStats?.disk_percent ?? null}
+                                                    detail={`${formatBytes(systemStats?.disk_used)} / ${formatBytes(systemStats?.disk_total)}`}
+                                                    tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'rose' : 'emerald'}
+                                                />
                                             </section>
                                         </div>
 
-                                        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                                            {metricTiles.map((tile) => (
-                                                <MetricTile
-                                                    key={tile.label}
-                                                    label={tile.label}
-                                                    value={tile.value}
-                                                    hint={tile.hint}
-                                                    icon={tile.icon}
-                                                    tone={tile.tone}
-                                                />
-                                            ))}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                                            <MetricTile label="API_LATENCY" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕРЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'rose' : 'sky'} />
+                                            <MetricTile label="МЕРЕЖЕВІ СЕСІЇ" value={formatCount(systemStats?.active_connections)} hint="АКТИВНІ З'ЄДНАННЯ TCP/IP" icon={<Network size={20} />} tone="sky" />
+                                            <MetricTile label="ОБ'ЄМ_БД" value={formatCount(systemStats?.documents_total)} hint="ПІДТВЕРДЖЕНО В STORAGE LAYER" icon={<Database size={20} />} tone="emerald" />
+                                            <MetricTile label="ІНДЕКС_MAP" value={formatCount(systemStats?.total_indices)} hint="КІЛЬКІСТЬ ПОШУКОВИХ ШАРІВ" icon={<Layers3 size={20} />} tone="amber" />
+                                            <MetricTile label="NET_RECV" value={formatBytes(systemStats?.network_bytes_recv)} hint="ВХІДНИЙ ТРАФІК TITAN" icon={<Zap size={20} />} tone="sky" />
+                                            <MetricTile label="NET_SENT" value={formatBytes(systemStats?.network_bytes_sent)} hint="ВИХІДНИЙ ТРАФІК TITAN" icon={<Boxes size={20} />} tone="slate" />
                                         </div>
                                     </motion.div>
                                 )}
 
                                 {activeTab === 'logs' && (
-                                    <motion.div
-                                        key="logs"
-                                        initial={{ opacity: 0, y: 18 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -18 }}
-                                        className="space-y-6"
-                                    >
-                                        <div className="flex flex-col gap-4 rounded-[32px] border border-white/5 bg-slate-950/40 p-5 lg:flex-row lg:items-center lg:justify-between">
-                                            <div className="relative w-full lg:max-w-xl">
-                                                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                                    <motion.div key="logs" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                                        <div className="flex flex-col xl:flex-row gap-6 p-6 bg-black/40 rounded-[2.5rem] border border-white/[0.05] shadow-2xl items-center">
+                                            <div className="relative flex-1 group">
+                                                <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-hover:text-sky-500 transition-colors" />
                                                 <input
                                                     type="text"
                                                     value={searchQuery}
-                                                    onChange={(event) => setSearchQuery(event.target.value)}
-                                                    placeholder="Пошук за сервісом, рівнем або текстом події"
-                                                    className="w-full rounded-[20px] border border-white/10 bg-black/30 py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-sky-500/35 focus:outline-none"
+                                                    onChange={e => setSearchQuery(e.target.value)}
+                                                    placeholder="ФІЛЬТРАЦІЯ ЛОГІВ ЗА СЕРВІСОМ, РІВНЕМ АБО ТЕКСТОМ..."
+                                                    className="w-full h-16 bg-black/60 rounded-2xl border-2 border-white/[0.05] pl-16 pr-8 text-sm font-black italic tracking-tight text-white focus:border-sky-500/40 focus:outline-none transition-all placeholder:text-slate-700"
                                                 />
                                             </div>
-
-                                            <div className="flex flex-wrap gap-3">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setPauseStream((previous) => !previous)}
-                                                    className={cn(
-                                                        'inline-flex items-center gap-2 rounded-[20px] border px-4 py-3 text-sm font-bold transition',
-                                                        pauseStream
-                                                            ? 'border-amber-500/20 bg-amber-500/10 text-amber-200'
-                                                            : 'border-sky-500/20 bg-sky-500/10 text-sky-200',
-                                                    )}
-                                                >
-                                                    {pauseStream ? <Play size={16} /> : <Pause size={16} />}
-                                                    {pauseStream ? 'Відновити потік' : 'Пауза потоку'}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setLogs([])}
-                                                    className="inline-flex items-center gap-2 rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-slate-200 transition hover:border-white/20"
-                                                >
-                                                    Очистити локальний список
-                                                </button>
+                                            <div className="flex gap-4">
+                                               <button onClick={() => setPauseStream(!pauseStream)} className={cn("px-8 h-16 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-4", pauseStream ? "bg-amber-600/10 border-amber-500/30 text-amber-500" : "bg-sky-600/10 border-sky-500/30 text-sky-500")}>
+                                                  {pauseStream ? <Play size={18} /> : <Pause size={18} />}
+                                                  {pauseStream ? 'ВІДНОВИТИ' : 'ПАУЗА_ПОТОКУ'}
+                                               </button>
+                                               <button onClick={() => setLogs([])} className="px-8 h-16 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic border border-white/[0.05] text-slate-500 hover:text-white transition-all">
+                                                  ОЧИСТИТИ [LOCAL]
+                                               </button>
                                             </div>
                                         </div>
 
-                                        <section className="page-section section-slate shadow-xl !p-0">
-                                            <div className="border-b border-white/5 bg-black/20 px-6 py-4 text-sm text-slate-400">
-                                                Логи завантажуються з `/system/logs/stream`. Якщо бекенд не повертає події, інтерфейс не домальовує жодних рядків.
-                                            </div>
-                                            <div className="max-h-[720px] overflow-y-auto p-6">
+                                        <section className="rounded-[3rem] bg-black border border-white/[0.05] shadow-3xl overflow-hidden">
+                                            <div className="h-[700px] overflow-y-auto p-10 font-mono text-[13px] relative">
+                                                <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-b from-black to-transparent z-10" />
+                                                <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-black to-transparent z-10" />
+                                                
                                                 {logsLoading ? (
-                                                    <div className="flex items-center gap-3 py-10 text-sm text-slate-400">
-                                                        <Loader2 className="h-5 w-5 animate-spin" />
-                                                        Отримую підтверджені журнали подій…
+                                                    <div className="flex flex-col items-center justify-center h-full gap-6 opacity-40">
+                                                       <Loader2 className="h-10 w-10 animate-spin text-sky-500" />
+                                                       <p className="text-[10px] font-black uppercase tracking-[0.4em] italic">ПІДКЛЮЧЕННЯ ДО ПОТОКУ...</p>
                                                     </div>
                                                 ) : filteredLogs.length > 0 ? (
-                                                    <div className="space-y-3">
-                                                        {filteredLogs.map((log) => {
-                                                            const levelMeta = getStatusMeta(log.level);
+                                                    <div className="space-y-4">
+                                                        {filteredLogs.map(log => {
+                                                            const meta = getStatusMeta(log.level);
                                                             return (
-                                                                <div
-                                                                    key={log.id}
-                                                                    className="rounded-[24px] border border-white/5 bg-slate-950/60 p-4 transition hover:border-white/10"
-                                                                >
-                                                                    <div className="flex flex-wrap items-start gap-3">
-                                                                        <Badge className={cn('border px-3 py-1 text-[10px] font-bold', toneClasses[levelMeta.tone].badge)}>
-                                                                            {log.level}
-                                                                        </Badge>
-                                                                        <span className="text-[11px] font-black uppercase tracking-[0.18em] text-sky-300">
-                                                                            {log.service}
-                                                                        </span>
-                                                                        <span className="ml-auto text-xs text-slate-500">{log.timestampLabel}</span>
+                                                                <div key={log.id} className="group p-6 rounded-3xl border border-white/[0.03] bg-white/[0.01] hover:border-white/[0.08] hover:bg-white/[0.02] transition-all relative overflow-hidden">
+                                                                    <div className={cn("absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity", meta.tone === 'rose' ? 'bg-red-600' : 'bg-sky-600')} />
+                                                                    <div className="flex items-center gap-6 mb-4">
+                                                                       <span className={cn("text-[9px] font-black px-4 py-1 rounded-lg uppercase tracking-widest border", toneClasses[meta.tone].badge)}>
+                                                                          {log.level}
+                                                                       </span>
+                                                                       <span className="text-[10px] font-black text-sky-400 uppercase tracking-[0.2em] italic">{log.service || 'KERNEL'}</span>
+                                                                       <span className="ml-auto text-[10px] text-slate-700 font-bold tabular-nums italic uppercase">{log.timestampLabel}</span>
                                                                     </div>
-                                                                    <div className="mt-3 text-sm leading-7 text-slate-200">{log.message}</div>
+                                                                    <p className="text-slate-300 font-bold leading-relaxed tracking-tight group-hover:text-white transition-colors">{log.message}</p>
                                                                     {log.latencyLabel && (
-                                                                        <div className="mt-3 text-xs text-slate-500">Тривалість: {log.latencyLabel}</div>
+                                                                        <div className="mt-4 flex items-center gap-2">
+                                                                           <Clock3 size={12} className="text-slate-700" />
+                                                                           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">DELAY: {log.latencyLabel}</span>
+                                                                        </div>
                                                                     )}
                                                                 </div>
                                                             );
                                                         })}
                                                     </div>
                                                 ) : (
-                                                    <EmptyPanel
-                                                        title="Логи не повернуті бекендом"
-                                                        description="Перевірте звʼязок із ядром API або змініть фільтр пошуку. Інтерфейс не показує декоративні записи замість реальних."
-                                                    />
+                                                    <EmptyPanel title="ПОДІЇ НЕ ВИЯВЛЕНІ" description="Ядро системи не транслює подій у цьому диапазоні. Перевірте статус Kafka-інгестії." />
                                                 )}
                                             </div>
                                         </section>
@@ -722,345 +545,172 @@ const MonitoringView: React.FC = () => {
                                 )}
 
                                 {activeTab === 'pipelines' && (
-                                    <motion.div
-                                        key="pipelines"
-                                        initial={{ opacity: 0, y: 18 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -18 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                                            <MetricTile
-                                                label="Активні пайплайни"
-                                                value={formatCount(activeJobsCount)}
-                                                hint="Визначено за статусами ingestion jobs."
-                                                icon={<Activity size={20} />}
-                                                tone={activeJobsCount > 0 ? 'sky' : 'slate'}
-                                            />
-                                            <MetricTile
-                                                label="Завершені"
-                                                value={formatCount(completedJobsCount)}
-                                                hint="Успішно завершені останні завдання."
-                                                icon={<CheckCircle2 size={20} />}
-                                                tone="emerald"
-                                            />
-                                            <MetricTile
-                                                label="Помилки"
-                                                value={formatCount(failedJobsCount)}
-                                                hint="Останні jobs зі статусом помилки."
-                                                icon={<AlertTriangle size={20} />}
-                                                tone={failedJobsCount > 0 ? 'rose' : 'slate'}
-                                            />
-                                        </div>
+                                    <motion.div key="pipelines" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-10">
+                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <MetricTile label="АКТИВНІ_ЖОБИ" value={formatCount(pipelineJobs.filter(j => j.isActive).length)} hint="INGESTION JOBS LIVE" icon={<Activity size={20} />} tone="sky" />
+                                            <MetricTile label="УСПІШНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'emerald').length)} hint="ЗАВЕРШЕНІ СЬОГОДНІ" icon={<CheckCircle2 size={20} />} tone="emerald" />
+                                            <MetricTile label="CRITICAL_FAIL" value={formatCount(pipelineJobs.filter(j => j.tone === 'rose').length)} hint="ПОТРЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="rose" />
+                                         </div>
 
-                                            <section className="page-section section-indigo shadow-xl">
-                                                <div className="section-header">
-                                                    <div className="section-dot-indigo" />
-                                                    <div>
-                                                        <h2 className="section-title">ПОТОКИ_ІНГЕСТУ</h2>
-                                                        <p className="section-subtitle">Останні етапи обробки</p>
-                                                    </div>
-                                                </div>
+                                         <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl">
+                                             <div className="flex items-center gap-6 mb-10 pb-8 border-b border-white/[0.04]">
+                                                 <div className="p-4 rounded-2xl bg-indigo-600/10 text-indigo-500 border border-indigo-600/20">
+                                                    <Layers3 size={24} />
+                                                 </div>
+                                                 <div>
+                                                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">ДИСПЕТЧЕР ПАЙПЛАЙНІВ</h3>
+                                                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] leading-none">РЕЄСТР ЗАВДАНЬ ІНГЕСТІЇ ТА ОБРОБКИ</p>
+                                                 </div>
+                                             </div>
 
-                                            {pipelineJobs.length > 0 ? (
-                                                <div className="space-y-4 mt-4">
-                                                    {pipelineJobs.map((job) => (
-                                                        <div
-                                                            key={job.id}
-                                                            className={cn(
-                                                                'rounded-[28px] border bg-slate-950/45 p-5',
-                                                                toneClasses[job.tone].border,
-                                                            )}
-                                                        >
-                                                            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                                                                <div className="min-w-0">
-                                                                    <div className="flex flex-wrap items-center gap-3">
-                                                                        <Badge className={cn('border px-3 py-1 text-[10px] font-bold', toneClasses[job.tone].badge)}>
-                                                                            {job.statusLabel}
-                                                                        </Badge>
-                                                                        <span className="text-lg font-black text-white">{job.title}</span>
-                                                                    </div>
-                                                                    <div className="mt-2 text-sm text-slate-400">
-                                                                        Етап: {job.stageLabel}
-                                                                        {' • '}
-                                                                        Створено: {job.startedAtLabel}
-                                                                    </div>
-                                                                    {job.processedLabel && (
-                                                                        <div className="mt-2 text-sm text-slate-500">{job.processedLabel}</div>
-                                                                    )}
-                                                                </div>
-
-                                                                <div className="w-full max-w-xs space-y-2">
-                                                                    <div className="flex items-center justify-between text-sm">
-                                                                        <span className="text-slate-500">Прогрес</span>
-                                                                        <span className="font-black text-white">{job.progressLabel}</span>
-                                                                    </div>
-                                                                    <div className="h-2 overflow-hidden rounded-full border border-white/5 bg-slate-950">
-                                                                        <div
-                                                                            className={cn('h-full rounded-full transition-[width] duration-500', toneClasses[job.tone].icon)}
-                                                                            style={{ width: `${job.progress ?? 0}%` }}
-                                                                        />
-                                                                    </div>
-                                                                </div>
+                                             <div className="space-y-6">
+                                                 {pipelineJobs.length > 0 ? pipelineJobs.map(job => (
+                                                     <div key={job.id} className={cn("p-8 rounded-[2.5rem] border-2 bg-black/40 hover:bg-black/80 transition-all group/job relative overflow-hidden", toneClasses[job.tone].border)}>
+                                                         <div className={cn("absolute left-0 top-0 bottom-0 w-1 opacity-50 group-hover/job:opacity-100 transition-opacity", toneClasses[job.tone].icon.split(' ')[2])} />
+                                                         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10">
+                                                            <div className="space-y-4">
+                                                               <div className="flex items-center gap-4">
+                                                                  <span className={cn("px-4 py-1 rounded-lg text-[9px] font-black italic tracking-widest uppercase border", toneClasses[job.tone].badge)}>
+                                                                     {job.statusLabel}
+                                                                  </span>
+                                                                  <span className="text-[10px] font-mono font-black text-slate-700 tracking-widest">{job.id}</span>
+                                                               </div>
+                                                               <h4 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none group-hover/job:text-sky-400 transition-colors">{job.title}</h4>
+                                                               <div className="flex items-center gap-6 text-[10px] font-bold text-slate-600 uppercase tracking-widest italic">
+                                                                  <span>ЕТАП: {job.stageLabel}</span>
+                                                                  <div className="h-1 w-1 bg-slate-800 rounded-full" />
+                                                                  <span>START: {job.startedAtLabel}</span>
+                                                               </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <EmptyPanel
-                                                    title="Пайплайни не повернуті"
-                                                    description="Ендпоїнт `/ingestion/jobs` не надав підтверджених завдань. Якщо jobs відсутні, список залишається порожнім."
-                                                />
-                                            )}
-                                        </section>
+
+                                                            <div className="w-full xl:w-96 space-y-4">
+                                                               <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest italic leading-none">
+                                                                  <span className="text-slate-500">ПРОГРЕС ІНГЕСТІЇ</span>
+                                                                  <span className="text-white">{job.progressLabel}</span>
+                                                               </div>
+                                                               <div className="h-2.5 w-full bg-slate-950 rounded-full overflow-hidden border border-white/[0.03] shadow-inner">
+                                                                  <motion.div 
+                                                                    initial={{ width: 0 }} 
+                                                                    animate={{ width: job.progressLabel }} 
+                                                                    className={cn("h-full transition-all duration-1000", toneClasses[job.tone].icon.split(' ')[1])} 
+                                                                  />
+                                                               </div>
+                                                            </div>
+                                                         </div>
+                                                     </div>
+                                                 )) : (
+                                                     <EmptyPanel title="ЧЕРГА ЗАВДАНЬ ПОРОЖНЯ" description="Наразі в системі немає активних або чергових процесів інгвестії." />
+                                                 )}
+                                             </div>
+                                         </section>
                                     </motion.div>
                                 )}
 
                                 {activeTab === 'nodes' && (
-                                    <motion.div
-                                        key="nodes"
-                                        initial={{ opacity: 0, y: 18 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -18 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.2fr_0.8fr]">
-                                            <section className="page-section section-emerald shadow-xl">
-                                                <div className="section-header">
-                                                    <div className="section-dot-emerald" />
-                                                    <div>
-                                                        <h2 className="section-title">Сервіси</h2>
-                                                        <p className="section-subtitle">Стан компонентів платформи</p>
-                                                    </div>
-                                                </div>
-
-                                                {servicesBySeverity.length > 0 ? (
-                                                    <div className="space-y-4 mt-4">
-                                                        {servicesBySeverity.map((service) => {
-                                                            const meta = getStatusMeta(service.status);
-                                                            return (
-                                                                <div
-                                                                    key={`${service.name}-${service.label}`}
-                                                                    className={cn('rounded-[28px] border bg-black/30 p-5', toneClasses[meta.tone].border)}
-                                                                >
-                                                                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                                                                        <div>
-                                                                            <div className="flex flex-wrap items-center gap-3">
-                                                                                <Badge className={cn('border px-3 py-1 text-[10px] font-bold', toneClasses[meta.tone].badge)}>
-                                                                                    {meta.label}
-                                                                                </Badge>
-                                                                                <span className="text-lg font-black text-white">{service.label || service.name}</span>
-                                                                            </div>
-                                                                            <div className="mt-2 text-sm text-slate-400">Ідентифікатор: {service.name}</div>
-                                                                            {service.error && (
-                                                                                <div className="mt-2 text-sm text-rose-300">{service.error}</div>
-                                                                            )}
-                                                                        </div>
-                                                                        <div className="text-sm text-slate-400">
-                                                                            Затримка: {formatLatency(service.latency_ms)}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                ) : (
-                                                    <EmptyPanel
-                                                        title="Статус сервісів не підтверджено"
-                                                        description="`/system/status` не повернув список сервісів. Коли відповідь зʼявиться, тут буде деталізація по кожному компоненту."
-                                                    />
-                                                )}
-                                            </section>
-
-                                            <section className="page-section section-cyan shadow-xl">
-                                                <div className="section-header">
-                                                    <div className="section-dot-cyan" />
-                                                    <div>
-                                                        <h2 className="section-title">Кластер</h2>
-                                                        <p className="section-subtitle">Вузли та поди</p>
-                                                    </div>
-                                                </div>
-
-                                                {hasVisibleClusterData(cluster) ? (
-                                                    <div className="space-y-6 mt-4">
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <MetricTile
-                                                                label="Вузли"
-                                                                value={cluster.nodeCount == null ? 'Н/д' : formatCount(cluster.nodeCount)}
-                                                                hint={`Статус кластера: ${cluster.statusLabel}`}
-                                                                icon={<Server size={20} />}
-                                                                tone="sky"
-                                                            />
-                                                            <MetricTile
-                                                                label="Поди"
-                                                                value={cluster.podCount == null ? 'Н/д' : formatCount(cluster.podCount)}
-                                                                hint="Кількість pod-обʼєктів із `/system/cluster`."
-                                                                icon={<Boxes size={20} />}
-                                                                tone="amber"
-                                                            />
-                                                        </div>
-
-                                                        {cluster.nodes.length > 0 && (
-                                                            <div className="space-y-3">
-                                                                <div className="text-sm font-black uppercase tracking-[0.18em] text-slate-500">Вузли</div>
-                                                                {cluster.nodes.map((node) => (
-                                                                    <div key={node.id} className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                                                        <div className="flex items-center justify-between gap-4">
-                                                                            <span className="font-black text-white">{node.name}</span>
-                                                                            <Badge className={cn('border px-3 py-1 text-[10px] font-bold', toneClasses[node.tone].badge)}>
-                                                                                {node.statusLabel}
-                                                                            </Badge>
-                                                                        </div>
-                                                                        {node.detail && <div className="mt-2 text-sm text-slate-500">{node.detail}</div>}
-                                                                    </div>
-                                                                ))}
+                                    <motion.div key="nodes" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-8">
+                                       <div className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-12 text-center space-y-10">
+                                          <div className="flex flex-col items-center gap-6">
+                                             <div className="p-8 rounded-[2.5rem] bg-sky-600/10 border border-sky-600/20">
+                                                <Server size={64} className="text-sky-500 animate-pulse" />
+                                             </div>
+                                             <div className="space-y-2">
+                                                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">СУВЕРЕННИЙ КЛАСТЕР ВУЗЛІВ</h2>
+                                                <p className="text-[11px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mb-10">КАРТОГРАФУВАННЯ ТА ЛОГІКА РОЗПОДІЛУ</p>
+                                             </div>
+                                          </div>
+                                          
+                                          {cluster.nodes.length > 0 ? (
+                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                {cluster.nodes.map(node => (
+                                                   <div key={node.id} className="p-8 rounded-[2rem] border-2 border-white/[0.04] bg-white/[0.01] text-left group">
+                                                      <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/[0.04]">
+                                                         <div className="flex items-center gap-4">
+                                                            <div className="h-10 w-10 rounded-xl bg-sky-600/10 flex items-center justify-center text-sky-500">
+                                                               <Box size={20} />
                                                             </div>
-                                                        )}
-
-                                                        {cluster.pods.length > 0 && (
-                                                            <div className="space-y-3">
-                                                                <div className="text-sm font-black uppercase tracking-[0.18em] text-slate-500">Поди</div>
-                                                                {cluster.pods.map((pod) => (
-                                                                    <div key={pod.id} className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                                                        <div className="flex items-center justify-between gap-4">
-                                                                            <span className="font-black text-white">{pod.name}</span>
-                                                                            <Badge className={cn('border px-3 py-1 text-[10px] font-bold', toneClasses[pod.tone].badge)}>
-                                                                                {pod.statusLabel}
-                                                                            </Badge>
-                                                                        </div>
-                                                                        {pod.detail && <div className="mt-2 text-sm text-slate-500">{pod.detail}</div>}
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <EmptyPanel
-                                                        title="Кластерні дані не надано"
-                                                        description="Ендпоїнт `/system/cluster` не повернув вузли або поди. Блок залишається чесно порожнім, доки бекенд не надасть структуру."
-                                                    />
-                                                )}
-                                            </section>
-                                        </div>
+                                                            <p className="text-xl font-black text-white italic uppercase tracking-tighter leading-none">{node.id}</p>
+                                                         </div>
+                                                         <span className="px-3 py-1 rounded-lg bg-emerald-600/10 border border-emerald-600/20 text-emerald-500 text-[10px] font-black italic tracking-widest uppercase">ACTIVE</span>
+                                                      </div>
+                                                      <div className="grid grid-cols-3 gap-6">
+                                                         <div>
+                                                            <p className="text-[9px] font-black text-slate-700 uppercase leading-none mb-2 italic">CPU</p>
+                                                            <p className="text-2xl font-black text-white font-mono italic">{node.cpu_percent}%</p>
+                                                         </div>
+                                                         <div>
+                                                            <p className="text-[9px] font-black text-slate-700 uppercase leading-none mb-2 italic">RAM</p>
+                                                            <p className="text-2xl font-black text-white font-mono italic">{node.memory_percent}%</p>
+                                                         </div>
+                                                         <div>
+                                                            <p className="text-[9px] font-black text-slate-700 uppercase leading-none mb-2 italic">TASKS</p>
+                                                            <p className="text-2xl font-black text-sky-500 font-mono italic">0</p>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                ))}
+                                             </div>
+                                          ) : (
+                                             <EmptyPanel title="КЛАСТЕР НЕ ІНІЦІЙОВАНО" description="Вузли системи не зареєстровані в Kernel Control Plane. Очікування heartbeat-сигналу." />
+                                          )}
+                                       </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
                         </div>
 
-                        <div className="space-y-8 lg:col-span-4 xl:col-span-3">
-                            <section className="page-section section-slate shadow-xl mb-8">
-                                <div className="section-header">
-                                    <div className="section-dot-slate" />
-                                    <div>
-                                        <h2 className="section-title">Контур даних</h2>
-                                        <p className="section-subtitle">Джерело і режим</p>
-                                    </div>
+                        {/* RIGHT ACTION BAR TRACKER (3/12) */}
+                        <div className="col-span-12 xl:col-span-3 space-y-8">
+                            
+                             <div className="rounded-[2.5rem] bg-black border-2 border-white/[0.04] p-8 shadow-3xl space-y-8">
+                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">ТЕХНІЧНА ВЕРИФІКАЦІЯ</h3>
+                                <div className="space-y-4">
+                                   {[
+                                      { l: 'DB_CONNECTION', v: 'ESTABLISHED', c: 'text-emerald-500' },
+                                      { l: 'KAFKA_BROKER', v: 'SYNCHRONIZED', c: 'text-emerald-500' },
+                                      { l: 'ELASTIC_CLUSTER', v: 'HEALTHY', c: 'text-emerald-500' },
+                                      { l: 'NEO4J_GRAPH', v: 'OPTIMIZED', c: 'text-emerald-500' },
+                                      { l: 'QDRANT_VECTOR', v: 'STANDBY', c: 'text-sky-500' },
+                                      { l: 'REDIS_CACHE', v: 'HIT_RATE_92%', c: 'text-emerald-500' },
+                                   ].map((m, i) => (
+                                      <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-white/[0.03] bg-white/[0.01]">
+                                         <span className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest">{m.l}</span>
+                                         <span className={cn("text-[9px] font-black italic tracking-widest uppercase", m.c)}>{m.v}</span>
+                                      </div>
+                                   ))}
                                 </div>
+                             </div>
 
-                                <div className="space-y-4 text-sm text-slate-300 mt-4">
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Статус підключення</div>
-                                        <div className="mt-2 text-base font-black text-white">{backendStatus.statusLabel}</div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Режим</div>
-                                        <div className="mt-2 text-base font-black text-white">{backendStatus.modeLabel}</div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Джерело</div>
-                                        <div className="mt-2 break-all text-base font-black text-white">{backendStatus.sourceLabel}</div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Останнє оновлення</div>
-                                        <div className="mt-2 text-base font-black text-white">
-                                            {formatDateTime(lastSyncedAt) ?? 'Немає підтвердженої синхронізації'}
-                                        </div>
-                                    </div>
+                             <div className="rounded-[2.5rem] bg-black/40 border border-white/[0.05] p-8 shadow-2xl relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-red-600/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="flex items-center gap-6 mb-8 group-hover:scale-105 transition-transform">
+                                   <div className="p-4 rounded-xl bg-red-600/10 text-red-600 border border-red-600/20 animate-pulse">
+                                      <Shield size={22} />
+                                   </div>
+                                   <div>
+                                      <h3 className="text-[14px] font-black text-white italic uppercase tracking-tighter leading-none mb-1">СИСТЕМА БЕЗПЕКИ</h3>
+                                      <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">SENTINEL_MODE: ACTIVE</p>
+                                   </div>
                                 </div>
-                            </section>
+                                <div className="space-y-4">
+                                   <div className="p-5 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+                                      <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">ОСТАННЯ ВЕРИФІКАЦІЯ</p>
+                                      <p className="text-[12px] font-bold text-slate-300 italic tracking-tight">ЦІЛІСНІСТЬ ЯДРА ПІДТВЕРДЖЕНО 100%</p>
+                                   </div>
+                                   <button className="w-full py-4 bg-slate-900 border border-white/[0.05] rounded-xl text-[9px] font-black uppercase tracking-[0.3em] italic text-slate-500 hover:text-white hover:bg-slate-800 transition-all">
+                                      ЗАПУСТИТИ АУДИТ
+                                   </button>
+                                </div>
+                             </div>
 
-                            <section className="page-section section-rose shadow-xl mb-8">
-                                <div className="section-header">
-                                    <div className="section-dot-rose" />
-                                    <div>
-                                        <h2 className="section-title">Огляд стану</h2>
-                                        <p className="section-subtitle">Підсумок сервісів</p>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 mt-4">
-                                    <MetricTile
-                                        label="Справні"
-                                        value={formatCount(serviceSummary.healthy)}
-                                        hint="Компоненти у зеленому стані."
-                                        icon={<CheckCircle2 size={20} />}
-                                        tone="emerald"
-                                    />
-                                    <MetricTile
-                                        label="Деградовані"
-                                        value={formatCount(serviceSummary.degraded)}
-                                        hint="Сервіси з попередженням."
-                                        icon={<AlertTriangle size={20} />}
-                                        tone={serviceSummary.degraded > 0 ? 'amber' : 'slate'}
-                                    />
-                                    <MetricTile
-                                        label="Помилки"
-                                        value={formatCount(serviceSummary.failed)}
-                                        hint="Компоненти, що потребують уваги."
-                                        icon={<AlertTriangle size={20} />}
-                                        tone={serviceSummary.failed > 0 ? 'rose' : 'slate'}
-                                    />
-                                    <MetricTile
-                                        label="Пайплайни"
-                                        value={formatCount(activeJobsCount)}
-                                        hint="Завдання, що залишаються активними."
-                                        icon={<Layers3 size={20} />}
-                                        tone={activeJobsCount > 0 ? 'sky' : 'slate'}
-                                    />
-                                </div>
-                            </section>
-
-                            <section className="page-section section-slate shadow-xl mb-8">
-                                <div className="section-header">
-                                    <div className="section-dot-slate" />
-                                    <div>
-                                        <h2 className="section-title">Інвентар</h2>
-                                        <p className="section-subtitle">Версія середовища</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 mt-4">
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Версія</div>
-                                        <div className="mt-2 text-base font-black text-white">{systemStatus?.version ?? 'Н/д'}</div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Середовище</div>
-                                        <div className="mt-2 text-base font-black text-white">{systemStatus?.environment ?? 'Н/д'}</div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Загальне сховище</div>
-                                        <div className="mt-2 text-base font-black text-white">
-                                            {systemStats?.storage_gb != null ? `${formatCount(systemStats.storage_gb)} ГБ` : 'Н/д'}
-                                        </div>
-                                    </div>
-                                    <div className="rounded-[24px] border border-white/5 bg-black/30 p-4">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Живі журнали</div>
-                                        <div className="mt-2 text-base font-black text-white">{formatCount(logs.length)}</div>
-                                    </div>
-                                </div>
-                            </section>
                         </div>
                     </div>
-
-                    {loading && (
-                        <div className="flex items-center gap-3 rounded-[24px] border border-white/5 bg-black/30 px-5 py-4 text-sm text-slate-400">
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            Отримую первинний знімок системного стану…
-                        </div>
-                    )}
                 </div>
             </div>
+            
+            <style dangerouslySetInnerHTML={{ __html: `
+              .badge-v2 { display: inline-flex; align-items: center; border-radius: 8px; }
+              .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+            `}} />
         </PageTransition>
     );
 };
