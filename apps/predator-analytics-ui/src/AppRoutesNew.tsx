@@ -127,6 +127,8 @@ const FinancialSigintView   = lazy(() => import('./features/intelligence/Financi
 const UBOMapView            = lazy(() => import('./features/intelligence/UBOMapView'));
 const GeopoliticalRadarView = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
 const MATargetScannerView   = lazy(() => import('./features/intelligence/MATargetScannerView'));
+const PortfolioRiskView     = lazy(() => import('./features/dashboard/PortfolioRiskView'));
+const HypothesisEngineView  = lazy(() => import('./features/ai/HypothesisEngineView'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -313,12 +315,12 @@ export const AppRoutesNew = () => {
             <Route path="/ubo-map"            element={<UBOMapView />} />
             <Route path="/pep-tracker"        element={<UBOMapView />} />
             <Route path="/shadow-director"    element={<UBOMapView />} />
-            {/* Нові сторінки з redirect на існуючі аналоги */}
-            <Route path="/portfolio-risk"     element={<RiskScoringPremium />} />
+            {/* Нові сторінки v56.4 — повні реалізації */}
+            <Route path="/portfolio-risk"     element={<PortfolioRiskView />} />
             <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
             <Route path="/ma-scanner"         element={<MATargetScannerView />} />
             <Route path="/market-entry"       element={<MarketAnalyticsPremium />} />
-            <Route path="/ai-hypothesis"      element={<PredictiveNexusView />} />
+            <Route path="/ai-hypothesis"      element={<HypothesisEngineView />} />
             <Route path="/conversation-intel" element={<SearchConsole />} />
 
             {/* Fallback */}
