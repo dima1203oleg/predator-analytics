@@ -22,6 +22,7 @@ import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
+import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -125,9 +126,9 @@ export default function ComprompatPersonView() {
                </div>
              }
              stats={[
-               { label: 'ПЕРЕВІРЕНО_ДЖЕРЕЛ', value: result?.sources_checked || 42, icon: <Share2 size={14} />, color: 'primary' },
+               { label: 'ПЕРЕВІРЕНО_ДЖЕРЕЛ', value: String(result?.sources_checked || 42), icon: <Share2 size={14} />, color: 'primary' },
                { label: 'РИЗИК_ОБ\'ЄКТА', value: result ? `${result.riskScore}%` : '???', icon: <Siren size={14} />, color: 'danger', animate: !!result },
-               { label: 'АКТИВНІ_ЗВ\'ЯЗКИ', value: result?.connections.length || 0, icon: <Network size={14} />, color: 'warning' }
+               { label: 'АКТИВНІ_ЗВ\'ЯЗКИ', value: String(result?.connections.length || 0), icon: <Network size={14} />, color: 'warning' }
              ]}
              actions={
                <div className="flex gap-4">
@@ -186,16 +187,16 @@ export default function ComprompatPersonView() {
              </motion.section>
            )}
 
-           {/* LOADING STATE */}
-           {loading && (
-             <div className="py-32 flex flex-col items-center justify-center space-y-12">
-                <CyberOrb size={220} variant="glitch" />
-                <div className="space-y-4 text-center">
-                   <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] animate-pulse">ТРАСУВАННЯ ТРАНЗАКЦІЙ...</p>
-                   <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">SEARCHING: {form.pib.toUpperCase()}</p>
-                </div>
-             </div>
-           )}
+            {/* LOADING STATE */}
+            {loading && (
+              <div className="py-32 flex flex-col items-center justify-center space-y-12">
+                 <CyberOrb size={220} status="quantum" />
+                 <div className="space-y-4 text-center">
+                    <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] animate-pulse">ТРАСУВАННЯ ТРАНЗАКЦІЙ...</p>
+                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">SEARCHING: {form.pib.toUpperCase()}</p>
+                 </div>
+              </div>
+            )}
 
            {/* RESULT STATE */}
            {result && !loading && (

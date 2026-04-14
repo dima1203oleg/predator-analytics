@@ -27,7 +27,8 @@ import {
     Cpu,
     Zap,
     ArrowUpRight,
-    AlertOctagon
+    AlertOctagon,
+    Box
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { PageTransition } from '@/components/layout/PageTransition';

@@ -371,10 +371,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                               className="w-20 h-20 flex items-center justify-center border shadow-[0_0_20px_rgba(220,38,38,0.15)] transition-all group-hover:scale-105 bg-black overflow-hidden"
                               style={{ borderColor: `${TYPE_CONFIG[insight.type]?.color}35` }}
                             >
-                              {TYPE_CONFIG[insight.type]?.icon ? React.createElement(TYPE_CONFIG[insight.type]!.icon, {
+                              {TYPE_CONFIG[insight.type].icon && React.createElement(TYPE_CONFIG[insight.type].icon, {
                                 size: 34,
-                                style: { color: TYPE_CONFIG[insight.type]?.color }
-                              }) : <Target size={34} />}
+                                style: { color: TYPE_CONFIG[insight.type].color }
+                              })}
                               <div className="absolute inset-x-0 bottom-0 h-0.5 opacity-40" style={{ backgroundColor: TYPE_CONFIG[insight.type]?.color }} />
                             </div>
                           </div>

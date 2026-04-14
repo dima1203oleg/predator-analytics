@@ -21,6 +21,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
   };
 
   const getMetric = (component: any) => {
+    if (component.storage_used_gb) return `${component.storage_used_gb} GB / ${component.storage_total_gb || '?'} GB`;
     if (component.records) return `${component.records.toLocaleString()} записів`;
     if (component.documents) return `${component.documents.toLocaleString()} док-ів`;
     if (component.vectors) return `${component.vectors.toLocaleString()} векторів`;
@@ -34,39 +35,61 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
       {Object.entries(data).map(([key, component]) => {
         const comp = component as any;
+        const usagePercent = comp.storage_total_gb ? (comp.storage_used_gb / comp.storage_total_gb) * 100 : 0;
+        
         return (
-          <div key={key} className="bg-white/5 border border-white/10 rounded-lg p-4 flex flex-col justify-between hover:bg-white/10 transition-colors">
+          <div key={key} className="bg-white/5 border border-white/10 rounded-lg p-4 flex flex-col justify-between hover:bg-white/10 transition-colors group">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500/20 transition-all">
                   {getIcon(key)}
                 </div>
                 <div>
-                  <h4 className="font-bold text-white capitalize leading-none">{key}</h4>
-                  <div className="text-xs text-slate-400 mt-1">v{comp.version || 'unknown'}</div>
+                  <h4 className="font-bold text-white capitalize leading-none tracking-tight">{key}</h4>
+                  <div className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-tighter">
+                    {comp.status === 'UP' ? 'Connected' : 'Disconnected'} • v{comp.version || 'unknown'}
+                  </div>
                 </div>
               </div>
-              {comp.status === 'UP' ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              ) : comp.status === 'DEGRADED' ? (
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
-              ) : (
-                <AlertCircle className="w-5 h-5 text-red-400" />
-              )}
+              <div className="flex flex-col items-end gap-1">
+                {comp.status === 'UP' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                ) : comp.status === 'DEGRADED' ? (
+                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-red-400" />
+                )}
+                <span className={cn(
+                    "text-[9px] font-black font-mono",
+                    comp.latency_ms < 5 ? "text-emerald-500" : "text-amber-500"
+                )}>{comp.latency_ms || 1}ms</span>
+              </div>
             </div>
             
-            <div className="mt-4 flex items-center justify-between text-sm">
-              <span className="text-slate-300 font-medium whitespace-nowrap overflow-hidden text-ellipsis mr-2">
-                {getMetric(comp)}
-              </span>
-              <span className={cn(
-                "text-xs px-2 py-1 rounded font-bold whitespace-nowrap",
-                comp.latency_ms < 5 ? "bg-emerald-500/20 text-emerald-400" :
-                comp.latency_ms < 20 ? "bg-amber-500/20 text-amber-400" :
-                "bg-red-500/20 text-red-400"
-              )}>
-                {comp.latency_ms || 1}ms
-              </span>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400 uppercase font-black tracking-widest text-[9px]">Об'єм Даних</span>
+                  <span className="text-white font-mono font-black">{getMetric(comp)}</span>
+              </div>
+              
+              {comp.storage_total_gb && (
+                <div className="space-y-1">
+                    <div className="flex justify-between text-[8px] uppercase font-black text-slate-600 tracking-tighter">
+                        <span>Зайнято: {comp.storage_used_gb} GB</span>
+                        <span>Вільно: {comp.storage_total_gb - comp.storage_used_gb} GB</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${usagePercent}%` }}
+                            className={cn(
+                                "h-full rounded-full transition-all duration-1000",
+                                usagePercent > 90 ? "bg-rose-500" : usagePercent > 70 ? "bg-amber-500" : "bg-indigo-500"
+                            )}
+                        />
+                    </div>
+                </div>
+              )}
             </div>
           </div>
         );

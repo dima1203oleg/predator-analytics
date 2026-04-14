@@ -64,7 +64,7 @@ export const SmartCompanySearch: React.FC = () => {
   const {data: results, isPending, error} = useQuery({
     queryKey: ['companies', searchTerm, filters],
     queryFn: () =>
-      (cersService as any).searchCompanies(searchTerm, {
+      cersService.searchCompanies(searchTerm, {
         ...filters,
         limit: 50,
         offset: pageIndex * 50
@@ -130,7 +130,7 @@ export const SmartCompanySearch: React.FC = () => {
 
       {/* Search Input */}
       <Card
-        variant="amber"
+        variant="cyber"
         className="p-4 bg-black/40 border-amber-500/20 backdrop-blur-xl shadow-[0_0_50px_rgba(245,158,11,0.1)]"
       >
         <div className="space-y-3">

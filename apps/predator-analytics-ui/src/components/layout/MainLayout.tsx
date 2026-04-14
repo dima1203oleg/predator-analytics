@@ -8,21 +8,17 @@ import Header from './Header';
 import ChatBot from '../ai/ChatBot';
 import ContextRail from './ContextRail';
 import ShellCommandPalette from './ShellCommandPalette';
+import { SystemMetricsHUD } from './SystemMetricsHUD';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { isSidebarOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import { ConstitutionalShield } from '../shared/ConstitutionalShield';
 import { useTheme } from '../../context/ThemeContext';
 import { Activity, Server } from 'lucide-react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
 import { cn } from '@/lib/utils';
 
-interface BackendNode {
-  id: string;
-  name: string;
-  url: string;
-  active: boolean;
-  status: 'online' | 'offline' | 'checking';
-}
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -38,29 +34,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useAtom(isSidebarOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
-  const [backendNodes, setBackendNodes] = useState<BackendNode[]>([]);
+  const { isOffline, nodes: backendNodes } = useBackendStatus();
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
   const { mode } = useTheme();
-
-  useEffect(() => {
-    // Initial load
-    if (typeof window !== 'undefined') {
-        const globalWindow = window as any;
-        if (globalWindow.__BACKEND_NODES__) {
-            setBackendNodes(globalWindow.__BACKEND_NODES__);
-        }
-    }
-
-    const handleStatusChange = (e: any) => {
-        if (e.detail && e.detail.nodes) {
-            setBackendNodes(e.detail.nodes);
-        }
-    };
-
-    window.addEventListener('predator-backend-status-change', handleStatusChange);
-    return () => window.removeEventListener('predator-backend-status-change', handleStatusChange);
-  }, []);
 
   useEffect(() => {
     if (isMobile) {
@@ -69,6 +46,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       setIsContextRailOpen(false);
     }
   }, [isMobile, setIsContextRailOpen, setIsSidebarExpanded]);
+
 
   useEffect(() => {
     if (!isMobile && shellV2Enabled) {
@@ -142,6 +120,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       ) : (
         <Sidebar />
       )}
+
+      <InfrastructureFailoverBanner />
+
 
       {/* ── Основна зона контенту ── */}
       <div
@@ -235,11 +216,24 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="flex items-center gap-5 min-w-0 overflow-hidden">
           <div className="flex items-center gap-1.5 shrink-0">
             <div
-              className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"
-              style={{ boxShadow: '0 0 6px rgba(52,211,153,0.8)' }}
+              className={cn(
+                "h-1.5 w-1.5 rounded-full animate-pulse",
+                isOffline ? "bg-rose-500" : "bg-emerald-400"
+              )}
+              style={{ boxShadow: isOffline ? '0 0 6px rgba(244,63,94,0.8)' : '0 0 6px rgba(52,211,153,0.8)' }}
             />
-            <span className="text-[8px] font-black uppercase tracking-[0.2em] text-emerald-400/80">СИСТЕМА_ОПТИМАЛЬНА</span>
+            <span className={cn(
+              "text-[8px] font-black uppercase tracking-[0.2em]",
+              isOffline ? "text-rose-500/80" : "text-emerald-400/80"
+            )}>
+              {isOffline ? 'СИСТЕМА_В_РЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
+            </span>
           </div>
+          <div className="h-3.5 w-px bg-white/10 shrink-0" />
+          
+          {/* Hardware Metrics HUD */}
+          <SystemMetricsHUD />
+          
           <div className="h-3.5 w-px bg-white/10 shrink-0" />
           <div className="flex items-center gap-3 overflow-hidden min-w-0">
             <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest whitespace-nowrap shrink-0">OSINT:</span>

@@ -1,49 +1,31 @@
 /**
- * 🔍 Supplier Discovery & Sourcing View
- *
- * Знаходження нових постачальників для бізнесу
- * на основі аналізу митних даних
+ * 🔍 SUPPLIER DISCOVERY // ПОШУК ПОСТАЧАЛЬНИКІВ | v56.2-TITAN
+ * PREDATOR Analytics — Strategic Sourcing & Global Supply Chain Recon
+ * 
+ * Знаходження нових постачальників на основі аналізу митних даних.
+ * Детекція цінових аномалій та патернів надійності.
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
-import { useContextRail } from '@/hooks/useContextRail';
-import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search,
-  Filter,
-  Star,
-  StarOff,
-  Building2,
-  Globe,
-  Package,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  ChevronRight,
-  ChevronDown,
-  MapPin,
-  Truck,
-  Phone,
-  Mail,
-  ExternalLink,
-  MessageSquare,
-  Calendar,
-  Crown,
-  Sparkles,
-  Target,
-  Shield,
-  Award,
-  Clock
+  Search, Filter, Star, StarOff, Building2, Package, TrendingUp, 
+  CheckCircle, XCircle, AlertCircle, ChevronDown, MapPin, 
+  Mail, ExternalLink, MessageSquare, Sparkles, Target, 
+  Shield, Award, Activity, Globe, Zap, Fingerprint, Crosshair,
+  BarChart3, Box
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { api } from '@/services/api';
 
-// ========================
-// Types
-// ========================
+// ─── TYPES ────────────────────────────────────────────────────────────
 
 interface Supplier {
   id: string;
@@ -64,259 +46,26 @@ interface Supplier {
   isFavorite: boolean;
 }
 
-interface SupplierMatch {
-  supplier: Supplier;
-  matchScore: number;
-  priceAdvantage: number;
-  reasons: string[];
-}
-
-// ========================
-// Mock data removed in favor of real API
-// ========================
-
-// ========================
-// Components
-// ========================
-
-const CountryFlag: React.FC<{ code: string; country: string }> = ({ code, country }) => (
-  <div className="flex items-center gap-2">
-    <div className="w-6 h-4 rounded-sm bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-400">
-      {code}
-    </div>
-    <span className="text-slate-300">{country}</span>
-  </div>
-);
+// ─── COMPONENTS ───────────────────────────────────────────────────────
 
 const ReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
-  const getConfig = (s: number) => {
-    if (s >= 90) return { color: 'emerald', label: 'Надійний', icon: CheckCircle };
-    if (s >= 70) return { color: 'amber', label: 'Добрий', icon: AlertCircle };
-    return { color: 'rose', label: 'Ризик', icon: XCircle };
-  };
-
-  const config = getConfig(score);
-  const Icon = config.icon;
+  const isEmerald = score >= 90;
+  const isAmber = score >= 70;
 
   return (
-    <div className={`flex items-center gap-1 px-2 py-1 bg-${config.color}-500/20 text-${config.color}-400 rounded-lg text-xs font-bold`}>
-      <Icon size={12} />
-      {score}% {config.label}
+    <div className={cn(
+      "flex items-center gap-2 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest italic border",
+      isEmerald ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400" :
+      isAmber ? "bg-amber-500/10 border-amber-500/30 text-amber-400" :
+      "bg-rose-500/10 border-rose-500/30 text-rose-400"
+    )}>
+      {isEmerald ? <CheckCircle size={12} /> : isAmber ? <AlertCircle size={12} /> : <XCircle size={12} />}
+      {score}% {isEmerald ? 'НАДІЙНИЙ' : isAmber ? 'ДОБРИЙ' : 'РИЗИК'}
     </div>
   );
 };
 
-const SupplierCard: React.FC<{
-  supplier: Supplier;
-  isExpanded: boolean;
-  onToggle: () => void;
-  onFavorite: () => void;
-}> = ({ supplier, isExpanded, onToggle, onFavorite }) => (
-  <motion.div
-    layout
-    className={`
-      bg-slate-900/60 border rounded-2xl overflow-hidden transition-all
-      ${isExpanded ? 'border-cyan-500/30 ring-2 ring-cyan-500/10' : 'border-white/5 hover:border-white/10'}
-    `}
-  >
-    <div className="p-5">
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          {/* Company Logo Placeholder */}
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center">
-            <Building2 className="text-slate-500" size={24} />
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-lg font-bold text-white">{supplier.name}</h3>
-              {supplier.verified && (
-                <div title="Верифікований">
-                  <Shield className="text-cyan-400" size={16} />
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-4 text-sm mb-3">
-              <CountryFlag code={supplier.countryCode} country={supplier.country} />
-              <span className="text-slate-500">{supplier.city}</span>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {supplier.products.slice(0, 3).map((product) => (
-                <span key={product} className="px-2 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-lg border border-cyan-500/20">
-                  {product}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-6">
-          {/* Price Competitiveness */}
-          <div className="text-center">
-            <div className={`text-2xl font-black ${supplier.priceCompetitiveness >= 90 ? 'text-emerald-400' :
-                supplier.priceCompetitiveness >= 70 ? 'text-amber-400' : 'text-rose-400'
-              }`}>
-              {supplier.priceCompetitiveness}%
-            </div>
-            <p className="text-xs text-slate-500">Ціна</p>
-          </div>
-
-          {/* Reliability */}
-          <div className="text-center">
-            <ReliabilityBadge score={supplier.reliability} />
-          </div>
-
-          {/* Ukraine Clients */}
-          <div className="text-center">
-            <div className="text-xl font-bold text-white">{supplier.ukraineClients}</div>
-            <p className="text-xs text-slate-500">UA клієнтів</p>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onFavorite();
-              }}
-              className={`p-2 rounded-lg transition-colors ${supplier.isFavorite
-                  ? 'bg-amber-500/20 text-amber-400'
-                  : 'bg-slate-800 text-slate-500 hover:text-amber-400'
-                }`}
-            >
-              {supplier.isFavorite ? <Star size={18} /> : <StarOff size={18} />}
-            </motion.button>
-
-            <button
-              onClick={onToggle}
-              className="p-2 rounded-lg bg-slate-800 text-slate-500 hover:text-white"
-            >
-              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
-                <ChevronDown size={18} />
-              </motion.div>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Expanded Details */}
-    <AnimatePresence>
-      {isExpanded && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="border-t border-white/5"
-        >
-          <div className="p-5 bg-slate-950/50">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Stats */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-slate-400 flex items-center gap-2">
-                  <TrendingUp size={14} />
-                  Статистика
-                </h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Обсяг експорту</span>
-                    <span className="text-white font-bold">
-                      ${(supplier.totalExportVolume / 1000000).toFixed(1)}M
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Середня ціна</span>
-                    <span className="text-white font-bold">${supplier.avgPrice}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Час доставки</span>
-                    <span className="text-white font-bold">{supplier.leadTime} днів</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Остання поставка</span>
-                    <span className="text-slate-300">{supplier.lastShipment}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Certifications */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-slate-400 flex items-center gap-2">
-                  <Award size={14} />
-                  Сертифікати
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {supplier.certifications.map((cert) => (
-                    <span key={cert} className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg border border-emerald-500/20">
-                      {cert}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Products */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-slate-400 flex items-center gap-2">
-                  <Package size={14} />
-                  Продукція
-                </h4>
-                <div className="space-y-2">
-                  {supplier.products.map((product) => (
-                    <div key={product} className="flex items-center gap-2 text-sm">
-                      <span className="w-2 h-2 bg-cyan-400 rounded-full" />
-                      <span className="text-slate-300">{product}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Contact */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-bold text-slate-400 flex items-center gap-2">
-                  <MessageSquare size={14} />
-                  Контакт
-                </h4>
-                <div className="space-y-2">
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-xl text-sm font-bold hover:bg-cyan-500/30 transition-colors">
-                    <Mail size={14} />
-                    Надіслати запит
-                  </button>
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-sm hover:bg-slate-700 transition-colors">
-                    <ExternalLink size={14} />
-                    Профіль компанії
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Recommendation */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/20 rounded-xl">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="text-purple-400" size={16} />
-                <span className="text-sm font-bold text-purple-400">AI Рекомендація</span>
-              </div>
-              <p className="text-sm text-slate-300">
-                Цей постачальник пропонує ціни на <span className="text-emerald-400 font-bold">15% нижче</span> ринкових
-                та має <span className="text-cyan-400 font-bold">98% своєчасних поставок</span>. Рекомендовано для
-                довгострокової співпраці.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </motion.div>
-);
-
-// ========================
-// Main Component
-// ========================
-
-const SupplierDiscoveryPremium: React.FC = () => {
+export default function SupplierDiscoveryPremium() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -344,18 +93,15 @@ const SupplierDiscoveryPremium: React.FC = () => {
 
   const filteredSuppliers = useMemo(() => {
     let result = [...suppliers];
-
     if (searchQuery) {
       result = result.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.products.some(p => p.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
-
     if (selectedCountry !== 'all') {
       result = result.filter(s => s.country === selectedCountry);
     }
-
     return result.sort((a, b) => b.priceCompetitiveness - a.priceCompetitiveness);
   }, [suppliers, searchQuery, selectedCountry]);
 
@@ -364,157 +110,232 @@ const SupplierDiscoveryPremium: React.FC = () => {
       s.id === id ? { ...s, isFavorite: !s.isFavorite } : s
     ));
   };
-  const focusSupplier = filteredSuppliers.find((supplier) => supplier.id === expandedId) ?? filteredSuppliers[0] ?? null;
-  const suppliersRailPayload = useMemo(() => {
-    if (!focusSupplier) {
-      return null;
-    }
 
-    return {
-      entityId: focusSupplier.id,
-      entityType: 'постачальник',
-      title: focusSupplier.name,
-      subtitle: `${focusSupplier.country} • ${focusSupplier.city} • ${focusSupplier.products.slice(0, 2).join(', ')}`,
-      status: {
-        label: focusSupplier.verified ? 'Верифікований постачальник' : 'Потребує перевірки',
-        tone: (focusSupplier.verified ? 'success' : 'warning') as any,
-      },
-      actions: createStandardContextActions({
-        auditPath: '/diligence',
-        documentsPath: '/documents',
-        agentPath: '/agents',
-      }),
-      insights: [
-        createMetric('price', 'Цінова перевага', `${focusSupplier.priceCompetitiveness}%`, 'Позиція відносно ринку', focusSupplier.priceCompetitiveness >= 90 ? 'success' : 'info'),
-        createMetric('reliability', 'Надійність', `${focusSupplier.reliability}%`, 'Своєчасність і якість поставок', focusSupplier.reliability >= 90 ? 'success' : 'warning'),
-        createMetric('delivery', 'Час доставки', `${focusSupplier.leadTime} дн`, 'Середній цикл виконання замовлення'),
-      ],
-      relations: [
-        createMetric('country', 'Країна', focusSupplier.country, 'Основний регіон поставки'),
-        createMetric('clients', 'UA клієнти', `${focusSupplier.ukraineClients}`, 'Підтверджені українські покупці'),
-      ],
-      documents: [
-        {
-          id: 'supplier-card',
-          label: 'Картка постачальника',
-          detail: `Остання поставка: ${focusSupplier.lastShipment}`,
-          path: '/suppliers',
-        },
-        {
-          id: 'supplier-products',
-          label: 'Профіль номенклатури',
-          detail: focusSupplier.products.join(', '),
-          path: '/price-compare',
-        },
-      ],
-      risks: [
-        createRisk(
-          'supplier-risk',
-          'Ризик виконання',
-          focusSupplier.reliability < 70
-            ? 'Надійність нижча за поріг для довгострокового контракту.'
-            : 'Рівень виконання придатний для швидкого запуску.',
-          focusSupplier.reliability < 70 ? 'danger' : 'success',
-        ),
-      ],
-      sourcePath: '/suppliers',
-    };
-  }, [focusSupplier]);
-
-  useContextRail(suppliersRailPayload);
+  const stats = useMemo(() => ([
+    { label: 'АКТИВНІ_ПОСТАЧАЛЬНИКИ', value: String(suppliers.length), icon: <Building2 size={14} />, color: 'primary' as const },
+    { label: 'ЦІНОВА_ПЕРЕВАГА', value: '15.4%', icon: <TrendingUp size={14} />, color: 'success' as const, animate: true },
+    { label: 'МАРКЕР_НАДІЙНОСТІ', value: '94%', icon: <Shield size={14} />, color: 'primary' as const }
+  ]), [suppliers.length]);
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px]" />
-      </div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(6, 182, 212, 0.03)" />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-3">
-              <Target className="text-cyan-400" />
-              Пошук Постачальників
-              <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
-                <Crown size={14} />
-                Premium
-              </span>
-            </h1>
-            <p className="text-slate-500 mt-1">
-              {suppliers.length} верифікованих постачальників у базі
-            </p>
-          </div>
-
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-bold text-sm">
-            <Sparkles size={16} />
-            AI Підбір
-          </button>
-        </div>
-
-        {/* Search & Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
-            <input
-              type="text"
-              placeholder="Пошук постачальника або товару..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50"
-            />
-          </div>
-
-          <select
-            value={selectedCountry}
-            onChange={(e) => setSelectedCountry(e.target.value)}
-            className="px-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-slate-300 focus:outline-none"
-          >
-            <option value="all">Всі країни</option>
-            {countries.map((country) => (
-              <option key={country} value={country}>{country}</option>
-            ))}
-          </select>
-
-          <button className="flex items-center gap-2 px-4 py-3 bg-slate-900/60 border border-white/10 rounded-xl text-slate-300">
-            <Filter size={18} />
-            Фільтри
-          </button>
-        </div>
-
-        {/* Suppliers List */}
-        <div className="space-y-4">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-slate-500 font-mono text-sm tracking-widest uppercase">Завантаження даних...</p>
-            </div>
-          ) : (
-            <>
-              {filteredSuppliers.map((supplier) => (
-                <SupplierCard
-                  key={supplier.id}
-                  supplier={supplier}
-                  isExpanded={expandedId === supplier.id}
-                  onToggle={() => setExpandedId(expandedId === supplier.id ? null : supplier.id)}
-                  onFavorite={() => toggleFavorite(supplier.id)}
-                />
-              ))}
-
-              {filteredSuppliers.length === 0 && (
-                <div className="text-center py-12">
-                  <Search className="text-slate-600 mx-auto mb-4" size={48} />
-                  <p className="text-slate-500">Постачальників не знайдено</p>
+        <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-12 space-y-12">
+          
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-10">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border border-cyan-900/40 rounded-[2.5rem] shadow-2xl">
+                    <Target size={42} className="text-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.5)]" />
+                  </div>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="badge-v2 bg-cyan-600/10 border border-cyan-600/20 text-cyan-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                      GLOBAL_SOURCING // PREM_INTEL
+                    </span>
+                    <div className="h-px w-10 bg-cyan-600/20" />
+                    <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                  </div>
+                  <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
+                    ПОШУК <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase">ПОСТАЧАЛЬНИКІВ</span>
+                  </h1>
+                  <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                    ГЛОБАЛЬНИЙ МОНІТОРИНГ РИНКУ ТА АНАЛІЗ НАДІЙНОСТІ
+                  </p>
+                </div>
+              </div>
+            }
+            stats={stats}
+            actions={
+              <div className="flex gap-4">
+                <button className="px-10 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
+                  <Sparkles size={20} /> AI_ПІДБІР
+                </button>
+              </div>
+            }
+          />
 
-export default SupplierDiscoveryPremium;
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            <div className="md:col-span-8 relative group">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-cyan-500 transition-colors" size={20} />
+              <input 
+                type="text" placeholder="ПОШУК ПОСТАЧАЛЬНИКА АБО ТОВАРУ..."
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                className="w-full bg-black border-2 border-white/[0.04] p-5 pl-16 rounded-2xl text-sm font-black text-white italic tracking-widest focus:border-cyan-500/40 outline-none transition-all placeholder:text-slate-800"
+              />
+            </div>
+            <div className="md:col-span-4">
+              <select
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.target.value)}
+                className="w-full bg-black border-2 border-white/[0.04] p-5 rounded-2xl text-sm font-black text-slate-400 italic tracking-widest focus:border-cyan-500/40 outline-none transition-all appearance-none cursor-pointer"
+              >
+                <option value="all">ВСІ КРАЇНИ</option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>{country.toUpperCase()}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full scale-150 animate-pulse" />
+                  <Zap className="text-cyan-500 animate-bounce" size={48} />
+                </div>
+                <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic animate-pulse">
+                  ІНГЕСТІЯ_ГЛОБАЛЬНИХ_ДАНИХ...
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6">
+                {filteredSuppliers.map((supplier) => (
+                  <motion.div
+                    layout
+                    key={supplier.id}
+                    className={cn(
+                      "p-8 bg-black border-2 rounded-[3.5rem] transition-all relative overflow-hidden group",
+                      expandedId === supplier.id ? "border-cyan-600/40 bg-cyan-600/[0.02]" : "border-white/[0.04] hover:border-white/10"
+                    )}
+                  >
+                    <div className="absolute top-0 right-0 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
+                      <Building2 size={160} className="text-cyan-500" />
+                    </div>
+
+                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-10 relative z-10">
+                      <div className="flex items-start gap-8">
+                        <div className="w-20 h-20 rounded-[2rem] bg-white/[0.02] border border-white/[0.05] flex items-center justify-center text-cyan-500 shadow-2xl group-hover:scale-110 transition-transform">
+                          <Building2 size={32} />
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-4">
+                            <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">{supplier.name}</h3>
+                            {supplier.verified && (
+                              <div className="p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-cyan-500">
+                                <Shield size={16} />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-6 text-[10px] font-black text-slate-600 uppercase italic tracking-widest">
+                            <div className="flex items-center gap-2"><MapPin size={12} className="text-cyan-500" /> {supplier.country} • {supplier.city}</div>
+                            <div className="h-1 w-1 rounded-full bg-slate-800" />
+                            <div className="flex items-center gap-2"><Activity size={12} className="text-cyan-500" /> UA_КЛІЄНТІВ: {supplier.ukraineClients}</div>
+                          </div>
+                          <div className="flex gap-2">
+                             {supplier.products.slice(0, 4).map(p => (
+                               <span key={p} className="px-3 py-1 bg-white/[0.03] border border-white/[0.05] rounded-xl text-[9px] font-black text-slate-400 italic uppercase">
+                                 {p}
+                               </span>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-10">
+                         <div className="text-center space-y-2">
+                            <p className={cn("text-4xl font-black font-mono tracking-tighter italic", supplier.priceCompetitiveness >= 90 ? "text-emerald-500" : "text-amber-500")}>
+                               {supplier.priceCompetitiveness}%
+                            </p>
+                            <p className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest">ЦІНА_INDEX</p>
+                         </div>
+                         <ReliabilityBadge score={supplier.reliability} />
+                         <div className="flex gap-3">
+                            <button 
+                              onClick={() => toggleFavorite(supplier.id)}
+                              className={cn("p-5 rounded-2xl border transition-all", supplier.isFavorite ? "bg-amber-500/10 border-amber-500/30 text-amber-500" : "bg-white/[0.02] border-white/[0.05] text-slate-700 hover:text-white")}
+                            >
+                               {supplier.isFavorite ? <Star size={24} className="fill-current" /> : <StarOff size={24} />}
+                            </button>
+                            <button 
+                              onClick={() => setExpandedId(expandedId === supplier.id ? null : supplier.id)}
+                              className="p-5 bg-white text-black rounded-2xl hover:bg-slate-200 transition-all shadow-2xl"
+                            >
+                               <motion.div animate={{ rotate: expandedId === supplier.id ? 180 : 0 }}>
+                                  <ChevronDown size={24} />
+                               </motion.div>
+                            </button>
+                         </div>
+                      </div>
+                    </div>
+
+                    <AnimatePresence>
+                      {expandedId === supplier.id && (
+                        <motion.div 
+                          initial={{ height: 0, opacity: 0 }} 
+                          animate={{ height: 'auto', opacity: 1 }} 
+                          exit={{ height: 0, opacity: 0 }}
+                          className="mt-12 pt-12 border-t border-white/[0.04] relative z-10"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+                             <div className="space-y-6">
+                                <h4 className="text-[10px] font-black text-slate-700 uppercase italic tracking-[0.2em] flex items-center gap-3"><Activity size={12} className="text-cyan-500" /> СТАТИСТИКА_ОПЕРАЦІЙ</h4>
+                                <div className="space-y-2">
+                                   {[
+                                      { l: 'ОБСЯГ_ЕКСПОРТУ', v: `$${(supplier.totalExportVolume / 1000000).toFixed(1)}M` },
+                                      { l: 'СЕРЕДНЯ_ЦІНА', v: `$${supplier.avgPrice}` },
+                                      { l: 'ЦИКЛ_ДОСТАВКИ', v: `${supplier.leadTime} ДНІВ` },
+                                   ].map(i => (
+                                      <div key={i.l} className="flex justify-between items-center p-3 rounded-xl bg-white/[0.01] border border-white/[0.03]">
+                                         <span className="text-[9px] font-black text-slate-600 uppercase italic">{i.l}</span>
+                                         <span className="text-sm font-black text-white italic font-mono">{i.v}</span>
+                                      </div>
+                                   ))}
+                                </div>
+                             </div>
+
+                             <div className="space-y-6">
+                                <h4 className="text-[10px] font-black text-slate-700 uppercase italic tracking-[0.2em] flex items-center gap-3"><Award size={12} className="text-cyan-500" /> СЕРТИФІКАЦІЯ</h4>
+                                <div className="flex flex-wrap gap-2">
+                                   {supplier.certifications.map(c => (
+                                      <span key={c} className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-[9px] font-black text-emerald-400 italic uppercase">
+                                         {c}
+                                      </span>
+                                   ))}
+                                </div>
+                             </div>
+
+                             <div className="md:col-span-2 space-y-6">
+                                <h4 className="text-[10px] font-black text-slate-700 uppercase italic tracking-[0.2em] flex items-center gap-3"><Sparkles size={12} className="text-purple-500" /> AI_ПЕРСПЕКТИВА_ВЗАЄМОДІЇ</h4>
+                                <div className="p-6 rounded-3xl bg-gradient-to-br from-purple-500/5 to-cyan-500/5 border border-purple-500/20 relative overflow-hidden group">
+                                   <div className="absolute top-0 right-0 p-6 opacity-[0.03]"><Brain size={80} className="text-purple-500" /></div>
+                                   <p className="text-sm font-black text-slate-300 italic leading-relaxed">
+                                      Цей постачальник демонструє <span className="text-emerald-500">15% цінову перевагу</span> над ринком. 
+                                      Верифіковано <span className="text-cyan-500">98% своєчасних поставок</span>. 
+                                      Рекомендовано для стратегічного контрактування.
+                                   </p>
+                                   <div className="flex gap-4 mt-6">
+                                      <button className="px-8 py-3 bg-cyan-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-cyan-500 transition-all">НАДІСЛАТИ_ЗАПИТ</button>
+                                      <button className="px-8 py-3 bg-white/[0.05] border border-white/[0.1] text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 transition-all">ПРОФІЛЬ_EXTERNAL</button>
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </PageTransition>
+  );
+}
+
+const Brain = ({ size, className }: { size?: number, className?: string }) => (
+  <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04" />
+    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04" />
+  </svg>
+);

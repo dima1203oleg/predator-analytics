@@ -18,6 +18,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { ServiceStatusGrid } from './components/ServiceStatusGrid';
 import { GpuGauge } from './components/GpuGauge';
 import { StorageChart } from './components/StorageChart';
+import { ResourceDynamicsChart } from './components/ResourceDynamicsChart';
 import { OODALoopPanel } from './components/OODALoopPanel';
 import { OODAStatus, OODAStep } from './ooda-types';
 import { infraApi } from '@/services/api/infra';
@@ -207,6 +208,14 @@ export default function InfraView() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left Column */}
                   <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-cyan-400" /> Динаміка Ресурсів (24г)
+                      </h3>
+                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
+                      <ResourceDynamicsChart />
+                    </div>
+
                     <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <DatabaseIcon className="w-5 h-5 text-indigo-400" /> БД та Сховища

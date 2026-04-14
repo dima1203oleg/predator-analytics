@@ -16,7 +16,7 @@ import {
   Shield, Zap, Activity, Target, RefreshCw, Download,
   ChevronRight, Radio, Flame, Wind, CloudLightning,
   Lock, Eye, BarChart3, Satellite, Network, Crosshair,
-  ArrowUpRight, AlertOctagon
+  ArrowUpRight, AlertOctagon, DollarSign
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,

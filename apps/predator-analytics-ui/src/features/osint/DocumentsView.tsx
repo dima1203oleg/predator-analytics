@@ -102,7 +102,7 @@ export default function DocumentsView() {
                        </div>
                      }
                      stats={[
-                       { label: 'ВЕРІФІКОВАНО_AI', value: documents.length, icon: <Fingerprint size={14} />, color: 'primary' },
+                       { label: 'ВЕРІФІКОВАНО_AI', value: String(documents.length), icon: <Fingerprint size={14} />, color: 'primary' },
                        { label: 'СИНХРОНІЗАЦІЯ', value: 'ONLINE', icon: <Satellite size={14} />, color: 'success' },
                        { label: 'ОБСЯГ_СХОВИЩА', value: '8.4 TB', icon: <Box size={14} />, color: 'warning' }
                      ]}

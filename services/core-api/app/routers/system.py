@@ -216,6 +216,24 @@ async def get_system_status(request: Request) -> dict[str, Any]:
     }
 
 
+@router.get("/metrics/history")
+async def get_metrics_history() -> list[dict[str, Any]]:
+    """Повертає історію метрик за останні 24 години з Redis."""
+    from app.services.redis_service import get_redis_service
+    import json
+    
+    redis = get_redis_service()
+    if not redis._connected:
+        return []
+        
+    try:
+        key = "system:metrics:history"
+        raw_data = await redis._client.lrange(key, 0, -1)
+        return [json.loads(d) for d in raw_data][::-1]  # Повертаємо у хронологічному порядку
+    except Exception:
+        return []
+
+
 @router.get("/stats")
 async def get_system_stats(request: Request) -> dict[str, Any]:
     """Легковажні системні метрики для UI-панелей."""

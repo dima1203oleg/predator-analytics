@@ -24,7 +24,9 @@ import {
   TrendingUp,
   Brain,
   ShieldCheck,
-  Globe
+  Globe,
+  Target,
+  ArrowRight
 } from 'lucide-react';
 import { 
   AreaChart, 

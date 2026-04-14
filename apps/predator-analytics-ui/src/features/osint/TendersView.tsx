@@ -16,7 +16,7 @@ import {
     Clock, TrendingUp, ShieldAlert, BarChart3, LayoutDashboard,
     Target, Activity, Zap, Database, Eye, AlertTriangle,
     ChevronRight, ArrowUpRight, Flag, ScanLine, Radar,
-    Building2, Scale, PieChart, Users, ShieldCheck, Siren, RefreshCcw
+    Building2, Scale, PieChart, Users, ShieldCheck, Siren, RefreshCcw, Satellite
 } from 'lucide-react';
 import {
     ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
@@ -200,8 +200,8 @@ export default function TendersView() {
                        </div>
                      }
                      stats={[
-                       { label: 'ЛОТІВ_ОБРОБЛЕНО', value: tenders.length, icon: <Database size={14} />, color: 'primary' },
-                       { label: 'КРИТИЧНИЙ_РИЗИК', value: tenders.filter(v => v.risk_score > 80).length, icon: <Siren size={14} />, color: 'danger', animate: true },
+                       { label: 'ЛОТІВ_ОБРОБЛЕНО', value: String(tenders.length), icon: <Database size={14} />, color: 'primary' },
+                       { label: 'КРИТИЧНИЙ_РИЗИК', value: String(tenders.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
                        { label: 'МОНІТОРИНГ', value: 'PROZORRO_API', icon: <Satellite size={14} />, color: 'success' }
                      ]}
                      actions={

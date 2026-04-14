@@ -203,9 +203,9 @@ export default function MaritimeView() {
                        </div>
                      }
                      stats={[
-                       { label: 'АКТИВНІ_СУДНА', value: vessels.length, icon: <Ship size={14} />, color: 'primary' },
-                       { label: 'КРИТИЧНИЙ_РИЗИК', value: vessels.filter(v => v.risk_score > 80).length, icon: <Siren size={14} />, color: 'danger', animate: true },
-                       { label: 'ПОРТИ_В_РОБОТІ', value: ports.length, icon: <Anchor size={14} />, color: 'success' }
+                       { label: 'АКТИВНІ_СУДНА', value: String(vessels.length), icon: <Ship size={14} />, color: 'primary' },
+                       { label: 'КРИТИЧНИЙ_РИЗИК', value: String(vessels.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
+                       { label: 'ПОРТИ_В_РОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
                      ]}
                      actions={
                        <div className="flex gap-4">

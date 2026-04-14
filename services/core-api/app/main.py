@@ -63,6 +63,7 @@ from app.services.factory_runtime import (
 from app.services.kafka_service import close_kafka, init_kafka
 from app.services.minio_service import close_minio, init_minio
 from app.services.redis_service import close_redis, init_redis
+from app.services.guardian import guardian_service
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.main")
@@ -137,6 +138,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         except Exception as e:
             logger.warning(f"Factory OODA initialization failed: {e}. System Factory features will be unavailable.")
 
+        # 7. Start Sovereign Guardian (Auto-Healing)
+        app.state.guardian_task = asyncio.create_task(guardian_service.run_loop())
+        logger.info("Sovereign Guardian task started")
+
         logger.info("Core API ініціалізовано (можливо, в обмеженому режимі)")
 
     yield
@@ -144,6 +149,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Зупинка Core API...")
     # Graceful shutdown
     if not settings.TESTING:
+        guardian_service.stop()
+        if hasattr(app.state, 'guardian_task'):
+            app.state.guardian_task.cancel()
         await cancel_factory_improvement_task(app)
         await close_redis()
         await close_kafka()

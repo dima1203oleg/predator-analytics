@@ -297,7 +297,7 @@ export default function SupplyChainAnalyticsView() {
                                  </div>
                                ))}
                             </div>
-                            <CyberOrb size={180} variant="minimalist" />
+                            <CyberOrb size={180} status="active" />
                          </TacticalCard>
 
                          <div className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8">

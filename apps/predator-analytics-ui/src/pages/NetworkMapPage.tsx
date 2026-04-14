@@ -308,8 +308,8 @@ const NetworkMapPage: React.FC = () => {
                                                 <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙРО-ВИСНОВОК v4</span>
                                             </div>
                                             <p className="text-sm font-black text-slate-300 leading-relaxed italic opacity-80">
-                                                Об'єкт ідентифіковано як {selectedNode.type === 'company' ? 'центральний вузол холдингової структури' : 'пов'язану особу з правом вирішального впливу'}.
-                                                Мережевий аналіз вказує на непрямий зв'язок з {selectedNode.primary_risk === 'high' ? 'санкційними списками' : 'прозорими капіталами'}.
+                                                Об'єкт ідентифіковано як {selectedNode.type === 'company' ? "центральний вузол холдингової структури" : "пов'язану особу з правом вирішального впливу"}.
+                                                Мережевий аналіз вказує на непрямий зв'язок з {selectedNode.primary_risk === 'high' ? "санкційними списками" : "прозорими капіталами"}.
                                             </p>
                                         </div>
 

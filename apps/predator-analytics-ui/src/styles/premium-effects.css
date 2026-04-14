@@ -824,3 +824,13 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
+
+/* ── SCANLINE FAST — Швидкий скануючий ефект для CyberGrid ── */
+@keyframes scanline-fast {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(500%); }
+}
+
+.animate-scanline-fast {
+  animation: scanline-fast 4s linear infinite;
+}

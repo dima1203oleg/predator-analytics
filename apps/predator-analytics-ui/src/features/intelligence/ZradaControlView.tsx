@@ -155,8 +155,8 @@ export default function ZradaControlView() {
                </div>
              }
              stats={[
-               { label: 'ПІД_НАГЛЯДОМ', value: stats.total, icon: <Users size={14} />, color: 'primary' },
-               { label: 'CONFIRMED_ZRADA', value: stats.confirmed, icon: <Skull size={14} />, color: 'danger', animate: true },
+               { label: 'ПІД_НАГЛЯДОМ', value: String(stats.total), icon: <Users size={14} />, color: 'primary' },
+               { label: 'CONFIRMED_ZRADA', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
                { label: 'РИЗИК (Σ)', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' }
              ]}
              actions={

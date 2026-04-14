@@ -73,7 +73,9 @@ describe('ReportBuilderPage', () => {
             sourceLabel: 'localhost/api/v1',
             sourceType: 'local',
             statusLabel: 'Зʼєднання активне',
+            nodes: [],
         });
+
     });
 
     it('рендерить заголовок і основні елементи керування', () => {

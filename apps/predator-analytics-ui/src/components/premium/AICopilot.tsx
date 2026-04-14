@@ -28,6 +28,7 @@ import {
   Cpu,
   ShieldAlert
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { api } from '../../services/api';
 
 import { useAppStore } from '../../store/useAppStore';

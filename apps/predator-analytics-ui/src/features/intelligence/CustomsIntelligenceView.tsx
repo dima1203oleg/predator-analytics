@@ -16,7 +16,7 @@ import {
   ArrowUpRight, ArrowDownRight, BarChart3, PieChart, Map,
   Bell, Crown, Zap, Anchor, Box, Truck, Factory,
   Layers, Cpu, Database, Scan, Microscope, FileText,
-  ChevronRight, AlertTriangle, CheckCircle2, Siren, ZapOff
+  ChevronRight, AlertTriangle, CheckCircle2, Siren, ZapOff, RefreshCw
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,

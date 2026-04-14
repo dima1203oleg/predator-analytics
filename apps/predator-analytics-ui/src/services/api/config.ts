@@ -138,6 +138,39 @@ const authInterceptor = (config: any) => {
     return config;
 };
 
+// ─── Active Watchdog Loop (Auto-Healing Trigger) ──────────────────────────────
+const startWatchdog = () => {
+    if (typeof window === 'undefined') return;
+    
+    setInterval(async () => {
+        const nodes = (window as any).__BACKEND_NODES__ || [];
+        for (const node of nodes) {
+            try {
+                // Short timeout for health probe
+                const response = await axios.get(`${node.url}/health`, { timeout: 3000 });
+                if (response.status === 200) {
+                    node.status = 'online';
+                    // If we were offline and now NVIDIA is back, failback!
+                    if (node.id === 'nvidia' && API_BASE_URL !== PRIMARY_URL) {
+                        console.info('🚀 Guardian: NVIDIA Master is back. Performing Failback...');
+                        API_BASE_URL = PRIMARY_URL;
+                        apiClient.defaults.baseURL = PRIMARY_URL;
+                        updateBackendAvailability(false);
+                    }
+                }
+            } catch {
+                node.status = 'offline';
+                if (node.active) updateBackendAvailability(true);
+            }
+        }
+        
+        // Dispatch update
+        window.dispatchEvent(new CustomEvent('predator-backend-status-change', { 
+            detail: { isOffline: (window as any).__BACKEND_OFFLINE_MODE__, nodes } 
+        }));
+    }, 15000); // Check every 15 seconds
+};
+
 // ─── Resilience Interceptor ───────────────────────────────────────────────────
 const resilienceInterceptor = (error: AxiosError) => {
     const url = error.config?.url ?? 'unknown';
@@ -181,4 +214,5 @@ v45Client.interceptors.response.use(successInterceptor, resilienceInterceptor);
 // Bootstrap initialization
 if (typeof window !== 'undefined') {
     updateBackendAvailability(false);
+    startWatchdog();
 }

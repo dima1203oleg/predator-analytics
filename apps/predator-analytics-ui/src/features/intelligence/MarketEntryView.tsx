@@ -14,7 +14,7 @@ import {
   Globe, BarChart3, TrendingUp, TrendingDown, Shield,
   DollarSign, Users, Building2, Target, Download,
   AlertTriangle, CheckCircle, Star, Zap, ChevronRight,
-  Activity, Search, Filter, ArrowUpRight, Layers
+  Activity, Search, Filter, ArrowUpRight, Layers, type LucideIcon
 } from 'lucide-react';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -139,7 +139,7 @@ const RADAR_DIMENSIONS = [
   'Регуляторика', 'Геополітика', 'Інфраструктура', 'Кадри', 'Купівля', 'Ринок'
 ];
 
-const RECOMMENDATION_CFG = {
+const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: LucideIcon }> = {
   'strong-buy': { label: 'АКТИВНИЙ ВХІД', color: '#f59e0b', bg: 'bg-amber-950/20', border: 'border-amber-500/40', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]', icon: Star },
   'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#10b981', bg: 'bg-emerald-950/20', border: 'border-emerald-800/30', shadow: 'shadow-none', icon: CheckCircle },
   'hold':       { label: 'МОНІТОРИНГ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
@@ -153,7 +153,7 @@ const MarketEntryView: React.FC = () => {
   const [sortBy, setSortBy] = useState<'score' | 'growth' | 'size'>('score');
   const [filterRec, setFilterRec] = useState<'all' | 'strong-buy' | 'buy' | 'hold'>('all');
 
-  const { data: markets = [], isLoading } = useQuery({
+  const { data: markets = [], isLoading } = useQuery<MarketEntry[]>({
     queryKey: ['market-entry-scores'],
     queryFn: async () => {
       const res = await apiClient.get('/market/entry-scores');
@@ -162,14 +162,14 @@ const MarketEntryView: React.FC = () => {
   });
 
   const sorted = [...markets]
-    .filter((m: any) => filterRec === 'all' || m.recommendation === filterRec)
-    .sort((a: any, b: any) => {
+    .filter(m => filterRec === 'all' || m.recommendation === filterRec)
+    .sort((a, b) => {
       if (sortBy === 'score')  return b.entryScore - a.entryScore;
       if (sortBy === 'growth') return parseFloat(b.growthRate) - parseFloat(a.growthRate);
       return 0;
     });
 
-  const selected = sorted.find((m: any) => m.id === selectedId) || sorted[0];
+  const selected = sorted.find(m => m.id === selectedId) || sorted[0];
 
   React.useEffect(() => {
     if (sorted.length > 0 && !selectedId) {
@@ -186,13 +186,6 @@ const MarketEntryView: React.FC = () => {
     { subject: 'Конкур.',        value: 100 - selected.competition },
   ];
 
-  const sorted = [...MARKETS]
-    .filter(m => filterRec === 'all' || m.recommendation === filterRec)
-    .sort((a, b) => {
-      if (sortBy === 'score')  return b.entryScore - a.entryScore;
-      if (sortBy === 'growth') return parseFloat(b.growthRate) - parseFloat(a.growthRate);
-      return 0;
-    });
 
   const scoreColor = (s: number) =>
     s >= 80 ? '#10b981' : s >= 65 ? '#f59e0b' : '#ef4444';
@@ -361,7 +354,13 @@ const MarketEntryView: React.FC = () => {
           </div>
 
           {/* Деталі ринку */}
-          <AnimatePresence mode="wait">
+          {!selected ? (
+            <div className="lg:col-span-7 flex flex-col items-center justify-center border border-white/5 bg-black/40 p-20 rounded-3xl">
+              <AlertTriangle size={48} className="text-slate-800 mb-6" />
+              <p className="text-slate-600 font-black italic uppercase tracking-[0.4em]">ОБЕРІТЬ_РІНОК_ДЛЯ_АНАЛІЗУ</p>
+            </div>
+          ) : (
+            <AnimatePresence mode="wait">
             <motion.div
               key={selected.id}
               initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
@@ -431,7 +430,7 @@ const MarketEntryView: React.FC = () => {
                       <CheckCircle size={12} className="text-emerald-600" />
                       МОЖЛИВОСТІ
                     </h3>
-                    {selected.opportunities.map((o, i) => (
+                    {selected.opportunities.map((o: string, i: number) => (
                       <div key={i} className="flex gap-2 mb-2">
                         <ArrowUpRight size={12} className="text-emerald-700 mt-0.5 shrink-0" />
                         <span className="text-[10px] font-black text-slate-400">{o}</span>
@@ -445,7 +444,7 @@ const MarketEntryView: React.FC = () => {
                       <AlertTriangle size={12} className="text-red-700" />
                       РИЗИКИ
                     </h3>
-                    {selected.risks.map((r, i) => (
+                    {selected.risks.map((r: string, i: number) => (
                       <div key={i} className="flex gap-2 mb-2">
                         <AlertTriangle size={12} className="text-red-800 mt-0.5 shrink-0" />
                         <span className="text-[10px] font-black text-slate-500">{r}</span>
@@ -475,7 +474,7 @@ const MarketEntryView: React.FC = () => {
                     <Layers size={12} className="text-emerald-700" />
                     РЕЖИМ ВХОДУ
                   </h3>
-                  {selected.entryMode.map((e, i) => (
+                  {selected.entryMode.map((e: string, i: number) => (
                     <div key={i} className="flex items-center gap-3 p-3 border border-slate-800/40 mb-2">
                       <CheckCircle size={12} className="text-emerald-700 shrink-0" />
                       <span className="text-[10px] font-black text-slate-400">{e}</span>
@@ -490,7 +489,8 @@ const MarketEntryView: React.FC = () => {
               </button>
             </motion.div>
           </AnimatePresence>
-        </div>
+        )}
+      </div>
       </div>
     </div>
   </PageTransition>

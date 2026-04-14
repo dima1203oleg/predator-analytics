@@ -105,7 +105,7 @@ export default function NewspaperView() {
   if (loading && !data) {
     return (
       <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center space-y-8 italic">
-        <CyberOrb size={180} variant="minimalist" />
+        <CyberOrb size={180} status="processing" />
         <p className="text-xl font-black text-indigo-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІР МЕДІА-РОЗВІДКИ...</p>
       </div>
     );
@@ -154,8 +154,8 @@ export default function NewspaperView() {
              }
              stats={[
                { label: 'ДЕКЛАРАЦІЇ_Σ', value: data.metrics.totalDeclarations.toLocaleString(), icon: <Box size={14} />, color: 'primary' },
-               { label: 'РИЗИК_АЛЕРТИ', value: data.metrics.riskAlerts, icon: <Siren size={14} />, color: 'danger', animate: true },
-               { label: 'ТРЕНДИ', value: data.metrics.trends, icon: <TrendingUp size={14} />, color: 'success' }
+               { label: 'РИЗИК_АЛЕРТИ', value: String(data.metrics.riskAlerts), icon: <Siren size={14} />, color: 'danger', animate: true },
+               { label: 'ТРЕНДИ', value: String(data.metrics.trends), icon: <TrendingUp size={14} />, color: 'success' }
              ]}
              actions={
                <div className="flex gap-4">

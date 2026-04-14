@@ -45,7 +45,10 @@ interface Message {
   sentiment: Sentiment;
   entities: string[];
   riskLevel: 'critical' | 'high' | 'medium' | 'low';
+  risk_score?: number;
   isDisinfo: boolean;
+  original_text?: string;
+  summary?: string;
 }
 
 // ─── MOCK DATA ────────────────────────────────────────────────────────
@@ -148,8 +151,8 @@ export default function ConversationIntelView() {
                        </div>
                      }
                      stats={[
-                       { label: 'АКТИВНІ_ДЖЕРЕЛА', value: 428, icon: <Satellite size={14} />, color: 'primary' },
-                       { label: 'ДЕТЕКТОВАНО_ФЕЙКІВ', value: 12, icon: <Shield size={14} />, color: 'warning' },
+                       { label: 'АКТИВНІ_ДЖЕРЕЛА', value: '428', icon: <Satellite size={14} />, color: 'primary' },
+                       { label: 'ДЕТЕКТОВАНО_ФЕЙКІВ', value: '12', icon: <Shield size={14} />, color: 'warning' },
                        { label: 'СИГНАЛІВ_ЗА_ДОБУ', value: liveCount.toLocaleString(), icon: <Activity size={14} />, color: 'success' }
                      ]}
                      actions={
@@ -187,8 +190,8 @@ export default function ConversationIntelView() {
                                     <AlertTriangle size={32} className="mx-auto text-slate-800 mb-4" />
                                     <p className="text-[10px] font-black uppercase text-slate-700 tracking-[0.4em]">NO_ACTUAL_SIGNALS_DECODED</p>
                                 </div>
-                            ) : messages.map((msg: any, i: number) => (
-                               <motion.div key={msg.id || i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className={cn("p-8 rounded-[3rem] bg-black border-2 border-white/[0.04] hover:border-sky-500/40 transition-all group space-y-5 relative overflow-hidden", msg.risk_score > 70 ? 'border-rose-900/10' : '')}>
+                            ) : messages.map((msg: Message, i: number) => (
+                               <motion.div key={msg.id || i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className={cn("p-8 rounded-[3rem] bg-black border-2 border-white/[0.04] hover:border-sky-500/40 transition-all group space-y-5 relative overflow-hidden", (msg.risk_score || 0) > 70 ? 'border-rose-900/10' : '')}>
                                  <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4">
                                        <div className="w-10 h-10 rounded-xl bg-sky-600/10 border border-sky-600/30 flex items-center justify-center text-sky-500">

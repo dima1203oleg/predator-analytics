@@ -14,7 +14,7 @@ import {
     Activity, Brain, Radio, Shield, Sparkles, Zap, Network, Target,
     ShieldCheck, Cpu, Database, Binary, Search, Globe, RadioTower, Eye, Crosshair,
     ChevronRight, Info, Layers, Workflow, Terminal, Boxes, Fingerprint,
-    TrendingUp, AlertCircle, RefreshCw, Lock, Orbit, BarChart3, TrendingDown
+    TrendingUp, AlertCircle, RefreshCw, Lock, Orbit, BarChart3, TrendingDown, Star, Box
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -106,7 +106,49 @@ const IntelligenceView: React.FC = () => {
                         {/* MAIN OPERATIONAL AREA */}
                         <div className="col-span-12 xl:col-span-8 space-y-12">
                             
-                            {/* Semantic Matrix HUD */}
+                            {/* Strategic Premium Modules */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                <section 
+                                    onClick={() => window.location.href = '/cargo-manifest'}
+                                    className="p-10 rounded-[3rem] bg-black border-2 border-rose-900/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-rose-600/30 transition-all"
+                                >
+                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Fingerprint size={120} className="text-rose-500" /></div>
+                                     <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
+                                        <div className="flex items-center gap-5">
+                                           <div className="p-3 bg-rose-600/10 border border-rose-600/20 rounded-xl text-rose-500">
+                                              <Box size={20} />
+                                           </div>
+                                           <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">МИТНА ФОРЕНЗИКА</h4>
+                                        </div>
+                                        <Badge variant="outline" className="border-rose-500/30 text-rose-500">PREMIUM</Badge>
+                                     </div>
+                                     <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Детекція схем підміни кодів УКТЗЕД та заниження митної вартості на основі маніфестів.</p>
+                                     <div className="flex items-center gap-3 text-rose-500 font-black text-[10px] uppercase tracking-widest italic">
+                                        ПЕРЕЙТИ_ДО_АНАЛІЗУ <ChevronRight size={14} />
+                                     </div>
+                                </section>
+
+                                <section 
+                                    onClick={() => window.location.href = '/suppliers'}
+                                    className="p-10 rounded-[3rem] bg-black border-2 border-cyan-900/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-cyan-600/30 transition-all"
+                                >
+                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Target size={120} className="text-cyan-500" /></div>
+                                     <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
+                                        <div className="flex items-center gap-5">
+                                           <div className="p-3 bg-cyan-600/10 border border-cyan-600/20 rounded-xl text-cyan-500">
+                                              <Search size={20} />
+                                           </div>
+                                           <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">ПОШУК ПОСТАЧАЛЬНИКІВ</h4>
+                                        </div>
+                                        <Badge variant="outline" className="border-cyan-500/30 text-cyan-500">PREMIUM</Badge>
+                                     </div>
+                                     <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Виявлення нових глобальних джерел постачання та аналіз цінової конкурентності.</p>
+                                     <div className="flex items-center gap-3 text-cyan-500 font-black text-[10px] uppercase tracking-widest italic">
+                                        ВІДКРИТИ_SOURCING <ChevronRight size={14} />
+                                     </div>
+                                </section>
+                            </div>
+
                             <section className="relative rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl overflow-hidden group">
                                 <div className="absolute inset-0 bg-red-600/[0.01] pointer-events-none" />
                                 <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04] relative z-20">
@@ -144,7 +186,7 @@ const IntelligenceView: React.FC = () => {
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
                                             <p className="text-[9px] text-slate-700 uppercase tracking-widest mb-1">{s.label}</p>
-                                            <p className={cn("text-2xl font-mono tracking-tighter leading-none", s.c)}>{s.val || s.value}</p>
+                                            <p className={cn("text-2xl font-mono tracking-tighter leading-none", s.c)}>{s.value}</p>
                                             <p className="text-[8px] text-slate-800 uppercase tracking-[0.2em] mt-1">{s.sub}</p>
                                         </div>
                                     ))}

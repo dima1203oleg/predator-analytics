@@ -14,7 +14,7 @@ import {
   Activity, Globe, Shield, Zap, Terminal, Database, 
   Layers, AlertTriangle, TrendingUp, Cpu, Network,
   Maximize2, Minimize2, Radio, Target, Bell,
-  ArrowUpRight, Clock, Box, Eye
+  ArrowUpRight, Clock, Box, Eye, CheckCircle2
 } from 'lucide-react';
 import { 
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,

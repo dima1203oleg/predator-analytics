@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
+import { Badge } from '@/components/ui/badge';
 
 // --- TYPES ---
 interface ChecklistItem {

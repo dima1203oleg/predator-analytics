@@ -149,7 +149,7 @@ export default function FirmDossierView() {
            {/* LOADING STATE */}
            {isSearching && (
              <div className="py-32 flex flex-col items-center justify-center space-y-12">
-                <CyberOrb size={220} variant="scan" color="#0ea5e9" />
+                <CyberOrb size={220} status="processing" color="#0ea5e9" />
                 <div className="space-y-4 text-center">
                    <p className="text-2xl font-black text-sky-500 uppercase italic tracking-[0.8em] animate-pulse">ЗБІР КОРПОРАТИВНИХ ДАНИХ...</p>
                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">TARGET: {query.toUpperCase()}</p>

@@ -35,6 +35,8 @@ export interface ClusterEntityRecord {
     statusLabel: string;
     tone: StatusTone;
     detail: string | null;
+    cpu_percent?: number | string;
+    memory_percent?: number | string;
 }
 
 export interface ClusterSnapshot {
@@ -388,6 +390,8 @@ const buildClusterEntity = (entity: Record<string, unknown>, index: number, fall
         statusLabel: statusMeta.label,
         tone: statusMeta.tone,
         detail: detailParts.length > 0 ? detailParts.join(' • ') : null,
+        cpu_percent: readNumber(entity.cpu_percent) ?? readNumber(entity.cpu) ?? 0,
+        memory_percent: readNumber(entity.memory_percent) ?? readNumber(entity.memory) ?? 0,
     };
 };
 

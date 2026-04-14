@@ -271,7 +271,7 @@ export default function SearchConsole() {
                     <div className="max-w-6xl mx-auto">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-40 gap-12 text-center">
-                                <CyberOrb size={220} variant="scan" color="#6366f1" />
+                                <CyberOrb size={220} status="processing" color="#6366f1" />
                                 <div className="space-y-4">
                                     <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em] animate-pulse italic">КВАНТОВИЙ_АНАЛІЗ_МАТРИЦІ</h3>
                                     <p className="text-[10px] font-mono text-indigo-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v56_TITAN...</p>

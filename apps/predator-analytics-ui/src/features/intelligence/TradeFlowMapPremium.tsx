@@ -123,8 +123,8 @@ export default function TradeFlowMapPremium() {
                </div>
              }
              stats={[
-               { label: 'ПАРТНЕРІВ', value: MOCK_COUNTRIES.length - 1, icon: <Navigation size={14} />, color: 'primary' },
-               { label: 'АКТИВНИХ_ЛІНІЙ', value: MOCK_FLOWS.length, icon: <Zap size={14} />, color: 'warning', animate: true },
+               { label: 'ПАРТНЕРІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
+               { label: 'АКТИВНИХ_ЛІНІЙ', value: String(MOCK_FLOWS.length), icon: <Zap size={14} />, color: 'warning', animate: true },
                { label: 'ОБСЯГ_TRADE (Σ)', value: '$120M', icon: <DollarSign size={14} />, color: 'success' }
              ]}
              actions={

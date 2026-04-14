@@ -43,5 +43,13 @@ export const cersService = {
     getFinancialMetrics: async (edrpou: string): Promise<any[]> => {
         const response = await apiClient.get(`/cers/company/${edrpou}/financials`);
         return response.data;
+    },
+
+    /**
+     * Пошук компаній за назвою, УЕІД або іншими параметрами
+     */
+    searchCompanies: async (query: string, filters: any): Promise<any[]> => {
+        const response = await apiClient.get('/cers/search', { params: { q: query, ...filters } });
+        return response.data;
     }
 };

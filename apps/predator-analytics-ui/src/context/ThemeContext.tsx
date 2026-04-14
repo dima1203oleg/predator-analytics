@@ -37,7 +37,7 @@ const MODE_ORDER: OperationalMode[] = ['sovereign', 'vigilance', 'threat', 'stea
 
 const MODE_META: Record<OperationalMode, ModeInfo> = {
   sovereign: {
-    label: 'SOVEREIGN',
+    label: 'СУВЕРЕННИЙ',
     icon: '🛡️',
     accentHsl: '234 89% 74%',    // Індиго
     glowColor: 'rgba(99, 102, 241, 0.35)',
@@ -61,6 +61,7 @@ const MODE_META: Record<OperationalMode, ModeInfo> = {
     glowColor: 'rgba(16, 185, 129, 0.3)',
   },
 };
+
 
 /**
  * CSS-змінні, що каскадом оновлюють весь інтерфейс

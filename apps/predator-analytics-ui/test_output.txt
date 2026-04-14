@@ -1,24 +1,616 @@
 
- RUN  v1.6.1 /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui
+> predator-analytics-ui@56.1.4 test:unit
+> vitest run src/features/monitoring/RealTimeMonitor.test.tsx
 
- ❯ src/pages/__tests__/NetworkMapPage.test.tsx  (0 test)
 
-⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+ RUN  v1.6.1 /Users/Shared/Predator_60/apps/predator-analytics-ui
 
- FAIL  src/pages/__tests__/NetworkMapPage.test.tsx [ src/pages/__tests__/NetworkMapPage.test.tsx ]
-Error: Failed to resolve import "../NetworkMapPage" from "src/pages/__tests__/NetworkMapPage.test.tsx". Does the file exist?
- ❯ TransformPluginContext._formatError node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49258:41
- ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49253:16
- ❯ normalizeUrl node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64307:23
- ❯ async file:/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64439:39
- ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:64366:7
- ❯ PluginContainer.transform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:49099:18
- ❯ loadAndTransform node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:51978:27
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render monitor title
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display connection status
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display total events counter
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display active events counter
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have pause/resume button
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should toggle pause state
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render filter section
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have type filter dropdown
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have severity filter dropdown
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+stderr | src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display no events message when empty
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+Error: Uncaught [Error: useTheme має використовуватись усередині ThemeProvider]
+    at reportException (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:26599:12) Error: useTheme має використовуватись усередині ThemeProvider
+    at Module.useTheme (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/context/ThemeContext.tsx:181:19)
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:23:22)
+    at renderWithHooks (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:15486:18)
+    at mountIndeterminateComponent (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:20103:13)
+    at beginWork (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:21626:16)
+    at HTMLUnknownElement.callCallback (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/react-dom/cjs/react-dom.development.js:4164:14)
+    at HTMLUnknownElement.callTheUserObjectsOperation (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/generated/EventListener.js:26:30)
+    at innerInvokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:350:25)
+    at invokeEventListeners (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+The above error occurred in the <AdvancedBackground> component:
+
+    at AdvancedBackground (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/AdvancedBackground.tsx:14:3)
+    at div
+    at div
+    at MotionComponent (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/framer-motion/dist/es/motion/index.mjs:36:16)
+    at PageTransition (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/components/layout/PageTransition.tsx:6:27)
+    at RealTimeMonitor (/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/monitoring/RealTimeMonitor.tsx:22:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+ ❯ src/features/monitoring/RealTimeMonitor.test.tsx  (10 tests | 10 failed) 1660ms
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render monitor title
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display connection status
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display total events counter
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display active events counter
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have pause/resume button
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should toggle pause state
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render filter section
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have type filter dropdown
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have severity filter dropdown
+     → useTheme має використовуватись усередині ThemeProvider
+   ❯ src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display no events message when empty
+     → useTheme має використовуватись усередині ThemeProvider
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render monitor title
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display connection status
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display total events counter
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display active events counter
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have pause/resume button
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should toggle pause state
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should render filter section
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have type filter dropdown
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should have severity filter dropdown
+ FAIL  src/features/monitoring/RealTimeMonitor.test.tsx > RealTimeMonitor > should display no events message when empty
+Error: useTheme має використовуватись усередині ThemeProvider
+ ❯ Module.useTheme src/context/ThemeContext.tsx:181:19
+    179| export const useTheme = (): ThemeContextValue => {
+    180|   const ctx = useContext(ThemeContext);
+    181|   if (!ctx) throw new Error('useTheme має використовуватись усередині …
+       |                   ^
+    182|   return ctx;
+    183| };
+ ❯ AdvancedBackground src/components/AdvancedBackground.tsx:23:22
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom.development.js:15486:18
+ ❯ mountIndeterminateComponent node_modules/react-dom/cjs/react-dom.development.js:20103:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom.development.js:21626:16
+ ❯ beginWork$1 node_modules/react-dom/cjs/react-dom.development.js:27465:14
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom.development.js:26599:12
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom.development.js:26505:5
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom.development.js:26473:7
+ ❯ recoverFromConcurrentError node_modules/react-dom/cjs/react-dom.development.js:25889:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
 
  Test Files  1 failed (1)
-      Tests  no tests
-   Start at  21:46:32
-   Duration  6.14s (transform 918ms, setup 1.88s, collect 0ms, tests 0ms, environment 3.24s, prepare 321ms)
+      Tests  10 failed (10)
+   Start at  17:50:59
+   Duration  76.98s (transform 11.48s, setup 6.26s, collect 43.88s, tests 1.66s, environment 21.68s, prepare 522ms)
 

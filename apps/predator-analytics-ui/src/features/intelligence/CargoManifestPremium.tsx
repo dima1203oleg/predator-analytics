@@ -88,9 +88,9 @@ export default function CargoManifestPremium() {
   const [selectedManifest, setSelectedManifest] = useState<ManifestItem | null>(MOCK_MANIFESTS[0]);
 
   const stats = useMemo(() => ([
-    { label: 'ПЕРЕВІРЕНО_МАНІФЕСТІВ', value: '1,429', icon: <FileSearch size={14} />, color: 'primary' },
-    { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '184', icon: <ShieldAlert size={14} />, color: 'danger', animate: true },
-    { label: 'ЗАГАЛЬНИЙ_РИЗИК', value: '47%', icon: <Activity size={14} />, color: 'warning' }
+    { label: 'ПЕРЕВІРЕНО_МАНІФЕСТІВ', value: '1,429', icon: <FileSearch size={14} />, color: 'primary' as const },
+    { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '184', icon: <ShieldAlert size={14} />, color: 'danger' as const, animate: true },
+    { label: 'ЗАГАЛЬНИЙ_РИЗИК', value: '47%', icon: <Activity size={14} />, color: 'warning' as const }
   ]), []);
 
   return (
@@ -287,10 +287,6 @@ export default function CargoManifestPremium() {
            </div>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: `
-            .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
-            .no-scrollbar::-webkit-scrollbar { display: none; }
-        `}} />
       </div>
     </PageTransition>
   );

@@ -1,9 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+export { useSuperIntelligence } from '../hooks/useSuperIntelligence';
 import { SuperLoopStage, SIContextLog, BrainNodeState, UnifiedAgentState, ArbitrationScore, RAGArtifact, AgentGenome } from '../types';
 import { api } from '../services/api';
 
-interface SuperIntelligenceContextType {
+export interface SuperIntelligenceContextType {
     isActive: boolean;
     toggleLoop: () => void;
     vetoCycle: () => void; // Human Kill Switch
@@ -21,7 +22,7 @@ interface SuperIntelligenceContextType {
     ragArtifacts: RAGArtifact[]; // Evidence Data
 }
 
-// Початкова конфігурація мозку - Моделі, що беруть участь у дебатах
+export const SuperIntelligenceContext = createContext<SuperIntelligenceContextType | undefined>(undefined);
 const INITIAL_BRAIN_NODES: BrainNodeState[] = [
     { id: 'gemini', name: 'Gemini 2.0 Flash', role: 'Архітектор', avatar: 'G', color: '#3b82f6', status: 'IDLE' },
     { id: 'deepseek-v3', name: 'DeepSeek V3', role: 'Аналітик', avatar: 'DV', color: '#a855f7', status: 'IDLE' },
@@ -205,8 +206,6 @@ const SCENARIOS = [
         diff: `+ "Context-aware PII detection"\n- "Aggressive PII detection"`
     }
 ];
-
-const SuperIntelligenceContext = createContext<SuperIntelligenceContextType | undefined>(undefined);
 
 export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isActive, setIsActive] = useState(false);
@@ -397,27 +396,4 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     );
 };
 
-export const useSuperIntelligence = () => {
-    const context = useContext(SuperIntelligenceContext);
-    if (context === undefined) {
-        console.warn('useSuperIntelligence used outside of SuperIntelligenceProvider - returning defaults');
-        return {
-            isActive: false,
-            toggleLoop: () => { },
-            vetoCycle: () => { },
-            injectScenario: () => { },
-            stage: 'IDLE' as SuperLoopStage,
-            logs: [],
-            brainNodes: INITIAL_BRAIN_NODES,
-            activeAgents: INITIAL_AGENTS,
-            agentGenomes: INITIAL_GENOMES,
-            nasDiff: '',
-            cycleCount: 0,
-            currentScenario: null,
-            availableScenarios: SCENARIOS,
-            arbitrationScores: INITIAL_SCORES,
-            ragArtifacts: []
-        };
-    }
-    return context;
-};
+// end of file

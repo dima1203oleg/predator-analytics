@@ -258,7 +258,7 @@ export default function RegistriesView() {
                    {/* LOADING STATE FOR DETAILS */}
                    {loading && (
                      <div className="py-32 flex flex-col items-center justify-center space-y-12">
-                        <CyberOrb size={220} variant="glitch" color="#10b981" />
+                        <CyberOrb size={220} status="processing" color="#10b981" />
                         <div className="space-y-4 text-center">
                            <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТРИЦІ...</p>
                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">EDRPOU: {query.toUpperCase()}</p>

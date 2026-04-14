@@ -180,8 +180,8 @@ export default function PowerStructureView() {
                        </div>
                      }
                      stats={[
-                       { label: 'АКТИВНІ_ВУЗЛИ', value: data?.summary.totalNodes || 0, icon: <Network size={14} />, color: 'primary' },
-                       { label: 'КРИТИЧНІ_ЗВ\'ЯЗКИ', value: data?.summary.highRiskCount || 0, icon: <Siren size={14} />, color: 'danger', animate: true },
+                       { label: 'АКТИВНІ_ВУЗЛИ', value: String(data?.summary.totalNodes || 0), icon: <Network size={14} />, color: 'primary' },
+                       { label: 'КРИТИЧНІ_ЗВ\'ЯЗКИ', value: String(data?.summary.highRiskCount || 0), icon: <Siren size={14} />, color: 'danger', animate: true },
                        { label: 'КАПІТАЛ_ПІД_НАГЛЯДОМ', value: `$${((data?.summary.totalValue || 0) / 1000000).toFixed(0)}M`, icon: <Zap size={14} />, color: 'warning' }
                      ]}
                      actions={

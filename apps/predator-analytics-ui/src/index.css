@@ -1543,3 +1543,9 @@ tbody tr:hover {
 }
 .section-title    { font-size: 0.875rem; font-weight: 700; color: #f8fafc; letter-spacing: -0.01em; }
 .section-subtitle { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+
+/* ── SUPREME UTILITIES ── */
+.shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+

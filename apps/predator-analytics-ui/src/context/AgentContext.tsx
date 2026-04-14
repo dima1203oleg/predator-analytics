@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+export { useAgents } from '../hooks/useAgents';
 import { Agent, CyclePhase } from '../types';
 import { api } from '../services/api';
 import { normalizeAgents, normalizeAgentLogs } from '@/features/platform/agentsView.utils';
@@ -11,7 +12,7 @@ export interface AgentCascade {
     steps: string[];
 }
 
-interface AgentContextType {
+export interface AgentContextType {
     agents: Agent[];
     cascades: AgentCascade[];
     cyclePhase: CyclePhase;
@@ -25,7 +26,7 @@ interface AgentContextType {
     refreshData: () => Promise<void>;
 }
 
-const AgentContext = createContext<AgentContextType | undefined>(undefined);
+export const AgentContext = createContext<AgentContextType | undefined>(undefined);
 
 export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [agents, setAgents] = useState<Agent[]>([]);
@@ -149,23 +150,4 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 };
 
-export const useAgents = () => {
-    const context = useContext(AgentContext);
-    if (context === undefined) {
-        console.warn('useAgents викликано поза AgentProvider, повертаються безпечні значення.');
-        return {
-            agents: [],
-            cascades: [],
-            cyclePhase: 'IDLE' as CyclePhase,
-            logs: [],
-            activePR: null,
-            startCycle: () => { },
-            advanceCycle: () => { },
-            approvePR: () => { },
-            rejectPR: () => { },
-            addLog: () => { },
-            refreshData: async () => { }
-        };
-    }
-    return context;
-};
+// end of file

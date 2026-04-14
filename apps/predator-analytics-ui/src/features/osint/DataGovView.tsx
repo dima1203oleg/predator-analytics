@@ -16,7 +16,7 @@ import {
     ArrowRight, Globe, Shield, RefreshCw, X, AlertCircle,
     Server, Share2, Layers, Zap, Clock, TrendingUp,
     ChevronDown, ChevronUp, History, Bookmark, Settings2,
-    Lock, CheckCircle, InfoIcon, Layout, RefreshCcw, Satellite, Radar
+    Lock, CheckCircle, InfoIcon, Layout, RefreshCcw, Satellite, Radar, Target
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
