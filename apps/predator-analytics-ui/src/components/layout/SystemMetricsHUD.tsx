@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, HardDrive, Layout, Activity, Gauge, Zap } from 'lucide-react';
+import { Cpu, HardDrive, Layout, Activity, Gauge, Zap, RefreshCw } from 'lucide-react';
 import { systemApi, type SystemStatsResponse } from '@/services/api/system';
 import { cn } from '@/lib/utils';
+import { formatDistanceToNow } from 'date-fns';
+import { uk } from 'date-fns/locale';
 
 export const SystemMetricsHUD: React.FC = () => {
     const [stats, setStats] = useState<SystemStatsResponse | null>(null);
@@ -53,6 +55,13 @@ export const SystemMetricsHUD: React.FC = () => {
             value: 'RTX 4090', 
             sub: '72°C | 85% Вик.',
             color: 'text-amber-400'
+        },
+        {
+            label: 'СИНХРОНІЗАЦІЯ',
+            icon: RefreshCw,
+            value: stats.last_sync ? formatDistanceToNow(new Date(stats.last_sync), { addSuffix: true, locale: uk }) : 'НЕМАЄ ДАНИХ',
+            sub: 'КЛАСТЕР COLAB',
+            color: 'text-sky-400'
         }
     ];
 

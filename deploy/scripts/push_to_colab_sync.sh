@@ -14,11 +14,11 @@ mkdir -p $LOCAL_BACKUP_DIR
 rm -f $LOCAL_BACKUP_DIR/latest_* # Очистка попередніх копій
 
 # 1. PostgreSQL Sync
-echo "🐘 [PHASE 1] ダンプ PostgreSQL..."
+echo "🐘 [PHASE 1] Створення дампу PostgreSQL..."
 pg_dump -U predator -d predator_db -f $LOCAL_BACKUP_DIR/latest_pg_dump.sql || { echo "❌ Помилка PG-Dump"; exit 1; }
 
 # 2. Neo4j Sync
-echo "📊 [PHASE 2] ダンプ Neo4j (Graph Topology)..."
+echo "📊 [PHASE 2] Створення дампу Neo4j (Графова топологія)..."
 # Примітка: Neo4j має бути зупинений або використовувати hot-backup в enterprise
 sudo neo4j-admin database dump neo4j --to-path=$LOCAL_BACKUP_DIR/neo4j_dump.dump --overwrite-destination=true 2>/dev/null
 cp $LOCAL_BACKUP_DIR/neo4j_dump.dump $LOCAL_BACKUP_DIR/latest_neo4j_dump.dump

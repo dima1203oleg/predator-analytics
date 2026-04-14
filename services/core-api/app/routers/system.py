@@ -202,6 +202,10 @@ async def get_system_status(request: Request) -> dict[str, Any]:
     latency_samples = [service["latency_ms"] for service in services if service["latency_ms"] > 0]
     stats["avg_latency"] = round(sum(latency_samples) / len(latency_samples), 2) if latency_samples else 0
 
+    from app.services.redis_service import get_redis_service
+    redis = get_redis_service()
+    last_sync = await redis.get("system:last_sync")
+
     return {
         "status": health["status"],
         "healthy": health["status"] == "ok",
@@ -209,6 +213,7 @@ async def get_system_status(request: Request) -> dict[str, Any]:
         "version": health["version"],
         "environment": health["environment"],
         "uptime": stats["uptime"],
+        "last_sync": last_sync,
         "services": services,
         "summary": health["summary"],
         "metrics": stats,
@@ -251,6 +256,9 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
     """Запускає поглиблену діагностику системи для UI."""
     health = await _health_snapshot()
     stats = _collect_system_stats(request)
+    
+    from app.main import sovereign_guardian
+    predictions = await sovereign_guardian.get_predictions()
 
     return {
         "status": "success",
@@ -261,6 +269,7 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
             **_group_diagnostics(health),
             "summary": health["summary"],
             "metrics": stats,
+            "predictions": predictions
         },
         "report_markdown": _build_markdown_report(health, stats),
     }
