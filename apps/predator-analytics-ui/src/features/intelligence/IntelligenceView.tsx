@@ -1,15 +1,16 @@
 /**
- * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v56.2-TITAN
+ * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v56.5-ELITE
  * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ (INTEL NEXUS)
  * 
  * Центральна точка розвідувального циклу:
  * Глобальний аналіз ринків, стратегічні пріоритети,
  * шанси для експансії та виявлення прихованих загроз.
+ * Sovereign Power Design · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Activity, Brain, Radio, Shield, Sparkles, Zap, Network, Target,
     ShieldCheck, Cpu, Database, Binary, Search, Globe, RadioTower, Eye, Crosshair,
@@ -25,7 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 
@@ -41,37 +42,37 @@ const IntelligenceView: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(220, 38, 38, 0.04)" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(220,38,38,0.06),transparent_70%)] pointer-events-none" />
+                <CyberGrid color="rgba(212, 175, 55, 0.05)" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(212,175,55,0.06),transparent_70%)] pointer-events-none" />
 
                 <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-16">
                     
                     {/* Tactical Search Entry */}
                     <div className="max-w-4xl mx-auto mb-16">
-                        <SearchWidget className="scale-105 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]" />
+                        <SearchWidget className="scale-105 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] border-[#D4AF37]/20" />
                     </div>
 
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                                    <div className="relative p-7 bg-black border border-red-900/40 rounded-[2.5rem] shadow-2xl">
-                                        <Brain size={42} className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" />
+                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="relative p-7 bg-[#0a0a0a] border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
+                                        <Brain size={42} className="text-[#D4AF37] drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
-                                       <span className="badge-v2 bg-red-600/10 border border-red-600/20 text-red-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                                       <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                                          INTEL_NEXUS // GLOBAL_RECON
                                        </span>
-                                       <div className="h-px w-10 bg-red-600/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                       <div className="h-px w-10 bg-[#D4AF37]/20" />
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v56.5-ELITE</span>
                                     </div>
                                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                        ЦЕНТР <span className="text-red-600 underline decoration-red-600/20 decoration-8">РОЗВІДКИ</span>
+                                        ЦЕНТР <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8">РОЗВІДКИ</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                         Аналіз Ринку • Оперативні Шанси • Пріоритети Суверенітету
@@ -80,7 +81,7 @@ const IntelligenceView: React.FC = () => {
                             </div>
                         }
                         stats={[
-                            { label: 'COGNITIVE_LOAD', value: '72%', color: 'danger', icon: <Activity size={14} />, animate: true },
+                            { label: 'COGNITIVE_LOAD', value: '72%', color: 'primary', icon: <Activity size={14} />, animate: true },
                             { label: 'GRAPH_DEPTH', value: 'L15', color: 'primary', icon: <Network size={14} /> },
                             { label: 'REACTION_TIME', value: '6ms', color: 'success', icon: <Zap size={14} />, animate: true }
                         ]}
@@ -89,13 +90,13 @@ const IntelligenceView: React.FC = () => {
                             <div className="flex gap-4">
                                 <button
                                     onClick={triggerCognitiveRefresh}
-                                    className="px-10 py-5 bg-red-700 text-white font-black rounded-2xl text-[11px] uppercase tracking-[0.3em] shadow-xl hover:bg-red-600 transition-all flex items-center gap-4 italic group"
+                                    className="px-10 py-5 bg-[#D4AF37] text-black font-black rounded-2xl text-[11px] uppercase tracking-[0.3em] shadow-xl hover:brightness-110 transition-all flex items-center gap-4 italic group"
                                 >
                                     {isThinking ? <RefreshCw className="animate-spin" size={18} /> : <Sparkles size={18} />}
                                     ОПТИМІЗУВАТИ_ЯДРО
                                 </button>
                                 <button className="p-5 bg-black/60 border border-white/10 rounded-2xl text-slate-500 hover:text-white transition-all">
-                                    <RadioTower size={22} className="animate-pulse text-red-600" />
+                                    <RadioTower size={22} className="animate-pulse text-[#D4AF37]" />
                                 </button>
                             </div>
                         }
@@ -110,65 +111,65 @@ const IntelligenceView: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <section 
                                     onClick={() => window.location.href = '/cargo-manifest'}
-                                    className="p-10 rounded-[3rem] bg-black border-2 border-rose-900/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-rose-600/30 transition-all"
+                                    className="p-10 rounded-[3rem] bg-[#0a0a0a] border-2 border-[#E11D48]/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-[#E11D48]/30 transition-all"
                                 >
-                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Fingerprint size={120} className="text-rose-500" /></div>
+                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Fingerprint size={120} className="text-[#E11D48]" /></div>
                                      <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
                                         <div className="flex items-center gap-5">
-                                           <div className="p-3 bg-rose-600/10 border border-rose-600/20 rounded-xl text-rose-500">
+                                           <div className="p-3 bg-[#E11D48]/10 border border-[#E11D48]/20 rounded-xl text-[#E11D48]">
                                               <Box size={20} />
                                            </div>
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">МИТНА ФОРЕНЗИКА</h4>
                                         </div>
-                                        <Badge variant="outline" className="border-rose-500/30 text-rose-500">PREMIUM</Badge>
+                                        <Badge variant="outline" className="border-[#E11D48]/30 text-[#E11D48]">PREMIUM</Badge>
                                      </div>
                                      <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Детекція схем підміни кодів УКТЗЕД та заниження митної вартості на основі маніфестів.</p>
-                                     <div className="flex items-center gap-3 text-rose-500 font-black text-[10px] uppercase tracking-widest italic">
+                                     <div className="flex items-center gap-3 text-[#E11D48] font-black text-[10px] uppercase tracking-widest italic">
                                         ПЕРЕЙТИ_ДО_АНАЛІЗУ <ChevronRight size={14} />
                                      </div>
                                 </section>
 
                                 <section 
                                     onClick={() => window.location.href = '/suppliers'}
-                                    className="p-10 rounded-[3rem] bg-black border-2 border-cyan-900/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-cyan-600/30 transition-all"
+                                    className="p-10 rounded-[3rem] bg-[#0a0a0a] border-2 border-[#D4AF37]/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-[#D4AF37]/30 transition-all"
                                 >
-                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Target size={120} className="text-cyan-500" /></div>
+                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Target size={120} className="text-[#D4AF37]" /></div>
                                      <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
                                         <div className="flex items-center gap-5">
-                                           <div className="p-3 bg-cyan-600/10 border border-cyan-600/20 rounded-xl text-cyan-500">
+                                           <div className="p-3 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-xl text-[#D4AF37]">
                                               <Search size={20} />
                                            </div>
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">ПОШУК ПОСТАЧАЛЬНИКІВ</h4>
                                         </div>
-                                        <Badge variant="outline" className="border-cyan-500/30 text-cyan-500">PREMIUM</Badge>
+                                        <Badge variant="outline" className="border-[#D4AF37]/30 text-[#D4AF37]">PREMIUM</Badge>
                                      </div>
                                      <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Виявлення нових глобальних джерел постачання та аналіз цінової конкурентності.</p>
-                                     <div className="flex items-center gap-3 text-cyan-500 font-black text-[10px] uppercase tracking-widest italic">
+                                     <div className="flex items-center gap-3 text-[#D4AF37] font-black text-[10px] uppercase tracking-widest italic">
                                         ВІДКРИТИ_SOURCING <ChevronRight size={14} />
                                      </div>
                                 </section>
                             </div>
 
-                            <section className="relative rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl overflow-hidden group">
-                                <div className="absolute inset-0 bg-red-600/[0.01] pointer-events-none" />
+                            <section className="relative rounded-[3rem] bg-[#0a0a0a] border-2 border-white/[0.04] p-10 shadow-3xl overflow-hidden group">
+                                <div className="absolute inset-0 bg-[#D4AF37]/[0.01] pointer-events-none" />
                                 <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04] relative z-20">
                                     <div className="flex items-center gap-6">
-                                        <div className="p-4 rounded-2xl bg-red-600/10 text-red-600 border border-red-600/20">
+                                        <div className="p-4 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">
                                             <Layers size={24} className="animate-pulse" />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТРИЦЯ</h3>
-                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v56.2</p>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v56.5</p>
                                         </div>
                                     </div>
                                     <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 backdrop-blur-3xl">
                                         <button 
                                             onClick={() => setActiveLayer('graph')}
-                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-300')}
+                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'graph' ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20' : 'text-slate-500 hover:text-slate-300')}
                                         >GRAPH_SCAN</button>
                                         <button 
                                             onClick={() => setActiveLayer('radar')}
-                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'radar' ? 'bg-red-600 text-white' : 'text-slate-500 hover:text-slate-300')}
+                                            className={cn("px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all italic", activeLayer === 'radar' ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20' : 'text-slate-500 hover:text-slate-300')}
                                         >RADAR_OSINT</button>
                                     </div>
                                 </div>
@@ -179,10 +180,10 @@ const IntelligenceView: React.FC = () => {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-12 pt-10 border-t border-white/[0.04]">
                                     {[
-                                        { label: 'SYNAPSE_DELAY', value: '6.2ms', sub: 'OPTIMIZED', c: 'text-red-500' },
-                                        { label: 'ENTROPY_IDX', value: '0.084', sub: 'STABLE', c: 'text-amber-500' },
-                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'TITAN-01', c: 'text-emerald-500' },
-                                        { label: 'ACTIVE_AGENTS', value: '14/14', sub: 'DEPLOYED', c: 'text-sky-500' },
+                                        { label: 'SYNAPSE_DELAY', value: '4.2ms', sub: 'OPTIMIZED', c: 'text-[#D4AF37]' },
+                                        { label: 'ENTROPY_IDX', value: '0.084', sub: 'STABLE', c: 'text-[#D4AF37]' },
+                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'ELITE-01', c: 'text-[#D4AF37]' },
+                                        { label: 'ACTIVE_AGENTS', value: '14/14', sub: 'DEPLOYED', c: 'text-[#D4AF37]' },
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
                                             <p className="text-[9px] text-slate-700 uppercase tracking-widest mb-1">{s.label}</p>
@@ -195,43 +196,43 @@ const IntelligenceView: React.FC = () => {
 
                             {/* Secondary Hubs */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                <section className="p-10 rounded-[3rem] bg-black/60 border border-white/[0.05] shadow-2xl relative overflow-hidden group">
+                                <section className="p-10 rounded-[3rem] bg-[#050505] border border-white/[0.05] shadow-2xl relative overflow-hidden group">
                                      <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
                                         <div className="flex items-center gap-5">
-                                           <Database size={24} className="text-emerald-500" />
+                                           <Database size={24} className="text-[#D4AF37]" />
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">ПОТОКИ ІНГЕСТІЇ</h4>
                                         </div>
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
                                      </div>
                                      <div className="h-[300px] overflow-y-auto no-scrollbar">
                                         <DatabasePipelineMonitor />
                                      </div>
                                 </section>
 
-                                <section className="p-10 rounded-[3rem] bg-black border-2 border-red-900/10 shadow-2xl relative overflow-hidden group">
+                                <section className="p-10 rounded-[3rem] bg-[#0a0a0a] border-2 border-[#D4AF37]/10 shadow-2xl relative overflow-hidden group">
                                      <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
                                         <div className="flex items-center gap-5">
-                                           <Terminal size={24} className="text-red-600" />
+                                           <Terminal size={24} className="text-[#D4AF37]" />
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">КОГНІТИВНІ ОПЕРАЦІЇ</h4>
                                         </div>
-                                        <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+                                        <div className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
                                      </div>
                                      <div className="space-y-6">
                                         <div className="p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] space-y-4">
                                             <p className="text-[13px] font-black text-slate-300 italic leading-snug">Ядро AZR-V56.GEN завершило 14.2M циклів дедукції.</p>
                                             <div className="flex items-center gap-3">
-                                               <Info size={12} className="text-red-500" />
+                                               <Info size={12} className="text-[#D4AF37]" />
                                                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">32 НОВІ САНКЦІЙНІ ПАТТЕРНИ</span>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="p-4 rounded-xl bg-black border border-white/5">
                                                <p className="text-[8px] font-black text-slate-700 uppercase mb-1">TRUST_INDEX</p>
-                                               <p className="text-xl font-black text-red-500 font-mono italic">0.9999</p>
+                                               <p className="text-xl font-black text-[#D4AF37] font-mono italic">0.9999</p>
                                             </div>
                                             <div className="p-4 rounded-xl bg-black border border-white/5">
                                                <p className="text-[8px] font-black text-slate-700 uppercase mb-1">REACTION</p>
-                                               <p className="text-xl font-black text-red-400 font-mono italic">4ms</p>
+                                               <p className="text-xl font-black text-[#D4AF37] font-mono italic">4ms</p>
                                             </div>
                                         </div>
                                      </div>
@@ -243,37 +244,37 @@ const IntelligenceView: React.FC = () => {
                         <div className="col-span-12 xl:col-span-4 space-y-12">
                             
                             {/* Neural Pulse Area */}
-                            <div className="rounded-[3rem] bg-black/60 border border-white/[0.05] overflow-hidden shadow-3xl h-[650px] relative">
-                                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.05),transparent_70%)] pointer-events-none" />
+                            <div className="rounded-[3rem] bg-[#0a0a0a]/60 border border-white/[0.05] overflow-hidden shadow-3xl h-[650px] relative">
+                                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
                                 <AIInsightsHub isWidgetMode={true} />
                             </div>
 
                             {/* Tactical Focus Dashboard */}
-                            <div className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl space-y-8 relative overflow-hidden">
+                            <div className="rounded-[3rem] bg-[#0a0a0a] border-2 border-white/[0.04] p-10 shadow-3xl space-y-8 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
-                                   <Orbit size={240} className="text-red-500" />
+                                   <Orbit size={240} className="text-[#D4AF37]" />
                                 </div>
                                 <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-8 flex items-center gap-4">
-                                   <Target size={16} className="text-red-600" /> ТАКТИЧНИЙ ФОКУС
+                                   <Target size={16} className="text-[#D4AF37]" /> ТАКТИЧНИЙ ФОКУС
                                 </h3>
                                 <div className="space-y-4 relative z-10">
                                    {[
-                                      { l: 'ШАНСИ РИНКУ', v: '12 АКТИВНИХ', c: 'text-emerald-500', icon: BarChart3 },
-                                      { l: 'ПРИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-red-500', icon: AlertCircle },
+                                      { l: 'ШАНСИ РИНКУ', v: '12 АКТИВНИХ', c: 'text-[#D4AF37]', icon: BarChart3 },
+                                      { l: 'ПРИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-[#E11D48]', icon: AlertCircle },
                                       { l: 'ПРІОРИТЕТИ_CEO', v: '03 КРИТИЧНІ', c: 'text-white', icon: Star },
                                    ].map((m, i) => (
-                                      <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-white/10 transition-all cursor-pointer group">
+                                      <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-[#D4AF37]/20 transition-all cursor-pointer group">
                                          <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl group-hover:bg-red-600/10 group-hover:text-red-500 transition-all">
+                                            <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl group-hover:bg-[#D4AF37]/10 group-hover:text-[#D4AF37] transition-all">
                                                <m.icon size={18} />
                                             </div>
-                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic group-hover:text-slate-300 transition-colors">{m.l}</span>
+                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic group-hover:text-slate-300 transition-colors uppercase">{m.l}</span>
                                          </div>
                                          <p className={cn("text-lg font-black italic tracking-tighter leading-none", m.c)}>{m.v}</p>
                                       </div>
                                    ))}
                                 </div>
-                                <button className="w-full py-5 bg-red-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-600 transition-all shadow-xl italic mt-6">
+                                <button className="w-full py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all shadow-xl italic mt-6">
                                    ПОВНИЙ СИСТЕМНИЙ АУДИТ
                                 </button>
                             </div>

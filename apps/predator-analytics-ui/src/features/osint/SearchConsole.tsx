@@ -29,7 +29,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 // ========================
 // Types & Defaults

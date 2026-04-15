@@ -1,5 +1,5 @@
 /**
- * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v56.2-TITAN
+ * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v56.5-ELITE
  * PREDATOR Analytics — Tactical Multi-Screen Command Center
  * 
  * Єдиний віртуальний простір для CEO з агрегацією всіх критичних потоків.
@@ -8,68 +8,45 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, Globe, Shield, Zap, Terminal, Database, 
   Layers, AlertTriangle, TrendingUp, Cpu, Network,
   Maximize2, Minimize2, Radio, Target, Bell,
-  ArrowUpRight, Clock, Box, Eye, CheckCircle2
+  ArrowUpRight, Clock, Box, Eye, CheckCircle2,
+  Lock, Satellite, Radar, Scan, Fingerprint
 } from 'lucide-react';
 import { 
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
-  BarChart, Bar, Cell, PieChart, Pie
+  PieChart, Pie, Cell
 } from 'recharts';
 import CyberGlobe from '@/components/3d/CyberGlobe';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { TacticalCard } from '@/components/TacticalCard';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// --- MOCK DATA ---
+// ─── ДАНІ ────────────────────────────────────────────────────────────
 const MOCK_LINE_DATA = Array.from({ length: 20 }, (_, i) => ({
   time: `${i}:00`,
   val: 30 + Math.random() * 40
 }));
 
 const RISK_PIE_DATA = [
-  { name: 'Санкції', value: 400, color: '#dc2626' },
-  { name: 'Логістика', value: 300, color: '#ea580c' },
-  { name: 'Фін-ризики', value: 200, color: '#0ea5e9' },
+  { name: 'Санкції', value: 400, color: '#E11D48' },
+  { name: 'Логістика', value: 300, color: '#fbbf24' },
+  { name: 'Фін-ризики', value: 200, color: '#D4AF37' },
 ];
 
-// --- COMPONENT: Tactical Screen ---
-const TacticalScreen = ({ title, icon: Icon, children, className, fullScreen, onToggleFull }: any) => (
-  <motion.div
-    layout
-    className={cn(
-      "relative rounded-[2rem] border-2 bg-black/60 shadow-3xl overflow-hidden transition-all duration-700",
-      fullScreen ? "fixed inset-10 z-[100] bg-black/95 border-red-900/40" : "border-white/[0.04] hover:border-white/10",
-      className
-    )}
-  >
-    <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
-    <div className="flex items-center justify-between p-6 border-b border-white/[0.04] bg-white/[0.01]">
-      <div className="flex items-center gap-4">
-        <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-slate-500">
-          <Icon size={18} />
-        </div>
-        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">{title}</h3>
-      </div>
-      <div className="flex items-center gap-3">
-         <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-         <button onClick={onToggleFull} className="p-2 text-slate-600 hover:text-white transition-colors">
-           {fullScreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-         </button>
-      </div>
-    </div>
-    <div className="p-8 h-full">
-      {children}
-    </div>
-  </motion.div>
-);
-
-// --- MAIN VIEW ---
+// ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 export default function WarRoomView() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [ticker, setTicker] = useState(0);
+  const { isOnline } = useBackendStatus();
 
   useEffect(() => {
     const itv = setInterval(() => setTicker(t => t + 1), 5000);
@@ -77,271 +54,335 @@ export default function WarRoomView() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 overflow-hidden relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(14,165,233,0.05),transparent_70%)] pointer-events-none" />
-      
-      {/* ── TOP NAV CONTOUR ── */}
-      <div className="relative z-50 px-10 py-6 flex items-center justify-between border-b border-white/[0.04] bg-black/40 backdrop-blur-3xl">
-         <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4">
-               <div className="relative">
-                  <div className="absolute inset-0 bg-red-600/30 blur-2xl rounded-full" />
-                  <Target size={32} className="text-red-600 relative z-10 animate-pulse" />
-               </div>
-               <div>
-                  <h1 className="text-2xl font-black text-white uppercase tracking-tighter italic leading-none truncate max-w-[200px] md:max-w-none">WAR_ROOM // TITAN-01</h1>
-                  <p className="text-[9px] font-mono font-black text-slate-600 uppercase tracking-widest mt-1">ОБ'ЄДНАНЕ ТАКТИЧНЕ УПРАВЛІННЯ</p>
-               </div>
-            </div>
-            <div className="h-10 w-px bg-white/5 hidden md:block" />
-            <div className="hidden md:flex items-center gap-6">
-               <div className="text-left">
-                  <p className="text-[8px] font-black text-slate-700 uppercase leading-none mb-1">ГЛОБАЛЬНИЙ РИЗИК</p>
-                  <p className="text-lg font-black text-red-500 italic font-mono leading-none tracking-tighter">84.2%</p>
-               </div>
-               <div className="text-left">
-                  <p className="text-[8px] font-black text-slate-700 uppercase leading-none mb-1">UPTIME</p>
-                  <p className="text-lg font-black text-white italic font-mono leading-none tracking-tighter uppercase">99.98%</p>
-               </div>
-            </div>
-         </div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020202] text-slate-200 overflow-hidden relative font-sans flex flex-col">
+        <AdvancedBackground mode="sovereign" />
+        <CyberGrid opacity={0.03} />
+        
+        <div className="relative z-10 flex-1 flex flex-col p-10 h-screen overflow-hidden max-w-[1950px] mx-auto w-full space-y-8">
+          
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-8">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-red-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border-2 border-red-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                    <Target size={48} className="text-red-600 drop-shadow-[0_0_20px_#e11d48]" />
+                  </div>
+                </div>
+                <div>
+                   <div className="flex items-center gap-4 mb-2">
+                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_10px_#e11d48]" />
+                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.8em]">
+                       TACTICAL COMMAND CENTER · v56.5-ELITE
+                     </span>
+                   </div>
+                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
+                     WAR <span className="text-red-600 underline decoration-red-600/20 decoration-[12px] underline-offset-8">ROOM</span>
+                   </h1>
+                </div>
+              </div>
+            }
+            stats={[
+              { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'error' },
+              { label: 'UDP_UPTIME', value: '99.98%', icon: <Activity size={14} />, color: 'success' },
+              { label: 'SCAN_PHASE', value: 'ACTIVE', icon: <Scan size={14} />, color: 'primary' }
+            ]}
+            actions={
+              <div className="flex items-center gap-6">
+                 <div className="px-8 py-4 bg-black/60 rounded-2xl border border-white/10 flex items-center gap-4 shadow-xl">
+                    <Clock size={16} className="text-slate-600" />
+                    <span className="text-[13px] font-black font-mono text-slate-300 italic tabular-nums leading-none">
+                       {new Date().toLocaleTimeString('uk-UA')}
+                    </span>
+                 </div>
+                 <button className="px-10 py-5 bg-red-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
+                    ДЕФОРМАТУВАТИ // EMERGENCY
+                 </button>
+              </div>
+            }
+          />
 
-         <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 px-6 py-2 bg-black/60 rounded-full border border-white/[0.05]">
-               <Clock size={14} className="text-slate-600" />
-               <p className="text-[12px] font-black font-mono text-slate-300 italic tabular-nums leading-none">
-                  {new Date().toLocaleTimeString('uk-UA')}
-               </p>
-            </div>
-            <button className="px-8 py-3 bg-red-700 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] italic hover:bg-red-600 transition-all shadow-xl">
-               ДЕФОРМАТУВАТИ // EMERGENCY
-            </button>
-         </div>
+          {/* ── QUADRANTS GRID ELITE ── */}
+          <div className="flex-1 grid grid-cols-12 grid-rows-2 gap-8 overflow-hidden pb-10">
+             
+             {/* Q1: GLOBAL INTEL (Radar/Globe) */}
+             <div className="col-span-12 xl:col-span-4 row-span-2">
+                <TacticalCard 
+                  variant="holographic"
+                  className={cn(
+                    "h-full flex flex-col p-8 transition-all duration-700 bg-black/60 border-yellow-500/10 rounded-[4rem] relative overflow-hidden",
+                    expanded === 'q1' ? "fixed inset-12 z-[100] bg-black/98 border-yellow-500/40" : ""
+                  )}
+                >
+                   <div className="flex items-center justify-between mb-8 relative z-10">
+                      <div className="flex items-center gap-4">
+                         <div className="p-3 bg-yellow-500/10 rounded-2xl">
+                            <Globe size={20} className="text-yellow-500" />
+                         </div>
+                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ГЛОБАЛЬНА РОЗВІДКА</h3>
+                      </div>
+                      <button onClick={() => setExpanded(expanded === 'q1' ? null : 'q1')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                        {expanded === 'q1' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                      </button>
+                   </div>
+
+                   <div className="flex-1 flex flex-col space-y-10 relative z-10 overflow-hidden">
+                      <div className="h-[45%] relative rounded-[3rem] overflow-hidden border-2 border-white/5 bg-black/40 shadow-inner group">
+                         <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-100 transition-opacity duration-1000">
+                            <CyberGlobe />
+                         </div>
+                         <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-yellow-500/20 backdrop-blur-xl">
+                            <p className="text-[10px] font-black text-yellow-500 uppercase italic tracking-widest flex items-center gap-3">
+                               <Satellite size={12} className="animate-pulse" /> ORBITAL_PHASE: ACTIVE
+                            </p>
+                         </div>
+                      </div>
+                      <div className="flex-1 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
+                         <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic mb-6">ГАРЯЧІ ЗОНИ КОНФЛІКТУ · {new Date().toLocaleDateString('uk-UA')}</h4>
+                         {[
+                            { zone: 'Схід Європи', risk: '98%', status: 'WAR_ACTIVE', c: '#E11D48' },
+                            { zone: 'Червоне море', risk: '84%', status: 'BLOCKADE', c: '#fbbf24' },
+                            { zone: 'Тайваньська прот.', risk: '72%', status: 'SIGNAL_UP', c: '#fbbf24' },
+                            { zone: 'Еквадор', risk: '54%', status: 'STABLE', c: '#D4AF37' },
+                         ].map((z, i) => (
+                            <motion.div 
+                               key={i} 
+                               initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                               className="flex items-center justify-between p-7 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/5 group hover:border-yellow-500/30 transition-all cursor-crosshair shadow-2xl"
+                            >
+                               <div className="flex items-center gap-6">
+                                  <div className="w-4 h-4 rounded-full animate-pulse shadow-[0_0_12px_currentColor]" style={{ color: z.c, backgroundColor: z.c }} />
+                                  <div className="text-left font-black italic">
+                                     <p className="text-[15px] text-white uppercase tracking-tight">{z.zone}</p>
+                                     <p className="text-[10px] text-slate-700 uppercase tracking-[0.2em] mt-1">{z.status}</p>
+                                  </div>
+                               </div>
+                               <p className="text-2xl font-black italic font-mono tracking-tighter leading-none" style={{ color: z.c }}>{z.risk}</p>
+                            </motion.div>
+                         ))}
+                      </div>
+                   </div>
+                </TacticalCard>
+             </div>
+
+             {/* Q2: SYSTEM KERNEL (Metrics/Logs) */}
+             <div className="col-span-12 xl:col-span-5">
+                <TacticalCard 
+                  className={cn(
+                    "h-full p-8 flex flex-col bg-black/60 border-white/5 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q2' ? "fixed inset-12 z-[100] bg-black border-white/20" : ""
+                  )}
+                >
+                   <div className="flex items-center justify-between mb-8 relative z-10">
+                      <div className="flex items-center gap-4">
+                         <div className="p-3 bg-emerald-500/10 rounded-2xl">
+                            <Activity size={20} className="text-emerald-500" />
+                         </div>
+                         <h3 className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.6em] italic">ЯДРО TITAN-01 // SOVEREIGN</h3>
+                      </div>
+                      <button onClick={() => setExpanded(expanded === 'q2' ? null : 'q2')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                        {expanded === 'q2' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                      </button>
+                   </div>
+
+                   <div className="flex-1 grid grid-cols-2 gap-10 relative z-10 h-full overflow-hidden">
+                      <div className="space-y-8 flex flex-col">
+                         <div className="flex-1 w-full border-2 border-white/5 rounded-[2.5rem] bg-black/40 p-6 shadow-inner relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-emerald-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <ResponsiveContainer width="100%" height="100%">
+                               <AreaChart data={MOCK_LINE_DATA}>
+                                  <defs>
+                                    <linearGradient id="q2gradElite" x1="0" y1="0" x2="0" y2="1">
+                                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                    </linearGradient>
+                                  </defs>
+                                  <Area type="monotone" dataKey="val" stroke="#10b981" strokeWidth={3} fill="url(#q2gradElite)" animationDuration={3000} />
+                               </AreaChart>
+                            </ResponsiveContainer>
+                         </div>
+                         <div className="grid grid-cols-2 gap-6">
+                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-emerald-500/30 transition-all">
+                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">CPU_COMPUTE</p>
+                               <p className="text-3xl font-black text-emerald-500 font-mono italic tracking-tighter">34.2%</p>
+                            </div>
+                            <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-yellow-500/30 transition-all">
+                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">NEURAL_LOAD</p>
+                               <p className="text-3xl font-black text-yellow-500 font-mono italic tracking-tighter">12.1T</p>
+                            </div>
+                         </div>
+                      </div>
+                      <div className="bg-black/80 border-2 border-white/5 rounded-[3rem] p-8 font-mono text-[11px] space-y-4 overflow-hidden relative shadow-inner group">
+                         <div className="absolute inset-0 bg-emerald-500/[0.01] pointer-events-none" />
+                         <div className="flex items-center gap-6 mb-6 pb-6 border-b border-white/5">
+                            <Terminal size={18} className="text-slate-700 group-hover:text-emerald-500 transition-colors" />
+                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">KERNEL_LIVE_STREAMS</span>
+                         </div>
+                         <div className="space-y-3 opacity-80 italic font-bold">
+                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">INGESTION:</span> Sync confirmed v56.5</p>
+                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ALARM:</span> Risk threshold POS-001 breach</p>
+                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">SOVEREIGN:</span> Kyoto Holdings resolution active</p>
+                            <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">SYSTEM:</span> Waiting for Kafka cluster burst...</p>
+                            <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_READY_FOR_COMMAND</motion.p>
+                         </div>
+                      </div>
+                   </div>
+                </TacticalCard>
+             </div>
+
+             {/* Q3: PORTFOLIO RISK (P&L Display) */}
+             <div className="col-span-12 xl:col-span-3">
+                <TacticalCard 
+                  variant="holographic"
+                  className={cn(
+                    "h-full p-8 flex flex-col bg-black/60 border-red-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q3' ? "fixed inset-12 z-[100] bg-black border-red-500/40" : ""
+                  )}
+                >
+                   <div className="flex items-center justify-between mb-10 relative z-10">
+                      <div className="flex items-center gap-4">
+                         <div className="p-3 bg-red-500/10 rounded-2xl">
+                            <Layers size={20} className="text-red-500" />
+                         </div>
+                         <h3 className="text-[11px] font-black text-red-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТРИЦЯ</h3>
+                      </div>
+                      <button onClick={() => setExpanded(expanded === 'q3' ? null : 'q3')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                        {expanded === 'q3' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                      </button>
+                   </div>
+
+                   <div className="flex-1 flex flex-col space-y-10 relative z-10">
+                      <div className="flex items-center justify-center p-10 relative">
+                         <div className="absolute inset-0 bg-red-500/10 blur-3xl rounded-full scale-110" />
+                         <PieChart width={160} height={160}>
+                            <Pie data={RISK_PIE_DATA} cx="50%" cy="50%" innerRadius={45} outerRadius={65} dataKey="value" paddingAngle={5}>
+                               {RISK_PIE_DATA.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
+                            </Pie>
+                         </PieChart>
+                      </div>
+                      <div className="space-y-4 flex-1 overflow-y-auto no-scrollbar">
+                         {RISK_PIE_DATA.map((r, i) => (
+                            <div key={i} className="flex items-center justify-between p-6 rounded-[2rem] border-2 border-white/5 bg-black hover:border-red-500/30 transition-all group/it shadow-2xl">
+                               <div className="flex items-center gap-5">
+                                  <div className="w-3 h-3 rounded-full transition-transform group-hover/it:scale-125 shadow-[0_0_10px_currentColor]" style={{ backgroundColor: r.color, color: r.color }} />
+                                  <span className="text-[11px] font-black text-slate-700 group-hover/it:text-white transition-colors uppercase italic tracking-widest leading-none">{r.name}</span>
+                               </div>
+                               <span className="text-[13px] font-black text-red-500 font-mono italic tabular-nums leading-none tracking-tighter">{(r.value / 10).toFixed(1)}%</span>
+                            </div>
+                         ))}
+                      </div>
+                      <div className="mt-auto p-10 bg-red-600/10 border-2 border-red-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
+                         <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                         <p className="text-[10px] font-black text-red-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_EXPOSURE</p>
+                         <p className="text-4xl font-black text-red-500 italic tracking-tighther font-serif leading-none">$127.4M</p>
+                      </div>
+                   </div>
+                </TacticalCard>
+             </div>
+
+             {/* Q4: PREDICTIONS & ALERTS (AI / Scenarios) */}
+             <div className="col-span-12 xl:col-span-8 overflow-hidden h-full">
+                <TacticalCard 
+                  variant="holographic"
+                  className={cn(
+                    "h-full p-10 flex flex-col bg-black/60 border-yellow-500/10 rounded-[4rem] relative overflow-hidden shadow-4xl",
+                    expanded === 'q4' ? "fixed inset-12 z-[100] bg-black border-yellow-500/40" : ""
+                  )}
+                >
+                   <div className="flex items-center justify-between mb-10 relative z-10">
+                      <div className="flex items-center gap-4">
+                         <div className="p-3 bg-yellow-500/10 rounded-2xl">
+                            <Zap size={20} className="text-yellow-500 animate-pulse" />
+                         </div>
+                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ELITE_АЛЕРТИ</h3>
+                      </div>
+                      <button onClick={() => setExpanded(expanded === 'q4' ? null : 'q4')} className="p-2 text-slate-700 hover:text-white transition-colors">
+                        {expanded === 'q4' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                      </button>
+                   </div>
+
+                   <div className="flex-1 grid grid-cols-12 gap-12 relative z-10 overflow-hidden">
+                      <div className="col-span-7 space-y-10 flex flex-col h-full">
+                         <div className="flex items-center gap-8 mb-4">
+                            <div className="p-5 rounded-[2rem] bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                               <Radar size={32} className="animate-pulse" />
+                            </div>
+                            <div>
+                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">SCENARIO: OMEGA-4</h4>
+                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПРЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ РОЗШИРЕННЯ КОНФЛІКТУ</p>
+                            </div>
+                         </div>
+                         <div className="space-y-4 flex-1">
+                            {[
+                               { t: 'Діючі санкції:', v: 'ПОВНЕ ЕМБАРГО', c: '#E11D48', icon: Shield },
+                               { t: 'Локальні гравці:', v: '14 ФІГУРАНТІВ', c: '#ffffff', icon: Users },
+                               { t: 'Ймовірність ескалації:', v: '92.4%', c: '#E11D48', icon: Target },
+                            ].map((s, i) => (
+                               <div key={i} className="flex items-center justify-between p-7 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 hover:border-yellow-500/20 transition-all group/ic">
+                                  <div className="flex items-center gap-5">
+                                     <s.icon size={20} className="text-slate-800 group-hover/ic:text-yellow-500 transition-colors" />
+                                     <span className="text-[13px] font-black text-slate-700 uppercase tracking-tight italic group-hover/ic:text-slate-300 transition-colors">{s.t}</span>
+                                  </div>
+                                  <span className={cn("text-[18px] font-black italic uppercase font-mono tracking-tighter", s.v === '92.4%' && "animate-pulse")} style={{ color: s.c }}>{s.v}</span>
+                               </div>
+                            ))}
+                         </div>
+                         <button className="w-full py-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-yellow-400/20">
+                            ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
+                         </button>
+                      </div>
+                      <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
+                         <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-4">
+                            <span>АКТИВНІ АЛЕРТИ</span>
+                            <span className="text-yellow-600">PREDATIVE MODE</span>
+                         </div>
+                         <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
+                            {[
+                               { msg: 'Виявлено збіг UBO (POS-001)', type: 'error' },
+                               { msg: 'Нова реєстрація Shell-компанії (BVI)', type: 'warning' },
+                               { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
+                               { msg: 'Оновлено реєстр PEP Україна', type: 'info' },
+                               { msg: 'Детектовано новий паттерн відмивання', type: 'error' },
+                            ].map((a, i) => (
+                               <motion.div 
+                                 key={i} 
+                                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }}
+                                 className={cn(
+                                  "p-7 rounded-[2.5rem] border-2 flex items-center gap-6 transition-all hover:scale-[1.01] shadow-xl",
+                                  a.type === 'error' ? "bg-red-600/10 border-red-500/30 text-red-500 shadow-red-500/10" :
+                                  a.type === 'warning' ? "bg-yellow-600/10 border-yellow-500/30 text-yellow-500 shadow-yellow-500/10" :
+                                  "bg-white/5 border-white/10 text-slate-400 shadow-black"
+                               )}>
+                                  <div className="shrink-0 p-3 bg-black/40 rounded-xl border border-white/10">
+                                     <Bell size={20} className={a.type === 'error' ? 'animate-bounce' : ''} />
+                                  </div>
+                                  <p className="text-[15px] font-black italic truncate leading-none uppercase tracking-tight">{a.msg}</p>
+                                  <ChevronRight size={18} className="ml-auto opacity-20" />
+                               </motion.div>
+                            ))}
+                         </div>
+                      </div>
+                   </div>
+                   <div className="absolute -bottom-10 -right-10 p-32 opacity-5 pointer-events-none">
+                      <Fingerprint size={300} className="text-yellow-500" />
+                   </div>
+                </TacticalCard>
+             </div>
+
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+          .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 20px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.4); }
+          .animate-spin-slow { animation: spin 40s linear infinite; }
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+        `}} />
       </div>
-
-      {/* ── QUADRANTS GRID ── */}
-      <div className="relative z-10 grid grid-cols-12 grid-rows-2 gap-8 p-10 h-[calc(100vh-100px)]">
-         
-         {/* Q1: GLOBAL INTEL (Radar/Globe) */}
-         <div className="col-span-12 xl:col-span-4 row-span-2">
-            <TacticalScreen 
-              title="ГЛОБАЛЬНА РОЗВІДКА" 
-              icon={Globe} 
-              fullScreen={expanded === 'q1'} 
-              onToggleFull={() => setExpanded(expanded === 'q1' ? null : 'q1')}
-              className="h-full"
-            >
-               <div className="h-full flex flex-col space-y-10">
-                  <div className="h-[45%] relative rounded-[2rem] overflow-hidden border border-white/5 bg-black/40 shadow-inner group">
-                     <div className="absolute inset-0 z-0">
-                        <CyberGlobe />
-                     </div>
-                     <div className="absolute top-5 left-5 z-10 bg-black/60 px-4 py-2 rounded-xl border border-white/10 backdrop-blur-md">
-                        <p className="text-[10px] font-black text-emerald-500 uppercase italic tracking-widest">ORBITAL_PHASE: ACTIVE</p>
-                     </div>
-                  </div>
-                  <div className="flex-1 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
-                     <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] italic mb-4">ГАРЯЧІ ЗОНИ КОНФЛІКТУ</h4>
-                     {[
-                        { zone: 'Схід Європи', risk: '98%', status: 'WAR_ACTIVE' },
-                        { zone: 'Червоне море', risk: '84%', status: 'BLOCKADE' },
-                        { zone: 'Тайваньська прот.', risk: '72%', status: 'SIGNAL_UP' },
-                        { zone: 'Еквадор', risk: '54%', status: 'STABLE' },
-                     ].map((z, i) => (
-                        <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-white/[0.05] transition-all">
-                           <div className="flex items-center gap-4">
-                              <div className={cn("h-3 w-3 rounded-full animate-pulse", z.risk === '98%' ? "bg-red-600" : "bg-orange-500")} />
-                              <div className="text-left font-black italic">
-                                 <p className="text-[13px] text-white uppercase">{z.zone}</p>
-                                 <p className="text-[8px] text-slate-600 uppercase tracking-widest mt-0.5">{z.status}</p>
-                              </div>
-                           </div>
-                           <p className="text-lg font-black text-red-500 italic font-mono tracking-tighter leading-none">{z.risk}</p>
-                        </div>
-                     ))}
-                  </div>
-               </div>
-            </TacticalScreen>
-         </div>
-
-         {/* Q2: SYSTEM KERNEL (Metrics/Logs) */}
-         <div className="col-span-12 xl:col-span-5">
-            <TacticalScreen 
-              title="ЯДРО TITAN-01" 
-              icon={Activity} 
-              fullScreen={expanded === 'q2'} 
-              onToggleFull={() => setExpanded(expanded === 'q2' ? null : 'q2')}
-              className="h-full"
-            >
-               <div className="grid grid-cols-2 gap-8 h-full">
-                  <div className="space-y-6">
-                     <div className="h-[140px] w-full border border-white/5 rounded-2xl bg-black/40 p-4">
-                        <ResponsiveContainer width="100%" height="100%">
-                           <AreaChart data={MOCK_LINE_DATA}>
-                              <defs>
-                                <linearGradient id="q2grad" x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3}/>
-                                  <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
-                                </linearGradient>
-                              </defs>
-                              <Area type="monotone" dataKey="val" stroke="#0ea5e9" strokeWidth={2} fill="url(#q2grad)" />
-                           </AreaChart>
-                        </ResponsiveContainer>
-                     </div>
-                     <div className="grid grid-cols-2 gap-4">
-                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                           <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">CPU_LOAD</p>
-                           <p className="text-xl font-black text-sky-400 font-mono italic">34.2%</p>
-                        </div>
-                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                           <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">RAM_USAGE</p>
-                           <p className="text-xl font-black text-amber-500 font-mono italic">12.1G</p>
-                        </div>
-                     </div>
-                     <div className="p-6 rounded-3xl bg-emerald-600/10 border border-emerald-600/20 flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                           <Database size={20} className="text-emerald-500" />
-                           <p className="text-[12px] font-black text-emerald-500 uppercase italic">БАЗИ ДАНИХ ОНЛАЙН</p>
-                        </div>
-                        <CheckCircle2 size={18} className="text-emerald-500" />
-                     </div>
-                  </div>
-                  <div className="bg-black border border-white/5 rounded-3xl p-6 font-mono text-[10px] space-y-3 overflow-hidden">
-                     <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/5">
-                        <Terminal size={14} className="text-slate-600" />
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">LIVE_TERMINAL</span>
-                     </div>
-                     <p><span className="text-slate-800">[14:32:01]</span> <span className="text-sky-500">KERNEL:</span> Ingestion sync confirmed.</p>
-                     <p><span className="text-slate-800">[14:32:05]</span> <span className="text-red-500">ALARM:</span> Risk threshold POS-001 breach.</p>
-                     <p><span className="text-slate-800">[14:32:15]</span> <span className="text-emerald-500">RESOLVER:</span> Entity KYOTO_HOLD resolved.</p>
-                     <p><span className="text-slate-800">[14:32:22]</span> <span className="text-slate-600">IDLE:</span> Waiting for Kafka burst...</p>
-                     <p className="animate-pulse">_</p>
-                  </div>
-               </div>
-            </TacticalScreen>
-         </div>
-
-         {/* Q3: PORTFOLIO RISK (P&L Display) */}
-         <div className="col-span-12 xl:col-span-3">
-            <TacticalScreen 
-              title="РИЗИК-МАТРИЦЯ" 
-              icon={Layers} 
-              fullScreen={expanded === 'q3'} 
-              onToggleFull={() => setExpanded(expanded === 'q3' ? null : 'q3')}
-              className="h-full"
-            >
-               <div className="flex flex-col h-full space-y-6">
-                  <div className="flex items-center justify-center h-[120px]">
-                     <PieChart width={120} height={120}>
-                        <Pie data={RISK_PIE_DATA} cx="50%" cy="50%" innerRadius={35} outerRadius={50} dataKey="value">
-                           {RISK_PIE_DATA.map((e, i) => <Cell key={i} fill={e.color} stroke="transparent" />)}
-                        </Pie>
-                     </PieChart>
-                  </div>
-                  <div className="space-y-3">
-                     {RISK_PIE_DATA.map((r, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-white/[0.03] bg-white/[0.01]">
-                           <div className="flex items-center gap-3">
-                              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: r.color }} />
-                              <span className="text-[10px] font-black text-slate-500 uppercase italic leading-none">{r.name}</span>
-                           </div>
-                           <span className="text-[11px] font-black text-white font-mono italic tabular-nums leading-none">{(r.value / 10).toFixed(1)}%</span>
-                        </div>
-                     ))}
-                  </div>
-                  <div className="mt-auto p-6 bg-red-600/10 border border-red-600/30 rounded-3xl text-center">
-                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">РИЗИК ПОРТФЕЛЮ ЗАРАЗ</p>
-                     <p className="text-3xl font-black text-red-500 italic tracking-tighter leading-none">$127.4M</p>
-                  </div>
-               </div>
-            </TacticalScreen>
-         </div>
-
-         {/* Q4: PREDICTIONS & ALERTS (AI / Scenarios) */}
-         <div className="col-span-12 xl:col-span-8 overflow-hidden h-full">
-            <TacticalScreen 
-              title="ШІ-ПРОГНОСТИКА ТА АЛЕРТИ" 
-              icon={Zap} 
-              fullScreen={expanded === 'q4'} 
-              onToggleFull={() => setExpanded(expanded === 'q4' ? null : 'q4')}
-              className="h-full"
-            >
-               <div className="grid grid-cols-12 gap-10 h-full">
-                  <div className="col-span-7 space-y-6">
-                     <div className="flex items-center gap-4 mb-6">
-                        <div className="p-3 rounded-2xl bg-amber-600/10 text-amber-500 border border-amber-600/20 shadow-xl">
-                           <Eye size={22} className="animate-pulse" />
-                        </div>
-                        <div>
-                           <h4 className="text-xl font-black text-white uppercase italic tracking-tighter leading-none mb-1">SCENARIO: OMEGA-4</h4>
-                           <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest leading-none">ПРЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ РОЗШИРЕННЯ КОНФЛІКТУ</p>
-                        </div>
-                     </div>
-                     <div className="space-y-4">
-                        {[
-                           { t: 'Діючі санкції:', v: 'ПОВНЕ ЕМБАРГО', c: 'text-red-500' },
-                           { t: 'Локальні гравці:', v: '14 ФІГУРАНТІВ', c: 'text-white' },
-                           { t: 'Ймовірність ескалації:', v: '92%', c: 'text-red-600 animate-pulse' },
-                        ].map((s, i) => (
-                           <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04]">
-                              <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight italic">{s.t}</span>
-                              <span className={cn("text-[13px] font-black italic uppercase", s.c)}>{s.v}</span>
-                           </div>
-                        ))}
-                     </div>
-                     <button className="w-full py-5 bg-gradient-to-r from-amber-600 to-amber-800 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic shadow-2xl hover:scale-[1.02] transition-all">
-                        ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ
-                     </button>
-                  </div>
-                  <div className="col-span-5 space-y-5 h-full overflow-hidden">
-                     <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-4">АКТИВНІ АЛЕРТИ</h4>
-                     <div className="space-y-3 max-h-[280px] overflow-y-auto pr-4 custom-scrollbar">
-                        {[
-                           { msg: 'Виявлено збіг UBO (POS-001)', type: 'error' },
-                           { msg: 'Нова реєстрація Shell-компанії (BVI)', type: 'warning' },
-                           { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
-                           { msg: 'Оновлено реєстр PEP Україна', type: 'info' },
-                        ].map((a, i) => (
-                           <div key={i} className={cn(
-                              "p-5 rounded-2xl border flex items-center gap-4 transition-all hover:bg-white/[0.02]",
-                              a.type === 'error' ? "bg-red-600/10 border-red-600/30 text-red-400" :
-                              a.type === 'warning' ? "bg-amber-600/10 border-amber-600/30 text-amber-500" :
-                              "bg-sky-600/10 border-sky-600/30 text-sky-400"
-                           )}>
-                              <Bell size={16} className={a.type === 'error' ? 'animate-bounce' : ''} />
-                              <p className="text-[12px] font-bold italic truncate leading-none uppercase">{a.msg}</p>
-                           </div>
-                        ))}
-                     </div>
-                  </div>
-               </div>
-            </TacticalScreen>
-         </div>
-
-      </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .shadow-3xl {
-           box-shadow: 0 60px 100px -30px rgba(0, 0, 0, 0.8);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-           width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-           background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-           background: rgba(255,255,255,0.05);
-           border-radius: 10px;
-        }
-        .animate-spin-slow {
-           animation: spin 30s linear infinite;
-        }
-        @keyframes spin {
-           from { transform: rotate(0deg); }
-           to { transform: rotate(360deg); }
-        }
-      `}} />
-    </div>
+    </PageTransition>
   );
 }

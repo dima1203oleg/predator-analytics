@@ -25,7 +25,7 @@ interface TacticalCardProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   metrics?: CardMetric[];
   actions?: CardAction[];
   expandable?: boolean;
-  glow?: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'cyan' | 'emerald' | 'indigo' | 'amber' | 'none';
+  glow?: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'cyan' | 'emerald' | 'indigo' | 'amber' | 'gold' | 'none';
   variant?: 'cyber' | 'glass' | 'minimal' | 'holographic' | 'premium';
   noPadding?: boolean;
   children?: React.ReactNode;
@@ -89,6 +89,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       case 'amber': return 'amber';
       case 'purple': return 'violet';
       case 'indigo': return 'indigo';
+      case 'gold': return 'amber';
       default: return 'slate';
     }
   };

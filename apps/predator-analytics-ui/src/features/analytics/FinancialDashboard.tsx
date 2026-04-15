@@ -22,7 +22,7 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface FinancialDashboardProps {
   ueid?: string;

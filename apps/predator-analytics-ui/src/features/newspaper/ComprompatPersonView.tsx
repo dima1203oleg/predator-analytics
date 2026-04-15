@@ -17,7 +17,7 @@ import {
   User, Briefcase, Share2, Phone, Mail, MapPin, Scan, Radar, Siren,
   RefreshCcw, Layout, FileText
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

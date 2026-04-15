@@ -30,7 +30,7 @@ import { ResourceDynamicsChart } from '../infrastructure/components/ResourceDyna
 import { ClusterTopology } from '../infrastructure/components/ClusterTopology';
 import { systemApi } from '@/services/api/system';
 import { useQuery } from '@tanstack/react-query';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { uk } from 'date-fns/locale';
 

@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getNavigationContext, getRecommendedNavigation } from '@/config/navigation';
 import { useUser } from '@/context/UserContext';
 import { useShellWorkspace } from '@/hooks/useShellWorkspace';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
   shellCommandPaletteOpenAtom,
   shellContextRailOpenAtom,

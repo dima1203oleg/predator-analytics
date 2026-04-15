@@ -16,7 +16,7 @@ import {
     Siren, Radar, RefreshCcw, Layout, Share2, Globe, Scan,
     ArrowRight, Fingerprint, Lock, ShieldAlert, Zap
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

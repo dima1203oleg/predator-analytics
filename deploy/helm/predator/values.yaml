@@ -32,7 +32,7 @@ frontend:
   replicaCount: 2
   image:
     repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: v56.2.1-ELITE
+    tag: v56.5-ELITE
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
@@ -78,7 +78,7 @@ coreApi:
   replicaCount: 2
   image:
     repository: ghcr.io/dima1203oleg/predator-core-api
-    tag: v56.2.1-ELITE
+    tag: v56.5-ELITE
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -161,7 +161,7 @@ ingestionWorker:
   replicaCount: 2
   image:
     repository: ghcr.io/dima1203oleg/predator-ingestion-worker
-    tag: v56.2.1-ELITE
+    tag: v56.5-ELITE
     pullPolicy: IfNotPresent
   resources:
     limits:

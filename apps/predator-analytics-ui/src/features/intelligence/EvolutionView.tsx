@@ -1,6 +1,11 @@
 /**
- * Predator v55 | Evolutionary Truth Ledger — Двигун Еволюції
+ * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v56.5-ELITE
+ * PREDATOR Analytics — Sovereign Mutation & AZR Synthesis
+ * 
  * Центр фіксації та впровадження системних мутацій AZR.
+ * Sovereign Power Design · Tactical · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -12,7 +17,6 @@ import {
     Sparkles,
     Zap,
     ChevronDown,
-    ChevronUp,
     GitBranch,
     Rocket,
     Brain,
@@ -23,37 +27,41 @@ import {
     ShieldCheck,
     History,
     Gauge,
-    Target
+    Target,
+    Orbit,
+    Fingerprint,
+    Landmark,
+    ArrowUpRight
 } from 'lucide-react';
 import EvolutionDashboard from '@/components/super/EvolutionDashboard';
 import TruthLedgerTerminal from '@/components/super/TruthLedgerTerminal';
-import GlobalNeuralMesh from '@/components/super/GlobalNeuralMesh';
 import EvolutionForge from '@/components/super/EvolutionForge';
 import { AZRImprovementTrace } from '@/components/super/AZRImprovementTrace';
 import { AZRDeploymentCenter } from '@/components/super/AZRDeploymentCenter';
 import { premiumLocales } from '@/locales/uk/premium';
 import { TacticalCard } from '@/components/TacticalCard';
-import { ViewHeader } from '@/components/ViewHeader';
-import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
-import { cn } from '@/utils/cn';
+import { CyberGrid } from '@/components/CyberGrid';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { cn } from '@/utils/cn'; // standardizing utility import
 
 interface TabConfig {
     id: string;
     label: string;
     icon: React.ReactNode;
-    gradient: string;
 }
 
 const tabs: TabConfig[] = [
-    { id: 'overview', label: premiumLocales.evolution.tabs.overview, icon: <Dna size={16} />, gradient: 'from-amber-500 to-orange-600' },
-    { id: 'trace', label: premiumLocales.evolution.tabs.trace, icon: <Activity size={16} />, gradient: 'from-blue-500 to-indigo-600' },
-    { id: 'deployment', label: premiumLocales.evolution.tabs.deployment, icon: <Rocket size={16} />, gradient: 'from-emerald-500 to-teal-600' },
-    { id: 'ledger', label: premiumLocales.evolution.tabs.ledger, icon: <Shield size={16} />, gradient: 'from-purple-500 to-pink-600' },
+    { id: 'overview', label: premiumLocales.evolution.tabs.overview, icon: <Dna size={18} /> },
+    { id: 'trace', label: premiumLocales.evolution.tabs.trace, icon: <Activity size={18} /> },
+    { id: 'deployment', label: premiumLocales.evolution.tabs.deployment, icon: <Rocket size={18} /> },
+    { id: 'ledger', label: premiumLocales.evolution.tabs.ledger, icon: <Shield size={18} /> },
 ];
 
 const EvolutionView: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -63,246 +71,344 @@ const EvolutionView: React.FC = () => {
         }
     }, []);
 
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        await new Promise(r => setTimeout(r, 1500));
+        setRefreshing(false);
+    };
+
     return (
-        <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans">
-            {/* V55 Background Matrix */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(245,158,11,0.08),transparent_70%)]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-amber-500/10 blur-[150px] rounded-full" />
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-orange-600/10 blur-[120px] rounded-full" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
-                <div className="absolute inset-0" style={{
-                    backgroundImage: 'linear-gradient(rgba(245,158,11,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(245,158,11,0.03) 1px, transparent 1px)',
-                    backgroundSize: '32px 32px'
-                }} />
-            </div>
+        <PageTransition>
+            <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40 px-4 xl:px-12">
+                <AdvancedBackground />
+                <CyberGrid color="rgba(212, 175, 55, 0.04)" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
 
-            <div className="relative z-10 max-w-[1800px] mx-auto p-4 sm:p-8 space-y-8 pb-32">
-                {/* Header Section */}
-                <ViewHeader
-                    title="EVOLUTIONARY TRUTH LEDGER"
-                    icon={<Dna size={22} className="text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]" />}
-                    breadcrumbs={['ЦИТАДЕЛЬ', 'ЕВОЛЮЦІЯ', 'LEDGER']}
-                    stats={[
-                        { label: 'Цикли AZR', value: '2,847', icon: <RefreshCw size={14} />, color: 'primary' },
-                        { label: 'Записи Ledger', value: '23K+', icon: <Shield size={14} />, color: 'secondary' },
-                        { label: 'Здоров\'я Ядра', value: '98.7%', icon: <Activity size={14} />, color: 'success' },
-                    ]}
-                    actions={
-                        <div className="flex gap-4">
-                            <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-                                className="px-6 py-2.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-full text-[10px] font-black tracking-widest uppercase hover:bg-amber-500/20 transition-all flex items-center gap-2"
-                            >
-                                <Sparkles size={14} /> НОВА МУТАЦІЯ
-                            </motion.button>
-                            <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-                                className="px-8 py-2.5 bg-amber-600 text-white rounded-full text-[10px] font-black tracking-[0.2em] uppercase shadow-xl shadow-amber-900/40 flex items-center gap-2"
-                            >
-                                <Zap size={14} className="fill-current" /> СИНТЕЗУВАТИ
-                            </motion.button>
-                        </div>
-                    }
-                />
-
-                {/* Tactical Navigation Tabs */}
-                <div className="flex gap-4 p-1 bg-slate-900/40 backdrop-blur-xl rounded-[24px] border border-white/5 w-fit">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={cn(
-                                "flex items-center gap-3 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all",
-                                activeTab === tab.id
-                                    ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg shadow-amber-900/40`
-                                    : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
-                            )}
-                        >
-                            {React.cloneElement(tab.icon as React.ReactElement, { size: 16 })}
-                            {tab.label}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Content Area */}
-                <AnimatePresence mode="wait">
-                    {activeTab === 'overview' && (
-                        <motion.div
-                            key="overview"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="space-y-8"
-                        >
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <div className="lg:col-span-2 space-y-8">
-                                    <TacticalCard variant="holographic" className="panel-3d" noPadding>
-                                        <EvolutionDashboard />
-                                    </TacticalCard>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <TacticalCard variant="holographic" title="НЕЙРОННА КУЗНЯ" className="panel-3d">
-                                            <EvolutionForge />
-                                        </TacticalCard>
-                                        <TacticalCard variant="holographic" title="МЕТРИКИ ДОМІНУВАННЯ" className="panel-3d">
-                                            <div className="space-y-4 py-4 px-2">
-                                                {[
-                                                    { label: 'Algorithmic Speed', val: '+24%', color: 'emerald', icon: Zap },
-                                                    { label: 'Neural Precision', val: '99.92%', color: 'indigo', icon: Target },
-                                                    { label: 'Security Entropy', val: '0.0001', color: 'rose', icon: ShieldCheck },
-                                                    { label: 'Resource Synergy', val: 'Optimal', color: 'amber', icon: Gauge },
-                                                ].map(m => (
-                                                    <div key={m.label} className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/5 group hover:border-white/20 transition-all">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className={cn("p-2 rounded-xl bg-opacity-20", `bg-${m.color}-500 text-${m.color}-400`)}>
-                                                                <m.icon size={16} />
-                                                            </div>
-                                                            <span className="text-[11px] font-black text-white uppercase tracking-tight">{m.label}</span>
-                                                        </div>
-                                                        <span className={cn("text-xs font-black", `text-${m.color}-400`)}>{m.val}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </TacticalCard>
-                                    </div>
-                                </div>
-                                <div className="space-y-8">
-                                    <TacticalCard variant="holographic" className="panel-3d flex items-center justify-center p-0 overflow-hidden relative min-h-[400px]">
-                                        <CyberOrb size={260} color="#f59e0b" intensity={0.6} pulse={true} className="drop-shadow-[0_0_60px_rgba(245,158,11,0.3)]" />
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                            <div className="text-[10px] font-black text-amber-500/50 uppercase tracking-[0.5em] mb-2">Evolution Active</div>
-                                            <div className="text-3xl font-black text-white font-mono opacity-80">v55.GEN</div>
-                                        </div>
-                                    </TacticalCard>
-
-                                    <TacticalCard variant="holographic" title="ЖИВА ІСТОРІЯ ПАТЧІВ" className="panel-3d h-full">
-                                        <div className="space-y-3 pt-2 max-h-[450px] overflow-y-auto custom-scrollbar">
-                                            {[
-                                                { version: 'v56.2-TITAN.1', date: 'Сьогодні', changes: 3, type: 'critical' },
-                                                { version: 'v54.8.9', date: 'Вчора', changes: 12, type: 'feature' },
-                                                { version: 'v54.2.0', date: '2 дні тому', changes: 7, type: 'performance' },
-                                                { version: 'v53.9.5', date: '4 дні тому', changes: 2, type: 'security' },
-                                                { version: 'v53.0.0', date: 'Тиждень тому', changes: 45, type: 'major' },
-                                            ].map((v, i) => (
-                                                <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-white/10 transition-all cursor-pointer">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={cn(
-                                                            "w-2 h-2 rounded-full",
-                                                            v.type === 'critical' ? 'bg-rose-500 animate-pulse' :
-                                                                v.type === 'major' ? 'bg-amber-500' : 'bg-blue-400'
-                                                        )} />
-                                                        <span className="font-mono font-black text-white text-xs">{v.version}</span>
-                                                        <span className="text-slate-500 text-[10px] uppercase font-bold tracking-tighter">{v.date}</span>
-                                                    </div>
-                                                    <span className="px-2 py-1 bg-slate-900 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest border border-white/5">
-                                                        +{v.changes} МУТАЦІЙ
-                                                    </span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </TacticalCard>
+                <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
+                    
+                    {/* HEADER ELITE HUD */}
+                    <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-12 py-10 border-b border-white/[0.04]">
+                        <div className="flex items-center gap-12">
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                                <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
+                                    <Dna size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
                                 </div>
                             </div>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-6">
+                                    <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                                        EVOLUTIONARY_LEDGER // NEURAL_MUTATION_CORE
+                                    </span>
+                                    <div className="h-px w-16 bg-yellow-500/20" />
+                                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                </div>
+                                <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
+                                    ДВИГУН <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕВОЛЮЦІЇ</span>
+                                </h1>
+                                <div className="flex items-center gap-6 text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-8 italic border-l-4 border-yellow-500/30 pl-10 opacity-95">
+                                    <Activity size={16} className="text-yellow-500" /> 
+                                    <span>СИСТЕМНИЙ КОНТРОЛЬ МУТАЦІЙ ТА СИНТЕЗУ AZR</span>
+                                    <span className="text-slate-900 mx-2">|</span>
+                                    <span className="text-rose-600 animate-pulse flex items-center gap-3 bg-rose-600/5 px-4 py-2 rounded-2xl border border-rose-600/20">
+                                        <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /> ОСТАННЯ МУТАЦІЯ: ТІЛЬКИ ЩО (v56.5.1)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <button 
+                                onClick={handleRefresh} 
+                                className={cn(
+                                    "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
+                                    refreshing && "animate-spin cursor-not-allowed opacity-50"
+                                )}
+                            >
+                                <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
+                            </button>
+                            <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+                                <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
+                                <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
+                                    <Sparkles size={24} /> ІНІЦІЮВАТИ_СИНТЕЗ_AZR
+                                </div>
+                                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
+                            </button>
+                        </div>
+                    </header>
 
-                            <TacticalCard variant="holographic" className="p-0 border-none h-[400px]">
-                                <TruthLedgerTerminal />
-                            </TacticalCard>
-                        </motion.div>
-                    )}
+                    {/* QUICK METRICS */}
+                    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        {[
+                            { label: 'ЦИКЛИ СИНТЕЗУ', value: '2,847', sub: 'Активні AZR ітерації', icon: RefreshCw, color: '#D4AF37' },
+                            { label: 'ТОПОЛОГІЯ МЕЖІ', value: '98.7%', sub: 'Здоров\'я ядра AZR', icon: ShieldCheck, color: '#D4AF37' },
+                            { label: 'МУТАЦІЙНІ РИЗИКИ', value: '0.0001', sub: 'Рівень системної ентропії', icon: Activity, color: '#E11D48' },
+                        ].map((m, i) => (
+                            <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
+                                <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
+                                    <m.icon size={160} style={{ color: m.color }} />
+                                </div>
+                                <div className="relative z-10 flex items-center justify-between">
+                                    <div className="space-y-4">
+                                        <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{m.label}</p>
+                                        <h3 className="text-6xl font-black text-white italic font-mono tracking-tighter leading-none">{m.value}</h3>
+                                        <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.3em]">{m.sub}</p>
+                                    </div>
+                                    <div className="p-6 bg-white/[0.02] border border-white/[0.05] rounded-3xl" style={{ color: m.color }}>
+                                        <m.icon size={32} />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </section>
 
-                    {activeTab === 'ledger' && (
-                        <motion.div
-                            key="ledger"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="h-[800px] space-y-8"
-                        >
-                            <TacticalCard variant="holographic" className="p-0 border-none h-full shadow-2xl">
-                                <TruthLedgerTerminal />
-                            </TacticalCard>
-                        </motion.div>
-                    )}
-
-                    {activeTab === 'trace' && (
-                        <motion.div
-                            key="trace"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="space-y-8"
-                        >
-                            <HoloContainer className="panel-3d p-8">
-                                <AZRImprovementTrace />
-                            </HoloContainer>
-                        </motion.div>
-                    )}
-
-                    {activeTab === 'deployment' && (
-                        <motion.div
-                            key="deployment"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="space-y-8"
-                        >
-                            <HoloContainer className="panel-3d p-8">
-                                <AZRDeploymentCenter />
-                            </HoloContainer>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Footer Status Bar */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex items-center justify-between px-10 py-6 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[32px] shadow-2xl relative overflow-hidden group"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 relative z-10">
-                        <span className="flex items-center gap-3">
-                            <Zap className="text-amber-500 animate-pulse" size={14} />
-                            СТАТУС: <span className="text-amber-400 font-black shadow-amber-500/20">ЯДРО СУВЕРЕННОГО СИНТЕЗУ</span>
-                        </span>
-                        <span>RUNTIME: 24H 56M</span>
-                        <span>НАСТУПНИЙ ЦИКЛ: 45S</span>
+                    {/* TABS SOVEREIGN */}
+                    <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl backdrop-blur-3xl mx-auto items-center">
+                        <span className="px-6 text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic border-r-2 border-white/5 h-10 flex items-center">MATRIX_SELECT</span>
+                        {tabs.map(mod => (
+                            <button 
+                                key={mod.id} onClick={() => setActiveTab(mod.id)}
+                                className={cn(
+                                    "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group/tab",
+                                    activeTab === mod.id 
+                                        ? "bg-yellow-500 border-yellow-400 text-black shadow-[0_0_50px_rgba(212,175,55,0.3)]" 
+                                        : "bg-transparent text-slate-600 border-transparent hover:bg-white/5 hover:text-slate-400"
+                                )}
+                            >
+                                {mod.icon}
+                                {mod.label}
+                            </button>
+                        ))}
                     </div>
-                    <div className="flex items-center gap-4 relative z-10">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">
-                            СИНТЕТИЧНИЙ КОНЦЕНСУС ДОСЯГНУТО
-                        </span>
+
+                    {/* CONTENT SOVEREIGN HUB */}
+                    <div className="grid grid-cols-12 gap-12">
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'overview' && (
+                                <motion.div
+                                    key="overview"
+                                    initial={{ opacity: 0, scale: 0.98, rotateX: 5 }}
+                                    animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="col-span-12 space-y-12 perspective-1000"
+                                >
+                                    <div className="grid grid-cols-12 gap-12">
+                                        <div className="col-span-12 xl:col-span-8 space-y-12">
+                                            <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl overflow-hidden relative">
+                                                <div className="absolute top-6 left-12 flex items-center gap-4 text-yellow-500">
+                                                    <Orbit size={18} className="animate-spin-slow" />
+                                                    <span className="text-[11px] font-black uppercase tracking-[0.5em] italic">EVOLUTIONARY_MAP // AZR_VISUALIZER</span>
+                                                </div>
+                                                <div className="pt-10">
+                                                   <EvolutionDashboard />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden">
+                                                    <h4 className="text-[12px] font-black text-yellow-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-white/[0.05] pb-8">
+                                                        <Landmark size={20} /> НЕЙРОННА КУЗНЯ
+                                                    </h4>
+                                                    <EvolutionForge />
+                                                </div>
+                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-rose-950/20 shadow-4xl space-y-10 relative overflow-hidden">
+                                                    <h4 className="text-[12px] font-black text-rose-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-rose-500/10 pb-8">
+                                                        <Gauge size={20} /> МЕТРИКИ ДОМІНУВАННЯ
+                                                    </h4>
+                                                    <div className="space-y-6 pt-4 italic">
+                                                        {[
+                                                            { label: 'ALGORITHMIC SPEED', val: '+24%', color: '#D4AF37', icon: Zap },
+                                                            { label: 'NEURAL PRECISION', val: '99.92%', color: '#D4AF37', icon: Target },
+                                                            { label: 'SECURITY ENTROPY', val: '0.0001', color: '#E11D48', icon: ShieldCheck },
+                                                            { label: 'RESOURCE SYNERGY', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
+                                                        ].map(m => (
+                                                            <div key={m.label} className="flex items-center justify-between p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] group/metric hover:border-white/10 transition-all shadow-inset">
+                                                                <div className="flex items-center gap-5">
+                                                                    <div className="p-4 rounded-2xl bg-black border-2 border-white/[0.05]" style={{ color: m.color }}>
+                                                                        <m.icon size={20} />
+                                                                    </div>
+                                                                    <span className="text-[12px] font-black text-white uppercase tracking-tighter">{m.label}</span>
+                                                                </div>
+                                                                <span className="text-xl font-black font-mono tracking-tighter" style={{ color: m.color }}>{m.val}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="col-span-12 xl:col-span-4 space-y-12 flex flex-col items-stretch">
+                                            <div className="flex-1 p-12 rounded-[5rem] bg-black border-2 border-yellow-500/40 shadow-4xl relative overflow-hidden flex flex-col items-center justify-center text-center group">
+                                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_60%)] pointer-events-none group-hover:scale-125 transition-transform duration-1000" />
+                                                <CyberOrb size={320} color="#D4AF37" intensity={0.8} pulse={true} className="drop-shadow-[0_0_80px_rgba(212,175,55,0.3)]" />
+                                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 space-y-4">
+                                                    <div className="text-[12px] font-black text-yellow-500/60 uppercase tracking-[0.8em] italic">EVOLUTION_ACTIVE</div>
+                                                    <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v56.5.GEN</div>
+                                                    <div className="p-4 bg-yellow-500/10 rounded-full border border-yellow-500/20 blur-sm animate-pulse w-32 h-32 absolute -z-10" />
+                                                </div>
+                                            </div>
+
+                                            <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden">
+                                                <h4 className="text-[12px] font-black text-yellow-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-white/[0.05] pb-8">
+                                                    <History size={20} /> ЖИВА ІСТОРІЯ ПАТЧІВ
+                                                </h4>
+                                                <div className="space-y-6 pt-4 max-h-[500px] overflow-y-auto no-scrollbar custom-scrollbar italic pr-4">
+                                                    {[
+                                                        { version: 'v56.5-ELITE.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
+                                                        { version: 'v56.4.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
+                                                        { version: 'v56.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
+                                                        { version: 'v55.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
+                                                        { version: 'v55.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
+                                                    ].map((v, i) => (
+                                                        <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
+                                                            <div className="flex items-center gap-5">
+                                                                <div className={cn(
+                                                                    "w-3 h-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,1)]",
+                                                                    v.type === 'critical' ? 'bg-rose-600 animate-pulse shadow-rose-600/20' :
+                                                                        v.type === 'major' ? 'bg-yellow-500 shadow-yellow-500/20' : 'bg-slate-500 shadow-slate-500/20'
+                                                                )} />
+                                                                <div className="space-y-1">
+                                                                    <p className="font-mono font-black text-white text-[10px] leading-none uppercase tracking-widest">{v.version}</p>
+                                                                    <p className="text-slate-800 text-[10px] uppercase font-black tracking-[0.1em]">{v.date}</p>
+                                                                </div>
+                                                            </div>
+                                                            <span className="px-4 py-2 bg-black border-2 border-white/[0.05] rounded-xl text-[9px] font-black text-slate-500 uppercase tracking-widest group-hover/v:text-yellow-500 group-hover/v:border-yellow-500/20 transition-all">
+                                                                +{v.changes} МУТАЦІЙ
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl relative overflow-hidden">
+                                        <div className="absolute top-6 left-12 flex items-center gap-4 text-rose-500 opacity-60">
+                                            <Binary size={18} />
+                                            <span className="text-[11px] font-black uppercase tracking-[0.5em] italic">TRUTH_LEDGER_STREAM // LIVE</span>
+                                        </div>
+                                        <div className="pt-10 h-[500px]">
+                                           <TruthLedgerTerminal />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {activeTab === 'ledger' && (
+                                <motion.div
+                                    key="ledger"
+                                    initial={{ opacity: 0, y: 50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    className="col-span-12 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl h-[900px] relative overflow-hidden"
+                                >
+                                     <div className="absolute top-8 left-12 flex items-center gap-6">
+                                        <div className="p-4 bg-yellow-500/10 border-2 border-yellow-500/20 rounded-2xl text-yellow-500">
+                                            <ShieldCheck size={32} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h2 className="text-2xl font-black text-white italic uppercase tracking-[0.4em]">SOVEREIGN_TRUTH_LEDGER</h2>
+                                            <p className="text-[10px] text-slate-800 font-black uppercase tracking-[0.3em] font-mono italic">IMMUTABLE_GENOME_RECORD_SERVICE</p>
+                                        </div>
+                                     </div>
+                                     <div className="pt-24 h-full">
+                                        <TruthLedgerTerminal />
+                                     </div>
+                                </motion.div>
+                            )}
+
+                            {activeTab === 'trace' && (
+                                <motion.div
+                                    key="trace"
+                                    initial={{ opacity: 0, x: 100 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -100 }}
+                                    className="col-span-12 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl min-h-[800px] relative overflow-hidden"
+                                >
+                                    <div className="absolute top-8 left-12 flex items-center gap-6">
+                                        <div className="p-4 bg-yellow-500/10 border-2 border-yellow-500/20 rounded-2xl text-yellow-500">
+                                            <GitBranch size={32} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h2 className="text-2xl font-black text-white italic uppercase tracking-[0.4em]">AZR_IMPROVEMENT_TRACE</h2>
+                                            <p className="text-[10px] text-slate-800 font-black uppercase tracking-[0.3em] font-mono italic">SYNTHETIC_EVOLUTION_PATH_QUERY</p>
+                                        </div>
+                                     </div>
+                                     <div className="pt-24 h-full">
+                                        <AZRImprovementTrace />
+                                     </div>
+                                </motion.div>
+                            )}
+
+                            {activeTab === 'deployment' && (
+                                <motion.div
+                                    key="deployment"
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.1 }}
+                                    className="col-span-12 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl min-h-[800px] relative overflow-hidden"
+                                >
+                                    <div className="absolute top-8 left-12 flex items-center gap-6">
+                                        <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-500">
+                                            <Rocket size={32} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h2 className="text-2xl font-black text-white italic uppercase tracking-[0.4em]">DEPLOYMENT_ORCHESTRATION</h2>
+                                            <p className="text-[10px] text-slate-800 font-black uppercase tracking-[0.3em] font-mono italic">MUTATION_PROPAGATION_PROTOCOL</p>
+                                        </div>
+                                     </div>
+                                     <div className="pt-24 h-full">
+                                        <AZRDeploymentCenter />
+                                     </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
-                </motion.div>
+
+                    {/* FOOTER STATUS SOVEREIGN */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col md:flex-row items-center justify-between px-16 py-8 bg-black border-4 border-white/[0.04] rounded-[4rem] shadow-4xl relative overflow-hidden group"
+                    >
+                         <div className="absolute inset-0 bg-yellow-500/[0.02] pointer-events-none group-hover:bg-yellow-500/[0.05] transition-colors" />
+                         <div className="flex items-center gap-12 text-[11px] font-black uppercase tracking-[0.4em] text-slate-700 relative z-10 italic">
+                             <div className="flex items-center gap-4 text-yellow-500">
+                                <Fingerprint size={20} />
+                                <span>STATUS: <span className="text-white">ЯДРО_ЕВОЛЮЦІЇ_АКТИВНЕ</span></span>
+                             </div>
+                             <div className="h-6 w-px bg-white/5 hidden md:block" />
+                             <div className="flex items-center gap-4">
+                                <Activity size={18} />
+                                <span>UPTIME: 99.982%</span>
+                             </div>
+                             <div className="h-6 w-px bg-white/5 hidden md:block" />
+                             <div className="flex items-center gap-4">
+                                <Database size={18} />
+                                <span>LEDGER_SIZE: 2.8PB</span>
+                             </div>
+                         </div>
+                         <div className="flex items-center gap-6 mt-8 md:mt-0 relative z-10 px-8 py-3 bg-emerald-500/5 rounded-2xl border-2 border-emerald-500/20">
+                             <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_20px_#10b981]" />
+                             <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-500 italic">СИНТЕТИЧНИЙ_КОНЦЕНСУС_OK</span>
+                         </div>
+                    </motion.div>
+                </div>
+
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
+                    .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8); }
+                    .animate-spin-slow { animation: spin 20s linear infinite; }
+                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                    .perspective-1000 { perspective: 1000px; }
+                    .no-scrollbar::-webkit-scrollbar { display: none; }
+                    .custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+                    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.1); border-radius: 20px; border: 3px solid black; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.2); }
+                    .backdrop-blur-4xl { backdrop-filter: blur(120px) saturate(180%); }
+                `}} />
             </div>
-
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                .panel-3d {
-                    transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
-                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                }
-                .panel-3d:hover {
-                    transform: perspective(1000px) rotateX(1deg) rotateY(-0.5deg) translateY(-5px);
-                }
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(245, 158, 11, 0.2);
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(245, 158, 11, 0.4);
-                }
-            `}} />
-        </div>
+        </PageTransition>
     );
 };
 

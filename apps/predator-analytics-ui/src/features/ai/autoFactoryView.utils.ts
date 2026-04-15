@@ -2,7 +2,7 @@ import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/s
 
 type UnknownRecord = Record<string, unknown>;
 
-export type AutoFactoryTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate';
+export type AutoFactoryTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate' | 'gold';
 
 export interface AutoFactoryMetricCard {
   label: string;

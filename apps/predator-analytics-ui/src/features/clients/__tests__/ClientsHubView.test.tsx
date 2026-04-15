@@ -27,6 +27,9 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     sourceLabel: 'localhost:9080/api/v1',
     sourceType: 'local',
     statusLabel: 'Зʼєднання активне',
+    nodes: [],
+    healingProgress: 100,
+    activeFailover: false,
   }),
 }));
 
@@ -76,6 +79,7 @@ const statusPayload: SystemStatusResponse = {
   version: '55.1',
   environment: 'dev',
   uptime: '2d',
+  last_sync: '2026-03-30T09:15:00Z',
   services: [],
   summary: {
     total: 12,
@@ -113,6 +117,7 @@ const statsPayload: SystemStatsResponse = {
   indexing_rate: 16,
   total_indices: 28,
   storage_gb: 412,
+  last_sync: '2026-03-30T09:15:00Z',
   timestamp: '2026-03-30T09:16:30.000Z',
 };
 

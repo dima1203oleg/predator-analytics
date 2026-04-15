@@ -17,7 +17,7 @@ import {
   Target, Zap, Fingerprint, Eye, ArrowRight, Activity, Database,
   Box, Radar, Siren, RefreshCcw, Scan, Layout, Share2
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

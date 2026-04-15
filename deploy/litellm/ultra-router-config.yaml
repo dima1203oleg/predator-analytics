@@ -112,6 +112,22 @@ model_list:
       api_key: ${GROQ_API_KEY_10}
 
   # ==============================================================
+  # ELITE — Вершина інтелекту 2026 (Llama 4 & Gemma 4)
+  # ==============================================================
+  - model_name: ultra-router-elite
+    litellm_params:
+      model: groq/llama-4-70b
+      api_key: ${GROQ_API_KEY}
+  - model_name: ultra-router-elite
+    litellm_params:
+      model: ollama/gemma4:latest
+      api_base: http://194.177.1.240:11434
+  - model_name: ultra-router-elite
+    litellm_params:
+      model: ollama/qwen3.5:latest
+      api_base: http://194.177.1.240:11434
+
+  # ==============================================================
   # REASONING — Глибокий аналіз та міркування
   # ==============================================================
   - model_name: ultra-router-reasoning
@@ -119,6 +135,11 @@ model_list:
       model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
       api_key: ${TOGETHER_API_KEY}
       api_base: https://api.together.xyz/v1
+
+  - model_name: ultra-router-reasoning
+    litellm_params:
+      model: ollama/deepseek-r1:latest
+      api_base: http://194.177.1.240:11434
 
   # ==============================================================
   # CHAT — Загальний чат
@@ -152,6 +173,7 @@ litellm_settings:
     - {"ultra-router-fast": ["ultra-router-coding"]}
     - {"ultra-router-reasoning": ["ultra-router-coding"]}
     - {"ultra-router-chat": ["ultra-router-fast"]}
+    - {"ultra-router-elite": ["ultra-router-reasoning"]}
 
 router_settings:
   routing_strategy: "least-busy"

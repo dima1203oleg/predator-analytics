@@ -24,9 +24,9 @@ export interface SuperIntelligenceContextType {
 
 export const SuperIntelligenceContext = createContext<SuperIntelligenceContextType | undefined>(undefined);
 const INITIAL_BRAIN_NODES: BrainNodeState[] = [
-    { id: 'gemini', name: 'Gemini 2.0 Flash', role: 'Архітектор', avatar: 'G', color: '#3b82f6', status: 'IDLE' },
-    { id: 'deepseek-v3', name: 'DeepSeek V3', role: 'Аналітик', avatar: 'DV', color: '#a855f7', status: 'IDLE' },
-    { id: 'qwen-2-5', name: 'Qwen 2.5', role: 'Дата-саєнтист', avatar: 'Q', color: '#ef4444', status: 'IDLE' },
+    { id: 'gemini', name: 'Gemini 2.0 Flash', role: 'Архітектор', avatar: 'G', color: '#D4AF37', status: 'IDLE' },
+    { id: 'deepseek-v3', name: 'DeepSeek V3', role: 'Аналітик', avatar: 'DV', color: '#E11D48', status: 'IDLE' },
+    { id: 'qwen-2-5', name: 'Qwen 2.5', role: 'Дата-саєнтист', avatar: 'Q', color: '#fbbf24', status: 'IDLE' },
     { id: 'gpt-4o', name: 'GPT-4o', role: 'Критик', avatar: 'O', color: '#10b981', status: 'IDLE' },
     { id: 'claude-3-5', name: 'Claude 3.5 Sonnet', role: 'Безпека', avatar: 'C', color: '#f97316', status: 'IDLE' },
     { id: 'llama-3-1', name: 'Llama 3.1 (Local)', role: 'Приватність', avatar: 'L', color: '#22c55e', status: 'IDLE' },
@@ -60,7 +60,7 @@ const INITIAL_SCORES: ArbitrationScore[] = [
 
 // Початкові логи для візалізації потоку
 const INITIAL_LOGS: SIContextLog[] = [
-    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v56.2-TITAN...' },
+    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v56.5-ELITE...' },
     { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Нейронне ядро ініціалізовано. Квантові зв\'язки встановлено.' },
     { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Векторна база даних підключена (Шард 0-5). Індексація 14.2 млн векторів.' },
     { id: 'init-3', timestamp: '10:00:05', type: 'DEBATE', source: 'GEMINI', message: 'Архітектура системи стабільна. Очікую нових векторів загроз для аналізу.' },
@@ -79,7 +79,7 @@ const INITIAL_ARTIFACTS: RAGArtifact[] = [
 
 // Rich Boot Code for the Typewriter Effect
 const INITIAL_NAS_BOOT_CODE = `
-// KERNEL: SINGULARITY v45.0.1
+// KERNEL: SINGULARITY v56.5-ELITE
 // TARGET: OPTIMIZATION_MATRIX
 // -----------------------------------
 import torch
@@ -211,7 +211,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const [isActive, setIsActive] = useState(false);
     const [stage, setStage] = useState<SuperLoopStage>('IDLE');
     const [logs, setLogs] = useState<SIContextLog[]>([
-        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Підключено до Predator v56 | Нейронна Аналітика. Очікування потоку...' }
+        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Підключено до Predator v56.5-ELITE | Нейронна Аналітика. Очікування потоку...' }
     ]);
     const [brainNodes, setBrainNodes] = useState<BrainNodeState[]>(INITIAL_BRAIN_NODES);
     const [activeAgents, setActiveAgents] = useState<UnifiedAgentState[]>(INITIAL_AGENTS);
@@ -306,7 +306,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
                             name: p.name,
                             role: existing?.role || (idx === 0 ? 'АРБІТР' : 'ЕКСПЕРТ'),
                             avatar: p.name[0],
-                            color: existing?.color || (p.id === 'google' ? '#3b82f6' : p.id === 'openai' ? '#10b981' : '#a855f7'),
+                            color: existing?.color || (p.id === 'google' ? '#D4AF37' : p.id === 'openai' ? '#10b981' : '#E11D48'),
                             status: 'IDLE',
                             load: sysMetrics ? (idx === 0 ? (sysMetrics as any).cpu_usage || 0 : Math.max(10, ((sysMetrics as any).cpu_usage || 20) - 15)) : 0
                         };
@@ -395,5 +395,3 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
         </SuperIntelligenceContext.Provider>
     );
 };
-
-// end of file

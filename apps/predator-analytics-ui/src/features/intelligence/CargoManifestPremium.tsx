@@ -1,9 +1,11 @@
 /**
- * 📦 CARGO MANIFEST FORENSIC // МИТНА ФОРЕНЗИКА | v56.2-TITAN
+ * 📦 CARGO MANIFEST FORENSIC // МИТНА ФОРЕНЗИКА | v56.5-ELITE
  * PREDATOR Analytics — Deep Manifest Analysis & Fraud Detection
  * 
  * Аналіз митних декларацій, вантажних маніфестів та виявлення невідповідностей.
  * Детекція схем з підміни кодів УКТЗЕД та заниження митної вартості.
+ * 
+ * Sovereign Power Design · Tactical · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -14,14 +16,13 @@ import {
   FileSearch, ShieldAlert, AlertTriangle, CheckCircle, Search, 
   Filter, Download, ArrowRight, Layers, Database, Sparkles,
   Zap, Package, Truck, Ship, Anchor, Fingerprint, Activity,
-  Scale, Crosshair, BarChart3, ChevronRight, List
+  Scale, Crosshair, BarChart3, ChevronRight, List, Siren,
+  Eye, Target, ShieldCheck, RefreshCw, Box, History
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
-import { ViewHeader } from '@/components/ViewHeader';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -86,218 +87,368 @@ const MOCK_MANIFESTS: ManifestItem[] = [
 export default function CargoManifestPremium() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedManifest, setSelectedManifest] = useState<ManifestItem | null>(MOCK_MANIFESTS[0]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const stats = useMemo(() => ([
-    { label: 'ПЕРЕВІРЕНО_МАНІФЕСТІВ', value: '1,429', icon: <FileSearch size={14} />, color: 'primary' as const },
-    { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '184', icon: <ShieldAlert size={14} />, color: 'danger' as const, animate: true },
-    { label: 'ЗАГАЛЬНИЙ_РИЗИК', value: '47%', icon: <Activity size={14} />, color: 'warning' as const }
-  ]), []);
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await new Promise(r => setTimeout(r, 1000));
+    setRefreshing(false);
+  };
+
+  const filteredManifests = useMemo(() => {
+    return MOCK_MANIFESTS.filter(m => 
+      m.manifestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.consignee.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40 px-4 xl:px-12">
         <AdvancedBackground />
-        <CyberGrid color="rgba(244, 63, 94, 0.03)" />
+        <CyberGrid color="rgba(225, 29, 72, 0.04)" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
 
-        <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-12 space-y-12">
+        <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-           <ViewHeader
-             title={
-               <div className="flex items-center gap-10">
-                  <div className="relative group">
-                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-rose-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Fingerprint size={42} className="text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
-                     </div>
-                  </div>
-                  <div className="space-y-2">
-                     <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-rose-600/10 border border-rose-600/20 text-rose-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                          MANIFEST_FORENSIC // DEEP_SCAN
-                        </span>
-                        <div className="h-px w-10 bg-rose-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
-                     </div>
-                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                       МИТНА <span className="text-rose-600 underline decoration-rose-600/20 decoration-8 italic uppercase">ФОРЕНЗИКА</span>
-                     </h1>
-                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        АНАЛІЗ ВАНТАЖНИХ МАНІФЕСТІВ ТА ДЕТЕКЦІЯ ШАХРАЙСТВА
-                     </p>
-                  </div>
-               </div>
-             }
-             stats={stats}
-             actions={
-               <div className="flex gap-4">
-                  <button className="px-10 py-5 bg-rose-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 shadow-2xl transition-all flex items-center gap-4">
-                     <Crosshair size={20} /> ЗАПУСТИТИ_СКАНУВАННЯ
-                  </button>
-               </div>
-             }
-           />
+          {/* HEADER ELITE HUD */}
+          <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-12 py-10 border-b border-white/[0.04]">
+            <div className="flex items-center gap-12">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-rose-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                <div className="relative p-8 bg-black border-2 border-rose-600/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all duration-700">
+                  <Fingerprint size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-6">
+                  <span className="bg-rose-600/10 border border-rose-600/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                    MANIFEST_FORENSIC // DEEP_SCAN_SYSTEM
+                  </span>
+                  <div className="h-px w-16 bg-rose-600/20" />
+                  <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                </div>
+                <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none text-shadow-elite">
+                  МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФОРЕНЗИКА</span>
+                </h1>
+                <div className="flex items-center gap-6 text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-8 italic border-l-4 border-rose-600/30 pl-10 opacity-95">
+                  <FileSearch size={16} className="text-rose-500" /> 
+                  <span>АНАЛІЗ ВАНТАЖНИХ МАНІФЕСТІВ ТА ПРЕДИКЦІЯ ШАХРАЙСТВА</span>
+                  <span className="text-slate-900 mx-2">|</span>
+                  <span className="text-yellow-500 animate-pulse flex items-center gap-3 bg-yellow-500/5 px-4 py-2 rounded-2xl border border-yellow-500/20">
+                     <Activity size={16} /> АРХІТЕКТУРА_РИЗИКУ: КРИТИЧНО
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-6">
+               <button 
+                onClick={handleRefresh} 
+                className={cn(
+                  "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-rose-500 transition-all shadow-4xl group/btn",
+                  refreshing && "animate-spin cursor-not-allowed opacity-50"
+                )}
+              >
+                <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
+              </button>
+              <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+                <div className="absolute inset-0 bg-gradient-to-r from-rose-700 to-rose-600 transition-transform duration-500 group-hover/main:scale-105" />
+                <div className="relative flex items-center gap-6 text-white font-black uppercase italic tracking-[0.3em] text-[12px]">
+                  <Crosshair size={24} /> ЗАПУСТИТИ_СКАНУВАННЯ
+                </div>
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
+              </button>
+            </div>
+          </header>
 
-           <div className="grid grid-cols-12 gap-10">
-              
-              {/* MANIFEST LIST */}
-              <div className="col-span-12 xl:col-span-4 space-y-8">
-                 <div className="relative group">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-rose-500 transition-colors" size={20} />
-                    <input 
-                      type="text" placeholder="ID МАНІФЕСТА АБО КОМПАНІЯ..."
-                      value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                      className="w-full bg-black border-2 border-white/[0.04] p-5 pl-16 rounded-2xl text-sm font-black text-white italic tracking-widest focus:border-rose-500/40 outline-none transition-all placeholder:text-slate-800"
-                    />
-                 </div>
+          {/* QUICK METRICS */}
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {[
+              { label: 'ПЕРЕВІРЕНО_МАНІФЕСТІВ', value: '1,842', sub: 'За останні 24 години', icon: FileSearch, color: '#D4AF37' },
+              { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '291', sub: 'Критичні розбіжності', icon: ShieldAlert, color: '#E11D48' },
+              { label: 'ЗАГАЛЬНИЙ_РИЗИК_UA', value: '54%', sub: 'Середньоринковий показник', icon: Activity, color: '#E11D48' },
+            ].map((m, i) => (
+              <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
+                <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
+                  <m.icon size={160} style={{ color: m.color }} />
+                </div>
+                <div className="relative z-10 flex items-center justify-between">
+                   <div className="space-y-4">
+                      <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{m.label}</p>
+                      <h3 className="text-6xl font-black text-white italic font-mono tracking-tighter leading-none">{m.value}</h3>
+                      <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.3em]">{m.sub}</p>
+                   </div>
+                   <div className="p-6 bg-white/[0.02] border border-white/[0.05] rounded-3xl" style={{ color: m.color }}>
+                      <m.icon size={32} />
+                   </div>
+                </div>
+              </div>
+            ))}
+          </section>
 
-                 <div className="space-y-4 max-h-[700px] overflow-y-auto no-scrollbar pr-2">
-                    {MOCK_MANIFESTS.map(m => (
-                      <button 
-                        key={m.id} onClick={() => setSelectedManifest(m)}
-                        className={cn(
-                          "w-full p-6 bg-black border-2 rounded-[2.5rem] transition-all text-left flex items-center justify-between group",
-                          selectedManifest?.id === m.id ? "border-rose-600/40 bg-rose-600/[0.02]" : "border-white/[0.04] hover:border-white/10"
-                        )}
-                      >
-                         <div className="flex items-center gap-5">
-                            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border", m.status === 'CRITICAL' ? "bg-rose-500/10 border-rose-500/30 text-rose-500" : m.status === 'WARNING' ? "bg-amber-500/10 border-amber-500/30 text-amber-500" : "bg-emerald-500/10 border-emerald-500/30 text-emerald-500")}>
-                               <Package size={20} />
-                            </div>
-                            <div>
-                               <h4 className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">{m.manifestId}</h4>
-                               <p className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest truncate max-w-[180px]">{m.consignee}</p>
-                            </div>
-                         </div>
-                         <div className="text-right">
-                            <p className={cn("text-xl font-black font-mono tracking-tighter italic", m.riskScore > 80 ? "text-rose-500" : "text-emerald-500")}>{m.riskScore}%</p>
-                            <p className="text-[8px] font-black text-slate-800 uppercase italic">RISK_SCORE</p>
-                         </div>
-                      </button>
-                    ))}
-                 </div>
+          <div className="grid grid-cols-12 gap-12">
+            
+            {/* MANIFEST LIST HUD */}
+            <div className="col-span-12 xl:col-span-4 space-y-10">
+              <div className="relative group w-full">
+                <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-rose-500 transition-colors" size={24} />
+                <input
+                  type="text"
+                  placeholder="ID МАНІФЕСТА АБО КОМПАНІЯ..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-20 pr-10 py-7 bg-black/60 border-2 border-white/[0.04] rounded-[2.2rem] text-white placeholder-slate-800 focus:outline-none focus:border-rose-500/50 transition-all font-black text-lg italic tracking-tight shadow-inset"
+                />
               </div>
 
-              {/* MANIFEST DETAILS */}
-              <div className="col-span-12 xl:col-span-8 space-y-10">
-                 <AnimatePresence mode="wait">
-                    {selectedManifest && (
-                      <motion.div key={selectedManifest.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="space-y-10">
-                         <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 opacity-5"><Scale size={200} className="text-rose-500" /></div>
-                            <div className="flex items-center justify-between border-b border-white/[0.04] pb-8 relative z-10">
-                               <div className="space-y-1">
-                                  <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">{selectedManifest.manifestId}</h3>
-                                  <p className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest flex items-center gap-3">
-                                     <Activity size={12} className="text-rose-500" /> FORENSIC_DOSSIER_ID: {selectedManifest.id.toUpperCase()}
-                                  </p>
-                               </div>
-                               <button className="p-4 bg-rose-600/10 border border-rose-500/30 rounded-xl text-rose-500 hover:bg-rose-600 hover:text-white transition-all">
-                                  <Download size={24} />
-                               </button>
-                            </div>
+              <div className="space-y-6 max-h-[850px] overflow-y-auto no-scrollbar custom-scrollbar pr-4">
+                {filteredManifests.map((m, idx) => (
+                  <motion.button 
+                    key={m.id} 
+                    onClick={() => setSelectedManifest(m)}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className={cn(
+                      "w-full p-8 bg-black border-2 rounded-[3rem] transition-all duration-500 text-left flex items-center justify-between group relative overflow-hidden",
+                      selectedManifest?.id === m.id 
+                        ? "border-rose-500/40 bg-rose-500/[0.04] shadow-[0_0_50px_rgba(225,29,72,0.1)]" 
+                        : "border-white/[0.03] hover:border-white/10"
+                    )}
+                  >
+                     <div className="flex items-center gap-6 relative z-10">
+                        <div className={cn(
+                          "w-16 h-16 rounded-2xl flex items-center justify-center border-2 transition-all duration-500", 
+                          m.status === 'CRITICAL' ? "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.3)]" : 
+                          m.status === 'WARNING' ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" : 
+                          "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
+                        )}>
+                           <Package size={28} />
+                        </div>
+                        <div className="space-y-1">
+                           <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none group-hover:text-rose-500 transition-colors">{m.manifestId}</h4>
+                           <p className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest truncate max-w-[200px]">{m.consignee}</p>
+                        </div>
+                     </div>
+                     <div className="text-right relative z-10">
+                        <p className={cn("text-3xl font-black font-mono tracking-tighter italic leading-none shadow-sm", m.riskScore > 80 ? "text-rose-500" : m.riskScore > 50 ? "text-yellow-500" : "text-emerald-500")}>{m.riskScore}%</p>
+                        <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-widest mt-1">RISK_INDEX</p>
+                     </div>
+                     {selectedManifest?.id === m.id && (
+                       <motion.div layoutId="activeInd" className="absolute left-0 top-0 bottom-0 w-2 bg-rose-500" />
+                     )}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
-                               <div className="space-y-6">
-                                  <div className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-3xl space-y-2">
-                                     <p className="text-[9px] font-black text-slate-700 uppercase italic">ОТРИМУВАЧ_ВАНТАЖУ</p>
-                                     <p className="text-xl font-black text-white italic uppercase tracking-tighter">{selectedManifest.consignee}</p>
-                                  </div>
-                                  <div className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-3xl space-y-2">
-                                     <p className="text-[9px] font-black text-slate-700 uppercase italic">ВІДПРАВНИК_ВАНТАЖУ</p>
-                                     <p className="text-xl font-black text-white italic uppercase tracking-tighter">{selectedManifest.consignor}</p>
-                                  </div>
-                               </div>
-                               <div className="space-y-6">
-                                  <div className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-3xl space-y-2">
-                                     <p className="text-[9px] font-black text-slate-700 uppercase italic">ОПИС_ТОВАРУ (ДЕКЛАРОВАНИЙ)</p>
-                                     <p className="text-sm font-black text-slate-300 italic uppercase">"{selectedManifest.goodsDescription}"</p>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-4">
-                                     <div className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-3xl space-y-1">
-                                        <p className="text-[9px] font-black text-slate-700 uppercase italic">ВАГА_KG</p>
-                                        <p className="text-xl font-black text-white italic font-mono">{selectedManifest.weight.toLocaleString()}</p>
-                                     </div>
-                                     <div className="p-6 bg-white/[0.01] border border-white/[0.04] rounded-3xl space-y-1">
-                                        <p className="text-[9px] font-black text-slate-700 uppercase italic">ВАРТІСТЬ_USD</p>
-                                        <p className="text-xl font-black text-emerald-500 italic font-mono">${selectedManifest.declaredValue.toLocaleString()}</p>
-                                     </div>
-                                  </div>
-                               </div>
-                            </div>
-
-                            {selectedManifest.anomalies.length > 0 && (
-                              <div className="relative z-10 p-8 rounded-[2.5rem] bg-rose-500/[0.02] border border-rose-500/20 space-y-4">
-                                 <h4 className="text-[10px] font-black text-rose-500 uppercase italic tracking-widest flex items-center gap-3">
-                                    <Siren size={16} /> ВИЯВЛЕНІ_АНОМАЛІЇ_СУБ'ЄКТА
-                                 </h4>
-                                 <div className="flex flex-wrap gap-4">
-                                    {selectedManifest.anomalies.map((a, i) => (
-                                      <div key={i} className="px-5 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black text-rose-400 italic uppercase tracking-widest">
-                                         {a}
-                                      </div>
-                                    ))}
+            {/* DASHBOARD ELITE VIEW */}
+            <div className="col-span-12 xl:col-span-8">
+              <AnimatePresence mode="wait">
+                {selectedManifest ? (
+                  <motion.div 
+                    key={selectedManifest.id} 
+                    initial={{ opacity: 0, scale: 0.98, rotateX: 5 }} 
+                    animate={{ opacity: 1, scale: 1, rotateX: 0 }} 
+                    exit={{ opacity: 0, scale: 0.95 }} 
+                    className="space-y-12 perspective-1000"
+                  >
+                     <div className="p-16 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-16 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-1000 rotate-6 group-hover:rotate-0">
+                          <Scale size={320} className="text-rose-500" />
+                        </div>
+                        
+                        <div className="flex items-center justify-between border-b-2 border-white/[0.04] pb-12 relative z-10">
+                           <div className="flex gap-8 items-center">
+                              <div className="p-6 bg-rose-600/10 border-2 border-rose-600/20 rounded-[2.5rem] text-rose-500 shadow-2xl">
+                                 <Fingerprint size={42} />
+                              </div>
+                              <div className="space-y-2">
+                                 <h3 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-none">{selectedManifest.manifestId}</h3>
+                                 <div className="flex items-center gap-4">
+                                    <span className="text-[10px] font-black text-yellow-500 bg-yellow-500/5 border border-yellow-500/20 px-4 py-1.5 rounded-xl uppercase tracking-widest italic drop-shadow-sm">
+                                       FORENSIC_DOSSIER // {selectedManifest.id.toUpperCase()}
+                                    </span>
+                                    <div className="w-2 h-2 rounded-full bg-slate-800" />
+                                    <span className="text-[10px] text-slate-700 font-black uppercase italic tracking-[0.2em] font-mono">STATUS: <span className={selectedManifest.status === 'CRITICAL' ? 'text-rose-600 animate-pulse' : 'text-emerald-500'}>{selectedManifest.status}</span></span>
                                  </div>
                               </div>
-                            )}
+                           </div>
+                           <div className="flex gap-4">
+                              <button className="p-6 bg-black border-2 border-white/[0.04] rounded-[1.8rem] text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl group/btn2">
+                                 <Download size={28} className="group-hover/btn2:scale-110 transition-transform" />
+                              </button>
+                             <button className="p-6 bg-rose-600 text-white rounded-[1.8rem] transition-all shadow-4xl hover:bg-rose-500 hover:scale-105 active:scale-95 duration-500 flex items-center justify-center">
+                                 <Layers size={28} />
+                              </button>
+                           </div>
+                        </div>
 
-                            <div className="relative z-10 pt-10 border-t border-white/[0.04] flex items-center gap-10">
-                               <div className="flex items-center gap-4">
-                                  <div className="w-4 h-4 rounded-full bg-rose-500 animate-pulse" />
-                                  <p className="text-[10px] font-black text-slate-500 uppercase italic tracking-widest">DEEP_FORENSIC_ANALYSIS_IN_PROGRESS...</p>
-                               </div>
-                               <div className="flex-1 h-px bg-white/[0.04]" />
-                               <button className="px-10 py-5 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-slate-200 shadow-2xl transition-all">
-                                  ГЕНЕРУВАТИ_ЗВІТ
-                                </button>
-                            </div>
-                         </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10 pt-16">
+                           <div className="space-y-10">
+                              <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
+                                 <div className="absolute top-6 right-8 text-slate-900 group-hover/card:text-yellow-500/10 transition-colors"><Truck size={42} /></div>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОТРИМУВАЧ_ВАНТАЖУ_UA</p>
+                                 <p className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedManifest.consignee}</p>
+                              </div>
+                              <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
+                                 <div className="absolute top-6 right-8 text-slate-900 group-hover/card:text-rose-500/10 transition-colors"><Ship size={42} /></div>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВІДПРАВНИК_ВАНТАЖУ_INTL</p>
+                                 <p className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedManifest.consignor}</p>
+                              </div>
+                           </div>
+                           <div className="flex flex-col gap-10">
+                              <div className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset flex-1">
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОПИС_ТОВАРУ (ДЕКЛАРОВАНИЙ)</p>
+                                 <p className="text-xl font-black text-slate-400 italic uppercase leading-relaxed font-mono">"{selectedManifest.goodsDescription}"</p>
+                              </div>
+                              <div className="grid grid-cols-2 gap-8">
+                                 <div className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] space-y-2 shadow-inset group/val transition-all">
+                                    <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВАГА_KG</p>
+                                    <p className="text-5xl font-black text-white italic font-mono tracking-tighter group-hover/val:text-yellow-500 transition-colors">{selectedManifest.weight.toLocaleString()}</p>
+                                 </div>
+                                 <div className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] space-y-2 shadow-inset group/val transition-all">
+                                    <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ВАРТІСТЬ_USD</p>
+                                    <p className="text-5xl font-black text-emerald-500 italic font-mono tracking-tighter group-hover/val:scale-105 transition-transform duration-700">${selectedManifest.declaredValue.toLocaleString()}</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
 
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <TacticalCard variant="cyber" className="p-8 rounded-[2.5rem] border-white/[0.04] bg-black shadow-2xl space-y-4">
-                               <h5 className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest">ХРОНОЛОГІЯ_СУБ'ЄКТА</h5>
-                               <div className="space-y-4">
-                                  {[1,2,3].map(i => (
-                                    <div key={i} className="flex items-center gap-4 text-xs">
-                                       <div className="w-2 h-2 rounded-full bg-slate-800" />
-                                       <p className="text-slate-500 font-black italic">202{6-i}/03/2{i} // МАНІФЕСТ_OK</p>
-                                    </div>
-                                  ))}
-                               </div>
-                            </TacticalCard>
-                            <TacticalCard variant="holographic" className="p-8 rounded-[2.5rem] border-rose-500/20 bg-rose-500/[0.02] shadow-2xl space-y-4">
-                               <h5 className="text-[9px] font-black text-rose-500 uppercase italic tracking-widest">AI_ПРЕДИКЦІЯ_РИЗИКУ</h5>
-                               <p className="text-xs text-slate-400 font-black italic">Ймовірність заниження вартості: <span className="text-rose-500">92.4%</span></p>
-                               <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
-                                  <div className="h-full bg-rose-600 w-[92%]" />
-                               </div>
-                            </TacticalCard>
-                            <TacticalCard variant="cyber" className="p-8 rounded-[2.5rem] border-white/[0.04] bg-black shadow-2xl space-y-4">
-                               <h5 className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest">ПОРІВНЯННЯ_HSCODE</h5>
-                               <div className="space-y-2">
-                                  <p className="text-[10px] font-black text-slate-500 italic">ДЕКЛАРОВАНО: 8541</p>
-                                  <p className="text-[10px] font-black text-emerald-500 italic">РЕКОМЕНДОВАНО: 8542</p>
-                               </div>
-                            </TacticalCard>
-                         </div>
-                      </motion.div>
-                    )}
-                 </AnimatePresence>
-              </div>
+                        {selectedManifest.anomalies.length > 0 && (
+                          <div className="relative z-10 mt-16 p-12 rounded-[4rem] bg-rose-600/[0.02] border-4 border-rose-600/30 space-y-8 shadow-4xl group/anom">
+                             <div className="flex items-center justify-between border-b-2 border-rose-500/10 pb-6">
+                                <h4 className="text-[13px] font-black text-rose-500 uppercase italic tracking-[0.5em] flex items-center gap-6">
+                                   <Siren size={32} className="animate-pulse shadow-rose-600" /> ВИЯВЛЕНІ_АНТРОПОГЕННІ_АНОМАЛІЇ
+                                </h4>
+                                <span className="bg-rose-600/20 text-rose-500 px-6 py-2 rounded-2xl text-[10px] font-black italic tracking-widest border border-rose-600/30 shadow-lg animate-bounce">УВАГА</span>
+                             </div>
+                             <div className="flex flex-wrap gap-6 pt-4">
+                                {selectedManifest.anomalies.map((a, i) => (
+                                  <div key={i} className="px-8 py-4 bg-rose-600/10 border-2 border-rose-600/30 rounded-[1.8rem] text-[12px] font-black text-rose-500 italic uppercase tracking-[0.2em] shadow-inner group-hover/anom:scale-105 transition-transform duration-500">
+                                     {a}
+                                  </div>
+                                ))}
+                             </div>
+                             <p className="text-[11px] text-slate-700 font-mono italic opacity-60 pt-4 uppercase tracking-widest border-t-2 border-white/[0.02] mt-4">
+                                СИСТЕМА ДЕТЕКТУВАЛА ПРЯМІ ОЗНАКИ МАНІПУЛЯЦІЇ З МИТНОЮ ВАРТІСТЮ // ПОТРІБНА ДОДАТКОВА ВЕРІФІКАЦІЯ
+                             </p>
+                          </div>
+                        )}
 
-           </div>
+                        <div className="relative z-10 mt-16 pt-12 border-t-2 border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-12">
+                           <div className="flex items-center gap-6">
+                              <div className="w-5 h-5 rounded-full bg-rose-600 animate-pulse shadow-[0_0_20px_#e11d48]" />
+                              <div className="space-y-1">
+                                 <p className="text-[11px] font-black text-yellow-500 uppercase italic tracking-widest leading-none">FORENSIC_CORE_ACTIVE</p>
+                                 <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-[0.4em]">DEEP_SCAN_IN_STABLE_STATE</p>
+                              </div>
+                           </div>
+                           <div className="flex gap-6 w-full md:w-auto">
+                             <button className="flex-1 md:flex-none px-12 py-6 bg-black border-2 border-white/[0.05] text-slate-600 hover:text-white hover:border-white/20 rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-xl transition-all">
+                                ЗБЕРЕГТИ_DOSSIER
+                             </button>
+                             <button className="flex-1 md:flex-none px-12 py-6 bg-white text-black rounded-[2.2rem] text-[11px] font-black uppercase tracking-[0.4em] italic hover:bg-slate-200 shadow-4xl active:scale-95 transition-all duration-300">
+                                ГЕНЕРУВАТИ_ПОВНИЙ_ЗВІТ
+                             </button>
+                           </div>
+                        </div>
+                     </div>
+
+                     {/* BOTTOM TACTICAL GRID */}
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-4">
+                        <div className="p-10 rounded-[4rem] border-2 border-white/[0.04] bg-black shadow-4xl space-y-8 relative overflow-hidden group/sub">
+                           <div className="absolute top-6 right-8 text-slate-900 group-hover/sub:text-yellow-500/10 transition-colors"><History size={32} /></div>
+                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">ХРОНОЛОГІЯ_СУБ'ЄКТА</h5>
+                           <div className="space-y-6 pt-4">
+                              {[1,2,3].map(i => (
+                                <div key={i} className="flex items-center gap-6 group/item transition-all cursor-crosshair">
+                                   <div className="w-3 h-3 rounded-full bg-slate-900 border border-white/5 group-hover/item:bg-yellow-500 transition-colors shadow-sm" />
+                                   <div className="space-y-1">
+                                      <p className="text-white font-black italic uppercase text-[12px] tracking-tight truncate max-w-[150px]">МАНІФЕСТ_OK // 2290{i}</p>
+                                      <p className="text-slate-800 font-mono text-[9px] italic">202{6-i}/04/1{i}</p>
+                                   </div>
+                                </div>
+                              ))}
+                           </div>
+                        </div>
+                        
+                        <div className="p-10 rounded-[4rem] border-2 border-rose-600/20 bg-rose-600/[0.02] shadow-4xl space-y-8 relative overflow-hidden group/ai2">
+                           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none" />
+                           <h5 className="text-[12px] font-black text-rose-500 uppercase italic tracking-[0.5em] border-b border-rose-500/10 pb-6">AI_ПРЕДИКЦІЯ_РИЗИКУ</h5>
+                           <div className="space-y-6 pt-4 relative z-10">
+                              <div className="flex justify-between items-end">
+                                 <p className="text-[12px] text-slate-400 font-black italic uppercase">Ймовірність_СХЕМИ:</p>
+                                 <span className="text-4xl font-black text-rose-500 font-mono tracking-tighter italic shadow-sm">94.1%</span>
+                              </div>
+                              <div className="w-full h-4 bg-slate-950 rounded-full overflow-hidden border border-white/5 p-0.5">
+                                 <motion.div 
+                                    initial={{ width: 0 }} 
+                                    animate={{ width: '94.1%' }} 
+                                    transition={{ duration: 1.5, ease: "easeOut" }} 
+                                    className="h-full bg-gradient-to-r from-rose-700 to-rose-500 rounded-full shadow-[0_0_15px_rgba(225,29,72,0.5)]" 
+                                 />
+                              </div>
+                              <p className="text-[10px] text-slate-700 italic font-black uppercase tracking-[0.2em] text-center bg-rose-950/20 py-2 rounded-xl border border-rose-500/10 animate-pulse">КРИТИЧНО_ВИСОКИЙ_РІВЕНЬ</p>
+                           </div>
+                        </div>
+
+                        <div className="p-10 rounded-[4rem] border-2 border-white/[0.04] bg-black shadow-4xl space-y-8 relative overflow-hidden group/hs">
+                           <div className="absolute top-6 right-8 text-slate-900 group-hover/hs:text-emerald-500/10 transition-colors"><Layers size={32} /></div>
+                           <h5 className="text-[12px] font-black text-slate-700 uppercase italic tracking-[0.5em] border-b border-white/[0.03] pb-6">ВЕРІФІКАЦІЯ_HSCODE</h5>
+                           <div className="space-y-6 pt-4">
+                              <div className="p-6 rounded-2xl bg-black border-2 border-white/[0.03] space-y-1 relative group/val1 transition-all">
+                                 <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-widest">ДЕКЛАРОВАНО</p>
+                                 <div className="flex items-center justify-between">
+                                    <p className="text-xl font-black text-slate-400 italic font-mono uppercase tracking-tighter">8541.10.00.00</p>
+                                    <ShieldAlert size={16} className="text-rose-500" />
+                                 </div>
+                              </div>
+                              <div className="p-6 rounded-2xl bg-emerald-500/5 border-2 border-emerald-500/20 space-y-1 relative group/val2 transition-all">
+                                 <p className="text-[9px] font-black text-emerald-800 uppercase italic tracking-widest">РЕКОМЕНДОВАНО_AZR</p>
+                                 <div className="flex items-center justify-between">
+                                    <p className="text-xl font-black text-emerald-500 italic font-mono uppercase tracking-tighter">8542.31.90.00</p>
+                                    <ShieldCheck size={16} className="text-emerald-500 animate-bounce" />
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </motion.div>
+                ) : (
+                  <div className="py-80 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-10 group">
+                    <div className="relative mx-auto w-32 h-32 flex items-center justify-center">
+                       <FileSearch className="w-24 h-24 text-slate-800 mx-auto opacity-20 group-hover:opacity-40 transition-opacity" />
+                       <div className="absolute inset-0 border-4 border-rose-500/10 rounded-full animate-ping group-hover:border-rose-500/30 transition-all" />
+                    </div>
+                    <div className="space-y-6">
+                      <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБЕРІТЬ_ОБ'ЄКТ_ДЛЯ_ФОРЕНЗИКИ</h3>
+                      <p className="text-slate-900 font-black uppercase tracking-[0.6em] italic text-xs max-w-xl mx-auto opacity-60">СИСТЕМА ГОТОВА ДО ГЛИБИННОГО СКАНУВАННЯ МАНІФЕСТІВ</p>
+                    </div>
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+
+          </div>
         </div>
 
+        {/* CUSTOM ELITE STYLES */}
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
+            .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8); }
+            .animate-spin-slow { animation: spin 20s linear infinite; }
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            .perspective-1000 { perspective: 1000px; }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .custom-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225, 29, 72, 0.1); border-radius: 20px; border: 3px solid black; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225, 29, 72, 0.2); }
+            .backdrop-blur-4xl { backdrop-filter: blur(120px) saturate(180%); }
+            .text-shadow-elite { text-shadow: 0 0 40px rgba(225, 29, 72, 0.2); }
+        `}} />
       </div>
     </PageTransition>
   );
 }
-
-const Siren = ({ size }: { size?: number }) => (
-  <svg width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M7 18v-6a5 5 0 1 1 10 0v6" />
-    <path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v1z" />
-    <path d="M12 7V2" />
-    <path d="M9 4l2 2" />
-    <path d="M15 4l-2 2" />
-  </svg>
-);

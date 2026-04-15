@@ -1,8 +1,8 @@
 /**
- * 🎯 PREDATOR AI Copilot - Revolutionary AI Assistant
- *
- * Killer Feature #1: Інтелектуальний помічник з голосовим управлінням
- * та предиктивною аналітикою
+ * 🎯 PREDATOR AI Copilot - v56.5-ELITE
+ * -------------------------------------------------------------
+ * Sovereign AI Assistant with Neuro-Voice Integration.
+ * Focused on Strategic Customs Analytics and Threat Intelligence.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -26,13 +26,14 @@ import {
   Eye,
   Activity,
   Cpu,
-  ShieldAlert
+  ShieldAlert,
+  Fingerprint,
+  Layers,
+  Search
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { api } from '../../services/api';
-
 import { useAppStore } from '../../store/useAppStore';
-
 import { factoryApi } from '../../services/api/factory';
 
 interface Suggestion {
@@ -52,8 +53,6 @@ export const Predator: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [aiResponse, setAiResponse] = useState('');
   const [activeAgent, setActiveAgent] = useState<string>('');
-  const [isPulseActive, setIsPulseActive] = useState(false);
-  const [isInteractiveMode, setIsInteractiveMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -77,10 +76,10 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
-            title: 'АНАЛІТИКА ФАБРИКИ v56.4',
-            description: `У базі ${stats.total_patterns} патернів. Золотий фонд: ${stats.gold_patterns}. Середній бал: ${stats.avg_score?.toFixed(1) || 0}%.`,
-            confidence: 0.95,
-            impact: 'medium'
+            title: 'АНАЛІТИКА ELITE v56.5',
+            description: `У суверенному ядрі ${stats.total_patterns} активних паттернів. Синергія: ${(stats.avg_score || 0).toFixed(1)}%.`,
+            confidence: 0.98,
+            impact: 'high'
           });
         }
 
@@ -89,8 +88,8 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `gold-${Date.now()}`,
             type: 'action',
-            title: 'АКТИВАЦІЯ ЗОЛОТОГО ПАТЕРНУ',
-            description: `Патерн "${topPattern.name}" має score ${topPattern.score}. Необхідне негайне втручання.`,
+            title: 'ЗОЛОТИЙ СТРАТЕГІЧНИЙ ПАТЕРН',
+            description: `AI виявив критичну можливість у патерні "${topPattern.name}". Рекомендується негайна активація.`,
             confidence: topPattern.score / 100,
             impact: 'high'
           });
@@ -100,8 +99,8 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `default-${Date.now()}`,
             type: 'opportunity',
-            title: 'SOVEREIGN NEXUS ГОТОВИЙ',
-            description: 'AI Copilot підключено до суверенного ядра. Очікування цілі...',
+            title: 'SOVEREIGN NEXUS ONLINE',
+            description: 'AI Копілот синхронізований з ядром Titan-Alpha. Очікування цілі...',
             confidence: 0.99,
             impact: 'low'
           });
@@ -109,13 +108,12 @@ export const Predator: React.FC = () => {
 
         setSuggestions(dynamicSuggestions);
       } catch (error) {
-         console.warn("Failed to fetch Factory insights for Copilot:", error);
          if (mounted) {
            setSuggestions([{
               id: `error-${Date.now()}`,
               type: 'warning',
-              title: 'СИСТЕМНА ПОМИЛКА D-102',
-              description: 'Спроба підключення до Knowledge Map завершилась тайм-аутом.',
+              title: 'СЕКТОРНИЙ ТАЙМ-АУТ',
+              description: 'Спроба підключення до Strategic Knowledge Map завершилась затримкою.',
               confidence: 0.5,
               impact: 'medium'
            }]);
@@ -160,8 +158,8 @@ export const Predator: React.FC = () => {
     const query = forcedQuery || message;
     if (!query.trim()) return;
     if (!forcedQuery) setMessage('');
-    setAiResponse('СКАНУВАННЯ СУВЕРЕННИМ ЯДРОМ...');
-    setActiveAgent('АГЕНТ: ТИТАН-АЛЬФА');
+    setAiResponse('СКАНУВАННЯ СТРАТЕГІЧНИМ ЯДРОМ...');
+    setActiveAgent('АГЕНТ: ТИТАН-АЛЬФА [v56.5]');
     try {
       const res = await api.premium.query(query);
       const answer = res.answer || res.response || res.result;
@@ -170,10 +168,10 @@ export const Predator: React.FC = () => {
         setActiveAgent(res.agent || 'PREDATOR_CORE');
         speak(answer);
       } else {
-        setAiResponse(`✨ ЗАПИТ ВИКОНАНО. ДАНІ ІНТЕГРОВАНО.`);
+        setAiResponse(`✨ КОМАНДУ ВИКОНАНО. СТРАТЕГІЧНІ ДАНІ ОНОВЛЕНО.`);
       }
     } catch (e: any) {
-      setAiResponse(`ПОМИЛКА КЛАСТЕРА: ${e?.message}. ПЕРЕВІРТЕ СТАТУС ВІРТУАЛЬНОЇ МАШИНИ.`);
+      setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕРА: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
     }
   };
 
@@ -184,15 +182,17 @@ export const Predator: React.FC = () => {
         const recognition = new SpeechRecognition();
         recognitionRef.current = recognition;
         recognition.lang = 'uk-UA';
-        recognition.continuous = isInteractiveMode;
+        recognition.continuous = false;
         recognition.onstart = () => setIsListening(true);
         recognition.onresult = (event: any) => {
           const transcript = event.results[event.results.length - 1][0].transcript;
-          setMessage(transcript);
-          handleSend(transcript);
+          if (transcript) {
+             setMessage(transcript);
+             handleSend(transcript);
+          }
         };
         recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => isInteractiveMode && isListening ? recognition.start() : setIsListening(false);
+        recognition.onend = () => setIsListening(false);
         recognition.start();
       }
     } else {
@@ -201,37 +201,24 @@ export const Predator: React.FC = () => {
     }
   };
 
-  const getSuggestionIcon = (type: string) => {
-    switch (type) {
-      case 'insight': return <Cpu className="w-5 h-5 text-amber-500" />;
-      case 'warning': return <ShieldAlert className="w-5 h-5 text-rose-500" />;
-      case 'opportunity': return <Zap className="w-5 h-5 text-emerald-500" />;
-      case 'action': return <Target className="w-5 h-5 text-amber-600" />;
-      default: return <Activity className="w-5 h-5 text-amber-400" />;
-    }
-  };
-
-  const getImpactColor = (impact: string) => {
-    switch (impact) {
-      case 'high': return 'text-rose-500 border-rose-500/30 bg-rose-500/10';
-      case 'medium': return 'text-amber-500 border-amber-500/30 bg-amber-500/10';
-      case 'low': return 'text-emerald-500 border-emerald-500/30 bg-emerald-500/10';
-      default: return 'text-slate-500 border-slate-500/30 bg-slate-500/10';
-    }
-  };
-
   return (
     <>
       <AnimatePresence>
         {!isOpen && (
           <motion.button
-            initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0, opacity: 0 }}
+            initial={{ scale: 0, shadow: "0 0 0px transparent" }} 
+            animate={{ scale: 1, shadow: "0 0 50px rgba(212,175,55,0.3)" }} 
+            exit={{ scale: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-10 right-10 z-[60] w-20 h-20 rounded-3xl bg-black border-2 border-amber-500/40 shadow-[0_0_50px_rgba(245,158,11,0.3)] flex items-center justify-center group overflow-hidden"
+            className="fixed bottom-12 right-12 z-[100] w-24 h-24 rounded-[32px] bg-black border-2 border-yellow-500/40 flex items-center justify-center group overflow-hidden shadow-3xl"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent" />
-            <Brain className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform relative z-10" />
-            <motion.div className="absolute inset-0 border-2 border-amber-500/40 rounded-3xl" animate={{ scale: [1, 1.15, 1], opacity: [0.6, 0, 0.6] }} transition={{ duration: 2, repeat: Infinity }} />
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-rose-500/5 animate-pulse" />
+            <Brain className="w-12 h-12 text-yellow-500 group-hover:scale-110 transition-transform relative z-10" strokeWidth={1.5} />
+            <motion.div 
+               className="absolute inset-0 border-2 border-yellow-500/40 rounded-[32px]" 
+               animate={{ scale: [1, 1.2, 1], opacity: [0.6, 0, 0.6] }} 
+               transition={{ duration: 3, repeat: Infinity }} 
+            />
           </motion.button>
         )}
       </AnimatePresence>
@@ -239,103 +226,133 @@ export const Predator: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 40 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 40 }}
+            initial={{ opacity: 0, scale: 0.9, y: 100 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            exit={{ opacity: 0, scale: 0.9, y: 100 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className={cn(
-              "fixed z-[150] bg-black/90 backdrop-blur-3xl border-2 border-amber-500/20 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col",
-              isExpanded ? "inset-10 rounded-[3rem]" : "bottom-10 right-10 w-[450px] h-[750px] rounded-[2.5rem]"
+              "fixed z-[150] bg-black/95 backdrop-blur-[40px] border-2 border-yellow-500/20 shadow-[0_50px_150px_rgba(0,0,0,1)] overflow-hidden flex flex-col transition-all duration-700",
+              isExpanded ? "inset-8 rounded-[4rem]" : "bottom-12 right-12 w-[520px] h-[850px] rounded-[3rem]"
             )}
           >
-            {/* Header */}
-            <div className="p-8 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+            {/* Elite Header */}
+            <div className="p-10 border-b border-yellow-500/10 bg-gradient-to-r from-yellow-500/5 via-transparent to-rose-500/5 flex items-center justify-between">
               <div className="flex items-center gap-6">
-                <div className="relative p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                  <Activity className="w-8 h-8 text-amber-500 animate-pulse" />
+                <div className="relative p-5 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl shadow-xl">
+                  <Fingerprint className="w-10 h-10 text-yellow-500 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">PREDATOR AI</h3>
+                  <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter flex items-center gap-3">
+                    PREDATOR <span className="text-yellow-500">AI</span>
+                  </h3>
                   <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                    <p className="text-[9px] text-amber-500/60 font-black uppercase tracking-[0.3em] font-mono">SOVEREIGN_CORE_v56.4</p>
+                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping shadow-[0_0_10px_#d4af37]" />
+                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v56.5</p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setIsExpanded(!isExpanded)} className="p-3 bg-white/5 border border-white/5 rounded-xl hover:text-amber-500 transition-colors">
-                  {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+              <div className="flex items-center gap-3">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:text-yellow-500 transition-all hover:bg-yellow-500/10">
+                  {isExpanded ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all">
-                  <X size={20} />
+                <button onClick={() => setIsOpen(false)} className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-lg">
+                  <X size={24} />
                 </button>
               </div>
             </div>
 
-            {/* Suggestions & Response Area */}
-            <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
-              <div className="space-y-4">
-                 <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic flex items-center gap-3">
-                   <Target size={14} className="text-amber-500" /> ТАКТИЧНИЙ_ФІД
-                 </h4>
-                 {suggestions.map((s) => (
-                   <motion.div key={s.id} className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:border-amber-500/30 transition-all cursor-pointer group">
-                     <div className="flex items-start gap-5">
-                       <div className="p-3 bg-black border border-white/10 rounded-xl group-hover:border-amber-500/40 transition-colors">
-                         {getSuggestionIcon(s.type)}
-                       </div>
-                       <div className="flex-1">
-                         <div className="flex items-center justify-between mb-2">
-                            <h5 className="text-[14px] font-black text-white uppercase italic tracking-tight">{s.title}</h5>
-                            <span className={cn("text-[8px] font-black uppercase px-2 py-1 border rounded-lg", getImpactColor(s.impact))}>{s.impact}</span>
-                         </div>
-                         <p className="text-[12px] text-slate-500 font-medium leading-relaxed italic">{s.description}</p>
-                         <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
-                           <motion.div initial={{ width: 0 }} animate={{ width: `${s.confidence * 100}%` }} className="h-full bg-amber-500" />
-                         </div>
-                       </div>
-                     </div>
-                   </motion.div>
-                 ))}
-              </div>
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto p-10 space-y-10 no-scrollbar relative">
+               <div className="absolute top-0 right-0 p-20 opacity-[0.03] pointer-events-none">
+                  <Brain size={400} className="text-yellow-500" />
+               </div>
 
-              {aiResponse && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-8 bg-amber-500/5 border-2 border-amber-500/20 rounded-[2rem] relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                    <Brain size={120} className="text-amber-500" />
-                  </div>
+               <div className="space-y-6 relative z-10">
+                  <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.5em] italic flex items-center gap-4">
+                    <Layers size={16} className="text-yellow-500" /> СТРАТЕГІЧНИЙ_ФІД_ELITE
+                  </h4>
+                  {suggestions.map((s) => (
+                    <motion.div 
+                        key={s.id} 
+                        whileHover={{ y: -4, border: '1px solid rgba(212,175,55,0.4)' }}
+                        className="p-8 bg-white/[0.03] border border-white/5 rounded-[40px] transition-all cursor-pointer group shadow-2xl relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-yellow-500 via-rose-500 to-transparent opacity-40" />
+                      <div className="flex items-start gap-6">
+                        <div className="p-4 bg-black border border-white/10 rounded-2xl group-hover:bg-yellow-500/10 group-hover:border-yellow-500/40 transition-all shadow-inner">
+                          {getSuggestionIcon(s.type)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-3">
+                             <h5 className="text-[16px] font-black text-white uppercase italic tracking-wide">{s.title}</h5>
+                             <span className={cn("text-[9px] font-black uppercase px-3 py-1.5 border rounded-xl shadow-lg", getImpactColor(s.impact))}>{s.impact}</span>
+                          </div>
+                          <p className="text-[13px] text-slate-400 font-bold leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity">{s.description}</p>
+                          <div className="mt-6 h-2 bg-slate-900 rounded-full overflow-hidden shadow-inner">
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${s.confidence * 100}%` }} className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+               </div>
+
+               {aiResponse && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    className="p-10 bg-yellow-500/5 border-2 border-yellow-500/20 rounded-[3rem] relative overflow-hidden shadow-3xl"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent pointer-events-none" />
                   <div className="relative z-10">
-                    <div className="flex items-center gap-4 mb-5">
-                       <Zap size={20} className="text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
-                       <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">{activeAgent}</span>
+                    <div className="flex items-center gap-5 mb-6">
+                       <Zap size={24} className="text-yellow-500 animate-pulse shadow-[0_0_20px_rgba(212,175,55,0.6)]" />
+                       <span className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.4em] font-mono">{activeAgent}</span>
                     </div>
-                    <p className="text-lg font-black text-white italic leading-relaxed tracking-tight">{aiResponse}</p>
+                    <p className="text-xl font-black text-white italic leading-relaxed tracking-tight underline decoration-yellow-500/10 underline-offset-8 decoration-4">{aiResponse}</p>
                   </div>
                 </motion.div>
               )}
             </div>
 
-            {/* Input Area */}
-            <div className="p-8 bg-white/[0.02] border-t border-white/5">
-              <div className="flex items-center gap-4">
-                <button 
+            {/* Premium Input Area */}
+            <div className="p-10 bg-black border-t border-yellow-500/10">
+              <div className="flex items-center gap-6">
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleVoiceToggle} 
                   className={cn(
-                    "p-6 rounded-3xl transition-all shadow-2xl",
-                    isListening ? "bg-rose-600 text-white animate-pulse" : "bg-black border border-white/10 text-amber-500 hover:text-white"
+                    "p-8 rounded-[2.5rem] transition-all shadow-3xl flex items-center justify-center",
+                    isListening ? "bg-rose-600 text-white animate-pulse shadow-[0_0_30px_#e11d48]" : "bg-slate-900 border border-yellow-500/20 text-yellow-500 hover:border-yellow-500/50 hover:text-white"
                   )}
                 >
-                  {isListening ? <Activity size={24} /> : <Mic size={24} />}
-                </button>
-                <input 
-                  type="text" 
-                  value={message} 
-                  onChange={(e) => setMessage(e.target.value)} 
-                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="ВВЕДІТЬ_КОМАНДУ_ДЛЯ_PREDATOR..."
-                  className="flex-1 bg-black border-2 border-white/5 rounded-3xl px-8 py-6 text-white font-mono text-[14px] uppercase italic tracking-widest focus:outline-none focus:border-amber-500/40 transition-all placeholder:text-slate-800"
-                />
-                <button onClick={() => handleSend()} className="p-6 bg-amber-500 text-black rounded-3xl font-black shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:scale-105 transition-all">
-                  <Zap size={24} />
-                </button>
+                  {isListening ? <Activity size={32} /> : <Mic size={32} />}
+                </motion.button>
+                <div className="flex-1 relative">
+                    <input 
+                      type="text" 
+                      value={message} 
+                      onChange={(e) => setMessage(e.target.value)} 
+                      onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                      placeholder="ВВЕДІТЬ_СТРАТЕГІЧНУ_КОМАНДУ..."
+                      className="w-full bg-slate-950 border-2 border-yellow-500/10 rounded-[2.5rem] px-10 py-8 text-white font-mono text-[16px] uppercase italic tracking-[0.1em] focus:outline-none focus:border-yellow-500/40 transition-all placeholder:text-slate-800 shadow-inner"
+                    />
+                    <div className="absolute top-1/2 right-10 -translate-y-1/2 flex items-center gap-4 text-slate-800">
+                        <Terminal size={18} />
+                        <span className="text-[10px] font-black">Ready</span>
+                    </div>
+                </div>
+                <motion.button 
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleSend()} 
+                    className="p-8 bg-yellow-500 text-black rounded-[2.5rem] font-black shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:shadow-[0_0_60px_rgba(212,175,55,0.6)] transition-all"
+                >
+                  <Send size={32} />
+                </motion.button>
               </div>
+              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">Classified PREDATOR Environment // Authorization Tier 1 Required</p>
             </div>
             <audio ref={audioRef} style={{ display: 'none' }} />
           </motion.div>
@@ -343,6 +360,25 @@ export const Predator: React.FC = () => {
       </AnimatePresence>
     </>
   );
+};
+
+const getSuggestionIcon = (type: string) => {
+  switch (type) {
+    case 'insight': return <Lightbulb size={24} className="text-yellow-500" />;
+    case 'warning': return <AlertTriangle size={24} className="text-rose-500" />;
+    case 'opportunity': return <Target size={24} className="text-emerald-500" />;
+    case 'action': return <Zap size={24} className="text-blue-500" />;
+    default: return <Brain size={24} />;
+  }
+};
+
+const getImpactColor = (impact: string) => {
+  switch (impact) {
+    case 'high': return 'bg-rose-500/10 text-rose-500 border-rose-500/20';
+    case 'medium': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+    case 'low': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+    default: return 'bg-slate-500/10 text-slate-500 border-slate-500/20';
+  }
 };
 
 export default Predator;

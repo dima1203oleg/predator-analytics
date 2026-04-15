@@ -1,8 +1,10 @@
 /**
- * 🕸️ PREDATOR Topology Sanctum | v56.2-TITAN
+ * 🕸️ PREDATOR Topology Sanctum | v56.5-ELITE
  * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙРОФОРМНОЇ ГРАФ ОПТИМІЗАЦІЇ
  * 
  * Глибинний аналіз зв'язків (Neo4j), детекція картелів та аномалій.
+ * 
+ * Sovereign Power Design · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -16,7 +18,7 @@ import {
     ExternalLink, Skull, Gem, Activity,
     Database, Info, AlertTriangle, CheckCircle2,
     Eye, TrendingUp, GitMerge, Layout, ChevronRight,
-    Terminal, Lock, Sparkles, Orbit, Globe
+    Terminal, Lock, Sparkles, Orbit, Globe, Radar
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { api } from '@/services/api';
@@ -26,7 +28,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { CyberOrb } from '@/components/CyberOrb';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 const GraphAnalyticsPage: React.FC = () => {
     const [graphData, setGraphData] = useState<any>(null);
@@ -42,25 +44,25 @@ const GraphAnalyticsPage: React.FC = () => {
                 const processedNodes = summaryRes.nodes.map((node: any) => ({
                     id: node.id,
                     name: node.label,
-                    symbolSize: node.riskScore ? (35 + node.riskScore / 2.5) : 45,
+                    symbolSize: node.riskScore ? (40 + node.riskScore / 2) : 50,
                     itemStyle: { 
-                        color: node.riskScore > 70 ? '#f43f5e' : 
-                                node.riskScore > 40 ? '#f59e0b' : 
-                                node.type === 'person' ? '#10b981' : '#6366f1',
-                        shadowBlur: 20,
-                        shadowColor: 'rgba(0,0,0,0.5)'
+                        color: node.riskScore > 70 ? '#E11D48' : 
+                                node.riskScore > 40 ? '#D4AF37' : 
+                                node.type === 'person' ? '#22c55e' : '#D4AF37',
+                        shadowBlur: 30,
+                        shadowColor: 'rgba(0,0,0,0.8)'
                     },
                     category: node.type?.toUpperCase() || 'ENTITY',
                     risk: node.riskScore,
-                    label: { show: node.riskScore > 45, position: 'right', fontSize: 10, fontWeight: 'bold', color: '#fff' }
+                    label: { show: node.riskScore > 45, position: 'right', fontSize: 11, fontWeight: '900', color: '#fff', fontStyle: 'italic', distance: 10 }
                 }));
 
                 const processedLinks = (summaryRes.links || []).map((link: any) => ({
                     ...link,
                     lineStyle: {
-                        color: 'rgba(99, 102, 241, 0.15)',
-                        width: 1.5,
-                        curveness: 0.1
+                        color: 'rgba(212, 175, 55, 0.12)',
+                        width: 2,
+                        curveness: 0.15
                     }
                 }));
 
@@ -83,12 +85,12 @@ const GraphAnalyticsPage: React.FC = () => {
 
     const fetchMock = () => {
         const nodes = [
-            { id: 'root', name: 'TITAN_CORE', symbolSize: 100, itemStyle: { color: '#6366f1', shadowBlur: 50, shadowColor: '#6366f1' }, label: { show: true }, risk: 0 },
-            { id: 'c1', name: 'ТОВ "ЗАВОД ТИТАН"', symbolSize: 75, itemStyle: { color: '#f43f5e' }, category: 'HIGH_RISK', risk: 94 },
-            { id: 'c2', name: 'ЛОГІСТИК-ПЛЮС', symbolSize: 65, itemStyle: { color: '#f59e0b' }, category: 'MEDIUM_RISK', risk: 58 },
-            { id: 'c3', name: 'ОФШОР "PANAMA"', symbolSize: 60, itemStyle: { color: '#f43f5e' }, category: 'HIGH_RISK', risk: 89 },
-            { id: 'c4', name: 'БЕНЕФІЦІАР X', symbolSize: 70, itemStyle: { color: '#10b981' }, category: 'UBO', risk: 15 },
-            { id: 'c6', name: 'МИТНИЦЯ_ЗАХІД', symbolSize: 55, itemStyle: { color: '#0ea5e9' }, category: 'GOV', risk: 8 },
+            { id: 'root', name: 'SOVEREIGN_CORE', symbolSize: 110, itemStyle: { color: '#D4AF37', shadowBlur: 60, shadowColor: 'rgba(212,175,55,0.4)', borderColor: 'rgba(212,175,55,0.8)', borderWidth: 4 }, label: { show: true }, risk: 0 },
+            { id: 'c1', name: 'ТОВ "ЗАВОД ТИТАН"', symbolSize: 85, itemStyle: { color: '#E11D48', shadowBlur: 30, shadowColor: '#E11D48' }, category: 'HIGH_RISK', risk: 94 },
+            { id: 'c2', name: 'ЛОГІСТИК-ПЛЮС', symbolSize: 70, itemStyle: { color: '#fbbf24' }, category: 'MEDIUM_RISK', risk: 58 },
+            { id: 'c3', name: 'ОФШОР "PANAMA"', symbolSize: 65, itemStyle: { color: '#E11D48' }, category: 'HIGH_RISK', risk: 89 },
+            { id: 'c4', name: 'БЕНЕФІЦІАР X', symbolSize: 75, itemStyle: { color: '#22c55e' }, category: 'UBO', risk: 15 },
+            { id: 'c6', name: 'МИТНИЦЯ_ЗАХІД', symbolSize: 60, itemStyle: { color: '#0ea5e9' }, category: 'GOV', risk: 8 },
         ];
         const links = [
             { source: 'root', target: 'c1' },
@@ -96,7 +98,7 @@ const GraphAnalyticsPage: React.FC = () => {
             { source: 'c1', target: 'c3' },
             { source: 'c3', target: 'c4' },
             { source: 'c4', target: 'c6' },
-        ].map(l => ({ ...l, lineStyle: { color: 'rgba(99, 102, 241, 0.2)', width: 2, curveness: 0.2 }}));
+        ].map(l => ({ ...l, lineStyle: { color: 'rgba(212, 175, 55, 0.15)', width: 3, curveness: 0.2, type: 'solid' }}));
         setGraphData({ nodes, links });
         setStats({ nodes_count: '1.42M', relationships: '5.24M', clusters: '3.1K', density: '0.096' });
     };
@@ -128,26 +130,30 @@ const GraphAnalyticsPage: React.FC = () => {
     const chartOptions = useMemo(() => ({
         backgroundColor: 'transparent',
         tooltip: {
-            backgroundColor: 'rgba(2, 6, 23, 0.95)',
-            borderColor: 'rgba(99, 102, 241, 0.4)',
-            borderWidth: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+            borderColor: 'rgba(212, 175, 55, 0.5)',
+            borderWidth: 2,
             padding: 0,
             textStyle: { color: '#f8fafc', fontStyle: 'italic' },
             formatter: (params: any) => {
                 const data = params.data;
                 if (params.dataType === 'node') {
                     return `
-                        <div style="padding: 24px; min-width: 250px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                        <div style="padding: 24px; min-width: 280px; border-radius: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 2px solid rgba(212, 175, 55, 0.1); padding-bottom: 16px;">
                                 <div>
-                                    <p style="font-size: 8px; font-weight: 900; color: #6366f1; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 4px;">TOPOLOGY_NODE</p>
-                                    <b style="font-size: 14px; font-weight: 900; color: #fff; text-transform: uppercase; font-style: italic;">${data.name}</b>
+                                    <p style="font-size: 9px; font-weight: 900; color: #D4AF37; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 6px;">TOPOLOGY_NODE_ELITE</p>
+                                    <b style="font-size: 16px; font-weight: 900; color: #fff; text-transform: uppercase; font-style: italic; tracking: -0.02em;">${data.name}</b>
                                 </div>
-                                <div style="height: 10px; width: 10px; border-radius: 50%; background: ${data.risk > 70 ? '#f43f5e' : '#10b981'}; box-shadow: 0 0 10px ${data.risk > 70 ? '#f43f5e' : '#10b981'};"></div>
+                                <div style="height: 12px; width: 12px; border-radius: 50%; background: ${data.risk > 70 ? '#E11D48' : '#D4AF37'}; box-shadow: 0 0 15px ${data.risk > 70 ? '#E11D48' : '#D4AF37'};"></div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <span style="font-size: 9px; font-weight: 900; color: #475569; text-transform: uppercase;">РИЗИК</span>
-                                <span style="font-size: 12px; font-weight: 900; color: ${data.risk > 70 ? '#f43f5e' : '#fff'};">${data.risk}%</span>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <span style="font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">RISK_INDEX</span>
+                                <span style="font-size: 14px; font-weight: 900; color: ${data.risk > 70 ? '#E11D48' : '#fff'}; font-family: monospace;">${data.risk}%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">CATEGORY</span>
+                                <span style="font-size: 10px; font-weight: 900; color: #D4AF37; font-style: italic;">${data.category || 'ASSET'}</span>
                             </div>
                         </div>
                     `;
@@ -164,41 +170,42 @@ const GraphAnalyticsPage: React.FC = () => {
             links: graphData?.links || [],
             roam: true,
             focusNodeAdjacency: true,
-            label: { show: true, position: 'bottom', fontSize: 10, color: '#475569', fontWeight: '900', fontStyle: 'italic' },
-            force: { repulsion: 2500, edgeLength: [150, 300], gravity: 0.1 },
+            label: { show: true, position: 'bottom', fontSize: 11, color: '#94a3b8', fontWeight: '900', fontStyle: 'italic', distance: 10 },
+            force: { repulsion: 3000, edgeLength: [180, 400], gravity: 0.08 },
             lineStyle: { type: 'solid', cap: 'round', join: 'round' },
-            emphasis: { focus: 'adjacency', lineStyle: { width: 5, color: '#6366f1', opacity: 1 } }
+            emphasis: { focus: 'adjacency', lineStyle: { width: 6, color: '#D4AF37', opacity: 1 } }
         }]
     }), [graphData]);
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.05)" />
+                <CyberGrid color="rgba(212, 175, 55, 0.04)" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
 
-                <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-16 flex flex-col h-screen">
+                <div className="relative z-10 max-w-[1850px] mx-auto p-4 sm:p-12 space-y-16 flex flex-col h-screen">
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                                    <div className="relative p-7 bg-black border border-indigo-900/40 rounded-[2.5rem] shadow-2xl">
-                                        <Network size={42} className="text-indigo-500" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                    <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                                        <Network size={42} className="text-yellow-500 shadow-[0_0_20px_#d4af37]" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-3">
-                                       <span className="badge-v2 bg-indigo-600/10 border border-indigo-600/20 text-indigo-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                         TITAN_GRAPH // TOPOLOGY_SANCTUM
+                                    <div className="flex items-center gap-4">
+                                       <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                         SOVEREIGN_GRAPH // TOPOLOGY_SANCTUM
                                        </span>
-                                       <div className="h-px w-10 bg-indigo-600/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                       <div className="h-px w-12 bg-yellow-500/20" />
+                                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
                                     </div>
-                                    <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                        МАПИ <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8">КОГНІЦІЇ</span>
+                                    <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                                        МАПИ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОГНІЦІЇ</span>
                                     </h1>
-                                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
+                                    <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
                                         НЕЙРОННИЙ СКАНЕР GRAHP-DB • ВИЯВЛЕННЯ КАРТЕЛІВ ТА ПРИХОВАНИХ UBO
                                     </p>
                                 </div>
@@ -212,87 +219,108 @@ const GraphAnalyticsPage: React.FC = () => {
                     />
 
                     <div className="grid grid-cols-12 gap-12 flex-1 min-h-0">
-                        <section className="col-span-12 xl:col-span-8 flex flex-col rounded-[3rem] bg-black border-2 border-white/[0.04] p-1 shadow-3xl overflow-hidden relative group">
-                            <div className="absolute top-12 left-12 z-20 flex items-center gap-6 pointer-events-none">
-                                <div className="p-4 rounded-2xl bg-indigo-600/10 text-indigo-500 border border-indigo-600/20">
-                                    <Search size={22} />
+                        {/* MAIN GRAPH ELITE */}
+                        <section className="col-span-12 xl:col-span-8 flex flex-col rounded-[4rem] bg-black border-2 border-white/[0.04] p-2 shadow-4xl overflow-hidden relative group">
+                            <div className="absolute top-12 left-12 z-20 flex items-center gap-8 pointer-events-none italic">
+                                <div className="p-5 rounded-[1.5rem] bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/20 shadow-xl">
+                                    <Search size={26} />
                                 </div>
-                                <h3 className="text-lg font-black text-white italic uppercase tracking-[0.4em]">LIVE_TOPOLOGY_SCREEN</h3>
+                                <h3 className="text-xl font-black text-white italic uppercase tracking-[0.5em] font-serif">LIVE_TOPOLOGY_SCREEN</h3>
                             </div>
-                            <div className="absolute top-12 right-12 z-20 flex gap-4">
-                               <button onClick={fetchData} className="p-5 bg-white/[0.02] border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
-                                  <RefreshCw size={22} className={loading ? "animate-spin" : ""} />
+                            <div className="absolute top-12 right-12 z-20 flex gap-6">
+                               <button onClick={fetchData} className="p-6 bg-black border-2 border-white/5 rounded-[1.5rem] text-slate-600 hover:text-yellow-500 transition-all shadow-xl group/btn">
+                                  <RefreshCw size={26} className={cn("transition-transform group-hover/btn:rotate-180", loading ? "animate-spin" : "")} />
                                </button>
                             </div>
                             <div className="w-full h-full relative z-10">
                                 {loading && !graphData ? (
-                                    <div className="w-full h-full flex flex-col items-center justify-center gap-12">
-                                        <CyberOrb size={180} color="#6366f1" intensity={0.6} pulse />
-                                        <p className="text-xl font-black text-white uppercase italic tracking-[0.6em] animate-pulse">RECONSTRUCTING...</p>
+                                    <div className="w-full h-full flex flex-col items-center justify-center gap-16">
+                                        <CyberOrb size={220} color="#D4AF37" intensity={0.5} pulse />
+                                        <div className="space-y-4 text-center">
+                                            <p className="text-2xl font-black text-white uppercase italic tracking-[0.8em] animate-pulse font-serif">RECONSTRUCTING_NODES...</p>
+                                            <p className="text-[10px] font-black text-yellow-800 uppercase tracking-[0.4em] italic leading-none">NEURAL_GRAPH_OPTIMIZATION_ACTIVE</p>
+                                        </div>
                                     </div>
                                 ) : (
                                     <ReactECharts option={chartOptions} style={{ height: '100%', width: '100%' }} />
                                 )}
                             </div>
+                            
+                            {/* HUD Overlays ELITE */}
+                            <div className="absolute bottom-10 left-10 z-20 flex flex-col gap-4">
+                                <div className="p-5 bg-black/60 border-2 border-white/5 rounded-2xl backdrop-blur-xl flex items-center gap-6 italic">
+                                    <div className="flex items-center gap-3"><div className="w-2.5 h-2.5 rounded-full bg-rose-600 shadow-[0_0_10px_#e11d48]"/><span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">HIGH_RISK_VECTOR</span></div>
+                                    <div className="h-4 w-px bg-slate-800" />
+                                    <div className="flex items-center gap-3"><div className="w-2.5 h-2.5 rounded-full bg-yellow-500 shadow-[0_0_10px_#d4af37]"/><span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">SOVEREIGN_ASSET</span></div>
+                                </div>
+                            </div>
                         </section>
 
-                        <aside className="col-span-12 xl:col-span-4 flex flex-col gap-10 overflow-y-auto no-scrollbar pr-2">
-                            <section className="p-10 rounded-[3rem] bg-black/60 border border-white/[0.05] shadow-2xl space-y-8">
-                                <div className="flex items-center gap-6 mb-4 border-b border-white/[0.04] pb-8">
-                                   <TrendingUp size={28} className="text-indigo-400" />
-                                   <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">НЕЙРО_МЕТРИКИ_ГРАФА</h4>
+                        <aside className="col-span-12 xl:col-span-4 flex flex-col gap-12 overflow-y-auto custom-scrollbar pr-4">
+                            {/* МЕТРИКИ ELITE */}
+                            <section className="p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
+                                <div className="flex items-center gap-8 mb-4 border-b border-white/[0.04] pb-8">
+                                   <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-yellow-500 transform group-hover:rotate-12 transition-transform">
+                                      <TrendingUp size={28} />
+                                   </div>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙРО_МЕТРИКИ_ГРАФА</h4>
                                 </div>
-                                <div className="grid grid-cols-2 gap-8">
+                                <div className="grid grid-cols-2 gap-10">
                                    {[
-                                      { l: 'ЩІЛЬНІСТЬ', v: '0.942', c: 'text-indigo-500' },
-                                      { l: 'HUB_IDX', v: '1.240', c: 'text-sky-500' },
-                                      { l: 'LOUVAIN', v: '0.884', c: 'text-emerald-500' },
-                                      { l: 'АНТРОПІЯ', v: '0.112', c: 'text-indigo-400' }
+                                      { l: 'TOPOLOGY_DENSITY', v: '0.942', c: 'text-yellow-500' },
+                                      { l: 'HUB_DOMINANCE', v: '1.240', c: 'text-white' },
+                                      { l: 'LOUVAIN_SCORE', v: '0.884', c: 'text-emerald-500' },
+                                      { l: 'ENTROPY_INDEX', v: '0.112', c: 'text-yellow-600/60' }
                                    ].map((m, i) => (
-                                      <div key={i} className="text-left italic">
-                                         <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-1">{m.l}</p>
-                                         <p className={cn("text-3xl font-black font-mono tracking-tighter leading-none", m.c)}>{m.v}</p>
+                                      <div key={i} className="text-left italic space-y-2">
+                                         <p className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none mb-1">{m.l}</p>
+                                         <p className={cn("text-4xl font-black font-mono tracking-tighter leading-none shadow-sm", m.c)}>{m.v}</p>
                                       </div>
                                    ))}
                                 </div>
                             </section>
 
-                            <section className="p-10 rounded-[3rem] bg-black border-2 border-rose-900/10 shadow-3xl flex-1 flex flex-col relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover:opacity-[0.1] transition-all rotate-12">
-                                   <Skull size={240} className="text-rose-500" />
+                            {/* КАРТЕЛІ ELITE */}
+                            <section className="p-10 rounded-[3.5rem] bg-black border-2 border-rose-950/20 shadow-4xl flex-1 flex flex-col relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover:opacity-[0.1] transition-all rotate-12 duration-[10s]">
+                                   <Skull size={300} className="text-rose-600" />
                                 </div>
-                                <div className="flex items-center gap-6 mb-8 border-b border-rose-500/10 pb-8">
-                                   <ShieldAlert size={28} className="text-rose-500" />
-                                   <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest leading-none">ВИЯВЛЕНІ <span className="text-rose-500">КАРТЕЛІ</span></h4>
+                                <div className="flex items-center gap-8 mb-10 border-b border-rose-500/10 pb-8">
+                                   <div className="p-4 bg-rose-600/10 border border-rose-600/20 rounded-2xl text-rose-500 animate-pulse">
+                                      <ShieldAlert size={28} />
+                                   </div>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] leading-none font-serif">ВИЯВЛЕНІ <span className="text-rose-600 underline decoration-rose-600/20 decoration-8 underline-offset-8">КАРТЕЛІ</span></h4>
                                 </div>
-                                <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4 italic">
+                                <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-4 italic">
                                    {(clusters.length > 0 ? clusters : [
                                       { name: 'ТОВ "ЕНЕРГО-СИНДИКАТ"', risk: 99, nodes: 56, type: 'SHADOW_CARTEL' },
                                       { name: 'МЕРЕЖА "ПРОКСІ-ТИТАН"', risk: 92, nodes: 22, type: 'UBO_HIDDEN' },
                                       { name: 'LOGISTICS_PROXY', risk: 84, nodes: 14, type: 'TRANSIT_HUBS' }
                                    ]).map((c, i) => (
-                                      <div key={i} className="p-6 rounded-[2rem] bg-white/[0.01] border border-white/[0.04] hover:border-rose-600/40 transition-all cursor-pointer group/item space-y-4">
-                                         <div className="flex items-center justify-between">
-                                            <p className="text-lg font-black text-white group-hover:text-rose-500 transition-colors uppercase truncate max-w-[200px]">{c.name}</p>
-                                            <Badge className="bg-rose-600 text-white font-black italic">{c.risk}%</Badge>
+                                      <div key={i} className="p-8 rounded-[2.5rem] bg-black border-2 border-white/[0.03] hover:border-rose-600/40 transition-all cursor-pointer group/item space-y-6 shadow-inner relative overflow-hidden">
+                                         <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-rose-600/5 to-transparent pointer-events-none" />
+                                         <div className="flex items-center justify-between relative z-10">
+                                            <p className="text-xl font-black text-white group-hover:text-rose-500 transition-colors uppercase truncate max-w-[220px] font-serif leading-none">{c.name}</p>
+                                            <Badge className="bg-rose-600 px-4 py-1 text-white font-black italic shadow-lg shadow-rose-900/40 rounded-lg">{c.risk}%</Badge>
                                          </div>
-                                         <div className="flex items-center justify-between text-[9px] font-black text-slate-600 uppercase tracking-widest">
-                                            <span>{c.type}</span>
-                                            <span className="text-rose-500/50">{c.nodes} ВУЗЛІВ</span>
+                                         <div className="flex items-center justify-between text-[10px] font-black text-slate-800 uppercase tracking-[0.3em] relative z-10 italic">
+                                            <span className="flex items-center gap-3"><Activity size={12} className="text-rose-600" /> {c.type}</span>
+                                            <span className="text-rose-500 shadow-sm">{c.nodes}_NODES</span>
                                          </div>
                                       </div>
                                    ))}
                                 </div>
-                                <button onClick={handleRunLouvain} className="mt-10 w-full py-6 bg-rose-700 text-white rounded-[1.5rem] tracking-[0.4em] text-[11px] font-black uppercase italic hover:bg-rose-600 shadow-2xl">
-                                   ЗАПУСТИТИ_GDS_АНАЛІЗ
+                                <button onClick={handleRunLouvain} className="mt-10 w-full py-8 bg-rose-600 text-white rounded-[2rem] tracking-[0.5em] text-[12px] font-black uppercase italic hover:brightness-110 shadow-4xl transition-all border-4 border-rose-500/20 font-bold">
+                                   <Zap size={18} className="inline mr-4 mb-1" /> ЗАПУСТИТИ_GDS_АНАЛІЗ
                                 </button>
                             </section>
                         </aside>
                     </div>
                 </div>
                 <style dangerouslySetInnerHTML={{ __html: `
-                    .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
-                    .no-scrollbar::-webkit-scrollbar { display: none; }
+                    .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 60px rgba(212,175,55,0.03); }
+                    .custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.2)}
                 `}} />
             </div>
         </PageTransition>

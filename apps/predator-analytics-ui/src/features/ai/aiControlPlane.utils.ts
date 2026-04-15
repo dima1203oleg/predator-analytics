@@ -3,7 +3,7 @@ import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/s
 
 type UnknownRecord = Record<string, unknown>;
 
-export type AIControlTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate';
+export type AIControlTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate' | 'gold';
 
 export interface AIControlMetricCard {
   id: string;

@@ -49,12 +49,12 @@ export interface SystemStatsResponse {
   disk_total: number;
   disk_used: number;
   disk_free: number;
-  gpu_available: boolean;
-  gpu_name: string;
-  gpu_temp: number;
-  gpu_utilization: number;
-  gpu_mem_total: number;
-  gpu_mem_used: number;
+  gpu_available?: boolean;
+  gpu_name?: string;
+  gpu_temp?: number;
+  gpu_utilization?: number;
+  gpu_mem_total?: number;
+  gpu_mem_used?: number;
   network_bytes_sent: number;
   network_bytes_recv: number;
   active_connections: number;

@@ -1,5 +1,5 @@
 /**
- * BootScreen — PREDATOR NEXUS v56.4 — SOVEREIGN CLASSIFIED INTRO
+ * BootScreen — PREDATOR NEXUS v56.5-ELITE — SOVEREIGN CLASSIFIED INTRO
  * ===============================================================
  * Billion-dollar intelligence platform. Доступ виключно для авторизованого персоналу.
  * Кінематографічна заставка рівня державної розвідки.
@@ -19,12 +19,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 
 const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 1800,  // VOID ACTIVATION
-  1: 2200,  // CRYPTOGRAPHIC INIT
-  2: 3200,  // GLOBAL DOMINANCE
-  3: 5600,  // TARGET ACQUISITION (SEARCH + LOCK)
-  4: 6000,  // SOVEREIGN REVEAL
-  5: 1400,  // FADE OUT
+  0: 2000,  // VOID ACTIVATION
+  1: 2400,  // CRYPTOGRAPHIC INIT
+  2: 3500,  // GLOBAL DOMINANCE
+  3: 6200,  // TARGET ACQUISITION (SEARCH + LOCK)
+  4: 7500,  // SOVEREIGN REVEAL (GOLD & COAL)
+  5: 1600,  // FADE OUT
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -278,14 +278,27 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [targetLocked, setTargetLocked]     = useState(false);
   const [dbLines, setDbLines]               = useState<string[]>([]);
   const [threatLevel, setThreatLevel]       = useState(0); // 0-100
+  const particlesRef = useRef<{x:number, y:number, s:number, vx:number, vy:number, c:string}[]>([]);
+
+  // Initialize Particles (Sovereign Essence)
+  useEffect(() => {
+    particlesRef.current = Array.from({length: 120}, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      s: Math.random() * 2.5 + 1.2,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      c: Math.random() > 0.65 ? '#D4AF37' : '#dc2626' // Gold & Rose
+    }));
+  }, []);
 
   // Фазові тексти
   const PHASE_TEXTS: Record<number, string> = {
     0: '',
-    1: '> ІНІЦІАЛІЗАЦІЯ КВАНТОВОГО ПРОТОКОЛУ [CRYSTALS-KYBER-1024]...',
-    2: '> ГЛОБАЛЬНА МЕРЕЖА: 47 СУПУТНИКІВ / 892 ВУЗЛІВ / 23 КРАЇНИ',
-    3: '> AI ENGINE: ПЕРЕХРЕСНА ВЕРИФІКАЦІЯ ЦІЛІ... РІВЕНЬ ЗАГРОЗИ: КРИТИЧНИЙ',
-    4: '> SOVEREIGN CORE: ДОСТУП ПІДТВЕРДЖЕНО — ЛАСКАВО ПРОСИМО ДО PREDATOR',
+    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [v56.5-ELITE]...',
+    2: '> ГЛОБАЛЬНИЙ СПЕКТР: 47 СУПУТНИКІВ / 1,217 ВУЗЛІВ / 42 КРАЇНИ',
+    3: '> NEURAL CORE: ПЕРЕХРЕСНА ВЕРИФІКАЦІЯ... РІВЕНЬ ЗАГРОЗИ: НЕВІДВОРОТНИЙ',
+    4: '> SOVEREIGN PREDATOR: ДОСТУП ТІР-1 ПІДТВЕРДЖЕНО — ВІТАЄМО В ЕЛІТІ',
   };
 
   const DB_SCAN_LINES = [
@@ -434,6 +447,21 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         gg.addColorStop(0, `rgba(180,140,20,${t * 0.06})`);
         gg.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = gg; ctx.fillRect(0, 0, W, H);
+      }
+
+      // Particle Field (Sovereign Essence)
+      if (cp >= 3) {
+        particlesRef.current.forEach(p => {
+          p.x += p.vx * (cp === 4 ? 6 : 1.5);
+          p.y += p.vy * (cp === 4 ? 6 : 1.5);
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+          
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.s * (cp === 4 ? 2 : 1), 0, Math.PI * 2);
+          ctx.fillStyle = cp === 4 ? p.c : `${p.c}33`;
+          ctx.fill();
+        });
       }
     }
 
@@ -1125,10 +1153,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {/* ─── ВЕРХНІЙ ЦЕНТР: TIMESTAMP / ВЕРСІЯ ─── */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center space-y-0.5">
               <div className="text-[6px] text-slate-800 uppercase tracking-[0.5em]">
-                PREDATOR ANALYTICS INTELLIGENCE PLATFORM
+                PREDATOR ANALYTICS · SOVEREIGN INTELLIGENCE ASSET
               </div>
-              <div className="text-[5.5px] text-slate-900 tracking-[0.4em] uppercase">
-                VERSION 56.3.0 · BUILD {rndHex(6)} · {new Date().toISOString().slice(0,10)}
+              <div className="text-[5.5px] text-yellow-600/70 tracking-[0.4em] uppercase font-black">
+                VERSION 56.5-ELITE · BUILD {rndHex(6)} · {new Date().toISOString().slice(0,10)}
               </div>
             </div>
 
@@ -1410,12 +1438,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 animate={{
                   textShadow:[
                     '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.2)',
+                    '0 0 40px rgba(180,140,20,0.8), 0 0 100px rgba(180,140,20,0.4)',
                     '0 0 30px rgba(220,38,38,1),0 0 100px rgba(220,38,38,0.45)',
                     '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.2)',
                   ],
+                  scale: [1, 1.02, 0.98, 1],
                 }}
-                transition={{ duration:2, repeat:Infinity }}
-                className="text-7xl md:text-9xl font-black tracking-[0.2em] text-white"
+                transition={{ duration:4, repeat:Infinity }}
+                className="text-8xl md:text-[12rem] font-black tracking-[-0.05em] text-white uppercase italic"
               >PREDATOR</motion.h1>
 
               {/* Роздільник з ромбом */}
@@ -1428,8 +1458,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="h-px w-32 bg-gradient-to-r from-transparent via-red-700 to-transparent"/>
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-1 bg-yellow-600/60 rotate-45"/>
-                  <h2 className="text-[11px] md:text-[13px] font-black tracking-[1.3em] text-red-400/80 uppercase whitespace-nowrap">
-                    СТРАТЕГІЧНИЙ РОЗВІДУВАЛЬНИЙ АКТИВ
+                  <h2 className="text-[11px] md:text-[16px] font-black tracking-[0.8em] text-yellow-500/90 uppercase whitespace-nowrap italic skew-x-[-12deg]">
+                    СУВЕРЕННИЙ ПРЕДАТОР · ELITE ASSET
                   </h2>
                   <div className="w-1 h-1 bg-yellow-600/60 rotate-45"/>
                 </div>
@@ -1447,7 +1477,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   OSINT · МИТНА РОЗВІДКА · КОРПОРАТИВНИЙ КОНТРОЛЬ · СУВЕРЕННИЙ ПРЕДАТОР
                 </div>
                 <div className="text-[7px] text-slate-800 tracking-[0.4em] uppercase">
-                  12.4 EXABYTE · 47 SATELLITE FEEDS · 23 STATE REGISTRIES · NEURAL CORE v56.4
+                  12.4 EXABYTE · 47 SATELLITE FEEDS · 23 STATE REGISTRIES · NEURAL CORE v56.5-ELITE
                 </div>
               </motion.div>
 
@@ -1462,15 +1492,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   animate={{
                     opacity:[0.8,1,0.8],
                     textShadow:[
-                      '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.25)',
-                      '0 0 40px rgba(220,38,38,1),0 0 120px rgba(220,38,38,0.6)',
-                      '0 0 15px rgba(220,38,38,0.6),0 0 60px rgba(220,38,38,0.25)',
+                      '0 0 20px rgba(180,140,20,0.6)',
+                      '0 0 40px rgba(220,38,38,1)',
+                      '0 0 20px rgba(180,140,20,0.6)',
                     ],
                   }}
-                  transition={{ duration:1.8, repeat:Infinity }}
-                  className="text-[16px] md:text-[22px] font-black tracking-[0.55em] text-red-600 uppercase italic"
+                  transition={{ duration:2, repeat:Infinity }}
+                  className="text-[20px] md:text-[32px] font-black tracking-[0.3em] text-white uppercase italic"
                 >
-                  ВІД НАС НЕ СХОВАЄШСЯ. НІХТО НЕ ЗМІГ.
+                  НІХТО НЕ ЗМІГ СХОВАТИСЯ.
                 </motion.p>
                 <div className="flex items-center justify-center gap-6">
                   <div className="h-px w-20 bg-red-900/30"/>

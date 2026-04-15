@@ -1,9 +1,11 @@
 /**
- * 🕸️ PREDATOR Cognitive Graph Analytics | v56.2-TITAN
+ * 🕸️ PREDATOR Cognitive Graph Analytics | v56.5-ELITE
  * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
- * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
+ * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
@@ -25,7 +27,7 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { useAppStore } from '@/store/useAppStore';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberOrb } from '@/components/CyberOrb';
 
@@ -70,9 +72,9 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                 <div className="flex items-center gap-5">
                     <div className={cn(
                         "p-4 rounded-2xl",
-                        node.type === 'COMPANY' ? "bg-indigo-500/20 text-indigo-400" :
-                        node.type === 'PERSON' ? "bg-emerald-500/20 text-emerald-400" :
-                        "bg-amber-500/20 text-amber-400"
+                        node.type === 'COMPANY' ? "bg-[#D4AF37]/20 text-[#D4AF37]" :
+                        node.type === 'PERSON' ? "bg-rose-500/20 text-rose-400" :
+                        "bg-white/10 text-slate-400"
                     )}>
                         <Box size={24} />
                     </div>
@@ -97,15 +99,15 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                     </div>
                     <div className="p-6 bg-black/40 border border-white/5 rounded-[2rem]">
                         <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">ІНДЕКС ЗВ'ЯЗНОСТІ</p>
-                        <div className="text-3xl font-mono font-black text-indigo-400 italic">0.94</div>
+                        <div className="text-3xl font-mono font-black text-[#D4AF37] italic">0.94</div>
                     </div>
                 </div>
 
                 <div className="space-y-6">
-                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-indigo-500 pl-4">
+                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-[#D4AF37] pl-4">
                         СЕМАНТИЧНИЙ ПРОФІЛЬ
                     </h4>
-                    <pre className="p-8 bg-black/60 border border-white/5 rounded-[2.5rem] text-[12px] text-indigo-300 font-mono italic leading-relaxed whitespace-pre-wrap">
+                    <pre className="p-8 bg-black/60 border border-white/5 rounded-[2.5rem] text-[12px] text-[#D4AF37] font-mono italic leading-relaxed whitespace-pre-wrap">
                         {`{
   "industry": "Maritime Defense",
   "sanctions_check": "CLEAR",
@@ -118,14 +120,14 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                 </div>
 
                 <div className="space-y-6">
-                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-indigo-500 pl-4">
+                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-[#D4AF37] pl-4">
                         АКТИВНІ ЗВ'ЯЗКИ
                     </h4>
                     <div className="space-y-4">
                         {[1, 2, 3].map(i => (
                             <div key={i} className="group p-5 bg-white/[0.02] border border-white/5 rounded-[2rem] flex items-center justify-between hover:bg-white/5 transition-all">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-500 group-hover:text-indigo-400 transition-colors">
+                                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-500 group-hover:text-[#D4AF37] transition-colors">
                                         <Share2 size={16} />
                                     </div>
                                     <div>
@@ -133,14 +135,14 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                                         <p className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">ЧЕРЕЗ: УЧАСНИК</p>
                                     </div>
                                 </div>
-                                <div className="text-xs font-mono font-black text-indigo-500">92%</div>
+                                <div className="text-xs font-mono font-black text-[#D4AF37]">92%</div>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
 
-            <button className="mt-10 w-full py-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.4em] shadow-3xl shadow-indigo-900/40 transition-all active:scale-95 flex items-center justify-center gap-4">
+            <button className="mt-10 w-full py-6 bg-rose-600 hover:bg-rose-500 text-white rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.4em] shadow-3xl shadow-rose-900/40 transition-all active:scale-95 flex items-center justify-center gap-4">
                <Fingerprint size={16} /> ПЕРЕЙТИ ДО ПОВНОГО ЗВІТУ
             </button>
         </motion.div>
@@ -164,9 +166,9 @@ const GraphAnalyticsPage: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+            <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(99, 102, 241, 0.08)" />
+                <CyberGrid color="rgba(212, 175, 55, 0.08)" />
 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
                     
@@ -175,19 +177,19 @@ const GraphAnalyticsPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
-                                    <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-indigo-500/40">
-                                        <Network size={36} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
+                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
+                                    <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-[#D4AF37]/40">
+                                        <Network size={36} className="text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
                                     </div>
                                 </div>
                                 <div>
                                     <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-2deg]">
-                                        COGNITIVE <span className="text-indigo-500">GRAPH</span>
+                                        COGNITIVE <span className="text-[#D4AF37]">GRAPH</span>
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
-                                        <div className="h-0.5 w-12 bg-indigo-500/50" />
-                                        <span className="text-[10px] font-mono font-black text-indigo-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                            NEURAL_TOPOLOGY_ANALYZER // v56.2-TITAN
+                                        <div className="h-0.5 w-12 bg-[#D4AF37]/50" />
+                                        <span className="text-[10px] font-mono font-black text-[#D4AF37]/80 uppercase tracking-[0.5em] animate-pulse">
+                                            NEURAL_TOPOLOGY_ANALYZER // v56.5-ELITE
                                         </span>
                                     </div>
                                 </div>
@@ -219,7 +221,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                                 onClick={() => { setActiveAlgorithm(alg as any); toggleLoading(); }}
                                                 className={cn(
                                                     "px-8 py-3 rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.2em] transition-all",
-                                                    activeAlgorithm === alg ? "bg-indigo-600 text-white shadow-xl" : "text-slate-500 hover:text-slate-200"
+                                                    activeAlgorithm === alg ? "bg-[#D4AF37] text-slate-950 shadow-xl" : "text-slate-500 hover:text-slate-200"
                                                 )}
                                              >
                                                 {alg}
@@ -241,7 +243,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                         { icon: Maximize2, label: 'FS' },
                                         { icon: RefreshCw, label: 'RESET', rotate: true }
                                      ].map(ctrl => (
-                                         <button key={ctrl.label} className="p-5 bg-black/60 backdrop-blur-3xl rounded-3xl border border-white/5 text-slate-500 hover:text-indigo-400 hover:border-indigo-500/30 transition-all group/btn shadow-2xl">
+                                         <button key={ctrl.label} className="p-5 bg-black/60 backdrop-blur-3xl rounded-3xl border border-white/5 text-slate-500 hover:text-[#D4AF37] hover:border-[#D4AF37]/30 transition-all group/btn shadow-2xl">
                                              <ctrl.icon size={22} className={cn("transition-transform group-hover/btn:scale-110", ctrl.rotate && "group-hover/btn:rotate-180 duration-500")} />
                                          </button>
                                      ))}
@@ -318,15 +320,15 @@ const GraphAnalyticsPage: React.FC = () => {
                                 {/* Bottom Legend HUD */}
                                 <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.5)]" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-slate-500 shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ОСОБИ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-[#D4AF37]/50 shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -350,7 +352,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              </div>
                                              <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">АНАЛІЗ_ПОТОКІВ_v5</h3>
                                          </div>
-                                         <Badge className="bg-indigo-500 text-black px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic">LIVE_DECODER</Badge>
+                                         <Badge className="bg-[#D4AF37] text-black px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic">LIVE_DECODER</Badge>
                                      </div>
                                      
                                      <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4">

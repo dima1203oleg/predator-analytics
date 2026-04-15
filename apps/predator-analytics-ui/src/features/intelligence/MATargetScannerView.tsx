@@ -1,5 +1,5 @@
 /**
- * 🎯 M&A TARGET SCANNER | v56.4
+ * 🎯 M&A TARGET SCANNER | v56.5-ELITE
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -63,7 +63,7 @@ const MA_TARGETS: MATarget[] = [
     founded: 2004,
     location: 'Дніпро',
     reason: ['Борг > виручка', 'Судові провадження (3)', 'Втрата ключового замовника'],
-    assets: 'Завод 12,000 м², 180 od. техніки, патенти',
+    assets: 'Завод 12,000 м², 180 од. техніки, патенти',
     priceTarget: '$3.2M–$5.5M',
   },
   {
@@ -102,42 +102,6 @@ const MA_TARGETS: MATarget[] = [
     assets: 'Ліцензії, B2B-контракти з 47 лікарнями, R&D команда',
     priceTarget: '$4.5M–$7.8M',
   },
-  {
-    id: 'ma-004',
-    name: 'ФОП "IT-Construct"',
-    edrpou: '2847391028',
-    sector: 'Будівельні технології',
-    revenue: '$1.8M',
-    debt: '$3.2M',
-    distressScore: 92,
-    opportunityScore: 62,
-    status: 'distress',
-    dealTypes: ['asset-buy'],
-    employees: 28,
-    founded: 2019,
-    location: 'Київ',
-    reason: ['Форс-мажор через бойові дії', 'Замовники розірвали контракти', 'Заборгованість з оренди'],
-    assets: 'SaaS-платформа BIM, 12 активних ліцензій',
-    priceTarget: '$280K–$600K',
-  },
-  {
-    id: 'ma-005',
-    name: 'ТОВ "ЕкоЕнерго Захід"',
-    edrpou: '38740921',
-    sector: 'Відновлювана енергетика',
-    revenue: '$6.7M',
-    debt: '$2.1M',
-    distressScore: 28,
-    opportunityScore: 98,
-    status: 'watch',
-    dealTypes: ['equity', 'partnership'],
-    employees: 156,
-    founded: 2013,
-    location: 'Львів',
-    reason: ['Зростання x3 за 2 роки', 'Шукають інвестора для масштабування', 'Грантова підтримка ЄС'],
-    assets: '3 сонячні парки (64 MWт), 2 БіоГЕС дозволи',
-    priceTarget: '$18M–$28M',
-  },
 ];
 
 const SECTOR_DATA = [
@@ -150,15 +114,15 @@ const SECTOR_DATA = [
 ];
 
 const STATUS_CFG = {
-  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#ef4444', bg: 'bg-red-900/20',     border: 'border-red-800/40',    icon: AlertTriangle },
+  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-rose-900/20',     border: 'border-rose-500/40',    icon: AlertTriangle },
   restructuring:  { label: 'РЕСТРУКТУРИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
-  opportunity:    { label: 'МОЖЛИВІСТЬ',          color: '#10b981', bg: 'bg-emerald-900/15', border: 'border-emerald-800/30', icon: Star },
-  watch:          { label: 'СПОСТЕРЕЖЕННЯ',       color: '#6366f1', bg: 'bg-indigo-900/15',  border: 'border-indigo-800/30', icon: Eye },
+  opportunity:    { label: 'МОЖЛИВІСТЬ',          color: '#D4AF37', bg: 'bg-yellow-900/15', border: 'border-yellow-500/30', icon: Star },
+  watch:          { label: 'СПОСТЕРЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
 };
 
 const DEAL_CFG = {
-  acquisition: { label: 'Поглинання',  color: '#ef4444' },
-  partnership: { label: 'Партнерство', color: '#06b6d4' },
+  acquisition: { label: 'Поглинання',  color: '#E11D48' },
+  partnership: { label: 'Партнерство', color: '#D4AF37' },
   'asset-buy': { label: 'Купівля активів', color: '#f59e0b' },
   equity:      { label: 'Вхід в капітал',  color: '#10b981' },
 };
@@ -166,7 +130,7 @@ const DEAL_CFG = {
 // ─── КОМПОНЕНТ ──────────────────────────────────────────────
 
 const MATargetScannerView: React.FC = () => {
-  const [selectedTarget, setSelectedTarget] = useState<MATarget | null>(null);
+  const [selectedTarget, setSelectedTarget] = useState<MATarget | null>(MA_TARGETS[0]);
   const [filterStatus, setFilterStatus] = useState<CompanyStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'opportunity' | 'distress'>('opportunity');
@@ -185,208 +149,207 @@ const MATargetScannerView: React.FC = () => {
     );
 
   return (
-    <div className="min-h-screen text-slate-200 font-sans pb-24 relative overflow-hidden">
+    <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#020202]">
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 40% 10%, rgba(99,102,241,0.04) 0%, transparent 55%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 40% 10%, rgba(212,175,55,0.05) 0%, transparent 55%)' }} />
       </div>
 
-      <div className="relative z-10 max-w-[1800px] mx-auto p-6 space-y-8">
+      <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК ── */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
+        {/* ── ЗАГОЛОВОК ELITE ── */}
+        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
+          <div className="flex items-center gap-10">
             <div className="relative">
-              <div className="absolute inset-0 bg-indigo-700/15 blur-2xl rounded-full" />
-              <div className="relative p-5 bg-black border border-indigo-900/50">
-                <Target size={38} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-600 rounded-full animate-pulse" />
+              <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
+              <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
+                <Target size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-600 rounded-full border-4 border-black animate-pulse" />
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <span className="w-1 h-1 bg-indigo-600 rounded-full animate-pulse" />
-                <span className="text-[8px] font-black text-indigo-700/70 uppercase tracking-[0.5em]">
-                  M&A INTELLIGENCE · DEAL SOURCING · CLASSIFIED · v56.4
+              <div className="flex items-center gap-4 mb-3">
+                <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
+                <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
+                  M&A INTELLIGENCE · DEAL SOURCING · v56.5-ELITE
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-                M&A TARGET{' '}
-                <span className="text-indigo-400 drop-shadow-[0_0_20px_rgba(99,102,241,0.3)]">SCANNER</span>
+              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic">
+                TARGET <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCANNER</span>
               </h1>
-              <p className="text-[10px] text-slate-700 font-black uppercase tracking-[0.3em] mt-1">
-                КОМПАНІЇ ПІД ТИСКОМ · МОЖЛИВОСТІ ПОГЛИНАНЬ · АКТИВИ ДО ПРОДАЖУ
+              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
+                МОНІТОРИНГ ВРАЗЛИВИХ АКТИВІВ · СТРАТЕГІЧНІ ПОГЛИНАННЯ · ТЕХНОЛОГІЧНИЙ МАРКЕТ-ЕНТРІ
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 px-5 py-3 bg-black border border-indigo-900/40">
-              <Crosshair size={13} className="text-indigo-600" />
-              <span className="text-[9px] font-black text-indigo-700 uppercase tracking-widest">
-                {MA_TARGETS.length} ЦІЛЕЙ АКТИВНИХ
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 px-10 py-6 bg-black border-2 border-white/5 rounded-3xl shadow-3xl group hover:border-yellow-500/20 transition-all">
+              <Crosshair size={24} className="text-yellow-500 animate-pulse" />
+              <span className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] font-mono italic">
+                {MA_TARGETS.length}_ACTIVE_ASSETS
               </span>
             </div>
-            <button className="px-8 py-3 bg-indigo-700 text-white text-[9px] font-black uppercase tracking-wider hover:bg-indigo-600 transition-colors border border-indigo-500/30 flex items-center gap-2">
-              <Download size={13} />
-              DEAL PACK PDF
+            <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+              <Download size={22} />
+              ACQUISITION_PACK_ELITE
             </button>
           </div>
         </div>
 
-        {/* ── МЕТРИКИ ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* ── МЕТРИКИ ELITE ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#6366f1', sub: 'По Україні' },
-            { label: 'В ДЕФОЛТ-ЗОНІ',         value: '43',    icon: AlertTriangle, color: '#ef4444', sub: 'Стрес > 80%' },
-            { label: 'ТОПОВИХ МОЖЛИВОСТЕЙ',   value: '18',    icon: Star,        color: '#10b981', sub: 'Score > 90%' },
-            { label: 'ЗАГАЛЬНА ОЦІНКА',       value: '$340M', icon: DollarSign,  color: '#f59e0b', sub: 'Сукупна вартість' },
+            { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
+            { label: 'CRITICAL_STRESS',      value: '43',    icon: AlertTriangle, color: '#E11D48', sub: 'Distress Score > 80%' },
+            { label: 'GOLDEN_OPPORTUNITIES',  value: '18',    icon: Star,        color: '#D4AF37', sub: 'Match Fidelity > 90%' },
+            { label: 'TOTAL_EXPOSURE',       value: '$340M', icon: DollarSign,  color: '#D4AF37', sub: 'Aggregated Asset Value' },
           ].map((m, i) => (
             <motion.div
               key={m.label}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-              className="p-7 bg-black border border-slate-800/50 hover:border-slate-700/60 transition-all relative overflow-hidden group"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+              className="p-10 bg-black/60 backdrop-blur-2xl border-2 border-white/5 hover:border-yellow-500/30 transition-all rounded-[3.5rem] shadow-2xl group relative overflow-hidden"
             >
-              <div className="absolute -right-3 -bottom-3 opacity-5 group-hover:opacity-10 transition-opacity">
-                <m.icon size={70} style={{ color: m.color }} />
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-yellow-500/40 to-transparent opacity-40" />
+              <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-10 transition-all duration-[2s]">
+                <m.icon size={120} style={{ color: m.color }} />
               </div>
-              <div className="space-y-2 relative">
-                <p className="text-[8px] font-black text-slate-700 uppercase tracking-[0.4em]">{m.label}</p>
-                <h3 className="text-3xl font-black text-white font-mono">{m.value}</h3>
-                <p className="text-[8px] text-slate-700 font-black uppercase tracking-wider">{m.sub}</p>
-              </div>
+              <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.5em] mb-4 italic">{m.label}</p>
+              <h3 className="text-5xl font-black text-white font-mono tracking-tighter italic" style={{ color: i === 1 ? m.color : '#fff' }}>{m.value}</h3>
+              <p className="text-[10px] text-slate-700 font-black uppercase mt-4 tracking-widest opacity-60 underline decoration-yellow-500/20">{m.sub}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* ── ОСНОВНИЙ КОНТЕНТ ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Список цілей */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Фільтри */}
-            <div className="flex flex-wrap gap-3 items-center">
-              <div className="flex items-center gap-2 bg-black border border-slate-800/50 px-4 py-2">
-                <Search size={12} className="text-slate-600" />
+          <div className="lg:col-span-7 space-y-8">
+            {/* Фільтри ELITE */}
+            <div className="flex flex-wrap gap-4 items-center p-3 bg-black/40 backdrop-blur-2xl border-2 border-white/5 rounded-[2.5rem] w-fit shadow-2xl">
+              <div className="flex items-center gap-4 bg-black border-2 border-white/5 px-8 py-3 rounded-2xl group focus-within:border-yellow-500/40 transition-all">
+                <Search size={18} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
                 <input
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Назва або сектор..."
-                  className="bg-transparent text-[11px] text-white outline-none placeholder:text-slate-700 font-mono w-36"
+                  placeholder="FILTER_SEARCH..."
+                  className="bg-transparent text-[11px] text-white outline-none placeholder:text-slate-800 font-mono w-44 font-black uppercase italic"
                 />
               </div>
-              <div className="flex gap-1 bg-black border border-slate-800/50 p-1">
-                {([['all', 'УСІ'], ['distress', 'СТРЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
+              <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
+                {([['all', 'УСІ_ВЕКТОРИ'], ['distress', 'СТРЕС'], ['opportunity', 'НАГОДА'], ['watch', 'НАГЛЯД']] as const).map(([v, l]) => (
                   <button
                     key={v}
                     onClick={() => setFilterStatus(v)}
                     className={cn(
-                      "px-3 py-1.5 text-[7px] font-black uppercase tracking-wider transition-all",
-                      filterStatus === v ? "bg-indigo-700 text-white" : "text-slate-600 hover:text-slate-300"
+                      "px-6 py-2.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic",
+                      filterStatus === v ? "bg-yellow-500 text-black shadow-lg" : "text-slate-600 hover:text-slate-300"
                     )}
                   >
                     {l}
                   </button>
                 ))}
               </div>
-              <div className="flex gap-1 bg-black border border-slate-800/50 p-1">
+              <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner ml-auto">
                 <button
                   onClick={() => setSortBy('opportunity')}
-                  className={cn("px-3 py-1.5 text-[7px] font-black uppercase tracking-wider transition-all", sortBy === 'opportunity' ? "bg-emerald-800/60 text-emerald-300" : "text-slate-600")}
+                  className={cn("px-6 py-2.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic", sortBy === 'opportunity' ? "text-yellow-500 font-bold" : "text-slate-800")}
                 >
-                  ↑ НАГОДА
+                  SORT_BY_ALPHA
                 </button>
                 <button
                   onClick={() => setSortBy('distress')}
-                  className={cn("px-3 py-1.5 text-[7px] font-black uppercase tracking-wider transition-all", sortBy === 'distress' ? "bg-red-900/40 text-red-400" : "text-slate-600")}
+                  className={cn("px-6 py-2.5 text-[9px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic", sortBy === 'distress' ? "text-rose-500 font-bold" : "text-slate-800")}
                 >
-                  ↑ СТРЕС
+                  SORT_BY_RISK
                 </button>
               </div>
             </div>
 
-            {/* Список */}
-            <div className="space-y-3">
+            {/* Список ELITE */}
+            <div className="space-y-6">
               {filtered.map((target, i) => {
                 const sc = STATUS_CFG[target.status];
                 const StatusIcon = sc.icon;
                 return (
                   <motion.div
                     key={target.id}
-                    initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
+                    initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
                     onClick={() => setSelectedTarget(target)}
                     className={cn(
-                      "p-6 border cursor-pointer transition-all relative overflow-hidden group",
+                      "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3.5rem] shadow-3xl",
                       selectedTarget?.id === target.id
-                        ? "bg-indigo-950/15 border-indigo-800/50"
-                        : "bg-black border-slate-800/40 hover:border-slate-700/60"
+                        ? "bg-yellow-500/[0.03] border-yellow-500/30 shadow-4xl"
+                        : "bg-black/60 border-white/5 hover:border-white/20"
                     )}
                   >
                     {selectedTarget?.id === target.id && (
-                      <div className="absolute left-0 inset-y-0 w-0.5 bg-indigo-600 shadow-[0_0_6px_rgba(99,102,241,0.6)]" />
+                      <div className="absolute left-0 inset-y-0 w-2.5 bg-yellow-500 shadow-[0_0_20px_#d4af37]" />
                     )}
 
-                    <div className="flex items-start gap-5">
-                      {/* Скор */}
-                      <div className="text-center shrink-0 w-16">
-                        <div className="text-[26px] font-black font-mono text-emerald-400 leading-none">
+                    <div className="flex items-start gap-10">
+                      {/* Скор ELITE */}
+                      <div className="text-center shrink-0 w-24 p-6 bg-black border-2 border-white/5 rounded-3xl group-hover:border-yellow-500/40 transition-all shadow-inner relative">
+                        <div className="text-4xl font-black font-mono text-yellow-500 leading-none italic tracking-tighter">
                           {target.opportunityScore}
                         </div>
-                        <div className="text-[7px] font-black text-emerald-700 uppercase mt-0.5">НАГОДА</div>
+                        <div className="text-[8px] font-black text-yellow-800 uppercase mt-3 tracking-widest italic">ALPHA_SCORE</div>
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-500 rounded-full animate-ping" />
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                          <h3 className="text-[13px] font-black text-white group-hover:text-indigo-300 transition-colors uppercase">
+                        <div className="flex items-center gap-6 flex-wrap mb-4">
+                          <h3 className="text-2xl font-black text-white group-hover:text-yellow-500 transition-colors uppercase italic tracking-tighter font-serif">
                             {target.name}
                           </h3>
-                          <span className={cn("text-[7px] font-black px-2 py-0.5 border uppercase flex items-center gap-1", sc.bg, sc.border)}>
-                            <StatusIcon size={9} style={{ color: sc.color }} />
+                          <span className={cn("text-[9px] font-black px-4 py-1.5 border-2 uppercase flex items-center gap-2 rounded-xl italic tracking-widest", sc.bg, sc.border)} style={{ color: sc.color }}>
+                            <StatusIcon size={12} />
                             {sc.label}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-4 text-[8px] text-slate-600 font-mono mb-3">
-                          <span className="font-black text-slate-500">{target.sector}</span>
-                          <span>·</span>
+                        <div className="flex items-center gap-6 text-[10px] text-slate-600 font-mono mb-6 uppercase tracking-widest font-black italic">
+                          <span className="text-yellow-600">{target.sector}</span>
+                          <span className="opacity-20">/</span>
                           <span>{target.location}</span>
-                          <span>·</span>
-                          <span>{target.employees} осіб</span>
-                          <span>·</span>
-                          <span>ЄДРПОУ {target.edrpou}</span>
+                          <span className="opacity-20">/</span>
+                          <span>{target.employees}_STAFF</span>
+                          <span className="opacity-20">/</span>
+                          <span className="text-slate-400 font-black">ID_{target.edrpou}</span>
                         </div>
 
-                        <div className="flex items-center gap-4 mb-3">
+                        <div className="flex items-center gap-10 mb-6">
                           <div>
-                            <p className="text-[7px] text-slate-700 uppercase">Виручка</p>
-                            <p className="text-[11px] font-black text-white font-mono">{target.revenue}</p>
+                            <p className="text-[8px] text-slate-800 uppercase font-black tracking-[0.4em] mb-2">REVENUE_STREAM</p>
+                            <p className="text-xl font-black text-white font-mono italic">{target.revenue}</p>
                           </div>
                           <div>
-                            <p className="text-[7px] text-slate-700 uppercase">Борг</p>
-                            <p className="text-[11px] font-black text-red-400 font-mono">{target.debt}</p>
+                            <p className="text-[8px] text-slate-800 uppercase font-black tracking-[0.4em] mb-2">LIABILITY_DEBT</p>
+                            <p className="text-xl font-black text-rose-500 font-mono italic">{target.debt}</p>
                           </div>
                           <div>
-                            <p className="text-[7px] text-slate-700 uppercase">Ціна входу</p>
-                            <p className="text-[11px] font-black text-indigo-400 font-mono">{target.priceTarget}</p>
+                            <p className="text-[8px] text-slate-800 uppercase font-black tracking-[0.4em] mb-2">TARGET_VALUATION</p>
+                            <p className="text-xl font-black text-yellow-600 font-mono italic">{target.priceTarget}</p>
                           </div>
                         </div>
 
-                        <div className="flex gap-2 flex-wrap">
+                        <div className="flex gap-3 flex-wrap">
                           {target.dealTypes.map(d => (
-                            <span key={d} className="text-[7px] font-black px-2 py-0.5 bg-slate-900 border border-slate-800 uppercase tracking-wider"
-                              style={{ color: DEAL_CFG[d].color }}>
-                              {DEAL_CFG[d].label}
+                            <span key={d} className="text-[9px] font-black px-5 py-1.5 bg-black border-2 border-white/5 uppercase tracking-widest rounded-full italic hover:border-yellow-500/20 transition-all text-slate-500"
+                              style={{ color: `${DEAL_CFG[d].color}ee` }}>
+                              #{DEAL_CFG[d].label.replace(' ', '_')}
                             </span>
                           ))}
                         </div>
                       </div>
 
-                      <div className="shrink-0 flex flex-col items-end gap-2">
-                        <div className="text-[10px] font-black font-mono" style={{ color: target.distressScore > 70 ? '#ef4444' : '#f59e0b' }}>
-                          СТРЕС {target.distressScore}%
+                      <div className="shrink-0 flex flex-col items-end gap-4 px-6 border-l-2 border-white/5">
+                        <div className="text-[10px] font-black font-mono uppercase tracking-widest italic" style={{ color: target.distressScore > 70 ? '#E11D48' : '#f59e0b' }}>
+                          STRESS_{target.distressScore}%
                         </div>
-                        <div className="h-12 w-0.5 bg-slate-800 relative overflow-hidden">
-                          <div className="absolute bottom-0 left-0 right-0 transition-all"
-                            style={{ height: `${target.distressScore}%`, backgroundColor: target.distressScore > 70 ? '#ef4444' : '#f59e0b' }} />
+                        <div className="h-24 w-2 bg-black rounded-full relative overflow-hidden shadow-inner border border-white/5">
+                          <div className="absolute bottom-0 left-0 right-0 transition-all duration-1000"
+                            style={{ height: `${target.distressScore}%`, backgroundColor: target.distressScore > 70 ? '#E11D48' : '#f59e0b', boxShadow: '0 0 15px currentColor' }} />
                         </div>
                       </div>
                     </div>
@@ -396,101 +359,106 @@ const MATargetScannerView: React.FC = () => {
             </div>
           </div>
 
-          {/* Деталі та графіки */}
-          <div className="lg:col-span-5 space-y-5">
-            {/* Деталі цілі */}
+          {/* Деталі та графіки ELITE */}
+          <div className="lg:col-span-5 space-y-8">
             <AnimatePresence mode="wait">
               {selectedTarget ? (
                 <motion.div
                   key={selectedTarget.id}
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  className="bg-black border border-indigo-900/30 p-6 space-y-5"
+                  initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                  className="bg-black/80 backdrop-blur-3xl border-2 border-yellow-500/10 p-12 space-y-10 rounded-[4rem] shadow-4xl relative overflow-hidden"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="absolute top-0 right-0 p-24 opacity-[0.03] pointer-events-none">
+                     <Target size={300} className="text-yellow-500" />
+                  </div>
+                  <div className="flex items-start justify-between relative z-10">
                     <div>
-                      <h2 className="text-[15px] font-black text-white uppercase">{selectedTarget.name}</h2>
-                      <p className="text-[9px] text-slate-600 mt-0.5">{selectedTarget.sector} · {selectedTarget.location}</p>
+                      <h2 className="text-3xl font-black text-white uppercase italic leading-none tracking-tighter font-serif">{selectedTarget.name}</h2>
+                      <p className="text-[11px] text-yellow-600 font-black mt-3 uppercase tracking-[0.4em] italic">{selectedTarget.sector} · {selectedTarget.location}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[22px] font-black text-emerald-400 font-mono">{selectedTarget.opportunityScore}%</p>
-                      <p className="text-[7px] text-emerald-700 uppercase font-black">OPPORTUNITY SCORE</p>
+                      <p className="text-5xl font-black text-yellow-500 font-mono leading-none tracking-tighter italic">{selectedTarget.opportunityScore}%</p>
+                      <p className="text-[9px] text-yellow-800 uppercase font-black tracking-widest mt-2">OPPORTUNITY_RANK</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="grid grid-cols-3 gap-6 relative z-10">
                     {[
-                      { l: 'Виручка', v: selectedTarget.revenue, c: 'text-white' },
-                      { l: 'Борг',    v: selectedTarget.debt,    c: 'text-red-400' },
-                      { l: 'Ціль',   v: selectedTarget.priceTarget, c: 'text-indigo-400' },
+                      { l: 'REVENUE', v: selectedTarget.revenue, c: 'text-white' },
+                      { l: 'DEBT',    v: selectedTarget.debt,    c: 'text-rose-500' },
+                      { l: 'ENTRY_VAL',   v: selectedTarget.priceTarget, c: 'text-yellow-600' },
                     ].map((f, i) => (
-                      <div key={i} className="p-3 border border-slate-800/50 bg-slate-950/40">
-                        <p className="text-[7px] text-slate-600 uppercase font-black">{f.l}</p>
-                        <p className={cn("text-[12px] font-black font-mono mt-1", f.c)}>{f.v}</p>
+                      <div key={i} className="p-6 border-2 border-white/5 bg-black rounded-3xl shadow-inner group hover:border-yellow-500/20 transition-all">
+                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest mb-2 group-hover:text-yellow-500/60 transition-colors">{f.l}</p>
+                        <p className={cn("text-[14px] font-black font-mono italic", f.c)}>{f.v}</p>
                       </div>
                     ))}
                   </div>
 
-                  <div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-3">ПРИЧИНИ ВРАЗЛИВОСТІ</p>
-                    <div className="space-y-2">
+                  <div className="relative z-10">
+                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-6 italic">CRITICAL_VULNERABILITIES</p>
+                    <div className="space-y-4">
                       {selectedTarget.reason.map((r, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 border border-slate-800/40">
-                          <AlertTriangle size={11} className="text-amber-600 shrink-0" />
-                          <span className="text-[10px] font-black text-slate-400">{r}</span>
+                        <div key={i} className="flex items-center gap-5 p-6 border-2 border-white/5 bg-white/[0.01] rounded-3xl hover:border-rose-500/20 transition-all">
+                          <div className="p-2 bg-rose-500/10 rounded-lg"><AlertTriangle size={16} className="text-rose-600 shrink-0" /></div>
+                          <span className="text-[12px] font-black text-slate-400 uppercase italic tracking-tight">{r}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-2">АКТИВИ</p>
-                    <div className="p-4 border border-slate-800/40 bg-slate-950/40">
-                      <p className="text-[10px] font-black text-slate-300">{selectedTarget.assets}</p>
+                  <div className="relative z-10">
+                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-4 italic">IDENTIFIED_ASSETS</p>
+                    <div className="p-8 border-2 border-white/5 bg-black rounded-[2.5rem] shadow-inner">
+                      <p className="text-[14px] font-black text-slate-300 italic leading-relaxed uppercase tracking-tighter border-l-4 border-yellow-500/30 pl-6">{selectedTarget.assets}</p>
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-2">ТИПИ УГОДИ</p>
-                    <div className="flex gap-2 flex-wrap">
+                  <div className="relative z-10">
+                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.6em] mb-5 italic">DEAL_ARCHITECTURE</p>
+                    <div className="flex gap-4 flex-wrap">
                       {selectedTarget.dealTypes.map(d => (
-                        <div key={d} className="px-4 py-2 border text-[9px] font-black uppercase tracking-wider" style={{ color: DEAL_CFG[d].color, borderColor: `${DEAL_CFG[d].color}30` }}>
+                        <div key={d} className="px-8 py-3 border-2 border-white/5 bg-white/[0.01] text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl italic transition-all hover:border-yellow-500/30" style={{ color: DEAL_CFG[d].color }}>
                           {DEAL_CFG[d].label}
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <button className="w-full py-4 bg-indigo-700 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-indigo-600 transition-colors shadow-[0_0_20px_rgba(99,102,241,0.25)] flex items-center justify-center gap-3">
-                    <Crosshair size={15} />
-                    ІНІЦІЮВАТИ КОНТАКТ
+                  <button className="w-full py-7 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl flex items-center justify-center gap-5 rounded-3xl italic font-bold">
+                    <Crosshair size={24} />
+                    EXECUTE_ACQUISITION_PROTOCOL
                   </button>
                 </motion.div>
               ) : (
-                <div className="bg-black border border-slate-800/30 p-10 text-center">
-                  <Target size={36} className="mx-auto mb-4 text-slate-800" />
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-wider">
-                    ОБЕРІТЬ ЦІЛЬ ДЛЯ ДЕТАЛЬНОГО АНАЛІЗУ
+                <div className="bg-black/40 border-4 border-dashed border-white/5 p-32 text-center rounded-[5rem] flex flex-col items-center justify-center">
+                  <Target size={80} className="mx-auto mb-8 text-slate-900 animate-pulse" />
+                  <p className="text-[12px] font-black text-slate-800 uppercase tracking-[0.8em] italic">
+                    STANDBY_FOR_TARGET_SELECTION
                   </p>
                 </div>
               )}
             </AnimatePresence>
 
-            {/* Розподіл по секторах */}
-            <div className="bg-black border border-slate-800/50 p-6">
-              <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.45em] mb-5 flex items-center gap-2">
-                <BarChart3 size={12} className="text-indigo-600" />
-                ЦІЛІ ПО СЕКТОРАХ
+            {/* Розподіл по секторах ELITE */}
+            <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl backdrop-blur-3xl overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500/20" />
+              <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] mb-10 flex items-center gap-5 italic">
+                 <div className="p-3 bg-yellow-500/10 rounded-xl"><BarChart3 size={20} className="text-yellow-500" /></div>
+                 SECTORIAL_ASSET_DISTRIBUTION
               </h3>
-              <div className="h-[180px]">
+              <div className="h-[240px] relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={SECTOR_DATA} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                    <XAxis dataKey="sector" tick={{ fill: '#475569', fontSize: 8, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
-                    <YAxis tick={{ fill: '#475569', fontSize: 9 }} tickLine={false} axisLine={false} />
+                  <BarChart data={SECTOR_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,175,55,0.05)" vertical={false} />
+                    <XAxis dataKey="sector" tick={{ fill: '#475569', fontSize: 10, fontWeight: 'black' }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} tickLine={false} axisLine={false} />
                     <Tooltip
-                      contentStyle={{ background: '#020008', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 0 }}
+                      cursor={{ fill: 'rgba(212,175,55,0.05)' }}
+                      contentStyle={{ background: '#000', border: '2px solid rgba(212,175,55,0.2)', borderRadius: '20px', padding: '15px' }}
+                      itemStyle={{ color: '#D4AF37', fontWeight: 'black', fontSize: '10px' }}
                     />
-                    <Bar dataKey="targets" name="Цілей" fill="#6366f1" radius={[2, 2, 0, 0]} opacity={0.8} />
+                    <Bar dataKey="targets" name="ASSETS" fill="#D4AF37" radius={[10, 10, 0, 0]} opacity={0.8} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -498,6 +466,7 @@ const MATargetScannerView: React.FC = () => {
           </div>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}` }} />
     </div>
   );
 };

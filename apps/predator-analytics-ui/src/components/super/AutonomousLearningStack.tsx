@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api, v45Client } from '../../services/api';
 import { TacticalCard } from '../TacticalCard';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Zap,
     Database,
@@ -9,7 +9,11 @@ import {
     RefreshCcw,
     Search,
     MessageSquare,
-    Play
+    Play,
+    Cpu,
+    Target,
+    Activity,
+    Lock
 } from 'lucide-react';
 import { premiumLocales } from '../../locales/uk/premium';
 
@@ -41,82 +45,104 @@ export const AutonomousLearningStack: React.FC = () => {
         setIsThinking(true);
         try {
             await v45Client.post('/training/trigger');
-            await fetchTrainingData(); // Refresh immediately after trigger
+            await fetchTrainingData(); 
         } finally {
             setIsThinking(false);
         }
     };
 
     return (
-        <TacticalCard
-            title={premiumLocales.evolution.learningStack.title}
-            icon={<Database className="w-4 h-4 text-orange-400" />}
-        >
-            <div className="space-y-4">
+        <div className="p-8 bg-slate-950/80 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/40 to-transparent" />
+            
+            <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="flex items-center gap-4">
+                    <div className="p-4 bg-rose-500/20 rounded-2xl border border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.15)]">
+                        <Database className="w-6 h-6 text-rose-400 animate-pulse" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-black text-white tracking-widest uppercase italic">{premiumLocales.evolution.learningStack.title}</h2>
+                        <p className="text-[10px] text-rose-600/60 font-black uppercase tracking-[0.3em] font-mono">NEURAL_DEEP_LEARNING_v5.6</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 rounded-full border border-rose-500/20">
+                    <Activity className="w-3 h-3 text-rose-400" />
+                    <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest tabular-nums">1.4B PARAM</span>
+                </div>
+            </div>
+
+            <div className="space-y-6 relative z-10">
                 {/* Current Status */}
-                <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-[10px] text-white/40 uppercase font-mono">{premiumLocales.evolution.learningStack.engineStatus}</span>
-                        <div className={`px-2 py-0.5 rounded-full text-[8px] font-bold uppercase ${
-                            trainingStatus?.status === 'running' ? 'bg-orange-500/20 text-orange-400 animate-pulse' : 'bg-green-500/20 text-green-400'
+                <div className="bg-black/60 p-6 rounded-3xl border border-white/5 group-hover:border-rose-500/30 transition-all duration-500 shadow-inner">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-[11px] text-slate-400 uppercase font-black tracking-widest">{premiumLocales.evolution.learningStack.engineStatus}</span>
+                        <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border-2 ${
+                            trainingStatus?.status === 'running' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30 animate-pulse' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
                         }`}>
-                            {trainingStatus?.status || premiumLocales.evolution.learningStack.idle}
+                            {trainingStatus?.status === 'running' ? 'АКТИВНЕ НАВЧАННЯ' : premiumLocales.evolution.learningStack.idle}
                         </div>
                     </div>
-                    <p className="text-xs text-white/80 font-mono mb-2">
+                    <p className="text-xs text-white font-black italic mb-4 leading-relaxed">
                         {trainingStatus?.message || premiumLocales.evolution.learningStack.waitingPatterns}
                     </p>
                     {trainingStatus?.status === 'running' && (
-                        <div className="w-full bg-white/10 h-1 rounded-full ">
+                        <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden shadow-inner">
                             <motion.div
-                                className="bg-orange-500 h-full"
+                                className="bg-gradient-to-r from-rose-600 to-yellow-500 h-full relative"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${trainingStatus.progress}%` }}
                                 transition={{ duration: 1 }}
-                            />
+                            >
+                                <motion.div animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="absolute inset-0 bg-white/40" />
+                            </motion.div>
                         </div>
                     )}
                 </div>
 
                 {/* Training Actions */}
-                <div className="grid grid-cols-2 gap-2">
-                    <button
+                <div className="grid grid-cols-2 gap-4">
+                    <motion.button
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={triggerManualTraining}
                         disabled={isThinking || trainingStatus?.status === 'running'}
-                        className="flex items-center justify-center gap-2 p-2 bg-orange-500/10 border border-orange-500/30 rounded-lg hover:bg-orange-500/20 transition-all group"
+                        className="flex items-center justify-center gap-3 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl hover:bg-rose-500/20 transition-all group/btn disabled:opacity-30 shadow-lg"
                     >
-                        <Zap className={`w-3 h-3 text-orange-400 ${isThinking ? 'animate-spin' : 'group-hover:scale-110'}`} />
-                        <span className="text-[10px] font-bold text-orange-400 uppercase">{premiumLocales.evolution.learningStack.startTraining}</span>
-                    </button>
-                    <button className="flex items-center justify-center gap-2 p-2 bg-blue-500/10 border border-blue-500/30 rounded-lg hover:bg-blue-500/20 transition-all opacity-50 cursor-not-allowed">
-                        <Search className="w-3 h-3 text-blue-400" />
-                        <span className="text-[10px] font-bold text-blue-400 uppercase">{premiumLocales.evolution.learningStack.tuneHyper}</span>
+                        <Zap className={`w-4 h-4 text-rose-400 ${isThinking ? 'animate-spin' : 'group-hover/btn:scale-125 transition-transform'}`} />
+                        <span className="text-[11px] font-black text-rose-400 uppercase tracking-widest">{premiumLocales.evolution.learningStack.startTraining}</span>
+                    </motion.button>
+                    <button className="flex items-center justify-center gap-3 p-4 bg-slate-900/60 border border-white/5 rounded-2xl opacity-40 cursor-not-allowed group/btn2">
+                        <Lock className="w-4 h-4 text-slate-500 group-hover/btn2:text-slate-200 transition-colors" />
+                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">HYPER_TUNE</span>
                     </button>
                 </div>
 
-                {/* Mini Benchmark */}
-                <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                        <span className="text-[10px] text-white/40 uppercase font-mono">{premiumLocales.evolution.learningStack.accuracyDelta}</span>
-                        <TrendingUp className="w-3 h-3 text-green-400" />
+                {/* Benchmarks Section */}
+                <div className="bg-slate-950/40 p-6 rounded-3xl border border-white/5 space-y-4 shadow-2xl">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">{premiumLocales.evolution.learningStack.accuracyDelta}</span>
+                        <div className="flex items-center gap-2">
+                             <TrendingUp className="w-3 h-3 text-emerald-400" />
+                             <span className="text-[10px] text-emerald-400 font-black">+4.2%</span>
+                        </div>
                     </div>
-                    {Array.isArray(history) && history.slice(0, 3).map((job, i) => (
-                        <div key={job.id || i} className="flex items-center justify-between text-[10px] p-1.5 hover:bg-white/5 rounded transition-colors border-b border-white/5">
-                            <span className="text-white/60 truncate max-w-[100px]">{job.name}</span>
-                            <div className="flex gap-2 font-mono">
-                                <span className="text-green-400">+{job.metrics?.accuracy ? (job.metrics.accuracy * 100).toFixed(1) : "0.0"}%</span>
-                                <span className="text-white/20">|</span>
-                                <span className="text-blue-400">{job.status === 'succeeded' ? 'PROM' : 'RUN'}</span>
+                    <div className="space-y-3">
+                        {Array.isArray(history) && history.slice(0, 3).map((job, i) => (
+                            <div key={job.id || i} className="flex items-center justify-between text-[11px] p-3 hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10 group/row">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.5)]" />
+                                    <span className="text-slate-200 font-black italic truncate max-w-[120px]">{job.name}</span>
+                                </div>
+                                <div className="flex gap-3 font-mono items-center">
+                                    <span className="text-emerald-400 font-black">+{job.metrics?.accuracy ? (job.metrics.accuracy * 100).toFixed(1) : "0.0"}%</span>
+                                    <div className="w-[1px] h-3 bg-slate-800" />
+                                    <span className="text-rose-500/60 font-black tracking-tighter uppercase text-[9px]">{job.status === 'succeeded' ? 'ELITE' : 'SYNC'}</span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                    {history.length === 0 && (
-                        <div className="text-[10px] text-white/20 text-center py-2 italic font-mono uppercase">
-                            {premiumLocales.evolution.learningStack.noBenchmarks}
-                        </div>
-                    )}
+                        ))}
+                    </div>
                 </div>
             </div>
-        </TacticalCard>
+        </div>
     );
 };

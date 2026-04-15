@@ -123,7 +123,7 @@ const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
 const MarketIntelligence = lazy(() => import('./features/intelligence/MarketAnalyticsPremium'));
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
-// ✅ Нові бізнес-розвідувальні модулі v56.4
+// ✅ Нові бізнес-розвідувальні модулі v56.5-ELITE
 const FinancialSigintView    = lazy(() => import('./features/intelligence/FinancialSigintView'));
 const UBOMapView             = lazy(() => import('./features/intelligence/UBOMapView'));
 const GeopoliticalRadarView  = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
@@ -312,7 +312,7 @@ export const AppRoutesNew = () => {
             <Route path="/power-structure" element={<PowerStructureView />} />
             <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
 
-            {/* ✅ НОВІ МОДУЛІ v56.4 — Бізнес-орієнтована розвідка */}
+            {/* ✅ НОВІ МОДУЛІ v56.5-ELITE — Бізнес-орієнтована розвідка */}
             <Route path="/financial-sigint"   element={<FinancialSigintView />} />
             <Route path="/swift-monitor"      element={<FinancialSigintView />} />
             <Route path="/offshore-detector"  element={<FinancialSigintView />} />
@@ -321,7 +321,7 @@ export const AppRoutesNew = () => {
             <Route path="/ubo-map"            element={<UBOMapView />} />
             <Route path="/pep-tracker"        element={<UBOMapView />} />
             <Route path="/shadow-director"    element={<UBOMapView />} />
-            {/* ✅ НОВІ МОДУЛІ v56.4 — всі реальні вью */}
+            {/* ✅ НОВІ МОДУЛІ v56.5-ELITE — всі реальні вью */}
             <Route path="/portfolio-risk"     element={<PortfolioRiskView />} />
             <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
             <Route path="/ma-scanner"         element={<MATargetScannerView />} />

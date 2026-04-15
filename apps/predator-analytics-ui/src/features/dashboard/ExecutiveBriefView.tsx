@@ -39,7 +39,7 @@ import {
 } from 'recharts';
 import CyberGlobe from '@/components/3d/CyberGlobe';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
 
 // --- STYLES ---

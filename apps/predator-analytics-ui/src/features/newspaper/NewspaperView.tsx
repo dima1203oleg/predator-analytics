@@ -18,7 +18,7 @@ import {
   Target, Activity, Database, Newspaper, Fingerprint, Eye,
   Layout, Search, Filter, Shield, Box, Signal, RefreshCcw
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { newspaperApi } from '@/services/api/newspaper';
 import type {
   NewspaperData, ComprommatItem, TrendItem, CustomsItem, AlertItem,

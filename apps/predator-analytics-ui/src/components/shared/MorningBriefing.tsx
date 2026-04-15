@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Coffee, Sparkles, TrendingUp, AlertTriangle, Shield, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 export interface BriefingItem {
   id: string;

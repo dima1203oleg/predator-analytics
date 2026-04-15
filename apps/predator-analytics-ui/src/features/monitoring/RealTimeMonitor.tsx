@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';

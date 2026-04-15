@@ -17,8 +17,12 @@ import {
     Scale,
     Fingerprint,
     Gavel,
-    UserCheck
+    UserCheck,
+    Brain,
+    Bot,
+    Radar
 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import type {
@@ -31,7 +35,7 @@ import type { ContextRailPayload, ContextTone } from '@/types/shell';
 import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 type RiskFilter = 'all' | RiskLevelValue;
 

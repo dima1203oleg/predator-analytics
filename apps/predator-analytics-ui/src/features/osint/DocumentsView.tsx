@@ -24,7 +24,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { useUser, UserRole } from '@/context/UserContext';
 import { NeutralizedContent } from '@/components/NeutralizedContent';
 

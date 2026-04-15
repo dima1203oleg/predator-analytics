@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils/cn"
 
 // 🦁 PREDATOR — Заглушка для ScrollArea (поки не встановлено Radix)
 // Ми робимо нативну прокрутку з кастомним стилем

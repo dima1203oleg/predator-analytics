@@ -26,7 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ─── HELPER COMPONENTS ───────────────────────────────────────────────

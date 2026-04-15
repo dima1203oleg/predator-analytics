@@ -12,7 +12,7 @@ import { useSystemMetrics } from '@/hooks/useSystemMetrics';
 import { api } from '@/services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // Extracted Sub-views

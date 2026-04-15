@@ -23,7 +23,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { Activity, Server } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 
 interface MainLayoutProps {

@@ -8,7 +8,7 @@ import {
   PieChart, BarChart
 } from 'lucide-react';
 import { apiClient } from '../../services/api/config';
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { premiumLocales } from '../../locales/uk/premium';
 
 interface NewsItem {

@@ -1,3 +1,14 @@
+/**
+ * 🛡️ САНКЦІЙНА МАТРИЦЯ | v56.5-ELITE
+ * PREDATOR Analytics — Sanctions Screening & Compliance
+ *
+ * Перевірка сутностей за міжнародними санкційними списками
+ * (OFAC, EU, UN, UK, РНБО) та PEP-статусом.
+ * Sovereign Power Design · Classified · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
+ */
+
 import React, { useCallback, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -17,6 +28,11 @@ import {
     ShieldCheck,
     User,
     Zap,
+    Target,
+    Fingerprint,
+    Boxes,
+    FileText,
+    ChevronRight,
     type LucideIcon,
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -26,7 +42,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import {
     normalizeSanctionsScreeningPayload,
@@ -43,27 +59,27 @@ const SELECTABLE_LISTS: SelectableListType[] = ['OFAC', 'EU', 'UN', 'UK', 'РН�
 
 const severityConfig: Record<SanctionSeverity, { bg: string; border: string; text: string; label: string }> = {
     high: {
-        bg: 'bg-rose-500/10',
-        border: 'border-rose-500/30',
-        text: 'text-rose-400',
+        bg: 'bg-rose-600/10',
+        border: 'border-rose-600/40',
+        text: 'text-rose-500',
         label: 'Критично',
     },
     medium: {
-        bg: 'bg-amber-500/10',
-        border: 'border-amber-500/30',
-        text: 'text-amber-400',
+        bg: 'bg-yellow-600/10',
+        border: 'border-yellow-600/30',
+        text: 'text-yellow-600',
         label: 'Попередження',
     },
     low: {
-        bg: 'bg-sky-500/10',
-        border: 'border-sky-500/30',
-        text: 'text-sky-400',
+        bg: 'bg-slate-800/20',
+        border: 'border-slate-800/30',
+        text: 'text-slate-400',
         label: 'Помірно',
     },
     none: {
-        bg: 'bg-emerald-500/10',
-        border: 'border-emerald-500/30',
-        text: 'text-emerald-400',
+        bg: 'bg-emerald-600/10',
+        border: 'border-emerald-600/30',
+        text: 'text-emerald-500',
         label: 'Чисто',
     },
 };
@@ -72,23 +88,23 @@ const statusConfig: Record<ScreenStatus, { label: string; icon: LucideIcon; cls:
     clean: {
         label: 'Чисто',
         icon: ShieldCheck,
-        cls: 'text-emerald-400',
-        bg: 'bg-emerald-500/10 border-emerald-500/30',
-        glow: 'shadow-[0_0_20px_rgba(16,185,129,0.25)]',
+        cls: 'text-emerald-500',
+        bg: 'bg-emerald-600/10 border-emerald-600/30',
+        glow: 'shadow-[0_0_20px_rgba(16,185,129,0.3)]',
     },
     warning: {
         label: 'Увага',
         icon: AlertTriangle,
-        cls: 'text-amber-400',
-        bg: 'bg-amber-500/10 border-amber-500/30',
-        glow: 'shadow-[0_0_20px_rgba(245,158,11,0.25)]',
+        cls: 'text-yellow-600',
+        bg: 'bg-yellow-600/10 border-yellow-600/30',
+        glow: 'shadow-[0_0_20px_rgba(212,175,55,0.3)]',
     },
     blocked: {
         label: 'Заблоковано',
         icon: AlertOctagon,
-        cls: 'text-rose-400',
-        bg: 'bg-rose-500/10 border-rose-500/30',
-        glow: 'shadow-[0_0_20px_rgba(244,63,94,0.25)]',
+        cls: 'text-rose-600',
+        bg: 'bg-rose-600/10 border-rose-600/30',
+        glow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]',
     },
 };
 
@@ -99,31 +115,22 @@ const entityIconMap: Record<EntityType, LucideIcon> = {
 };
 
 const listConfigs: Record<string, { color: string; flag: string }> = {
-    OFAC: { color: 'bg-blue-500/20 text-blue-300 border-blue-500/30', flag: '🇺🇸' },
-    EU: { color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30', flag: '🇪🇺' },
-    UN: { color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30', flag: '🌐' },
-    UK: { color: 'bg-purple-500/20 text-purple-300 border-purple-500/30', flag: '🇬🇧' },
-    'РНБО': { color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30', flag: '🇺🇦' },
-    PEP: { color: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30', flag: '👤' },
-    PREDATOR: { color: 'bg-rose-500/20 text-rose-300 border-rose-500/30', flag: '🦅' },
+    OFAC: { color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20', flag: '🇺🇸' },
+    EU: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇪🇺' },
+    UN: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🌐' },
+    UK: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇬🇧' },
+    'РНБО': { color: 'bg-yellow-600/20 text-yellow-500 border-yellow-600/40', flag: '🇺🇦' },
+    PEP: { color: 'bg-rose-600/10 text-rose-500 border-rose-600/20', flag: '👤' },
+    PREDATOR: { color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/40 font-black', flag: '🦅' },
 };
 
 const formatTimestamp = (value?: string | null): string => {
-    if (!value) {
-        return 'Н/д';
-    }
-
+    if (!value) return 'Н/д';
     const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) {
-        return 'Н/д';
-    }
-
+    if (Number.isNaN(parsed.getTime())) return 'Н/д';
     return parsed.toLocaleString('uk-UA', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
     });
 };
 
@@ -131,35 +138,26 @@ const getListConfig = (list: string): { color: string; flag: string } =>
     listConfigs[list] ?? { color: 'bg-white/10 text-slate-200 border-white/10', flag: '•' };
 
 const RiskGauge: React.FC<{ score: number }> = ({ score }) => {
-    const color = score >= 80 ? '#f43f5e' : score >= 50 ? '#f59e0b' : '#10b981';
+    const color = score >= 80 ? '#E11D48' : score >= 50 ? '#D4AF37' : '#22c55e';
     const angle = (score / 100) * 180 - 90;
 
     return (
-        <div className="relative h-14 w-28 overflow-hidden">
+        <div className="relative h-20 w-40 overflow-hidden flex flex-col items-center">
             <svg viewBox="0 0 100 50" className="h-full w-full">
-                <path
-                    d="M5,50 A45,45 0 0,1 95,50"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.05)"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                />
+                <path d="M5,50 A45,45 0 0,1 95,50" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="12" strokeLinecap="round" />
                 <path
                     d="M5,50 A45,45 0 0,1 95,50"
                     fill="none"
                     stroke={color}
-                    strokeWidth="8"
+                    strokeWidth="12"
                     strokeLinecap="round"
                     strokeDasharray={`${(score / 100) * 141.3} 141.3`}
-                    style={{ filter: `drop-shadow(0 0 6px ${color})` }}
+                    style={{ filter: `drop-shadow(0 0 10px ${color}66)` }}
                 />
-                <g transform={`rotate(${angle}, 50, 50)`}>
-                    <line x1="50" y1="50" x2="50" y2="12" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                    <circle cx="50" cy="50" r="3" fill="white" />
-                </g>
+                <circle cx="50" cy="50" r="4" fill="white" />
             </svg>
-            <div className="absolute bottom-0 w-full text-center text-[10px] font-black" style={{ color }}>
-                {score}%
+            <div className="absolute bottom-1 w-full text-center text-[12px] font-black italic tracking-tighter" style={{ color }}>
+                {score}%_RISK
             </div>
         </div>
     );
@@ -172,37 +170,38 @@ const MatchCard: React.FC<{ match: SanctionMatch; index: number }> = ({ match, i
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.06 }}
-            className={cn('rounded-2xl border p-5', severity.bg, severity.border)}
+            transition={{ delay: index * 0.08 }}
+            className={cn('rounded-[2rem] border-2 p-8 shadow-4xl relative overflow-hidden group/mcard', severity.bg, severity.border)}
         >
-            <div className="flex items-start gap-4">
-                <div className={cn('rounded-xl p-2', severity.bg)}>
-                    <AlertOctagon className={severity.text} size={20} />
+            <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white/[0.02] to-transparent pointer-events-none" />
+            <div className="flex items-start gap-6 relative z-10">
+                <div className={cn('rounded-2xl p-4 border-2 bg-black shadow-2xl transition-transform group-hover/mcard:rotate-6', severity.border)}>
+                    <AlertOctagon className={severity.text} size={28} />
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                        <span className={cn('rounded-lg border px-2 py-0.5 text-[10px] font-black', primaryList.color)}>
-                            {primaryList.flag} {match.list}
+                    <div className="mb-4 flex flex-wrap items-center gap-4">
+                        <span className={cn('rounded-xl border-2 px-4 py-1.5 text-[10px] font-black italic tracking-[0.2em] shadow-lg', primaryList.color)}>
+                            {primaryList.flag} {match.list.toUpperCase()}
                         </span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white">{match.program}</span>
-                        <span className={cn('ml-auto rounded-lg px-2 py-0.5 text-[10px] font-black', severity.bg, severity.text)}>
-                            {match.score}% ЗБІГ
+                        <span className="text-[11px] font-black uppercase tracking-[0.4em] text-white opacity-80 font-serif">{match.program}</span>
+                        <span className={cn('ml-auto rounded-xl px-4 py-2 text-[10px] font-black italic shadow-inner', severity.bg, severity.text)}>
+                            {match.score}% MATCH_VEC
                         </span>
                     </div>
 
-                    <p className="mb-1 text-sm font-black uppercase tracking-tight text-white">{match.target}</p>
-                    <p className="text-[11px] leading-relaxed text-slate-400">{match.details}</p>
+                    <p className="mb-3 text-2xl font-black uppercase tracking-tighter text-white font-serif italic truncate">{match.target}</p>
+                    <p className="text-[13px] leading-relaxed text-slate-400 font-medium italic border-l-2 border-white/5 pl-6">{match.details}</p>
 
                     {relatedLists.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2">
+                        <div className="mt-6 flex flex-wrap gap-3">
                             {relatedLists.map((list) => {
                                 const config = getListConfig(list);
                                 return (
-                                    <span key={`${match.id}-${list}`} className={cn('rounded-lg border px-2 py-0.5 text-[9px] font-black', config.color)}>
-                                        {config.flag} {list}
+                                    <span key={`${match.id}-${list}`} className={cn('rounded-xl border-2 px-4 py-1.5 text-[9px] font-black italic tracking-widest', config.color)}>
+                                        {config.flag} {list.toUpperCase()}
                                     </span>
                                 );
                             })}
@@ -210,7 +209,9 @@ const MatchCard: React.FC<{ match: SanctionMatch; index: number }> = ({ match, i
                     )}
 
                     {match.dateAdded && (
-                        <p className="mt-2 text-[9px] font-mono uppercase text-slate-600">ДОДАНО: {match.dateAdded}</p>
+                        <div className="mt-6 flex items-center gap-3 text-[10px] font-mono font-black uppercase tracking-[0.3em] text-slate-800">
+                             <History size={12} /> RECORD_FOUND: {match.dateAdded}
+                        </div>
                     )}
                 </div>
             </div>
@@ -226,34 +227,32 @@ const HistoryRow: React.FC<{ result: ScreeningResult; isSelected: boolean; onCli
     return (
         <motion.button
             type="button"
-            whileHover={{ x: 4 }}
+            whileHover={{ x: 10 }}
             onClick={onClick}
             className={cn(
-                'relative w-full cursor-pointer overflow-hidden rounded-2xl border p-4 text-left transition-all group',
-                isSelected ? 'border-white/20 bg-slate-800/60' : 'border-white/5 bg-slate-950/40 hover:border-white/15',
+                'relative w-full cursor-pointer overflow-hidden rounded-[2.5rem] border-2 p-6 text-left transition-all group shadow-xl',
+                isSelected ? 'border-yellow-500/40 bg-white/[0.04] shadow-4xl' : 'border-white/5 bg-black hover:border-white/10',
             )}
         >
-            {isSelected && <div className="absolute bottom-0 left-0 top-0 w-0.5 rounded-l-full bg-primary-500" />}
-
-            <div className="flex items-center gap-3">
-                <div className={cn('rounded-xl border p-2', status.bg)}>
-                    <StatusIcon className={status.cls} size={16} />
+            <div className="flex items-center gap-6">
+                <div className={cn('rounded-[1.5rem] border-2 p-4 transition-transform group-hover:rotate-6 shadow-2xl', status.bg)}>
+                    <StatusIcon className={status.cls} size={24} />
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-black uppercase tracking-tight text-white">{result.entityName}</p>
-                        <EntityIcon size={10} className="shrink-0 text-slate-600" />
+                    <div className="flex items-center gap-4">
+                        <p className="truncate text-lg font-black uppercase tracking-tighter text-white font-serif italic">{result.entityName}</p>
+                        <EntityIcon size={14} className="shrink-0 text-slate-800" />
                     </div>
-                    <p className="mt-0.5 text-[9px] font-mono text-slate-600">
-                        {formatTimestamp(result.timestamp)} • ID: {result.searchId}
+                    <p className="mt-1.5 text-[10px] font-mono font-black text-slate-800 uppercase tracking-widest leading-none">
+                        {formatTimestamp(result.timestamp)} // ID_{result.searchId.slice(0,8)}
                     </p>
                 </div>
 
-                <div className="flex flex-col items-end gap-1">
-                    <span className={cn('text-[9px] font-black uppercase', status.cls)}>{status.label}</span>
-                    <span className="text-[8px] font-mono text-slate-600">
-                        {result.matches.length > 0 ? `${result.matches.length} ЗБІГІВ` : 'БЕЗ ЗБІГІВ'}
+                <div className="flex flex-col items-end gap-2">
+                    <span className={cn('text-[10px] font-black uppercase tracking-[0.3em] italic', status.cls)}>{status.label.toUpperCase()}</span>
+                    <span className="text-[9px] font-black text-slate-800 uppercase tracking-widest">
+                        {result.matches.length > 0 ? `${result.matches.length}_HITS` : 'CLEAR_VEC'}
                     </span>
                 </div>
             </div>
@@ -262,10 +261,12 @@ const HistoryRow: React.FC<{ result: ScreeningResult; isSelected: boolean; onCli
 };
 
 const EmptyPanel = ({ title, description }: { title: string; description: string }) => (
-    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-[28px] border border-dashed border-white/10 bg-slate-950/35 px-8 text-center">
-        <AlertCircle size={44} className="mb-4 text-slate-600" />
-        <h3 className="text-lg font-black uppercase tracking-tight text-white">{title}</h3>
-        <p className="mt-3 max-w-md text-sm leading-6 text-slate-400">{description}</p>
+    <div className="flex min-h-[500px] flex-col items-center justify-center rounded-[4rem] border-4 border-dashed border-white/5 bg-black/40 px-12 text-center shadow-inner group">
+        <div className="p-12 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl mb-10 group-hover:scale-110 transition-transform duration-[10s]">
+            <AlertCircle size={64} className="text-slate-800 animate-pulse" />
+        </div>
+        <h3 className="text-3xl font-black uppercase tracking-tighter text-white font-serif italic">{title}</h3>
+        <p className="mt-6 max-w-lg text-sm leading-7 text-slate-600 font-black uppercase tracking-[0.4em] italic opacity-80">{description}</p>
     </div>
 );
 
@@ -282,9 +283,7 @@ const SanctionsScreening: React.FC = () => {
 
     const handleSearch = useCallback(async () => {
         const query = searchQuery.trim();
-        if (!query) {
-            return;
-        }
+        if (!query) return;
 
         setIsSearching(true);
         setFeedback(null);
@@ -299,7 +298,7 @@ const SanctionsScreening: React.FC = () => {
             const normalized = normalizeSanctionsScreeningPayload(response.data, entityType);
 
             if (!normalized) {
-                setFeedback('`/sanctions/screen` не повернув підтверджену структуру результату. Локальні збіги не підставляються.');
+                setFeedback('`/sanctions/screen` не повернув підтверджену структуру результату.');
                 return;
             }
 
@@ -308,7 +307,7 @@ const SanctionsScreening: React.FC = () => {
             setLastConfirmedAt(normalized.timestamp);
         } catch (error) {
             console.error('Sanctions screening error:', error);
-            setFeedback('Не вдалося виконати підтверджений скринінг через `/sanctions/screen`. Демонстраційна історія не використовується.');
+            setFeedback('Помилка підключення до бекенду.');
         } finally {
             setIsSearching(false);
         }
@@ -320,7 +319,6 @@ const SanctionsScreening: React.FC = () => {
             if (current.includes(list)) {
                 return current.length === 1 ? current : current.filter((item) => item !== list);
             }
-
             return [...current, list];
         });
     };
@@ -332,7 +330,6 @@ const SanctionsScreening: React.FC = () => {
         const pep = history.filter((item) =>
             item.matches.some((match) => match.list === 'PEP' || match.allLists.includes('PEP')),
         ).length;
-
         return { blocked, warning, clean, pep };
     }, [history]);
 
@@ -346,131 +343,143 @@ const SanctionsScreening: React.FC = () => {
 
     return (
         <PageTransition>
-            <div className="relative min-h-screen overflow-hidden px-4 pb-20 sm:px-6 lg:px-10">
+            <div className="relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]">
                 <AdvancedBackground />
-                <CyberGrid opacity={0.015} />
-                <CyberOrb color="rose" size="xl" intensity="low" className="right-0 top-1/4 opacity-10" />
-                <CyberOrb color="purple" size="lg" intensity="low" className="bottom-1/3 left-0 opacity-10" />
+                <CyberGrid color="rgba(212, 175, 55, 0.04)" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none" />
 
-                <div className="relative mb-10">
+                <div className="relative mb-16">
                     <ViewHeader
-                        title="САНКЦІЙНА МАТРИЦЯ"
-                        icon={<ShieldAlert className="text-rose-400" />}
-                        breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'МАТРИЦЯ v56.2-TITAN']}
+                        title={
+                            <div className="flex items-center gap-10">
+                                <div className="relative group">
+                                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                     <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                                         <ShieldAlert size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
+                                     </div>
+                                </div>
+                                <div className="space-y-4">
+                                     <div className="flex items-center gap-4">
+                                        <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                            SANCTIONS_HUB // MATRIX_ARRAY
+                                        </span>
+                                        <div className="h-px w-12 bg-rose-500/20" />
+                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                     </div>
+                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif">
+                                        САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТРИЦЯ</span>
+                                     </h1>
+                                </div>
+                            </div>
+                        }
+                        breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'GLOBAL_SCREENING_v56.5']}
                         badges={[
-                            { label: 'OSINT_HUB_v56.2-TITAN_CERTIFIED', color: 'rose', icon: <Zap size={10} /> },
-                            { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                            { label: 'SOVEREIGN_ELITE_FORCE', color: 'rose', icon: <Zap size={10} /> },
+                            { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                         ]}
                         stats={[
-                            { label: 'Підтверджені перевірки', value: String(history.length), icon: <Database />, color: 'primary' },
-                            { label: 'Активні реєстри', value: String(selectedLists.length), icon: <Shield />, color: 'danger' },
+                            { label: 'ПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ', value: String(history.length), icon: <Database />, color: 'primary' },
+                            { label: 'АКТИВНІ_РЕЄСТРИ', value: String(selectedLists.length), icon: <Shield />, color: 'danger' },
                             {
-                                label: 'Останній ризик',
-                                value: selected?.riskScore != null ? `${selected.riskScore}%` : 'Н/д',
+                                label: 'РИЗИК_ОСТАННЬОЇ_СЕСІЇ',
+                                value: selected?.riskScore != null ? `${selected.riskScore}%` : 'ALPHA',
                                 icon: <Zap />,
                                 color: selected?.status === 'blocked' ? 'danger' : 'success',
                             },
                         ]}
                     />
 
-                    <div className="mt-4 flex flex-wrap items-center gap-3 px-2">
-                        <div className="rounded-full border border-slate-800 bg-slate-950/60 px-4 py-2">
-                            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                                Джерело: /sanctions/screen
-                            </span>
-                        </div>
-                        <div className="rounded-full border border-slate-800 bg-slate-950/60 px-4 py-2">
-                            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                                Джерело бекенду: {backendStatus.sourceLabel}
-                            </span>
-                        </div>
-                        <div className="rounded-full border border-slate-800 bg-slate-950/60 px-4 py-2">
-                            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                                {backendStatus.statusLabel}
-                            </span>
-                        </div>
-                        <div className="rounded-full border border-slate-800 bg-slate-950/60 px-4 py-2">
-                            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                                Останнє підтвердження: {formatTimestamp(lastConfirmedAt)}
-                            </span>
-                        </div>
+                    <div className="mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic">
+                        {[
+                            { l: 'DATA_SOURCE', v: '/sanctions/screen', c: 'text-yellow-600' },
+                            { l: 'BACKEND_NODE', v: backendStatus.sourceLabel.toUpperCase(), c: 'text-white' },
+                            { l: 'STATUS', v: backendStatus.statusLabel.toUpperCase(), c: 'text-emerald-500' },
+                            { l: 'LAST_SYNC', v: formatTimestamp(lastConfirmedAt), c: 'text-slate-600' }
+                        ].map((m, i) => (
+                            <div key={i} className="flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10">
+                                <span className="text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase">{m.l}:</span>
+                                <span className={cn("text-[10px] font-mono font-black shadow-sm", m.c)}>{m.v}</span>
+                            </div>
+                        ))}
                     </div>
 
-                    <div className="mt-4 px-2">
-                        <p className="text-xs leading-6 text-slate-400">
-                            {feedback ?? 'Сесійний журнал поповнюється тільки підтвердженими відповідями `/sanctions/screen`. Без відповіді API локальна історія не домальовується.'}
+                    <div className="mt-8 px-6 border-l-4 border-yellow-600/30 ml-2">
+                        <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-700 italic leading-none">
+                            {feedback ?? 'СЕСІЙНИЙ ЖУРНАЛ ПОПОВНЮЄТЬСЯ ТІЛЬКИ ПІДТВЕРДЖЕНИМИ ВІДПОВІДЯМИ `/SANCTIONS/SCREEN`.'}
                         </p>
                     </div>
                 </div>
 
-                <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="mb-16 grid grid-cols-2 gap-8 md:grid-cols-4">
                     {[
-                        { label: 'Заблоковано', value: summary.blocked, icon: AlertOctagon, cls: 'text-rose-400', bg: 'from-rose-500/10', border: 'border-rose-500/20', glow: 'shadow-rose-500/10' },
-                        { label: 'Попереджень', value: summary.warning, icon: AlertTriangle, cls: 'text-amber-400', bg: 'from-amber-500/10', border: 'border-amber-500/20', glow: 'shadow-amber-500/10' },
-                        { label: 'Чистих', value: summary.clean, icon: ShieldCheck, cls: 'text-emerald-400', bg: 'from-emerald-500/10', border: 'border-emerald-500/20', glow: 'shadow-emerald-500/10' },
-                        { label: 'PEP виявлено', value: summary.pep, icon: Crown, cls: 'text-purple-400', bg: 'from-purple-500/10', border: 'border-purple-500/20', glow: 'shadow-purple-500/10' },
+                        { label: 'Заблоковано', value: summary.blocked, icon: AlertOctagon, cls: 'text-rose-600', bg: 'from-rose-600/20', border: 'border-rose-600/30', glow: 'shadow-rose-900/40' },
+                        { label: 'Попереджень', value: summary.warning, icon: AlertTriangle, cls: 'text-yellow-600', bg: 'from-yellow-600/20', border: 'border-yellow-600/30', glow: 'shadow-yellow-900/40' },
+                        { label: 'Чистих', value: summary.clean, icon: ShieldCheck, cls: 'text-emerald-500', bg: 'from-emerald-600/20', border: 'border-emerald-600/30', glow: 'shadow-emerald-900/40' },
+                        { label: 'PEP виявлено', value: summary.pep, icon: Crown, cls: 'text-yellow-500', bg: 'from-yellow-500/10', border: 'border-yellow-500/20', glow: 'shadow-yellow-900/20' },
                     ].map((item, index) => (
-                        <motion.div key={item.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
-                            <TacticalCard variant="cyber" className={cn('relative overflow-hidden border p-6 shadow-xl', item.border, item.glow)}>
-                                <div className={cn('absolute inset-0 bg-gradient-to-br to-transparent opacity-60', item.bg)} />
+                        <motion.div key={item.label} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
+                            <TacticalCard variant="cyber" className={cn('relative overflow-hidden border-2 p-10 shadow-4xl rounded-[3rem]', item.border, item.glow)}>
+                                <div className={cn('absolute inset-0 bg-gradient-to-br to-transparent opacity-40', item.bg)} />
                                 <div className="relative z-10 flex items-center justify-between">
                                     <div>
-                                        <div className={cn('text-3xl font-black font-mono', item.cls)}>{item.value}</div>
-                                        <div className="mt-1 text-[8px] font-black uppercase tracking-[0.4em] text-slate-600">{item.label}</div>
+                                        <div className={cn('text-5xl font-black font-mono tracking-tighter leading-none shadow-xl', item.cls)}>{item.value}</div>
+                                        <div className="mt-3 text-[10px] font-black uppercase tracking-[0.5em] text-slate-800 italic">{item.label}</div>
                                     </div>
-                                    <item.icon className={cn(item.cls, 'opacity-30')} size={36} />
+                                    <item.icon className={cn(item.cls, 'opacity-40 shadow-2xl')} size={48} />
                                 </div>
                             </TacticalCard>
                         </motion.div>
                     ))}
                 </div>
 
-                <TacticalCard variant="holographic" className="relative mb-10 overflow-hidden p-8">
-                    <CyberOrb color="rose" size="md" intensity="low" className="right-0 top-0 opacity-15" />
+                {/* SEARCH SECTION ELITE */}
+                <TacticalCard variant="holographic" className="relative mb-16 overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl group/search">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
+                    <CyberOrb color="rose" size="lg" intensity="low" className="right-0 top-0 opacity-[0.05]" />
 
                     <div className="relative z-10">
-                        <div className="mb-6 flex items-center gap-3">
-                            <ScanLine className="text-rose-400" size={20} />
-                            <h2 className="text-sm font-black uppercase tracking-[0.3em] text-white">ПІДТВЕРДЖЕНИЙ СКРИНІНГ СУТНОСТІ</h2>
+                        <div className="mb-12 flex items-center gap-10">
+                            <div className="p-6 bg-rose-600/10 border-2 border-rose-600/20 rounded-[2rem] text-rose-500 shadow-2xl transform group-hover/search:scale-110 transition-transform">
+                                <ScanLine size={32} />
+                            </div>
+                            <div className="space-y-4">
+                                <h2 className="text-3xl font-black uppercase tracking-[0.6em] text-white font-serif italic leading-none">ПІДТВЕРДЖЕНИЙ СКРИНІНГ СУТНОСТІ</h2>
+                                <p className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic border-l-2 border-rose-900/40 pl-6">SOVEREIGN_VETTING_PROTOCOL // DEEP_SCAN_ACTIVE</p>
+                            </div>
                         </div>
 
-                        <div className="mb-5 flex gap-2">
+                        <div className="mb-10 flex flex-wrap gap-4">
                             {(['company', 'person', 'vessel'] as EntityType[]).map((type) => {
                                 const Icon = entityIconMap[type];
-                                const label = type === 'company' ? 'КОМПАНІЯ' : type === 'person' ? 'ОСОБА' : 'СУДНО';
-
+                                const label = type === 'company' ? 'ORGANIZATION' : type === 'person' ? 'SUBJECT_X' : 'VESSEL_ID';
                                 return (
                                     <button
                                         key={type}
                                         type="button"
                                         onClick={() => setEntityType(type)}
                                         className={cn(
-                                            'flex items-center gap-2 rounded-xl border px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all',
+                                            'flex items-center gap-5 rounded-[2rem] border-2 px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] transition-all italic font-serif shadow-xl',
                                             entityType === type
-                                                ? 'border-rose-500/40 bg-rose-500/20 text-rose-400'
-                                                : 'border-white/5 bg-slate-900/40 text-slate-500 hover:border-white/20',
+                                                ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-500 shadow-4xl scale-105'
+                                                : 'border-white/5 bg-black text-slate-700 hover:border-white/20 hover:text-white',
                                         )}
                                     >
-                                        <Icon size={13} /> {label}
+                                        <Icon size={18} /> {label}
                                     </button>
                                 );
                             })}
                         </div>
 
-                        <div className="mb-5 flex gap-3">
-                            <div className="group relative flex-1">
-                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-hover:text-rose-400" size={18} />
+                        <div className="mb-10 flex gap-6">
+                            <div className="group/input relative flex-1">
+                                <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 transition-colors group-hover/input:text-yellow-500 group-focus-within/input:text-yellow-500" size={32} />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(event) => setSearchQuery(event.target.value)}
-                                    onKeyDown={(event) => {
-                                        if (event.key === 'Enter') {
-                                            void handleSearch();
-                                        }
-                                    }}
+                                    onKeyDown={(event) => { if (event.key === 'Enter') void handleSearch(); }}
                                     placeholder="Введіть назву компанії, ім'я особи або назву судна..."
-                                    className="w-full rounded-[20px] border border-white/5 bg-slate-950/60 py-5 pl-14 pr-5 text-sm text-white placeholder-slate-600 transition-all focus:border-rose-500/40 focus:outline-none"
+                                    className="w-full rounded-[3rem] border-2 border-white/5 bg-black py-8 pl-24 pr-10 text-xl font-black italic tracking-tight text-white placeholder-slate-800 transition-all focus:border-yellow-500/40 focus:ring-8 focus:ring-yellow-500/5 focus:outline-none shadow-inner"
                                 />
                             </div>
 
@@ -478,27 +487,26 @@ const SanctionsScreening: React.FC = () => {
                                 type="button"
                                 onClick={() => void handleSearch()}
                                 disabled={isSearching || searchQuery.trim().length < 2}
-                                className="flex shrink-0 items-center gap-3 rounded-[20px] bg-rose-500 px-8 py-4 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-rose-500/20 transition-all hover:bg-rose-400 disabled:opacity-50"
+                                className="flex shrink-0 items-center gap-6 rounded-[3rem] bg-rose-600 px-16 py-6 text-[13px] font-black uppercase tracking-[0.5em] text-white shadow-4xl shadow-rose-900/40 transition-all hover:brightness-110 disabled:opacity-30 italic font-bold border-4 border-rose-500/20"
                             >
-                                {isSearching ? <RefreshCw className="animate-spin" size={18} /> : <Shield size={18} />}
-                                {isSearching ? 'ПЕРЕВІРКА...' : 'ПЕРЕВІРИТИ'}
+                                {isSearching ? <RefreshCw className="animate-spin" size={24} /> : <Target size={24} />}
+                                {isSearching ? 'SCAN_ACTIVE' : 'EXECUTE_VETTING'}
                             </button>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[8px] font-black uppercase tracking-[0.4em] text-slate-700">РЕЄСТРИ:</span>
+                        <div className="flex flex-wrap items-center gap-4 py-8 border-t border-white/[0.04]">
+                            <span className="text-[11px] font-black uppercase tracking-[0.6em] text-slate-900 italic font-serif mr-4">ACTIVE_REGISTRIES:</span>
                             {SELECTABLE_LISTS.map((list) => {
                                 const config = getListConfig(list);
                                 const active = selectedLists.includes(list);
-
                                 return (
                                     <button
                                         key={list}
                                         type="button"
                                         onClick={() => toggleList(list)}
                                         className={cn(
-                                            'rounded-xl border px-3 py-1.5 text-[9px] font-black transition-all',
-                                            active ? config.color : 'border-white/5 bg-slate-900/40 text-slate-600 hover:border-white/20',
+                                            'rounded-[1.5rem] border-2 px-6 py-2.5 text-[10px] font-black transition-all italic tracking-widest uppercase shadow-xl',
+                                            active ? `${config.color} border-yellow-500/40 shadow-yellow-900/20 scale-105` : 'border-white/5 bg-black text-slate-800 hover:border-white/15',
                                         )}
                                     >
                                         {config.flag} {list}
@@ -509,135 +517,153 @@ const SanctionsScreening: React.FC = () => {
                     </div>
                 </TacticalCard>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-                    <div className="space-y-3 lg:col-span-2">
-                        <div className="mb-4 flex items-center gap-3">
-                            <History className="text-slate-500" size={16} />
-                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">СЕСІЙНИЙ ЖУРНАЛ</h3>
-                            <span className="ml-auto text-[8px] font-mono text-slate-700">{history.length} ЗАПИСІВ</span>
+                <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 h-full min-h-[800px]">
+                    {/* LEFT: SESSION LOG ELITE */}
+                    <div className="space-y-6 lg:col-span-2 flex flex-col">
+                        <div className="mb-6 flex items-center gap-6 px-10 py-5 bg-black/40 border-l-4 border-yellow-500 rounded-r-3xl">
+                            <History className="text-yellow-600" size={22} />
+                            <h3 className="text-xl font-black uppercase tracking-[0.4em] text-white font-serif italic">СЕСІЙНИЙ ЖУРНАЛ</h3>
+                            <span className="ml-auto px-4 py-1 bg-black border border-white/10 rounded-lg text-[10px] font-black text-slate-800 tracking-widest">{history.length}_BLOCKS</span>
                         </div>
 
-                        {history.length === 0 ? (
-                            <TacticalCard variant="cyber" className="rounded-[28px] border border-white/5 p-6">
-                                <div className="flex min-h-[220px] flex-col items-center justify-center text-center">
-                                    <History size={40} className="mb-4 text-slate-700" />
-                                    <h4 className="text-lg font-black uppercase tracking-tight text-white">Сесійний журнал поки порожній</h4>
-                                    <p className="mt-3 max-w-sm text-sm leading-6 text-slate-400">
-                                        Після першої підтвердженої відповіді `/sanctions/screen` тут зʼявляться реальні результати скринінгу.
-                                    </p>
-                                </div>
-                            </TacticalCard>
-                        ) : (
-                            <AnimatePresence mode="popLayout">
-                                {history.map((result, index) => (
-                                    <motion.div
-                                        key={result.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.04 }}
-                                    >
-                                        <HistoryRow
-                                            result={result}
-                                            isSelected={selected?.id === result.id}
-                                            onClick={() => setSelected(result)}
-                                        />
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
-                        )}
+                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-6">
+                            {history.length === 0 ? (
+                                <TacticalCard variant="cyber" className="rounded-[4rem] border-2 border-white/5 p-12 bg-black/40 shadow-inner">
+                                    <div className="flex min-h-[300px] flex-col items-center justify-center text-center opacity-20">
+                                        <History size={80} className="mb-10 text-slate-800 animate-pulse" />
+                                        <h4 className="text-2xl font-black uppercase tracking-tighter text-white font-serif italic">EMPTY_SESSION_LEDGER</h4>
+                                        <p className="mt-6 max-w-sm text-[11px] leading-relaxed text-slate-700 uppercase tracking-[0.4em] italic font-black">
+                                            AWAITING_CONFIRMED_API_CALLBACK_FOR_DECRYPTION
+                                        </p>
+                                    </div>
+                                </TacticalCard>
+                            ) : (
+                                <AnimatePresence mode="popLayout">
+                                    {history.map((result, index) => (
+                                        <motion.div
+                                            key={result.id}
+                                            initial={{ opacity: 0, x: -30 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                        >
+                                            <HistoryRow
+                                                result={result}
+                                                isSelected={selected?.id === result.id}
+                                                onClick={() => setSelected(result)}
+                                            />
+                                        </motion.div>
+                                    ))}
+                                </AnimatePresence>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="lg:col-span-3">
+                    {/* RIGHT: DETAILED ANALYSIS ELITE */}
+                    <div className="lg:col-span-3 flex flex-col">
                         <AnimatePresence mode="wait">
                             {selected ? (
-                                <motion.div key={selected.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-                                    <TacticalCard variant="holographic" className="relative overflow-hidden p-8">
+                                <motion.div key={selected.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full">
+                                    <TacticalCard variant="holographic" className="relative overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl h-full flex flex-col">
                                         <CyberOrb
-                                            color={selected.status === 'blocked' ? 'rose' : selected.status === 'warning' ? 'purple' : 'cyan'}
-                                            size="lg"
-                                            intensity="low"
-                                            className="bottom-0 right-0 opacity-10"
+                                            color={selected.status === 'blocked' ? 'rose' : selected.status === 'warning' ? 'yellow' : 'cyan'}
+                                            size="xl" intensity="low"
+                                            className="bottom-0 right-0 opacity-[0.05]"
                                         />
 
-                                        <div className="relative z-10">
-                                            <div className="mb-8 flex items-start justify-between gap-6">
-                                                <div className="flex items-center gap-5">
-                                                    <div className={cn('rounded-2xl border p-4', statusConfig[selected.status].bg, statusConfig[selected.status].glow)}>
+                                        <div className="relative z-10 flex flex-col h-full">
+                                            <div className="mb-12 flex items-start justify-between gap-10">
+                                                <div className="flex items-center gap-8">
+                                                    <div className={cn('rounded-[2.5rem] border-4 p-8 bg-black shadow-4xl transform -rotate-3 transition-transform hover:rotate-0', statusConfig[selected.status].bg, statusConfig[selected.status].glow)}>
                                                         {React.createElement(statusConfig[selected.status].icon, {
-                                                            size: 32,
+                                                            size: 64,
                                                             className: statusConfig[selected.status].cls,
                                                         })}
                                                     </div>
 
-                                                    <div>
-                                                        <h2 className="mb-2 text-2xl font-black uppercase tracking-tighter text-white">
+                                                    <div className="space-y-4">
+                                                        <h2 className="text-5xl font-black uppercase tracking-tighter text-white font-serif italic leading-none truncate max-w-[400px]">
                                                             {selected.entityName}
                                                         </h2>
-                                                        <div className="flex flex-wrap items-center gap-3">
-                                                            <span className={cn('rounded-xl border px-3 py-1 text-[9px] font-black uppercase', statusConfig[selected.status].bg, statusConfig[selected.status].cls)}>
-                                                                {statusConfig[selected.status].label}
+                                                        <div className="flex flex-wrap items-center gap-4">
+                                                            <span className={cn('rounded-xl border-2 px-6 py-2 text-[11px] font-black uppercase italic tracking-[0.4em] font-serif shadow-lg', statusConfig[selected.status].bg, statusConfig[selected.status].cls)}>
+                                                                {statusConfig[selected.status].label.toUpperCase()}
                                                             </span>
-                                                            <span className="text-[9px] font-mono text-slate-600">
-                                                                ID: {selected.searchId} • {formatTimestamp(selected.timestamp)}
+                                                            <div className="h-px w-8 bg-white/10" />
+                                                            <span className="text-[11px] font-mono font-black text-slate-800 uppercase tracking-widest italic leading-none">
+                                                                MASTER_ID: {selected.searchId.toUpperCase()} // T: {formatTimestamp(selected.timestamp)}
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 {selected.riskScore !== undefined && (
-                                                    <div className="shrink-0 text-center">
-                                                        <div className="mb-1 text-[8px] font-black uppercase tracking-[0.3em] text-slate-600">ІНДЕКС РИЗИКУ</div>
+                                                    <div className="shrink-0 flex flex-col items-center gap-4">
+                                                        <div className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif underline decoration-yellow-600/30 underline-offset-8">FIDELITY_SCORE</div>
                                                         <RiskGauge score={selected.riskScore} />
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {selected.matches.length > 0 ? (
-                                                <div className="mb-8 space-y-3">
-                                                    <div className="mb-4 flex items-center gap-3">
-                                                        <AlertOctagon className="text-rose-500" size={16} />
-                                                        <h3 className="text-[10px] font-black uppercase tracking-[0.35em] text-slate-400">
-                                                            ВИЯВЛЕНО ЗБІГІВ: {selected.matches.length}
-                                                        </h3>
+                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-6 mb-12">
+                                                {selected.matches.length > 0 ? (
+                                                    <div className="space-y-8">
+                                                        <div className="mb-8 flex items-center gap-6 pb-6 border-b-2 border-white/[0.04]">
+                                                            <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-500 shadow-xl">
+                                                                <AlertOctagon size={28} className="animate-pulse" />
+                                                            </div>
+                                                            <h3 className="text-xl font-black uppercase tracking-[0.5em] text-white font-serif italic">
+                                                                ВИЯВЛЕНІ ЗБІГІВ: <span className="text-rose-600 underline decoration-rose-600/20 decoration-8">{selected.matches.length}</span>
+                                                            </h3>
+                                                        </div>
+                                                        {selected.matches.map((match, index) => (
+                                                            <MatchCard key={match.id} match={match} index={index} />
+                                                        ))}
                                                     </div>
-                                                    {selected.matches.map((match, index) => (
-                                                        <MatchCard key={match.id} match={match} index={index} />
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <div className="mb-8 flex flex-col items-center py-14 text-center">
-                                                    <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 2, repeat: Infinity }}>
-                                                        <ShieldCheck size={56} className="mb-5 text-emerald-500" />
-                                                    </motion.div>
-                                                    <h3 className="mb-2 text-xl font-black uppercase tracking-tight text-white">ЗБІГІВ НЕ ЗНАЙДЕНО</h3>
-                                                    <p className="max-w-xs text-sm text-slate-500">
-                                                        Сутність відсутня у вибраних санкційних реєстрах. Статус — <span className="font-bold text-emerald-400">ЧИСТО</span>.
-                                                    </p>
-                                                </div>
-                                            )}
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center py-20 text-center relative overflow-hidden group/clear h-full">
+                                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
+                                                        <motion.div animate={{ scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }} transition={{ duration: 10, repeat: Infinity }}>
+                                                            <div className="p-16 bg-black border-4 border-emerald-500/10 rounded-[5rem] shadow-4xl mb-12 relative">
+                                                                <ShieldCheck size={120} className="text-emerald-500 shadow-[0_0_60px_rgba(16,185,129,0.2)]" />
+                                                                <div className="absolute -top-4 -right-4 bg-emerald-500 p-4 rounded-full text-black shadow-xl"><Zap size={24} /></div>
+                                                            </div>
+                                                        </motion.div>
+                                                        <h3 className="text-4xl font-black uppercase tracking-tighter text-white font-serif italic mb-6">NULL_RISK_DETECTED</h3>
+                                                        <p className="max-w-md text-[13px] text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-relaxed border-t border-white/5 pt-8">
+                                                            СУТНІСТЬ ВІДСУТНЯ В АКТИВНІЙ МАПІ ТЕРОРИЗМУ ТА САНКЦІЙ. СТАТУС — <span className="font-bold text-emerald-500 underline decoration-emerald-500/20 decoration-8">ЧИСТО</span>.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                            <div className="grid gap-4 border-t border-white/5 pt-6 md:grid-cols-2">
-                                                <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
-                                                    <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">ПЕРЕВІРЕНІ РЕЄСТРИ</div>
-                                                    <div className="mt-3 flex flex-wrap gap-2">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t-2 border-white/[0.04] pt-12">
+                                                <div className="rounded-[2.5rem] border-2 border-white/[0.04] bg-black p-10 shadow-4xl group/lists relative overflow-hidden">
+                                                    <div className="absolute inset-0 bg-yellow-500/[0.02] opacity-0 group-hover/lists:opacity-100 transition-opacity" />
+                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif flex items-center gap-4 mb-8 underline decoration-yellow-600/20 underline-offset-8">
+                                                        <Boxes size={18} className="text-yellow-600" /> ПЕРЕВІРЕНІ РЕЄСТРИ
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-4 relative z-10">
                                                         {(selected.listsChecked.length > 0 ? selected.listsChecked : selectedRegistrySet).map((list) => {
                                                             const config = getListConfig(list);
                                                             return (
-                                                                <span key={`selected-${list}`} className={cn('rounded-xl border px-3 py-1 text-[9px] font-black', config.color)}>
+                                                                <span key={`selected-${list}`} className={cn('rounded-xl border-2 px-6 py-2.5 text-[10px] font-black italic tracking-widest shadow-xl uppercase', config.color)}>
                                                                     {config.flag} {list}
                                                                 </span>
                                                             );
                                                         })}
                                                         {selected.listsChecked.length === 0 && selectedRegistrySet.length === 0 && (
-                                                            <span className="text-sm text-slate-400">Н/д</span>
+                                                            <span className="text-sm font-black text-slate-800 uppercase italic tracking-widest px-6 py-2 border-2 border-dashed border-white/5 rounded-xl">NULL_RECORDS</span>
                                                         )}
                                                     </div>
                                                 </div>
 
-                                                <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
-                                                    <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">МЕЖІ КОНТУРУ</div>
-                                                    <p className="mt-3 text-sm leading-6 text-slate-400">
-                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг не активуються без окремих маршрутів бекенду.
+                                                <div className="rounded-[2.5rem] border-2 border-rose-900/20 bg-black p-10 shadow-4xl group/lim relative overflow-hidden">
+                                                    <div className="absolute inset-0 bg-rose-600/[0.02] opacity-0 group-hover/lim:opacity-100 transition-opacity" />
+                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-900 italic font-serif flex items-center gap-4 mb-8 underline decoration-rose-600/20 underline-offset-8">
+                                                        <FileText size={18} className="text-rose-600" /> BOUNDARY_LIMITS
+                                                    </div>
+                                                    <p className="text-[13px] leading-relaxed text-slate-600 font-bold italic uppercase tracking-tight relative z-10 border-l-4 border-rose-900/30 pl-8">
+                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг потребують доступу рівня <span className="text-rose-500">TITAN_ELITE</span>.
                                                     </p>
                                                 </div>
                                             </div>
@@ -646,14 +672,15 @@ const SanctionsScreening: React.FC = () => {
                                 </motion.div>
                             ) : (
                                 <EmptyPanel
-                                    title="Оберіть запис або виконайте перевірку"
-                                    description="Деталізація санкційного профілю зʼявляється тільки після підтвердженої відповіді API. До цього екран не показує демо-збіги."
+                                    title="AWAITING_ENTITY_VETTING"
+                                    description="ДЕТАЛІЗАЦІЯ САНКЦІЙНОГО ПРОФІЛЮ МОЖЛИВА ТІЛЬКИ ПІСЛЯ ПІДТВЕРДЖЕНОЇ ВІДПОВІДІ API_CORE. РЕЗУЛЬТАТИ ВІДОБРАЖАЮТЬСЯ В РЕАЛЬНОМУ ЧАСІ."
                                 />
                             )}
                         </AnimatePresence>
                     </div>
                 </div>
             </div>
+            <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.2)}.shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 60px rgba(225,29,72,0.03); }` }} />
         </PageTransition>
     );
 };

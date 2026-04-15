@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { InfrastructureResponse } from '../types';
 import { CheckCircle2, AlertCircle, AlertTriangle, Database, Search, Brain, Share2, Box, Cpu } from 'lucide-react';
 import { cn } from '@/utils/cn';

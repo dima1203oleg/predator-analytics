@@ -16,7 +16,7 @@ import {
   Zap, ArrowRight, Save, X, Eye, Target, 
   Layers, Activity, ChevronDown, CheckCircle2
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';

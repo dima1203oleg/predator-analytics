@@ -12,7 +12,7 @@ import {
   Fingerprint, Activity, Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';

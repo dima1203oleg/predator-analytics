@@ -1,11 +1,11 @@
 /**
- * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v56.2-TITAN
+ * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v56.5-ELITE
  * PREDATOR Analytics — Logistics & Trade Flow Intelligence
  * 
  * Моніторинг митних декларацій, аналіз контрагентів (ЗЕД),
  * трекінг товарних груп та виявлення митних ризиків.
  * 
- * © 2026 PREDATOR Analytics — HR-04 (100% українська)
+ * Sovereign Power Design · Classified · Tier-1
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -23,7 +23,7 @@ import {
   ResponsiveContainer, AreaChart, Area, PieChart as RePieChart,
   Pie, Cell
 } from 'recharts';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -44,9 +44,9 @@ const TRADE_VOLUME_DATA = [
 ];
 
 const CATEGORY_DATA = [
-  { name: 'ЕЛЕКТРОНІКА', value: 35, color: '#3b82f6' },
-  { name: 'МАШИНОБУДУВАННЯ', value: 25, color: '#6366f1' },
-  { name: 'АГРО-СЕКТОР', value: 20, color: '#10b981' },
+  { name: 'ЕЛЕКТРОНІКА', value: 35, color: '#D4AF37' },
+  { name: 'МАШИНОБУДУВАННЯ', value: 25, color: '#fbbf24' },
+  { name: 'АГРО-СЕКТОР', value: 20, color: '#E11D48' },
   { name: 'ХІМІЯ', value: 12, color: '#f59e0b' },
   { name: 'ІНШЕ', value: 8, color: '#64748b' },
 ];
@@ -76,35 +76,35 @@ export default function CustomsIntelligenceView() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
-        <CyberGrid color="rgba(16, 185, 129, 0.03)" />
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-32">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
+        <CyberGrid color="rgba(212,175,55,0.03)" />
         
-        <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-12">
+        <div className="relative z-10 max-w-[1850px] mx-auto p-4 sm:p-12 space-y-12">
            
            {/* HEADER HUD */}
            <ViewHeader
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-emerald-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-emerald-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Anchor size={42} className="text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                     <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[2.5rem] shadow-2xl transform rotate-2 hover:rotate-0 transition-all">
+                        <Anchor size={42} className="text-yellow-500 shadow-[0_0_20px_#d4af37]" />
                      </div>
                   </div>
                   <div className="space-y-2">
-                     <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-emerald-600/10 border border-emerald-600/20 text-emerald-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                          LOGISTICS_MATRIX // TRADE_CUSTOMS_MONITOR
+                     <div className="flex items-center gap-4">
+                        <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                          LOGISTICS_MATRIX // TRADE_MONITOR
                         </span>
-                        <div className="h-px w-10 bg-emerald-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
+                        <div className="h-px w-12 bg-yellow-500/20" />
+                        <span className="text-[10px] font-black text-yellow-700 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
                      </div>
-                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       МИТНА <span className="text-emerald-600 underline decoration-emerald-600/20 decoration-8 italic uppercase">АНАЛІТИКА</span>
+                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                       МИТНА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">АНАЛІТИКА</span>
                      </h1>
-                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        КОНТРОЛЬ ЗЕД, ТОВАРНИХ ПОТОКІВ ТА МИТНИХ РИЗИКІВ
+                     <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
+                        КОНТРОЛЬ ЗЕД, ТОВАРНИХ ПОТОКІВ ТА МИТНИХ РИЗИКІВ REGULATORY_ELITE
                      </p>
                   </div>
                </div>
@@ -116,18 +116,18 @@ export default function CustomsIntelligenceView() {
              ]}
              actions={
                <div className="flex gap-4">
-                  <button onClick={handleRefresh} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}>
-                     <RefreshCw size={24} />
+                  <button onClick={handleRefresh} className={cn("p-6 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-yellow-500 transition-all shadow-xl", refreshing && "animate-spin")}>
+                     <RefreshCw size={26} />
                   </button>
-                  <button className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
-                     <Download size={18} /> ЗАВАНТАЖИТИ_ЗЕД_ЗВІТ
+                  <button className="px-12 py-6 bg-yellow-500 text-black rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4 font-bold">
+                     <Download size={20} /> CUSTOMS_INTELLIGENCE_PACK
                   </button>
                </div>
              }
            />
 
-           {/* ANALYTICS TABS */}
-           <div className="flex flex-wrap gap-4 p-3 bg-black/60 border border-white/[0.03] rounded-[2.5rem] w-fit shadow-2xl">
+           {/* ANALYTICS TABS ELITE */}
+           <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               {[
                 { id: 'analytics', label: 'ОБСЯГИ_ТА_ДИНАМІКА', i: Activity },
                 { id: 'importers', label: 'ТОП_ІМПОРТЕРІВ', i: Truck },
@@ -137,201 +137,231 @@ export default function CustomsIntelligenceView() {
                 <button 
                   key={tab.id} onClick={() => setActiveTab(tab.id as any)}
                   className={cn(
-                    "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3",
-                    activeTab === tab.id ? "bg-emerald-600 border-emerald-400 text-white shadow-[0_0_30px_rgba(16,185,129,0.3)]" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"
+                    "px-10 py-5 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.3em] italic border-2 transition-all flex items-center gap-4",
+                    activeTab === tab.id 
+                      ? "bg-yellow-500 border-yellow-400 text-black shadow-4xl scale-105 font-bold" 
+                      : "bg-transparent text-slate-600 border-transparent hover:bg-white/5 hover:text-slate-300"
                   )}
                 >
-                   <tab.i size={16} />
+                   <tab.i size={18} />
                    {tab.label}
                 </button>
               ))}
            </div>
 
-           {/* MAIN DISPLAY HUB */}
+           {/* MAIN DISPLAY HUB ELITE */}
            <div className="grid grid-cols-12 gap-10">
               <AnimatePresence mode="wait">
                  {activeTab === 'analytics' && (
-                   <motion.div key="analytics" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
-                      
-                      <div className="col-span-12 xl:col-span-8 p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
-                         <div className="flex items-center justify-between pb-6 border-b border-white/[0.04]">
-                            <h2 className="text-[14px] font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
-                               <TrendingUp size={24} className="text-emerald-500" /> ДИНАМІКА МИТНИХ ОПЕРАЦІЙ 2026
-                            </h2>
-                            <div className="flex gap-6">
-                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" /><span className="text-[9px] font-black text-slate-400 uppercase italic">ІМПОРТ_АКТИВНИЙ</span></div>
-                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-600" /><span className="text-[9px] font-black text-slate-500 uppercase italic">ЕКСПОРТ_СТРИМАНИЙ</span></div>
-                            </div>
-                         </div>
-                         <div className="h-[450px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                               <AreaChart data={TRADE_VOLUME_DATA}>
-                                  <defs>
-                                     <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                     </linearGradient>
-                                  </defs>
-                                  <CartesianGrid strokeDasharray="5 5" stroke="rgba(255,255,255,0.02)" vertical={false} />
-                                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} />
-                                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }} />
-                                  <Tooltip contentStyle={{ background: '#000', border: '1px solid #10b981', borderRadius: '15px' }} />
-                                  <Area type="monotone" dataKey="import" stroke="#10b981" strokeWidth={4} fill="url(#emeraldGrad)" />
-                                  <Area type="monotone" dataKey="export" stroke="#475569" strokeWidth={2} strokeDasharray="5 5" fill="transparent" />
-                               </AreaChart>
-                            </ResponsiveContainer>
-                         </div>
-                      </div>
+                    <motion.div key="analytics" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
+                       
+                       <div className="col-span-12 xl:col-span-8 p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
+                          <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500/20" />
+                          <div className="flex items-center justify-between pb-8 border-b border-white/[0.04]">
+                             <h2 className="text-[16px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6 font-serif">
+                                <TrendingUp size={28} className="text-yellow-500" /> ДИНАМІКА МИТНИХ ОПЕРАЦІЙ // CLASSIFIED
+                             </h2>
+                             <div className="flex gap-10">
+                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_12px_#d4af37]" /><span className="text-[10px] font-black text-slate-400 uppercase italic">ІМПОРТ_АКТИВНИЙ</span></div>
+                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-slate-800" /><span className="text-[10px] font-black text-slate-600 uppercase italic">ЕКСПОРТ_СТРИМАНИЙ</span></div>
+                             </div>
+                          </div>
+                          <div className="h-[500px]">
+                             <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={TRADE_VOLUME_DATA}>
+                                   <defs>
+                                      <linearGradient id="yellowGrad" x1="0" y1="0" x2="0" y2="1">
+                                         <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.2} />
+                                         <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
+                                      </linearGradient>
+                                   </defs>
+                                   <CartesianGrid strokeDasharray="6 6" stroke="rgba(212,175,55,0.05)" vertical={false} />
+                                   <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 'black' }} />
+                                   <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11, fontWeight: 'black' }} />
+                                   <Tooltip 
+                                      contentStyle={{ background: '#000', border: '2px solid #D4AF37', borderRadius: '20px', padding: '15px' }}
+                                      itemStyle={{ color: '#D4AF37', fontWeight: 'black', fontSize: '11px' }}
+                                   />
+                                   <Area type="monotone" dataKey="import" stroke="#D4AF37" strokeWidth={5} fill="url(#yellowGrad)" />
+                                   <Area type="monotone" dataKey="export" stroke="#475569" strokeWidth={2} strokeDasharray="8 8" fill="transparent" />
+                                </AreaChart>
+                             </ResponsiveContainer>
+                          </div>
+                       </div>
 
-                      <div className="col-span-12 xl:col-span-4 p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-10">
-                         <h2 className="text-[12px] font-black text-emerald-500 italic uppercase tracking-[0.4em] pb-6 border-b border-white/[0.04]">СТРУКТУРА_ТОВАРНИХ_ГРУП</h2>
-                         <div className="flex justify-center p-6 bg-black/40 rounded-[3rem] border border-white/[0.02]">
-                            <RePieChart width={280} height={280}>
-                               <Pie data={CATEGORY_DATA} innerRadius={70} outerRadius={110} paddingAngle={4} dataKey="value" cx="50%" cy="50%">
-                                  {CATEGORY_DATA.map((entry, i) => (
-                                     <Cell key={i} fill={entry.color} stroke="transparent" />
-                                  ))}
-                               </Pie>
-                               <Tooltip contentStyle={{ background: '#000', border: '1px solid #10b981', borderRadius: '15px' }} />
-                            </RePieChart>
-                         </div>
-                         <div className="space-y-4">
-                            {CATEGORY_DATA.map(d => (
-                              <div key={d.name} className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-emerald-600/5 transition-all group">
-                                 <div className="flex items-center gap-4">
-                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase italic tracking-widest">{d.name}</span>
-                                 </div>
-                                 <span className="text-sm font-black text-white italic font-mono">{d.value}%</span>
-                              </div>
-                            ))}
-                         </div>
-                      </div>
+                       <div className="col-span-12 xl:col-span-4 p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
+                          <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] pb-8 border-b border-white/[0.04] font-serif">СТРУКТУРА_ТОВАРНИХ_ГРУП</h2>
+                          <div className="flex justify-center p-10 bg-black/40 rounded-[4rem] border-2 border-white/[0.02] shadow-inner">
+                             <RePieChart width={320} height={320}>
+                                <Pie data={CATEGORY_DATA} innerRadius={80} outerRadius={130} paddingAngle={6} dataKey="value" cx="50%" cy="50%">
+                                   {CATEGORY_DATA.map((entry, i) => (
+                                      <Cell key={i} fill={entry.color} stroke="transparent" />
+                                   ))}
+                                </Pie>
+                                <Tooltip 
+                                   contentStyle={{ background: '#000', border: '2px solid #D4AF37', borderRadius: '20px' }}
+                                />
+                             </RePieChart>
+                          </div>
+                          <div className="space-y-6">
+                             {CATEGORY_DATA.map(d => (
+                               <div key={d.name} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.01] border-2 border-white/[0.03] hover:border-yellow-500/20 transition-all group">
+                                  <div className="flex items-center gap-6">
+                                     <div className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: d.color }} />
+                                     <span className="text-[12px] font-black text-slate-500 uppercase italic tracking-widest group-hover:text-white transition-colors">{d.name}</span>
+                                  </div>
+                                  <span className="text-xl font-black text-white italic font-mono tracking-tighter">{d.value}%</span>
+                               </div>
+                             ))}
+                          </div>
+                       </div>
 
-                   </motion.div>
+                    </motion.div>
                  )}
 
                  {activeTab === 'importers' && (
-                   <motion.div key="importers" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
-                      <div className="col-span-12 xl:col-span-12 p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl">
-                         <div className="flex items-center justify-between mb-10 border-b border-white/[0.04] pb-8">
-                            <h2 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
-                               <Truck size={24} className="text-emerald-500" /> ТОП_ІМПОРТЕРІВ // MARKET_DOMINANCE
-                            </h2>
-                            <div className="flex gap-4">
-                               <button className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest italic">ФІЛЬТР_ПО_ГРУПАМ</button>
-                            </div>
-                         </div>
-                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-                            {TOP_IMPORTERS.map((comp, i) => (
-                              <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/[0.04] hover:border-emerald-500/40 transition-all group space-y-6">
-                                 <div className="flex items-center justify-between">
-                                    <div className="p-4 bg-black border border-white/5 rounded-2xl text-emerald-500">
-                                       <Factory size={24} />
-                                    </div>
-                                    <div className={cn("flex items-center gap-1 text-[10px] font-black italic", comp.trend === 'up' ? "text-emerald-500" : comp.trend === 'down' ? "text-rose-500" : "text-slate-600")}>
-                                       {comp.trend === 'up' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                                       {comp.share} РИНКУ
-                                    </div>
-                                 </div>
-                                 <div className="space-y-1">
-                                    <h4 className="text-lg font-black text-white italic uppercase leading-none truncate group-hover:text-emerald-400 transition-colors">{comp.name}</h4>
-                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest">UA_REG: {Math.floor(Math.random() * 90000000 + 10000000)}</p>
-                                 </div>
-                                 <div className="pt-4 border-t border-white/[0.04]">
-                                    <p className="text-3xl font-black italic font-mono text-white tracking-tighter">{comp.value}</p>
-                                    <p className="text-[8px] font-black text-slate-800 uppercase tracking-[0.4em] italic mt-1">ОБСЯГ_ІМПОРТУ_MONTH</p>
-                                 </div>
-                              </div>
-                            ))}
-                         </div>
-                      </div>
-                   </motion.div>
+                    <motion.div key="importers" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
+                       <div className="col-span-12 xl:col-span-12 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl relative overflow-hidden">
+                          <div className="absolute top-0 right-0 p-32 opacity-[0.03] pointer-events-none">
+                              <Truck size={400} className="text-yellow-500" />
+                          </div>
+                          <div className="flex items-center justify-between mb-12 border-b border-white/[0.04] pb-10 relative z-10">
+                             <h2 className="text-[18px] font-black text-white italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif">
+                                <Truck size={32} className="text-yellow-500" /> ТОП_ІМПОРТЕРІВ // DOMINANCE_LEADERBOARD
+                             </h2>
+                             <div className="flex gap-6">
+                                <button className="px-10 py-4 bg-black border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:border-yellow-500/30 transition-all">FILTER_BY_CATEGORY</button>
+                             </div>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 relative z-10">
+                             {TOP_IMPORTERS.map((comp, i) => (
+                               <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] hover:border-yellow-500/40 transition-all group space-y-8 shadow-inner">
+                                  <div className="flex items-center justify-between">
+                                     <div className="p-6 bg-yellow-500/10 border-2 border-yellow-500/20 rounded-[2rem] text-yellow-500 transform group-hover:rotate-6 transition-transform">
+                                        <Factory size={32} />
+                                     </div>
+                                     <div className={cn("px-6 py-2 rounded-xl text-[10px] font-black italic border-2 uppercase tracking-widest", comp.trend === 'up' ? "text-yellow-500 border-yellow-500/20 bg-yellow-500/5" : comp.trend === 'down' ? "text-rose-500 border-rose-500/20 bg-rose-500/5" : "text-slate-600 border-slate-500/10")}>
+                                        {comp.trend === 'up' ? 'ALPHA_UP' : comp.trend === 'down' ? 'BETA_DOWN' : 'STABLE'}
+                                     </div>
+                                  </div>
+                                  <div className="space-y-3">
+                                     <h4 className="text-2xl font-black text-white italic uppercase leading-tight group-hover:text-yellow-500 transition-colors font-serif">{comp.name}</h4>
+                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic">EDRPOU_IDENTIFIER: {Math.floor(Math.random() * 90000000 + 10000000)}</p>
+                                  </div>
+                                  <div className="pt-8 border-t-2 border-white/[0.04] flex items-end justify-between">
+                                     <div>
+                                        <p className="text-4xl font-black italic font-mono text-white tracking-tighter leading-none">{comp.value}</p>
+                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic mt-4">MONTHLY_VOLUME</p>
+                                     </div>
+                                     <div className="text-right">
+                                        <p className="text-xl font-black text-yellow-500 italic font-mono">{comp.share}</p>
+                                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest">MKT_SHARE</p>
+                                     </div>
+                                  </div>
+                               </div>
+                             ))}
+                          </div>
+                       </div>
+                    </motion.div>
                  )}
 
                  {activeTab === 'risks' && (
-                   <motion.div key="risks" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="col-span-12 space-y-8">
-                      <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 p-16 opacity-[0.02] pointer-events-none">
-                            <ShieldAlert size={300} className="text-rose-600" />
-                         </div>
-                         <div className="flex items-center justify-between relative z-10">
-                            <h3 className="text-[14px] font-black text-rose-600 italic uppercase tracking-[0.5em] flex items-center gap-6">
-                               <AlertTriangle size={24} className="animate-pulse" /> CUSTOMS_RISK_ALERTS // МОНІТОРИНГ_ЗЛОВЖИВАНЬ
-                            </h3>
-                            <button className="px-10 py-4 bg-rose-600/10 border border-rose-600/40 text-rose-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 hover:text-white transition-all">АКТИВУВАТИ_АНТИФРОД</button>
-                         </div>
-                         <div className="space-y-6 relative z-10">
-                            {RISK_ALERTS.map((alert, i) => (
-                              <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/[0.05] hover:border-rose-600/30 transition-all group flex items-start gap-10">
-                                 <div className={cn("p-5 rounded-2xl border bg-black/40", alert.severity === 'КРИТИЧНА' ? "text-rose-600 border-rose-500/20" : "text-amber-500 border-amber-500/20")}>
-                                    <Database size={32} />
-                                 </div>
-                                 <div className="flex-1 space-y-4">
-                                    <div className="flex items-center justify-between">
-                                       <div className="flex items-center gap-4">
-                                          <span className="text-[10px] font-black font-mono text-slate-700 tracking-widest">{alert.id}</span>
-                                          <span className={cn("px-3 py-1 text-[8px] font-black italic rounded-full uppercase", alert.severity === 'КРИТИЧНА' ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20")}>{alert.severity}</span>
-                                       </div>
-                                       <span className="text-[9px] font-black text-slate-800 uppercase italic font-mono">SOURCE_CODE: {alert.source}</span>
-                                    </div>
-                                    <div className="space-y-1">
-                                       <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{alert.title}</h4>
-                                       <p className="text-sm font-black text-slate-500 italic max-w-3xl">{alert.desc}</p>
-                                    </div>
-                                 </div>
-                                 <div className="flex flex-col gap-3">
-                                    <button className="px-6 py-3 bg-white/5 hover:bg-rose-600 border border-white/5 rounded-xl text-[9px] font-black uppercase italic transition-all">РОЗСЛІДУВАТИ</button>
-                                    <button className="px-6 py-3 border border-white/5 rounded-xl text-[9px] font-black uppercase text-slate-700 italic">АРХІВУВАТИ</button>
-                                 </div>
-                              </div>
-                            ))}
-                         </div>
-                      </div>
-                   </motion.div>
+                    <motion.div key="risks" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="col-span-12 space-y-10">
+                       <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
+                          <div className="absolute top-0 right-0 p-24 opacity-[0.04] pointer-events-none">
+                             <ShieldAlert size={400} className="text-rose-600" />
+                          </div>
+                          <div className="flex items-center justify-between relative z-10">
+                             <h3 className="text-[18px] font-black text-rose-600 italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif font-bold">
+                                <AlertTriangle size={36} className="animate-pulse" /> CUSTOMS_RISK_ALERTS // RED_VECTOR_MONITOR
+                             </h3>
+                             <button className="px-14 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold">DEPLOY_ANTIFRAUD_ARRAY</button>
+                          </div>
+                          <div className="space-y-8 relative z-10">
+                             {RISK_ALERTS.map((alert, i) => (
+                               <div key={i} className="p-12 rounded-[4rem] bg-black border-2 border-rose-500/10 hover:border-rose-500/40 transition-all group flex items-center gap-14 shadow-inner relative overflow-hidden">
+                                  <div className="absolute top-0 right-0 w-48 h-full bg-gradient-to-l from-rose-500/5 to-transparent pointer-events-none" />
+                                  <div className={cn("p-8 rounded-[2.5rem] border-4 bg-black shadow-2xl transform group-hover:scale-110 transition-transform", alert.severity === 'КРИТИЧНА' ? "text-rose-600 border-rose-600/20" : "text-amber-500 border-amber-500/20")}>
+                                     <Database size={48} />
+                                  </div>
+                                  <div className="flex-1 space-y-6">
+                                     <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-6">
+                                           <span className="text-[12px] font-black font-mono text-slate-800 tracking-[0.4em] bg-white/5 px-4 py-1 rounded-lg italic">SIGNAL_{alert.id}</span>
+                                           <span className={cn("px-6 py-2 text-[10px] font-black italic rounded-full uppercase tracking-widest border-2", alert.severity === 'КРИТИЧНА' ? "bg-rose-600 text-white border-rose-500 shadow-lg shadow-rose-900/40" : "bg-amber-500/10 text-amber-500 border-amber-500/20")}>{alert.severity}</span>
+                                        </div>
+                                        <span className="text-[11px] font-black text-slate-800 uppercase italic font-mono tracking-widest border-b border-slate-900">IDENT_SOURCE: {alert.source}</span>
+                                     </div>
+                                     <div className="space-y-3">
+                                        <h4 className="text-4xl font-black text-white italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors font-serif leading-none">{alert.title}</h4>
+                                        <p className="text-lg font-black text-slate-500 italic max-w-4xl leading-relaxed font-medium uppercase tracking-tight">{alert.desc}</p>
+                                     </div>
+                                  </div>
+                                  <div className="flex flex-col gap-4 min-w-[220px]">
+                                     <button className="w-full py-5 bg-white/5 hover:bg-rose-600 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white font-bold tracking-widest shadow-xl">INIT_INVESTIGATION</button>
+                                     <button className="w-full py-5 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase text-slate-700 italic tracking-[0.3em]">ARCHIVE_REPORT</button>
+                                  </div>
+                               </div>
+                             ))}
+                          </div>
+                       </div>
+                    </motion.div>
                  )}
 
                  {activeTab === 'signals' && (
                     <motion.div key="signals" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
-                       <div className="col-span-12 xl:col-span-8 p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-10">
-                          <h2 className="text-[12px] font-black text-emerald-500 italic uppercase tracking-[0.4em] pb-6 border-b border-white/[0.04] flex items-center gap-4">
-                             <Target size={18} /> LIVE_SIGNAL_DECODE (CEREBRO_INGESTION)
+                       <div className="col-span-12 xl:col-span-8 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
+                          <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500/20" />
+                          <h2 className="text-[16px] font-black text-yellow-500 italic uppercase tracking-[0.6em] pb-10 border-b border-white/[0.04] flex items-center gap-6 font-serif">
+                             <Target size={28} className="text-yellow-500 animate-pulse" /> LIVE_SIGNAL_DECODE // STRATEGIC_INTEL
                           </h2>
-                          <div className="space-y-4">
+                          <div className="space-y-6">
                              {[
                                 { time: '14:22:15', channel: 'МИТНИЙ_ІНФОРМАТОР', msg: 'Помічено скупчення фур ТОВ "Агро-Трейд" на КПП "Краківець". Можливий дефіцит ДП.' },
                                 { time: '14:20:08', channel: 'LOGISTICS_UA_TG', msg: 'Зміна тарифів на контейнерні перевезення з Гданська. +12%.' },
                                 { time: '14:15:33', channel: 'INTERNAL_AF_BOT', msg: 'Детекція аномально великої партії iPhone 15 у декларації 104/2203.' },
                              ].map((sig, i) => (
-                               <div key={i} className="p-6 bg-white/[0.01] border border-white/[0.03] rounded-3xl hover:bg-emerald-600/5 transition-all group flex items-start gap-6">
-                                  <div className="text-[10px] font-black text-slate-800 font-mono mt-1">{sig.time}</div>
-                                  <div className="flex-1 space-y-2">
-                                     <p className="text-[10px] font-black text-emerald-600 uppercase italic tracking-widest">{sig.channel}</p>
-                                     <p className="text-sm font-black text-slate-300 italic group-hover:text-white transition-colors">"{sig.msg}"</p>
+                               <div key={i} className="p-10 bg-black border-2 border-white/[0.03] rounded-[3.5rem] hover:border-yellow-500/40 transition-all group flex items-start gap-10 shadow-inner relative overflow-hidden">
+                                  <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500/5 group-hover:bg-yellow-500/20 transition-all" />
+                                  <div className="text-[12px] font-black text-slate-800 font-mono mt-2 italic border-r-2 border-slate-900 pr-8">{sig.time}</div>
+                                  <div className="flex-1 space-y-4">
+                                     <p className="text-[12px] font-black text-yellow-600 uppercase italic tracking-[0.3em] font-serif">{sig.channel}</p>
+                                     <p className="text-xl font-black text-slate-500 italic group-hover:text-white transition-colors leading-relaxed">"{sig.msg}"</p>
                                   </div>
-                                  <ChevronRight size={18} className="text-slate-800" />
+                                  <ChevronRight size={28} className="text-slate-800 group-hover:text-yellow-500 transition-all mt-4" />
                                </div>
                              ))}
                           </div>
                        </div>
-                       <div className="col-span-12 xl:col-span-4 space-y-8">
-                          <TacticalCard variant="holographic" className="p-10 rounded-[3rem] border-emerald-500/20 bg-emerald-500/[0.02]">
-                             <h3 className="text-xl font-black text-white italic uppercase mb-6 flex items-center gap-4"><Scan size={20} className="text-emerald-500" /> АКТИВНІ_ХАБИ</h3>
-                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-black border border-white/5 rounded-2xl">
-                                   <div className="flex items-center gap-4"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"/><span className="text-[11px] font-black text-white italic">TG_CUSTOMS_UA</span></div>
-                                   <span className="text-[10px] text-slate-700 font-mono italic">ONLINE</span>
+                       <div className="col-span-12 xl:col-span-4 space-y-10">
+                          <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-4 border-yellow-500/20 bg-yellow-500/[0.03] shadow-4xl relative overflow-hidden">
+                             <div className="absolute -right-8 -top-8 opacity-10 rotate-12">
+                                <Scan size={180} className="text-yellow-500" />
+                             </div>
+                             <h3 className="text-3xl font-black text-white italic uppercase mb-10 flex items-center gap-6 font-serif"><Scan size={32} className="text-yellow-500 shadow-[0_0_15px_#d4af37]" /> АКТИВНІ_ХАБИ</h3>
+                             <div className="space-y-6 relative z-10">
+                                <div className="flex items-center justify-between p-6 bg-black border-2 border-yellow-500/10 rounded-3xl shadow-inner group hover:border-yellow-500/30 transition-all cursor-default">
+                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_#d4af37]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">TG_CUSTOMS_UA</span></div>
+                                   <span className="text-[11px] text-yellow-800 font-mono italic font-black uppercase">LINK_ACTIVE</span>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-black border border-white/5 rounded-2xl">
-                                   <div className="flex items-center gap-4"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"/><span className="text-[11px] font-black text-white italic">RSS_WORLD_TRADE</span></div>
-                                   <span className="text-[10px] text-slate-700 font-mono italic">ONLINE</span>
+                                <div className="flex items-center justify-between p-6 bg-black border-2 border-yellow-500/10 rounded-3xl shadow-inner group hover:border-yellow-500/30 transition-all cursor-default">
+                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_#d4af37]"/><span className="text-[13px] font-black text-white italic uppercase tracking-tighter">RSS_WORLD_TRADE</span></div>
+                                   <span className="text-[11px] text-yellow-800 font-mono italic font-black uppercase">LINK_ACTIVE</span>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-black border border-white/5 rounded-2xl opacity-40 grayscale">
-                                   <div className="flex items-center gap-4"><div className="w-2 h-2 rounded-full bg-rose-600"/><span className="text-[11px] font-black text-white italic">MARITIME_AIS_SERVER</span></div>
-                                   <span className="text-[10px] text-rose-500 font-mono italic">OFFLINE</span>
+                                <div className="flex items-center justify-between p-6 bg-black border-2 border-white/5 rounded-3xl opacity-40 grayscale group hover:grayscale-0 transition-all cursor-not-allowed">
+                                   <div className="flex items-center gap-6"><div className="w-3 h-3 rounded-full bg-rose-600"/><span className="text-[13px] font-black text-slate-400 italic uppercase tracking-tighter">MARITIME_AIS_SERVER</span></div>
+                                   <span className="text-[11px] text-rose-800 font-mono italic font-black uppercase">OFFLINE_ERR</span>
                                 </div>
                              </div>
                           </TacticalCard>
+
+                          <div className="p-10 rounded-[4rem] bg-black border-2 border-yellow-500/10 shadow-4xl relative overflow-hidden group hover:border-yellow-500/30 transition-all cursor-crosshair">
+                             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
+                             <h4 className="text-[10px] font-black text-yellow-700 uppercase tracking-[0.6em] mb-6 italic">SOVEREIGN_AI_SENTINEL</h4>
+                             <p className="text-[14px] font-black text-slate-400 italic leading-relaxed uppercase tracking-tighter border-l-4 border-yellow-500/30 pl-8 group-hover:text-white transition-colors">
+                               Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендується перегляд лімітів для імпортерів електроніки категорії A.
+                             </p>
+                          </div>
                        </div>
                     </motion.div>
                  )}
@@ -340,8 +370,10 @@ export default function CustomsIntelligenceView() {
         </div>
 
         <style dangerouslySetInnerHTML={{ __html: `
-            .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+            .shadow-3xl { box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8); }
+            .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 40px rgba(212,175,55,0.05); }
             .no-scrollbar::-webkit-scrollbar { display: none; }
+            .custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}
         `}} />
       </div>
     </PageTransition>

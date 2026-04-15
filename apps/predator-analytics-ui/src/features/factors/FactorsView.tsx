@@ -33,7 +33,7 @@ import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
 import { factoryApi } from '@/services/api/factory';
 import type { FactoryStats } from '@/features/factory/types';
 import { systemApi, type SystemStatsResponse } from '@/services/api/system';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { normalizeFactorsSnapshot, type FactorTone } from './factorsView.utils';
 
 const toneClasses: Record<FactorTone, { icon: string; badge: string; border: string; glow: string }> = {

@@ -41,7 +41,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ViewHeader } from '@/components/ViewHeader';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 // --- Types ---
 

@@ -1,12 +1,12 @@
 /**
- * PREDATOR v56.2-TITAN | Premium Intelligence Sanctum — Хаб Комерційної Розвідки
+ * PREDATOR v56.5-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного домінування:
  * - TITAN (Market Dominance): Конкуренти, ринкові прогнози, інсайди
  * - INQUISITOR (Risk Sovereignty): Аномалії, схеми, компромат
  * - SOVEREIGN (Macro Architect): Тренди, кореляції, макро-прогнози
  * 
- * © 2026 PREDATOR Analytics | Maximum Value Extraction
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
@@ -81,8 +81,8 @@ const PERSONA_CONFIG = {
     subtitle: 'Агресивне домінування та конкурентна розвідка',
     icon: Target,
     color: 'amber',
-    gradient: 'from-amber-400 via-orange-500 to-amber-600',
-    glow: 'rgba(245, 158, 11, 0.4)',
+    gradient: 'from-[#D4AF37] via-amber-600 to-[#D4AF37]',
+    glow: 'rgba(212, 175, 55, 0.4)',
     features: [
       { icon: Eye, label: 'АНАЛІЗ КОНКУРЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
       { icon: TrendingUp, label: 'РИНКОВІ ПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
@@ -101,8 +101,8 @@ const PERSONA_CONFIG = {
     subtitle: 'Контроль ризиків та виявлення прихованих схем',
     icon: Shield,
     color: 'rose',
-    gradient: 'from-rose-500 via-pink-600 to-rose-700',
-    glow: 'rgba(244, 63, 94, 0.4)',
+    gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
+    glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: AlertTriangle, label: 'ДЕТЕКЦІЯ АНОМАЛІЙ', desc: 'AI-сканування на предмет заниження вартості та пересортиці' },
       { icon: ShieldAlert, label: 'МЕРЕЖІ УХИЛЕННЯ', desc: 'Автоматичне картування пов\'язаних фірм-прокладок та офшорів' },
@@ -120,9 +120,9 @@ const PERSONA_CONFIG = {
     title: 'МАКРО-СУВЕРЕН',
     subtitle: 'Архітектор торгових стратегій та геополітики',
     icon: Crown,
-    color: 'indigo',
-    gradient: 'from-indigo-400 via-purple-500 to-indigo-600',
-    glow: 'rgba(99, 102, 241, 0.4)',
+    color: 'amber',
+    gradient: 'from-[#D4AF37] via-[#E11D48] to-[#D4AF37]',
+    glow: 'rgba(212, 175, 55, 0.4)',
     features: [
       { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТОР', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
       { icon: Landmark, label: 'СЕКТОРНИЙ АРХІТЕКТОР', desc: 'Картування цілих галузей економіки через митні дані' },
@@ -146,59 +146,59 @@ const PERSONA_CONFIG = {
  */
 const HolographicAccessGate: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#02040a] flex items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[#020202] flex items-center justify-center p-8 relative overflow-hidden">
       <AdvancedBackground />
-      <CyberGrid color="rgba(245, 158, 11, 0.05)" />
+      <CyberGrid color="rgba(212, 175, 55, 0.05)" />
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-amber-500/5 blur-[200px] rounded-full animate-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#D4AF37]/5 blur-[200px] rounded-full animate-pulse" />
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="relative z-10 max-w-5xl w-full"
       >
-        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-amber-500/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(245,158,11,0.1)] relative overflow-hidden">
+        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-[#D4AF37]/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(212,175,55,0.1)] relative overflow-hidden">
           <div className="absolute top-0 right-0 p-12 opacity-5">
-            <Crown size={300} className="text-amber-500" />
+            <Crown size={300} className="text-[#D4AF37]" />
           </div>
 
           <div className="flex flex-col items-center text-center space-y-12">
             <motion.div 
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="relative p-1 rounded-full bg-gradient-to-r from-amber-500 to-rose-500"
+              className="relative p-1 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#E11D48]"
             >
-              <div className="w-40 h-40 bg-[#02040a] rounded-full flex items-center justify-center border border-amber-400/20">
-                <Crown className="w-20 h-20 text-amber-400 drop-shadow-[0_0_20px_rgba(245,158,11,0.8)]" />
+              <div className="w-40 h-40 bg-black rounded-full flex items-center justify-center border border-[#D4AF37]/20">
+                <Crown className="w-20 h-20 text-[#D4AF37] drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]" />
               </div>
             </motion.div>
 
             <div className="space-y-6">
               <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-6deg]">
-                ДОСТУП <span className="text-amber-500">ОБМЕЖЕНО</span>
+                ДОСТУП <span className="text-[#D4AF37]">ОБМЕЖЕНО</span>
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
                 Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕРЕН". 
-                Виявлено обмежений доступ. Активуйте статус PREMIUM для розблокування протоколів.
+                Виявлено обмежений доступ. Активуйте статус v56.5-ELITE для розблокування протоколів.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
               {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
-                <div key={key} className="p-8 bg-white/5 border border-white/5 rounded-[40px] group hover:border-amber-500/30 transition-all hover:-translate-y-2">
-                  <config.icon className={cn("w-12 h-12 mx-auto mb-6", `text-${config.color}-500 group-hover:scale-125 transition-transform`)} />
+                <div key={key} className="p-8 bg-white/5 border border-white/5 rounded-[40px] group hover:border-[#D4AF37]/30 transition-all hover:-translate-y-2">
+                  <config.icon className={cn("w-12 h-12 mx-auto mb-6", persona === key ? "text-[#D4AF37]" : "text-slate-500", "group-hover:scale-125 transition-transform")} />
                   <h3 className="text-xs font-black text-white uppercase tracking-widest mb-2">{config.title}</h3>
                   <p className="text-[10px] text-slate-500 font-medium px-4">{config.subtitle}</p>
                 </div>
               ))}
             </div>
 
-            <button className="px-20 py-8 bg-amber-600 hover:bg-amber-500 text-white text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-amber-500/40 border border-amber-400/30 transition-all hover:scale-105 active:scale-95 group">
+            <button className="px-20 py-8 bg-[#D4AF37] hover:brightness-110 text-black text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#D4AF37]/40 border border-[#D4AF37]/30 transition-all hover:scale-105 active:scale-95 group italic">
               <span className="flex items-center gap-4">
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </button>
-            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v56.2-TITAN | PREDATOR_NET</p>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v56.5-ELITE | SOVEREIGN_POWER</p>
           </div>
         </div>
       </motion.div>
@@ -237,7 +237,7 @@ const PremiumHubView: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#02040a] text-slate-200 relative overflow-hidden font-sans pb-40">
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
         <AdvancedBackground />
         <CyberGrid color={currentConfig.glow} />
         
@@ -267,28 +267,28 @@ const PremiumHubView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
             
-            {/* View Header v56.2-TITAN */}
+            {/* View Header v56.5-ELITE */}
             <ViewHeader
                 title={
                     <div className="flex items-center gap-8">
                         <div className="relative group">
-                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", `bg-${currentConfig.color}-500/20`)} />
-                            <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                <currentConfig.icon size={32} className={cn(`text-${currentConfig.color}-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]`)} />
+                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#D4AF37]/20")} />
+                            <div className="relative w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
+                                <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#D4AF37]", "drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]")} />
                             </div>
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                ПРЕМІУМ <span className={cn(`text-${currentConfig.color}-500`)}>{persona}</span> ХАБ
+                                ПРЕМІУМ <span className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#D4AF37]")}>{persona}</span> ХАБ
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                <Gem size={12} className="text-amber-500 hover:scale-125 transition-transform" /> 
-                                КОМЕРЦІЙНА_РОЗВІДКА_РІВЕНЬ_5
+                                <Gem size={12} className="text-[#D4AF37] hover:scale-125 transition-transform" /> 
+                                КОМЕРЦІЙНА_РОЗВІДКА_v56.5_ELITE
                             </p>
                         </div>
                     </div>
                 }
-                icon={<Crown size={22} className="text-amber-400" />}
+                icon={<Crown size={22} className="text-[#D4AF37]" />}
                 breadcrumbs={['PREDATOR', 'PREMIUM', persona]}
                 stats={[
                     { label: 'ДАНІ_В_ОБРОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
@@ -297,17 +297,17 @@ const PremiumHubView: React.FC = () => {
                 ]}
             />
 
-            {/* Persona Switcher & Tactical Nav (v56.2-TITAN) */}
-            <div className="flex flex-wrap items-center justify-between gap-8 bg-[#0b0f1a]/60 backdrop-blur-3xl p-4 rounded-[40px] border border-white/5">
+            {/* Persona Switcher & Tactical Nav (v56.5-ELITE) */}
+            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#D4AF37]/10">
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
                     {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
                         <button
                             key={key}
                             onClick={() => setPersona(key as InterlinkPersona)}
                             className={cn(
-                                "px-10 py-4 rounded-[24px] text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 relative overflow-hidden",
+                                "px-10 py-4 rounded-[24px] text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 relative overflow-hidden italic",
                                 persona === key 
-                                    ? `bg-gradient-to-r ${config.gradient} text-white shadow-xl shadow-amber-900/20`
+                                    ? `bg-gradient-to-r ${config.gradient} text-black shadow-xl shadow-[#D4AF37]/20`
                                     : "text-slate-500 hover:text-white hover:bg-white/5"
                             )}
                         >
@@ -336,9 +336,9 @@ const PremiumHubView: React.FC = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "px-8 py-3.5 rounded-[22px] text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all",
+                                "px-8 py-3.5 rounded-[22px] text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all italic",
                                 activeTab === tab.id
-                                    ? `bg-${currentConfig.color}-500/10 text-${currentConfig.color}-400 border border-${currentConfig.color}-500/30`
+                                    ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30"
                                     : "text-slate-500 hover:text-white hover:bg-white/5"
                             )}
                         >
@@ -370,21 +370,23 @@ const PremiumHubView: React.FC = () => {
                             <div className="lg:col-span-5 space-y-8">
                                 <div className={cn(
                                     "p-10 rounded-[48px] border border-white/5 relative overflow-hidden panel-3d",
-                                    `bg-gradient-to-br from-${currentConfig.color}-500/10 via-slate-900/40 to-black`
+                                    persona === 'INQUISITOR' 
+                                        ? "bg-gradient-to-br from-rose-500/10 via-black/40 to-black"
+                                        : "bg-gradient-to-br from-[#D4AF37]/10 via-black/40 to-black"
                                 )}>
                                     <div className="absolute -top-10 -right-10 opacity-5">
                                         <currentConfig.icon size={280} />
                                     </div>
                                     <div className="relative z-10 space-y-6">
-                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", `text-${currentConfig.color}-500`)}>
+                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", persona === 'INQUISITOR' ? "text-rose-500" : "text-[#D4AF37]")}>
                                             {currentConfig.title}
                                         </div>
                                         <h2 className="text-4xl font-black text-white tracking-tight uppercase leading-tight italic">
                                             {currentConfig.subtitle}
                                         </h2>
                                         <div className="flex items-center gap-6">
-                                            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(16,185,129,0.3)]">АКТИВНІ_ПРОТОКОЛИ</Badge>
-                                            <span className="text-xs text-slate-500 font-mono">v56.2-TITAN.9-stable</span>
+                                            <Badge className="bg-[#D4AF37]/20 text-[#D4AF37] border-[#D4AF37]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(212,175,55,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
+                                            <span className="text-xs text-slate-500 font-mono">v56.5-ELITE.1-stable</span>
                                         </div>
                                     </div>
                                 </div>
@@ -395,10 +397,10 @@ const PremiumHubView: React.FC = () => {
                                         <motion.div
                                             key={i}
                                             whileHover={{ scale: 1.02 }}
-                                            className="p-6 bg-slate-900/40 border border-white/5 rounded-[32px] group hover:border-white/20 transition-all cursor-pointer"
+                                            className="p-6 bg-black/40 border border-white/5 rounded-[32px] group hover:border-[#D4AF37]/20 transition-all cursor-pointer"
                                         >
-                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", `bg-${currentConfig.color}-500/10`)}>
-                                                <feature.icon className={cn(`text-${currentConfig.color}-400 group-hover:scale-110 transition-transform`)} size={24} />
+                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", persona === 'INQUISITOR' ? "bg-rose-500/10" : "bg-[#D4AF37]/10")}>
+                                                <feature.icon className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#D4AF37]", "group-hover:scale-110 transition-transform")} size={24} />
                                             </div>
                                             <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-2">{feature.label}</h4>
                                             <p className="text-[10px] text-slate-500 italic leading-relaxed">{feature.desc}</p>
@@ -409,13 +411,13 @@ const PremiumHubView: React.FC = () => {
                                 {/* Neural Insights Feed */}
                                 <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
-                                        <div className={cn("w-2 h-2 rounded-full", `bg-${currentConfig.color}-500 animate-pulse`)} />
+                                        <div className={cn("w-2 h-2 rounded-full animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#D4AF37]")} />
                                         НЕЙРОННІ ІНСАЙДИ (24h)
                                     </h3>
                                     <div className="space-y-4">
                                         {currentConfig.insights.map((insight, i) => (
-                                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
-                                                <div className="shrink-0 p-2 bg-indigo-500/20 rounded-lg text-indigo-400 h-fit"><Sparkles size={14} /></div>
+                                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-[#D4AF37]/10 transition-all">
+                                                <div className="shrink-0 p-2 bg-[#D4AF37]/20 rounded-lg text-[#D4AF37] h-fit"><Sparkles size={14} /></div>
                                                 <p className="text-xs text-slate-300 font-medium italic">"{insight}"</p>
                                             </div>
                                         ))}
@@ -472,7 +474,7 @@ const PremiumHubView: React.FC = () => {
                     {activeTab === 'analytics' && (
                         <div className="space-y-12">
                             <AIInsightsPanel persona={persona as string} />
-                            <div className="p-10 bg-slate-950/80 border border-white/10 rounded-[48px] backdrop-blur-3xl">
+                            <div className="p-10 bg-black/80 border border-[#D4AF37]/10 rounded-[48px] backdrop-blur-3xl">
                                 <TradeSankeyWidget persona={persona as string} />
                             </div>
                         </div>
@@ -480,15 +482,15 @@ const PremiumHubView: React.FC = () => {
 
                     {/* Placeholder for other tabs - each should be deeply informative */}
                     {['modeling', 'reports', 'builder'].includes(activeTab) && (
-                        <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-white/5 rounded-[60px]">
+                        <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-[#D4AF37]/10 rounded-[60px]">
                             <div className="relative">
-                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", `bg-${currentConfig.color}-500/20`)} />
-                                <Cpu size={80} className={cn(`text-${currentConfig.color}-500 animate-pulse`)} />
+                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#D4AF37]/20")} />
+                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#D4AF37]", "animate-pulse")} />
                             </div>
                             <div className="text-center space-y-4">
-                                <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em]">МОДУЛЬ_В_ОБРОБЦІ</h3>
+                                <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
-                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v56.2-TITAN.
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v56.5-ELITE.
                                 </p>
                             </div>
                         </div>

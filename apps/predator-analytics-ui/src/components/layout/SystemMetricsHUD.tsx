@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Cpu, HardDrive, Layout, Activity, Zap, RefreshCw } from 'lucide-react';
 import { systemApi, type SystemStatsResponse } from '@/services/api/system';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { uk } from 'date-fns/locale';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -60,11 +60,11 @@ export const SystemMetricsHUD: React.FC = () => {
         { 
             label: 'ВІДЕОЯДРО', 
             icon: Zap, 
-            value: stats.gpu_available ? stats.gpu_name.replace('NVIDIA ', '') : 'N/A', 
+            value: stats.gpu_available ? (stats.gpu_name || 'GPU').replace('NVIDIA ', '') : 'N/A', 
             sub: stats.gpu_available 
-                ? `${stats.gpu_temp}°C | ${stats.gpu_utilization}% Вик. | ${(stats.gpu_mem_used / (1024**2)).toFixed(0)}МБ` 
+                ? `${stats.gpu_temp || 0}°C | ${stats.gpu_utilization || 0}% Вик. | ${((stats.gpu_mem_used || 0) / (1024**2)).toFixed(0)}МБ` 
                 : 'НЕВИЗНАЧЕНО',
-            color: stats.gpu_temp > 80 ? 'text-rose-500' : 'text-amber-400'
+            color: (stats.gpu_temp || 0) > 80 ? 'text-rose-500' : 'text-amber-400'
         },
         {
             label: 'СИНХРОНІЗАЦІЯ',

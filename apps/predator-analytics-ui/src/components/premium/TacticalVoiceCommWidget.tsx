@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, Volume2, ShieldAlert, MessageSquare, Terminal, Wifi } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { premiumLocales } from '../../locales/uk/premium';
 
 export const TacticalVoiceCommWidget: React.FC<{ persona: string }> = ({ persona }) => {

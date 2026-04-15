@@ -9,7 +9,7 @@ import {
   Terminal,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { useUser } from '@/context/UserContext';
 import { shellCommandPaletteOpenAtom } from '@/store/atoms';
 import { useShellWorkspace } from '@/hooks/useShellWorkspace';

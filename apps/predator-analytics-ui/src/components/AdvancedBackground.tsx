@@ -1,5 +1,5 @@
 /**
- * 🌌 ADVANCED TITAN BACKGROUND // ПРЕМІАЛЬНИЙ ФОН TITAN | v56.2
+ * 🌌 ADVANCED TITAN BACKGROUND // ПРЕМІАЛЬНИЙ ФОН TITAN | v56.5-ELITE
  * 3D Deep Space + Tactical Nebula System
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -10,7 +10,7 @@ import { Canvas } from '@react-three/fiber';
 import { Stars, PerspectiveCamera, OrbitControls, Float } from '@react-three/drei';
 import { CyberGrid } from './CyberGrid';
 import { useTheme } from '@/context/ThemeContext';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface AdvancedBackgroundProps {
     showStars?: boolean;
@@ -18,6 +18,7 @@ interface AdvancedBackgroundProps {
     gridColor?: string;
     starCount?: number;
     className?: string;
+    mode?: string;
 }
 
 export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
@@ -25,9 +26,11 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
     showGrid = true,
     gridColor,
     starCount = 5000,
-    className
+    className,
+    mode: propsMode
 }) => {
-    const { mode } = useTheme();
+    const { mode: themeMode } = useTheme();
+    const mode = propsMode || themeMode;
 
     // Mode-specific color mapping
     const getModeGradient = () => {
@@ -35,6 +38,7 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
             case 'vigilance': return 'from-amber-900/10 via-transparent to-black';
             case 'threat':    return 'from-rose-900/15 via-transparent to-black';
             case 'stealth':   return 'from-emerald-900/10 via-transparent to-black';
+            case 'sovereign': return 'from-yellow-900/20 via-rose-950/20 to-black';
             default:          return 'from-blue-900/10 via-transparent to-black';
         }
     };
@@ -44,6 +48,7 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
             case 'vigilance': return 'bg-amber-600/5';
             case 'threat':    return 'bg-rose-600/5';
             case 'stealth':   return 'bg-emerald-600/5';
+            case 'sovereign': return 'bg-yellow-500/10';
             default:          return 'bg-blue-600/5';
         }
     };
@@ -58,19 +63,24 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
                         <Stars
                             radius={100}
                             depth={60}
-                            count={starCount}
-                            factor={6}
-                            saturation={2}
+                            count={mode === 'sovereign' ? 8000 : starCount}
+                            factor={mode === 'sovereign' ? 8 : 6}
+                            saturation={mode === 'sovereign' ? 4 : 2}
                             fade
-                            speed={0.8}
+                            speed={mode === 'sovereign' ? 1.5 : 0.8}
                         />
                         <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                             <mesh position={[0, 0, -20]}>
                                 <sphereGeometry args={[40, 32, 32]} />
-                                <meshBasicMaterial color={mode === 'threat' ? "#450a0a" : mode === 'vigilance' ? "#451a03" : "#020617"} wireframe opacity={0.05} transparent />
+                                <meshBasicMaterial 
+                                  color={mode === 'sovereign' ? "#78350f" : mode === 'threat' ? "#450a0a" : mode === 'vigilance' ? "#451a03" : "#020617"} 
+                                  wireframe 
+                                  opacity={0.05} 
+                                  transparent 
+                                />
                             </mesh>
                         </Float>
-                        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+                        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={mode === 'sovereign' ? 0.6 : 0.3} />
                     </Canvas>
                 </div>
             )}

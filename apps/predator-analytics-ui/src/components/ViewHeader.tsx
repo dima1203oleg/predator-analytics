@@ -12,14 +12,14 @@ interface ViewHeaderProps {
     label: string;
     value: string;
     icon?: React.ReactNode;
-    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'secondary' | 'cyan';
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'secondary' | 'cyan' | 'gold';
     animate?: boolean;
   }[];
   actions?: React.ReactNode;
   badges?: {
     label: string;
     icon?: React.ReactNode;
-    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'cyan' | 'secondary' | 'emerald' | 'amber' | 'rose';
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'cyan' | 'secondary' | 'emerald' | 'amber' | 'rose' | 'gold';
   }[];
   className?: string;
 }
@@ -94,6 +94,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                           badge.color === 'danger' || badge.color === 'rose' ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
                           badge.color === 'warning' || badge.color === 'amber' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.15)]' :
                           badge.color === 'purple' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.15)]' :
+                          badge.color === 'gold' ? 'bg-yellow-500/10 border-yellow-500/30 text-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.15)]' :
                           'bg-slate-800/40 border-slate-700/50 text-slate-300'
                         }
                       `}
@@ -128,6 +129,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                   stat.color === 'danger' ? 'text-danger-500 shadow-[0_0_10px_rgba(239,68,68,0.1)]' :
                   stat.color === 'primary' ? 'text-primary-500 shadow-[0_0_10px_rgba(6,182,212,0.1)]' :
                   stat.color === 'purple' ? 'text-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.1)]' :
+                  stat.color === 'gold' ? 'text-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.1)]' :
                   stat.color === 'cyan' ? 'text-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.1)]' :
                   stat.color === 'secondary' ? 'text-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.1)]' : 'text-slate-400'
                 }`}>
@@ -142,6 +144,7 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                    stat.color === 'danger' ? 'text-danger-400' :
                    stat.color === 'primary' ? 'text-primary-400' :
                    stat.color === 'purple' ? 'text-purple-400' :
+                   stat.color === 'gold' ? 'text-[#D4AF37]' :
                    stat.color === 'cyan' ? 'text-cyan-400' :
                    stat.color === 'secondary' ? 'text-indigo-400' : 'text-slate-200'
                 }`}>{stat.value}</span>

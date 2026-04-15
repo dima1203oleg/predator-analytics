@@ -12,7 +12,7 @@ import type {
 import { createMetric, createRisk, createStandardContextActions } from '@/components/layout/contextRail.builders';
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import {
   Activity,

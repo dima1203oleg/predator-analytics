@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '@/services/api';
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 import { premiumLocales } from '@/locales/uk/premium';
 
 /** Components */

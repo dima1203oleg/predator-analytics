@@ -12,7 +12,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Zap, ShieldAlert, Cpu, Activity, Database, Radio } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 export const InfrastructureFailoverBanner: React.FC = () => {
     const { isOffline, nodes } = useBackendStatus();

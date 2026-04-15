@@ -1,5 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+/**
+ * 🕹️ AI Sovereign Control Plane | v56.5-ELITE
+ * PREDATOR — Контур Суверенного Керування Інтелектом
+ * 
+ * Моніторинг та налаштування нейронних рушіїв, телеметрія та управління політиками.
+ * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
+ */
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
   AlertCircle,
@@ -25,7 +34,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
   normalizeAIControlPlaneSnapshot,
   type AIControlEngineRecord,
@@ -40,26 +49,32 @@ const toneClasses: Record<AIControlTone, { border: string; panel: string; text: 
   emerald: {
     border: 'border-emerald-500/20',
     panel: 'bg-emerald-500/10',
-    text: 'text-emerald-200',
-    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
+    text: 'text-emerald-400',
+    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
   },
   amber: {
     border: 'border-amber-500/20',
     panel: 'bg-amber-500/10',
-    text: 'text-amber-200',
-    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
+    text: 'text-amber-400',
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
   },
   rose: {
     border: 'border-rose-500/20',
     panel: 'bg-rose-500/10',
-    text: 'text-rose-200',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+    text: 'text-rose-400',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
   },
   sky: {
-    border: 'border-sky-500/20',
-    panel: 'bg-sky-500/10',
-    text: 'text-sky-200',
-    badge: 'border-sky-500/20 bg-sky-500/10 text-sky-100',
+    border: 'border-amber-500/20', // Migrated to Gold accent
+    panel: 'bg-amber-500/10',
+    text: 'text-amber-500',
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-500',
+  },
+  gold: {
+    border: 'border-[#D4AF37]/20',
+    panel: 'bg-[#D4AF37]/10',
+    text: 'text-[#D4AF37]',
+    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
   },
   slate: {
     border: 'border-white/10',
@@ -267,23 +282,23 @@ export default function AIControlPlane() {
             title={(
               <div className="flex items-center gap-5">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-sky-500/20 blur-[48px]" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-sky-500/20 bg-slate-950/90 shadow-2xl">
-                    <Sparkles className="h-8 w-8 text-sky-300" />
+                  <div className="absolute inset-0 rounded-full bg-[#D4AF37]/20 blur-[48px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-[#D4AF37]/20 bg-slate-950/90 shadow-2xl">
+                    <Sparkles className="h-8 w-8 text-[#D4AF37]" />
                   </div>
                 </div>
                 <div>
                   <div className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
-                    Контур керування <span className="text-sky-300">ШІ</span>
+                    Контур керування <span className="text-[#D4AF37]">ШІ</span>
                   </div>
-                  <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-sky-200/70">
+                  <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="animate-pulse" />
-                    Рушії та телеметрія без локальної імітації
+                    v56.5-ELITE · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
                   </div>
                 </div>
               </div>
             )}
-            icon={<Sparkles className="h-5 w-5 text-sky-300" />}
+            icon={<Sparkles className="h-5 w-5 text-[#D4AF37]" />}
             breadcrumbs={['PREDATOR', 'ШІ', 'Контур керування']}
             stats={[
               {
@@ -325,7 +340,7 @@ export default function AIControlPlane() {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.gold.badge)}>
               {backendStatus.statusLabel}
             </Badge>
             <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -367,7 +382,7 @@ export default function AIControlPlane() {
                 className={cn(
                   'inline-flex items-center gap-3 rounded-[22px] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] transition',
                   activeTab === item.id
-                    ? 'bg-sky-400 text-slate-950 shadow-[0_18px_36px_rgba(56,189,248,0.24)]'
+                    ? 'bg-[#D4AF37] text-slate-950 shadow-[0_18px_36px_rgba(212,175,55,0.24)]'
                     : 'text-slate-400 hover:bg-white/5 hover:text-white',
                 )}
               >
@@ -379,7 +394,7 @@ export default function AIControlPlane() {
 
           {activeTab === 'engines' && (
             <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-              <TacticalCard variant="holographic" title="Реєстр рушіїв" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+              <TacticalCard variant="holographic" title="Реєстр рушіїв" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 {snapshot.engines.length > 0 ? (
                   <div className="space-y-4">
                     {snapshot.engines.map((engine) => (
@@ -395,7 +410,7 @@ export default function AIControlPlane() {
               </TacticalCard>
 
               <div className="space-y-6">
-                <TacticalCard variant="holographic" title="Стан контуру" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+                <TacticalCard variant="holographic" title="Стан контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   <div className="space-y-4">
                     {[
                       { label: 'Оптимальні', value: String(snapshot.activeCount), tone: 'emerald' as const },
@@ -412,10 +427,10 @@ export default function AIControlPlane() {
                   </div>
                 </TacticalCard>
 
-                <TacticalCard variant="holographic" title="Висновок" className="rounded-[40px] border-sky-500/20 bg-slate-950/50 p-8">
+                <TacticalCard variant="holographic" title="Висновок" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,rgba(14,116,144,0.18),rgba(2,6,23,0.92))] p-5">
                     <div className="flex items-start gap-4">
-                      <div className="rounded-[20px] border border-sky-500/20 bg-sky-500/10 p-3 text-sky-200">
+                      <div className="rounded-[20px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-3 text-[#D4AF37]">
                         <Cpu className="h-5 w-5" />
                       </div>
                       <div>
@@ -438,9 +453,9 @@ export default function AIControlPlane() {
           {activeTab === 'governance' && (
             <div className="grid gap-6 lg:grid-cols-3">
               {governanceCards.map((card) => (
-                <TacticalCard key={card.id} variant="holographic" className="rounded-[36px] border-sky-500/20 bg-slate-950/50 p-8">
+                <TacticalCard key={card.id} variant="holographic" className="rounded-[36px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   <div className="flex items-start gap-4">
-                    <div className="rounded-[22px] border border-sky-500/20 bg-sky-500/10 p-3 text-sky-200">
+                    <div className="rounded-[22px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-3 text-[#D4AF37]">
                       <ShieldAlert className="h-5 w-5" />
                     </div>
                     <div>
@@ -454,7 +469,7 @@ export default function AIControlPlane() {
           )}
 
           {activeTab === 'logs' && (
-            <TacticalCard variant="holographic" title="Журнал системного контуру" className="rounded-[40px] border-sky-500/20 bg-slate-950/75 p-0 overflow-hidden">
+            <TacticalCard variant="holographic" title="Журнал системного контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/75 p-0 overflow-hidden">
               <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
                 Потік підтверджених подій `/system/logs/stream`
               </div>

@@ -1,9 +1,10 @@
 /**
- * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v56.2-TITAN
+ * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v56.5-ELITE
  * PREDATOR Analytics — Global Trade & Logistics Intelligence
  * 
  * Візуалізація імпорту/експорту в реальному часі.
  * Аналіз логістичних ланцюгів та потоків цінностей на глобальній карті.
+ * Sovereign Power Design · Tactical Intelligence · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -15,9 +16,9 @@ import {
   Settings, Info, TrendingUp, TrendingDown, Package, DollarSign,
   ArrowRight, ChevronRight, Crown, Sparkles, Layers, Eye, EyeOff,
   ZoomIn, ZoomOut, Move, RefreshCw, Anchor, Ship, Truck, Box,
-  Navigation, Crosshair, Zap, ShieldCheck
+  Navigation, Crosshair, Zap, ShieldCheck, Database
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -58,10 +59,10 @@ const MOCK_COUNTRIES: Country[] = [
 ];
 
 const MOCK_FLOWS: TradeFlow[] = [
-  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТРОНІКА', color: '#10b981' },
-  { id: 'f2', from: 'de', to: 'ua', value: 32000000, product: 'МАШИНОБУДУВАННЯ', color: '#3b82f6' },
-  { id: 'f3', from: 'tr', to: 'ua', value: 18000000, product: 'ТЕКСТИЛЬ', color: '#f59e0b' },
-  { id: 'f4', from: 'us', to: 'ua', value: 25000000, product: 'IT-ПОСЛУГИ', color: '#6366f1' },
+  { id: 'f1', from: 'cn', to: 'ua', value: 45000000, product: 'ЕЛЕКТРОНІКА', color: '#D4AF37' },
+  { id: 'f2', from: 'de', to: 'ua', value: 32000000, product: 'МАШИНОБУДУВАННЯ', color: '#E11D48' },
+  { id: 'f3', from: 'tr', to: 'ua', value: 18000000, product: 'ТЕКСТИЛЬ', color: '#D4AF37' },
+  { id: 'f4', from: 'us', to: 'ua', value: 25000000, product: 'IT-ПОСЛУГИ', color: '#D4AF37' },
 ];
 
 export default function TradeFlowMapPremium() {
@@ -90,9 +91,9 @@ export default function TradeFlowMapPremium() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-32">
         <AdvancedBackground />
-        <CyberGrid color="rgba(34, 211, 238, 0.03)" />
+        <CyberGrid color="rgba(212, 175, 55, 0.03)" />
 
         <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-12">
            
@@ -100,21 +101,21 @@ export default function TradeFlowMapPremium() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-cyan-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-cyan-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Globe size={42} className="text-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+                     <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
+                        <Globe size={42} className="text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
                      </div>
                   </div>
                   <div className="space-y-2">
                      <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-cyan-600/10 border border-cyan-600/20 text-cyan-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                        <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                           TRADE_MATRIX // FLOW_GEOSPATIAL
                         </span>
-                        <div className="h-px w-10 bg-cyan-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                        <div className="h-px w-10 bg-[#D4AF37]/20" />
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       КАРТА <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase">ПОТОКІВ</span>
+                       КАРТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8 italic uppercase text-[#D4AF37]">ПОТОКІВ</span>
                      </h1>
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                         ГЛОБАЛЬНА ВІЗУАЛІЗАЦІЯ ІМПОРТУ ТА ЛАНЦЮГІВ ПОСТАЧАННЯ
@@ -143,7 +144,7 @@ export default function TradeFlowMapPremium() {
               
               {/* PRIMARY MAP INTERFACE */}
               <div className="col-span-12 xl:col-span-9 p-8 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl h-[750px] relative overflow-hidden group">
-                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.02),transparent_70%)] pointer-events-none" />
+                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.02),transparent_70%)] pointer-events-none" />
                  
                  {/* SVG GEOSPACE */}
                  <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="transition-transform duration-700 ease-out" style={{ transform: `scale(${zoom})` }}>
@@ -176,27 +177,27 @@ export default function TradeFlowMapPremium() {
                     {/* COUNTRY NODES */}
                     {MOCK_COUNTRIES.map((c) => (
                        <g key={c.id} onClick={() => setSelectedCountry(c)} className="cursor-pointer group/node">
-                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 1.5 : 1} fill={c.id === 'ua' ? '#10b981' : '#334155'} className="group-hover/node:fill-white transition-colors" />
-                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 3 : 2} fill={c.id === 'ua' ? '#10b981' : '#334155'} fillOpacity={0.2} className="animate-pulse" />
+                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 1.5 : 1} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} className="group-hover/node:fill-white transition-colors" />
+                          <circle cx={c.x} cy={c.y} r={c.id === 'ua' ? 3 : 2} fill={c.id === 'ua' ? '#D4AF37' : '#334155'} fillOpacity={0.2} className="animate-pulse" />
                           <text x={c.x} y={c.y + 4} textAnchor="middle" fontSize={1.8} className="fill-slate-600 font-black font-mono group-hover/node:fill-white">{c.code}</text>
                        </g>
                     ))}
                  </svg>
 
                  {/* FLOATING LEGEND */}
-                 <div className="absolute bottom-10 left-10 p-8 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] w-[350px] space-y-6">
+                 <div className="absolute bottom-10 left-10 p-8 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] w-[350px] space-y-6 shadow-2xl">
                     <h4 className="text-[10px] font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
-                       <Layers size={16} className="text-cyan-500" /> АКТИВНІ_ПОТОКИ
+                       <Layers size={16} className="text-[#D4AF37]" /> АКТИВНІ_ПОТОКИ
                     </h4>
                     <div className="space-y-4">
                        {MOCK_FLOWS.map(f => (
-                         <div key={f.id} onClick={() => setSelectedFlow(f)} className={cn("p-4 rounded-2xl border transition-all cursor-pointer group", selectedFlow?.id === f.id ? "bg-cyan-500/10 border-cyan-500/40" : "bg-black/40 border-white/5 hover:border-cyan-500/20")}>
+                         <div key={f.id} onClick={() => setSelectedFlow(f)} className={cn("p-4 rounded-2xl border transition-all cursor-pointer group", selectedFlow?.id === f.id ? "bg-[#D4AF37]/10 border-[#D4AF37]/40" : "bg-black/40 border-white/5 hover:border-[#D4AF37]/20")}>
                             <div className="flex items-center justify-between mb-2">
                                <div className="flex items-center gap-3">
                                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: f.color }} />
                                   <p className="text-[10px] font-black text-white italic">{f.product}</p>
                                </div>
-                               <p className="text-[10px] font-black text-cyan-500 font-mono">{formatValue(f.value)}</p>
+                               <p className="text-[10px] font-black text-[#D4AF37] font-mono">{formatValue(f.value)}</p>
                             </div>
                             <p className="text-[8px] font-black text-slate-700 uppercase italic tracking-widest">{MOCK_COUNTRIES.find(c => c.id === f.from)?.name} → UA</p>
                          </div>
@@ -206,9 +207,9 @@ export default function TradeFlowMapPremium() {
 
                  {/* ZOOM HUD */}
                  <div className="absolute top-10 right-10 flex flex-col gap-4">
-                    <div className="p-6 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2rem] text-center">
+                    <div className="p-6 bg-black/80 backdrop-blur-3xl border border-white/5 rounded-[2rem] text-center shadow-xl">
                        <p className="text-[8px] font-black text-slate-700 uppercase italic mb-1">ZOOM_LEVEL</p>
-                       <p className="text-xl font-black text-cyan-500 font-mono italic">x{zoom.toFixed(1)}</p>
+                       <p className="text-xl font-black text-[#D4AF37] font-mono italic">x{zoom.toFixed(1)}</p>
                     </div>
                  </div>
               </div>
@@ -218,16 +219,16 @@ export default function TradeFlowMapPremium() {
                  <AnimatePresence mode="wait">
                     {selectedCountry ? (
                       <motion.div key={selectedCountry.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="space-y-8">
-                         <TacticalCard variant="holographic" className="p-8 rounded-[3rem] border-cyan-500/20 bg-cyan-500/[0.02]">
+                         <TacticalCard variant="holographic" className="p-8 rounded-[3rem] border-[#D4AF37]/20 bg-[#D4AF37]/[0.02]">
                             <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-2">{selectedCountry.name}</h3>
                             <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-6">ISO_CODE: {selectedCountry.code} // ID: {selectedCountry.id}</p>
                             
                             <div className="space-y-4">
-                               <div className="p-6 bg-black border border-white/5 rounded-[2rem]">
+                               <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
                                   <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ІМПОРТ_З_КРАЇНИ</p>
-                                  <p className="text-3xl font-black text-emerald-500 italic font-mono tracking-tighter">{formatValue(MOCK_FLOWS.filter(f => f.from === selectedCountry.id).reduce((a, b) => a + b.value, 0))}</p>
+                                  <p className="text-3xl font-black text-[#D4AF37] italic font-mono tracking-tighter">{formatValue(MOCK_FLOWS.filter(f => f.from === selectedCountry.id).reduce((a, b) => a + b.value, 0))}</p>
                                </div>
-                               <div className="p-6 bg-black border border-white/5 rounded-[2rem]">
+                               <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
                                   <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ОБСЯГ_ЕКСПОРТУ</p>
                                   <p className="text-3xl font-black text-white italic font-mono tracking-tighter">$12.4M</p>
                                </div>
@@ -235,16 +236,16 @@ export default function TradeFlowMapPremium() {
                          </TacticalCard>
 
                          <div className="p-8 rounded-[3rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-8">
-                            <h4 className="text-[10px] font-black text-amber-500 italic uppercase tracking-[0.4em] border-b border-white/[0.04] pb-6 flex items-center gap-4">
+                            <h4 className="text-[10px] font-black text-rose-500 italic uppercase tracking-[0.4em] border-b border-white/[0.04] pb-6 flex items-center gap-4">
                                <ShieldCheck size={16} /> RISK_COMPLIANCE_UA
                             </h4>
                             <div className="space-y-4">
                                <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2">
-                                  <p className="text-[9px] font-black text-emerald-500 uppercase italic">FATF_STATUS</p>
+                                  <p className="text-[9px] font-black text-[#D4AF37] uppercase italic">FATF_STATUS</p>
                                   <p className="text-xs font-black text-white italic">WHITE_LIST // LOW_RISK</p>
                                </div>
                                <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2">
-                                  <p className="text-[9px] font-black text-amber-500 uppercase italic">SANCTIONS_CHECK</p>
+                                  <p className="text-[9px] font-black text-rose-500 uppercase italic">SANCTIONS_CHECK</p>
                                   <p className="text-xs font-black text-white italic">0 MATCHES (CLEAN)</p>
                                </div>
                             </div>

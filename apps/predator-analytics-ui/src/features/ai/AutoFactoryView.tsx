@@ -1,14 +1,11 @@
 /**
- * Робочий центр автономного вдосконалення.
- *
- * Екран більше не симулює OODA-цикл локально:
- * - /api/v1/factory/infinite/status
- * - /api/v1/factory/bugs
- * - /api/v1/factory/patterns/gold
- * - /api/v1/factory/stats
- * - /api/v1/factory/logs
- * - /api/v1/system/status
- * - /api/v1/system/stats
+ * 🏭 Sovereign Auto-Factory | v56.5-ELITE
+ * PREDATOR — Робочий Центр Автономного Вдосконалення
+ * 
+ * Контроль OODA-циклу, патч-менеджмент та еволюція нейронних архітектур.
+ * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -41,7 +38,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { factoryApi } from '@/services/api/factory';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
   normalizeAutoFactorySnapshot,
   type AutoFactoryBugRecord,
@@ -79,37 +76,44 @@ const toneClasses: Record<AutoFactoryTone, { border: string; panel: string; text
   emerald: {
     border: 'border-emerald-500/20',
     panel: 'bg-emerald-500/10',
-    text: 'text-emerald-300',
-    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200',
-    dot: 'bg-emerald-300',
+    text: 'text-emerald-400',
+    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
+    dot: 'bg-emerald-400',
   },
   amber: {
-    border: 'border-amber-500/20',
-    panel: 'bg-amber-500/10',
-    text: 'text-amber-300',
-    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-200',
-    dot: 'bg-amber-300',
+    border: 'border-[#D4AF37]/20',
+    panel: 'bg-[#D4AF37]/10',
+    text: 'text-[#D4AF37]',
+    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
+    dot: 'bg-[#D4AF37]',
   },
   rose: {
     border: 'border-rose-500/20',
     panel: 'bg-rose-500/10',
-    text: 'text-rose-300',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-200',
-    dot: 'bg-rose-300',
+    text: 'text-rose-400',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+    dot: 'bg-rose-400',
   },
   sky: {
-    border: 'border-sky-500/20',
-    panel: 'bg-sky-500/10',
-    text: 'text-sky-300',
-    badge: 'border-sky-500/20 bg-sky-500/10 text-sky-200',
-    dot: 'bg-sky-300',
+    border: 'border-[#D4AF37]/20',
+    panel: 'bg-[#D4AF37]/10',
+    text: 'text-[#D4AF37]',
+    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
+    dot: 'bg-[#D4AF37]',
+  },
+  gold: {
+    border: 'border-[#D4AF37]/20',
+    panel: 'bg-[#D4AF37]/10',
+    text: 'text-[#D4AF37]',
+    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
+    dot: 'bg-[#D4AF37]',
   },
   slate: {
-    border: 'border-slate-500/20',
-    panel: 'bg-slate-500/10',
+    border: 'border-white/10',
+    panel: 'bg-white/5',
     text: 'text-slate-300',
-    badge: 'border-slate-500/20 bg-slate-500/10 text-slate-200',
-    dot: 'bg-slate-300',
+    badge: 'border-white/10 bg-white/5 text-slate-200',
+    dot: 'bg-slate-400',
   },
 };
 
@@ -356,32 +360,32 @@ export default function AutoFactoryView() {
 
   return (
     <PageTransition>
-      <div className="relative min-h-screen overflow-hidden bg-[#02040a] pb-24 text-slate-200">
+      <div className="relative min-h-screen overflow-hidden bg-[#020202] pb-24 text-slate-200">
         <AdvancedBackground />
-        <CyberGrid color="rgba(249,115,22,0.06)" />
+        <CyberGrid color="rgba(212,175,55,0.06)" />
 
         <div className="relative z-10 mx-auto max-w-[1760px] space-y-8 px-4 py-8 sm:px-8 lg:px-12">
           <ViewHeader
             title={(
               <div className="flex items-center gap-6">
                 <div className="relative">
-                  <div className="absolute inset-0 scale-150 rounded-full bg-orange-500/20 blur-[60px]" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-orange-500/20 bg-slate-950/90 shadow-2xl">
-                    <Factory size={30} className="text-orange-300 drop-shadow-[0_0_14px_rgba(249,115,22,0.75)]" />
+                  <div className="absolute inset-0 scale-150 rounded-full bg-[#D4AF37]/20 blur-[60px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-[#D4AF37]/20 bg-slate-950/90 shadow-2xl">
+                    <Factory size={30} className="text-[#D4AF37] drop-shadow-[0_0_14px_rgba(212,175,55,0.75)]" />
                   </div>
                 </div>
                 <div>
                   <h1 className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
-                    Автономний <span className="text-orange-400">завод</span>
+                    Автономний <span className="text-[#D4AF37]">завод</span>
                   </h1>
-                  <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-orange-300/75">
+                  <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
                     <Sparkles size={12} className="animate-pulse" />
-                    Factory API без локальної імітації OODA
+                    v56.5-ELITE · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>
               </div>
             )}
-            icon={<Factory size={20} className="text-orange-400" />}
+            icon={<Factory size={20} className="text-[#D4AF37]" />}
             breadcrumbs={['PREDATOR', 'ШІ', 'Автозавод']}
             stats={[
               {
@@ -449,7 +453,7 @@ export default function AutoFactoryView() {
                     className={cn(
                       'inline-flex items-center gap-3 rounded-[22px] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] transition',
                       tab === item.id
-                        ? 'bg-orange-500 text-slate-950 shadow-[0_18px_36px_rgba(249,115,22,0.3)]'
+                        ? 'bg-[#D4AF37] text-slate-950 shadow-[0_18px_36px_rgba(212,175,55,0.3)]'
                         : 'text-slate-400 hover:bg-white/5 hover:text-white',
                     )}
                   >
@@ -460,7 +464,7 @@ export default function AutoFactoryView() {
               </div>
 
               {tab === 'pipeline' && (
-                <TacticalCard variant="holographic" title="Поточний цикл OODA" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                <TacticalCard variant="holographic" title="Поточний цикл OODA" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   {snapshot.hasAnyData ? (
                     <div className="space-y-8">
                       <div className="grid gap-4 lg:grid-cols-5">
@@ -488,7 +492,7 @@ export default function AutoFactoryView() {
 
                       <div className="rounded-[32px] border border-white/10 bg-black/20 p-6">
                         <div className="flex items-center gap-3">
-                          <BrainCircuit size={18} className="text-orange-300" />
+                          <BrainCircuit size={18} className="text-[#D4AF37]" />
                           <div className="text-sm font-black uppercase tracking-[0.22em] text-white">Поточний стан рішення</div>
                         </div>
                         <div className="mt-4 text-base leading-7 text-slate-300">
@@ -506,7 +510,7 @@ export default function AutoFactoryView() {
               )}
 
               {tab === 'fixes' && (
-                <TacticalCard variant="holographic" title="Черга виправлень" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                <TacticalCard variant="holographic" title="Черга виправлень" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                   {snapshot.bugs.length > 0 ? (
                     <div className="space-y-5">
                       {snapshot.bugs.map((bug) => (
@@ -528,7 +532,7 @@ export default function AutoFactoryView() {
                     {AXIOMS.map((axiom) => (
                       <TacticalCard key={axiom.code} variant="holographic" className="rounded-[36px] border-white/10 bg-slate-950/50 p-8">
                         <div className="flex items-start gap-5">
-                          <div className="rounded-[24px] border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm font-black text-orange-300">
+                          <div className="rounded-[24px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 px-4 py-3 text-sm font-black text-[#D4AF37]">
                             {axiom.code}
                           </div>
                           <div>
@@ -540,7 +544,7 @@ export default function AutoFactoryView() {
                     ))}
                   </div>
 
-                  <TacticalCard variant="holographic" title="Суверенний контур" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+                  <TacticalCard variant="holographic" title="Суверенний контур" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                     <div className="grid gap-4 md:grid-cols-3">
                       {snapshot.engines.map((engine) => (
                         <EngineCard key={engine.id} engine={engine} />
@@ -551,7 +555,7 @@ export default function AutoFactoryView() {
               )}
 
               {tab === 'terminal' && (
-                <TacticalCard variant="holographic" title="Журнал ядра" className="rounded-[40px] border-orange-500/20 bg-slate-950/80 p-0 overflow-hidden">
+                <TacticalCard variant="holographic" title="Журнал ядра" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/80 p-0 overflow-hidden">
                   <div className="border-b border-white/10 bg-black/30 px-6 py-4 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">
                     Потік підтверджених подій Factory API
                   </div>
@@ -575,7 +579,7 @@ export default function AutoFactoryView() {
             </div>
 
             <div className="space-y-6">
-              <TacticalCard variant="holographic" title="Керування контуром" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+              <TacticalCard variant="holographic" title="Керування контуром" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 <div className="space-y-6">
                   <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
                     <div className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Стан бекенду</div>
@@ -622,7 +626,7 @@ export default function AutoFactoryView() {
                 </div>
               </TacticalCard>
 
-              <TacticalCard variant="holographic" title="Контурні сигнали" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+              <TacticalCard variant="holographic" title="Контурні сигнали" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 <div className="space-y-4">
                   {snapshot.engines.map((engine) => (
                     <EngineCard key={engine.id} engine={engine} />
@@ -630,7 +634,7 @@ export default function AutoFactoryView() {
                 </div>
               </TacticalCard>
 
-              <TacticalCard variant="holographic" title="Надійність контуру" className="rounded-[40px] border-orange-500/20 bg-slate-950/50 p-8">
+              <TacticalCard variant="holographic" title="Надійність контуру" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 {snapshot.reliability.some((bar) => bar.value != null) ? (
                   <div className="space-y-4">
                     {snapshot.reliability.map((bar) => (
@@ -645,9 +649,9 @@ export default function AutoFactoryView() {
                 )}
               </TacticalCard>
 
-              <div className="rounded-[36px] border border-orange-500/20 bg-[linear-gradient(135deg,rgba(124,45,18,0.35),rgba(15,23,42,0.92))] p-6 shadow-[0_22px_60px_rgba(120,53,15,0.28)]">
+              <div className="rounded-[36px] border border-[#D4AF37]/20 bg-[linear-gradient(135deg,rgba(168,162,158,0.1),rgba(15,23,42,0.92))] p-6 shadow-[0_22px_60px_rgba(212,175,55,0.15)]">
                 <div className="flex items-start gap-4">
-                  <div className="rounded-[24px] border border-orange-500/20 bg-orange-500/10 p-3 text-orange-300">
+                  <div className="rounded-[24px] border border-[#D4AF37]/20 bg-[#D4AF37]/10 p-3 text-[#D4AF37]">
                     {snapshot.isRunning ? <Zap size={22} /> : <ShieldCheck size={22} />}
                   </div>
                   <div>

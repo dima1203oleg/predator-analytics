@@ -9,7 +9,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 const SystemPromptsView = () => {
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);

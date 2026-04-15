@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';

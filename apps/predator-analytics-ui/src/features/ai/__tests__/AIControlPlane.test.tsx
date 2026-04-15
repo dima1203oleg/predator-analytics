@@ -13,6 +13,9 @@ const { getEngines, getStatus, getStats, getLogs } = vi.hoisted(() => ({
 
 vi.mock('@/hooks/useBackendStatus', () => ({
   useBackendStatus: () => ({
+    nodes: [],
+    healingProgress: 100,
+    activeFailover: false,
     isOffline: false,
     isTruthOnly: true,
     modeLabel: 'Режим правдивих даних',
@@ -78,6 +81,7 @@ const statusPayload: SystemStatusResponse = {
   version: '55.1',
   environment: 'test',
   uptime: '2d',
+  last_sync: '2026-03-30T10:00:00Z',
   services: [],
   summary: {
     total: 10,
@@ -115,6 +119,7 @@ const statsPayload: SystemStatsResponse = {
   indexing_rate: 16,
   total_indices: 28,
   storage_gb: 412,
+  last_sync: '2026-03-30T10:00:00Z',
   timestamp: '2026-03-30T11:01:00Z',
 };
 

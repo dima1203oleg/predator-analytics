@@ -1,5 +1,5 @@
 /**
- * 🧠 AI HYPOTHESIS ENGINE | v56.4
+ * 🧠 AI HYPOTHESIS ENGINE | v56.5-ELITE
  * PREDATOR Analytics — Autonomous Intelligence Hypothesis Generation
  *
  * Автоматична генерація слідчих гіпотез на базі аномалій, патернів
@@ -13,9 +13,9 @@ import {
   Sparkles, Brain, Target, AlertTriangle, CheckCircle,
   Clock, Zap, Eye, ArrowUpRight, RefreshCw, Download,
   Filter, ChevronRight, Network, DollarSign, Globe,
-  Activity, Lock, FileText, Send, Loader2, Star
+  Activity, Lock, FileText, Send, Loader2, Star, Fingerprint, Cpu, Search, Radar
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 // ─── ТИПИ ────────────────────────────────────────────────────────────
 
@@ -67,9 +67,9 @@ const HYPOTHESES: Hypothesis[] = [
       { source: 'Судовий реєстр', description: 'Справа про банкрутство відкрита через 91 день після трансферів', weight: 91, timestamp: '2025-02-01' },
     ],
     nextActions: [
-      'Подати заяву до НАБУ — ст. 199 ККУ',
-      'Клопотання про визнання угод недійсними',
-      'Запит до кіпрського регулятора на розкриття UBO',
+      'ПОДАТИ ЗАЯВУ ДО НАБУ — СТ. 199 ККУ',
+      'КЛОПОТАННЯ ПРО ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
+      'ЗАПИТ ДО КІПРСЬКОГО РЕГУЛЯТОРА НА РОЗКРИТТЯ UBO',
     ],
     aiModel: 'PREDATOR-SIGINT-7B',
     processingTime: '2.4с',
@@ -91,74 +91,28 @@ const HYPOTHESES: Hypothesis[] = [
       { source: 'ContactData', description: 'Однакові контактні дані та IP-адреси заявок у ProZorro', weight: 85, timestamp: '2025-03-12' },
     ],
     nextActions: [
-      'Запит до АМКУ — антимонопольне провадження',
-      'Аналіз IP-адрес подачі тендерних пропозицій',
-      'Порівняльний аналіз специфікацій за 47 лотами',
+      'ЗАПИТ ДО АМКУ — АНТИМОНОПОЛЬНЕ ПРОВАДЖЕННЯ',
+      'АНАЛІЗ IP-АДРЕС ПОДАЧІ ТЕНДЕРНИХ ПРОПОЗИЦІЙ',
+      'ПОРІВНЯЛЬНИЙ АНАЛІЗ СПЕЦИФІКАЦІЙ ЗА 47 ЛОТАМИ',
     ],
     aiModel: 'PREDATOR-GRAPH-4B',
     processingTime: '3.1с',
-  },
-  {
-    id: 'HYP-0698',
-    title: 'Санкційне ухилення через ланцюг ОАЕ → Туреччина → UA',
-    summary: 'Виявлено маршрут обходу санкцій: товари з РФ переоформлюються через Gulf Meridian FZCO (ОАЕ) і Ankara Transit LLC (TR), потрапляють в Україну як "турецьке виробництво". Подвійне використання — 7 SKU.',
-    category: 'sanctions',
-    status: 'probable',
-    confidence: 77,
-    impact: 'Санкційні порушення · Кримінал',
-    impactValue: '$23M',
-    createdAt: '02:18:44',
-    entities: ['Gulf Meridian FZCO (UAE)', 'Ankara Transit LLC', 'ТОВ "ЕА-ТРЕЙД"'],
-    evidence: [
-      { source: 'Митниця', description: '3 партії з ОАЕ містять компоненти рос. виробника (DUAL-USE)', weight: 82, timestamp: '2025-02-20' },
-      { source: 'AIS Maritime', description: 'Суден маршрут: Новоросійськ → Батумі → Стамбул → Одеса', weight: 74, timestamp: '2025-01-07' },
-      { source: 'UN Experts DB', description: 'Gulf Meridian у базі підозрілих посередників OSAC-2024', weight: 88, timestamp: '2024-11-15' },
-    ],
-    nextActions: [
-      'Повідомити ДФСУ та СБУ',
-      'Технічна аналіз SKU — відповідність заявленому COO',
-      'Запит до OFAC щодо статусу Gulf Meridian',
-    ],
-    aiModel: 'PREDATOR-SANCTIONS-3B',
-    processingTime: '1.8с',
-  },
-  {
-    id: 'HYP-0612',
-    title: 'Прихований контроль держзакупівель через підставних ФОП',
-    summary: 'AI виявив патерн: 14 ФОП отримали держконтракти на $4.1M, зареєстровані в один день, з однаковим видом діяльності та КВЕД. Всі кошти обналічені через 2 банки. Можливий схематоз.',
-    category: 'corruption',
-    status: 'possible',
-    confidence: 63,
-    impact: 'Бюджетні збитки',
-    impactValue: '$4.1M',
-    createdAt: '01:55:08',
-    entities: ['14× ФОП (реєстрація 2024-09-14)', 'ПАТ "УКРОБОЗОВНІШНІМ"', 'Мотрієнко Д.С.'],
-    evidence: [
-      { source: 'ЄДР', description: '14 ФОП зареєстровані 2024-09-14, однаковий КВЕД 46.90', weight: 71, timestamp: '2024-09-14' },
-      { source: 'ProZorro', description: 'Всі 14 отримали контракти від однієї установи за 45 днів', weight: 68, timestamp: '2024-10-30' },
-    ],
-    nextActions: [
-      'Фінансовий моніторинг ФОП через ДФС',
-      'Запит до банків щодо операцій (ст. 64 Закону про банки)',
-    ],
-    aiModel: 'PREDATOR-PATTERN-2B',
-    processingTime: '4.2с',
   },
 ];
 
 const STATUS_CFG = {
   confirmed: { label: 'ПІДТВЕРДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
-  probable:  { label: 'ЙМОВІРНО',    color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: AlertTriangle },
-  possible:  { label: 'МОЖЛИВО',     color: '#6366f1', bg: 'bg-indigo-900/15',  border: 'border-indigo-800/30', icon: Eye },
-  refuted:   { label: 'СПРОСТОВАНО', color: '#475569', bg: 'bg-slate-900/30',   border: 'border-slate-700/40',  icon: Lock },
+  probable:  { label: 'ЙМОВІРНО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
+  possible:  { label: 'МОЖЛИВО',     color: '#475569', bg: 'bg-slate-900/15',   border: 'border-slate-800/30',  icon: Eye },
+  refuted:   { label: 'СПРОСТОВАНО', color: '#E11D48', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
 };
 
 const CATEGORY_CFG = {
-  financial:  { label: 'Фінансова',    icon: DollarSign, color: '#ef4444' },
-  network:    { label: 'Мережевий',    icon: Network,    color: '#06b6d4' },
-  sanctions:  { label: 'Санкційна',    icon: Globe,      color: '#f59e0b' },
-  corruption: { label: "Корупційна",   icon: AlertTriangle, color: '#dc2626' },
-  supply:     { label: 'Ланцюг пост.', icon: Activity,   color: '#8b5cf6' },
+  financial:  { label: 'Фінансова',    icon: DollarSign, color: '#D4AF37' },
+  network:    { label: 'Мережевий',    icon: Network,    color: '#34d399' },
+  sanctions:  { label: 'Санкційна',    icon: Globe,      color: '#E11D48' },
+  corruption: { label: "Корупційна",   icon: AlertTriangle, color: '#f59e0b' },
+  supply:     { label: 'Ланцюг пост.', icon: Activity,   color: '#D4AF37' },
 };
 
 // ─── КОМПОНЕНТ ───────────────────────────────────────────────────────
@@ -172,7 +126,7 @@ const HypothesisEngineView: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<HypothesisStatus | 'all'>('all');
   const terminalRef = useRef<HTMLDivElement>(null);
   const [terminalLines, setTerminalLines] = useState<string[]>([
-    '> PREDATOR Hypothesis Engine v56.4 завантажено',
+    '> PREDATOR Hypothesis Engine v56.5-ELITE завантажено',
     '> Моделі: SIGINT-7B · GRAPH-4B · SANCTIONS-3B · PATTERN-2B',
     '> Датасети: ЄДР · ProZorro · Митниця · SWIFT · YouControl · OFAC',
     '> Статус: ГОТОВИЙ · Гіпотез у черзі: 0',
@@ -184,7 +138,7 @@ const HypothesisEngineView: React.FC = () => {
 
     const steps = [
       `> ЗАПИТ: "${promptText}"`,
-      '> Ініціалізація multi-model ensemble...',
+      '> Ініціалізація SOVEREIGN multi-model ensemble...',
       '> [SIGINT-7B] Аналіз фінансових аномалій...',
       '> [GRAPH-4B] Побудова графа зв\'язків...',
       '> [PATTERN-2B] Пошук повторюваних патернів...',
@@ -196,7 +150,7 @@ const HypothesisEngineView: React.FC = () => {
     ];
 
     for (let i = 0; i < steps.length; i++) {
-      await new Promise(r => setTimeout(r, 280 + Math.random() * 200));
+      await new Promise(r => setTimeout(r, 200 + Math.random() * 150));
       setTerminalLines(prev => [...prev, steps[i]]);
       if (terminalRef.current) {
         terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
@@ -212,170 +166,158 @@ const HypothesisEngineView: React.FC = () => {
   const filtered = HYPOTHESES.filter(h => filterStatus === 'all' || h.status === filterStatus);
 
   return (
-    <div className="min-h-screen text-slate-200 font-sans pb-24 relative overflow-hidden">
+    <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#020202]">
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.05) 0%, transparent 55%)' }} />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.05) 0%, transparent 55%)' }} />
       </div>
 
-      <div className="relative z-10 max-w-[1800px] mx-auto p-6 space-y-8">
+      <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК ── */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
+        {/* ── ЗАГОЛОВОК ELITE ── */}
+        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
+          <div className="flex items-center gap-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-violet-700/15 blur-2xl rounded-full" />
-              <div className="relative p-5 bg-black border border-violet-900/50">
-                <Brain size={38} className="text-violet-400 drop-shadow-[0_0_15px_rgba(139,92,246,0.4)]" />
+              <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
+              <div className="relative p-7 bg-black border border-yellow-500/40 rounded-[2.5rem] shadow-4xl">
+                <Brain size={48} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
                 <motion.span
                   animate={{ scale: [1, 1.5, 1], opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-violet-600 rounded-full"
+                  className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border-4 border-black"
                 />
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Sparkles size={10} className="text-violet-600 animate-pulse" />
-                <span className="text-[8px] font-black text-violet-700/70 uppercase tracking-[0.5em]">
-                  AI HYPOTHESIS ENGINE · MULTI-MODEL · SOVEREIGN AI · v56.4
+              <div className="flex items-center gap-4 mb-3">
+                <Sparkles size={12} className="text-yellow-600 animate-pulse" />
+                <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
+                  SOVEREIGN HYPOTHESIS ENGINE · v56.5-ELITE
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
+              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic">
                 HYPOTHESIS{' '}
-                <span className="text-violet-400 drop-shadow-[0_0_20px_rgba(139,92,246,0.35)]">ENGINE</span>
+                <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">ENGINE</span>
               </h1>
-              <p className="text-[10px] text-slate-700 font-black uppercase tracking-[0.3em] mt-1">
-                АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · АНОМАЛІЇ · ПАТЕРНИ · AI-ВЕРИФІКАЦІЯ
+              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
+                <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-5 py-3 bg-black border border-violet-900/40 flex items-center gap-3">
-              <Sparkles size={13} className="text-violet-600" />
+          <div className="flex items-center gap-6">
+            <div className="px-8 py-5 bg-black/60 backdrop-blur-xl border-2 border-yellow-500/20 rounded-2xl flex items-center gap-5 shadow-2xl">
+              <div className="p-3 bg-yellow-500/10 rounded-xl">
+                 <Cpu size={24} className="text-yellow-500" />
+              </div>
               <div>
-                <p className="text-[7px] font-black text-slate-700 uppercase">Активних моделей</p>
-                <p className="text-[13px] font-black text-violet-400 font-mono">4 / 4 ONLINE</p>
+                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Активних моделей</p>
+                <p className="text-xl font-black text-yellow-500 font-mono">ENCORE v56.5</p>
               </div>
             </div>
-            <button className="px-8 py-3 bg-violet-700 text-white text-[9px] font-black uppercase tracking-wider hover:bg-violet-600 transition-colors border border-violet-500/30 flex items-center gap-2">
-              <Download size={13} />
-              INTELLIGENCE REPORT
+            <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4">
+              <Download size={20} />
+              STRATEGIC_REPORT_ELITE
             </button>
           </div>
         </div>
 
-        {/* ── МЕТРИКИ ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* ── МЕТРИКИ ELITE ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '4',    sub: 'Цього тижня',       c: '#8b5cf6' },
-            { l: 'ПІДТВЕРДЖЕНО',       v: '1',    sub: '94% confidence',     c: '#10b981' },
-            { l: 'ЗАГАЛЬНИЙ ВПЛИВ',    v: '$112M', sub: 'Виявлено ризику',   c: '#ef4444' },
-            { l: 'СЕРЕДНІЙ ЧАС',       v: '2.9с', sub: 'Генерація гіпотези', c: '#6366f1' },
+            { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '47',    sub: 'Active Vector Scan',       c: '#D4AF37' },
+            { l: 'CONFIRMATION_RATE',  v: '94.2%', sub: 'High Fidelity Match',     c: '#10b981' },
+            { l: 'TARGET_EXPOSURE',    v: '$184M', sub: 'Detected Capital Leak',   c: '#E11D48' },
+            { l: 'COMPUTE_SPEED',      v: '1.8ms', sub: 'Neural Mesh Performance', c: '#D4AF37' },
           ].map((m, i) => (
             <motion.div
               key={m.l}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-              className="p-6 bg-black border border-slate-800/50 hover:border-slate-700/60 transition-all"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+              className="p-10 bg-black/60 backdrop-blur-2xl border border-white/5 hover:border-yellow-500/30 transition-all rounded-[3rem] shadow-2xl group overflow-hidden"
             >
-              <p className="text-[7px] font-black text-slate-700 uppercase tracking-[0.4em] mb-2">{m.l}</p>
-              <p className="text-[24px] font-black font-mono" style={{ color: m.c }}>{m.v}</p>
-              <p className="text-[8px] text-slate-700 font-black uppercase mt-1">{m.sub}</p>
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-yellow-500/40 to-transparent" />
+              <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em] mb-4 group-hover:text-yellow-500/60 transition-colors">{m.l}</p>
+              <p className="text-4xl font-black font-mono tracking-tighter italic" style={{ color: m.c }}>{m.v}</p>
+              <p className="text-[10px] text-slate-700 font-black uppercase mt-3 tracking-widest opacity-60">{m.sub}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* ── ГЕНЕРАТОР ЗАПИТІВ ── */}
-        <div className="bg-black border border-violet-900/30 p-6 space-y-4">
-          <h2 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em] flex items-center gap-2">
-            <Brain size={12} className="text-violet-600" />
-            ЗАПУСТИТИ НОВУ ГІПОТЕЗУ
+        {/* ── ГЕНЕРАТОР ЗАПИТІВ ELITE ── */}
+        <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden backdrop-blur-3xl">
+          <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
+             <Brain size={400} className="text-yellow-500" />
+          </div>
+          <h2 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] flex items-center gap-4 italic font-bold relative z-10">
+            <Zap size={16} className="text-yellow-500 animate-pulse" />
+            INITIATE_PREDATIVE_SCAN_SEQUENCER
           </h2>
-          <div className="flex gap-3">
-            <div className="flex-1 flex items-center gap-3 border border-violet-900/30 bg-violet-950/10 px-5 py-3">
-              <Sparkles size={14} className="text-violet-700 shrink-0" />
+          <div className="flex flex-col md:flex-row gap-6 relative z-10">
+            <div className="flex-1 flex items-center gap-6 border-2 border-white/5 bg-white/[0.02] px-10 py-6 rounded-3xl group hover:border-yellow-500/30 transition-all shadow-inner">
+              <Search size={24} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
               <input
                 value={promptText}
                 onChange={e => setPromptText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleGenerate()}
-                placeholder="Опишіть підозру або назвіть суб'єкт... напр: 'ТОВ Агро-Лідер підозрілі транзакції'"
-                className="flex-1 bg-transparent text-[11px] text-white outline-none placeholder:text-slate-700 font-mono"
+                placeholder="ВВЕДІТЬ_ПАРАМЕТРИ_ПОШУКУ_ОБ'ЄКТА..."
+                className="flex-1 bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono italic"
               />
             </div>
             <motion.button
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={handleGenerate}
               disabled={generating || !promptText.trim()}
               className={cn(
-                "px-8 py-3 text-[9px] font-black uppercase tracking-wider flex items-center gap-3 transition-all border",
+                "px-16 py-6 text-[12px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-4 transition-all rounded-3xl shadow-3xl italic",
                 generating
-                  ? "bg-violet-900/40 text-violet-600 border-violet-800/30 cursor-wait"
-                  : "bg-violet-700 text-white border-violet-500/40 hover:bg-violet-600"
+                  ? "bg-slate-900 text-yellow-600 border-2 border-yellow-500/20 cursor-wait"
+                  : "bg-yellow-500 text-black border-none hover:brightness-110"
               )}
             >
-              {generating ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-              {generating ? 'АНАЛІЗ...' : 'ГЕНЕРУВАТИ'}
+              {generating ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
+              {generating ? 'АНАЛІЗ...' : 'АКТИВУВАТИ'}
             </motion.button>
           </div>
 
-          {/* Терміанл */}
+          {/* Термінал ELITE */}
           <div
             ref={terminalRef}
-            className="h-[120px] overflow-y-auto bg-black border border-violet-900/20 p-4 font-mono space-y-1 custom-scrollbar"
+            className="h-[180px] overflow-y-auto bg-black/80 border-2 border-white/5 p-8 font-mono space-y-2 custom-scrollbar rounded-3xl shadow-inner relative z-10"
           >
             {terminalLines.map((line, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: -8 }}
+                initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 className={cn(
-                  "text-[9px] leading-relaxed",
+                  "text-[10px] leading-relaxed italic font-bold",
                   line.startsWith('> ✓') ? "text-emerald-400 font-black" :
-                  line.startsWith('> [') ? "text-violet-500" :
-                  line.startsWith('───') ? "text-slate-800" :
-                  line.startsWith('> ЗАПИТ') ? "text-amber-400" :
-                  "text-slate-600"
+                  line.startsWith('> [') ? "text-yellow-500/70" :
+                  line.startsWith('───') ? "text-slate-900" :
+                  line.startsWith('> ZAПИТ') ? "text-yellow-500" :
+                  "text-slate-700"
                 )}
               >
                 {line}
               </motion.div>
             ))}
             {generating && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <motion.span
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{ duration: 0.7, repeat: Infinity }}
-                  className="text-[9px] text-violet-600"
-                >█</motion.span>
+                  className="text-yellow-500 font-black"
+                >_PENDING_ELITE_COMMAND</motion.span>
               </div>
             )}
           </div>
-
-          {/* Підказки */}
-          <div className="flex flex-wrap gap-2">
-            {[
-              'Офшорні структури БВО',
-              'Схема банкрутства + трансфери',
-              'Картельна змова ProZorro',
-              'Санкційне ухилення ОАЕ',
-            ].map(hint => (
-              <button
-                key={hint}
-                onClick={() => setPromptText(hint)}
-                className="text-[8px] font-black text-slate-600 bg-slate-900 border border-slate-800 px-3 py-1.5 hover:text-violet-400 hover:border-violet-900/50 transition-all uppercase tracking-wide"
-              >
-                {hint}
-              </button>
-            ))}
-          </div>
         </div>
 
-        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ ELITE ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Список гіпотез */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="flex gap-1 p-1 bg-black border border-slate-800/50 w-fit">
+          <div className="lg:col-span-12 xl:col-span-5 space-y-6">
+            <div className="flex gap-2 p-2 bg-black border-2 border-white/5 rounded-2xl w-fit shadow-2xl">
               {(['all', 'confirmed', 'probable', 'possible'] as const).map(s => {
                 const sc = s !== 'all' ? STATUS_CFG[s] : null;
                 return (
@@ -383,15 +325,15 @@ const HypothesisEngineView: React.FC = () => {
                     key={s}
                     onClick={() => setFilterStatus(s)}
                     className={cn(
-                      "px-3 py-1.5 text-[7px] font-black uppercase tracking-wider transition-all",
+                      "px-6 py-3 text-[9px] font-black uppercase tracking-[0.3em] transition-all rounded-xl italic",
                       filterStatus === s
-                        ? s === 'all' ? "bg-slate-800 text-white"
+                        ? s === 'all' ? "bg-white/10 text-white"
                           : "text-white font-black"
                         : "text-slate-600 hover:text-slate-300"
                     )}
-                    style={filterStatus === s && sc ? { backgroundColor: sc.color + '25', color: sc.color } : {}}
+                    style={filterStatus === s && sc ? { backgroundColor: sc.color + '25', color: sc.color, borderColor: sc.color + '40', borderWidth: '1px' } : {}}
                   >
-                    {s === 'all' ? 'УСІ' : sc!.label}
+                    {s === 'all' ? 'УСІ_ВЕКТОРИ' : sc!.label}
                   </button>
                 );
               })}
@@ -399,225 +341,230 @@ const HypothesisEngineView: React.FC = () => {
 
             {newHypAdded && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                className="p-4 border border-emerald-800/50 bg-emerald-950/20 flex items-center gap-3"
+                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className="p-6 border-2 border-emerald-500/20 bg-emerald-500/5 flex items-center gap-4 rounded-3xl shadow-xl"
               >
-                <CheckCircle size={14} className="text-emerald-400" />
-                <span className="text-[10px] font-black text-emerald-400">НОВА ГІПОТЕЗА ДОДАНА ДО ЧЕРГИ ВЕРИФІКАЦІЇ</span>
+                <CheckCircle size={20} className="text-emerald-400" />
+                <span className="text-[12px] font-black text-emerald-400 italic">НОВА ГІПОТЕЗА СИНТЕЗОВАНА · ЧЕРГА_ВЕРИФІКАЦІЇ_АКТИВНА</span>
               </motion.div>
             )}
 
-            {filtered.map((hyp, i) => {
-              const sc = STATUS_CFG[hyp.status];
-              const cc = CATEGORY_CFG[hyp.category];
-              const StatusIcon = sc.icon;
-              const CatIcon = cc.icon;
-              return (
-                <motion.div
-                  key={hyp.id}
-                  initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
-                  onClick={() => setSelected(hyp)}
-                  className={cn(
-                    "p-6 border cursor-pointer transition-all relative overflow-hidden group",
-                    selected?.id === hyp.id
-                      ? "bg-violet-950/10 border-violet-800/50"
-                      : "bg-black border-slate-800/40 hover:border-slate-700/60"
-                  )}
-                >
-                  {selected?.id === hyp.id && (
-                    <div className="absolute left-0 inset-y-0 w-0.5 bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
-                  )}
+            <div className="space-y-4">
+              {filtered.map((hyp, i) => {
+                const sc = STATUS_CFG[hyp.status];
+                const cc = CATEGORY_CFG[hyp.category];
+                const StatusIcon = sc.icon;
+                const CatIcon = cc.icon;
+                return (
+                  <motion.div
+                    key={hyp.id}
+                    initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.07 }}
+                    onClick={() => setSelected(hyp)}
+                    className={cn(
+                      "p-10 border-2 cursor-pointer transition-all relative overflow-hidden group rounded-[3rem] shadow-2xl",
+                      selected?.id === hyp.id
+                        ? "bg-yellow-500/[0.03] border-yellow-500/30"
+                        : "bg-black/60 border-white/5 hover:border-yellow-500/20"
+                    )}
+                  >
+                    {selected?.id === hyp.id && (
+                      <div className="absolute left-0 inset-y-0 w-2 bg-yellow-500 shadow-[0_0_20px_#d4af37]" />
+                    )}
 
-                  <div className="flex items-center justify-between mb-3 pl-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[8px] font-black font-mono text-slate-700">{hyp.id}</span>
-                      <span className={cn("text-[7px] font-black px-2 py-0.5 border flex items-center gap-1", sc.bg, sc.border)} style={{ color: sc.color }}>
-                        <StatusIcon size={9} />
-                        {sc.label}
-                      </span>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black font-mono text-slate-700">{hyp.id}</span>
+                        <span className={cn("text-[8px] font-black px-4 py-1 border-2 flex items-center gap-2 rounded-lg italic", sc.bg, sc.border)} style={{ color: sc.color }}>
+                          <StatusIcon size={12} />
+                          {sc.label}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full border border-white/5">
+                        <CatIcon size={14} style={{ color: cc.color }} />
+                        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: cc.color }}>{cc.label}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <CatIcon size={11} style={{ color: cc.color }} />
-                      <span className="text-[8px] font-black" style={{ color: cc.color }}>{cc.label}</span>
-                    </div>
-                  </div>
 
-                  <h3 className="text-[11px] font-black text-white group-hover:text-violet-300 transition-colors leading-tight pl-3 mb-3">
-                    {hyp.title}
-                  </h3>
+                    <h3 className="text-xl font-black text-white group-hover:text-yellow-500 transition-colors italic leading-tight mb-8">
+                      {hyp.title}
+                    </h3>
 
-                  <div className="flex items-center gap-5 pl-3">
-                    <div>
-                      <p className="text-[7px] text-slate-700 uppercase">Confidence</p>
-                      <p className="text-[16px] font-black font-mono" style={{ color: sc.color }}>{hyp.confidence}%</p>
+                    <div className="grid grid-cols-3 gap-8 border-t border-white/5 pt-8">
+                      <div>
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Confidence</p>
+                        <p className="text-3xl font-black font-mono italic" style={{ color: sc.color }}>{hyp.confidence}%</p>
+                      </div>
+                      <div>
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Impact</p>
+                        <p className="text-2xl font-black text-white font-mono italic">{hyp.impactValue}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Source</p>
+                        <p className="text-[10px] font-black text-yellow-600 font-mono italic">{hyp.aiModel.split('-')[1]}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[7px] text-slate-700 uppercase">Під ризиком</p>
-                      <p className="text-[14px] font-black text-white font-mono">{hyp.impactValue}</p>
-                    </div>
-                    <div>
-                      <p className="text-[7px] text-slate-700 uppercase">Модель</p>
-                      <p className="text-[8px] font-black text-violet-600 font-mono">{hyp.aiModel.replace('PREDATOR-', '')}</p>
-                    </div>
-                    <div className="ml-auto flex items-center gap-1 text-slate-700">
-                      <Clock size={9} />
-                      <span className="text-[8px] font-mono">{hyp.createdAt}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Деталі гіпотези */}
-          <div className="lg:col-span-7">
+          {/* Деталі гіпотези ELITE */}
+          <div className="lg:col-span-12 xl:col-span-7">
             <AnimatePresence mode="wait">
               {selected ? (
                 <motion.div
                   key={selected.id}
-                  initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
-                  className="space-y-5"
+                  initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                  className="space-y-8"
                 >
-                  {/* Заголовок + метрики */}
-                  <div className="bg-black border border-violet-900/30 p-7">
-                    <div className="flex items-start justify-between mb-4">
+                  <div className="bg-black/80 backdrop-blur-3xl border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500 opacity-20" />
+                    <div className="flex items-start justify-between mb-8">
                       <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[8px] font-mono text-slate-700">{selected.id}</span>
+                        <div className="flex items-center gap-4 mb-4">
+                          <span className="text-[11px] font-mono text-slate-700 font-black">{selected.id}</span>
                           <span
-                            className={cn("text-[7px] font-black px-2 py-0.5 border flex items-center gap-1",
+                            className={cn("text-[9px] font-black px-5 py-1.5 border-2 flex items-center gap-2 rounded-xl italic",
                               STATUS_CFG[selected.status].bg, STATUS_CFG[selected.status].border
                             )}
                             style={{ color: STATUS_CFG[selected.status].color }}
                           >
-                            {React.createElement(STATUS_CFG[selected.status].icon, { size: 9 })}
+                            {React.createElement(STATUS_CFG[selected.status].icon, { size: 14 })}
                             {STATUS_CFG[selected.status].label}
                           </span>
                         </div>
-                        <h2 className="text-[15px] font-black text-white leading-tight max-w-lg">{selected.title}</h2>
+                        <h2 className="text-[32px] font-black text-white leading-[1.1] max-w-2xl italic uppercase tracking-tighter">{selected.title}</h2>
                       </div>
-                      <div className="text-right shrink-0 ml-4">
-                        <p className="text-[28px] font-black font-mono" style={{ color: STATUS_CFG[selected.status].color }}>
+                      <div className="text-right shrink-0">
+                        <p className="text-[56px] font-black font-mono leading-none tracking-tighter italic" style={{ color: STATUS_CFG[selected.status].color }}>
                           {selected.confidence}%
                         </p>
-                        <p className="text-[7px] text-slate-600 uppercase font-black">CONFIDENCE</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.5em] mt-2">CERTAINTY_RATING</p>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-relaxed border-l-2 border-violet-900/50 pl-4">
-                      {selected.summary}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-4">
+                    
+                    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[2.5rem] relative mb-10">
+                       <p className="text-[16px] text-slate-300 leading-relaxed font-medium italic">
+                         {selected.summary}
+                       </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 mb-10">
                       {selected.entities.map((e, i) => (
-                        <span key={i} className="text-[8px] font-black px-3 py-1 bg-slate-900 border border-slate-800 text-slate-400 uppercase">
-                          {e}
+                        <span key={i} className="text-[10px] font-black px-6 py-2 bg-black border-2 border-white/5 text-slate-400 uppercase tracking-widest rounded-full italic hover:border-yellow-500/30 transition-all cursor-default group hover:text-white">
+                          <Fingerprint size={12} className="inline mr-2 text-yellow-500 opacity-0 group-hover:opacity-100 transition-all" />{e}
                         </span>
                       ))}
                     </div>
-                    <div className="flex items-center gap-6 mt-4 pt-4 border-t border-slate-900">
-                      <div className="text-[9px] text-slate-600">
-                        ⚡ Модель: <span className="text-violet-500 font-black">{selected.aiModel}</span>
+
+                    <div className="grid grid-cols-3 gap-10 border-t-2 border-white/5 pt-10">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-white/5 rounded-2xl"><Cpu size={20} className="text-yellow-500" /></div>
+                        <div>
+                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Compute Node</p>
+                           <p className="text-[13px] font-black text-white font-mono">{selected.aiModel}</p>
+                        </div>
                       </div>
-                      <div className="text-[9px] text-slate-600">
-                        ⏱ Час: <span className="text-slate-400 font-black">{selected.processingTime}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-white/5 rounded-2xl"><Clock size={20} className="text-slate-500" /></div>
+                        <div>
+                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Processing Time</p>
+                           <p className="text-[13px] font-black text-white font-mono">{selected.processingTime}</p>
+                        </div>
                       </div>
-                      <div className="text-[9px] text-slate-600">
-                        🎯 Вплив: <span className="text-red-400 font-black">{selected.impactValue}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-rose-500/10 rounded-2xl"><Target size={20} className="text-rose-500" /></div>
+                        <div>
+                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Strategic Impact</p>
+                           <p className="text-[13px] font-black text-rose-500 font-mono italic uppercase">{selected.impactValue}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Докази */}
-                  <div className="bg-black border border-slate-800/50 p-6">
-                    <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-4 flex items-center gap-2">
-                      <FileText size={12} className="text-violet-600" />
-                      ДОКАЗОВА БАЗА · {selected.evidence.length} ДЖЕРЕЛ
+                  {/* Докази ELITE */}
+                  <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
+                    <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic">
+                      <FileText size={20} className="text-yellow-500" />
+                      PROOF_OF_HYPOTHESIS · {selected.evidence.length} STREAMS
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {selected.evidence.map((ev, i) => (
                         <motion.div
                           key={i}
                           onClick={() => setActiveEvidence(activeEvidence === i ? null : i)}
                           className={cn(
-                            "border cursor-pointer transition-all",
-                            activeEvidence === i ? "border-violet-800/50 bg-violet-950/15" : "border-slate-800/40 hover:border-slate-700/60 bg-black"
+                            "border-2 cursor-pointer transition-all rounded-3xl overflow-hidden",
+                            activeEvidence === i ? "border-yellow-500/40 bg-yellow-500/[0.03] shadow-lg" : "border-white/5 hover:border-white/20 bg-black shadow-none"
                           )}
                         >
-                          <div className="flex items-center justify-between p-4">
-                            <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-between p-7">
+                            <div className="flex items-center gap-6">
                               <div
-                                className="w-8 h-8 flex items-center justify-center border shrink-0 font-black text-[13px] font-mono"
+                                className="w-12 h-12 flex items-center justify-center border-2 shrink-0 font-black text-[18px] font-mono italic rounded-xl shadow-inner"
                                 style={{
-                                  borderColor: `rgba(139,92,246,${ev.weight / 100 * 0.6})`,
+                                  borderColor: `rgba(212,175,55,${ev.weight / 100 * 0.4})`,
                                   color: ev.weight > 85 ? '#10b981' : ev.weight > 70 ? '#f59e0b' : '#64748b',
+                                  backgroundColor: `rgba(212,175,55,${ev.weight / 100 * 0.05})`
                                 }}
                               >
                                 {ev.weight}
                               </div>
                               <div>
-                                <p className="text-[9px] font-black text-violet-500 uppercase">{ev.source}</p>
-                                <p className="text-[9px] text-slate-400 font-black">{ev.description}</p>
+                                <p className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic mb-1">{ev.source}</p>
+                                <p className="text-[14px] text-slate-300 font-bold tracking-tight">{ev.description}</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                              <span className="text-[7px] font-mono text-slate-700">{ev.timestamp}</span>
-                              <ChevronRight size={12} className={cn("text-slate-700 transition-transform", activeEvidence === i && "rotate-90")} />
+                            <div className="flex items-center gap-5">
+                              <span className="text-[9px] font-mono text-slate-700 font-black">{ev.timestamp}</span>
+                              <ChevronRight size={18} className={cn("text-slate-800 transition-transform", activeEvidence === i && "rotate-90 text-yellow-500")} />
                             </div>
                           </div>
-                          {activeEvidence === i && (
-                            <div className="px-4 pb-4 pt-0 border-t border-slate-800/40">
-                              <div className="flex items-center justify-between mt-2">
-                                <span className="text-[8px] text-slate-600">Вага доказу:</span>
-                                <div className="flex items-center gap-2">
-                                  <div className="h-1 w-24 bg-slate-900">
-                                    <div className="h-full" style={{ width: `${ev.weight}%`, backgroundColor: ev.weight > 85 ? '#10b981' : '#f59e0b' }} />
-                                  </div>
-                                  <span className="text-[9px] font-black font-mono" style={{ color: ev.weight > 85 ? '#10b981' : '#f59e0b' }}>
-                                    {ev.weight}%
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
                         </motion.div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Наступні дії */}
-                  <div className="bg-black border border-slate-800/50 p-6">
-                    <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-4 flex items-center gap-2">
-                      <Target size={12} className="text-amber-600" />
-                      РЕКОМЕНДОВАНІ ДІЇ
+                  {/* РЕКОМЕНДОВАНИ ДІЇ ELITE */}
+                  <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
+                    <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
+                      <Target size={20} className="text-rose-500 animate-pulse" />
+                      STRATEGIC_ACTION_VECTORS
                     </h3>
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       {selected.nextActions.map((action, i) => (
-                        <div key={i} className="flex items-center gap-3 p-4 border border-slate-800/40 hover:border-amber-900/40 hover:bg-amber-950/5 transition-all cursor-pointer group">
-                          <div className="w-6 h-6 border border-amber-900/40 bg-amber-950/20 flex items-center justify-center shrink-0">
-                            <span className="text-[8px] font-black text-amber-700">{i + 1}</span>
+                        <div key={i} className="flex items-center gap-5 p-7 border-2 border-white/5 bg-white/[0.01] hover:border-yellow-500/30 hover:bg-yellow-500/[0.02] transition-all cursor-pointer group rounded-3xl shadow-xl">
+                          <div className="w-10 h-10 border-2 border-white/10 bg-black flex items-center justify-center shrink-0 rounded-xl group-hover:border-yellow-500/50 group-hover:scale-110 transition-all">
+                            <span className="text-sm font-black text-slate-700 group-hover:text-yellow-500 font-mono italic">{i + 1}</span>
                           </div>
-                          <span className="text-[10px] font-black text-slate-400 group-hover:text-slate-200 transition-colors">{action}</span>
-                          <ArrowUpRight size={13} className="ml-auto text-slate-700 group-hover:text-amber-600 transition-colors" />
+                          <span className="text-[12px] font-black text-slate-400 group-hover:text-white transition-colors uppercase italic tracking-tight">{action}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="py-4 bg-violet-700 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-violet-600 transition-colors flex items-center justify-center gap-3 border border-violet-500/30">
-                      <Sparkles size={14} />
-                      ПОГЛИБИТИ АНАЛІЗ
+                  <div className="grid grid-cols-2 gap-8 pt-6">
+                    <button className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
+                      <Sparkles size={22} className="animate-pulse" />
+                      DEEP_SENSORY_SWEEP
                     </button>
-                    <button className="py-4 bg-black border border-slate-700/50 text-slate-400 text-[9px] font-black uppercase tracking-wider hover:bg-slate-900 transition-colors flex items-center justify-center gap-3">
-                      <Download size={14} />
-                      СЛІДЧИЙ ЗВІТ PDF
+                    <button className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
+                      <Download size={20} />
+                      EXPORT_CASE_DOCKET
                     </button>
                   </div>
                 </motion.div>
               ) : (
-                <div className="bg-black border border-slate-800/30 p-16 text-center">
-                  <Brain size={40} className="mx-auto mb-4 text-slate-800" />
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-wider">
-                    ОБЕРІТЬ ГІПОТЕЗУ АБО ЗГЕНЕРУЙТЕ НОВУ
+                <div className="bg-black/40 border-4 border-dashed border-white/5 p-32 text-center rounded-[5rem] flex flex-col items-center justify-center">
+                  <div className="relative mb-10">
+                     <Brain size={120} className="text-slate-900" />
+                     <div className="absolute inset-0 flex items-center justify-center">
+                        <Radar size={60} className="text-slate-800 animate-pulse" />
+                     </div>
+                  </div>
+                  <p className="text-[14px] font-black text-slate-800 uppercase tracking-[.8em] italic">
+                    SELECT_ANALYTICAL_OBJECTIVE
                   </p>
                 </div>
               )}
@@ -626,7 +573,7 @@ const HypothesisEngineView: React.FC = () => {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:3px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(139,92,246,.15)}` }} />
+      <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:4px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.12);border-radius:20px}` }} />
     </div>
   );
 };

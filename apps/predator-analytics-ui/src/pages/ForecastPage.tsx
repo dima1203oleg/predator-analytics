@@ -9,7 +9,7 @@ import type {
     ForecastResponse,
 } from '@/features/forecast/types';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
     AlertCircle,
     ArrowUpRight,

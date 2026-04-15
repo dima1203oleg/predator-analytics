@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { marketApi } from '@/features/market/api/market';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
     ArrowUpRight,
     Clock,

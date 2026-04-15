@@ -43,7 +43,7 @@ import {
 } from '@/config/navigation';
 import { useUser } from '@/context/UserContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 /* ── Утиліти форматування ── */
 const formatCurrency = (value: number): string => {

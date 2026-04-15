@@ -20,7 +20,7 @@ import { ResourceDynamicsChart } from '../infrastructure/components/ResourceDyna
 import { infraApi } from '@/services/api/infra';
 import { systemApi } from '@/services/api/system';
 import { useQuery } from '@tanstack/react-query';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 export default function PredictiveNexusView() {
     const [oodaStatus, setOodaStatus] = useState('OBSERVING');

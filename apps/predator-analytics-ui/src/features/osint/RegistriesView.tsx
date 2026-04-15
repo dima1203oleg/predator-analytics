@@ -26,7 +26,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 // ========================
 // Types

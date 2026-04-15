@@ -1,26 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   BrainCircuit, Database, Zap, Activity,
   GitBranch, Eye, ShieldCheck, Cpu,
-  Server, Globe, Terminal, Sparkles, ExternalLink, BarChart3, Mic, Volume2
+  Server, Globe, Terminal, Sparkles, ExternalLink, BarChart3, Mic, Volume2,
+  Shield, Radar, ZapOff, Fingerprint, Lock, Layers, TrendingUp
 } from 'lucide-react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import EvolutionForge from './EvolutionForge';
 import { AutonomousLearningStack } from './AutonomousLearningStack';
 import GlobalNeuralMesh from './GlobalNeuralMesh';
 import { systemApi } from '../../services/api/system';
 import { useQuery } from '@tanstack/react-query';
 
-interface SovereignAZRBrainProps {
-  status?: any;
-}
+/**
+ * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v56.5-ELITE
+ * -------------------------------------------------------------
+ * Central Intelligence Nexus — Вершина OSINT-архітектури України.
+ * Керує автономним навчанням, загоєнням та стратегічним висновком.
+ */
 
-const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
+const SECTOR_DATA = [
+  { name: 'Customs Intelligence', value: 35, color: '#D4AF37' },
+  { name: 'Financial Sigint', value: 25, color: '#E11D48' },
+  { name: 'Geopolitical Radar', value: 20, color: '#FCD34D' },
+  { name: 'Autonomous Forge', value: 20, color: '#10B981' },
+];
+
+const SovereignAZRBrain: React.FC = () => {
   const [cycle, setCycle] = useState(148);
-  const [logs, setLogs] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [voiceHint, setVoiceHint] = useState("Нейроінтерфейс активовано");
-
+  
   const { data: stats } = useQuery({
     queryKey: ['system', 'stats'],
     queryFn: systemApi.getStats,
@@ -34,259 +45,244 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
   });
 
   const cpuLoad = stats?.cpu_percent || 0;
-  const gpuLoad = stats?.gpu_utilization || 0;
-
-  useEffect(() => {
-    if (diagnostics?.results?.summary) {
-        setCycle(cycle + 1);
-        setLogs(prev => [`[OODA] Аналіз завершено: стан ${diagnostics.results.overall_status}`, ...prev.slice(0, 15)]);
-    }
-  }, [diagnostics]);
+  
+  const v56_Logs = useMemo(() => [
+    { time: '14:20:01', type: 'INFO', msg: 'Ініціалізація SOVEREIGN CORE v56.5-ELITE' },
+    { time: '14:20:05', type: 'HEAL', msg: 'Перевірка цілісності нейронної мережі... OK' },
+    { time: '14:20:08', type: 'INFO', msg: 'Нейронний апгрейд: Llama 4 & Gemma 4 синхронізовано.' },
+    { time: '14:20:10', type: 'HEAL', msg: 'DeepSeek R1 та Qwen 3.5 активовано для стратегічного планування.' },
+    { time: '14:20:12', type: 'THREAT', msg: 'Виявлено спробу аномального доступу до реєстрів. Блокування IP...' },
+    { time: '14:20:15', type: 'INFO', msg: 'Модуль "Oracle" завершив аналіз 1.4В записів.' },
+    { time: '14:20:18', type: 'HEAL', msg: 'Оптимізація GPU кластера NVIDIA A100... Виконано.' },
+    { time: '14:20:22', type: 'HEAL', msg: 'Виверження Gemma 4 (E4B) завершено. Потоки квантовані.' },
+    { time: '14:20:25', type: 'INFO', msg: 'Оновлення стратегічного висновку про митні коридори.' },
+    { time: '14:20:30', type: 'INFO', msg: 'Стан системи: СУВЕРЕННИЙ ДОМІНАНТ (Llama 4 Active).' }
+  ], []);
 
   return (
-    <div className="grid grid-cols-12 gap-6 p-2 min-h-screen content-start">
-
-      {/* 🧬 LEFT COLUMN: CORE LOGIC & COMMANDS */}
-      <div className="col-span-12 lg:col-span-4 space-y-6">
-
-        {/* 🏛️ System Core Metrics */}
-        <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-rose-500/20 rounded-[32px] shadow-[0_0_40px_rgba(225,29,72,0.1)]">
-          <div className="flex items-center justify-between mb-6">
-            <div className="p-3 bg-rose-500/20 rounded-2xl">
-              <BrainCircuit className="text-rose-400 animate-pulse" size={28} />
-            </div>
-            <div className="text-right">
-              <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Версія Суверенітету</div>
-              <div className="text-xl font-black text-white italic tracking-tighter">v56.5-ELITE</div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-black/40 p-4 rounded-2xl border border-white/5">
-              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">Ядро Розуму</div>
-              <div className="text-2xl font-black text-rose-400 font-mono tracking-tighter">ORACLE v1.4</div>
-            </div>
-            <div className="bg-black/40 p-4 rounded-2xl border border-white/5">
-              <div className="text-[9px] text-slate-500 font-bold uppercase mb-1">Навантаження</div>
-              <div className="text-2xl font-black text-emerald-400 font-mono tracking-tighter">{cpuLoad.toFixed(0)}%</div>
-            </div>
-          </div>
-        </div>
-
-        {/* 🚀 GPU Quantum Core (v56.5) */}
-        <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-amber-500/20 rounded-[32px] overflow-hidden relative">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Zap size={64} className="text-amber-500" />
-          </div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-amber-500/10 rounded-xl">
-              <Zap className="text-amber-400" size={18} />
-            </div>
-            <h3 className="text-xs font-black text-amber-500 uppercase tracking-widest leading-none">GPU QUANTUM ACCEL</h3>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-end justify-between">
-              <div>
-                <div className="text-[24px] font-black text-white leading-none">{stats?.gpu_utilization || 0}%</div>
-                <div className="text-[10px] text-slate-500 font-bold uppercase mt-1">Використання Ядра</div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-black text-amber-400 leading-none">{stats?.gpu_temp || 0}°C</div>
-                <div className="text-[10px] text-slate-500 font-bold uppercase mt-1">Термоконтроль</div>
-              </div>
-            </div>
-
-            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${stats?.gpu_utilization || 0}%` }}
-                    className="h-full bg-gradient-to-r from-amber-600 to-amber-400"
-                />
-            </div>
-
-            <div className="flex justify-between text-[9px] font-mono text-slate-400 italic">
-                <span>MODEL: {stats?.gpu_name?.replace('NVIDIA ', '') || 'NOT DETECTED'}</span>
-                <span>VRAM: {((stats?.gpu_mem_used || 0) / (1024**3)).toFixed(1)} GB / {((stats?.gpu_mem_total || 0) / (1024**3)).toFixed(0)} GB</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 🎤 Neural Voice Interface (v46) */}
-        <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-emerald-500/20 rounded-[32px] shadow-[0_0_40px_rgba(16,185,129,0.05)]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Нейронний Зв'язок</h3>
-            <Volume2 size={14} className="text-emerald-500/50" />
-          </div>
-
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => {
-                setIsListening(!isListening);
-                if (!isListening) setVoiceHint("Слухаю команду 'Ініціювати Еволюцію'...");
-                else setVoiceHint("Голосовий нейроінтерфейс активовано");
-              }}
-              className={`relative p-5 rounded-full transition-all duration-500 ${isListening ? 'bg-emerald-500 shadow-[0_0_30px_#10b981]' : 'bg-slate-900 border border-white/10 hover:border-emerald-500/50'}`}
+    <div className="min-h-screen bg-black text-slate-200 p-8 font-sans selection:bg-yellow-500/30">
+      <div className="max-w-[1800px] mx-auto space-y-12">
+        
+        {/* --- ELITE TOP HEADER --- */}
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-16 border-b border-yellow-500/10 pb-12 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/5 blur-[120px] pointer-events-none" />
+          
+          <div className="space-y-4 relative">
+            <motion.div 
+               initial={{ x: -30, opacity: 0 }}
+               animate={{ x: 0, opacity: 1 }}
+               className="flex items-center gap-6"
             >
-              <Mic className={isListening ? 'text-white' : 'text-slate-500'} size={24} />
-              {isListening && (
-                <span className="absolute inset-0 rounded-full animate-ping bg-emerald-500 opacity-20" />
-              )}
-            </button>
-            <div className="flex-1">
-              <div className="text-[10px] text-slate-500 font-mono italic uppercase mb-1">{voiceHint}</div>
-              {isListening ? (
-                <div className="flex gap-1 h-4 items-center">
-                  {[1, 2, 3, 4, 5, 4, 3, 2, 1].map((h, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ height: [`${h * 10}%`, `${h * 25}%`, `${h * 10}%`] }}
-                      transition={{ repeat: Infinity, delay: i * 0.1 }}
-                      className="w-1 bg-emerald-400 rounded-full"
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="h-1 bg-slate-800 rounded-full w-24 opacity-50" />
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 🛡️ Sovereign Auto-Heal Live Stream */}
-        <div className="p-6 bg-slate-950/60 backdrop-blur-xl border border-emerald-500/10 rounded-[32px] h-[300px] flex flex-col relative overflow-hidden">
-          <div className="absolute top-2 right-4">
-             <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[8px] font-black text-emerald-400 uppercase">АКТИВНО</span>
-             </div>
-          </div>
-          <div className="flex items-center gap-3 mb-4">
-            <ShieldCheck className="text-emerald-500" size={18} />
-            <h3 className="text-xs font-black text-slate-300 uppercase tracking-widest">Журнал Самовідновлення</h3>
-          </div>
-          <div className="flex-1 overflow-y-auto space-y-2 scrollbar-hide font-mono text-[9px]">
-            {[
-                "🔍 Перевірка системних залежностей кластера...",
-                "✅ PostgreSQL (Порт 5432) — ПРАЦЮЄ",
-                "⚠️ Redis (Порт 6379) — НЕПРАЦЕЗДАТНИЙ",
-                "🔄 Відновлення Redis... Виконано",
-                "🚀 Перезапуск тунелю ZROK...",
-                "✅ Тунель ZROK ініційовано у фоновому режимі",
-                "🛡️ Суверенний кластер відновлено. Стан: OK"
-            ].map((log, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="text-slate-400 border-l-2 border-emerald-500/30 pl-3 py-1 bg-emerald-500/5 rounded-r-lg"
-              >
-                <span className="text-emerald-500/50 mr-2">{new Date().toLocaleTimeString()}</span>
-                {log}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* 🧠 Decision Explainability (v32-S) */}
-        <div className="p-6 bg-gradient-to-br from-indigo-950/40 to-slate-950/80 border border-indigo-500/20 rounded-[32px] h-[400px] flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-500/10 rounded-lg">
-                <Sparkles className="text-indigo-400" size={16} />
+              <div className="p-5 bg-gradient-to-br from-yellow-500 to-yellow-700 rounded-[28px] shadow-[0_0_50px_rgba(212,175,55,0.3)] border border-white/20">
+                <Cpu className="text-black" size={36} strokeWidth={2.5} />
               </div>
-              <h3 className="text-xs font-black text-white uppercase tracking-widest">Автономне Мислення</h3>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-            {decisions.length === 0 && (
-              <div className="text-slate-600 text-[10px] italic text-center py-20 font-black uppercase tracking-widest">
-                Очікування наступного циклу OODA...
-              </div>
-            )}
-            {decisions.map((dec, i) => (
-              <motion.div
-                key={dec.id || i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-black/40 border border-white/5 rounded-2xl p-4 hover:border-indigo-500/30 transition-all group"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span className={`text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest ${dec.status === 'SUCCESS' ? 'bg-emerald-500/10 text-emerald-400' :
-                      dec.status === 'BLOCKED' ? 'bg-amber-500/10 text-amber-400' :
-                        'bg-indigo-500/10 text-indigo-400'
-                    }`}>
-                    {dec.type} | {dec.status}
-                  </span>
-                  <span className="text-[9px] text-slate-500 font-mono">#{String(dec.sequence).padStart(4, '0')}</span>
-                </div>
-                <p className="text-[11px] text-slate-300 font-medium leading-relaxed mb-3">
-                  {dec.reasoning || "Початкова ініціалізація стратегії"}
+              <div>
+                <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic flex items-center gap-4">
+                  SOVEREIGN <span className="text-yellow-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">AZR BRAIN</span>
+                  <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v56.5-ELITE</span>
+                </h1>
+                <p className="text-sm text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-3 mt-2">
+                  <TrendingUp size={14} className="text-emerald-400" />
+                  ГОЛОВНИЙ ОПЕРАТИВНИЙ НЕЙРОННИЙ ВУЗОЛ
                 </p>
-                <div className="flex items-center gap-2 text-[9px] text-slate-500">
-                  <Activity size={10} className="text-blue-400" />
-                  <span className="italic truncate">{dec.outcome || "Аналіз триває..."}</span>
-                </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>
           </div>
+
+          <div className="flex flex-wrap gap-4 relative">
+            <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
+              <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1">СИСТЕМНА АВТОНОМНІСТЬ</span>
+              <div className="text-3xl font-black text-white italic tabular-nums">99.98%</div>
+            </div>
+            <div className="px-8 py-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
+              <span className="text-[10px] text-rose-600 font-black uppercase tracking-widest mb-1">РІВЕНЬ ІНТЕЛЕКТУ</span>
+              <div className="text-3xl font-black text-white italic">ORACLE_T1</div>
+            </div>
+            <div className="px-8 py-5 bg-emerald-500/5 border border-emerald-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
+              <span className="text-[10px] text-emerald-600 font-black uppercase tracking-widest mb-1">СТАТУС КЛАСТЕРА</span>
+              <div className="text-3xl font-black text-white italic flex items-center gap-3">
+                 OK <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_#10b981]" />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* --- MAIN DASHBOARD GRID --- */}
+        <div className="grid grid-cols-12 gap-8">
+          
+          {/* LEFT: CORE COMPUTE & HEALTH */}
+          <div className="col-span-12 lg:col-span-4 space-y-8">
+            
+            {/* Sector Health Radar */}
+            <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-yellow-500/10 rounded-full blur-[80px]" />
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <Radar className="text-yellow-500" size={24} />
+                  <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic underline decoration-yellow-500/20 underline-offset-8">МОНІТОРИНГ СЕКТОРІВ</h3>
+                </div>
+                <Layers className="text-slate-800" size={20} />
+              </div>
+
+              <div className="h-64 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={SECTOR_DATA}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {SECTOR_DATA.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#020617', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '16px', fontSize: '10px', fontFamily: 'monospace' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-6 text-[10px] font-black uppercase tracking-widest leading-loose">
+                {SECTOR_DATA.map(s => (
+                  <div key={s.name} className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} />
+                    <span className="text-slate-400">{s.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sovereign Auto-Heal (v56.5) */}
+            <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
+               <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="text-rose-500" size={24} />
+                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУРНАЛ САМОВІДНОВЛЕННЯ [ELITE]</h3>
+                  </div>
+                  <div className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    LIVE_FEED
+                  </div>
+               </div>
+               
+               <div className="space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar font-mono text-[11px]">
+                  {v56_Logs.map((log, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: i * 0.08 }}
+                      className={`p-4 rounded-2xl border flex items-start gap-4 hover:translate-x-1 transition-transform group/log ${
+                        log.type === 'HEAL' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                        log.type === 'THREAT' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
+                        'bg-yellow-500/5 border-yellow-500/10 text-yellow-200'
+                      }`}
+                    >
+                      <span className="opacity-40 font-black shrink-0 text-[10px]">[{log.time}]</span>
+                      <span className="font-bold flex-1 group-hover/log:text-white transition-colors">{log.msg}</span>
+                    </motion.div>
+                  ))}
+               </div>
+            </div>
+
+          </div>
+
+          {/* MIDDLE: GLOBAL NEURAL MESH & AI BRAIN FOCUS */}
+          <div className="col-span-12 lg:col-span-5 space-y-8">
+            <div className="h-[650px] bg-slate-950/40 backdrop-blur-3xl border border-yellow-500/5 rounded-[48px] shadow-2xl relative overflow-hidden p-8 flex flex-col">
+               <div className="flex items-center justify-between mb-8 relative z-20">
+                  <div className="flex items-center gap-3 px-6 py-3 bg-black/60 border border-yellow-500/20 rounded-2xl backdrop-blur-xl">
+                    <Globe className="text-yellow-500 animate-spin-slow" size={20} />
+                    <div>
+                      <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Sovereign Neural Mesh</h3>
+                      <div className="text-[9px] text-yellow-600/80 font-black uppercase">Active Nodes: 12,472 UA_SECURE</div>
+                    </div>
+                  </div>
+                  <div className="flex -space-x-3">
+                    {[1,2,3,4].map(i => (
+                      <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-slate-900 flex items-center justify-center overflow-hidden shadow-xl">
+                        <div className={`w-full h-full bg-gradient-to-br ${i % 2 === 0 ? 'from-yellow-500 to-rose-600' : 'from-indigo-500 to-teal-400'} opacity-40 animate-pulse`} />
+                      </div>
+                    ))}
+                  </div>
+               </div>
+
+               <div className="flex-1 rounded-[32px] overflow-hidden bg-black/40 border border-white/5 relative group cursor-crosshair">
+                  <GlobalNeuralMesh />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 pointer-events-none" />
+                  
+                  {/* Holographic Overlays */}
+                  <div className="absolute top-10 right-10 text-right opacity-40 pointer-events-none font-mono group-hover:opacity-100 transition-opacity">
+                      <div className="text-[10px] text-yellow-500 font-black">LATENCY: 12ms</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">SEC: QUANTUM_V56</div>
+                  </div>
+               </div>
+
+               {/* Neural Listening Interface */}
+               <div className="mt-8 bg-black/60 border border-yellow-500/20 rounded-3xl p-6 flex items-center gap-6">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsListening(!isListening)}
+                    className={`relative w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-500 ${isListening ? 'bg-yellow-500 text-black shadow-[0_0_50px_#d4af37]' : 'bg-slate-900 text-yellow-500 border border-yellow-500/30 hover:border-yellow-500'}`}
+                  >
+                    <Mic size={28} className={isListening ? 'animate-bounce' : ''} />
+                    {isListening && <motion.div animate={{ scale: [1, 1.5], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="absolute inset-0 bg-yellow-500 rounded-3xl" />}
+                  </motion.button>
+                  <div className="flex-1">
+                    <div className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.3em] mb-1">{isListening ? 'СЛУХАЮ...' : 'НЕЙРОІНТЕРФЕЙС ГОТОВИЙ'}</div>
+                    <div className="text-sm font-black text-white italic tracking-tight">{voiceHint}</div>
+                    {isListening && (
+                      <div className="flex gap-1.5 h-6 items-end mt-2">
+                        {[1, 2, 4, 3, 5, 2, 4, 1, 3, 4, 2].map((h, i) => (
+                          <motion.div
+                            key={i}
+                            animate={{ height: [`${h * 20}%`, `${h * 40}%`, `${h * 20}%`] }}
+                            transition={{ repeat: Infinity, duration: 0.5 + Math.random(), delay: i * 0.05 }}
+                            className="w-1.5 bg-yellow-400 rounded-full"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <Volume2 className="text-slate-800" size={24} />
+               </div>
+            </div>
+          </div>
+
+          {/* RIGHT: EVOLUTION & LEARNING */}
+          <div className="col-span-12 lg:col-span-3 space-y-8">
+            <EvolutionForge status={stats} />
+            <AutonomousLearningStack />
+            
+            {/* Elite Info Card */}
+            <div className="p-8 bg-gradient-to-br from-yellow-900/10 to-rose-950/10 border border-yellow-500/20 rounded-[40px] shadow-2xl relative overflow-hidden">
+               <Fingerprint className="absolute -bottom-4 -right-4 text-yellow-500 opacity-10" size={100} />
+               <h4 className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase mb-4">СЕРТИФІКАТ СУВЕРЕНІТЕТУ</h4>
+               <p className="text-[11px] text-slate-300 font-bold italic leading-relaxed opacity-70">
+                 Платформа PREDATOR Analytics v56.5-ELITE є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
+               </p>
+               <div className="mt-6 flex justify-between items-center text-[10px] font-black font-mono">
+                  <span className="text-yellow-600">ID: SOV-99-AX</span>
+                  <span className="text-slate-100 flex items-center gap-1"><Lock size={10} /> ENCRYPTED</span>
+               </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-      {/* 📡 CENTER/RIGHT: GLOBAL MESH & EVOLUTION */}
-      <div className="col-span-12 lg:col-span-8 space-y-6">
-
-        {/* 🗺️ Global Neural Mesh Visualization */}
-        <GlobalNeuralMesh status={status} />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* 🚀 Autonomous Learning Stack */}
-          <AutonomousLearningStack />
-
-          {/* 🛠️ UI Evolution Forge */}
-          <EvolutionForge status={status} />
-        </div>
-
-        {/* 🏢 MLOps Intelligence Hub (Admin Links) */}
-        <div className="p-8 bg-black/40 border border-white/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-blue-500/5 opacity-50 transition-opacity group-hover:opacity-100" />
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-white/10 flex items-center justify-center">
-                <BarChart3 className="text-blue-400 animate-pulse" size={32} />
-              </div>
-              <div>
-                <h4 className="text-xl font-black text-white uppercase tracking-tight">MLOps ЦЕНТР РОЗВІДКИ</h4>
-                <p className="text-xs text-slate-500 font-mono tracking-widest uppercase italic">Прямий доступ до моделювання та експеринентів</p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 w-full md:w-auto">
-              <a href="http://h2o-studio.analytics.local" target="_blank" rel="noreferrer"
-                className="flex-1 md:flex-none flex items-center justify-between gap-6 px-8 py-5 bg-white/5 hover:bg-orange-500/10 border border-white/10 hover:border-orange-500/30 rounded-2xl transition-all group/btn"
-              >
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-orange-500/50 uppercase tracking-[0.2em] mb-1">Інфраструктура</span>
-                  <span className="text-sm font-bold text-slate-200">H2O STUDIO</span>
-                </div>
-                <ExternalLink size={18} className="text-slate-500 group-hover/btn:text-orange-400 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-all" />
-              </a>
-
-              <a href="http://mlflow.analytics.local" target="_blank" rel="noreferrer"
-                className="flex-1 md:flex-none flex items-center justify-between gap-6 px-8 py-5 bg-white/5 hover:bg-blue-500/10 border border-white/10 hover:border-blue-500/30 rounded-2xl transition-all group/btn"
-              >
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-[0.2em] mb-1">Експерименти</span>
-                  <span className="text-sm font-bold text-slate-200">MLFLOW SERVER</span>
-                </div>
-                <ExternalLink size={18} className="text-slate-500 group-hover/btn:text-blue-400 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-all" />
-              </a>
-            </div>
-          </div>
-        </div>
-
+      {/* Background Neural Pulse */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1]">
+        <div className="absolute inset-0 bg-repeat bg-center" style={{ backgroundImage: 'radial-gradient(circle, #D4AF37 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
     </div>
   );

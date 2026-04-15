@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Server, Globe, Shield, Zap, Database, Cpu, Cloud, Link as LinkIcon } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface NodeProps {
     id: string;

@@ -1,7 +1,7 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.4
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.5-ELITE
  * Екран авторизації глобальної розвідувальної платформи.
- * Атмосфера: строгість, страх, масштаб, вартість. Юридичний кордон: 23 країни.
+ * Атмосфера: суверенітет, абсолютний контроль, елітарність.
  */
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -107,42 +107,42 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const formatDate = (d: Date) => d.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     return (
-        <div className="h-screen bg-[#010409] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
+        <div className="h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
 
             {/* ═══ ФОНОВИЙ ШАР: Сітка / Матриця ═══ */}
             <div className="absolute inset-0 pointer-events-none z-0">
                 {/* Глобальна сітка координат */}
-                <div className="absolute inset-0 opacity-[0.04]"
+                <div className="absolute inset-0 opacity-[0.06]"
                      style={{
-                         backgroundImage: 'linear-gradient(rgba(239,68,68,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(239,68,68,0.15) 1px, transparent 1px)',
-                         backgroundSize: '120px 120px'
+                         backgroundImage: 'linear-gradient(rgba(180,140,20,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(180,140,20,0.1) 1px, transparent 1px)',
+                         backgroundSize: '160px 160px'
                      }}
                 />
                 {/* Micro mesh */}
-                <div className="absolute inset-0 opacity-[0.02]"
+                <div className="absolute inset-0 opacity-[0.03]"
                      style={{
-                         backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                         backgroundSize: '10px 10px'
+                         backgroundImage: 'linear-gradient(rgba(220,38,38,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(220,38,38,0.1) 1px, transparent 1px)',
+                         backgroundSize: '12px 12px'
                      }}
                 />
                 
                 {/* WORLD MAP SILHOUETTE */}
-                <div className="absolute inset-0 opacity-[0.03] flex items-center justify-center p-20 grayscale invert">
-                    <Globe size={1200} className="text-red-500 blur-sm" />
+                <div className="absolute inset-0 opacity-[0.06] flex items-center justify-center p-20 mix-blend-screen overflow-hidden">
+                    <Globe size={1400} className="text-red-900/40 blur-[1px] animate-spin-slow" />
                 </div>
 
                 {/* Вертикальна смуга скану */}
                 <motion.div
                     animate={{ left: ['-10%', '110%'] }}
-                    transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-                    className="absolute top-0 bottom-0 w-[400px] bg-gradient-to-r from-transparent via-red-600/[0.04] to-transparent"
+                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                    className="absolute top-0 bottom-0 w-[600px] bg-gradient-to-r from-transparent via-yellow-600/[0.03] to-transparent"
                 />
                 
                 {/* LASER SCAN LINE (Horizontal) */}
                 <motion.div
                     animate={{ top: ['0%', '100%'] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                    className="absolute left-0 right-0 h-[1.5px] bg-red-600/20 shadow-[0_0_20px_rgba(220,38,38,0.8)] z-10"
+                    transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                    className="absolute left-0 right-0 h-[2px] bg-red-600/30 shadow-[0_0_35px_rgba(220,38,38,0.9)] z-10"
                 />
             </div>
 
@@ -160,9 +160,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             animate={{ opacity: threatPulse ? 1 : 0.4 }}
                             className="flex items-center gap-2"
                         >
-                            <div className="w-2.5 h-2.5 bg-red-600 rounded-full shadow-[0_0_15px_rgba(220,38,38,1)] animate-pulse" />
-                            <span className="text-[10px] font-black text-red-600 tracking-[0.5em] uppercase">
-                                ЦІЛКОМ ТАЄМНО // СУВЕРЕННИЙ КАНАЛ
+                            <div className="w-2.5 h-2.5 bg-red-600 rounded-full shadow-[0_0_20px_#dc2626] animate-pulse" />
+                            <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(220,38,38,0.8)]">
+                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_V56.5
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
@@ -325,24 +325,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
                             {/* Монета */}
                             <div
-                                className="w-36 h-36 rounded-full bg-black/60 border-2 border-red-500/30 shadow-[0_0_60px_rgba(239,68,68,0.15),0_0_120px_rgba(239,68,68,0.05)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_80px_rgba(239,68,68,0.3),0_0_160px_rgba(239,68,68,0.1)] group-hover:border-red-400/50"
-                                style={{ perspective: '1000px', clipPath: 'circle(50% at 50% 50%)' }}
+                                className="w-44 h-44 rounded-full bg-slate-950 border-2 border-yellow-600/40 shadow-[0_0_80px_rgba(180,140,20,0.15),0_0_150px_rgba(239,68,68,0.08)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_100px_rgba(180,140,20,0.4),0_0_200px_rgba(239,68,68,0.15)] group-hover:border-yellow-500/80"
+                                style={{ perspective: '1200px' }}
                             >
                                 <motion.div
                                     animate={{
-                                        y: [0, -3, 0],
+                                        y: [0, -5, 0],
                                         rotateY: [0, 360],
-                                        filter: ['drop-shadow(0 0 8px rgba(239,68,68,0.2))', 'drop-shadow(0 0 20px rgba(239,68,68,0.5))', 'drop-shadow(0 0 8px rgba(239,68,68,0.2))']
+                                        filter: ['drop-shadow(0 0 12px rgba(180,140,20,0.4))', 'drop-shadow(0 0 35px rgba(220,38,38,0.6))', 'drop-shadow(0 0 12px rgba(180,140,20,0.4))']
                                     }}
                                     transition={{
-                                        y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-                                        rotateY: { duration: 6, repeat: Infinity, ease: "linear" },
-                                        filter: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                                        y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+                                        rotateY: { duration: 8, repeat: Infinity, ease: "linear" },
+                                        filter: { duration: 5, repeat: Infinity, ease: "easeInOut" }
                                     }}
-                                    className="w-[70%] h-[70%] text-red-500 flex items-center justify-center"
+                                    className="w-[65%] h-[65%] text-white flex items-center justify-center"
                                     style={{ transformStyle: 'preserve-3d' }}
                                 >
-                                    <GeometricRaptor className="w-full h-full object-contain" />
+                                    <GeometricRaptor className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]" />
                                 </motion.div>
 
                                 {/* Скан-лінія */}
@@ -360,26 +360,27 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <motion.h1
                                 animate={{ 
                                     textShadow: [
-                                        '0 0 20px rgba(220,38,38,0.4)', 
-                                        '0 0 50px rgba(220,38,38,0.7)', 
-                                        '0 0 20px rgba(220,38,38,0.4)'
-                                    ] 
+                                        '0 4px 15px rgba(220,38,38,0.4), 0 8px 40px rgba(180,140,20,0.2)', 
+                                        '0 4px 50px rgba(220,38,38,0.8), 0 8px 120px rgba(180,140,20,0.4)', 
+                                        '0 4px 15px rgba(220,38,38,0.4), 0 8px 40px rgba(180,140,20,0.2)'
+                                    ],
+                                    scale: [1, 1.02, 1]
                                 }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                                className="text-5xl md:text-7xl font-black tracking-[0.4em] text-white"
+                                transition={{ duration: 5, repeat: Infinity }}
+                                className="text-6xl md:text-8xl font-black tracking-[-0.04em] text-white uppercase italic"
                             >
                                 PREDATOR
                             </motion.h1>
-                            <div className="flex items-center justify-center gap-4">
-                                <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
-                            <h2 className="text-[12px] font-black tracking-[1em] text-white uppercase bg-red-600/20 px-6 py-1.5 border border-red-600/30">
-                                    ГЛОБАЛЬНА СИСТЕМА ПРИМУСОВОГО КОНТРОЛЮ
+                            <div className="flex items-center justify-center gap-6">
+                                <div className="h-[1.5px] w-24 bg-gradient-to-r from-transparent via-yellow-600 to-transparent opacity-60" />
+                            <h2 className="text-[13px] font-black tracking-[0.7em] text-yellow-500 uppercase bg-yellow-950/20 px-8 py-2 border border-yellow-700/30 skew-x-[-15deg]">
+                                    SOVEREIGN INTELLIGENCE ASSET
                                 </h2>
-                                <div className="h-[2px] w-20 bg-gradient-to-l from-transparent via-red-600 to-transparent" />
+                                <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-yellow-600 to-transparent opacity-60" />
                             </div>
-                            <p className="text-[9px] text-red-600/60 tracking-[0.5em] uppercase font-bold">
-                            ЄДИНИЙ ГЛОБАЛЬНИЙ КОМАНДНИЙ ТЕРМІНАЛ v56.4 · TIER-1
-                        </p>
+                            <p className="text-[10px] text-red-600 font-black tracking-[0.55em] uppercase italic group-hover:text-red-400 transition-colors">
+                                ELITE GLOBAL CONTROL TERMINAL v56.5 · TIER-1 CLASSIFIED
+                            </p>
                         </div>
 
                         {/* ФОРМА АВТОРИЗАЦІЇ */}
@@ -431,59 +432,59 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="text-center z-10 space-y-6"
+                        className="text-center z-10 space-y-8"
                     >
-                        <div className="relative w-44 h-44 mx-auto flex items-center justify-center">
-                            {/* Зовнішнє кільце */}
+                        <div className="relative w-56 h-56 mx-auto flex items-center justify-center">
+                            {/* Зовнішнє кільце (Золото) */}
                             <motion.div
                                 animate={{ rotate: 360 }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 border-t-2 border-r border-red-500/60 rounded-full"
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 border-t-2 border-r border-yellow-500/60 rounded-full shadow-[0_0_25px_rgba(212,175,55,0.3)]"
                             />
-                            {/* Внутрішнє кільце */}
+                            {/* Внутрішнє кільце (Троянда) */}
                             <motion.div
                                 animate={{ rotate: -360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-3 border-b-2 border-red-400/40 rounded-full"
+                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-4 border-b-2 border-rose-500/40 rounded-full shadow-[0_0_20px_rgba(225,29,72,0.2)]"
                             />
                             {/* Перехрестя */}
-                            <div className="absolute inset-6 border border-slate-800/30 rounded-full" />
-                            <div className="absolute w-[1px] h-full bg-slate-800/20 left-1/2" />
-                            <div className="absolute h-[1px] w-full bg-slate-800/20 top-1/2" />
+                            <div className="absolute inset-10 border border-slate-800/40 rounded-full" />
+                            <div className="absolute w-[1px] h-full bg-yellow-500/10 left-1/2" />
+                            <div className="absolute h-[1px] w-full bg-yellow-500/10 top-1/2" />
 
-                            <div className="flex flex-col items-center gap-1">
+                            <div className="flex flex-col items-center gap-2">
                                 <motion.div
-                                    animate={{ scale: [1, 1.05, 1] }}
-                                    transition={{ duration: 0.5, repeat: Infinity }}
-                                    className="text-2xl font-black text-red-400 tracking-[0.2em] tabular-nums"
+                                    animate={{ scale: [1, 1.08, 1], textShadow: ['0 0 10px rgba(212,175,55,0.5)', '0 0 30px rgba(212,175,55,0.8)', '0 0 10px rgba(212,175,55,0.5)'] }}
+                                    transition={{ duration: 0.8, repeat: Infinity }}
+                                    className="text-4xl font-black text-white tracking-widest tabular-nums italic"
                                 >
                                     {scanProgress}%
                                 </motion.div>
-                                <div className="text-[7px] font-black text-slate-600 tracking-[0.3em] uppercase">
-                                    ВЕРИФІКАЦІЯ ДОПУСКУ
+                                <div className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase bg-yellow-950/20 px-3 py-1 border border-yellow-700/30">
+                                    BIOMETRIC_SYNC
                                 </div>
                                 <motion.div
-                                    animate={{ opacity: [0.3, 1, 0.3] }}
-                                    transition={{ duration: 1, repeat: Infinity }}
-                                    className="text-[7px] text-red-500/50 tracking-[0.2em]"
+                                    animate={{ opacity: [0.4, 1, 0.4] }}
+                                    transition={{ duration: 1.2, repeat: Infinity }}
+                                    className="text-[8px] text-slate-400 tracking-[0.25em] font-bold"
                                 >
-                                    ЗЧИТУВАННЯ БІО-ХЕШУ...
+                                    DECODING SOVEREIGN_HASH...
                                 </motion.div>
                             </div>
                         </div>
 
                         {/* Прогрес-бар */}
-                        <div className="w-64 mx-auto space-y-1">
-                            <div className="h-[2px] bg-slate-900 rounded-full overflow-hidden">
+                        <div className="w-80 mx-auto space-y-2">
+                            <div className="h-[3px] bg-slate-950 border border-white/5 rounded-full overflow-hidden shadow-inner">
                                 <motion.div
-                                    className="h-full bg-gradient-to-r from-red-800 via-red-600 to-red-500 rounded-full"
+                                    className="h-full bg-gradient-to-r from-yellow-700 via-yellow-500 to-rose-600 rounded-full"
                                     animate={{ width: `${scanProgress}%` }}
-                                    transition={{ duration: 0.2 }}
+                                    transition={{ duration: 0.3 }}
                                 />
                             </div>
-                            <div className="flex justify-between text-[7px] text-slate-700 tracking-wider">
-                                <span>ІДЕНТИФІКАЦІЯ</span>
-                                <span>АВТОРИЗАЦІЯ</span>
+                            <div className="flex justify-between text-[8px] text-yellow-600/60 font-black tracking-widest uppercase">
+                                <span>AUTHENTICATION</span>
+                                <span>READY_TO_COMMAND</span>
                             </div>
                         </div>
                     </motion.div>
@@ -497,80 +498,79 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         animate={{ opacity: 1, y: 0 }}
                         className="z-10 max-w-5xl w-full px-4 space-y-4"
                     >
-                        {/* Заголовок */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-center space-y-1 mb-2"
+                            className="text-center space-y-2 mb-8"
                         >
-                            <div className="text-[8px] text-emerald-500/60 font-black tracking-[0.5em] uppercase flex items-center justify-center gap-2">
-                                <Shield size={10} />
-                                ІДЕНТИФІКАЦІЮ ПІДТВЕРДЖЕНО
-                                <Shield size={10} />
+                            <div className="text-[10px] text-yellow-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-yellow-600/30">
+                                <Shield size={14} className="text-yellow-600" />
+                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v56.5-ELITE]
+                                <Shield size={14} className="text-yellow-600" />
                             </div>
-                            <div className="text-[7px] text-slate-700 tracking-[0.3em]">
-                                ОБЕРІТЬ РІВЕНЬ ДОПУСКУ ДЛЯ ПОТОЧНОЇ СЕСІЇ
+                            <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">
+                                ОБЕРІТЬ РІВЕНЬ СУВЕРЕННОГО ДОПУСКУ ТІР-1
                             </div>
                         </motion.div>
 
                         {/* Картки ролей */}
-                        <div className="flex flex-col md:flex-row gap-3">
+                        <div className="flex flex-col md:flex-row gap-6">
                             {[
                                 {
                                     role: UserRole.ADMIN,
-                                    label: 'КОМАНДИР',
-                                    desc: 'Повний суверенітет платформи. Доступ до всіх секторів розвідки та управління.',
+                                    label: 'КОМАНДНИК СУВЕРЕНІТЕТУ',
+                                    desc: 'Абсолютний контроль екосистеми. Тір-1 доступ до всіх стратегічних вузлів та AI Oracle.',
                                     icon: ShieldAlert,
-                                    level: 'ОСОБЛИВО ВАЖЛИВО',
-                                    clearance: 'V',
-                                    borderColor: 'border-red-500/30 hover:border-red-400/60',
-                                    glowColor: 'hover:shadow-[0_0_40px_rgba(239,68,68,0.15)]',
-                                    accentColor: 'text-red-400',
-                                    bgAccent: 'bg-red-950/10',
-                                    tagColor: 'text-red-500 border-red-500/30',
+                                    level: 'TOP-SECRET ELITE',
+                                    clearance: 'SOVEREIGN',
+                                    borderColor: 'border-yellow-500/40 hover:border-yellow-400 shadow-[0_0_50px_rgba(212,175,55,0.05)]',
+                                    glowColor: 'hover:shadow-[0_0_60px_rgba(212,175,55,0.2)]',
+                                    accentColor: 'text-yellow-400',
+                                    bgAccent: 'bg-yellow-950/20',
+                                    tagColor: 'text-yellow-500 border-yellow-500/40',
                                 },
                                 {
                                     role: UserRole.CLIENT_PREMIUM,
-                                    label: 'СТАРШИЙ АНАЛІТИК',
-                                    desc: 'Глобальна розвідка, AI-прогнози, графовий аналіз, фінансове стеження.',
+                                    label: 'СТАРШИЙ СТРАТЕГ',
+                                    desc: 'Глибока OSINT-розвідка, закриті фінансові потоки UA_SWIFT, AI-прогнозування.',
                                     icon: Activity,
-                                    level: 'ЦІЛКОМ ТАЄМНО',
-                                    clearance: 'IV',
-                                    borderColor: 'border-amber-500/20 hover:border-amber-400/50',
-                                    glowColor: 'hover:shadow-[0_0_40px_rgba(245,158,11,0.12)]',
-                                    accentColor: 'text-amber-400',
-                                    bgAccent: 'bg-amber-950/10',
-                                    tagColor: 'text-amber-500 border-amber-500/30',
+                                    level: 'CLASSIFIED PLUS',
+                                    clearance: 'ELITE-IV',
+                                    borderColor: 'border-rose-500/30 hover:border-rose-400/60 shadow-[0_0_50px_rgba(225,29,72,0.03)]',
+                                    glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.15)]',
+                                    accentColor: 'text-rose-400',
+                                    bgAccent: 'bg-rose-950/20',
+                                    tagColor: 'text-rose-500 border-rose-500/40',
                                 },
                                 {
                                     role: UserRole.CLIENT_BASIC,
-                                    label: 'ОПЕРАТОР',
-                                    desc: 'Стандартний моніторинг потоків даних та митних операцій.',
+                                    label: 'ОПЕРАТИВНИЙ ОФІЦЕР',
+                                    desc: 'Моніторинг митних коридорів, базовий аудит та оперативна підтримка інгестії.',
                                     icon: Terminal,
-                                    level: 'ТАЄМНО',
-                                    clearance: 'III',
-                                    borderColor: 'border-slate-700/30 hover:border-slate-500/40',
-                                    glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.1)]',
-                                    accentColor: 'text-slate-400',
-                                    bgAccent: 'bg-slate-800/50',
+                                    level: 'SECRET',
+                                    clearance: 'ELITE-III',
+                                    borderColor: 'border-slate-700/40 hover:border-slate-500/60',
+                                    glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.15)]',
+                                    accentColor: 'text-slate-200',
+                                    bgAccent: 'bg-slate-900',
                                     tagColor: 'text-slate-400 border-slate-700',
                                 }
                             ].map((item, idx) => (
                                 <motion.button
                                     key={item.role}
-                                    whileHover={{ scale: 1.015, y: -4 }}
-                                    whileTap={{ scale: 0.99 }}
-                                    initial={{ opacity: 0, y: 15 }}
+                                    whileHover={{ scale: 1.02, y: -8 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.12, duration: 0.5 }}
+                                    transition={{ delay: idx * 0.15, duration: 0.6 }}
                                     onClick={() => handleDemoLogin(item.role)}
-                                    className={`group flex-1 p-5 bg-black/50 ${item.borderColor} border rounded-lg text-left space-y-3 backdrop-blur-md relative overflow-hidden transition-all duration-500 ${item.glowColor}`}
+                                    className={`group flex-1 p-8 bg-slate-950/60 ${item.borderColor} border-2 rounded-[32px] text-left space-y-4 backdrop-blur-2xl relative overflow-hidden transition-all duration-700 ${item.glowColor} shadow-inner`}
                                 >
-                                    {/* Скан-ефект */}
+                                    {/* Скан-ефект (Золото) */}
                                     <motion.div
                                         animate={{ left: ['-100%', '200%'] }}
-                                        transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: idx * 0.7 }}
-                                        className="absolute inset-y-0 w-24 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent skew-x-12 pointer-events-none"
+                                        transition={{ duration: 5, repeat: Infinity, ease: "linear", delay: idx * 0.8 }}
+                                        className="absolute inset-y-0 w-40 bg-gradient-to-r from-transparent via-yellow-500/[0.05] to-transparent skew-x-[-30deg] pointer-events-none"
                                     />
 
                                     {/* Верхній рядок */}
@@ -659,8 +659,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             </span>
                         </motion.div>
                     </div>
-                    <div className="px-6 text-[10px] font-black text-red-600 tracking-[0.4em]">
-                        PREDATOR v56.4
+                    <div className="px-6 text-[10px] font-black text-yellow-600 tracking-[0.4em] italic underline decoration-yellow-600/40">
+                        PREDATOR v56.5-ELITE
                     </div>
                 </div>
                 <div className="h-[3px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.8)]" />

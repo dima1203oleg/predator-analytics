@@ -24,7 +24,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';
 import { CyberOrb } from '@/components/CyberOrb';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 const SearchPage: React.FC = () => {
     const [query, setQuery] = useState('');

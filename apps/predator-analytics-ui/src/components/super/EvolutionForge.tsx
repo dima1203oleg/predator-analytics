@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Hammer, Sparkles, Code2, Layout, ArrowUpRight, Zap, RefreshCcw } from 'lucide-react';
+import { Hammer, Sparkles, Code2, Layout, ArrowUpRight, Zap, RefreshCcw, Box, Diamond } from 'lucide-react';
 import { premiumLocales } from '../../locales/uk/premium';
 
 interface EvolutionTask {
@@ -19,10 +19,10 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
   const [tasks, setTasks] = useState<EvolutionTask[]>([
     { id: '1', component: 'PredictiveNexusView.tsx', type: 'feature', status: 'deployed', progress: 100 },
     { id: '2', component: 'GlobalNeuralMesh.tsx', type: 'aesthetic', status: 'deployed', progress: 100 },
-    { id: '3', component: 'guardian.py', type: 'performance', status: 'deployed', progress: 100 },
-    { id: '4', component: 'system.py', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '3', component: 'Brain Intelligence Sync (Llama 4)', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '4', component: 'Gemma 4 E4B Adaptation', type: 'performance', status: 'deployed', progress: 100 },
     { id: '5', component: 'Sovereign Launch Initiated', type: 'feature', status: 'deployed', progress: 100 },
-    { id: '6', component: 'SovereignAZRBrain.tsx', type: 'aesthetic', status: 'crafting', progress: 92 },
+    { id: '6', component: 'SovereignAZRBrain.tsx', type: 'aesthetic', status: 'crafting', progress: 98 },
   ]);
 
   useEffect(() => {
@@ -36,7 +36,6 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
              status: 'deployed',
              progress: 100
            };
-           // Avoid duplicates if possible
            if (prev[0].component === newTask.component) return prev;
            return [newTask, ...prev].slice(0, 5);
         });
@@ -44,27 +43,28 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
   }, [status]);
 
   return (
-    <div className="p-6 bg-slate-950/80 backdrop-blur-2xl border border-white/5 rounded-[32px] shadow-2xl overflow-hidden relative">
+    <div className="p-8 bg-slate-950/80 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl overflow-hidden relative group">
       {/* Decorative Glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 blur-[100px] pointer-events-none group-hover:bg-yellow-500/15 transition-colors duration-700" />
+      <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-rose-500/5 blur-[80px] pointer-events-none" />
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 relative z-10">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/20 rounded-2xl border border-emerald-500/30">
-            <Hammer className="text-emerald-400 animate-bounce" size={24} />
+          <div className="p-4 bg-yellow-500/20 rounded-2xl border border-yellow-500/30 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <Hammer className="text-yellow-400 animate-bounce" size={24} />
           </div>
           <div>
             <h2 className="text-xl font-black text-white tracking-widest uppercase italic">{premiumLocales.evolution.forgeView.title}</h2>
-            <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em]">{premiumLocales.evolution.forgeView.subtitle}</p>
+            <p className="text-[10px] text-yellow-600/60 font-black uppercase tracking-[0.3em] font-mono">{premiumLocales.evolution.forgeView.subtitle}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded-full border border-white/5">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">{premiumLocales.evolution.forgeView.liveActive}</span>
+        <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-full border border-yellow-500/20">
+          <div className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+          <span className="text-[10px] font-black text-yellow-400 uppercase tracking-widest">{premiumLocales.evolution.forgeView.liveActive}</span>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 relative z-10">
         <AnimatePresence>
           {tasks.map((task) => (
             <motion.div
@@ -72,50 +72,62 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="group p-5 bg-black/40 border border-white/5 rounded-2xl hover:border-emerald-500/30 transition-all"
+              whileHover={{ x: 4 }}
+              className="group/item p-6 bg-black/40 border border-white/5 rounded-3xl hover:border-yellow-500/30 transition-all duration-300 relative overflow-hidden"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center border border-white/5">
-                    {task.type === 'aesthetic' ? <Sparkles className="text-purple-400" size={18} /> :
-                     task.type === 'performance' ? <Zap className="text-amber-400" size={18} /> :
-                     <Code2 className="text-blue-400" size={18} />}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center border border-white/10 group-hover/item:border-yellow-500/40 transition-colors">
+                    {task.type === 'aesthetic' ? <Sparkles className="text-rose-400" size={20} /> :
+                     task.type === 'performance' ? <Zap className="text-yellow-400" size={20} /> :
+                     <Box className="text-blue-400" size={20} />}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-200">{task.component}</div>
-                    <div className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">
-                      {task.type === 'aesthetic' ? 'Естетичне' : 
-                       task.type === 'performance' ? 'Продуктивність' : 'Функціональне'} {premiumLocales.evolution.forgeView.enhancement}
+                    <div className="text-sm font-black text-slate-100 italic tracking-wide">{task.component}</div>
+                    <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">
+                      {task.type === 'aesthetic' ? 'ЕСТЕТИЧНЕ' : 
+                       task.type === 'performance' ? 'ПРОДУКТИВНІСТЬ' : 'ФУНКЦІОНАЛЬНЕ'} СУВЕРЕНІЗАЦІЯ
                     </div>
                   </div>
                 </div>
-                <div className={`px-3 py-1 rounded-lg text-[9px] font-black tracking-widest border ${
+                <div className={`px-3 py-1.5 rounded-xl text-[9px] font-black tracking-widest border-2 ${
                   task.status === 'deployed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                  task.status === 'crafting' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                  task.status === 'crafting' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
                   'bg-slate-800 text-slate-400 border-slate-700'
                 }`}>
                   {task.status === 'deployed' ? 'ВПРОВАДЖЕНО' : 
-                   task.status === 'crafting' ? 'СТВОРЕННЯ' : 
+                   task.status === 'crafting' ? 'КУВАННЯ' : 
                    task.status === 'scanning' ? 'СКАНУВАННЯ' : 'ПЕРЕВІРКА'}
                 </div>
               </div>
 
-              <div className="relative h-1.5 bg-slate-900 rounded-full overflow-hidden">
+              <div className="relative h-2 bg-slate-900 rounded-full overflow-hidden shadow-inner">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${task.progress}%` }}
                   className={`absolute h-full bg-gradient-to-r ${
-                    task.status === 'deployed' ? 'from-emerald-600 to-teal-400' : 'from-blue-600 to-indigo-400'
+                    task.status === 'deployed' ? 'from-emerald-600 to-emerald-400' : 'from-yellow-600 to-yellow-400'
                   }`}
                 />
+                {task.status !== 'deployed' && (
+                    <motion.div 
+                        animate={{ left: ['-100%', '200%'] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                        className="absolute inset-0 bg-white/20 skew-x-[-30deg]" 
+                    />
+                )}
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
 
-      <button className="w-full mt-6 py-4 bg-slate-900 hover:bg-slate-850 rounded-2xl border border-white/5 text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:text-white">
-        <RefreshCcw size={14} /> {premiumLocales.evolution.forgeView.viewAllHistory}
+      <button className="w-full mt-8 py-5 bg-yellow-500/5 hover:bg-yellow-500/10 rounded-[28px] border border-yellow-500/20 text-[11px] font-black text-yellow-500 uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all hover:tracking-[0.4em] relative">
+        <RefreshCcw size={16} /> 
+        АРХІВ ЕВОЛЮЦІЇ СИСТЕМИ
+        <div className="absolute right-6 opacity-40">
+            <Diamond size={12} />
+        </div>
       </button>
     </div>
   );

@@ -25,7 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { apiClient } from '@/services/api/config';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import {

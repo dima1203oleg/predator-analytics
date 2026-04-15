@@ -1,5 +1,5 @@
 /**
- * 🛰️ Semantic Radar Matrix | v56.2-TITAN Sovereign Matrix
+ * 🛰️ Semantic Radar Matrix | v56.5-ELITE Sovereign Matrix
  * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
  *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
@@ -9,7 +9,9 @@
  * - AI Інсайти та аналіз ризиків
  * - Розширена візуальна аналітика
  *
- * © 2026 PREDATOR Analytics — Повна українізація v56.2-TITAN
+ * Sovereign Power Design · Classified · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -20,11 +22,12 @@ import {
     Share2, Info, FileText, Filter,
     Zap, Eye, Target, TrendingUp, ShieldAlert, Cpu, Network, Globe,
     Hexagon, Layers, Box, Boxes, Terminal, ShieldCheck,
-    ChevronRight, ArrowUpRight, Radio, Sparkles, Brain, BarChart3
+    ChevronRight, ArrowUpRight, Radio, Sparkles, Brain, BarChart3,
+    Fingerprint, Lock, ZapOff
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { api } from '@/services/api';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -33,7 +36,7 @@ import { VisualAnalytics } from '@/components/premium/VisualAnalytics';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 
-// === ТИПИ ТА КОНФІГУРАЦІЯ ===
+// === ТИПИ ТА КОНФІГУРАЦІЯ ELITE ===
 interface GraphNode {
     id: string;
     name: string;
@@ -56,47 +59,47 @@ interface GraphLink {
 }
 
 const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> = {
-    PERSON: { color: '#60a5fa', icon: <Info size={14} />, label: premiumLocales.semanticRadar.categories.person },
-    ORGANIZATION: { color: '#f59e0b', icon: <Building2 size={14} />, label: premiumLocales.semanticRadar.categories.organization },
-    LOCATION: { color: '#f43f5e', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
-    PROJECT: { color: '#e11d48', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
+    PERSON: { color: '#fbbf24', icon: <Info size={14} />, label: premiumLocales.semanticRadar.categories.person },
+    ORGANIZATION: { color: '#D4AF37', icon: <Building2 size={14} />, label: premiumLocales.semanticRadar.categories.organization },
+    LOCATION: { color: '#E11D48', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
+    PROJECT: { color: '#9f1239', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
     EVENT: { color: '#be123c', icon: <Activity size={14} />, label: premiumLocales.semanticRadar.categories.event },
-    CONCEPT: { color: '#fb7185', icon: <BrainCircuit size={14} />, label: premiumLocales.semanticRadar.categories.concept },
-    DEFAULT: { color: '#9f1239', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
+    CONCEPT: { color: '#64748b', icon: <BrainCircuit size={14} />, label: premiumLocales.semanticRadar.categories.concept },
+    DEFAULT: { color: '#D4AF37', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
 };
 
-// === ДОПОМІЖНІ КОМПОНЕНТИ ===
+// === ДОПОМІЖНІ КОМПОНЕНТИ ELITE ===
 
 const RadarOverlay: React.FC = () => (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[48px]">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
         <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03]" />
 
-        {/* Spinning Radar Beam */}
+        {/* Spinning Radar Beam ELITE */}
         <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-red-500/10 to-transparent origin-center opacity-30"
-            style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 60%)' }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 w-[220%] h-[220%] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-yellow-500/10 to-transparent origin-center opacity-40 shadow-[0_0_100px_rgba(212,175,55,0.05)]"
+            style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 55%)' }}
         />
 
-        {/* Concentric Circles */}
+        {/* Concentric Circles ELITE */}
         <div className="absolute inset-0 flex items-center justify-center">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
                 <div
                     key={i}
-                    className="absolute rounded-full border border-red-500/10 shadow-[inner_0_0_20px_rgba(239,68,68,0.05)]"
-                    style={{ width: `${i * 25}%`, height: `${i * 25}%` }}
+                    className="absolute rounded-full border-2 border-yellow-500/[0.03] shadow-[inner_0_0_40px_rgba(212,175,55,0.02)]"
+                    style={{ width: `${i * 20}%`, height: `${i * 20}%` }}
                 />
             ))}
         </div>
 
-        {/* Tactical Indicators */}
-        <div className="absolute top-10 left-10 text-[8px] font-black text-red-500/40 uppercase tracking-[0.4em] font-mono">
-            РАДАР_АКТИВНИЙ // ГЛИБИНА: 4
+        {/* Tactical Indicators ELITE */}
+        <div className="absolute top-12 left-12 text-[10px] font-black text-yellow-600/40 uppercase tracking-[0.5em] font-serif italic">
+            RADAR_STATUS: ACTIVE // COGNITIVE_DEPTH: ELITE
         </div>
-        <div className="absolute bottom-10 right-10 text-[8px] font-black text-red-500/40 uppercase tracking-[0.4em] font-mono">
-            КООРДИНАТИ: 50.4501° N, 30.5234° E
+        <div className="absolute bottom-12 right-12 text-[10px] font-black text-yellow-600/40 uppercase tracking-[0.5em] font-serif italic">
+            SIGNAL_LOCK: 50.4501° N, 30.5234° E
         </div>
     </div>
 );
@@ -122,7 +125,7 @@ const AnalysisGraph: React.FC<{
             y: (Math.random() - 0.5) * 600,
             vx: 0,
             vy: 0,
-            radius: n.label === 'ORGANIZATION' ? 40 : 30,
+            radius: n.label === 'ORGANIZATION' ? 45 : 35,
             color: (CATEGORY_MAP[n.label] || CATEGORY_MAP.DEFAULT).color
         }));
         linksRef.current = initialLinks;
@@ -158,7 +161,7 @@ const AnalysisGraph: React.FC<{
             const nodes = nodesRef.current;
             const links = linksRef.current;
 
-            // PHYSICS
+            // PHYSICS ELITE
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const n1 = nodes[i];
@@ -167,10 +170,10 @@ const AnalysisGraph: React.FC<{
                     const dy = n2.y! - n1.y!;
                     const distSq = dx * dx + dy * dy || 1;
                     const dist = Math.sqrt(distSq);
-                    if (dist < 300) {
-                        const force = (300 - dist) / 300;
-                        const fx = (dx / dist) * force * 3;
-                        const fy = (dy / dist) * force * 3;
+                    if (dist < 400) {
+                        const force = (400 - dist) / 400;
+                        const fx = (dx / dist) * force * 4;
+                        const fy = (dy / dist) * force * 4;
                         if (n1 !== draggingNode.current) { n1.vx! -= fx; n1.vy! -= fy; }
                         if (n2 !== draggingNode.current) { n2.vx! += fx; n2.vy! += fy; }
                     }
@@ -184,8 +187,8 @@ const AnalysisGraph: React.FC<{
                     const dx = t.x! - s.x!;
                     const dy = t.y! - s.y!;
                     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                    const targetDist = 200;
-                    const force = (dist - targetDist) * 0.05;
+                    const targetDist = 250;
+                    const force = (dist - targetDist) * 0.08;
                     const fx = (dx / dist) * force;
                     const fy = (dy / dist) * force;
                     if (s !== draggingNode.current) { s.vx! += fx; s.vy! += fy; }
@@ -195,20 +198,20 @@ const AnalysisGraph: React.FC<{
 
             nodes.forEach(n => {
                 if (n !== draggingNode.current) {
-                    n.vx! += (0 - n.x!) * 0.01; // Gravity to center
-                    n.vy! += (0 - n.y!) * 0.01;
-                    n.vx! *= 0.85; // Friction
-                    n.vy! *= 0.85;
+                    n.vx! += (0 - n.x!) * 0.015; 
+                    n.vy! += (0 - n.y!) * 0.015;
+                    n.vx! *= 0.82; 
+                    n.vy! *= 0.82;
                     n.x! += n.vx!;
                     n.y! += n.vy!;
                 }
             });
 
-            // RENDER
+            // RENDER ELITE
             ctx.save();
             ctx.translate(cx, cy);
 
-            // Links
+            // Links ELITE
             links.forEach(link => {
                 const s = nodes.find(n => n.id === link.source);
                 const t = nodes.find(n => n.id === link.target);
@@ -216,56 +219,63 @@ const AnalysisGraph: React.FC<{
                     ctx.beginPath();
                     ctx.moveTo(s.x!, s.y!);
                     ctx.lineTo(t.x!, t.y!);
-                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.2)';
-                    ctx.setLineDash([5, 5]);
-                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+                    ctx.setLineDash([8, 12]);
+                    ctx.lineWidth = 2;
                     ctx.stroke();
                     ctx.setLineDash([]);
 
-                    if (link.relation && Math.hypot(s.x! - t.x!, s.y! - t.y!) > 150) {
-                        ctx.font = 'bold 8px Courier New';
-                        ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+                    if (link.relation && Math.hypot(s.x! - t.x!, s.y! - t.y!) > 180) {
+                        ctx.font = 'black 10px Courier New';
+                        ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
                         ctx.textAlign = 'center';
                         ctx.fillText(link.relation.toUpperCase(), (s.x! + t.x!) / 2, (s.y! + t.y!) / 2);
                     }
                 }
             });
 
-            // Nodes
+            // Nodes ELITE
             nodes.forEach(node => {
-                const pulse = Math.sin(Date.now() / 600) * 0.1 + 1;
+                const pulse = Math.sin(Date.now() / 800) * 0.05 + 1;
 
-                // Glow
-                const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, node.radius! * pulse * 2);
-                gradient.addColorStop(0, `${node.color}33`);
+                // Glow ELITE
+                const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, node.radius! * pulse * 2.5);
+                gradient.addColorStop(0, `${node.color}22`);
                 gradient.addColorStop(1, 'transparent');
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
-                ctx.arc(node.x!, node.y!, node.radius! * pulse * 2, 0, Math.PI * 2);
+                ctx.arc(node.x!, node.y!+(Math.sin(Date.now()/1000)*5), node.radius! * pulse * 2.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Border Hexagon (Pseudo)
+                // Core ELITE
                 ctx.beginPath();
                 ctx.arc(node.x!, node.y!, node.radius!, 0, Math.PI * 2);
-                ctx.fillStyle = '#020617';
+                ctx.fillStyle = '#0a0a0a';
                 ctx.fill();
                 ctx.strokeStyle = node.color!;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 4;
                 ctx.stroke();
 
-                // Name
-                ctx.font = 'black 12px Inter, sans-serif';
+                // Inner Ring ELITE
+                ctx.beginPath();
+                ctx.arc(node.x!, node.y!, node.radius! - 8, 0, Math.PI * 2);
+                ctx.strokeStyle = `${node.color}44`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Name ELITE
+                ctx.font = 'black 14px "Outfit", sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
-                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 15;
                 ctx.shadowColor = node.color!;
-                ctx.fillText(node.name, node.x!, node.y! + node.radius! + 20);
+                ctx.fillText(node.name.toUpperCase(), node.x!, node.y! + node.radius! + 24);
                 ctx.shadowBlur = 0;
 
-                // Type
-                ctx.font = '8px monospace';
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.fillText((CATEGORY_MAP[node.label] || CATEGORY_MAP.DEFAULT).label.toUpperCase(), node.x!, node.y! + node.radius! + 32);
+                // Type ELITE
+                ctx.font = '900 9px monospace';
+                ctx.fillStyle = 'rgba(212,175,55,0.4)';
+                ctx.fillText((CATEGORY_MAP[node.label] || CATEGORY_MAP.DEFAULT).label.toUpperCase(), node.x!, node.y! + node.radius! + 38);
             });
 
             ctx.restore();
@@ -283,12 +293,10 @@ const AnalysisGraph: React.FC<{
         const rc = canvasRef.current!.getBoundingClientRect();
         const width = rc.width;
         const height = rc.height;
-        const scrollX = window.scrollX || window.pageXOffset;
-        const scrollY = window.scrollY || window.pageYOffset;
         const mx = (e.clientX || e.touches?.[0].clientX) - rc.left - width / 2;
         const my = (e.clientY || e.touches?.[0].clientY) - rc.top - height / 2;
 
-        const hit = nodesRef.current.find(n => Math.hypot(n.x! - mx, n.y! - my) < n.radius! + 10);
+        const hit = nodesRef.current.find(n => Math.hypot(n.x! - mx, n.y! - my) < n.radius! + 15);
         if (hit) {
             draggingNode.current = hit;
             onSelectNode(hit);
@@ -305,7 +313,7 @@ const AnalysisGraph: React.FC<{
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-slate-950/20 backdrop-blur-xl rounded-[48px] border border-white/5 shadow-2xl">
+        <div ref={containerRef} className="w-full h-full relative cursor-crosshair group overflow-hidden bg-black/40 backdrop-blur-3xl rounded-[4rem] border-2 border-white/[0.04] shadow-4xl transition-all hover:border-yellow-500/20">
             <RadarOverlay />
             <canvas
                 ref={canvasRef}
@@ -322,7 +330,7 @@ const AnalysisGraph: React.FC<{
     );
 };
 
-// === ГОЛОВНИЙ КОМПОНЕНТ ===
+// === ГОЛОВНИЙ КОМПОНЕНТ ELITE ===
 const AnalyticsView: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isScanning, setIsScanning] = useState(false);
@@ -334,7 +342,7 @@ const AnalyticsView: React.FC = () => {
 
     useEffect(() => {
         loadSummary();
-        handleSearch("Енерго"); // Lead search
+        handleSearch("Енерго");
     }, []);
 
     const loadSummary = async () => {
@@ -366,33 +374,48 @@ const AnalyticsView: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col p-10 gap-10 relative z-10 animate-in fade-in duration-1000">
+        <div className="min-h-screen flex flex-col p-12 gap-12 relative z-10 animate-in fade-in duration-1000 bg-[#020202]">
             <AdvancedBackground />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
 
-            {/* Ambient Lighting Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-red-500/5 blur-[150px] rounded-full animate-pulse" />
-                <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-rose-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-            </div>
-
-            {/* ViewHeader v56.2-TITAN */}
+            {/* ViewHeader v56.5-ELITE */}
             <ViewHeader
-                title="СЕМАНТИЧНИЙ РАДАР"
-                icon={<Network className="text-red-400" />}
-                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v56.2-TITAN']}
+                title={
+                    <div className="flex items-center gap-10">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                            <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                                <Network size={42} className="text-yellow-500 shadow-[0_0_20px_#d4af37]" />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                             <div className="flex items-center gap-4">
+                                <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                    SEMANTIC_CORE // RADAR_ARRAY
+                                </span>
+                                <div className="h-px w-12 bg-yellow-500/20" />
+                                <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                             </div>
+                             <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                                СЕМАНТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РАДАР</span>
+                             </h1>
+                        </div>
+                    </div>
+                }
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_COGNITION_v56.5']}
                 badges={[
-                    { label: 'OSINT_HUB_v56.2-TITAN_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
-                    { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
+                    { label: 'SOVEREIGN_ELITE_FORCE', color: 'primary', icon: <Zap size={10} /> },
+                    { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                 ]}
                 stats={[
-                    { label: 'Вузлів у графі', value: summary?.total_nodes ? String(summary.total_nodes) : '...', icon: <Network />, color: 'primary' },
-                    { label: 'Зв\'язків', value: summary?.total_edges ? String(summary.total_edges) : '...', icon: <Share2 />, color: 'warning' },
-                    { label: 'Точність', value: '98.2%', icon: <ShieldCheck />, color: 'success' },
+                    { label: 'ТОПО_ВУЗЛІВ', value: summary?.total_nodes ? String(summary.total_nodes) : '...', icon: <Network />, color: 'primary' },
+                    { label: 'АКТИВНІ_ЗВ\'ЯЗКИ', value: summary?.total_edges ? String(summary.total_edges) : '...', icon: <Share2 />, color: 'warning' },
+                    { label: 'FIDELITY_INDEX', value: '98.8%', icon: <ShieldCheck />, color: 'success' },
                 ]}
             />
 
-            {/* Tactical Search & View Toggle */}
-            <div className="flex flex-col xl:flex-row gap-6 items-center z-20">
+            {/* Tactical Search & View Toggle ELITE */}
+            <div className="flex flex-col xl:flex-row gap-8 items-center z-20">
                 <div className="relative flex-1 group w-full">
                     <input
                         type="text"
@@ -400,66 +423,66 @@ const AnalyticsView: React.FC = () => {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder={premiumLocales.semanticRadar.search.placeholder}
-                        className="w-full pl-16 pr-40 py-6 bg-slate-950/60 border border-white/5 rounded-[28px] text-white placeholder-slate-600 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all font-medium backdrop-blur-3xl shadow-2xl"
+                        className="w-full pl-20 pr-48 py-8 bg-black border-2 border-white/5 rounded-[3rem] text-white placeholder-slate-800 focus:border-yellow-500/40 focus:ring-8 focus:ring-yellow-500/5 transition-all font-black italic text-lg backdrop-blur-3xl shadow-4xl tracking-tight"
                     />
-                    <Search size={24} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
-                    <div className="absolute right-3 top-2.5 bottom-2.5 flex items-center gap-2">
+                    <Search size={32} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within:text-yellow-500 transition-colors" />
+                    <div className="absolute right-4 top-3 bottom-3 flex items-center gap-4">
                         <button
                             onClick={() => handleSearch()}
-                            className="px-8 h-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-[20px] transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl"
+                            className="px-12 h-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-black rounded-[2rem] transition-all font-black text-[12px] uppercase tracking-[0.4em] italic flex items-center gap-4 shadow-4xl border-2 border-yellow-400/20"
                         >
-                            {isScanning ? <Activity size={16} className="animate-spin" /> : <><Target size={16} /> {premiumLocales.semanticRadar.search.button}</>}
+                            {isScanning ? <Activity size={20} className="animate-spin" /> : <><Target size={20} /> EXECUTE_SCAN</>}
                         </button>
                     </div>
                 </div>
 
-                <div className="flex gap-4 p-2 bg-slate-950/60 border border-white/5 rounded-[30px] backdrop-blur-3xl shadow-xl">
+                <div className="flex gap-6 p-3 bg-black border-2 border-white/5 rounded-[4rem] backdrop-blur-3xl shadow-4xl">
                     {[
-                        { id: 'radar', label: premiumLocales.semanticRadar.title, icon: Network },
-                        { id: 'visual', label: premiumLocales.visualAnalytics.title, icon: BarChart3 }
+                        { id: 'radar', label: 'RADAR_ARRAY', icon: Network },
+                        { id: 'visual', label: 'VISUAL_VECTOR', icon: BarChart3 }
                     ].map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "px-8 py-4 rounded-[22px] flex items-center gap-3 transition-all duration-500",
+                                "px-10 py-5 rounded-[2.5rem] flex items-center gap-4 transition-all duration-700 italic border-2",
                                 activeTab === tab.id
-                                    ? "bg-blue-600 text-white shadow-[0_0_30px_rgba(59,130,246,0.3)]"
-                                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                                    ? "bg-yellow-600 border-yellow-500 text-white shadow-4xl scale-105"
+                                    : "text-slate-700 border-transparent hover:text-white hover:bg-white/5"
                             )}
                         >
-                            <tab.icon size={16} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+                            <tab.icon size={20} />
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em]">{tab.label}</span>
                         </button>
                     ))}
-                    <div className="w-px h-8 bg-white/5 mx-2 self-center" />
-                    <button title="Фільтр" className="p-4 text-slate-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all"><Filter size={20} /></button>
+                    <div className="w-px h-10 bg-white/5 mx-2 self-center" />
+                    <button title="Фільтр" className="p-5 text-slate-700 hover:text-yellow-500 hover:bg-yellow-500/10 rounded-3xl transition-all"><Filter size={24} /></button>
                 </div>
             </div>
 
-            {/* Main Workspace Area */}
-            <div className="flex-1 min-h-[600px] relative">
+            {/* Main Workspace Area ELITE */}
+            <div className="flex-1 min-h-[700px] relative">
                 <AnimatePresence mode="wait">
                     {activeTab === 'radar' ? (
                         <motion.div
                             key="radar-matrix"
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.02 }}
-                            className="grid grid-cols-12 gap-10 h-full"
+                            exit={{ opacity: 0, scale: 1.05 }}
+                            className="grid grid-cols-12 gap-12 h-full"
                         >
-                            {/* Visual Graph Area */}
+                            {/* Visual Graph Area ELITE */}
                             <div className="col-span-12 xl:col-span-8 relative group">
                                 {isScanning && (
-                                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/80 rounded-[48px] backdrop-blur-md">
-                                        <div className="relative mb-8">
-                                            <div className="w-32 h-32 border-4 border-blue-500/10 border-t-blue-500 rounded-full animate-spin" />
+                                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 rounded-[4rem] backdrop-blur-2xl border-4 border-yellow-500/10">
+                                        <div className="relative mb-12">
+                                            <div className="w-48 h-48 border-4 border-yellow-500/5 border-t-yellow-500 rounded-full animate-spin shadow-[0_0_50px_rgba(212,175,55,0.2)]" />
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <Activity size={48} className="text-blue-500 animate-pulse" />
+                                                <CyberOrb size={100} color="#D4AF37" intensity={0.6} pulse />
                                             </div>
                                         </div>
-                                        <h3 className="text-xl font-black text-white uppercase tracking-[0.4em] font-display animate-pulse">{premiumLocales.semanticRadar.search.scanning}</h3>
-                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">ЗАХОПЛЕННЯ НЕЙРОННИХ СИГНАЛІВ...92%</p>
+                                        <h3 className="text-3xl font-black text-white uppercase tracking-[0.6em] font-serif animate-pulse">CAPTURING_SIGNALS...</h3>
+                                        <p className="text-[12px] font-mono text-yellow-800 uppercase tracking-[0.4em] mt-6 italic">NEURAL_DECRYPTION: ACTIVE • 92%_FIDELITY</p>
                                     </div>
                                 )}
                                 <AnalysisGraph
@@ -470,99 +493,100 @@ const AnalyticsView: React.FC = () => {
                                 />
                             </div>
 
-                            {/* Entity Intelligence HUD */}
-                            <div className="col-span-12 xl:col-span-4 flex flex-col gap-8">
+                            {/* Entity Intelligence HUD ELITE */}
+                            <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
                                 <AnimatePresence mode="wait">
                                     {selectedEntity ? (
                                         <motion.div
                                             key={selectedEntity.id}
-                                            initial={{ opacity: 0, x: 20 }}
+                                            initial={{ opacity: 0, x: 30 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            className="flex flex-col gap-8 h-full"
+                                            exit={{ opacity: 0, x: -30 }}
+                                            className="flex flex-col gap-10 h-full"
                                         >
-                                            {/* Primary Entity Card */}
-                                            <TacticalCard variant="holographic" className="p-10 bg-slate-950 shadow-2xl relative overflow-hidden group/entity">
-                                                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover/entity:opacity-30 transition-all duration-1000 rotate-12 group-hover/entity:rotate-0 scale-150">
-                                                    {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={120} />}
+                                            {/* Primary Entity Card ELITE */}
+                                            <TacticalCard variant="holographic" className="p-12 bg-black shadow-4xl rounded-[4rem] border-yellow-500/10 relative overflow-hidden group/entity">
+                                                <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/entity:opacity-20 transition-all duration-[5s] rotate-45 group-hover/entity:rotate-0 scale-150">
+                                                    {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={200} />}
                                                 </div>
 
-                                                <div className="flex items-center gap-4 mb-8">
-                                                    <div className={cn("p-4 rounded-2xl border border-white/10 shadow-lg", `text-[${CATEGORY_MAP[selectedEntity.label]?.color}]`)}>
-                                                        {CATEGORY_MAP[selectedEntity.label]?.icon || <Activity size={24} />}
+                                                <div className="flex items-center gap-6 mb-10">
+                                                    <div className="p-5 bg-black border-2 border-white/5 rounded-[2.5rem] shadow-2xl transform group-hover/entity:rotate-6 transition-transform" style={{ color: CATEGORY_MAP[selectedEntity.label]?.color }}>
+                                                        {CATEGORY_MAP[selectedEntity.label]?.icon || <Activity size={32} />}
                                                     </div>
-                                                    <div className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                                        {CATEGORY_MAP[selectedEntity.label]?.label || 'ENTITY_NODE'}
+                                                    <div className="px-6 py-2 bg-yellow-500/10 border-2 border-yellow-500/20 rounded-full text-[10px] font-black text-yellow-500 uppercase tracking-[0.4em] italic font-serif">
+                                                        {CATEGORY_MAP[selectedEntity.label]?.label || 'ASSET_NODE'}
                                                     </div>
                                                 </div>
 
-                                                <h2 className="text-4xl font-black text-white leading-none tracking-tighter mb-8 font-display group-hover/entity:text-blue-400 transition-colors">
+                                                <h2 className="text-5xl font-black text-white leading-none tracking-tighter mb-10 font-serif italic uppercase group-hover/entity:text-yellow-500 transition-colors">
                                                     {selectedEntity.name}
                                                 </h2>
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <button className="flex-1 py-4 bg-blue-600 text-white rounded-[20px] text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:bg-blue-500 transition-all flex items-center justify-center gap-3">
-                                                        <Target size={16} /> {premiumLocales.semanticRadar.entityHud.openCase}
+                                                <div className="grid grid-cols-2 gap-6 relative z-10">
+                                                    <button className="flex-1 py-6 bg-yellow-600 border-2 border-yellow-500/40 text-black rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:brightness-110 transition-all flex items-center justify-center gap-4">
+                                                        <Crosshair size={22} /> OPEN_DOSSIER
                                                     </button>
-                                                    <button className="p-4 bg-white/5 border border-white/10 rounded-[20px] text-white hover:bg-white/10 transition-all flex items-center justify-center">
-                                                        <Share2 size={20} />
+                                                    <button className="p-6 bg-white/[0.02] border-2 border-white/5 rounded-[2.5rem] text-slate-600 hover:text-white hover:border-white/20 transition-all flex items-center justify-center shadow-xl">
+                                                        <Share2 size={26} />
                                                     </button>
                                                 </div>
                                             </TacticalCard>
 
-                                            {/* Parameters Breakdown */}
-                                            <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[40px] shadow-2xl backdrop-blur-3xl">
-                                                <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
-                                                    <Terminal size={16} /> {premiumLocales.semanticRadar.entityHud.params}
+                                            {/* Parameters Breakdown ELITE */}
+                                            <div className="p-10 bg-black/60 border-2 border-white/5 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/params">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
+                                                <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 flex items-center gap-5 italic font-serif">
+                                                    <Fingerprint size={20} className="text-yellow-600" /> TOPOLOGY_PARAMETERS
                                                 </h3>
-                                                <div className="space-y-4">
+                                                <div className="space-y-6 max-h-[300px] overflow-y-auto custom-scrollbar pr-4 italic">
                                                     {Object.entries(selectedEntity.properties || {}).map(([key, val]: [string, any], idx) => (
-                                                        <div key={idx} className="flex justify-between items-center py-3 border-b border-white/5 group/row">
-                                                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest group-hover/row:text-slate-400 transition-colors">{key.replace(/_/g, ' ')}</span>
-                                                            <span className="text-xs font-mono text-white max-w-[180px] truncate">{String(val)}</span>
+                                                        <div key={idx} className="flex justify-between items-center py-5 border-b-2 border-slate-900 group/row hover:border-yellow-900/40 transition-all">
+                                                            <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest group-hover/row:text-slate-400 transition-colors">{key.replace(/_/g, ' ')}</span>
+                                                            <span className="text-[13px] font-mono text-white font-bold tracking-tighter shadow-sm">{String(val)}</span>
                                                         </div>
                                                     ))}
                                                     {(!selectedEntity.properties || Object.keys(selectedEntity.properties).length === 0) && (
-                                                        <div className="py-10 text-center opacity-20">
-                                                            <Box size={40} className="mx-auto mb-4" />
-                                                            <span className="text-[10px] font-black uppercase tracking-widest">{premiumLocales.common.noData}</span>
+                                                        <div className="py-16 text-center opacity-10">
+                                                            <Boxes size={60} className="mx-auto mb-6" />
+                                                            <span className="text-[11px] font-black uppercase tracking-[0.6em] italic">NULL_DATA_FIELD</span>
                                                         </div>
                                                     )}
                                                 </div>
                                             </div>
 
-                                            {/* AI Neural Insight */}
-                                            <div className="p-8 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border border-blue-500/20 rounded-[40px] shadow-2xl backdrop-blur-3xl relative overflow-hidden group/insight">
-                                                <div className="absolute top-0 right-0 p-6 opacity-10 animate-pulse">
-                                                    <BrainCircuit size={80} />
+                                            {/* AI Neural Insight ELITE */}
+                                            <div className="p-10 bg-rose-950/20 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/insight">
+                                                <div className="absolute top-0 right-0 p-10 opacity-[0.05] group-hover/insight:opacity-20 transition-all duration-[5s] rotate-12">
+                                                    <Brain size={120} className="text-rose-500" />
                                                 </div>
-                                                <div className="flex items-center gap-4 mb-6">
-                                                    <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30 text-blue-400">
-                                                        <Brain size={20} />
+                                                <div className="flex items-center gap-6 mb-8">
+                                                    <div className="p-5 bg-black border-2 border-rose-600/30 rounded-[2rem] text-rose-500 shadow-2xl">
+                                                        <Sparkles size={24} className="animate-pulse" />
                                                     </div>
-                                                    <span className="text-[11px] font-black text-white uppercase tracking-[0.3em]">{premiumLocales.semanticRadar.entityHud.aiInsight}</span>
+                                                    <span className="text-[12px] font-black text-white uppercase tracking-[0.5em] italic font-serif leading-none underline decoration-rose-600/30 decoration-4 underline-offset-4">COGNITIVE_INSIGHT_X</span>
                                                 </div>
-                                                <p className="text-sm text-blue-100/80 leading-relaxed font-serif italic mb-8 relative z-10 transition-all group-hover/insight:text-white">
+                                                <p className="text-xl text-rose-100/80 leading-relaxed font-serif italic mb-10 relative z-10 transition-all group-hover/insight:text-white uppercase tracking-tight">
                                                     "{premiumLocales.semanticRadar.entityHud.aiInsightText.replace('{name}', selectedEntity.name).replace('{type}', selectedEntity.label)}"
                                                 </p>
-                                                <div className="flex flex-wrap gap-4 relative z-10">
-                                                    <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3">
-                                                        <ShieldCheck size={14} className="text-emerald-400" />
-                                                        <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.safe}</span>
+                                                <div className="flex flex-wrap gap-6 relative z-10">
+                                                    <div className="px-8 py-4 bg-emerald-500/10 border-2 border-emerald-500/20 rounded-[1.5rem] flex items-center gap-5 italic shadow-inner">
+                                                        <ShieldCheck size={20} className="text-emerald-500" />
+                                                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">VERIFIED_SAFE</span>
                                                     </div>
-                                                    <div className="px-4 py-2 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 opacity-40">
-                                                        <AlertTriangle size={14} className="text-rose-400" />
-                                                        <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{premiumLocales.semanticRadar.entityHud.risk}</span>
+                                                    <div className="px-8 py-4 bg-rose-500/10 border-2 border-rose-500/20 rounded-[1.5rem] flex items-center gap-5 italic opacity-40 grayscale group-hover/insight:grayscale-0 group-hover/insight:opacity-100 transition-all">
+                                                        <AlertTriangle size={20} className="text-rose-500" />
+                                                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em]">RISK_VECTOR</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </motion.div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center h-full text-slate-700 opacity-40">
-                                            <div className="p-10 bg-slate-900 border border-dashed border-white/10 rounded-[48px] mb-8">
-                                                <Activity size={80} className="animate-pulse" />
+                                        <div className="flex flex-col items-center justify-center h-full text-slate-800 opacity-20">
+                                            <div className="p-16 bg-black border-4 border-dashed border-white/5 rounded-[5rem] mb-12 shadow-inner group transition-all hover:bg-white/[0.02]">
+                                                <Activity size={120} className="animate-pulse group-hover:scale-110 transition-transform duration-[10s]" />
                                             </div>
-                                            <span className="text-[11px] font-black uppercase tracking-[0.4em]">{premiumLocales.semanticRadar.entityHud.selectNode}</span>
+                                            <span className="text-[14px] font-black uppercase tracking-[1em] italic text-center">AWAITING_NODE_SELECTION</span>
                                         </div>
                                     )}
                                 </AnimatePresence>
@@ -571,9 +595,9 @@ const AnalyticsView: React.FC = () => {
                     ) : (
                         <motion.div
                             key="visual-matrix"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -30 }}
+                            initial={{ opacity: 0, scale: 1.05 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
                             className="h-full"
                         >
                             <VisualAnalytics />
@@ -582,42 +606,48 @@ const AnalyticsView: React.FC = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Стрічка Глобального Інтелекту */}
+            {/* Стрічка Глобального Інтелекту ELITE */}
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-10 p-10 bg-slate-950/60 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden group"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-12 p-12 bg-black border-2 border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl relative overflow-hidden group hover:border-yellow-500/10 transition-all duration-1000"
             >
-                <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-                    <div className="flex items-center gap-8">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-150 animate-pulse" />
-                            <Globe size={48} className="text-blue-400 relative z-10 animate-spin-slow" />
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/[0.02] to-transparent pointer-events-none" />
+                <div className="flex flex-col xl:flex-row items-center justify-between gap-12 relative z-10">
+                    <div className="flex items-center gap-10">
+                        <div className="relative group/globe">
+                            <div className="absolute inset-0 bg-yellow-500/20 blur-[60px] rounded-full scale-150 animate-pulse group-hover/globe:bg-yellow-500/40 transition-all duration-[5s]" />
+                            <div className="p-6 bg-black border-2 border-yellow-500/20 rounded-[3rem] shadow-4xl relative z-10">
+                                <Globe size={64} className="text-yellow-500 animate-spin-slow" />
+                            </div>
                         </div>
-                        <div>
-                            <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Глобальна Семантична Мережа</h4>
-                            <p className="text-xs text-slate-500 font-medium">Моніторинг зв'язків у реальному часі за межами локальної мережі знань.</p>
+                        <div className="space-y-3">
+                            <h4 className="text-4xl font-black text-white uppercase tracking-tighter italic font-serif leading-none group-hover:text-yellow-500 transition-colors">Глобальна Семантична Мережа</h4>
+                            <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic leading-none border-l-4 border-yellow-500/30 pl-8">DEEP_COGNITION_SURVEILLANCE // GLOBAL_REACH_ARRAY</p>
                         </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-10">
+                    
+                    <div className="flex flex-wrap items-center gap-14 border-x-2 border-white/5 px-20">
                         {[
-                            { label: 'ОХОПЛЕННЯ', value: '142 КРАЇНИ', icon: Globe },
-                            { label: 'КРОС-ДОМЕН', value: 'АКТИВНО', icon: Share2 },
-                            { label: 'НЕЙРО-МІСТ', value: 'V55_GEN3', icon: BrainCircuit },
+                            { label: 'GLOBAL_COVERAGE', value: '142_STATES', icon: Globe, color: 'text-yellow-500' },
+                            { label: 'CROSS_DOMAIN_MESH', value: 'ULTRA_ACTIVE', icon: Share2, color: 'text-white' },
+                            { label: 'NEURAL_BRIDGE_X', value: 'V56.5_PLATINUM', icon: BrainCircuit, color: 'text-yellow-600' },
                         ].map((item, i) => (
-                            <div key={i} className="flex flex-col">
-                                <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
-                                    <item.icon size={10} /> {item.label}
+                            <div key={i} className="flex flex-col gap-4 italic group/item">
+                                <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] mb-1 flex items-center gap-4 group-hover/item:text-yellow-700 transition-colors">
+                                    <item.icon size={16} /> {item.label}
                                 </span>
-                                <span className="text-[12px] font-black text-white">{item.value}</span>
+                                <span className={cn("text-2xl font-black font-mono tracking-tighter leading-none shadow-sm", item.color)}>{item.value}</span>
                             </div>
                         ))}
                     </div>
-                    <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[24px] text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
-                        РОЗШИРИТИ ГОРИЗОНТ <ArrowUpRight size={18} />
+
+                    <button className="px-14 py-8 bg-yellow-600 text-black border-2 border-yellow-500/40 rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic hover:brightness-110 transition-all flex items-center gap-6 shadow-4xl font-bold">
+                        EXPAND_NETWORK_HORIZON <ArrowUpRight size={24} className="animate-pulse" />
                     </button>
                 </div>
             </motion.div>
+            <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.2)}` }} />
         </div>
     );
 };

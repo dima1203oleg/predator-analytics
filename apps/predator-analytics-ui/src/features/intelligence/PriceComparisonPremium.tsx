@@ -1,9 +1,10 @@
 /**
- * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v56.2-TITAN
+ * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v56.5-ELITE
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  * 
  * Знаходження найкращих пропозицій від глобальних постачальників.
  * Аналіз демпінгу, економії та надійності ланцюгів постачання.
+ * Sovereign Power Design · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -15,9 +16,9 @@ import {
   ChevronDown, ChevronUp, Star, Clock, Truck, Shield, Crown,
   Sparkles, CheckCircle, AlertCircle, Globe, Package, BarChart3,
   Download, Target, Layers, Zap, ShieldCheck, Box, Crosshair,
-  Factory, BadgeCheck, AlertTriangle
+  Factory, BadgeCheck, AlertTriangle, Database
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
@@ -91,9 +92,9 @@ export default function PriceComparisonPremium() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-hidden font-sans pb-32">
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-32">
         <AdvancedBackground />
-        <CyberGrid color="rgba(16, 185, 129, 0.03)" />
+        <CyberGrid color="rgba(212, 175, 55, 0.03)" />
 
         <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-12 space-y-12">
            
@@ -101,21 +102,21 @@ export default function PriceComparisonPremium() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-emerald-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-emerald-900/40 rounded-[2.5rem] shadow-2xl">
-                        <DollarSign size={42} className="text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                     <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
+                        <DollarSign size={42} className="text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
                      </div>
                   </div>
                   <div className="space-y-2">
                      <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-emerald-600/10 border border-emerald-600/20 text-emerald-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                        <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                           MARKET_SIGINT // PRICE_DYNAMICS
                         </span>
-                        <div className="h-px w-10 bg-emerald-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                        <div className="h-px w-10 bg-[#D4AF37]/20" />
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       ПОРІВНЯННЯ <span className="text-emerald-600 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЦІН</span>
+                       ПОРІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8 italic uppercase text-[#D4AF37]">ЦІН</span>
                      </h1>
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                         АНАЛІЗ НАЙКРАЩИХ ПРОПОЗИЦІЙ ТА ДЕМПІНГ-ДЕТЕКЦІЯ
@@ -130,7 +131,7 @@ export default function PriceComparisonPremium() {
              ]}
              actions={
                <div className="flex gap-4">
-                  <button className="px-10 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
+                  <button className="px-10 py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-2xl transition-all flex items-center gap-4">
                      <Sparkles size={20} /> AI_ПОШУК_ЦІН
                   </button>
                </div>
@@ -140,15 +141,15 @@ export default function PriceComparisonPremium() {
            {/* SEARCH HUD */}
            <section className="p-8 rounded-[3rem] bg-black border border-white/[0.04] shadow-3xl space-y-6 flex items-center gap-6">
               <div className="relative flex-1 group">
-                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-emerald-500 transition-colors" size={24} />
+                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-[#D4AF37] transition-colors" size={24} />
                  <input 
                    type="text" placeholder="ПОШУК ТОВАРУ, КАТЕГОРІЇ АБО КОДУ УКТЗЕД..."
                    value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                   className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-18 rounded-2xl text-xl font-black text-white italic tracking-tighter focus:border-emerald-500/40 outline-none transition-all placeholder:text-slate-800"
+                   className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-18 rounded-2xl text-xl font-black text-white italic tracking-tighter focus:border-[#D4AF37]/40 outline-none transition-all placeholder:text-slate-800"
                  />
               </div>
-              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all"><Filter size={24} /></button>
-              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all"><Download size={24} /></button>
+              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Filter size={24} /></button>
+              <button className="p-5 bg-white/[0.04] border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><Download size={24} /></button>
            </section>
 
            {/* PRODUCTS GRID */}
@@ -157,7 +158,7 @@ export default function PriceComparisonPremium() {
                 <div key={product.id} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-8 overflow-hidden">
                    <div className="flex items-center justify-between pb-8 border-b border-white/[0.04]">
                       <div className="flex items-center gap-8">
-                         <div className="p-6 bg-emerald-600/10 border border-emerald-600/30 rounded-[2rem] text-emerald-500">
+                         <div className="p-6 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-[2rem] text-[#D4AF37]">
                             <Package size={32} />
                          </div>
                          <div className="space-y-1">
@@ -174,11 +175,11 @@ export default function PriceComparisonPremium() {
                             <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-1">СЕРЕДНЯ_ЦІНА</p>
                             <p className="text-3xl font-black text-white italic font-mono tracking-tighter">{formatPrice(product.avgPrice)}</p>
                          </div>
-                         <div className="p-6 bg-emerald-600 text-black rounded-[1.8rem] text-center min-w-[140px] shadow-2xl">
+                         <div className="p-6 bg-[#D4AF37] text-black rounded-[1.8rem] text-center min-w-[140px] shadow-2xl skew-x-[-3deg]">
                             <p className="text-3xl font-black italic font-mono tracking-tighter leading-none">-{(((Math.max(...product.offers.map(o => o.price)) - Math.min(...product.offers.map(o => o.price))) / Math.max(...product.offers.map(o => o.price))) * 100).toFixed(0)}%</p>
                             <p className="text-[9px] font-black uppercase tracking-widest leading-none mt-1">ОПТІМ_DEAL</p>
                          </div>
-                         <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)} className="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                         <button onClick={() => setExpandedProduct(expandedProduct === product.id ? null : product.id)} className="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/5">
                             {expandedProduct === product.id ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
                          </button>
                       </div>
@@ -189,16 +190,16 @@ export default function PriceComparisonPremium() {
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-6">
                            <div className="grid grid-cols-1 gap-4">
                               {product.offers.map((offer, idx) => (
-                                <div key={offer.id} className={cn("p-8 rounded-[2.5rem] bg-white/[0.01] border-2 transition-all flex items-center justify-between group", offer.isBestPrice ? "border-emerald-600/40 bg-emerald-600/[0.02]" : "border-white/[0.04] hover:border-white/10")}>
+                                <div key={offer.id} className={cn("p-8 rounded-[2.5rem] bg-white/[0.01] border-2 transition-all flex items-center justify-between group", offer.isBestPrice ? "border-[#D4AF37]/40 bg-[#D4AF37]/[0.02]" : "border-white/[0.04] hover:border-[#D4AF37]/20")}>
                                    <div className="flex items-center gap-8">
-                                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center font-black italic font-mono", idx === 0 ? "bg-amber-600 text-black shadow-xl" : "bg-slate-800 text-slate-500")}>
+                                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center font-black italic font-mono shadow-2xl", idx === 0 ? "bg-[#D4AF37] text-black" : "bg-slate-900 border border-white/5 text-slate-500")}>
                                          0{idx+1}
                                       </div>
                                       <div className="space-y-1">
                                          <div className="flex items-center gap-3">
-                                            <h4 className="text-xl font-black text-white italic uppercase tracking-tighter group-hover:text-emerald-400 transition-colors leading-none">{offer.supplierName}</h4>
-                                            {offer.isVerified && <BadgeCheck size={18} className="text-cyan-500" />}
-                                            {offer.isBestPrice && <span className="bg-emerald-600 text-black px-3 py-1 rounded-full text-[8px] font-black italic uppercase tracking-widest">BEST_VALUE</span>}
+                                            <h4 className="text-xl font-black text-white italic uppercase tracking-tighter group-hover:text-[#D4AF37] transition-colors leading-none">{offer.supplierName}</h4>
+                                            {offer.isVerified && <BadgeCheck size={18} className="text-[#D4AF37]" />}
+                                            {offer.isBestPrice && <span className="bg-[#D4AF37] text-black px-3 py-1 rounded-full text-[8px] font-black italic uppercase tracking-widest">BEST_VALUE</span>}
                                          </div>
                                          <div className="flex items-center gap-4 text-[9px] font-black text-slate-700 uppercase italic tracking-widest">
                                             <span className="flex items-center gap-1"><Globe size={12} /> {offer.country}</span>
@@ -209,17 +210,17 @@ export default function PriceComparisonPremium() {
                                    </div>
                                    <div className="flex items-center gap-16">
                                       <div className="text-center">
-                                         <div className={cn("text-2xl font-black font-mono italic", offer.reliability >= 95 ? "text-emerald-500" : "text-amber-500")}>{offer.reliability}%</div>
+                                         <div className={cn("text-2xl font-black font-mono italic", offer.reliability >= 95 ? "text-[#D4AF37]" : "text-amber-500")}>{offer.reliability}%</div>
                                          <p className="text-[8px] font-black text-slate-800 uppercase tracking-widest leading-none">НАДІЙНІСТЬ</p>
                                       </div>
-                                      <div className="text-right">
+                                      <div className="text-right border-l border-white/5 pl-10">
                                          <p className="text-3xl font-black text-white italic font-mono tracking-tighter leading-none">{formatPrice(offer.price)}</p>
-                                         <p className={cn("text-[9px] font-black italic mt-1", offer.price < product.avgPrice ? "text-emerald-500" : "text-rose-500")}>
+                                         <p className={cn("text-[9px] font-black italic mt-1", offer.price < product.avgPrice ? "text-[#D4AF37]" : "text-rose-500")}>
                                             {offer.price < product.avgPrice ? <TrendingDown size={14} className="inline mr-1" /> : <TrendingUp size={14} className="inline mr-1" />}
                                             {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕРЕДНЬОЇ
                                          </p>
                                       </div>
-                                      <button className="p-6 bg-emerald-600 text-black rounded-2xl hover:bg-emerald-500 shadow-2xl transition-all">
+                                      <button className="p-6 bg-[#D4AF37] text-black rounded-2xl hover:brightness-110 shadow-2xl transition-all">
                                          <ArrowRight size={24} />
                                       </button>
                                    </div>

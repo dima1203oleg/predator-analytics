@@ -15,97 +15,115 @@ const GPUModel: React.FC<GPUModelProps> = ({ load, color }) => {
   useFrame((state) => {
     if (!meshRef.current) return;
     const t = state.clock.getElapsedTime();
-    meshRef.current.rotation.y = t * 0.5;
-    meshRef.current.rotation.z = Math.sin(t * 0.2) * 0.1;
-    meshRef.current.position.y = Math.sin(t * 1) * 0.1;
+    meshRef.current.rotation.y = t * 0.4;
+    meshRef.current.rotation.z = Math.sin(t * 0.2) * 0.05;
+    meshRef.current.position.y = Math.sin(t * 0.8) * 0.15;
   });
 
   return (
     <group ref={meshRef}>
-      {/* Main Board */}
+      {/* Main Board - Ultra Dark Coal */}
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[4, 2, 0.1]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.8} roughness={0.2} />
+        <boxGeometry args={[4.2, 2.2, 0.15]} />
+        <meshStandardMaterial color="#020617" metalness={0.95} roughness={0.05} />
       </mesh>
 
-      {/* Glowing Core */}
-      <mesh position={[0, 0, 0.1]}>
-        <boxGeometry args={[1.2, 1.2, 0.1]} />
+      {/* Glowing Core - Sovereign Gold/Rose Fusion */}
+      <mesh position={[0, 0, 0.12]}>
+        <boxGeometry args={[1.4, 1.4, 0.15]} />
         <MeshDistortMaterial
           color={color}
-          speed={load / 20}
-          distort={0.3}
+          speed={load / 12}
+          distort={0.45}
           emissive={color}
-          emissiveIntensity={2 + (load / 50)}
+          emissiveIntensity={4 + (load / 30)}
         />
       </mesh>
 
-      {/* Cooling Fans (Simplified 3D Circles) */}
-      {[-1.2, 1.2].map((x, i) => (
-        <group key={i} position={[x, 0, 0.15]}>
+      {/* Cooling Fans (Sovereign Gold Rings) */}
+      {[-1.3, 1.3].map((x, i) => (
+        <group key={i} position={[x, 0, 0.18]}>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.7, 0.7, 0.05, 32]} />
-            <meshStandardMaterial color="#0f172a" />
+            <cylinderGeometry args={[0.8, 0.8, 0.08, 64]} />
+            <meshStandardMaterial color="#030712" metalness={1} roughness={0} />
           </mesh>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <torusGeometry args={[0.75, 0.02, 16, 100]} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
+            <torusGeometry args={[0.85, 0.03, 32, 128]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={3} />
+          </mesh>
+          {/* Fan detailing */}
+          <mesh position={[0, 0, 0.05]}>
+             <sphereGeometry args={[0.2, 16, 16]} />
+             <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1} />
           </mesh>
         </group>
       ))}
 
-      {/* Connectors / Visual Details */}
-      <mesh position={[0, -1, 0]}>
-        <boxGeometry args={[3.8, 0.2, 0.05]} />
-        <meshStandardMaterial color="#fbbf24" emissive="#fbbf24" emissiveIntensity={0.5} />
+      {/* Connectors / Elite Gold Trim */}
+      <mesh position={[0, -1.05, 0]}>
+        <boxGeometry args={[4, 0.25, 0.1]} />
+        <meshStandardMaterial color="#D4AF37" emissive="#D4AF37" emissiveIntensity={2} />
       </mesh>
+      
+      {/* Structural Bars */}
+      {[1.9, -1.9].map((x, i) => (
+        <mesh key={i} position={[x, 0, 0]}>
+           <boxGeometry args={[0.1, 2, 0.2]} />
+           <meshStandardMaterial color="#D4AF37" opacity={0.4} transparent />
+        </mesh>
+      ))}
     </group>
   );
 };
 
 const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
   const gpuColor = useMemo(() => {
-    if (load > 80) return "#ef4444"; // Red for heavy load
-    if (load > 50) return "#f59e0b"; // Orange for mid load
-    return "#10b981"; // Green for low load
+    if (load > 85) return "#E11D48"; // Elite Rose Peak
+    if (load > 60) return "#F59E0B"; // Sovereign Gold High
+    return "#D4AF37"; // Pure Gold Operational
   }, [load]);
 
   return (
-    <div className="w-full h-full min-h-[300px] relative rounded-3xl overflow-hidden bg-gradient-to-b from-slate-900 to-black">
+    <div className="w-full h-full min-h-[350px] relative rounded-[40px] overflow-hidden bg-black shadow-3xl">
       {/* UI Overlay Labels */}
-      <div className="absolute top-6 left-6 z-10 pointer-events-none">
-        <div className="flex items-center gap-3 mb-1">
-          <div className={`w-2 h-2 rounded-full animate-ping`} style={{ backgroundColor: gpuColor }} />
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">NVIDIA H100 TENSOR CORE</span>
+      <div className="absolute top-10 left-10 z-10 pointer-events-none">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-[0_0_25px_rgba(212,175,55,1)] animate-pulse" />
+          <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_CORE_ELITE</span>
         </div>
-        <div className="text-2xl font-black text-slate-400 italic">COMPUTE_ACTIVE</div>
+        <div className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter opacity-30 select-none">NODE_READY</div>
       </div>
 
-      <div className="absolute bottom-6 right-6 z-10 text-right pointer-events-none">
-        <div className="text-[32px] font-black font-mono leading-none" style={{ color: gpuColor }}>
+      <div className="absolute bottom-10 right-10 z-10 text-right pointer-events-none">
+        <div className="text-[64px] font-black font-mono leading-none tracking-tighter italic" style={{ color: gpuColor, textShadow: `0 0 40px ${gpuColor}66` }}>
           {load}%
         </div>
-        <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Node Utilization</div>
+        <div className="text-[11px] text-yellow-600 font-black uppercase tracking-[0.5em] mt-3">COMPUTE_EXHAUST</div>
       </div>
 
-      <Canvas gl={{ antialias: true }} dpr={[1, 2]}>
-        <PerspectiveCamera makeDefault position={[0, 0, 6]} />
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+      <Canvas gl={{ antialias: true, alpha: true, stencil: true }} dpr={[1, 2]}>
+        <PerspectiveCamera makeDefault position={[0, 0, 8]} />
+        <Stars radius={120} depth={70} count={12000} factor={8} saturation={1} fade speed={3} />
         <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color={gpuColor} />
-        <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+        <pointLight position={[12, 12, 12]} intensity={3} color={gpuColor} />
+        <spotLight position={[-12, 12, 12]} angle={0.25} penumbra={1} intensity={2.5} castShadow color="#D4AF37" />
+        <pointLight position={[0, -5, 5]} intensity={1} color="#E11D48" />
 
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+        <Float speed={4} rotationIntensity={1} floatIntensity={1.2}>
           <GPUModel load={load} color={gpuColor} />
         </Float>
 
-        <ContactShadows position={[0, -2.5, 0]} opacity={0.4} scale={10} blur={2.5} far={4} color={gpuColor} />
+        <ContactShadows position={[0, -3.5, 0]} opacity={0.7} scale={15} blur={4} far={6} color={gpuColor} />
       </Canvas>
+      
+      {/* Elite Digital Overlay */}
+      <div className="absolute inset-0 pointer-events-none border-[1px] border-yellow-500/10 rounded-[40px]" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-yellow-500/30 blur-[2px]" />
+         <div className="absolute top-0 left-1/2 w-[1px] h-full bg-yellow-500/30 blur-[2px]" />
+      </div>
     </div>
   );
 };
-
-// Required for threejs in React
-// 3D Engine Visualization v45.0.0
 
 export default Nvidia3DVisualizer;

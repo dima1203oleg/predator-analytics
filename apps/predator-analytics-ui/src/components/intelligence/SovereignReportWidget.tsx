@@ -1,9 +1,11 @@
 /**
- * 👁️ Sovereign Intelligence Advisor | v56.2-TITAN Premium Matrix
+ * 👁️ Sovereign Intelligence Advisor | v56.5-ELITE Premium Matrix
  * PREDATOR Глибокий експертний висновок.
  * 
  * Генерація та візуалізація суверенних аналітичних звітів з ШІ-підтримкою.
- * © 2026 PREDATOR Analytics - Повна українізація v56.2-TITAN
+ * Sovereign Power Design · Classified · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -55,22 +57,22 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
 
     return (
         <div className={cn(
-            "flex flex-col bg-[#030712]/60 backdrop-blur-[50px] border border-white/10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] transition-all",
+            "flex flex-col bg-[#050505]/60 backdrop-blur-[50px] border border-[#D4AF37]/10 rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] transition-all",
             className
         )}>
             {/* Extended Cyber Header */}
-            <div className="p-10 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-indigo-500/10 via-white/[0.02] to-transparent">
+            <div className="p-10 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-[#D4AF37]/10 via-white/[0.02] to-transparent">
                 <div className="flex items-center gap-6">
                     <div className="relative">
-                        <div className="absolute inset-0 bg-indigo-500/20 blur-2xl rounded-2xl animate-pulse" />
-                        <div className="relative p-4 bg-slate-900 border border-indigo-500/30 rounded-2xl shadow-2xl">
-                            <Brain size={28} className="text-indigo-400" />
+                        <div className="absolute inset-0 bg-[#D4AF37]/20 blur-2xl rounded-2xl animate-pulse" />
+                        <div className="relative p-4 bg-black border border-[#D4AF37]/30 rounded-2xl shadow-2xl">
+                            <Brain size={28} className="text-[#D4AF37]" />
                         </div>
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v56.2-TITAN</span>
-                            <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
+                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v56.5-ELITE</span>
+                            <Badge className="bg-[#D4AF37]/10 text-[#D4AF37] border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
                         <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕРЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
                         <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 opacity-60">IDENTIFIER: {ueid} // LAYER: COGNITIVE_ANALYSIS</p>
@@ -91,7 +93,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </motion.button>
                     <motion.button 
                         whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
-                        className="px-8 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-indigo-500 transition-all shadow-[0_0_30px_rgba(99,102,241,0.3)] group"
+                        className="px-8 py-4 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:brightness-110 transition-all shadow-[0_0_30px_rgba(212,175,55,0.3)] group italic"
                     >
                         ПОШИРИТИ_РОЗВІДКУ
                     </motion.button>
@@ -109,19 +111,19 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                             className="h-full flex flex-col items-center justify-center space-y-10 py-32"
                         >
                             <div className="relative">
-                                <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full scale-200 animate-pulse" />
+                                <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[60px] rounded-full scale-200 animate-pulse" />
                                 <div className="relative">
-                                    <Sparkles size={64} className="text-indigo-400 animate-pulse" />
+                                    <Sparkles size={64} className="text-[#D4AF37] animate-pulse" />
                                     <motion.div 
                                         animate={{ rotate: 360 }}
                                         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                                        className="absolute -inset-4 border-2 border-dashed border-indigo-500/20 rounded-full"
+                                        className="absolute -inset-4 border-2 border-dashed border-[#D4AF37]/20 rounded-full"
                                     />
                                 </div>
                             </div>
                             <div className="text-center space-y-3">
-                                <p className="text-indigo-400 font-black tracking-[0.6em] uppercase text-xs animate-pulse">СИНТЕЗУЮ_ЕКСПЕРТНИЙ_ВИСНОВОК...</p>
-                                <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Trinity Engine Analysing 5-Layer Risk Matrix v55</p>
+                                <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs animate-pulse">СИНТЕЗУЮ_ЕКСПЕРТНИЙ_ВИСНОВОК...</p>
+                                <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Sovereign Engine Analysing 5-Layer Risk Matrix v56.5</p>
                             </div>
                             <div className="flex gap-2">
                                 {[1,2,3,4,5].map(i => (
@@ -129,7 +131,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                         key={i}
                                         animate={{ height: [4, 16, 4] }}
                                         transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
-                                        className="w-1 bg-indigo-500/40 rounded-full"
+                                        className="w-1 bg-[#D4AF37]/40 rounded-full"
                                     />
                                 ))}
                             </div>
@@ -144,12 +146,12 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                 <AlertTriangle size={40} className="text-rose-500" />
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-rose-500 uppercase italic mb-2 tracking-tighter">СИСТЕМНИЙ_ЗБІЙ_v55</h4>
+                                <h4 className="text-xl font-black text-rose-500 uppercase italic mb-2 tracking-tighter">СИСТЕМНИЙ_ЗБІЙ_v56.5</h4>
                                 <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">{error}</p>
                             </div>
                             <button 
                                 onClick={fetchReport} 
-                                className="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-indigo-400 text-[10px] uppercase font-black tracking-widest hover:bg-white/10 transition-all"
+                                className="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-[#D4AF37] text-[10px] uppercase font-black tracking-widest hover:bg-white/10 transition-all font-bold"
                             >
                                 Перепідключити_ядро
                             </button>
@@ -158,7 +160,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         <motion.div
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="prose prose-invert max-w-none prose-p:text-slate-400 prose-p:leading-relaxed prose-headings:text-white prose-headings:uppercase prose-headings:tracking-tighter prose-headings:italic prose-headings:font-black prose-strong:text-indigo-400 prose-li:text-slate-300"
+                            className="prose prose-invert max-w-none prose-p:text-slate-400 prose-p:leading-relaxed prose-headings:text-white prose-headings:uppercase prose-headings:tracking-tighter prose-headings:italic prose-headings:font-black prose-strong:text-[#D4AF37] prose-li:text-slate-300"
                         >
                             <ReactMarkdown>{report}</ReactMarkdown>
                         </motion.div>
@@ -175,17 +177,17 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
             <div className="p-10 bg-white/[0.02] border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="flex flex-wrap gap-10">
                     <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-emerald-500/10 rounded-xl">
-                            <ShieldCheck size={18} className="text-emerald-500" />
+                        <div className="p-2.5 bg-[#D4AF37]/10 rounded-xl">
+                            <ShieldCheck size={18} className="text-[#D4AF37]" />
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">ЦІЛІСНІСТЬ</span>
-                            <span className="text-[11px] font-black text-emerald-400 uppercase tracking-tight italic">ВЕРИФІКОВАНО_v55</span>
+                            <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-tight italic">ВЕРИФІКОВАНО_ELITE</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-indigo-500/10 rounded-xl">
-                            <Fingerprint size={18} className="text-indigo-400" />
+                        <div className="p-2.5 bg-[#D4AF37]/10 rounded-xl">
+                            <Fingerprint size={18} className="text-[#D4AF37]" />
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">АВТОРСТВО_ШІ</span>
@@ -193,7 +195,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-slate-800 rounded-xl">
+                        <div className="p-2.5 bg-[#0a0a0a] rounded-xl border border-white/5">
                             <Lock size={18} className="text-slate-400" />
                         </div>
                         <div className="flex flex-col">
@@ -218,8 +220,8 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
             <style>{`
                 .prose blockquote {
                     border-left-width: 4px;
-                    border-left-color: #6366f1;
-                    background: rgba(99, 102, 241, 0.05);
+                    border-left-color: #D4AF37;
+                    background: rgba(212, 175, 55, 0.05);
                     padding: 2rem;
                     border-radius: 0 2rem 2rem 0;
                     font-style: italic;
@@ -238,11 +240,11 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     background: transparent;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(99, 102, 241, 0.1);
+                    background: rgba(212, 175, 55, 0.1);
                     border-radius: 20px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(99, 102, 241, 0.3);
+                    background: rgba(212, 175, 55, 0.3);
                 }
             `}</style>
         </div>

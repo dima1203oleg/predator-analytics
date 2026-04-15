@@ -25,7 +25,7 @@ import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { dashboardApi } from '@/services/api/dashboard';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { AudioSanctuary } from '@/components/shared/AudioSanctuary';

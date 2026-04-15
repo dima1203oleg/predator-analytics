@@ -20,7 +20,7 @@ import {
     Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 

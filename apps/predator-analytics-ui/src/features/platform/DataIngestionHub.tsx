@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useIngestionStore, IngestionJob } from '@/store/useIngestionStore';
 import { apiClient as api } from '@/services/api/config';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';

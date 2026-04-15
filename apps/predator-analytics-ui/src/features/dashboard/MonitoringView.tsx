@@ -40,7 +40,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { ingestionApi, type JobStatusResponse } from '@/services/api/ingestion';
 import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import {
     appendMetricPoint,
     formatBytes,

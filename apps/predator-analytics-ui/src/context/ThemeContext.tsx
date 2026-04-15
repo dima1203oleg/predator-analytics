@@ -38,9 +38,9 @@ const MODE_ORDER: OperationalMode[] = ['sovereign', 'vigilance', 'threat', 'stea
 const MODE_META: Record<OperationalMode, ModeInfo> = {
   sovereign: {
     label: 'СУВЕРЕННИЙ',
-    icon: '🛡️',
-    accentHsl: '234 89% 74%',    // Індиго
-    glowColor: 'rgba(99, 102, 241, 0.35)',
+    icon: '👑',
+    accentHsl: '45 74% 52%',      // Sovereign Gold (#D4AF37)
+    glowColor: 'rgba(212, 175, 55, 0.45)',
   },
   vigilance: {
     label: 'ПИЛЬНІСТЬ',
@@ -69,17 +69,17 @@ const MODE_META: Record<OperationalMode, ModeInfo> = {
  */
 const MODE_CSS_VARS: Record<OperationalMode, Record<string, string>> = {
   sovereign: {
-    '--op-accent':        'rgb(99, 102, 241)',
-    '--op-accent-soft':   'rgba(99, 102, 241, 0.15)',
-    '--op-accent-glow':   '0 0 30px rgba(99, 102, 241, 0.2)',
-    '--op-accent-border': 'rgba(99, 102, 241, 0.3)',
-    '--op-accent-text':   '#a5b4fc',
-    '--op-accent-bg':     'rgba(99, 102, 241, 0.08)',
-    '--op-header-glow':   'linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent)',
-    '--op-sidebar-active':'linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.06))',
-    '--op-pulse-color':   'rgba(99, 102, 241, 0.6)',
-    '--op-scanline':      'rgba(99, 102, 241, 0.03)',
-    '--op-ring':          'rgba(99, 102, 241, 0.15)',
+    '--op-accent':        'rgb(212, 175, 55)',
+    '--op-accent-soft':   'rgba(212, 175, 55, 0.18)',
+    '--op-accent-glow':   '0 0 45px rgba(212, 175, 55, 0.3)',
+    '--op-accent-border': 'rgba(212, 175, 55, 0.45)',
+    '--op-accent-text':   '#fde68a',
+    '--op-accent-bg':     'rgba(212, 175, 55, 0.12)',
+    '--op-header-glow':   'linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent)',
+    '--op-sidebar-active':'linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(220, 38, 38, 0.1))',
+    '--op-pulse-color':   'rgba(212, 175, 55, 0.7)',
+    '--op-scanline':      'rgba(212, 175, 55, 0.04)',
+    '--op-ring':          'rgba(212, 175, 55, 0.25)',
   },
   vigilance: {
     '--op-accent':        'rgb(245, 158, 11)',

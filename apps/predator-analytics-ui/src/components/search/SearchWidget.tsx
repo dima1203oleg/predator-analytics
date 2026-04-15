@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, ArrowRight, Zap, History, Star, TrendingUp, Skull, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 import { useNavigate } from 'react-router-dom';
 
 /**
