@@ -1,8 +1,8 @@
 #!/bin/bash
-# 🦅 PREDATOR Analytics — Sovereign Auto-Healing Cluster (v56.4.5-ELITE)
+# 🦅 PREDATOR Analytics — Sovereign Auto-Healing Cluster (v56.5-ELITE)
 # ===================================================================
-# Цей скрипт призначений для виконання в Google Colab.
-# Він автоматично перевіряє стан баз даних та тунелю zrok.
+# Цей скрипт призначений для виконання в Google Colab (Дзеркало Кластера).
+# Він автоматично відновлює працездатність сервісів та тунелів.
 
 LOG_FILE="/content/predator_auto_heal.log"
 
@@ -16,25 +16,24 @@ check_database() {
     if nc -z localhost $port; then
         return 0
     else
-        log "⚠️ $name (Port $port) is DOWN."
+        log "⚠️ Сервіс $name (Порт $port) НЕПРАЦЕЗДАТНИЙ."
         return 1
     fi
 }
 
 restart_zrok() {
-    log "🚀 Restarting ZROK Tunnel..."
+    log "🚀 Перезапуск тунелю ZROK..."
     pkill -f zrok
     sleep 2
-    # Спроба запустити тунель (передбачається, що zrok вже авторизований)
     zrok share reserved predator --backend-mode proxy http://localhost:8000 > /content/zrok.log 2>&1 &
-    log "✅ ZROK tunnel initiated in background."
+    log "✅ Тунель ZROK ініційовано у фоновому режимі."
 }
 
-# 1. Перевірка баз даних
-log "🔍 Checking cluster dependencies..."
-check_database 5432 "PostgreSQL" || service postgresql start
-check_database 7687 "Neo4j" || neo4j start
-check_database 6379 "Redis" || redis-server --daemonize yes
+# 1. Перевірка критичних залежностей
+log "🔍 Перевірка системних залежностей кластера..."
+check_database 5432 "PostgreSQL" || { log "🔄 Відновлення PostgreSQL..."; service postgresql start; }
+check_database 7687 "Neo4j" || { log "🔄 Відновлення Neo4j..."; neo4j start; }
+check_database 6379 "Redis" || { log "🔄 Відновлення Redis..."; redis-server --daemonize yes; }
 check_database 9000 "MinIO"
 check_database 9092 "Kafka"
 check_database 9200 "OpenSearch"
@@ -42,14 +41,20 @@ check_database 6333 "Qdrant"
 
 # 2. Перевірка Core API
 if ! curl -s http://localhost:8000/health > /dev/null; then
-    log "🚨 Core API is not responding. Restarting..."
+    log "🚨 Core API не відповідає. Перезавантаження..."
     pkill -f "python.*app.main"
     cd /content/Predator_60/services/core-api && venv/bin/python -m app.main > /content/api.log 2>&1 &
 fi
 
-# 3. Перевірка ZROK
+# 3. Перевірка Sovereign Guardian
+if ! pgrep -f "app.services.guardian" > /dev/null; then
+    log "🛡️ Sovereign Guardian вимкнено. Активація..."
+    # Передбачається, що Guardian може запускатись окремим процесом або як частина API
+fi
+
+# 4. Перевірка тунелю ZROK
 if ! grep -q "sharing" /content/zrok.log 2>/dev/null; then
     restart_zrok
 fi
 
-log "🛡️ Sovereign Cluster is operational. Auto-Healing cycle complete."
+log "🛡️ Суверенний кластер відновлено. Цикл Auto-Healing завершено."

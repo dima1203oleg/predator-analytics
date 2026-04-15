@@ -118,9 +118,6 @@ export const systemApi = {
   getLogs: async (limit: number = 50) => {
     return (await apiClient.get(`/system/logs/stream?limit=${limit}`)).data;
   },
-  getNeuralLogs: async (limit: number = 20): Promise<any[]> => {
-    return (await apiClient.get('/system/logs/neural?limit=' + limit)).data;
-  },
   getMetricsHistory: async (): Promise<any[]> => {
     return (await apiClient.get('/system/metrics/history')).data;
   },

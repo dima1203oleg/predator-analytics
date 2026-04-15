@@ -126,10 +126,10 @@ export default function FinancialSigintView() {
                          FINANCIAL_SIGINT // TRANSACTIONAL_RADAR
                        </span>
                        <div className="h-px w-10 bg-rose-600/20" />
-                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
                     </div>
                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                      ФІНАНСОВА <span className="text-rose-600 underline decoration-rose-600/20 decoration-8 italic uppercase">РОЗВІДКА</span>
+                      ФІНАНСОВА <span className="text-rose-600 underline decoration-rose-600/30 decoration-8 italic uppercase">РОЗВІДКА</span>
                     </h1>
                     <div className="flex items-center gap-4 text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-80 leading-none">
                        <Activity size={14} className="text-rose-600" /> 
@@ -179,8 +179,8 @@ export default function FinancialSigintView() {
                 <button 
                   key={mod.id} onClick={() => setActiveModule(mod.id)}
                   className={cn(
-                    "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3",
-                    activeModule === mod.id ? "bg-rose-700 border-rose-500 text-white shadow-3xl" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"
+                    "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3 relative overflow-hidden group",
+                    activeModule === mod.id ? "bg-rose-600 border-rose-400 text-white shadow-[0_0_30px_rgba(244,63,94,0.3)]" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"
                   )}
                 >
                    <mod.icon size={16} />
@@ -358,8 +358,8 @@ export default function FinancialSigintView() {
                                <CyberOrb size={150} color="#6366f1" intensity={0.6} />
                                <div className="space-y-4">
                                   <p className="text-4xl font-black italic text-white leading-none">HIGH_PROBABILITY</p>
-                                  <p className="text-6xl font-black italic text-indigo-500 font-mono leading-none tracking-tighter">94.2%</p>
-                                  <p className="text-[11px] font-black text-slate-700 uppercase italic tracking-widest">ЙМОВІРНІСТЬ ПЕРЕХОВУВАННЯ UBO ЧЕРЕЗ ФІКТИВНИЙ БОРГ</p>
+                                  <p className="text-6xl font-black italic text-rose-500 font-mono leading-none tracking-tighter shadow-rose-500/20">94.2%</p>
+                                  <p className="text-[11px] font-black text-slate-700 uppercase italic tracking-widest border-l-2 border-rose-500/40 pl-4">ЙМОВІРНІСТЬ ПЕРЕХОВУВАННЯ UBO ЧЕРЕЗ ФІКТИВНИЙ БОРГ</p>
                                </div>
                             </div>
                             <div className="grid grid-cols-2 gap-6">

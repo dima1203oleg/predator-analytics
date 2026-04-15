@@ -59,11 +59,10 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     }, [nodes]);
 
     useEffect(() => {
-        const syncState = (e?: Event) => {
+        const syncState = (e?: any) => {
             setIsOffline(readOfflineState());
-            const detail = (e as CustomEvent)?.detail;
-            if (detail?.nodes) {
-                setNodes(detail.nodes);
+            if (e?.detail?.nodes) {
+                setNodes(e.detail.nodes);
             } else {
                 setNodes(readNodes());
             }
@@ -73,11 +72,11 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         window.addEventListener('predator-backend-offline', syncState);
         window.addEventListener('predator-backend-status-change', syncState);
 
-        // Симуляція прогресу самовідновлення при офлайні
-        let timer: ReturnType<typeof setInterval> | null = null;
+        // Simulation of auto-healing progress when offline
+        let interval: any;
         if (isOffline) {
             setHealingProgress(0);
-            timer = setInterval(() => {
+            interval = setInterval(() => {
                 setHealingProgress(prev => (prev < 99 ? prev + (Math.random() * 5) : 99));
             }, 2000);
         } else {
@@ -88,7 +87,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
             window.removeEventListener('predator-backend-online', syncState);
             window.removeEventListener('predator-backend-offline', syncState);
             window.removeEventListener('predator-backend-status-change', syncState);
-            if (timer) clearInterval(timer);
+            if (interval) clearInterval(interval);
         };
     }, [isOffline]);
 
@@ -99,7 +98,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
             modeLabel: IS_TRUTH_ONLY_MODE ? 'Режим правдивих даних' : 'Локальний робочий режим',
             sourceLabel: getSourceLabel(),
             sourceType: API_BASE_URL.startsWith('http') ? 'remote' : 'local',
-            statusLabel: isOffline ? 'Бекенд недоступний (Авто-відновлення...)' : 'Зʼєднання активне',
+            statusLabel: isOffline ? 'Бекенд недоступний (Auto-Healing active)' : 'Зʼєднання активне',
             nodes,
             healingProgress,
             activeFailover,

@@ -17,11 +17,12 @@ interface EvolutionForgeProps {
 
 const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
   const [tasks, setTasks] = useState<EvolutionTask[]>([
-    { id: '1', component: 'SovereignAZRBrain.tsx', type: 'aesthetic', status: 'deployed', progress: 100 },
-    { id: '2', component: 'MainLayout.tsx', type: 'performance', status: 'deployed', progress: 100 },
-    { id: '3', component: 'SearchConsole.tsx', type: 'aesthetic', status: 'deployed', progress: 100 },
-    { id: '4', component: 'DiligencePage.tsx', type: 'aesthetic', status: 'crafting', progress: 85 },
-    { id: '5', component: 'EvolutionForge.tsx', type: 'performance', status: 'scanning', progress: 12 },
+    { id: '1', component: 'PredictiveNexusView.tsx', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '2', component: 'GlobalNeuralMesh.tsx', type: 'aesthetic', status: 'deployed', progress: 100 },
+    { id: '3', component: 'guardian.py', type: 'performance', status: 'deployed', progress: 100 },
+    { id: '4', component: 'system.py', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '5', component: 'Sovereign Launch Initiated', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '6', component: 'SovereignAZRBrain.tsx', type: 'aesthetic', status: 'crafting', progress: 92 },
   ]);
 
   useEffect(() => {

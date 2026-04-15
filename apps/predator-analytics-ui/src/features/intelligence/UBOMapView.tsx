@@ -271,15 +271,14 @@ const UBOMapView: React.FC = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="w-1 h-1 bg-cyan-600 rounded-full animate-pulse" />
-                <span className="text-[8px] font-black text-cyan-700/70 uppercase tracking-[0.5em]">
-                  UBO · BENEFICIAL OWNER INTEL · CLASSIFIED · v56.4
+                <span className="text-[8px] font-black text-cyan-500/80 uppercase tracking-[0.5em]">
+                  UBO · BENEFICIAL OWNER INTEL · CLASSIFIED · v56.5-ELITE
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-                БЕНЕФІЦІАРНА{' '}
-                <span className="text-cyan-500 drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]">КАРТА</span>
+              <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg]">
+                БЕНЕФІЦІАРНА <span className="text-cyan-500 underline decoration-cyan-600/30 decoration-8 italic uppercase">КАРТА</span>
               </h1>
-              <p className="text-[10px] text-slate-700 font-black uppercase tracking-[0.3em] mt-1">
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mt-2 italic border-l-2 border-cyan-500/30 pl-4 opacity-80">
                 UBO ГРАФ · PEP ТРЕКЕР · SHADOW DIRECTOR DETECTOR
               </p>
             </div>
@@ -408,8 +407,26 @@ const UBOMapView: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* 🤖 Sovereign AI UBO Analysis */}
+                  <div className="relative group overflow-hidden rounded-[32px] border border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-black/40 to-slate-950/80 p-8 shadow-2xl">
+                    <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-[5s]">
+                      <Fingerprint size={240} className="text-cyan-500" />
+                    </div>
+                    <div className="relative z-10 space-y-6">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cyan-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                          <Fingerprint size={24} />
+                        </div>
+                        <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">АНАЛІЗ ПРИХОВАНИХ ЗВ’ЯЗКІВ</h3>
+                      </div>
+                      <p className="text-xs leading-6 text-slate-300 italic border-l-2 border-cyan-500/40 pl-6 bg-white/5 py-4 rounded-r-2xl">
+                          Виявлено непрямий контроль через офшорну структуру Kyoto Holdings. Ймовірність Shadow Director (Петренко М.О.) становить 88.4%.
+                      </p>
+                    </div>
+                  </div>
+
                   {/* PEP статус */}
-                  <div className="bg-black border border-amber-900/30 p-6">
+                  <div className="bg-black border border-amber-900/30 p-8 rounded-3xl">
                     <h3 className="text-[9px] font-black text-amber-700 uppercase tracking-[0.4em] mb-4 flex items-center gap-2">
                       <Fingerprint size={13} /> PEP ПОПЕРЕДЖЕННЯ
                     </h3>

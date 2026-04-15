@@ -85,12 +85,6 @@ export default function PredictiveNexusView() {
         refetchInterval: 30000
     });
 
-    const { data: neuralLogs = [] } = useQuery({
-        queryKey: ['system', 'logs', 'neural'],
-        queryFn: () => systemApi.getNeuralLogs(20),
-        refetchInterval: 5000
-    });
-
     const predictions = diagnostics?.results?.predictions || {};
 
     const startScan = () => {
@@ -125,21 +119,6 @@ export default function PredictiveNexusView() {
                         }
                     />
 
-                    {/* Tactical Ticker */}
-                    <div className="w-full h-8 bg-black/40 border-y border-white/5 mt-4 flex items-center overflow-hidden">
-                        <motion.div 
-                            initial={{ x: '100%' }}
-                            animate={{ x: '-100%' }}
-                            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                            className="whitespace-nowrap flex items-center gap-12 text-[9px] font-black uppercase tracking-[0.2em]"
-                        >
-                            <span className="text-emerald-400 flex items-center gap-2"><div className="w-1 h-1 bg-emerald-500 rounded-full" /> СИСТЕМА: NVIDIA_MASTER ONLINE</span>
-                            <span className="text-indigo-400 flex items-center gap-2"><div className="w-1 h-1 bg-indigo-500 rounded-full" /> СИНХРОНІЗАЦІЯ: 100% (COLAB MIRROR)</span>
-                            <span className="text-amber-400 flex items-center gap-2"><div className="w-1 h-1 bg-amber-500 rounded-full" /> УВАГА: РІСТ ЦІН НА ПАЛЬНЕ +5.4%</span>
-                            <span className="text-rose-400 flex items-center gap-2"><div className="w-1 h-1 bg-rose-500 rounded-full" /> ЗАГРОЗА: НЕВИЯВЛЕНО</span>
-                        </motion.div>
-                    </div>
-
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6 overflow-hidden">
                         {/* Ліву колонку: OODA Loop */}
                         <div className="lg:col-span-1 flex flex-col gap-6">
@@ -159,29 +138,30 @@ export default function PredictiveNexusView() {
                                 </div>
                             </div>
 
-                            <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-md">
+                            <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-md flex-1">
                                 <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Shield size={16} className="text-rose-500" /> SOVEREIGN SECURITY
+                                    <TrendingUp size={16} /> ПРОГНОЗ РЕСУРСІВ
                                 </h3>
-                                <div className="space-y-3">
-                                    <Button 
-                                        onClick={() => systemApi.lockdown()} 
-                                        className="w-full bg-rose-950/40 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white text-[10px] font-black uppercase tracking-widest transition-all"
-                                    >
-                                        ACTIVATE LOCKDOWN
-                                    </Button>
-                                    <Button 
-                                        onClick={() => systemApi.startEvolutionCycle()} 
-                                        variant="outline"
-                                        className="w-full border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 text-[10px] font-black uppercase tracking-widest"
-                                    >
-                                        START EVOLUTION
-                                    </Button>
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase">Сховище</span>
+                                            <span className="text-xs font-black text-amber-400">{predictions.disk_exhaustion_days || '--'} днів</span>
+                                        </div>
+                                        <p className="text-[9px] text-slate-500 mb-2 italic">"{predictions.recommendation || 'Аналіз триває...'}"</p>
+                                    </div>
+                                    <div className="p-4 bg-emerald-500/5 rounded-lg border border-emerald-500/20">
+                                        <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                                            <ShieldCheck size={14} />
+                                            <span className="text-[10px] font-black uppercase">Цілісність</span>
+                                        </div>
+                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ Colab Mirror: <span className="text-emerald-300">SYNCHRONIZED</span></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Центральна колонка: Topology & Charts */}
+                        {/* Центральна колонка: Topology & Dynamics */}
                         <div className="lg:col-span-2 flex flex-col gap-6 min-h-0">
                             <div className="bg-black/60 border border-white/10 rounded-xl backdrop-blur-lg">
                                 <ClusterTopology />
@@ -196,53 +176,18 @@ export default function PredictiveNexusView() {
                             </div>
                         </div>
 
-                        {/* Права колонка: OSINT Scenarios & Neural Terminal */}
-                        <div className="lg:col-span-1 flex flex-col gap-6 h-full">
-                            <div className="flex-1 flex flex-col gap-6 overflow-hidden">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">СЦЕНАРІЇ OSINT</h3>
-                                    <Badge variant="outline" className="text-[9px]">TOP PRIORITY</Badge>
-                                </div>
-                                <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
-                                    {scenarios.map(s => <PredictionCard key={s.id} scenario={s} />)}
-                                </div>
+                        {/* Права колонка: OSINT Scenarios */}
+                        <div className="lg:col-span-1 flex flex-col gap-6 overflow-auto">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">СЦЕНАРІЇ OSINT</h3>
+                                <Badge variant="outline" className="text-[9px]">TOP PRIORITY</Badge>
                             </div>
-
-                            <div className="bg-slate-900/80 border border-white/5 rounded-xl p-4 font-mono text-[9px] h-[180px] overflow-hidden flex flex-col shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
-                                <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-1 text-slate-500 font-sans font-black">
-                                    <span className="flex items-center gap-1"><Brain size={10} /> NEURAL_LOGS_STREAM</span>
-                                    <span className="animate-pulse text-emerald-500 text-[8px]">● LIVE_FEED</span>
-                                </div>
-                                <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar scroll-smooth">
-                                    <AnimatePresence initial={false}>
-                                        {neuralLogs.map((log, i) => (
-                                            <motion.div 
-                                                key={`${log.timestamp}-${i}`}
-                                                initial={{ opacity: 0, x: -5 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                className="flex gap-2"
-                                            >
-                                                <span className="text-slate-600">[{log.level}]</span>
-                                                <span className={cn(
-                                                    log.level === 'WARN' ? "text-amber-400" : 
-                                                    log.level === 'ERROR' ? "text-rose-500 font-bold" :
-                                                    log.level === 'SYNC' ? "text-indigo-400" : "text-slate-300"
-                                                )}>
-                                                    {log.message}
-                                                </span>
-                                            </motion.div>
-                                        ))}
-                                    </AnimatePresence>
-                                    <motion.div 
-                                        initial={{ opacity: 0 }} 
-                                        animate={{ opacity: 1 }} 
-                                        transition={{ repeat: Infinity, duration: 1 }}
-                                        className="text-emerald-500"
-                                    >
-                                        _
-                                    </motion.div>
-                                </div>
+                            <div className="space-y-4">
+                                {scenarios.map(s => <PredictionCard key={s.id} scenario={s} />)}
                             </div>
+                            <Button variant="ghost" className="w-full border border-dashed border-white/10 text-[10px] font-bold py-6">
+                                ВСІ СЦЕНАРІЇ (24)
+                            </Button>
                         </div>
                     </div>
                 </motion.div>

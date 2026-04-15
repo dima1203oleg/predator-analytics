@@ -98,7 +98,7 @@ export default function CustomsIntelligenceView() {
                           LOGISTICS_MATRIX // TRADE_CUSTOMS_MONITOR
                         </span>
                         <div className="h-px w-10 bg-emerald-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                        МИТНА <span className="text-emerald-600 underline decoration-emerald-600/20 decoration-8 italic uppercase">АНАЛІТИКА</span>
@@ -138,7 +138,7 @@ export default function CustomsIntelligenceView() {
                   key={tab.id} onClick={() => setActiveTab(tab.id as any)}
                   className={cn(
                     "px-8 py-4 rounded-[1.8rem] text-[10px] font-black uppercase tracking-[0.2em] italic border transition-all flex items-center gap-3",
-                    activeTab === tab.id ? "bg-emerald-700 border-emerald-500 text-white shadow-3xl" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"
+                    activeTab === tab.id ? "bg-emerald-600 border-emerald-400 text-white shadow-[0_0_30px_rgba(16,185,129,0.3)]" : "bg-transparent text-slate-500 border-transparent hover:bg-white/5 hover:text-slate-300"
                   )}
                 >
                    <tab.i size={16} />
@@ -156,11 +156,11 @@ export default function CustomsIntelligenceView() {
                       <div className="col-span-12 xl:col-span-8 p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
                          <div className="flex items-center justify-between pb-6 border-b border-white/[0.04]">
                             <h2 className="text-[14px] font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
-                               <TrendingUp size={24} className="text-emerald-500" /> ДИНАМІКА_ТОРГОВИХ_ПОТОКІВ_2026
+                               <TrendingUp size={24} className="text-emerald-500" /> ДИНАМІКА МИТНИХ ОПЕРАЦІЙ 2026
                             </h2>
                             <div className="flex gap-6">
-                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500" /><span className="text-[9px] font-black text-slate-600 uppercase italic">ІМПОРТ</span></div>
-                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-600" /><span className="text-[9px] font-black text-slate-600 uppercase italic">ЕКСПОРТ</span></div>
+                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" /><span className="text-[9px] font-black text-slate-400 uppercase italic">ІМПОРТ_АКТИВНИЙ</span></div>
+                               <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-600" /><span className="text-[9px] font-black text-slate-500 uppercase italic">ЕКСПОРТ_СТРИМАНИЙ</span></div>
                             </div>
                          </div>
                          <div className="h-[450px]">

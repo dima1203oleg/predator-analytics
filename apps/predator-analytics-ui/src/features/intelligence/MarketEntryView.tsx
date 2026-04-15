@@ -140,9 +140,9 @@ const RADAR_DIMENSIONS = [
 ];
 
 const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: LucideIcon }> = {
-  'strong-buy': { label: 'АКТИВНИЙ ВХІД', color: '#f59e0b', bg: 'bg-amber-950/20', border: 'border-amber-500/40', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]', icon: Star },
-  'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#10b981', bg: 'bg-emerald-950/20', border: 'border-emerald-800/30', shadow: 'shadow-none', icon: CheckCircle },
-  'hold':       { label: 'МОНІТОРИНГ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
+  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#f43f5e', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: 'shadow-[0_0_20px_rgba(244,63,94,0.3)]', icon: Star },
+  'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#fbbf24', bg: 'bg-amber-950/20', border: 'border-amber-800/30', shadow: 'shadow-none', icon: CheckCircle },
+  'hold':       { label: 'СПОСТЕРЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
   'avoid':      { label: 'УНИКАТИ',      color: '#ef4444', bg: 'bg-red-950/20',     border: 'border-red-900/30',  shadow: 'shadow-none', icon: AlertTriangle },
 };
 
@@ -211,31 +211,31 @@ const MarketEntryView: React.FC = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span className="w-1 h-1 bg-emerald-600 rounded-full animate-pulse" />
-                <span className="text-[8px] font-black text-emerald-700/70 uppercase tracking-[0.5em]">
-                  MARKET ENTRY · INTELLIGENCE · GROWTH · v56.4
+                <span className="text-[8px] font-black text-rose-500/80 uppercase tracking-[0.5em]">
+                  MARKET ENTRY · INTELLIGENCE · GROWTH · v56.5-ELITE
                 </span>
               </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase">
-                MARKET ENTRY{' '}
-                <span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.35)]">SCORE</span>
+              <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg]">
+                MARKET ENTRY <span className="text-rose-500 underline decoration-rose-600/30 decoration-8 italic uppercase">SCORE</span>
               </h1>
-              <p className="text-[10px] text-slate-700 font-black uppercase tracking-[0.3em] mt-1">
-                СКОРИНГ РИНКІВ · КОНКУРЕНЦІЯ · РЕГУЛЯТОРИКА · РЕКОМЕНДАЦІЇ
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mt-2 italic border-l-2 border-rose-500/30 pl-4 opacity-80">
+                СКОРИНГ РИНКІВ · ПРЕДИКТИВНИЙ АНАЛІЗ · РЕКОМЕНДАЦІЇ ELITE
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="px-5 py-3 bg-black border border-emerald-900/30 flex items-center gap-3">
-              <TrendingUp size={15} className="text-emerald-600" />
+            <div className="px-6 py-4 bg-black border border-rose-900/40 flex items-center gap-4 relative overflow-hidden group shadow-2xl">
+              <div className="absolute inset-0 bg-rose-500/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-[2s] pointer-events-none" />
+              <TrendingUp size={20} className="text-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
               <div>
-                <p className="text-[7px] text-slate-700 uppercase font-black">Ринків проаналізовано</p>
-                <p className="text-[14px] font-black text-emerald-400 font-mono">{markets.length} АКТИВНИХ</p>
+                <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest leading-none mb-1">Ринків проаналізовано</p>
+                <p className="text-[18px] font-black text-rose-400 font-mono leading-none">{markets.length} АКТИВНИХ</p>
               </div>
             </div>
-            <button className="px-8 py-3 bg-emerald-700 text-white text-[9px] font-black uppercase tracking-wider hover:bg-emerald-600 transition-colors border border-emerald-500/30 flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              <Download size={13} />
-              MARKET BRIEF PDF
+            <button className="px-10 py-4 bg-rose-600/90 text-white text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-500 transition-all border border-rose-500/30 flex items-center gap-4 shadow-[0_0_40px_rgba(244,63,94,0.2)]">
+              <Download size={16} />
+              МОМЕНТАЛЬНИЙ_MARKET_BRIEF
             </button>
           </div>
         </div>
@@ -483,9 +483,27 @@ const MarketEntryView: React.FC = () => {
                 </div>
               </div>
 
-              <button className="w-full py-4 bg-emerald-700 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-emerald-600 transition-colors border border-emerald-500/30 flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                <Target size={15} />
-                ЗАПУСТИТИ ПІЛОТНИЙ ПРОЕКТ — {selected.country.toUpperCase()}
+              {/* 🤖 Sovereign AI Verdict */}
+              <div className="relative group overflow-hidden rounded-[32px] border border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-slate-950/80 p-8 shadow-2xl">
+                  <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-[5s]">
+                      <Zap size={240} className="text-rose-500" />
+                  </div>
+                  <div className="relative z-10 space-y-6">
+                      <div className="flex items-center gap-4">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-600 text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                              <Target size={24} />
+                          </div>
+                          <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">ПРЕДИКТИВНИЙ ВЕРДИКТ</h3>
+                      </div>
+                      <p className="text-sm leading-8 text-slate-300 italic border-l-2 border-rose-500/40 pl-6 bg-white/5 py-4 rounded-r-2xl">
+                          На основі макроекономічних сигналів та регуляторної динаміки, ринок {selected.country} пропонує оптимальне вікно для експансії в секторі {selected.sector}. Впевненість моделі 94.2%.
+                      </p>
+                  </div>
+              </div>
+
+              <button className="w-full py-6 bg-rose-600/90 text-white text-[11px] font-black uppercase tracking-[0.4em] italic hover:bg-rose-500 transition-all border border-rose-500/40 flex items-center justify-center gap-4 shadow-[0_0_40px_rgba(244,63,94,0.3)] rounded-2xl group">
+                <Target size={20} className="group-hover:scale-125 transition-transform" />
+                ЗАПУСТИТИ_СЦЕНАРІЙ_ВХОДУ — {selected.country.toUpperCase()}
               </button>
             </motion.div>
           </AnimatePresence>

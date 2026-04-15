@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Zap, Activity, ShieldCheck, Globe, Cpu, MoreHorizontal, Link as LinkIcon, Maximize2 } from 'lucide-react';
 import Nvidia3DVisualizer from './Nvidia3DVisualizer';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 interface NeuralNode {
   id: string;
@@ -19,24 +20,36 @@ interface GlobalNeuralMeshProps {
 }
 
 const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
-  const [nodes, setNodes] = useState<NeuralNode[]>([
-    { id: 'NODE-NV-01', name: 'NVIDIA H100 Cluster', type: 'nvidia-server', status: 'online', load: 42, gpu_temp: 68, latency: 12, region: 'EU-CENTRAL' },
-    { id: 'NODE-NV-02', name: 'NVIDIA A100 Node', type: 'nvidia-server', status: 'busy', load: 89, gpu_temp: 74, latency: 45, region: 'US-EAST' },
-    { id: 'NODE-ED-04', name: 'Edge Oracle V3', type: 'edge-node', status: 'online', load: 15, latency: 8, region: 'LOCAL-MESH' },
-    { id: 'NODE-CL-09', name: 'Predator Shadow Cloud', type: 'cloud-instance', status: 'syncing', load: 0, latency: 120, region: 'GLOBAL' },
-  ]);
+  const { nodes: clusterNodes, activeFailover } = useBackendStatus();
+  const [nodes, setNodes] = useState<NeuralNode[]>([]);
 
   useEffect(() => {
-    if (status?.realtime_metrics) {
-        setNodes(curr => {
-            const next = [...curr];
-            // Simulate load on primary cluster
-            next[0].load = status.realtime_metrics.cpu_load || status.realtime_metrics.cpu_percent || 42;
-            next[0].status = status.health_score > 90 ? 'online' : status.health_score > 70 ? 'busy' : 'offline';
-            return next;
-        });
-    }
-  }, [status]);
+    const nvidia = clusterNodes.find(n => n.id === 'nvidia');
+    const colab = clusterNodes.find(n => n.id === 'colab');
+
+    setNodes([
+      { 
+        id: 'NODE-NV-MASTER', 
+        name: 'NVIDIA MASTER (RTX 4090)', 
+        type: 'nvidia-server', 
+        status: nvidia?.status === 'online' ? (activeFailover ? 'busy' : 'online') : 'offline', 
+        load: status?.realtime_metrics?.cpu_percent || 42, 
+        gpu_temp: status?.realtime_metrics?.gpu_temp || 68,
+        latency: 12, 
+        region: 'LOCAL-MESH' 
+      },
+      { 
+        id: 'NODE-CL-MIRROR', 
+        name: 'COLAB CLOUD MIRROR', 
+        type: 'cloud-instance', 
+        status: colab?.status === 'online' ? (activeFailover ? 'online' : 'syncing') : 'offline', 
+        load: activeFailover ? 85 : 5, 
+        latency: 120, 
+        region: 'GLOBAL' 
+      },
+      { id: 'NODE-ED-04', name: 'Edge Oracle V3', type: 'edge-node', status: 'online', load: 15, latency: 8, region: 'SECURE-GATEWAY' },
+    ]);
+  }, [clusterNodes, activeFailover, status]);
 
   return (
     <div className="p-8 bg-slate-950/60 backdrop-blur-2xl border border-blue-500/20 rounded-[40px] shadow-2xl relative overflow-hidden group">

@@ -133,6 +133,7 @@ const HypothesisEngineView   = lazy(() => import('./features/ai/HypothesisEngine
 const ConversationIntelView  = lazy(() => import('./features/osint/ConversationIntelView'));
 const MarketEntryView        = lazy(() => import('./features/intelligence/MarketEntryView'));
 const WarRoomView            = lazy(() => import('./features/dashboard/WarRoomView'));
+const SovereignIntelHub      = lazy(() => import('./features/ai/SovereignIntelHub'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -327,6 +328,7 @@ export const AppRoutesNew = () => {
             <Route path="/market-entry"       element={<MarketEntryView />} />
             <Route path="/ai-hypothesis"      element={<HypothesisEngineView />} />
             <Route path="/conversation-intel" element={<ConversationIntelView />} />
+            <Route path="/oracle"             element={<SovereignIntelHub />} />
             <Route path="/war-room"           element={<WarRoomView />} />
 
             {/* Fallback */}
