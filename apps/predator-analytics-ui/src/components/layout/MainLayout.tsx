@@ -1,4 +1,10 @@
+/**
+ * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v56.2-TITAN
+ * Підтримка гібридного вузла та суверенного дизайну.
+ */
 import React, { useEffect, useState } from 'react';
+
+
 import { useAtom } from 'jotai';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -303,7 +309,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
           <div className="h-3.5 w-px bg-white/10" />
           <div className="text-[8px] font-black uppercase tracking-[0.25em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            PREDATOR <span style={{ color: 'rgba(239,68,68,0.7)' }}>ELITE</span> v56.1.4
+            PREDATOR <span style={{ color: 'rgba(239,68,68,0.7)' }}>ELITE</span> v56.2-TITAN
           </div>
         </div>
       </motion.div>

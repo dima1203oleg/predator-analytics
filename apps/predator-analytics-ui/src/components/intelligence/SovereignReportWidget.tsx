@@ -1,9 +1,9 @@
 /**
- * 👁️ Sovereign Intelligence Advisor | v56.1.4 Premium Matrix
+ * 👁️ Sovereign Intelligence Advisor | v56.2-TITAN Premium Matrix
  * PREDATOR Глибокий експертний висновок.
  * 
  * Генерація та візуалізація суверенних аналітичних звітів з ШІ-підтримкою.
- * © 2026 PREDATOR Analytics - Повна українізація v56.1.4
+ * © 2026 PREDATOR Analytics - Повна українізація v56.2-TITAN
  */
 
 import React, { useState, useEffect } from 'react';
@@ -69,7 +69,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v56.1.4</span>
+                            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v56.2-TITAN</span>
                             <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
                         <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕРЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>

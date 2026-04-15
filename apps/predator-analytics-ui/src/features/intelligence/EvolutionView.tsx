@@ -179,7 +179,7 @@ const EvolutionView: React.FC = () => {
                                     <TacticalCard variant="holographic" title="ЖИВА ІСТОРІЯ ПАТЧІВ" className="panel-3d h-full">
                                         <div className="space-y-3 pt-2 max-h-[450px] overflow-y-auto custom-scrollbar">
                                             {[
-                                                { version: 'v56.1.4.1', date: 'Сьогодні', changes: 3, type: 'critical' },
+                                                { version: 'v56.2-TITAN.1', date: 'Сьогодні', changes: 3, type: 'critical' },
                                                 { version: 'v54.8.9', date: 'Вчора', changes: 12, type: 'feature' },
                                                 { version: 'v54.2.0', date: '2 дні тому', changes: 7, type: 'performance' },
                                                 { version: 'v53.9.5', date: '4 дні тому', changes: 2, type: 'security' },

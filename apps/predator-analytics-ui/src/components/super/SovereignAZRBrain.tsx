@@ -75,7 +75,7 @@ const SovereignAZRBrain: React.FC<SovereignAZRBrainProps> = ({ status }) => {
             </div>
             <div className="text-right">
               <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Версія Суверенітету</div>
-              <div className="text-xl font-black text-white italic tracking-tighter">v56.1.4-APEX</div>
+              <div className="text-xl font-black text-white italic tracking-tighter">v56.2-TITAN</div>
             </div>
           </div>
 

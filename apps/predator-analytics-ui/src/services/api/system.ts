@@ -16,6 +16,7 @@ export interface SystemStatusResponse {
   version: string;
   environment: string;
   uptime: string;
+  last_sync: string | null;
   services: Array<{
     name: string;
     status: string;
@@ -48,6 +49,12 @@ export interface SystemStatsResponse {
   disk_total: number;
   disk_used: number;
   disk_free: number;
+  gpu_available: boolean;
+  gpu_name: string;
+  gpu_temp: number;
+  gpu_utilization: number;
+  gpu_mem_total: number;
+  gpu_mem_used: number;
   network_bytes_sent: number;
   network_bytes_recv: number;
   active_connections: number;
@@ -60,6 +67,7 @@ export interface SystemStatsResponse {
   indexing_rate: number;
   total_indices: number;
   storage_gb: number;
+  last_sync: string | null;
   timestamp: string;
 }
 
@@ -80,6 +88,7 @@ export interface SystemDiagnosticsResponse {
       failed: number;
     };
     metrics: SystemStatsResponse;
+    predictions: Record<string, any>;
   };
   report_markdown: string;
 }
@@ -109,8 +118,14 @@ export const systemApi = {
   getLogs: async (limit: number = 50) => {
     return (await apiClient.get(`/system/logs/stream?limit=${limit}`)).data;
   },
+  getNeuralLogs: async (limit: number = 20): Promise<any[]> => {
+    return (await apiClient.get('/system/logs/neural?limit=' + limit)).data;
+  },
   getMetricsHistory: async (): Promise<any[]> => {
     return (await apiClient.get('/system/metrics/history')).data;
+  },
+  getNexusScenarios: async (): Promise<any[]> => {
+    return (await apiClient.get('/system/nexus/scenarios')).data;
   },
   getConfig: async () => {
     return (await apiClient.get('/system/config')).data;

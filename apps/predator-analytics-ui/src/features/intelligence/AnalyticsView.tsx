@@ -1,5 +1,5 @@
 /**
- * 🛰️ Semantic Radar Matrix | v56.1.4 Sovereign Matrix
+ * 🛰️ Semantic Radar Matrix | v56.2-TITAN Sovereign Matrix
  * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
  *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
@@ -9,7 +9,7 @@
  * - AI Інсайти та аналіз ризиків
  * - Розширена візуальна аналітика
  *
- * © 2026 PREDATOR Analytics — Повна українізація v56.1.4
+ * © 2026 PREDATOR Analytics — Повна українізація v56.2-TITAN
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -375,13 +375,13 @@ const AnalyticsView: React.FC = () => {
                 <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] bg-rose-500/5 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
             </div>
 
-            {/* ViewHeader v56.1.4 */}
+            {/* ViewHeader v56.2-TITAN */}
             <ViewHeader
                 title="СЕМАНТИЧНИЙ РАДАР"
                 icon={<Network className="text-red-400" />}
-                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v56.1.4']}
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_STATS v56.2-TITAN']}
                 badges={[
-                    { label: 'OSINT_HUB_v56.1.4_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
+                    { label: 'OSINT_HUB_v56.2-TITAN_CERTIFIED', color: 'primary', icon: <Zap size={10} /> },
                     { label: 'CONSTITUTIONAL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                 ]}
                 stats={[

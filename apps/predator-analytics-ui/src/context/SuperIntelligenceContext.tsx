@@ -60,7 +60,7 @@ const INITIAL_SCORES: ArbitrationScore[] = [
 
 // Початкові логи для візалізації потоку
 const INITIAL_LOGS: SIContextLog[] = [
-    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v56.1.4...' },
+    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v56.2-TITAN...' },
     { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Нейронне ядро ініціалізовано. Квантові зв\'язки встановлено.' },
     { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Векторна база даних підключена (Шард 0-5). Індексація 14.2 млн векторів.' },
     { id: 'init-3', timestamp: '10:00:05', type: 'DEBATE', source: 'GEMINI', message: 'Архітектура системи стабільна. Очікую нових векторів загроз для аналізу.' },

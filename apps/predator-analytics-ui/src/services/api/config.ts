@@ -1,4 +1,9 @@
+/**
+ * ⚙️ API CONFIGURATION // КОНФІГУРАЦІЯ API | v56.2-TITAN
+ * Логіка гібридної відмовостійкості (Failover Protocol)
+ */
 import axios, { AxiosError } from 'axios';
+
 
 const getMetaEnv = () => {
     try {

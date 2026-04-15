@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 /**
- * 🛠️ TACTICAL SEARCH WIDGET | v56.1.4.1 (PREDATOR_CORE)
+ * 🛠️ TACTICAL SEARCH WIDGET | v56.2-TITAN.1 (PREDATOR_CORE)
  * ВІДЖЕТ ШВИДКОГО ПОШУКУ (ШВИДКИЙ ДОСТУП ДО СВЯТИЛИЩА)
  * 
  * Тепер у "устрашаючому" тактичному стилі.

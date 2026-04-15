@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.1.4 | Newspaper API — Газета PREDATOR
+ * PREDATOR v56.2-TITAN | Newspaper API — Газета PREDATOR
  * Сервіс для отримання даних газети: компромат, тренди, митниця, алерти.
  */
 

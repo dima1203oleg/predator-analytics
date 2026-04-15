@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AreaChart, Area, X_Axis, Y_Axis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { systemApi } from '@/services/api/system';
 import { format } from 'date-fns';
 
@@ -52,7 +52,7 @@ export const ResourceDynamicsChart: React.FC = () => {
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="white" strokeOpacity={0.03} />
-                    <X_Axis 
+                    <XAxis 
                         dataKey="time" 
                         name="Час"
                         axisLine={false} 
@@ -60,12 +60,13 @@ export const ResourceDynamicsChart: React.FC = () => {
                         tick={{ fill: '#475569', fontSize: 8, fontWeight: 800 }} 
                         interval={Math.floor(history.length / 6)}
                     />
-                    <Y_Axis 
+                    <YAxis 
                         domain={[0, 100]} 
                         axisLine={false} 
                         tickLine={false} 
                         tick={{ fill: '#475569', fontSize: 8, fontWeight: 800 }} 
                     />
+
                     <Tooltip content={<CustomTooltip />} />
                     <Area 
                         type="monotone" 

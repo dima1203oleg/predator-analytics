@@ -1,4 +1,11 @@
+/**
+ * 🌌 ADVANCED TITAN BACKGROUND // ПРЕМІАЛЬНИЙ ФОН TITAN | v56.2
+ * 3D Deep Space + Tactical Nebula System
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
+ */
 import React from 'react';
+
 import { Canvas } from '@react-three/fiber';
 import { Stars, PerspectiveCamera, OrbitControls, Float } from '@react-three/drei';
 import { CyberGrid } from './CyberGrid';

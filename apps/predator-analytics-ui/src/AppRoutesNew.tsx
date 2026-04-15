@@ -304,7 +304,7 @@ export const AppRoutesNew = () => {
             <Route path="/deployment" element={onlyAdmin(<DeploymentView />)} />
             <Route path="/settings" element={<SettingsView />} />
 
-            {/* Клієнтський арсенал — нові маршрути v56.1.4 */}
+            {/* Клієнтський арсенал — нові маршрути v56.2-TITAN */}
             <Route path="/newspaper" element={<NewspaperView />} />
             <Route path="/compromat-person" element={<ComprompatPersonView />} />
             <Route path="/compromat-firm" element={<FirmDossierView />} />

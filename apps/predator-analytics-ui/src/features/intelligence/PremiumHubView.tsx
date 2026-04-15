@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.1.4 | Premium Intelligence Sanctum — Хаб Комерційної Розвідки
+ * PREDATOR v56.2-TITAN | Premium Intelligence Sanctum — Хаб Комерційної Розвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного домінування:
  * - TITAN (Market Dominance): Конкуренти, ринкові прогнози, інсайди
@@ -198,7 +198,7 @@ const HolographicAccessGate: React.FC = () => {
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </button>
-            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v56.1.4 | PREDATOR_NET</p>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v56.2-TITAN | PREDATOR_NET</p>
           </div>
         </div>
       </motion.div>
@@ -267,7 +267,7 @@ const PremiumHubView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
             
-            {/* View Header v56.1.4 */}
+            {/* View Header v56.2-TITAN */}
             <ViewHeader
                 title={
                     <div className="flex items-center gap-8">
@@ -297,7 +297,7 @@ const PremiumHubView: React.FC = () => {
                 ]}
             />
 
-            {/* Persona Switcher & Tactical Nav (v56.1.4) */}
+            {/* Persona Switcher & Tactical Nav (v56.2-TITAN) */}
             <div className="flex flex-wrap items-center justify-between gap-8 bg-[#0b0f1a]/60 backdrop-blur-3xl p-4 rounded-[40px] border border-white/5">
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
                     {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
@@ -384,7 +384,7 @@ const PremiumHubView: React.FC = () => {
                                         </h2>
                                         <div className="flex items-center gap-6">
                                             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(16,185,129,0.3)]">АКТИВНІ_ПРОТОКОЛИ</Badge>
-                                            <span className="text-xs text-slate-500 font-mono">v56.1.4.9-stable</span>
+                                            <span className="text-xs text-slate-500 font-mono">v56.2-TITAN.9-stable</span>
                                         </div>
                                     </div>
                                 </div>
@@ -488,7 +488,7 @@ const PremiumHubView: React.FC = () => {
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em]">МОДУЛЬ_В_ОБРОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
-                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v56.1.4.
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v56.2-TITAN.
                                 </p>
                             </div>
                         </div>

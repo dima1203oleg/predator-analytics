@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.1.4 | Synaptic Discovery Matrix — Консоль Надглибинного Пошуку
+ * PREDATOR v56.2-TITAN | Synaptic Discovery Matrix — Консоль Надглибинного Пошуку
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
  * - Величезний пошуковий рядок з градієнтним бордером та внутрішнім світінням
@@ -216,7 +216,7 @@ export const SearchConsolePage: React.FC = () => {
                 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                     
-                    {/* View Header v56.1.4 */}
+                    {/* View Header v56.2-TITAN */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-8">
@@ -232,7 +232,7 @@ export const SearchConsolePage: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-indigo-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Atom size={12} className="animate-spin-slow" /> 
-                                        НЕЙРО_ПОШУК_v56.1.4
+                                        НЕЙРО_ПОШУК_v56.2-TITAN
                                     </p>
                                 </div>
                             </div>
@@ -246,7 +246,7 @@ export const SearchConsolePage: React.FC = () => {
                         ]}
                     />
 
-                    {/* Massive Search Console Input (v56.1.4 UX) */}
+                    {/* Massive Search Console Input (v56.2-TITAN UX) */}
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -324,7 +324,7 @@ export const SearchConsolePage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Search Modes (v56.1.4 Visuals) */}
+                        {/* Search Modes (v56.2-TITAN Visuals) */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#6366f1' },

@@ -283,7 +283,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-3 px-4 py-1.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest font-mono">AZR_RUNTIME_v56.1.4.1_STABLE</span>
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest font-mono">AZR_RUNTIME_v56.2-TITAN.1_STABLE</span>
               </div>
               {constitution?.active && (
                 <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">

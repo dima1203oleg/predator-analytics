@@ -536,7 +536,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-[11px] font-black text-white uppercase tracking-widest mb-1">Architecture_Integrity</div>
-            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v56.1.4.1</div>
+            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v56.2-TITAN.1</div>
           </div>
         </div>
 

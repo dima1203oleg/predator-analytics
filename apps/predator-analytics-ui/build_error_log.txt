@@ -1,0 +1,30 @@
+
+> predator-analytics-ui@56.1.4 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+
+/noise.png referenced in /noise.png didn't resolve at build time, it will remain unchanged to be resolved at runtime
+✓ 5160 modules transformed.
+x Build failed in 12.99s
+error during build:
+src/features/infrastructure/components/ResourceDynamicsChart.tsx (2:26): "X_Axis" is not exported by "node_modules/recharts/es6/index.js", imported by "src/features/infrastructure/components/ResourceDynamicsChart.tsx".
+file: /Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/infrastructure/components/ResourceDynamicsChart.tsx:2:26
+
+1: import React, { useEffect, useState } from 'react';
+2: import { AreaChart, Area, X_Axis, Y_Axis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+                             ^
+3: import { systemApi } from '@/services/api/system';
+4: import { format } from 'date-fns';
+
+    at getRollupError (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at Module.error (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:17022:16)
+    at Module.traceVariable (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:17478:29)
+    at ModuleScope.findVariable (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:15141:39)
+    at ReturnValueScope.findVariable (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:5688:38)
+    at FunctionBodyScope.findVariable (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:5688:38)
+    at Identifier.bind (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:5462:40)
+    at CallExpression.bind (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:2825:28)
+    at CallExpression.bind (file:///Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/rollup/dist/es/shared/node-entry.js:12172:15)

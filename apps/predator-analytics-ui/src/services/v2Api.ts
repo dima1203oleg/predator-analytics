@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.1.4 — v2 API Client
+ * PREDATOR v56.2-TITAN — v2 API Client
  * Real backend integration for CERS, Behavioral, Pipeline, Signals, Entities.
  * All endpoints hit /api/v2/* (proxied to backend:8000 or 194.177.1.240:9080)
  */

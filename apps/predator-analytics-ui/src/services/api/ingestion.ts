@@ -26,7 +26,7 @@ export interface JobStatusResponse {
 
 export const ingestionApi = {
     /**
-     * Завантаження файлу для інгестування (v56.1.4 API)
+     * Завантаження файлу для інгестування (v56.2-TITAN API)
      */
     uploadFile: async (file: File, datasetName?: string, description?: string): Promise<UploadResponse> => {
         const formData = new FormData();

@@ -345,7 +345,7 @@ const SystemVerificationSuite: React.FC = () => {
         breadcrumbs={['System', 'Verification', 'Control Case']}
         stats={[
           { label: 'Pipeline State', value: isProcessing ? 'RUNNING' : 'IDLE', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
-          { label: 'Data Version', value: 'v56.1.4-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
+          { label: 'Data Version', value: 'v56.2-TITAN-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
           { label: 'Safety Index', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
         ]}
       />

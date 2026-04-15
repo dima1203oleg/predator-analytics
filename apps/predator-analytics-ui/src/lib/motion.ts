@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.1.4 — Канонічні пресети анімацій (Framer Motion)
+ * PREDATOR v56.2-TITAN — Канонічні пресети анімацій (Framer Motion)
  * Єдине джерело для всіх motion-конфігурацій.
  */
 

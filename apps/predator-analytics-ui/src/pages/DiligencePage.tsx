@@ -191,7 +191,7 @@ const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarP
     ];
 };
 
-// --- MOCK DATA FALLBACK (v56.1.4-ELITE) ---
+// --- MOCK DATA FALLBACK (v56.2-TITAN-ELITE) ---
 const MOCK_ENTITIES: RiskEntity[] = [
   { ueid: '1', edrpou: '38210342', name: 'ТОВ "ЕНЕРДЖИ-ГРУП"', risk_score: 92, risk_level: 'critical', status: 'active' },
   { ueid: '2', edrpou: '41092384', name: 'ПРАТ "ТЕХНО-ВЕСТ"', risk_score: 75, risk_level: 'high', status: 'active' },
@@ -381,7 +381,7 @@ export default function DiligencePage() {
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-200">
-                                OSINT-HUB v56.1.4 | Контрагентна розвідка
+                                OSINT-HUB v56.2-TITAN | Контрагентна розвідка
                             </span>
                             <span
                                 className={cn(
@@ -437,7 +437,7 @@ export default function DiligencePage() {
                         <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
                         <MetricTile 
                             label="Статус" 
-                            value="v56.1.4 HUB" 
+                            value="v56.2-TITAN HUB" 
                             compact 
                         />
                     </div>

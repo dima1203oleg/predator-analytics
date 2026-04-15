@@ -1,5 +1,5 @@
 /**
- * 🧠 PREDATOR Strategic Intelligence Center | v56.1.4
+ * 🧠 PREDATOR Strategic Intelligence Center | v56.2-TITAN
  * МОДУЛЬ СТРАТЕГІЧНОЇ РОЗВІДКИ ТА КОГНІТИВНОГО МОНІТОРИНГУ
  *
  * Центр управління AI-агентами та стратегічного аналізу.
@@ -150,7 +150,7 @@ const IntelligencePage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-indigo-500/50" />
                                         <span className="text-[10px] font-mono font-black text-indigo-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                            КОГНІТИВНЕ_ЯДРО // v56.1.4
+                                            КОГНІТИВНЕ_ЯДРО // v56.2-TITAN
                                         </span>
                                     </div>
                                 </div>
