@@ -97,9 +97,11 @@ class Settings(BaseSettings):
 
     # AI / LiteLLM / MCP
     LITELLM_API_BASE: str = "http://localhost:4000/v1"
-    OLLAMA_MODEL: str = "llama3"
+    OLLAMA_MODEL: str = "llama4"
     MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"
-    LITELLM_MODEL: str = "ollama/llama3"
+    LITELLM_MODEL: str = "ollama/llama4"
+    LITELLM_REASONING_MODEL: str = "ollama/deepseek-r1:latest"
+    LITELLM_ELITE_MODEL: str = "ollama/qwen3.5:latest"
     AI_ENGINE_URL: str = "http://localhost:9050"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     COPILOT_STREAM_BUFFER: int = 100

@@ -1064,8 +1064,8 @@ export const premiumLocales = {
   // Semantic Radar (Analytics View)
   // ============================================
   semanticRadar: {
-    title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ",
-    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GRAFT DATA v45'],
+    title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ ELITE",
+    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v56.5'],
     stats: {
       nodes: 'Вузли',
       edges: 'Зв\'язки',
@@ -1087,13 +1087,13 @@ export const premiumLocales = {
     },
     entityHud: {
       params: 'ПАРАМЕТРИ ОБ\'ЄКТА',
-      aiInsight: 'AI ІНСАЙТ v45',
+      aiInsight: 'AI ІНСАЙТ ELITE-2026',
       safe: 'БЕЗПЕЧНО',
       risk: 'РИЗИК',
       selectNode: 'Виберіть вузол для аналізу',
       openCase: 'Відкрити Кейс',
       type: 'ТИП ОБ\'ЄКТА',
-      aiInsightText: 'Об\'єкт {name} має високу щільність непрямих зв\'язків з ризиковими офшорними юрисдикціями через 3-тіх осіб. Рекомендується провести аудит фінансових потоків у секторі {type}.',
+      aiInsightText: 'Об\'єкт {name} проаналізовано DeepSeek R1 та Llama 4. Виявлено стратегічну вразливість у секторі {type}. Рекомендується негайний аудит фінансових потоків через суверенні вузли.',
     },
   },
 
@@ -1199,6 +1199,11 @@ export const premiumLocales = {
       descriptionHighlight: 'найпотужнішого',
       descriptionEnd: 'інструменту конкурентної розвідки. Аналізуйте ціни, ринкові частки, стратегії та слабкі місця ваших конкурентів.',
       upgrade: 'ОНОВИТИ ДО ПРЕМІУМ',
+      forgeView: {
+        title: 'КУЗНЯ ЕВОЛЮЦІЇ ELITE',
+        subtitle: 'Ковальський Цех Нейронних Моделей v56.5',
+        liveActive: 'АКТИВНЕ КУВАННЯ',
+      },
       features: {
         analysis: 'Аналіз конкурентів у реальному часі',
         monitoring: 'Моніторинг цін та маржі',
@@ -1569,8 +1574,8 @@ export const premiumLocales = {
   // Evolution Engine
   // ============================================
   evolution: {
-    title: 'ДВИГУН ЕВОЛЮЦІЇ',
-    subtitle: 'Цикл Автономного Самовдосконалення v45_Активний',
+    title: 'ДВИГУН ЕВОЛЮЦІЇ ELITE',
+    subtitle: 'Цикл Автономного Самовдосконалення v56.5_Активний',
     stats: {
       azrCycles: 'AZR_CYCLES',
       ledgerEntries: 'LEDGER_ENTRIES',

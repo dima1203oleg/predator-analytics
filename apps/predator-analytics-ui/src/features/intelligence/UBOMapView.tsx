@@ -260,46 +260,56 @@ const UBOMapView: React.FC = () => {
       <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
         {/* ── ЗАГОЛОВОК ELITE ── */}
-        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
-          <div className="flex items-center gap-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
-              <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                <Network size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-600 rounded-full border-4 border-black animate-pulse" />
+        <ViewHeader
+          title={
+            <div className="flex items-center gap-10">
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
+                <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all cursor-crosshair">
+                  <Network size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-600 rounded-full border-4 border-black animate-pulse" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-4 mb-3">
+                  <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
+                  <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
+                    UBO · SOVEREIGN BENEFICIAL INTEL · v56.5-ELITE
+                  </span>
+                </div>
+                <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                  БЕНЕФІЦІАРНА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КАРТА</span>
+                </h1>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-4 mb-3">
-                <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
-                <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
-                  UBO · SOVEREIGN BENEFICIAL INTEL · v56.5-ELITE
-                </span>
-              </div>
-              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
-                БЕНЕФІЦІАРНА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КАРТА</span>
-              </h1>
-              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
-                ГРАФІЧНИЙ АНАЛІЗ ЛАНЦЮГІВ ВЛАСНОСТІ · ВИЯВЛЕННЯ ТІНЬОВОГО КОНТРОЛЮ · PEP ТРЕКЕР
-              </p>
-            </div>
-          </div>
+          }
+          breadcrumbs={['INTEL', 'GOVERNANCE', 'UBO_NEXUS']}
+          badges={[
+            { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
+            { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Star size={10} /> },
+          ]}
+          stats={[
+            { label: 'РІВНІВ СТРУКТУРИ', value: '4_TIERS', icon: <Network />, color: 'gold' },
+            { label: 'PEP_DETECTION', value: '02_LEADS', icon: <Fingerprint />, color: 'warning' },
+            { label: 'OFFSHORE_NODES', value: '03_UNITS', icon: <Globe />, color: 'danger' },
+            { label: 'RISK_SCORE', value: '94.8%', icon: <Target />, color: 'danger' },
+          ]}
+        />
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-6 px-10 py-6 bg-black border-2 border-white/5 rounded-3xl shadow-3xl group hover:border-yellow-500/20 transition-all">
-              <Search size={24} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
-              <input
-                value={company}
-                onChange={e => setCompany(e.target.value)}
-                placeholder="ЄДРПОУ / НАЗВА..."
-                className="bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono w-64 italic uppercase"
-              />
-            </div>
-            <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic">
-              <Crosshair size={24} />
-              SCAN_UBO_NEXUS
-            </button>
+        <div className="flex items-center justify-end gap-6">
+          <div className="flex items-center gap-6 px-10 py-6 bg-black border-2 border-white/5 rounded-3xl shadow-3xl group hover:border-yellow-500/20 transition-all">
+            <Search size={24} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
+            <input
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              placeholder="ЄДРПОУ / НАЗВА..."
+              className="bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono w-64 italic uppercase"
+            />
           </div>
+          <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic">
+            <Crosshair size={24} />
+            SCAN_UBO_NEXUS
+          </button>
         </div>
 
         {/* ── МЕТРИКИ ELITE ── */}

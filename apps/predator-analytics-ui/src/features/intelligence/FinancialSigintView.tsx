@@ -109,52 +109,66 @@ export default function FinancialSigintView() {
       <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40">
         <AdvancedBackground />
         <CyberGrid color="rgba(212, 175, 55, 0.04)" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-[800px] bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.08),transparent_70%)] pointer-events-none" />
         
         <div className="relative z-10 max-w-[1850px] mx-auto p-4 sm:p-12 space-y-16 flex flex-col items-stretch">
            
            {/* HEADER ELITE HUD */}
-           <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-12 py-10 border-b border-white/[0.04]">
-              <div className="flex items-center gap-12">
-                 <div className="relative group">
-                    <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
-                    <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
-                       <Landmark size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
-                    </div>
+           <ViewHeader
+             title={
+               <div className="flex items-center gap-12">
+                  <div className="relative group">
+                     <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
+                        <Landmark size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
+                     </div>
+                  </div>
+                  <div className="space-y-4">
+                     <div className="flex items-center gap-6">
+                        <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                          FINANCIAL_SIGINT // NEURAL_MONEY_RADAR
+                        </span>
+                        <div className="h-px w-16 bg-yellow-500/20" />
+                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                     </div>
+                     <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
+                       ФІНАНСОВА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕКЗЕКУЦІЯ</span>
+                     </h1>
+                  </div>
+               </div>
+             }
+             breadcrumbs={['INTEL', 'FINANCIAL', 'SIGINT_ARRAY']}
+             badges={[
+               { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
+               { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Landmark size={10} /> },
+             ]}
+             stats={[
+               { label: 'LIVE_THREATS', value: liveAlerts, icon: <Siren />, color: 'danger', animate: true },
+               { label: 'SIGINT_SCAN', value: 'ACTIVE', icon: <Radar />, color: 'primary' },
+               { label: 'BLOCK_CORE', value: 'SYNC', icon: <Zap />, color: 'warning' },
+               { label: 'ASSET_LOCK', value: '$41.8M', icon: <Lock />, color: 'gold' },
+             ]}
+           />
+
+           <div className="flex justify-end gap-6">
+              <button 
+               onClick={handleRefresh} 
+               className={cn(
+                 "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
+                 refreshing && "animate-spin cursor-not-allowed opacity-50"
+               )}
+              >
+                 <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
+              </button>
+              <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
+                 <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
+                    <Wallet size={24} /> ГЕНЕРУВАТИ_РЕЄСТР_SIGINT
                  </div>
-                 <div className="space-y-4">
-                    <div className="flex items-center gap-6">
-                       <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                         FINANCIAL_SIGINT // NEURAL_MONEY_RADAR
-                       </span>
-                       <div className="h-px w-16 bg-yellow-500/20" />
-                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
-                    </div>
-                    <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                      ФІНАНСОВА <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕКЗЕКУЦІЯ</span>
-                    </h1>
-                    <div className="flex items-center gap-6 text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-8 italic border-l-4 border-yellow-500/30 pl-10 opacity-95">
-                       <Activity size={16} className="text-yellow-500" /> 
-                       <span>ТРАНЗАКЦІЙНИЙ МОНІТОРИНГ ТА ОФШОРНИЙ КОНТРОЛЬ</span>
-                       <span className="text-slate-900 mx-2">|</span>
-                       <span className="text-rose-600 animate-pulse flex items-center gap-3 bg-rose-600/5 px-4 py-2 rounded-2xl border border-rose-600/20">
-                          <Siren size={16} /> LIVE_THREATS: {liveAlerts} СИГНАЛІВ_РИЗИКУ
-                       </span>
-                    </div>
-                 </div>
-              </div>
-              <div className="flex items-center gap-6">
-                 <button 
-                  onClick={handleRefresh} 
-                  className={cn(
-                    "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
-                    refreshing && "animate-spin cursor-not-allowed opacity-50"
-                  )}
-                 >
-                    <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-                 </button>
-                 <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
+                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
+              </button>
+           </div>
+bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                     <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
                        <Wallet size={24} /> ГЕНЕРУВАТИ_РЕЄСТР_SIGINT
                     </div>

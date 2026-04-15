@@ -42,6 +42,21 @@ class AIService:
         return "AI Error: Unexpected path"
 
     @staticmethod
+    async def get_reasoning(
+        prompt: str,
+        context: dict[str, Any] | None = None
+    ) -> str:
+        """Виклик DeepSeek R1 для глибокого міркування та аналізу."""
+        messages = [{"role": "user", "content": prompt}]
+        if context:
+            messages.insert(0, {"role": "system", "content": f"Context: {context}"})
+        
+        return await AIService.chat_completion(
+            messages, 
+            model=settings.LITELLM_REASONING_MODEL
+        )
+
+    @staticmethod
     async def generate_insight(prompt: str, context: dict[str, Any] | None = None) -> str: # Властивості словника можуть бути довільними
         """Виклик Sovereign Advisor через MCP Router (v55.2).
         Використовується для складної аналітики та інтерпретації ризиків.
