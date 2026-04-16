@@ -85,10 +85,13 @@ const MOCK_MANIFESTS: ManifestItem[] = [
   }
 ];
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export default function CargoManifestPremium() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedManifest, setSelectedManifest] = useState<ManifestItem | null>(MOCK_MANIFESTS[0]);
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -140,8 +143,10 @@ export default function CargoManifestPremium() {
             badges={[
               { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
               { label: 'SOVEREIGN_ELITE', color: 'rose', icon: <Siren size={10} /> },
+              { label: `ВУЗОЛ_${nodeSource}`, color: isOffline ? 'danger' : 'emerald', icon: <Activity size={10} /> },
+              { label: isOffline ? `ЗЦІЛЕННЯ_${Math.round(healingProgress)}%` : 'CONNECTION_STABLE', color: isOffline ? 'danger' : 'emerald', icon: <RefreshCw size={10} className={isOffline ? "animate-spin" : ""} /> },
             ]}
-            stats={[
+			stats={[
               { label: 'ПЕРЕВІРЕНО_24H', value: '1,842', icon: <FileSearch />, color: 'gold' },
               { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '291', icon: <ShieldAlert />, color: 'danger' },
               { label: 'АРХІТЕКТУРА_РИЗИКУ', value: '54%', icon: <Activity />, color: 'danger', animate: true },
@@ -345,10 +350,14 @@ export default function CargoManifestPremium() {
 
                         <div className="relative z-10 mt-16 pt-12 border-t-2 border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-12">
                            <div className="flex items-center gap-6">
-                              <div className="w-5 h-5 rounded-full bg-rose-600 animate-pulse shadow-[0_0_20px_#e11d48]" />
+                              <div className={cn("w-5 h-5 rounded-full animate-pulse shadow-lg", isOffline ? "bg-rose-600 shadow-rose-600/50" : "bg-emerald-500 shadow-emerald-500/50")} />
                               <div className="space-y-1">
-                                 <p className="text-[11px] font-black text-yellow-500 uppercase italic tracking-widest leading-none">FORENSIC_CORE_ACTIVE</p>
-                                 <p className="text-[9px] font-black text-slate-800 uppercase italic tracking-[0.4em]">DEEP_SCAN_IN_STABLE_STATE</p>
+                                 <p className={cn("text-[11px] font-black uppercase italic tracking-widest leading-none", isOffline ? "text-yellow-500" : "text-emerald-500")}>
+                                   {isOffline ? 'ZROK_FAILOVER_ACTIVE' : 'FORENSIC_CORE_ACTIVE'}
+                                 </p>
+                                 <p className="text-[9px] font-black text-slate-500 uppercase italic tracking-[0.4em]">
+                                   {isOffline ? `MOCK_DATA_SOURCE // NODE: ${nodeSource}` : `LIVE_PRODUCTION_DATA // NODE: ${nodeSource}`}
+                                 </p>
                               </div>
                            </div>
                            <div className="flex gap-6 w-full md:w-auto">
