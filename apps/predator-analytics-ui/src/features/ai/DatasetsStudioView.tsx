@@ -32,7 +32,7 @@ const DatasetsStudioView = () => {
       <AdvancedBackground />
       
       <ViewHeader 
-        title="СТУДІЯ ДАТАСЕТІВ v55"
+        title="СТУДІЯ ДАТАСЕТІВ v56.5-ELITE"
         subtitle="Керування даними для навчання ШІ-моделей та OSINT-аналітики"
         icon={<Database size={24} className="text-cyan-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ДАТАСЕТИ']}

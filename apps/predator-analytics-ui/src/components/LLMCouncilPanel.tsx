@@ -1,10 +1,10 @@
 /**
- * NEURAL_COUNCIL Arbitrator | v55 Premium Edition
+ * NEURAL_COUNCIL Arbitrator | v56.5-ELITE Premium Edition
  * 
  * Багатомодельна система арбітражу та синтезу знань.
  * Координує роботу провідних ШІ (Gemini, Llama, GPT, Claude, Sentinel).
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
@@ -39,7 +39,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
     const availableModels = useMemo(() => [
         { id: 'gemini', name: 'GEMINI_2.0_ULTRA', icon: <Sparkles size={16} />, color: 'blue', desc: 'Мутимодальний геній' },
         { id: 'groq', name: 'LLAMA_3_70B_GROQ', icon: <Zap size={16} />, color: 'orange', desc: 'Ультра-швидка логіка' },
-        { id: 'ops-sentinel-v45', name: 'OPS_SENTINEL_V55', icon: <Shield size={16} />, color: 'emerald', desc: 'Безпека та інфраструктура' },
+        { id: 'ops-sentinel-v45', name: 'OPS_SENTINEL_V56.5', icon: <Shield size={16} />, color: 'emerald', desc: 'Безпека та інфраструктура' },
         { id: 'gpt4', name: 'GPT_4O_PREMIUM', icon: <Brain size={16} />, color: 'purple', desc: 'Глибоке розуміння контексту' },
         { id: 'claude', name: 'CLAUDE_3.5_SONNET', icon: <Target size={16} />, color: 'rose', desc: 'Точність та стиль' },
     ], []);
@@ -79,7 +79,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
         setIsDeliberating(true);
         setError(null);
         setResult(null);
-        setQuery("Strategic Autonomous Analysis_v56.2-TITAN_Initiated...");
+        setQuery("Strategic Autonomous Analysis_v56.5-ELITE_Initiated...");
 
         try {
             setPhase('GENERATING');
@@ -99,7 +99,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
     return (
         <div className="flex flex-col gap-10 min-h-[900px] animate-in fade-in duration-800">
 
-            {/* Neural Header v55 */}
+            {/* Neural Header v56.5-ELITE */}
             <div className="p-10 bg-slate-950/40 border border-white/5 rounded-[48px] backdrop-blur-3xl shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
                 <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
@@ -117,7 +117,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                         <div className="flex flex-wrap items-center gap-6">
                             <div className="flex items-center gap-3 px-4 py-1.5 bg-cyan-500/10 rounded-full border border-cyan-500/20">
                                 <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse" />
-                                <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest font-mono">ARBITRATOR_v56.2-TITAN_ACTIVE</span>
+                                <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest font-mono">ARBITRATOR_v56.5-ELITE_ACTIVE</span>
                             </div>
                             {result && (
                                 <div className="flex items-center gap-8 pl-8 border-l border-white/10">
@@ -303,7 +303,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                 </div>
                                 <div className="mt-20 text-center relative z-10">
                                     <h4 className="text-4xl font-black text-slate-700 uppercase tracking-tighter mb-6 font-display group-hover:text-slate-500 transition-colors">Council Standby</h4>
-                                    <p className="text-[11px] text-slate-600 font-black uppercase tracking-[0.5em] max-w-sm mx-auto leading-loose opacity-60">Очікування ініціалізації нейронного ланцюга арбітражу знань v55.</p>
+                                    <p className="text-[11px] text-slate-600 font-black uppercase tracking-[0.5em] max-w-sm mx-auto leading-loose opacity-60">Очікування ініціалізації нейронного ланцюга арбітражу знань v56.5-ELITE.</p>
                                 </div>
                             </motion.div>
                         )}

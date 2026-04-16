@@ -1,5 +1,5 @@
 /**
- * 🔍 PREDATOR Semantic Search | v56.2-TITAN
+ * 🔍 PREDATOR Semantic Search | v56.5-ELITE
  * НЕЙРОФОРМНИЙ ПОШУКОВИЙ ДВИГУН (INTEL NEXUS SEARCH)
  * 
  * Гібридний OSINT-пошук: Реєстри, Митниця, Медіа, Санкції, Graph.
@@ -77,7 +77,7 @@ const SearchPage: React.FC = () => {
                                          TITAN_OSINT // SEARCH_DEEP
                                        </span>
                                        <div className="h-px w-10 bg-red-600/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                                         ПОШУК <span className="text-red-600 underline decoration-red-600/20 decoration-8">ПРЕДАТОРА</span>
@@ -154,7 +154,7 @@ const SearchPage: React.FC = () => {
                                 </div>
                                 <div className="text-center space-y-4">
                                     <span className="text-2xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">АНАЛІЗ_КРИМІНАЛЬНИХ_ВЕКТОРІВ</span>
-                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_IN_PROGRESS_v56.2</p>
+                                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_IN_PROGRESS_v56.5</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (

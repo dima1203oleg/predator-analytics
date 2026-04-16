@@ -1,5 +1,5 @@
 /**
- * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v56.2-TITAN
+ * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v56.5-ELITE
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
  * Повний збір даних про суб'єкта: Реєстри, Митниця, Податки,
@@ -86,7 +86,7 @@ export default function FirmDossierView() {
                           CORPORATE_INTEL // DOSSIER_360
                         </span>
                         <div className="h-px w-10 bg-sky-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІРМИ</span>

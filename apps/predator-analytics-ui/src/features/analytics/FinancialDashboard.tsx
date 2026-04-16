@@ -23,6 +23,9 @@ import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { useEffect } from 'react';
 
 interface FinancialDashboardProps {
   ueid?: string;
@@ -31,6 +34,7 @@ interface FinancialDashboardProps {
 export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: propUeid }) => {
   const { ueid: paramUeid } = useParams<{ ueid: string }>();
   const ueid = propUeid || paramUeid;
+  const { isOffline, activeFailover, sourceLabel } = useBackendStatus();
 
   const { data: metrics, isLoading, isError } = useQuery({
     queryKey: ['financials', ueid],
@@ -38,6 +42,19 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
     enabled: !!ueid,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });
+
+  useEffect(() => {
+    if (isError) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'FinancialAnalytics',
+          action: 'FetchCERSMetrics',
+          message: 'Не вдалося отримати фінансові показники CERS для суб\'єкта',
+          severity: 'critical'
+        }
+      }));
+    }
+  }, [isError]);
 
   if (isLoading) {
     return (
@@ -92,11 +109,14 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
         <div className="flex justify-between items-end border-b border-white/5 pb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Badge variant="outline" className="border-blue-500/30 text-blue-400">FINANCE_CORE_v56</Badge>
-              <span className="text-slate-500 font-mono text-xs tracking-widest uppercase">Entity ID: {ueid}</span>
+              <Badge variant="outline" className={cn("border-blue-500/30 text-blue-400 font-black", isOffline && "border-amber-500/30 text-amber-500")}>
+                {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v56'}
+              </Badge>
+              <span className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">NODE: {sourceLabel} // ID: {ueid}</span>
+              {activeFailover && <Badge className="bg-amber-600 text-black text-[8px] animate-pulse">FAILOVER_MIRROR</Badge>}
             </div>
             <h1 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter">
-              💰 Фінансові <span className="text-blue-500">Метрики</span>
+              💰 Фінансові <span className={cn(isOffline ? "text-amber-500" : "text-blue-500")}>Метрики</span>
             </h1>
           </div>
           <div className="hidden lg:block text-right">
@@ -187,6 +207,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
             </table>
           </div>
         </TacticalCard>
+
+        {/* System Diagnostics */}
+        <div className="mt-12">
+          <DiagnosticsTerminal className="w-full" />
+        </div>
       </div>
     </div>
   );

@@ -48,18 +48,18 @@ const SuperIntelligenceView: React.FC = () => {
         <div className={`space-y-8 animate-in fade-in duration-500 w-full mx-auto relative z-10 ${isFocusMode ? 'fixed inset-0 z-[100] bg-slate-950 p-0 m-0 max-w-none backdrop-blur-3xl' : 'max-w-[1600px] pb-24'}`}>
             {!isFocusMode && (
                 <ViewHeader
-                    title="СУПЕРІНТЕЛЕКТ (ЯДРО E-ACC)"
-                    icon={<Zap size={20} className="icon-3d-purple" />}
-                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'ФАЗА ЕБОЛЮЦІЇ']}
+                    title="СУПЕРІНТЕЛЕКТ (ЯДРО GLM-5.1)"
+                    icon={<Zap size={20} className="icon-3d-yellow" />}
+                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'СУВЕРЕННИЙ_ШІ']}
                     stats={[
                         { label: 'Статус', value: isActive ? 'АКТИВНИЙ' : 'ГОТОВИЙ', icon: <Activity size={14} />, color: isActive ? 'success' : 'warning', animate: isActive },
                         {
-                            label: 'Фаза Системи',
-                            value: stage === 'IDLE' ? 'ОЧІКУВАННЯ' : stage === 'DISCOVERY' ? 'ПОШУК' : stage === 'DEBATE' ? 'ДЕБАТИ' : stage === 'ARBITRATION' ? 'АРБІТРАЖ' : stage === 'NAS_IMPLEMENTATION' ? 'СИНТЕЗ NAS' : 'ВПРОВАДЖЕННЯ',
-                            icon: <BrainCircuit size={14} />,
-                            color: stage === 'DEBATE' ? 'warning' : stage === 'ARBITRATION' ? 'primary' : stage === 'NAS_IMPLEMENTATION' ? 'cyan' : 'success'
+                            label: 'Джерело Node',
+                            value: 'NVIDIA_ZROK',
+                            icon: <Server size={14} />,
+                            color: 'primary'
                         },
-                        { label: 'Еволюційний Стек', value: `#${cycleCount}`, icon: <GitBranch size={14} />, color: 'primary' },
+                        { label: 'Версія ELITE', value: 'v56.5', icon: <Cpu size={14} />, color: 'primary' },
                     ]}
                     actions={
                         <div className="flex flex-wrap gap-4 w-full sm:w-auto">

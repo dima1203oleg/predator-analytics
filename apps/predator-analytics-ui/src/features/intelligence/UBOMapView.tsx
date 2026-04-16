@@ -16,8 +16,10 @@ import {
   Crosshair, Zap, Lock, Star, Target, Radar, Cpu
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { intelligence } from '@/services/dataService';
+import { ViewHeader } from '@/components/ViewHeader';
 
-// ─── MOCK DATA ────────────────────────────────────────────
+// ─── TYPES ──────────────────────────────────────────────────────────
 
 type UBONode = {
   id: string;
@@ -241,15 +243,79 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
 // ─── ГОЛОВНИЙ КОМПОНЕНТ ────────────────────────────────────
 
 const UBOMapView: React.FC = () => {
+  const [uboData, setUboData] = useState<UBONode | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<ActiveView>('ubo-tree');
   const [searchQuery, setSearchQuery] = useState('');
   const [company, setCompany] = useState('ТОВ "АГРО-ЛІДЕР ГРУП"');
+
+  const fetchUboData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await intelligence.getUBOMap('12345678');
+      if (result) {
+        setUboData(result);
+        setCompany(result.name);
+      } else {
+        setError('Дані про бенефіціарів відсутні або недоступні');
+      }
+    } catch (err) {
+      console.error('UBO Fetch Error:', err);
+      setError('Помилка з\'єднання з сервером розвідки');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchUboData();
+  }, [fetchUboData]);
 
   const views: Array<{ id: ActiveView; label: string; icon: React.ElementType; badge?: string }> = [
     { id: 'ubo-tree',       label: 'UBO_STRUCTURE',       icon: Network,      badge: 'ENHANCED' },
     { id: 'pep-tracker',    label: 'PEP_INTEL',           icon: Fingerprint,  badge: 'LIVE' },
     { id: 'shadow-director', label: 'SHADOW_DETECTOR',     icon: Eye,          badge: 'AI_CORE' },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#020202] flex items-center justify-center">
+        <div className="text-center space-y-8">
+            <div className="relative inline-block">
+                <div className="absolute inset-0 bg-yellow-500/20 blur-4xl animate-pulse" />
+                <Radar className="text-yellow-500 animate-spin-slow relative" size={80} />
+            </div>
+            <div className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.5em] animate-pulse italic">
+                Scanning_Beneficiary_Nodes ... Initializing_Intel_Link
+            </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !uboData) {
+    return (
+      <div className="min-h-screen bg-[#020202] flex items-center justify-center p-12">
+        <div className="max-w-xl w-full bg-red-950/10 border-2 border-red-500/20 p-16 rounded-[4rem] text-center space-y-10 backdrop-blur-3xl">
+           <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center mx-auto border border-red-500/30">
+             <AlertTriangle className="text-red-500" size={48} />
+           </div>
+           <div className="space-y-4">
+             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">КРИТИЧНИЙ ЗБІЙ РОЗВІДКИ</h2>
+             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs leading-relaxed">{error || 'НЕВІДОМА ПОМИЛКА ЯДРА'}</p>
+           </div>
+           <button 
+             onClick={() => fetchUboData()}
+             className="w-full py-6 bg-red-600 text-white font-black uppercase tracking-[0.4em] rounded-[2rem] hover:bg-red-500 transition-all shadow-[0_20px_40px_-10px_rgba(220,38,38,0.4)] italic scale-105 active:scale-95"
+           >
+             ПЕРЕЗАПРОСИТИ_ДАНІ
+           </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-slate-200 font-sans pb-32 relative overflow-hidden bg-[#020202]">
@@ -382,7 +448,7 @@ const UBOMapView: React.FC = () => {
                     </button>
                   </div>
                   <div className="overflow-x-auto pb-10 custom-scrollbar relative z-10">
-                    <UBONodeCard node={MOCK_UBO_TREE} depth={0} />
+                    <UBONodeCard node={uboData} depth={0} />
                   </div>
                 </div>
 

@@ -1,4 +1,4 @@
-# Predator Analytics v55.0 - Production Docker Compose
+# Predator Analytics v56.5-ELITE - Production Docker Compose
 # Single network: predator-network | No hardcoded secrets | No duplicates
 
 services:
@@ -388,7 +388,7 @@ services:
     profiles: ["local", "server"]
 
   orchestrator:
-    image: predator-orchestrator:v55
+    image: predator-orchestrator:v56.5-elite
     build:
       context: .
       dockerfile: apps/self-improve-orchestrator/Dockerfile

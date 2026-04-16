@@ -1,5 +1,5 @@
 /**
- * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v56.2-TITAN
+ * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v56.5-ELITE
  * PREDATOR Analytics — Tactical Influence Mapping
  * 
  * Хто під ким стоїть? Карта реального впливу, бенефіціарів та "акціонерів" українського ринку.
@@ -168,7 +168,7 @@ export default function PowerStructureView() {
                                   POWER_NEXUS // INFLUENCE_MAPPING
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МАПА <span className="text-cyan-500 underline decoration-cyan-600/20 decoration-8 italic uppercase">ВПЛИВУ</span>

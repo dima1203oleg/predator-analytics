@@ -201,7 +201,7 @@ const EntityRadarView: React.FC = () => {
     setRefreshing(false);
   };
 
-  const filteredEntities = useMemo(() => {
+  const filteredEntities = useMemo<EntityRadarItem[]>(() => {
     let result = [...entities];
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -524,7 +524,7 @@ const EntityRadarView: React.FC = () => {
                     )}
                   </AnimatePresence>
                 </motion.div>
-              )
+              ))
             ) : (
               <div className="py-40 text-center bg-black border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-10">
                 <div className="relative mx-auto w-32 h-32">

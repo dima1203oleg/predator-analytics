@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Predator v55 | Neural Analytics",
+    "title": "Predator v56.5-ELITE | Neural Analytics",
     "subtitle": "Система раннього попередження, аналізу ризиків та інформаційної переваги",
     "loading": "Завантаження системи...",
     "access_denied": "Доступ заборонено",
     "not_found": "Сторінку не знайдено",
-    "version": "v55.2.5-SM"
+    "version": "v56.5-ELITE.2.5-SM"
   },
   "auth": {
     "login": "Увійти",

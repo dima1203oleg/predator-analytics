@@ -393,7 +393,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
-                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v56.2-TITAN</p>
+                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v56.5-ELITE</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКОР = 0.9984</p>
                                          <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
@@ -480,7 +480,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="p-6 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] flex items-center justify-between">
                                           <div className="flex items-center gap-4">
                                                <Cpu size={18} className="text-indigo-400" />
-                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v55</span>
+                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v56.5-ELITE</span>
                                           </div>
                                           <span className="text-xl font-mono font-black text-white italic tracking-tighter">X256</span>
                                      </div>

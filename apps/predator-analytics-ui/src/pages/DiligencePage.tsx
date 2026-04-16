@@ -195,7 +195,7 @@ const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarP
     ];
 };
 
-// --- MOCK DATA FALLBACK (v56.2-TITAN-ELITE) ---
+// --- MOCK DATA FALLBACK (v56.5-ELITE-ELITE) ---
 const MOCK_ENTITIES: RiskEntity[] = [
   { ueid: '1', edrpou: '38210342', name: 'ТОВ "ЕНЕРДЖИ-ГРУП"', risk_score: 92, risk_level: 'critical', status: 'active' },
   { ueid: '2', edrpou: '41092384', name: 'ПРАТ "ТЕХНО-ВЕСТ"', risk_score: 75, risk_level: 'high', status: 'active' },

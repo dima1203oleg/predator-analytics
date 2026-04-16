@@ -1,5 +1,5 @@
 /**
- * ⚙️ API CONFIGURATION // КОНФІГУРАЦІЯ API | v56.2-TITAN
+ * ⚙️ API CONFIGURATION // КОНФІГУРАЦІЯ API | v56.5-ELITE
  * Логіка гібридної відмовостійкості (Failover Protocol)
  */
 import axios, { AxiosError } from 'axios';
@@ -58,12 +58,10 @@ const updateBackendAvailability = async (isOffline: boolean) => {
     };
     
     // Initialize nodes if not present
-    if (!globalWindow.__BACKEND_NODES__) {
         globalWindow.__BACKEND_NODES__ = [
             { id: 'nvidia', name: 'NVIDIA_MASTER', url: PRIMARY_URL, active: false, status: 'online' },
-            { id: 'colab', name: 'COLAB_MIRROR', url: FALLBACK_URL, active: false, status: 'online' }
+            { id: 'zrok', name: 'NVIDIA_ZROK', url: FALLBACK_URL, active: false, status: 'online' }
         ];
-    }
 
     // Sync active state with API_BASE_URL (checks if current base matches node url or if overridden)
     globalWindow.__BACKEND_NODES__ = globalWindow.__BACKEND_NODES__.map(node => ({
@@ -74,7 +72,7 @@ const updateBackendAvailability = async (isOffline: boolean) => {
     // Failover Logic: NVIDIA -> Colab -> Local Mock
     if (isOffline) {
         if (globalWindow.__CURRENT_BACKEND__ !== FALLBACK_URL && !FALLBACK_URL.includes('undefined')) {
-            console.warn('⚠️ Основний сервер NVIDIA недоступний. Перемикання на Colab (Failover)...');
+            console.warn('⚠️ Основний сервер NVIDIA (IP) недоступний. Перемикання на NVIDIA_ZROK (Tunnel)...');
             API_BASE_URL = FALLBACK_URL;
             apiClient.defaults.baseURL = FALLBACK_URL;
             globalWindow.__CURRENT_BACKEND__ = FALLBACK_URL;

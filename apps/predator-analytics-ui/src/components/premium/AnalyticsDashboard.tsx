@@ -1,10 +1,10 @@
 /**
- * Аналітичний Дашборд Predator v55 | Neural Analytics Matrix
+ * Аналітичний Дашборд Predator v56.5-ELITE | Neural Analytics Matrix
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
  * Прямий моніторинг когнітивної матриці та інфраструктурного шару.
  *
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -58,7 +58,7 @@ interface TimeSeriesPoint {
   label?: string;
 }
 
-// Покращений компонент швидкої статистики v55
+// Покращений компонент швидкої статистики v56.5-ELITE
 const QuickStatCard: React.FC<{
   icon: React.ElementType;
   label: string;
@@ -141,7 +141,7 @@ const QuickStatCard: React.FC<{
   );
 };
 
-// Прогресивний графік v55
+// Прогресивний графік v56.5-ELITE
 const NeuralChart: React.FC<{
   title: string;
   subtitle: string;
@@ -236,7 +236,7 @@ const NeuralChart: React.FC<{
   );
 };
 
-// Головний компонент дашборду v55
+// Головний компонент дашборду v56.5-ELITE
 export const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -536,7 +536,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-[11px] font-black text-white uppercase tracking-widest mb-1">Architecture_Integrity</div>
-            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v56.2-TITAN.1</div>
+            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v56.5-ELITE.1</div>
           </div>
         </div>
 
@@ -560,7 +560,7 @@ export const AnalyticsDashboard: React.FC = () => {
         <div className="flex items-center justify-end gap-5">
           <div className="text-right">
             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">Neural Network Controller</div>
-            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">PREDATOR_ANALYTICS_V55_SYSTEM_ADMIN</div>
+            <div className="text-[8px] text-slate-700 uppercase tracking-widest mt-1">PREDATOR_ANALYTICS_V56.5_SYSTEM_ADMIN</div>
           </div>
           <ChevronRight size={24} className="text-slate-800" />
         </div>

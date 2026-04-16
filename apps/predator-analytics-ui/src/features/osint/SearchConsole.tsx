@@ -1,5 +1,5 @@
 /**
- * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v56.2-TITAN
+ * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v56.5-ELITE
  * PREDATOR Analytics — Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
@@ -162,10 +162,10 @@ export default function SearchConsole() {
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-3">
                                         <span className="badge-v2 bg-indigo-600/10 border border-indigo-600/20 text-indigo-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v56.2
+                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v56.5
                                         </span>
                                         <div className="h-px w-10 bg-indigo-600/20" />
-                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
                                         SYNAPTIC <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">DISCOVERY</span>

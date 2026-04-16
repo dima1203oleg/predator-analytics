@@ -1,5 +1,5 @@
 /**
- * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v56.2-TITAN
+ * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v56.5-ELITE
  * PREDATOR Analytics — Global Maritime Traffic & Risk Intelligence
  * 
  * Моніторинг морського трафіку, AIS-трекінг суден та аналіз портів.
@@ -191,7 +191,7 @@ export default function MaritimeView() {
                                   MARITIME_SOVEREIGN // GLOBAL_AIS_NET
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МОРСЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕРЕН</span>

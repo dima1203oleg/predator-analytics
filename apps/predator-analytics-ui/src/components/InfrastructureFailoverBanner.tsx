@@ -8,12 +8,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Server, Zap, ShieldAlert, Cpu, Activity, Database, Radio, Globe } from 'lucide-react';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
+import { API_BASE_URL } from '@/services/api/config';
 
 export const InfrastructureFailoverBanner: React.FC = () => {
     const { isOffline, nodes } = useBackendStatus();
 
     const activeNode = nodes.find(n => n.active);
-    const isMirror = activeNode?.id === 'colab';
+    const isMirror = activeNode?.id === 'colab' || (activeNode?.id === 'zrok');
     
     // Якщо вузла немає але ми не офлайн - це початкове завантаження
     if (!activeNode && !isOffline) return null;
@@ -61,6 +62,10 @@ export const InfrastructureFailoverBanner: React.FC = () => {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] font-mono italic">
                             {isMirror ? 'ДЗЕРКАЛО_АКТИВНЕ' : isOffline ? 'ЗВ’ЯЗОК_ВТРАЧЕНО' : 'ОСНОВНИЙ_МАСТЕР'}
                         </span>
+                        <div className="h-px w-4 bg-current opacity-20" />
+                        <span className="text-[8px] font-mono font-bold opacity-60">
+                           {typeof window !== 'undefined' ? new URL(API_BASE_URL).host : '...'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-6 mt-1">
                         <h4 className="text-3xl font-black italic tracking-tighter uppercase leading-none font-serif">
@@ -78,12 +83,14 @@ export const InfrastructureFailoverBanner: React.FC = () => {
                 {/* Метрики з’єднання */}
                 <div className="hidden xl:flex items-center gap-8 pl-8 border-l-2 border-white/10 ml-4">
                     <div className="text-right">
-                        <p className="text-[9px] font-black opacity-40 uppercase tracking-widest italic">ЗАТРИМКА</p>
+                        <p className="text-[9px] font-black opacity-40 uppercase tracking-widest italic">ЗАТРИМКА (WEB-API)</p>
                         <p className="text-xl font-black italic font-mono tracking-tighter shadow-sm">{isOffline ? '---' : isMirror ? '142ms' : '8ms'}</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[9px] font-black opacity-40 uppercase tracking-widest italic">КАНАЛ_L2</p>
-                        <p className="text-xl font-black italic font-mono tracking-tighter shadow-sm text-cyan-500">{isOffline ? '0B/s' : isMirror ? '12MB/s' : '1.8GB/s'}</p>
+                        <p className="text-[9px] font-black opacity-40 uppercase tracking-widest italic">ВЕБ_ВУЗОЛ</p>
+                        <p className="text-xl font-black italic font-mono tracking-tighter shadow-sm text-cyan-500">
+                           {typeof window !== 'undefined' ? window.location.hostname : 'SERVER'}
+                        </p>
                     </div>
                 </div>
 
@@ -99,3 +106,5 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         </AnimatePresence>
     );
 };
+
+export default InfrastructureFailoverBanner;

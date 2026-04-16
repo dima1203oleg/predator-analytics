@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.2-TITAN — React Hooks for v2 API
+ * PREDATOR v56.5-ELITE — React Hooks for v2 API
  * Real-time data fetching with React Query for CERS, Signals, Entities, Pipeline.
  */
 

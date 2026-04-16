@@ -1,5 +1,5 @@
 /**
- * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v56.2-TITAN
+ * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v56.5-ELITE
  * Live feed від Kafka + WebSocket streaming
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -156,7 +156,7 @@ export const RealTimeMonitor: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span className="badge-v2 bg-red-600/10 border border-red-600/20 text-red-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                      LIVE_MONITORING // TITAN_v56.2
+                      LIVE_MONITORING // TITAN_v56.5
                     </span>
                     <div className="h-px w-10 bg-red-600/20" />
                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">REALTIME_SCAN</span>

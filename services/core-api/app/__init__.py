@@ -1,3 +1,3 @@
 """PREDATOR Analytics Core API.
 """
-__version__ = "55.1.0"
+__version__ = "56.5.0-ELITE"

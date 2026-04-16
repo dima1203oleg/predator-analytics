@@ -23,6 +23,7 @@ import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { ViewHeader } from '@/components/ViewHeader';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -95,7 +96,7 @@ export default function CargoManifestPremium() {
     setRefreshing(false);
   };
 
-  const filteredManifests = useMemo(() => {
+  const filteredManifests = useMemo<ManifestItem[]>(() => {
     return MOCK_MANIFESTS.filter(m => 
       m.manifestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       m.consignee.toLowerCase().includes(searchQuery.toLowerCase())

@@ -1,5 +1,5 @@
 /**
- * 🌌 Hyper-Omniscience Nexus | v55 Premium Matrix
+ * 🌌 Hyper-Omniscience Nexus | v56.5-ELITE Premium Matrix
  * PREDATOR Omniscience - Центр всеосяжного контролю та нейронного управління.
  * 
  * Включає:
@@ -9,7 +9,7 @@
  * - 🛡️ Тіньовий Контроль (Shadow Control)
  * - 🧬 Революція AZR (AZR Evolution)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -170,8 +170,8 @@ const OmniscienceView: React.FC = () => {
   const { agents: liveAgents, logs, cyclePhase } = useAgents();
   const [selectedView, setSelectedView] = useState<'overview' | 'agents' | 'council' | 'knowledge' | 'control' | 'triple' | 'cortex' | 'sovereign' | 'evolution_dash' | 'telegram'>('overview');
   const [metrics, setMetrics] = useState<SystemMetrics>({
-    health: 99.8, activeAgents: 0, activeContainers: 14, tasksCompleted: 4281,
-    knowledgeNodes: 124032, autonomyLevel: 84, processingPower: 42, memoryUsage: 38, networkActivity: 62
+    health: 99.9, activeAgents: 0, activeContainers: 24, tasksCompleted: 8241,
+    knowledgeNodes: 424032, autonomyLevel: 99, processingPower: 88, memoryUsage: 42, networkActivity: 78
   });
   const [v45Status, setV45Status] = useState<any>(null);
   const [systemThoughts, setSystemThoughts] = useState<string[]>([]);
@@ -237,12 +237,12 @@ const OmniscienceView: React.FC = () => {
                 Omniscience Nexus
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                V55_SYSTEM_KERNEL // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
+                V56.5-ELITE_SYSTEM_KERNEL // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
         }
-        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V55']}
+        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-ELITE']}
         stats={[
           { label: 'ЗДОРОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
           { label: 'ВУЗЛИ', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },

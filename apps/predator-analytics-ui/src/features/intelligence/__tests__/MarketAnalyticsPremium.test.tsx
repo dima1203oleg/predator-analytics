@@ -46,6 +46,10 @@ vi.mock('@/features/market', () => ({
     }
 }))
 
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title }: any) => <div data-testid="view-header"><h1>{title}</h1></div>
+}))
+
 vi.mock('@/components/TacticalCard', () => ({
     TacticalCard: ({ title, children, metrics }: any) => (
         <div data-testid="tactical-card">

@@ -1,6 +1,6 @@
 /**
- * 🔮 PREDATOR ANALYTICS v55 — Scenario Modeling (What-If Analysis)
- * ===============================================================
+ * 🔮 PREDATOR ANALYTICS v56.5-ELITE — Моделювання Сценаріїв (What-If Analysis)
+ * =========================================================================
  * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
  */
 
@@ -92,7 +92,7 @@ const ScenarioModeling: React.FC = () => {
 
     const getChartOption = () => {
         const baseData = [120, 132, 121, 134, 150, 140, 160, 155, 170, 165, 180, 190];
-        const xAxis = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const xAxis = ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Черв', 'Лип', 'Серп', 'Вер', 'Жовт', 'Лист', 'Груд'];
 
         let forecastData = baseData;
         
@@ -120,7 +120,7 @@ const ScenarioModeling: React.FC = () => {
                 axisPointer: { type: 'cross', label: { backgroundColor: '#8b5cf6' } }
             },
             legend: {
-                data: ['Історичний Факт', 'ШІ Прогноз (V55)'],
+                data: ['Історичний Факт', 'ШІ Прогноз (ELITE)'],
                 textStyle: { color: '#64748b', fontFamily: 'Inter', fontWeight: 700 },
                 top: 0
             },
@@ -148,7 +148,7 @@ const ScenarioModeling: React.FC = () => {
                     data: baseData.map((v: any, i: number) => i <= 5 ? v : null)
                 },
                 {
-                    name: 'ШІ Прогноз (V55)',
+                    name: 'ШІ Прогноз (ELITE)',
                     type: 'line',
                     smooth: true,
                     symbol: 'circle',
@@ -164,61 +164,44 @@ const ScenarioModeling: React.FC = () => {
     const marginChange = ((params.globalDemand / 100) * (40 / params.currencyRate) - 1) * 100 - (params.importDuty / 2);
 
     return (
-        <div className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
-            {/* Background Ambience */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(139,92,246,0.15),transparent_40%)] pointer-events-none" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,rgba(6,182,212,0.1),transparent_40%)] pointer-events-none" />
-            <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
-
-            <div className="relative z-10 max-w-[1600px] mx-auto p-6 lg:p-10 space-y-8 mt-10">
-
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between md:items-end gap-6 border-b border-white/5 pb-8 relative">
-                    <div>
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="px-2.5 py-1 bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[9px] font-black tracking-widest uppercase rounded">
-                                SIMULATION CORE v55
-                            </div>
-                            <div className="flex items-center gap-2 px-2.5 py-1 bg-black/40 border border-white/10 rounded">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                <span className="text-[9px] text-slate-400 font-bold tracking-widest uppercase font-mono">NEURAL_NET: READY</span>
-                            </div>
-                        </div>
-                        <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tighter uppercase italic">
-                            WHAT-IF <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">MODELING</span>
-                        </h1>
-                        <p className="text-slate-500 text-sm mt-3 uppercase tracking-widest max-w-2xl leading-relaxed">
-                            Моделюйте вплив макроекономічних шоків, регуляторних змін та активності конкурентів на ваші фінансові та операційні показники за допомогою NAS предикторів.
-                        </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                        <button className="px-5 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
-                            <Save className="w-4 h-4" /> Save Preset
+        <PageTransition className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
+            <ViewHeader 
+                title="МОДЕЛЮВАННЯ СЦЕНАРІЇВ"
+                subtitle="WHAT-IF ANALYSIS CORE v56.5-ELITE"
+                badge="SIMULATION_ELITE"
+                stats={[
+                    { label: 'ПРОГНОЗ РУХУ', value: '$12.4M', trend: 14.2 },
+                    { label: 'РИЗИК СЦЕНАРІЮ', value: '42/100', trend: -5.1 },
+                    { label: 'AI ТОЧНІСТЬ', value: '94.8%', trend: 0.2 }
+                ]}
+                actions={
+                    <div className="flex gap-3">
+                        <button className="px-5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-slate-300 font-bold text-xs uppercase tracking-widest hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2">
+                            <Save className="w-4 h-4" /> Зберегти
                         </button>
                         <button
                             onClick={runSimulation}
                             disabled={isSimulating}
                             className={cn(
-                                "relative group px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all overflow-hidden border",
+                                "relative group px-8 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all overflow-hidden border",
                                 isSimulating
                                     ? "bg-slate-800 border-violet-500/50 text-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.3)]"
                                     : "bg-emerald-600 hover:bg-emerald-500 border-emerald-400/50 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105"
                             )}
                         >
-                            {/* Embedded Progress Bar */}
                             {isSimulating && (
                                 <div className="absolute inset-0 bg-violet-600/20" style={{ width: `${scanProgress}%` }} />
                             )}
-
                             <div className="relative z-10 flex items-center justify-center gap-2">
                                 {isSimulating ? <Activity className="w-4 h-4 animate-pulse" /> : <Play className="w-4 h-4" />}
-                                {isSimulating ? `Calculating... ${Math.round(scanProgress)}%` : 'Run Simulation'}
+                                {isSimulating ? `Розрахунок... ${Math.round(scanProgress)}%` : 'Запустити'}
                             </div>
                         </button>
                     </div>
-                </div>
+                }
+            />
 
+            <div className="relative z-10 max-w-[1600px] mx-auto p-6 lg:p-10 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                     {/* Left Panel: Controls (4 cols) */}
@@ -232,7 +215,7 @@ const ScenarioModeling: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-black text-white uppercase tracking-widest">Параметри Сценарію</h3>
-                                    <p className="text-[10px] uppercase text-slate-500 tracking-[0.2em] font-mono">Input Variables</p>
+                                    <p className="text-[10px] uppercase text-slate-500 tracking-[0.2em] font-mono">ВХІДНІ ЗМІННІ</p>
                                 </div>
                             </div>
 
@@ -249,7 +232,6 @@ const ScenarioModeling: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        {/* V55 Custom Slider */}
                                         <div className="relative group/slider">
                                             <div className="absolute inset-y-0 left-0 w-full h-[6px] bg-slate-950 rounded-full border border-white/5 shadow-inner top-1/2 -translate-y-1/2" />
                                             <div
@@ -284,16 +266,15 @@ const ScenarioModeling: React.FC = () => {
                                 ))}
                             </div>
 
-                            {/* Applied Model Info */}
                             <div className="mt-8 pt-6 border-t border-white/5">
                                 <div className="flex items-center gap-3 p-4 bg-black/40 border border-white/5 rounded-2xl relative overflow-hidden group/model">
                                     <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-transparent translate-x-[-100%] group-hover/model:translate-x-[100%] transition-transform duration-1000" />
                                     <Brain className="text-violet-400 w-8 h-8 shrink-0 relative z-10" />
                                     <div className="relative z-10">
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Active AI Model</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Активна AI Модель</p>
                                         <p className="text-sm font-black text-white font-mono flex items-center gap-2">
-                                            N5.PREDICTIVE-CORE
-                                            <span className="text-emerald-400 text-[9px] px-1.5 py-0.5 border border-emerald-500/20 bg-emerald-500/10 rounded">94.8% ACC</span>
+                                            N5.PREDICTIVE-ELITE
+                                            <span className="text-emerald-400 text-[9px] px-1.5 py-0.5 border border-emerald-500/20 bg-emerald-500/10 rounded">94.8% ТОЧНІСТЬ</span>
                                         </p>
                                     </div>
                                 </div>
@@ -307,9 +288,9 @@ const ScenarioModeling: React.FC = () => {
                         {/* KPI Cards row */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {[
-                                { label: 'Forecasted Revenue', value: '$12.4M', diff: '+14.2%', up: true, color: '#10b981' },
-                                { label: 'Margin Variance', value: `${marginChange > 0 ? '+' : ''}${marginChange.toFixed(1)}%`, diff: 'vs Base', up: marginChange >= 0, color: marginChange >= 0 ? '#10b981' : '#ef4444' },
-                                { label: 'Scenario Risk Score', value: '42/100', diff: '-5.1 v.s. Avg', up: true, color: '#06b6d4' } // true because lower risk is better
+                                { label: 'Прогнозована Виручка', value: '$12.4M', diff: '+14.2%', up: true, color: '#10b981' },
+                                { label: 'Відхилення Маржі', value: `${marginChange > 0 ? '+' : ''}${marginChange.toFixed(1)}%`, diff: 'до бази', up: marginChange >= 0, color: marginChange >= 0 ? '#10b981' : '#ef4444' },
+                                { label: 'Індекс Ризику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
                             ].map((kpi, i) => (
                                 <div key={i} className="p-5 rounded-3xl bg-slate-900/60 border border-white/5 backdrop-blur-xl relative overflow-hidden">
                                     <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full pointer-events-none" />
@@ -329,9 +310,9 @@ const ScenarioModeling: React.FC = () => {
                                 <div>
                                     <h3 className="font-black text-white text-lg uppercase tracking-widest flex items-center gap-2">
                                         <BarChart3 className="text-violet-400" />
-                                        Forecast Trajectory
+                                        Траєкторія Прогнозу
                                     </h3>
-                                    <p className="text-xs text-slate-500 font-mono mt-1 1">Time horizon: +6 Months</p>
+                                    <p className="text-xs text-slate-500 font-mono mt-1">Горизонт планування: +6 місяців</p>
                                 </div>
 
                                 <div className="flex gap-2">
@@ -344,7 +325,6 @@ const ScenarioModeling: React.FC = () => {
                             </div>
 
                             <div className="h-[400px] relative">
-                                {/* Blurry glow behind chart */}
                                 <div className="absolute inset-0 bg-violet-500/10 blur-[100px] rounded-full pointer-events-none" />
 
                                 {isSimulating ? (
@@ -354,8 +334,8 @@ const ScenarioModeling: React.FC = () => {
                                             <div className="absolute inset-2 border-r-2 border-cyan-400 rounded-full animate-[spin_2s_linear_infinite_reverse]" />
                                             <Crosshair className="w-6 h-6 text-violet-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                                         </div>
-                                        <p className="text-sm font-black text-violet-400 uppercase tracking-[0.3em] animate-pulse">Running Monte Carlo...</p>
-                                        <p className="text-[10px] text-slate-500 font-mono mt-2">Computing 10,000 futures</p>
+                                        <p className="text-sm font-black text-violet-400 uppercase tracking-[0.3em] animate-pulse">Запуск Монте-Карло...</p>
+                                        <p className="text-[10px] text-slate-500 font-mono mt-2">Обчислення 10,000 можливих майбутніх</p>
                                     </div>
                                 ) : (
                                     <ReactECharts option={getChartOption()} style={{ height: '100%', width: '100%' }} theme="dark" />
@@ -368,7 +348,7 @@ const ScenarioModeling: React.FC = () => {
                             <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 relative">
                                 <Target className="absolute top-5 right-5 w-16 h-16 text-emerald-500/10" />
                                 <h4 className="text-[10px] font-black shrink-0 text-emerald-400 tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" /> AI Opportunity
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" /> AI Можливість
                                 </h4>
                                 <p className="text-sm text-slate-300 leading-relaxed font-medium">
                                     Падіння <span className="text-white font-black">Курсу USD</span> при зниженні мит створює вікно в <span className="text-emerald-400 font-black">45 днів</span> для агресивної закупівлі електроніки. ROI +22% вище норми.
@@ -378,7 +358,7 @@ const ScenarioModeling: React.FC = () => {
                             <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/20 relative">
                                 <Shield className="absolute top-5 right-5 w-16 h-16 text-rose-500/10" />
                                 <h4 className="text-[10px] font-black shrink-0 text-rose-400 tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-rose-500 rounded-full" /> Threat Vector
+                                    <span className="w-2 h-2 bg-rose-500 rounded-full" /> Вектор Загроз
                                 </h4>
                                 <p className="text-sm text-slate-300 leading-relaxed font-medium">
                                     Зростання активності конкурентів до <span className="text-white font-black">{params.competitorActivity}</span> вимагає збільшення маркетинг-бюджету на <span className="text-rose-400 font-black">~15%</span> для утримання долі ринку в Q3.
@@ -388,13 +368,13 @@ const ScenarioModeling: React.FC = () => {
 
                     </div>
                 </div>
-
             </div>
-        </div>
+        </PageTransition>
     );
 };
 
 export default ScenarioModeling;
+
 
 function SettingsIcon(props: any) {
     return (

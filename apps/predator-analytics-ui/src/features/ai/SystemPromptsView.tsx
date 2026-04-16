@@ -22,7 +22,7 @@ const SystemPromptsView = () => {
   ];
 
   const prompts = [
-    { id: 'PR-101', name: 'PREDATOR_V55_OODA_REASONING', category: 'factory', version: 'v2.4.1', status: 'АКТИВНО', lastUpdate: '2026-03-20T12:00:00Z' },
+    { id: 'PR-101', name: 'PREDATOR_V56.5_OODA_REASONING', category: 'factory', version: 'v2.4.1', status: 'АКТИВНО', lastUpdate: '2026-03-20T12:00:00Z' },
     { id: 'PR-102', name: 'ANTI_FRAUD_HEURISTICS_SCAN', category: 'analysis', version: 'v1.8.0', status: 'БЕТА', lastUpdate: '2026-03-21T09:30:00Z' },
     { id: 'PR-103', name: 'CUSTOMS_CODE_LEGAL_ENTITY_EXTRACT', category: 'extraction', version: 'v4.0.0', status: 'АКТИВНО', lastUpdate: '2026-03-22T14:15:00Z' },
     { id: 'PR-104', name: 'CRITICAL_RISK_SCORE_EXPLAINABILITY', category: 'decision', version: 'v1.0.2', status: 'АКТИВНО', lastUpdate: '2026-03-23T10:00:00Z' },
@@ -78,7 +78,7 @@ const SystemPromptsView = () => {
         {/* Middle Column: Prompts List */}
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v56.2-TITAN</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v56.5-ELITE</h3>
               <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-amber-400">
                  <RefreshCw size={14} />
               </Button>

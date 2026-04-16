@@ -164,8 +164,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=get_settings().APP_NAME,
-    version="55.2-SM-EXTENDED",
-    description="Аналітична платформа PREDATOR Analytics (v55.2-SM-EXTENDED)",
+    version="56.5-ELITE",
+    description="Аналітична платформа PREDATOR Analytics (v56.5-ELITE)",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",

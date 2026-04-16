@@ -55,7 +55,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     const [healingProgress, setHealingProgress] = useState(0);
 
     const activeFailover = useMemo(() => {
-        return nodes.some(n => n.id === 'colab' && n.active);
+        return nodes.some(n => n.id === 'zrok' && n.active);
     }, [nodes]);
 
     useEffect(() => {

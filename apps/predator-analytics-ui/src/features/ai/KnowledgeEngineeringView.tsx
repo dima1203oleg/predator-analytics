@@ -286,7 +286,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
           <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
             <Zap size={28} className="text-white" />
           </div>
-          Knowledge Engineering <span className="text-slate-600">/ v55</span>
+          Knowledge Engineering <span className="text-slate-600">/ v56.5-ELITE</span>
         </h1>
         <p className="text-slate-500 mt-3 ml-20 text-sm font-medium uppercase tracking-[0.2em]">
           9 критичних рівнів формування знань економічного інтелекту

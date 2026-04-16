@@ -31,7 +31,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
             <div className="lg:col-span-2">
                 <TacticalCard
                     variant="holographic"
-                    title="QDRANT SEMANTIC RADAR v55"
+                    title="QDRANT SEMANTIC RADAR v56.5-ELITE"
                     className="h-[600px] panel-3d overflow-hidden group"
                 >
                     <div className="absolute top-4 right-8 flex items-center gap-4 z-20">

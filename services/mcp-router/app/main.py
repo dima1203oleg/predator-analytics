@@ -1,6 +1,6 @@
 """Module: router
 Component: mcp-router
-Predator Analytics v45.1.
+Predator Analytics v56.5-ELITE.
 """
 
 import logging
@@ -19,7 +19,7 @@ from .providers.ollama import OllamaProvider
 setup_logging("mcp-router")
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Predator MCP Router", version="25.1")
+app = FastAPI(title="Predator MCP Router", version="56.5-ELITE")
 
 # Providers Registry
 providers = {"ollama": OllamaProvider(), "groq": GroqProvider(), "gemini": GeminiProvider()}
@@ -40,9 +40,9 @@ ROUTING_RULES = {
         "ollama/qwen2.5-coder:7b",
         "ollama/codellama:7b",
     ],
-    "analysis": ["ollama/llama3.1:8b", "groq/llama-3.1-70b-versatile"],
-    "summarization": ["ollama/llama3.1:8b", "gemini/gemini-2.0-flash"],
-    "reasoning": ["groq/llama-3.1-70b-versatile", "gemini/gemini-2.0-flash"],
+    "analysis": ["ollama/glm-5.1:latest", "groq/llama-3.1-70b-versatile"],
+    "summarization": ["ollama/glm-5.1:latest", "gemini/gemini-2.0-flash"],
+    "reasoning": ["ollama/deepseek-r1:latest", "groq/llama-3.1-70b-versatile", "gemini/gemini-2.0-flash"],
     "creative": ["gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash"],
 }
 

@@ -12,7 +12,7 @@ interface ViewHeaderProps {
     label: string;
     value: string;
     icon?: React.ReactNode;
-    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'secondary' | 'cyan' | 'gold';
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'secondary' | 'cyan' | 'gold' | 'rose' | 'amber' | 'emerald';
     animate?: boolean;
   }[];
   actions?: React.ReactNode;

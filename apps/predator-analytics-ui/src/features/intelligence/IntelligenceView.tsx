@@ -21,19 +21,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ViewHeader } from '@/components/ViewHeader';
 import { SemanticRadar } from '@/components/graph/SemanticRadar';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { Badge } from '@/components/ui/badge';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 const IntelligenceView: React.FC = () => {
     const [selectedUeid, setSelectedUeid] = useState<string | null>('12345678');
     const [isThinking, setIsThinking] = useState(false);
     const [activeLayer, setActiveLayer] = useState<'graph' | 'radar'>('graph');
+    const { isOffline, activeFailover } = useBackendStatus();
 
     const triggerCognitiveRefresh = () => {
         setIsThinking(true);
@@ -65,8 +67,11 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
-                                       <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                         INTEL_NEXUS // GLOBAL_RECON
+                                       <span className={cn(
+                                         "badge-v2 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic border",
+                                         isOffline ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-[#D4AF37]/10 border-[#D4AF37]/20 text-[#D4AF37]"
+                                       )}>
+                                         {isOffline ? 'SOVEREIGN_EMERGENCY' : 'INTEL_NEXUS'} // GLOBAL_RECON
                                        </span>
                                        <div className="h-px w-10 bg-[#D4AF37]/20" />
                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v56.5-ELITE</span>
@@ -82,8 +87,8 @@ const IntelligenceView: React.FC = () => {
                         }
                         stats={[
                             { label: 'COGNITIVE_LOAD', value: '72%', color: 'primary', icon: <Activity size={14} />, animate: true },
-                            { label: 'GRAPH_DEPTH', value: 'L15', color: 'primary', icon: <Network size={14} /> },
-                            { label: 'REACTION_TIME', value: '6ms', color: 'success', icon: <Zap size={14} />, animate: true }
+                            { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', color: isOffline ? 'warning' : 'primary', icon: <Cpu size={14} /> },
+                            { label: 'FAILOVER', value: activeFailover ? 'COLAB_ACTIVE' : isOffline ? 'MOCK_PROXY' : 'STANDBY', color: isOffline ? 'warning' : 'success', icon: <Radio size={14} /> }
                         ]}
                         breadcrumbs={['STRATEGY', 'NEXUS', 'RECON_HUB']}
                         actions={
@@ -107,6 +112,12 @@ const IntelligenceView: React.FC = () => {
                         {/* MAIN OPERATIONAL AREA */}
                         <div className="col-span-12 xl:col-span-8 space-y-12">
                             
+                            {/* Sovereign Intelligence Dashboard */}
+                            <SovereignReportWidget 
+                                ueid={selectedUeid || '12345678'} 
+                                className="shadow-3xl"
+                            />
+
                             {/* Strategic Premium Modules */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <section 
@@ -282,6 +293,7 @@ const IntelligenceView: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                <DiagnosticsTerminal />
                 <style dangerouslySetInnerHTML={{ __html: `
                     .no-scrollbar::-webkit-scrollbar { display: none; }
                     .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }

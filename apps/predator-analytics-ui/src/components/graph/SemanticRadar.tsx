@@ -1,9 +1,9 @@
 /**
- * 🛰️ Semantic Radar Matrix | v56.2-TITAN Premium Vision
+ * 🛰️ Semantic Radar Matrix | v56.5-ELITE Premium Vision
  * PREDATOR Візуалізатор знаннєвого графа.
  * 
  * Виявлення прихованих зв'язків та семантичне картографування мереж.
- * © 2026 PREDATOR Analytics - Повна українізація v56.2-TITAN
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -251,7 +251,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 <div className="absolute bottom-10 left-10 space-y-3 pointer-events-none">
                      <div className="flex items-center gap-3">
                          <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">ОРГАНІЗАЦІЯ_v55</span>
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">ОРГАНІЗАЦІЯ_v56.5-ELITE</span>
                      </div>
                      <div className="flex items-center gap-3">
                          <div className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
@@ -273,7 +273,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && fetchGraph(searchQuery)}
-                        placeholder="ПОШУК_ОБ'ЄКТІВ_v55 (ЕДРПОУ, ПІБ, КОД)..."
+                        placeholder="ПОШУК_ОБ'ЄКТІВ_v56.5-ELITE (ЕДРПОУ, ПІБ, КОД)..."
                         className="w-full bg-[#030712]/60 border border-white/5 rounded-[2rem] py-5 pl-16 pr-6 text-xs text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:bg-indigo-500/5 transition-all outline-none shadow-inner italic"
                     />
                 </div>
@@ -331,7 +331,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         <div className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-4">
                             <div className="p-8 bg-white/[0.02] rounded-[2rem] border border-white/5 space-y-4">
                                 <div className="flex justify-between items-center mb-2">
-                                     <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">ІНДЕКС_ДОВІРИ_v55</span>
+                                     <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">ІНДЕКС_ДОВІРИ_v56.5-ELITE</span>
                                      <span className="text-xs font-black text-emerald-400 font-mono italic">94.8%</span>
                                 </div>
                                 <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/5">

@@ -1,5 +1,5 @@
 /**
- * Predator v55 | Sovereign Activity Ledger — Журнал Подій
+ * Predator v56.5-ELITE | Sovereign Activity Ledger — Журнал Подій
  * Хронологічна матриця всіх системних маневрів та нейронних зсувів.
  */
 
@@ -165,7 +165,7 @@ const ActivityView: React.FC = () => {
               title: a.intent || 'ЕВОЛЮЦІЙНИЙ_КРОК',
               description: a.request_text,
               timestamp: new Date(a.created_at),
-              actor: 'ДВИГУН AZR'
+              actor: 'GLM-5.1 AGENTIC POOL'
             });
           });
         }

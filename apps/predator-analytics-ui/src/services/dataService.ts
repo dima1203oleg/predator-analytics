@@ -16,7 +16,10 @@ import { api, apiClient, v45Client } from './api';
 const logError = (service: string, operation: string, error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(`[${service}] ${operation} failed:`, message);
-  // TODO: Надіслати в error tracking систему (e.g. Sentry)
+  // TRACE: v56.5-ELITE Error Protocol
+  if (window.dispatchEvent) {
+    window.dispatchEvent(new CustomEvent('predator-error', { detail: { service, operation, message } }));
+  }
 };
 
 // ============================================================================
@@ -338,6 +341,80 @@ class CatalogService {
 }
 
 // ============================================================================
+// INTELLIGENCE & OSINT - v56.5-ELITE Core
+// ============================================================================
+
+class IntelligenceService {
+  async getSovereignInsights(ueid?: string) {
+    try {
+      if (ueid) {
+        return (await api.premium.generateReport(ueid));
+      }
+      return await api.v45.getInsights();
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch Sovereign Insights', error);
+      return [];
+    }
+  }
+
+  async getUBOMap(ueid: string) {
+    try {
+      return await api.graph.getBeneficiaries(ueid);
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch UBO Map', error);
+      return null;
+    }
+  }
+
+  async getFinancialSigint(ueid?: string) {
+    try {
+      if (ueid) {
+        return (await api.premium.generateReport(ueid));
+      }
+      return await api.finance.portfolioVar({});
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch Financial Sigint', error);
+      return null;
+    }
+  }
+
+  async getMarketEntryAnalysis(params: any) {
+    try {
+      // In production, this would use a dedicated market analysis endpoint
+      // For now, we use the overview as a fallback
+      return await api.market.getOverview();
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch Market Entry', error);
+      return null;
+    }
+  }
+
+  /**
+   * 📡 SIGNAL FEED - OSINT & Signal Decoding
+   * Отримує потік сигналів з Telegram, ЗМІ та інших джерел.
+   */
+  async getSignalFeed() {
+    try {
+      // Trace: v56.5-ELITE Signal Acquisition
+      const res = await apiClient.get('/telegram/feed');
+      return Array.isArray(res.data) ? res.data : [];
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch Signal Feed', error);
+      return [];
+    }
+  }
+
+  async getWarRoomSummary() {
+    try {
+      return await api.warroom.getDashboardSummary();
+    } catch (error) {
+      logError('IntelligenceService', 'Fetch War Room Summary', error);
+      return null;
+    }
+  }
+}
+
+// ============================================================================
 // EXPORT UNIFIED SERVICE
 // ============================================================================
 
@@ -349,6 +426,7 @@ export const dataService = {
   agents: new AgentsService(),
   analytics: new AnalyticsService(),
   catalog: new CatalogService(),
+  intelligence: new IntelligenceService(),
 };
 
 // Convenience exports
@@ -359,5 +437,6 @@ export const {
   security,
   agents,
   analytics,
-  catalog
+  catalog,
+  intelligence
 } = dataService;

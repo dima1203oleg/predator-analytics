@@ -1,9 +1,9 @@
 /**
- * 🌀 Omni-Data Ingestion Nexus | v56.2-TITAN Premium Matrix
+ * 🌀 Omni-Data Ingestion Nexus | v56.5-ELITE Premium Matrix
  * PREDATOR Цитадель Захоплення та Обробки Даних
  * 
  * Керування потоками інформації, підключення джерел та моніторинг ETL.
- * © 2026 PREDATOR Analytics - Повна українізація v56.2-TITAN
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -458,7 +458,7 @@ const DataIngestionHub: React.FC = () => {
 
                         <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v55
+                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v56.5-ELITE
                             </div>
                             <div className="flex gap-6">
                                 <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">

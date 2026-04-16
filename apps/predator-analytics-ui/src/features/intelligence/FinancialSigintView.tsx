@@ -19,7 +19,7 @@ import {
   BarChart3, Landmark, Wallet, Layers, Fingerprint,
   Siren, Skull, Cpu, ShieldCheck, Network,
   CreditCard, Coins, Scale, Target, Radar,
-  Database, ZapOff, Orbit, Sparkles
+  Database, ZapOff, Orbit, Sparkles, ArrowUpRight
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis,
@@ -28,15 +28,41 @@ import {
 } from 'recharts';
 import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { Badge } from '@/components/ui/badge';
+import { intelligence } from '@/services/dataService';
+import { ViewHeader } from '@/components/ViewHeader';
 
-// ─── MOCK DATA ────────────────────────────────────────────────────────
+// ─── TYPES ───────────────────────────────────────────────────────────
 
-const SWIFT_FLOW_DATA = [
+interface SuspiciousTx {
+  id: string;
+  from: string;
+  to: string;
+  amount: string;
+  currency: string;
+  time: string;
+  risk: number;
+  type: string;
+  route: string;
+}
+
+interface FrozenAsset {
+  entity: string;
+  amount: string;
+  date: string;
+  authority: string;
+  reason: string;
+  status: string;
+}
+
+// ─── MOCK DATA (Fallback) ───────────────────────────────────────────
+
+const MOCK_SWIFT_FLOW = [
   { hour: '00:00', normal: 12, suspicious: 0.2 },
   { hour: '04:00', normal: 5,  suspicious: 0.4 },
   { hour: '08:00', normal: 45, suspicious: 1.2 },
@@ -46,7 +72,7 @@ const SWIFT_FLOW_DATA = [
   { hour: '23:59', normal: 14, suspicious: 0.3 },
 ];
 
-const OFFSHORE_DATA = [
+const MOCK_OFFSHORE = [
   { name: 'БРИТ. ВІРГ. О-ВИ', value: 38, amount: '$142.5M', color: '#E11D48' },
   { name: 'КІПР', value: 27, amount: '$98.2M',  color: '#D4AF37' },
   { name: 'ОАЕ',  value: 18, amount: '$67.0M',  color: '#991b1b' },
@@ -54,20 +80,20 @@ const OFFSHORE_DATA = [
   { name: 'ІНШІ', value: 6,  amount: '$22.0M',  color: '#1e293b' },
 ];
 
-const SUSPICIOUS_TX = [
+const MOCK_SUSPICIOUS_TX = [
   { id: 'TX-ELITE-8821', from: 'ТОВ "АГРО-ЛІДЕР"', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Shell Company', route: 'UA → BVI → ОАЕ' },
   { id: 'TX-ELITE-7203', from: 'БФ "ВІДРОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Layering', route: 'UA → CY → MT' },
   { id: 'TX-ELITE-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP Exposure', route: 'UA → AE → SA' },
   { id: 'TX-ELITE-4412', from: 'ТОВ "МЕТАЛ-ГРУП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Sanctions Nexus', route: 'UA → BZ → PA' },
 ];
 
-const FROZEN_ASSETS = [
+const MOCK_FROZEN = [
   { entity: 'ПУМБ РАХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: 'РНБО', reason: 'Санкційний список', status: 'ЗАМОРОЖЕНО' },
   { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМОРОЖЕНО' },
   { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
 ];
 
-const AML_RADAR_DATA = [
+const MOCK_AML_RADAR = [
   { subject: 'СТРУКТУРУВАННЯ', A: 120, B: 110 },
   { subject: 'ШАЙРУВАННЯ', A: 98, B: 130 },
   { subject: 'ОФШОРИЗАЦІЯ', A: 86, B: 130 },
@@ -82,26 +108,50 @@ export default function FinancialSigintView() {
   const [activeModule, setActiveModule] = useState<ActiveModule>('swift');
   const [refreshing, setRefreshing] = useState(false);
   const [liveAlerts, setLiveAlerts] = useState(14);
+  const { isOffline, activeFailover } = useBackendStatus();
+  
+  // Real Data State
+  const [swiftData, setSwiftData] = useState(MOCK_SWIFT_FLOW);
+  const [offshoreData, setOffshoreData] = useState(MOCK_OFFSHORE);
+  const [suspiciousTx, setSuspiciousTx] = useState<SuspiciousTx[]>(MOCK_SUSPICIOUS_TX);
+  const [frozenAssets, setFrozenAssets] = useState<FrozenAsset[]>(MOCK_FROZEN);
+  const [amlRadar, setAmlRadar] = useState(MOCK_AML_RADAR);
+
+  const fetchData = async () => {
+    try {
+      const result = await intelligence.getFinancialSigint('SIGINT_ALL');
+      if (result) {
+        if (result.swift) setSwiftData(result.swift);
+        if (result.offshore) setOffshoreData(result.offshore);
+        if (result.suspicious) setSuspiciousTx(result.suspicious);
+        if (result.frozen) setFrozenAssets(result.frozen);
+        if (result.aml) setAmlRadar(result.aml);
+      }
+    } catch (error) {
+       console.error('[FinancialSigint] Error fetching real intelligence data', error);
+    }
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    fetchData();
+    const alertTimer = setInterval(() => {
       setLiveAlerts(prev => prev + (Math.random() > 0.8 ? 1 : 0));
     }, 8000);
-    return () => clearInterval(timer);
+    return () => clearInterval(alertTimer);
   }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1500));
+    await fetchData();
     setRefreshing(false);
   };
 
   const modules = useMemo(() => [
-    { id: 'swift',     label: 'SWIFT_SEPA_CORE',       icon: Activity,    count: liveAlerts, badge: 'LIVE' },
-    { id: 'offshore',  label: 'OFFSHORE_RADAR',        icon: Globe,       count: '247',      badge: 'GDS' },
-    { id: 'contracts', label: 'PRICE_AUDIT',           icon: BarChart3,   count: '18' },
-    { id: 'frozen',    label: 'FROZEN_REACTIVE',       icon: Lock,      count: FROZEN_ASSETS.length },
-    { id: 'aml',       label: 'ORACLE_AMLSCORE',       icon: ShieldCheck, badge: 'ELITE' },
+    { id: 'swift',     label: 'SWIFT_SEPA_КОНТУР',     icon: Activity,    count: liveAlerts, badge: 'LIVE' },
+    { id: 'offshore',  label: 'ОФШОРНИЙ_РАДАР',        icon: Globe,       count: '247',      badge: 'GDS' },
+    { id: 'contracts', label: 'АУДИТ_ЦІН',             icon: BarChart3,   count: '18' },
+    { id: 'frozen',    label: 'ЗАМОРОЖЕНІ_АКТИВИ',     icon: Lock,      count: frozenAssets.length },
+    { id: 'aml',       label: 'СКОРИНГ_ORACLE',        icon: ShieldCheck, badge: 'ELITE' },
   ], [liveAlerts]);
 
   return (
@@ -143,9 +193,9 @@ export default function FinancialSigintView() {
                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Landmark size={10} /> },
              ]}
              stats={[
-               { label: 'LIVE_THREATS', value: liveAlerts, icon: <Siren />, color: 'danger', animate: true },
-               { label: 'SIGINT_SCAN', value: 'ACTIVE', icon: <Radar />, color: 'primary' },
-               { label: 'BLOCK_CORE', value: 'SYNC', icon: <Zap />, color: 'warning' },
+               { label: 'LIVE_THREATS', value: liveAlerts.toString(), icon: <Siren />, color: 'danger', animate: true },
+               { label: 'NODE_SOURCE', value: activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'OFFLINE' : 'NVIDIA_MASTER', icon: <Cpu />, color: isOffline ? 'warning' : 'success' },
+               { label: 'FAILOVER', value: activeFailover ? 'ZROK_TUNNEL' : isOffline ? 'AUTONOMOUS' : 'STANDBY', icon: <Network />, color: isOffline ? 'warning' : 'gold' },
                { label: 'ASSET_LOCK', value: '$41.8M', icon: <Lock />, color: 'gold' },
              ]}
            />
@@ -168,14 +218,6 @@ export default function FinancialSigintView() {
                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
               </button>
            </div>
-bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
-                    <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
-                       <Wallet size={24} /> ГЕНЕРУВАТИ_РЕЄСТР_SIGINT
-                    </div>
-                    <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-                 </button>
-              </div>
-           </header>
 
            {/* QUICK SIGINT METRICS */}
            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -205,7 +247,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
            <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl backdrop-blur-3xl mx-auto">
               {modules.map(mod => (
                 <button 
-                  key={mod.id} onClick={() => setActiveModule(mod.id)}
+                  key={mod.id} onClick={() => setActiveModule(mod.id as ActiveModule)}
                   className={cn(
                     "px-10 py-5 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-2 transition-all duration-500 flex items-center gap-5 relative overflow-hidden group",
                     activeModule === mod.id 
@@ -236,22 +278,22 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                          <div className="flex items-center justify-between mb-6 border-b-2 border-white/[0.04] pb-10">
                             <h2 className="text-[16px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
                                <Activity size={28} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
-                               SWIFT_FLOW_DYNAMICS // ПОТОКИ_ТРАНЗАКЦІЙ
+                               ДИНАМІКА_SWIFT_ПОТОКІВ // ТРАНЗАКЦІЙНИЙ_МОНІТОРИНГ
                             </h2>
                             <div className="flex items-center gap-8">
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-slate-800" />
-                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">NORMAL_FLOW</span>
+                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НОРМАЛЬНИЙ_ПОТІК</span>
                                </div>
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_15px_#d4af37]" />
-                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">THREAT_PATTERN_LIVE</span>
+                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГРОЗА_В_РЕАЛЬНОМУ_ЧАСІ</span>
                                </div>
                             </div>
                          </div>
                          <div className="h-[500px]">
                             <ResponsiveContainer width="100%" height="100%">
-                               <AreaChart data={SWIFT_FLOW_DATA}>
+                               <AreaChart data={swiftData}>
                                   <defs>
                                      <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.4} />
@@ -280,7 +322,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                             <Skull size={350} className="text-rose-600" />
                          </div>
                          <h3 className="text-[14px] font-black text-rose-600 italic uppercase tracking-[0.5em] mb-10 border-b-2 border-rose-500/10 pb-10 flex items-center justify-between">
-                            <span>THREAT_TX_LIVE</span>
+                            <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
                             <div className="flex gap-2">
                                <div className="w-2 h-2 rounded-full bg-rose-600 animate-pulse" />
                                <div className="w-2 h-2 rounded-full bg-rose-600 animate-pulse delay-75" />
@@ -288,7 +330,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                             </div>
                          </h3>
                          <div className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-4 italic">
-                            {SUSPICIOUS_TX.map((tx, i) => (
+                            {suspiciousTx.map((tx, i) => (
                               <div key={tx.id} className="p-8 rounded-[3rem] bg-white/[0.01] border-2 border-white/[0.03] hover:border-rose-600/40 transition-all cursor-pointer group/item space-y-6 shadow-inset">
                                  <div className="flex items-center justify-between relative z-10">
                                     <span className="text-[11px] font-black font-mono text-rose-600 tracking-[0.3em] uppercase">{tx.id}</span>
@@ -305,11 +347,11 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                                  </div>
                                  <div className="flex items-center justify-between pt-8 border-t-2 border-white/[0.03] relative z-10">
                                     <div className="space-y-1">
-                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">AMOUNT_VAL</p>
+                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">СУМА_ВАЛЮТА</p>
                                        <span className="text-3xl font-black italic font-mono text-white tracking-tighter">{tx.amount}</span>
                                     </div>
                                     <div className="text-right">
-                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-2">RISK_LVL</p>
+                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-2">РІВЕНЬ_РИЗИКУ</p>
                                        <span className="text-[11px] font-black text-white uppercase italic bg-rose-600 px-4 py-1.5 rounded-xl shadow-lg font-mono">{tx.risk}%</span>
                                     </div>
                                  </div>
@@ -337,12 +379,12 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                       <div className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                          <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-yellow-500/[0.03] to-transparent pointer-events-none" />
                          <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
-                            <Globe size={28} className="animate-spin-slow" /> OFFSHORE_LIQUIDITY_RADAR
+                            <Globe size={28} className="animate-spin-slow" /> РАДАР_ОФШОРНОЇ_ЛІКВІДНОСТІ
                          </h2>
                          <div className="flex items-center justify-center p-12 bg-black border-4 border-white/[0.02] rounded-[4rem] relative group shadow-2xl">
                             <PieChart width={360} height={360}>
                                <Pie 
-                                data={OFFSHORE_DATA} 
+                                data={offshoreData} 
                                 innerRadius={100} 
                                 outerRadius={150} 
                                 paddingAngle={6} 
@@ -351,7 +393,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                                 cy="50%"
                                 stroke="none"
                                >
-                                  {OFFSHORE_DATA.map((entry, i) => (
+                                  {offshoreData.map((entry, i) => (
                                      <Cell key={i} fill={entry.color} className="hover:opacity-80 transition-opacity cursor-pointer shadow-lg" />
                                   ))}
                                </Pie>
@@ -363,7 +405,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                             </PieChart>
                          </div>
                          <div className="space-y-6">
-                            {OFFSHORE_DATA.map(d => (
+                            {offshoreData.map(d => (
                               <div key={d.name} className="flex items-center justify-between p-7 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-yellow-500/10 hover:border-yellow-500/20 transition-all group cursor-pointer shadow-sm">
                                  <div className="flex items-center gap-6">
                                     <div className="w-4 h-4 rounded-full group-hover:scale-125 transition-transform shadow-lg" style={{ backgroundColor: d.color }} />
@@ -381,9 +423,9 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                       </div>
                       <div className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.01] blur-[150px] pointer-events-none" />
-                         <h3 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
-                            <Target size={28} /> SHELL_DETECTION_ENGINE // GDS_CLUSTER_ANALYSIS
-                         </h3>
+                         <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
+                            <Target size={28} /> ДВИГУН_ВИЯВЛЕННЯ_SHELL // АНАЛІЗ_GDS_КЛАСТЕРІВ
+                         </h2>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 overflow-y-auto no-scrollbar pr-2 h-[800px] custom-scrollbar">
                              {[
                                 { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'CONFIRMED', color: '#E11D48' },
@@ -454,7 +496,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                          </h2>
                          <div className="flex-1 w-full flex items-center justify-center p-6 lg:p-12">
                             <ResponsiveContainer width="100%" height={450}>
-                               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={AML_RADAR_DATA}>
+                               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={amlRadar}>
                                   <PolarGrid stroke="rgba(255,255,255,0.08)" />
                                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 11, fontWeight: '900', fontStyle: 'italic' }} />
                                   <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
@@ -477,7 +519,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                                <div className="space-y-6 text-center lg:text-left">
                                   <div className="space-y-1">
                                     <p className="text-[14px] font-black text-slate-800 uppercase tracking-[0.5em] leading-none mb-4 italic">FINAL_JUDGEMENT</p>
-                                    <p className="text-5xl font-black italic text-white tracking-tighter leading-none shadow-sm capitalize">HIGH_PROBABILITY</p>
+                                    <p className="text-5xl font-black italic text-white tracking-tighter leading-none shadow-sm capitalize">ВИСОКА_ЙМОВІРНІСТЬ</p>
                                   </div>
                                   <p className="text-8xl font-black italic text-rose-600 font-mono leading-none tracking-tighter drop-shadow-[0_0_30px_rgba(225,29,72,0.5)] animate-pulse">94.8%</p>
                                   <div className="text-[12px] font-black text-slate-600 uppercase italic tracking-[0.4em] border-l-8 border-rose-600/40 pl-8 leading-relaxed max-w-sm mx-auto lg:mx-0">
@@ -543,7 +585,7 @@ bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500
                                </tr>
                             </thead>
                             <tbody>
-                               {FROZEN_ASSETS.map((asset, i) => (
+                               {frozenAssets.map((asset, i) => (
                                  <tr key={i} className="border-b-2 border-white/[0.02] hover:bg-rose-950/10 transition-all cursor-pointer group/row relative overflow-hidden">
                                     <td className="px-16 py-12 text-2xl font-black text-white italic truncate max-w-[450px] group-hover/row:text-rose-500 transition-colors uppercase tracking-tight relative z-10">{asset.entity}</td>
                                     <td className="px-16 py-12 text-4xl font-black text-rose-600 italic font-mono tracking-tighter relative z-10">{asset.amount}</td>

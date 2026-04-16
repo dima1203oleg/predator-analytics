@@ -14,7 +14,7 @@ import {
   Globe, BarChart3, TrendingUp, TrendingDown, Shield,
   DollarSign, Users, Building2, Target, Download,
   AlertTriangle, CheckCircle, Star, Zap, ChevronRight,
-  Activity, Search, Filter, ArrowUpRight, Layers, Fingerprint, Radar, Cpu, Lock, type LucideIcon
+  Activity, Search, Filter, ArrowUpRight, Layers, Fingerprint, Radar, Cpu, Lock, Network, type LucideIcon
 } from 'lucide-react';
 import {
   RadarChart, Radar as RechartRadar, PolarGrid, PolarAngleAxis,
@@ -26,9 +26,12 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
-import { apiClient } from '@/services/api/config';
+import { intelligence } from '@/services/dataService';
+import { ViewHeader } from '@/components/ViewHeader';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
 
@@ -117,18 +120,28 @@ const MarketEntryView: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'score' | 'growth' | 'size'>('score');
   const [filterRec, setFilterRec] = useState<'all' | 'strong-buy' | 'buy' | 'hold'>('all');
+  const { isOffline, activeFailover } = useBackendStatus();
 
-  const { data: markets = MARKETS, isLoading } = useQuery<MarketEntry[]>({
+  const { data: markets = MARKETS, isLoading, error } = useQuery<MarketEntry[]>({
     queryKey: ['market-entry-scores'],
     queryFn: async () => {
-      try {
-        const res = await apiClient.get('/market/entry-scores');
-        return Array.isArray(res.data) ? res.data : MARKETS;
-      } catch (e) {
-        return MARKETS;
-      }
+      const result = await intelligence.getMarketEntryAnalysis('UA_RECON');
+      return result || MARKETS;
     }
   });
+
+  // Trace: v56.5-ELITE Error Protocol Integration
+  React.useEffect(() => {
+    if (error) {
+      window.dispatchEvent(new CustomEvent('predator-error', { 
+        detail: { 
+          service: 'MarketEntry', 
+          operation: 'Scoring Analysis', 
+          message: error instanceof Error ? error.message : 'Market data nexus unavailable' 
+        } 
+      }));
+    }
+  }, [error]);
 
   const sorted = [...markets]
     .filter(m => filterRec === 'all' || m.recommendation === filterRec)
@@ -181,14 +194,17 @@ const MarketEntryView: React.FC = () => {
               </div>
               <div className="space-y-4">
                 <div className="flex items-center gap-6">
-                  <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                    MARKET_ENTRY_SIGINT // ACTIVE_SCORE_ARRAY
+                  <span className={cn(
+                    "px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg border",
+                    isOffline ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
+                  )}>
+                    {isOffline ? 'SOVEREIGN_EMERGENCY' : 'MARKET_ENTRY_SIGINT'} // ACTIVE_CORE
                   </span>
                   <div className="h-px w-12 bg-yellow-500/20" />
                   <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                  MARKET ENTRY <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCORE</span>
+                  MARKET ENTRY <span className={cn("underline decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-yellow-500 decoration-yellow-600/30")}>SCORE</span>
                 </h1>
               </div>
             </div>
@@ -199,9 +215,9 @@ const MarketEntryView: React.FC = () => {
             { label: 'PREDICTIVE_CORE_v5', color: 'primary', icon: <Cpu size={10} /> },
           ]}
           stats={[
-            { label: 'РИНКІВ АКТИВНО', value: String(markets.length), icon: <TrendingUp />, color: 'gold' },
-            { label: 'ALPHA_TARGET', value: sorted[0]?.country ?? '—', icon: <Target />, color: 'gold' },
-            { label: 'RELIABILITY_INDEX', value: '96.4%', icon: <Fingerprint />, color: 'success' },
+            { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', icon: <Cpu />, color: isOffline ? 'warning' : 'gold' },
+            { label: 'FAILOVER', value: activeFailover ? 'COLAB_SHARED' : isOffline ? 'PROXIFIED' : 'STANDBY', icon: <Network />, color: isOffline ? 'warning' : 'primary' },
+            { label: 'RELIABILITY', value: '96.4%', icon: <Fingerprint />, color: 'success' },
           ]}
           actions={
             <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
@@ -247,7 +263,7 @@ const MarketEntryView: React.FC = () => {
                         ? "bg-yellow-500 text-black shadow-4xl scale-105 font-bold"
                         : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-yellow-500/10 hover:bg-white/5"
                     )}>
-                    {r === 'all' ? 'УСІ_МОДЕЛІ' : RECOMMENDATION_CFG[r].label.replace(' ', '_')}
+                    {r === 'all' ? 'УСІ_МОДЕЛІ' : (RECOMMENDATION_CFG[r as keyof typeof RECOMMENDATION_CFG]?.label.replace(' ', '_') || r)}
                   </button>
                 ))}
               </div>
@@ -511,6 +527,10 @@ const MarketEntryView: React.FC = () => {
             </AnimatePresence>
           </div>
         </div>
+        </div>
+        
+        <div className="max-w-[1850px] mx-auto px-12 mt-12">
+            <DiagnosticsTerminal />
         </div>
       </div>
       <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}` }} />

@@ -1,5 +1,5 @@
 /**
- * 🧪 E2E Verification Citadel | v55 Testing & Integrity
+ * 🧪 E2E Verification Citadel | v56.5-ELITE Testing & Integrity
  * System Verification Suite - Контрольний стенд перевірки цілісності даних.
  * 
  * Відповідає вимогам "Control Case":
@@ -7,7 +7,7 @@
  * 2. Перевірка кластерів MinIO, PG, Graph, Qdrant
  * 3. Виконання контрольних аналітичних запитів (HS-Code)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -197,7 +197,7 @@ const SystemVerificationSuite: React.FC = () => {
     try {
       const job = await api.ingestion.startJob({
         source_type: 'file',
-        config: { note: 'Control Case March Data v55' }
+        config: { note: 'Control Case March Data v56.5-ELITE' }
       });
       if (job && job.job_id) {
         setJobId(job.job_id);
@@ -345,7 +345,7 @@ const SystemVerificationSuite: React.FC = () => {
         breadcrumbs={['System', 'Verification', 'Control Case']}
         stats={[
           { label: 'Pipeline State', value: isProcessing ? 'RUNNING' : 'IDLE', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
-          { label: 'Data Version', value: 'v56.2-TITAN-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
+          { label: 'Data Version', value: 'v56.5-ELITE-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
           { label: 'Safety Index', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
         ]}
       />

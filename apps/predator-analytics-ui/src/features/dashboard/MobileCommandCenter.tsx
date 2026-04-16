@@ -1,5 +1,5 @@
 /**
- * 📱 Mobile Command Center | v55 Orbital Matrix
+ * 📱 Mobile Command Center | v56.5-ELITE Orbital Matrix
  * PREDATOR Mobile - Цитадель оперативного управління у вашій кишені.
  * 
  * Включає:
@@ -8,7 +8,7 @@
  * - 🛡️ Моніторинг ризиків (Risk Watch)
  * - 🛰️ Супутниковий зв'язок (Orbital Link)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect } from 'react';

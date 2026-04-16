@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "core-api"
-version = "55.1.0"
-description = "PREDATOR Analytics v55.1 Core API"
+version = "56.5.0-ELITE"
+description = "PREDATOR Analytics v56.5-ELITE Core API"
 authors = ["PREDATOR Engineering Team"]
 
 [tool.poetry.dependencies]

@@ -14,6 +14,16 @@ import { systemApi } from '../../services/api/system';
 import { aiApi, AIThought } from '../../services/api/ai';
 import { useQuery } from '@tanstack/react-query';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
+import { dataService } from '../../services/dataService';
+
+interface OSINTSignal {
+  id: string;
+  time?: string;
+  platform?: string;
+  channel?: string;
+  text?: string;
+  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
+}
 
 /**
  * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v56.5-ELITE
@@ -23,10 +33,10 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
  */
 
 const SECTOR_DATA = [
-  { name: 'Customs Intelligence', value: 35, color: '#D4AF37' },
-  { name: 'Financial Sigint', value: 25, color: '#E11D48' },
-  { name: 'Geopolitical Radar', value: 20, color: '#FCD34D' },
-  { name: 'Autonomous Forge', value: 20, color: '#10B981' },
+  { name: 'Митна розвідка', value: 35, color: '#D4AF37' },
+  { name: 'Фінансовий Sigint', value: 25, color: '#E11D48' },
+  { name: 'Геополітичний радар', value: 20, color: '#FCD34D' },
+  { name: 'Автономна кузня', value: 20, color: '#10B981' },
 ];
 
 const SovereignAZRBrain: React.FC = () => {
@@ -54,7 +64,20 @@ const SovereignAZRBrain: React.FC = () => {
     refetchInterval: 5000
   });
 
+  const { data: signals } = useQuery({
+    queryKey: ['osint', 'signals'],
+    queryFn: () => dataService.intelligence.getSignalFeed(),
+    refetchInterval: 10000
+  });
+
+  const { data: clusterSummary } = useQuery({
+    queryKey: ['infra', 'cluster'],
+    queryFn: () => dataService.infrastructure.getClusterStatus(),
+    refetchInterval: 15000
+  });
+
   const cpuLoad = stats?.cpu_percent || 0;
+  const activeAlertsCount = stats?.active_containers || 0; // Simplified mapping for UI
   
   const combinedLogs = useMemo(() => {
     const now = new Date();
@@ -69,18 +92,30 @@ const SovereignAZRBrain: React.FC = () => {
       { id: 'v56-log-3', time: timeStr(0), type: 'INFO', msg: activeFailover ? 'FAILOVER_STRATEGY: GOOGLE COLAB MIRROR ACTIVE' : 'FAILOVER_STRATEGY: STANDBY_MODE' },
     ];
 
-    if (thoughts) {
+    const logs = [...base];
+
+    if (signals && Array.isArray(signals)) {
+      const signalLogs = (signals as OSINTSignal[]).slice(0, 5).map((s: OSINTSignal) => ({
+        id: s.id || `sig-${Math.random()}`,
+        time: s.time || timeStr(0),
+        type: s.riskLevel === 'critical' ? 'THREAT' : 'INFO',
+        msg: `[OSINT_SIGNAL // ${s.platform?.toUpperCase() || 'UNKNOWN'}]: ${s.channel || 'INTERNAL'} -> ${s.text?.substring(0, 60) || ''}...`
+      }));
+      logs.push(...signalLogs);
+    }
+
+    if (thoughts && Array.isArray(thoughts)) {
       const aiLogs = thoughts.map((t: AIThought) => ({
         id: t.id,
         time: t.timestamp.split('T')[1].split('.')[0],
-        type: t.stage === 'action' ? 'HEAL' : t.stage === 'observation' ? 'INFO' : 'INFO',
+        type: t.stage === 'action' ? 'HEAL' : 'INFO',
         msg: `[AI_THOUGHT // ${t.stage.toUpperCase()}]: ${t.content}`
       }));
-      return [...base, ...aiLogs].sort((a,b) => b.time.localeCompare(a.time)).slice(0, 20);
+      logs.push(...aiLogs);
     }
 
-    return base.reverse();
-  }, [isOffline, activeFailover, sourceLabel, thoughts]);
+    return logs.sort((a,b) => b.time.localeCompare(a.time)).slice(0, 20);
+  }, [isOffline, activeFailover, sourceLabel, thoughts, signals]);
 
   useEffect(() => {
     if (isListening) {
@@ -137,18 +172,29 @@ const SovereignAZRBrain: React.FC = () => {
                 <div className="text-xl font-black text-white italic">EMERGENCY_LOCAL</div>
               </motion.div>
             )}
+            
             <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/autonomy">
               <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1 group-hover/autonomy:text-yellow-400 transition-colors">СИСТЕМНА АВТОНОМНІСТЬ</span>
               <div className="text-3xl font-black text-white italic tabular-nums">{isOffline ? '100.00%' : '99.98%'}</div>
             </div>
-            <div className="px-8 py-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/intel">
-              <span className="text-[10px] text-rose-600 font-black uppercase tracking-widest mb-1 group-hover/intel:text-rose-400 transition-colors">РІВЕНЬ ІНТЕЛЕКТУ</span>
-              <div className="text-3xl font-black text-white italic">ORACLE_T1</div>
-            </div>
-            <div className={`px-8 py-5 bg-emerald-500/5 border ${isOffline ? 'border-amber-500/20' : 'border-emerald-500/20'} rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/cluster`}>
-              <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1 group-hover/cluster:text-white transition-colors">СТАТУС КЛАСТЕРА</span>
+
+            <div className={`px-8 py-5 bg-emerald-500/5 border ${isOffline ? 'border-amber-500/20' : 'border-emerald-500/20'} rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/cluster relative overflow-hidden`}>
+              <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1 group-hover/cluster:text-white transition-colors">ОПЕРАЦІЙНИЙ ВУЗОЛ</span>
               <div className={`text-3xl font-black ${isOffline ? 'text-amber-500' : 'text-emerald-500'} italic flex items-center gap-3`}>
-                 {isOffline ? 'OFFLINE' : 'ONLINE'} <div className={`w-3 h-3 ${isOffline ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-emerald-500 shadow-[0_0_15px_#10b981]'} rounded-full animate-pulse`} />
+                 {activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'OFFLINE' : 'NVIDIA_MASTER'} 
+                 <div className={`w-3 h-3 ${isOffline ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-emerald-500 shadow-[0_0_15px_#10b981]'} rounded-full animate-pulse`} />
+              </div>
+              
+              <div className="mt-4 flex items-center gap-4 text-[9px] font-black font-mono border-t border-white/5 pt-4">
+                 <div className="flex flex-col gap-0.5">
+                    <span className="text-slate-600 text-[7px] tracking-widest uppercase opacity-60">WEB_HOST</span>
+                    <span className="text-cyan-500 uppercase">{typeof window !== 'undefined' ? window.location.hostname : 'SERVER'}</span>
+                 </div>
+                 <div className="w-px h-6 bg-white/10" />
+                 <div className="flex flex-col gap-0.5">
+                    <span className="text-slate-600 text-[7px] tracking-widest uppercase opacity-60">API_NODE</span>
+                    <span className="text-indigo-500 uppercase tracking-tighter">{activeFailover ? 'ZROK_TUNNEL' : sourceLabel}</span>
+                 </div>
               </div>
             </div>
           </div>
@@ -157,8 +203,43 @@ const SovereignAZRBrain: React.FC = () => {
         {/* --- MAIN DASHBOARD GRID --- */}
         <div className="grid grid-cols-12 gap-8">
           
-          {/* LEFT: CORE COMPUTE & HEALTH */}
+          {/* LEFT: CORE COMPUTE & AGENTIC BRAIN */}
           <div className="col-span-12 lg:col-span-4 space-y-8">
+            
+            {/* GLM-5.1 Agentic HUD */}
+            <div className="p-10 bg-black border-2 border-yellow-500/20 rounded-[4rem] shadow-4xl relative overflow-hidden group">
+               <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
+               <div className="flex items-center gap-8 mb-10">
+                  <div className="relative">
+                     <CyberOrb size={80} color="#D4AF37" pulse intensity={0.9} />
+                     <div className="absolute inset-0 flex items-center justify-center">
+                        <Sparkles size={24} className="text-white opacity-40 animate-pulse" />
+                     </div>
+                  </div>
+                  <div>
+                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none mb-1">STRATEGIC_AGENTIC_BRAIN</p>
+                     <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">GLM-5.1 <span className="text-yellow-500 font-mono text-2xl ml-2">CLOUD</span></h3>
+                     <div className="flex items-center gap-4 mt-3">
+                        <span className="text-[10px] font-black text-yellow-600 bg-yellow-500/10 px-4 py-1.5 rounded-xl border border-yellow-500/20 uppercase italic">SWE-Bench Pro Verified</span>
+                        <div className="h-1.5 w-1.5 rounded-full bg-yellow-500 animate-ping" />
+                     </div>
+                  </div>
+               </div>
+               
+               <div className="space-y-6 pt-10 border-t border-white/5">
+                  <div className="flex items-center justify-between">
+                     <span className="text-[11px] font-black text-slate-800 uppercase italic tracking-widest">AGENTIC_SYNC</span>
+                     <span className="text-xl font-black text-white italic font-mono uppercase">99.9% PROB</span>
+                  </div>
+                  <div className="h-3 bg-slate-900 rounded-full overflow-hidden p-0.5 border border-white/5 relative">
+                     <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: '99.9%' }}
+                        className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full"
+                     />
+                  </div>
+               </div>
+            </div>
             
             {/* Sector Health Radar */}
             <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
@@ -342,6 +423,26 @@ const SovereignAZRBrain: React.FC = () => {
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1]">
         <div className="absolute inset-0 bg-repeat bg-center" style={{ backgroundImage: 'radial-gradient(circle, #D4AF37 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
+    </div>
+  );
+};
+
+interface CyberOrbProps {
+  size: number;
+  color: string;
+  pulse?: boolean;
+  intensity?: number;
+}
+
+const CyberOrb: React.FC<CyberOrbProps> = ({ size, color, pulse, intensity = 0.5 }) => {
+  return (
+    <div style={{ width: size, height: size }} className="relative">
+      <div 
+        className={`absolute inset-0 rounded-full blur-2xl ${pulse ? 'animate-pulse' : ''}`} 
+        style={{ backgroundColor: color, opacity: 0.2 * intensity }} 
+      />
+      <div className="absolute inset-2 rounded-full border border-white/10" />
+      <div className="absolute inset-4 rounded-full border border-white/5 shadow-inner" />
     </div>
   );
 };

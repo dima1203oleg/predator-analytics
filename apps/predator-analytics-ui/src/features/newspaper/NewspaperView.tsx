@@ -1,5 +1,5 @@
 /**
- * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v56.2-TITAN
+ * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v56.5-ELITE
  * PREDATOR Analytics — Tactical OSINT Media Parser
  * 
  * Автоматичний дайджест: Компромат, Тренди, Митниця та ШІ-алерти.
@@ -136,7 +136,7 @@ export default function NewspaperView() {
                           TACTICAL_OSINT // MEDIA_PARSER
                         </span>
                         <div className="h-px w-10 bg-indigo-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ГАЗЕТА <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">PREDATOR</span>
@@ -180,7 +180,7 @@ export default function NewspaperView() {
                        <Flame size={14} /> {data.headline.tag}
                     </span>
                     <div className="h-px w-20 bg-rose-600/20" />
-                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v56.2</span>
+                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v56.5</span>
                  </div>
                  <h2 className="text-7xl font-black text-white italic tracking-tighter uppercase leading-[0.9] max-w-5xl group-hover:text-rose-500 transition-colors">
                     {data.headline.title}

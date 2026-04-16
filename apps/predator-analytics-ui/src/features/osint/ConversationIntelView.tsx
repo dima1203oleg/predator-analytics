@@ -27,9 +27,10 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { Badge } from '@/components/ui/badge';
-import { apiClient } from '@/services/api/config';
+import { intelligence } from '@/services/dataService';
 import { useQuery } from '@tanstack/react-query';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -57,16 +58,26 @@ interface Message {
 export default function ConversationIntelView() {
     const [activeTab, setActiveTab] = useState<'feed' | 'analytics' | 'risk'>('feed');
     const [liveCount, setLiveCount] = useState(8234);
-    const { isOnline } = useBackendStatus();
+    const { isOffline, activeFailover } = useBackendStatus();
 
-    const { data: messages = [], isLoading, refetch } = useQuery({
+    const { data: messages = [], isLoading, refetch, error } = useQuery({
         queryKey: ['telegram-feed'],
-        queryFn: async () => {
-            const res = await apiClient.get('/telegram/feed');
-            return Array.isArray(res.data) ? res.data : [];
-        },
+        queryFn: () => intelligence.getSignalFeed(),
         refetchInterval: 15000 
     });
+
+    // Trace: v56.5-ELITE Error Protocol Integration
+    useEffect(() => {
+        if (error) {
+            window.dispatchEvent(new CustomEvent('predator-error', { 
+                detail: { 
+                    service: 'ConversationIntel', 
+                    operation: 'Signal Acquisition', 
+                    message: error instanceof Error ? error.message : 'Unknown communication failure' 
+                } 
+            }));
+        }
+    }, [error]);
 
     useEffect(() => {
         const id = setInterval(() => setLiveCount(c => c + Math.floor(Math.random() * 5)), 3000);
@@ -112,13 +123,13 @@ export default function ConversationIntelView() {
                           </div>
                           <div>
                              <div className="flex items-center gap-4 mb-3">
-                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981] animate-ping" />
-                                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.8em] italic leading-none">
-                                  SIGNAL_DECODER // NEURAL_OSINT_V56.5
+                                <span className={cn("w-1.5 h-1.5 rounded-full shadow-[0_0_10px_currentColor] animate-ping", isOffline ? "bg-amber-500 text-amber-500" : "bg-emerald-500 text-emerald-500")} />
+                                <span className={cn("text-[10px] font-black uppercase tracking-[0.8em] italic leading-none", isOffline ? "text-amber-500/80" : "text-emerald-500/80")}>
+                                   {isOffline ? 'SOVEREIGN_EMERGENCY' : 'SIGNAL_DECODER'} // NEURAL_OSINT_V56.5
                                 </span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none mb-1">
-                               СИГНАЛЬНИЙ <span className="text-emerald-500 italic uppercase">ДЕКОДЕР</span>
+                               СИГНАЛЬНИЙ <span className={cn("italic uppercase underline decoration-8 underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-emerald-500 decoration-emerald-500/20")}>ДЕКОДЕР</span>
                              </h1>
                              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-emerald-500/20 pl-8 opacity-90 max-w-2xl">
                                МОНІТОРИНГ ТЕЛЕГРАМ-КАНАЛІВ, ЗМІ ТА ДАРКНЕТ-ФОРУМІВ // SOVEREIGN CLOUD
@@ -127,9 +138,9 @@ export default function ConversationIntelView() {
                        </div>
                      }
                      stats={[
-                       { label: 'АКТИВНІ_ДЖЕРЕЛА', value: '428', icon: <Satellite size={14} />, color: 'primary' },
-                       { label: 'ДЕТЕКТОВАНО_ФЕЙКІВ', value: '12', icon: <Shield size={14} />, color: 'error' },
-                       { label: 'СИГНАЛІВ_ЗА_ДОБУ', value: liveCount.toLocaleString(), icon: <Activity size={14} />, color: 'success' }
+                       { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
+                       { label: 'FAILOVER', value: activeFailover ? 'COLAB_SHARED' : isOffline ? 'LOCAL_PROXY' : 'STANDBY', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
+                       { label: 'СИГНАЛЬНИЙ_ТРАФІК', value: liveCount.toLocaleString(), icon: <Activity size={14} />, color: 'success' }
                      ]}
                      actions={
                        <div className="flex items-center gap-6">
@@ -173,14 +184,14 @@ export default function ConversationIntelView() {
                                         <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
                                         <Satellite size={80} className="relative z-10 text-emerald-500 animate-spin-slow" />
                                     </div>
-                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">INITIATING_SIGNAL_ACQUISITION...</p>
+                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕРЕХОПЛЕННЯ_СИГНАЛІВ...</p>
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="p-40 text-center border-4 border-dashed border-white/5 rounded-[4rem] bg-black/40 h-full flex flex-col items-center justify-center">
                                     <div className="mb-10 text-slate-800">
                                         <Scan size={100} className="mx-auto" />
                                     </div>
-                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.6em] italic leading-none">NO_ACTUAL_SIGNALS_DECODED_YET</p>
+                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.6em] italic leading-none">АКТУАЛЬНИХ_СИГНАЛІВ_НЕ_ВИЯВЛЕНО</p>
                                 </div>
                             ) : messages.map((msg: Message, i: number) => (
                                <motion.div 
@@ -330,6 +341,10 @@ export default function ConversationIntelView() {
                       </div>
 
                    </div>
+                </div>
+
+                <div className="max-w-[1880px] mx-auto px-12 pb-20 mt-[-40px] relative z-20">
+                    <DiagnosticsTerminal className="w-full" />
                 </div>
 
                 <style dangerouslySetInnerHTML={{ __html: `

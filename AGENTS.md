@@ -1,4 +1,4 @@
-# 🦅 PREDATOR Analytics v55.1 — Інструкції для ШІ-Агента (AGENTS.md)
+# 🦅 PREDATOR Analytics v56.5-ELITE — Інструкції для ШІ-Агента (AGENTS.md)
 
 > Цей файл визначає **канонічну поведінку** будь-якого ШІ-агента, що працює з кодовою базою PREDATOR Analytics.
 
@@ -76,7 +76,7 @@ HR-16  WORM таблиці (audit_log, decision_artifacts): UPDATE/DELETE = ERRO
 
 ---
 
-## Структура проекту (v55.1)
+## Структура проекту (v56.5-ELITE)
 
 ```
 Predator_21/

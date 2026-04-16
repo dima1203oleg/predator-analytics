@@ -31,6 +31,7 @@ import {
     Orbit,
     Fingerprint,
     Landmark,
+    Lock,
     ArrowUpRight
 } from 'lucide-react';
 import EvolutionDashboard from '@/components/super/EvolutionDashboard';
@@ -44,6 +45,7 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { PageTransition } from '@/components/layout/PageTransition';
+import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn'; // standardizing utility import
 
 interface TabConfig {
@@ -261,9 +263,9 @@ const EvolutionView: React.FC = () => {
                                                     {[
                                                         { version: 'v56.5-ELITE.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
                                                         { version: 'v56.4.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
-                                                        { version: 'v56.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
-                                                        { version: 'v55.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
-                                                        { version: 'v55.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
+                                                        { version: 'v56.5.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
+                                                        { version: 'v56.5-ELITE.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
+                                                        { version: 'v56.5-ELITE.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
                                                     ].map((v, i) => (
                                                         <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
                                                             <div className="flex items-center gap-5">

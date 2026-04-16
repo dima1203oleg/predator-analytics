@@ -1,6 +1,6 @@
 [project]
 name = "predator-common"
-version = "55.1.0"
+version = "56.5.0"
 description = "PREDATOR Analytics — спільні бібліотеки (UEID, Circuit Breaker, Retry, Logging)"
 requires-python = ">=3.12"
 license = { text = "Proprietary" }

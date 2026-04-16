@@ -19,7 +19,7 @@ import {
 import { cn } from '../../utils/cn';
 import ReactMarkdown from 'react-markdown';
 import { Badge } from '../ui/badge';
-import { intelligenceApi } from '../../services/api/intelligence';
+import { intelligence } from '../../services/dataService';
 
 interface SovereignReportWidgetProps {
     ueid: string;
@@ -36,16 +36,38 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
         setLoading(true);
         setError(null);
         try {
-            const data = await intelligenceApi.generateReport(ueid);
+            const data = await intelligence.getSovereignInsights(ueid);
             if (data && data.report) {
                 setReport(data.report);
             } else {
                 setReport(null);
                 setError('API не повернув текст звіту для цієї сутності.');
+                
+                // Dispatch diagnostic error
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                    detail: {
+                        service: 'IntelligenceAdvisor',
+                        action: 'GenerateReport',
+                        message: 'Empty report response from backend matrix',
+                        severity: 'warning'
+                    }
+                }));
             }
-        } catch (err) {
+        } catch (err: any) {
             setReport(null);
-            setError('Не вдалося отримати звіт із бекенду.');
+            const errMsg = err.message || 'Не вдалося отримати звіт із бекенду.';
+            setError(errMsg);
+
+            // Dispatch diagnostic error
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'IntelligenceAdvisor',
+                    action: 'GenerateReport',
+                    error: err,
+                    message: errMsg,
+                    severity: 'critical'
+                }
+            }));
         } finally {
             setLoading(false);
         }

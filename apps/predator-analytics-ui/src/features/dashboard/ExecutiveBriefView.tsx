@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v56.2 — STRATEGIC MORNING BRIEFING (TITAN CORE)
+ * 🦅 PREDATOR v56.5-ELITE — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
  * Розділ I.3 — ШІ-керований звіт для вищого керівництва.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -85,8 +85,8 @@ export default function ExecutiveBriefView() {
       'OSINT: Виявлено 14 нових згадок суб\'єкта в закритих реєстрах',
       'ТРИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
       'СИНХРОНІЗАЦІЯ: Оновлено санкційні списки РНБО та OFAC/EU',
-      'ШІ-АНАЛІЗ: Прогноз ризику для ТОВ "АГРО" підвищено до 92%',
-      'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною (-45% від ринку)',
+      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГРО" підвищено до 98.9% (AGENTIC_SYNC)',
+      'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною — Тунель ZROK активний',
       'ФІНАНСИ: Виявлено ознаки кругової торгівлі у секторі палива'
     ];
     let counter = 3;
@@ -136,7 +136,7 @@ export default function ExecutiveBriefView() {
               СУВЕРЕННЕ <span className="text-red-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v56.2-TITAN
+              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v56.5-ELITE (AGENTIC POOL)
             </p>
           </div>
           

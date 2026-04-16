@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v56.2 — CORE MONITORING (TITAN CORE)
+ * 🦅 PREDATOR v56.5 — CORE MONITORING (ELITE CORE)
  * Розділ I.6 — Операційний моніторинг платформи.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -338,7 +338,7 @@ const MonitoringView: React.FC = () => {
                                      SYSTEM_KERNEL // OPERATIONAL_COMMAND
                                    </span>
                                    <div className="h-px w-12 bg-sky-600/20" />
-                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                   ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>

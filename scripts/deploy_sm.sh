@@ -1,10 +1,10 @@
 #!/bin/bash
-# PREDATOR Analytics v55.3 - Single Machine (SM) Deployment
+# PREDATOR Analytics v56.5-ELITE - Single Machine (SM) Deployment
 # Run this from the root of the project
 
 set -e
 
-echo "🦅 PREDATOR Analytics v55.3 SM Edition - ініціалізація розгортання..."
+echo "🦅 PREDATOR Analytics v56.5-ELITE SM Edition - ініціалізація розгортання..."
 
 # 1. Створення необхідних директорій
 echo "[1/4] Створення директорій для томів..."
@@ -34,9 +34,10 @@ docker-compose --profile server up -d
 echo "[4/4] Готово! Перевіряємо статус сервісів..."
 docker-compose ps
 
-echo "🚀 Усі служби запущені. PREDATOR Analytics працює!"
-echo "➡️  UI: http://localhost"
-echo "➡️  API Backend: http://localhost:8090"
-echo "➡️  Grafana: http://localhost:3001 (admin/admin)"
-echo "➡️  Keycloak: http://localhost:8080 (admin/admin)"
-echo "➡️  Prometheus: http://localhost:9090"
+echo "🚀 Усі служби запущені. PREDATOR Analytics v56.5-ELITE працює!"
+echo "➡️  UI (Sovereign Command): http://localhost:3030"
+echo "➡️  API Backend (NVIDIA/ZROK): http://localhost:8000"
+echo "➡️  Grafana (Monitoring): http://localhost:3001 (admin/admin)"
+echo "➡️  Keycloak (Auth): http://localhost:8080 (admin/admin)"
+echo "➡️  Prometheus (Metrics): http://localhost:9090"
+echo "📡 ZROK Status: Active via Tunnel Node"

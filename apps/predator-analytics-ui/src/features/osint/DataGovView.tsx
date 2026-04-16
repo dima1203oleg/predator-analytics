@@ -1,5 +1,5 @@
 /**
- * 🌐 OPEN DATA MATRIX // МАТРИЦЯ ВІДКРИТИХ ДАНИХ | v56.2-TITAN
+ * 🌐 OPEN DATA MATRIX // МАТРИЦЯ ВІДКРИТИХ ДАНИХ | v56.5-ELITE
  * PREDATOR Analytics — Governance OSINT & Dataset Discovery
  * 
  * Модуль інтеграції з порталом data.gov.ua: пошук та аналіз датасетів.
@@ -100,7 +100,7 @@ export default function DataGovView() {
                                   OPEN_DATA_MATRIX // GOVERNMENT_SCAN
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.2 TITAN</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                ДЕРЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">РЕЄСТРИ</span>

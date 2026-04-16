@@ -264,7 +264,7 @@ const buildCustomsChartOption = (declarations: DeclarationResponse[]) => {
   };
 };
 
-// --- MOCK DATA FALLBACK (v56.2-TITAN-ELITE) ---
+// --- MOCK DATA FALLBACK (v56.5-ELITE-ELITE) ---
 const MOCK_MARKET_OVERVIEW = {
   overview: {
     stats: {
@@ -477,7 +477,7 @@ export default function MarketPage() {
           <div className="flex-1 space-y-6">
             <div className="flex flex-wrap items-center gap-3">
               <div className="badge-v2 badge-v2-red">
-                <span className="relative z-10 text-white font-black italic">PREDATOR v56.2-TITAN | SOVEREIGN MARKET</span>
+                <span className="relative z-10 text-white font-black italic">PREDATOR v56.5-ELITE | SOVEREIGN MARKET</span>
                 <div className="badge-v2-glimmer" />
               </div>
               <div className={cn(
@@ -556,7 +556,7 @@ export default function MarketPage() {
           </div>
           <div>
             <div className="text-[10px] font-black uppercase tracking-wider text-slate-500">Пульс ринку</div>
-            <div className="text-xs font-bold text-slate-200 uppercase italic">Активність_Ядра (v56.2-TITAN)</div>
+            <div className="text-xs font-bold text-slate-200 uppercase italic">Активність_Ядра (v56.5-ELITE)</div>
           </div>
         </div>
         <div className="flex items-center gap-3 p-4 rounded-2xl border border-amber-500/10 bg-amber-500/5 group hover:border-amber-500/30 transition-all">

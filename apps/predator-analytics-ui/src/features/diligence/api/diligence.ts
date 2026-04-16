@@ -62,7 +62,7 @@ const extractRiskEntities = (payload: unknown): RiskEntity[] => {
 
 /**
  * API для роботи з перевіркою контрагентів (Due Diligence).
- * Синхронізовано з v56.2-TITAN-SM-EXTENDED Core API (/companies, /risk).
+ * Синхронізовано з v56.5-ELITE-SM-EXTENDED Core API (/companies, /risk).
  */
 export const diligenceApi = {
     /**
@@ -91,7 +91,7 @@ export const diligenceApi = {
     },
 
     /**
-     * Пошук компаній з фільтрацією по ризику (v56.2-TITAN).
+     * Пошук компаній з фільтрацією по ризику (v56.5-ELITE).
      */
     searchCompanies: async (params: CompanySearchParams | string = {}): Promise<CompanySearchResponse | RiskEntity[]> => {
         const response = await apiClient.get('/companies', { params: normalizeSearchParams(params) });

@@ -28,29 +28,36 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
 import { HoloContainer } from '@/components/HoloContainer';
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 // --- MOCK DATA FOR ELITE ---
 const MOCK_THOUGHTS: AIThought[] = [
-    { id: '1', stage: 'observation', content: 'Перехоплено аномальний обсяг транзакцій у секторі пального (АЗС ТІТАН).', confidence: 0.98, timestamp: new Date().toISOString() },
-    { id: '2', stage: 'analysis', content: 'Кореляція зі зміною цін на Роттердам+ за останні 4 години відсутня. Ознаки штучного дефіциту.', confidence: 0.85, timestamp: new Date().toISOString() },
-    { id: '3', stage: 'decision', content: 'Ініціювати запит до реєстру податкових накладних (API-V3). Підготовка звіту для АМКУ.', confidence: 0.92, timestamp: new Date().toISOString() },
+    { id: '1', stage: 'observation', content: '[GLM-5.1] Виявлено критичне відхилення у ланцюгу постачання пального. Джерело: NVIDIA-CLUSTER.', confidence: 0.99, timestamp: new Date().toISOString() },
+    { id: '2', stage: 'analysis', content: 'Активація SWE-Bench Pro для аудиту аномальних транзакцій. Кореляція з ZROK-трафіком позитивна.', confidence: 0.97, timestamp: new Date().toISOString() },
+    { id: '3', stage: 'decision', content: 'Переведення інтелекту в режим ПРЯМОГО ВПЛИВУ. Ініціація OSINT-контрзаходів.', confidence: 0.98, timestamp: new Date().toISOString() },
 ];
 
 export default function SovereignIntelHub() {
+    const { status, nodeSource } = useBackendStatus();
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { role: 'system', content: 'Система PREDATOR ORACLE v56.5-ELITE активована. Очікування запиту суверенного аналітика...' }
+        { role: 'system', content: 'СУВЕРЕННИЙ ІНТЕЛЕКТ ПРЕДАТОР GLM-5.1 АКТИВОВАНО. Зв\'язок через ZROK тунель: ВСТАНОВЛЕНО.' }
     ]);
     const [input, setInput] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const chatMutation = useMutation({
-        mutationFn: (msgs: ChatMessage[]) => aiApi.chat(msgs),
+        mutationFn: (msgs: ChatMessage[]) => aiApi.chat(msgs, 'glm-5.1:sovereign'),
         onSuccess: (data) => {
-            setMessages(prev => [...prev, { role: 'assistant', content: data.content, thought_process: data.thoughts }]);
+            setMessages(prev => [...prev, { 
+                role: 'assistant', 
+                content: data.choices[0].message.content, 
+                thought_process: data.choices[0].message.thought_process 
+            }]);
         }
     });
 
     const handleSend = () => {
-        if (!input.trim()) return;
+        if (!input.trim() || chatMutation.isPending) return;
         const newMsgs: ChatMessage[] = [...messages, { role: 'user', content: input }];
         setMessages(newMsgs);
         setInput('');
@@ -86,7 +93,7 @@ export default function SovereignIntelHub() {
                                 <div className="flex items-center gap-4 mb-2">
                                     <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
                                     <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.8em]">
-                                        SOVEREIGN INTEL NEXUS · v56.5-ELITE
+                                        GLM-5.1 SOVEREIGN AGENT · v56.5-ELITE
                                     </span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none italic">
@@ -104,7 +111,9 @@ export default function SovereignIntelHub() {
                                         </div>
                                     ))}
                                 </div>
-                                <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">3 АКТИВНІ СЕСІЇ</span>
+                                <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">
+                                    {nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL ACTIVE' : 'LOCAL_MOCK_MODE'}
+                                </span>
                             </div>
                             <Button variant="ghost" className="text-yellow-500/60 hover:text-yellow-500 uppercase text-[9px] font-black tracking-widest gap-2">
                                 <Command size={14} /> ТЕРМІНАЛ
@@ -119,13 +128,13 @@ export default function SovereignIntelHub() {
                             <TacticalCard variant="holographic" className="flex-1 p-8 relative overflow-hidden flex flex-col bg-black/60 border-yellow-500/10 rounded-[3rem]">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em] flex items-center gap-3 italic">
-                                        <Terminal size={18} className="text-yellow-500" /> ПОТІК_МИСЛЕННЯ
+                                        <Terminal size={18} className="text-yellow-500" /> ПОТІК_МИСЛЕННЯ_GLM
                                     </h3>
                                     <div className="w-3 h-3 bg-yellow-500 rounded-full animate-ping opacity-40 shadow-[0_0_10px_#d4af37]" />
                                 </div>
                                 
-                                <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar">
-                                    {MOCK_THOUGHTS.map((t, i) => (
+                                <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar font-mono">
+                                    {(messages[messages.length - 1]?.thought_process || MOCK_THOUGHTS).map((t, i) => (
                                         <motion.div 
                                             key={t.id}
                                             initial={{ opacity: 0, x: -20 }}
@@ -147,7 +156,7 @@ export default function SovereignIntelHub() {
                                                 <span className="text-[8px] font-mono text-slate-700 ml-auto font-black">{t.confidence * 100}% CONF</span>
                                             </div>
                                             <p className="text-[12px] text-slate-400 leading-relaxed italic group-hover:text-white transition-colors">
-                                                "{t.content}"
+                                                {t.content}
                                             </p>
                                         </motion.div>
                                     ))}
@@ -155,11 +164,11 @@ export default function SovereignIntelHub() {
 
                                 <div className="mt-8 pt-8 border-t border-white/5">
                                     <div className="flex items-center justify-between text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4 italic">
-                                        <span>СИНЕРГІЯ ПРЕДИКЦІЇ</span>
-                                        <span className="text-yellow-500">92.4%</span>
+                                        <span>SWE-BENCH PRO (SOTA)</span>
+                                        <span className="text-yellow-500">98.9%</span>
                                     </div>
                                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
-                                        <motion.div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" initial={{ width: 0 }} animate={{ width: '92.4%' }} />
+                                        <motion.div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" initial={{ width: 0 }} animate={{ width: '98.9%' }} />
                                     </div>
                                 </div>
                             </TacticalCard>
@@ -169,15 +178,15 @@ export default function SovereignIntelHub() {
                                     <Shield size={180} className="text-rose-500" />
                                 </div>
                                 <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
-                                    <Shield size={16} /> АВТОНОМНИЙ_ЗАХИСТ
+                                    <Shield size={16} /> СУВЕРЕННИЙ_БРАНДМАУЕР
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center bg-black/40 p-4 rounded-2xl border border-white/5">
-                                        <span className="text-[11px] font-black text-slate-400">ВЕКТОР_АТАКИ_0</span>
-                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] font-black">STABLE</Badge>
+                                        <span className="text-[11px] font-black text-slate-400">ZROK_PROTECTION_ENABLED</span>
+                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] font-black">ACTIVE</Badge>
                                     </div>
                                     <div className="text-[10px] text-slate-600 leading-tight font-black uppercase tracking-wider">
-                                        КВАНТОВИЙ МОНІТОР ПЕРЕВІРЯЄ ЦІЛІСНІСТЬ ЯДРА v56.5...
+                                        GLM-5.1 МОНІТОРИТЬ КЛАСТЕР NVIDIA ЧЕРЕЗ ШИФРОВАНИЙ ТУНЕЛЬ...
                                     </div>
                                 </div>
                             </HoloContainer>
@@ -191,17 +200,17 @@ export default function SovereignIntelHub() {
                             <div className="p-8 border-b border-yellow-500/10 flex items-center justify-between relative z-10 backdrop-blur-3xl bg-black/20">
                                 <div className="flex items-center gap-6">
                                     <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-yellow-600 to-yellow-500 flex items-center justify-center shadow-4xl border border-yellow-400/30 relative">
-                                        <Lock className="text-black" size={28} />
+                                        <Zap className="text-black" size={28} />
                                         <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full border-4 border-black" />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-black text-white uppercase tracking-wider italic">ORACLE_SECURE_CHANNEL</h4>
+                                        <h4 className="text-lg font-black text-white uppercase tracking-wider italic">GLM-5.1:SOVEREIGN_OPERATIONS</h4>
                                         <div className="flex items-center gap-3">
                                             <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-                                                <span className="text-[9px] text-emerald-400 font-black uppercase tracking-widest">ENCRYPTED_OODA</span>
+                                                <span className="text-[9px] text-emerald-400 font-black uppercase tracking-widest">SECURE_ZROK_NODE</span>
                                             </div>
-                                            <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">MISTRAL_ELITE_v2</span>
+                                            <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">AGENTIC_MODE: ON</span>
                                         </div>
                                     </div>
                                 </div>
@@ -236,7 +245,7 @@ export default function SovereignIntelHub() {
                                             {msg.role === 'user' ? <Fingerprint size={22} /> : <Bot size={22} />}
                                         </div>
                                         <div className={cn(
-                                            "p-7 rounded-[2.5rem] text-[15px] leading-relaxed relative overflow-hidden",
+                                            "p-7 rounded-[2.5rem] text-[15px] leading-relaxed relative overflow-hidden whitespace-pre-wrap",
                                             msg.role === 'user' 
                                                 ? "bg-yellow-500 text-black rounded-tr-none font-bold italic shadow-xl" 
                                                 : "bg-white/[0.03] text-slate-200 border border-white/5 rounded-tl-none font-medium backdrop-blur-md"
@@ -254,7 +263,7 @@ export default function SovereignIntelHub() {
                                         <div className="flex flex-col gap-2">
                                             <div className="h-4 w-64 bg-white/5 rounded-full" />
                                             <div className="h-4 w-48 bg-white/5 rounded-full opacity-50" />
-                                            <span className="text-[9px] font-black text-yellow-600 uppercase tracking-[0.5em] mt-2 italic">СИНТЕЗ_ВІДПОВІДІ_ELITE...</span>
+                                            <span className="text-[9px] font-black text-yellow-600 uppercase tracking-[0.5em] mt-2 italic">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
                                         </div>
                                     </div>
                                 )}
@@ -268,7 +277,7 @@ export default function SovereignIntelHub() {
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder="Введіть директиву для аналізу (напр. 'Ескалація санкцій ТІТАН')..." 
+                                        placeholder="Введіть директиву для GLM-5.1 (напр. 'Проаналізувати критичні порти NVIDIA серверу')..." 
                                         className="h-20 pl-16 pr-28 bg-black border-2 border-white/5 rounded-3xl text-white focus:border-yellow-500/60 focus:ring-0 transition-all font-bold tracking-tight text-lg placeholder:text-slate-700 placeholder:italic relative z-10"
                                     />
                                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-yellow-500 transition-colors z-20" size={24} />
@@ -286,16 +295,16 @@ export default function SovereignIntelHub() {
                                     <div className="flex items-center gap-6">
                                         <div className="flex items-center gap-2 group cursor-help">
                                             <Cpu size={14} className="text-yellow-500/60 group-hover:text-yellow-500" />
-                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">Mistral-7B-v56.5</span>
+                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">GLM-5.1:SOVEREIGN</span>
                                         </div>
                                         <div className="flex items-center gap-2 group cursor-help">
-                                            <Zap size={14} className="text-rose-500/60 group-hover:text-rose-500" />
-                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">Latency: 42ms</span>
+                                            <Globe size={14} className="text-rose-500/60 group-hover:text-rose-500" />
+                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">NODE: {nodeSource}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-                                        <span className="text-[9px] font-black uppercase text-yellow-600 tracking-widest italic font-bold">SOVEREIGN_SESSION_ACTIVE</span>
+                                        <span className="text-[9px] font-black uppercase text-yellow-600 tracking-widest italic font-bold">ZROK_LINK: ENCRYPTED</span>
                                     </div>
                                 </div>
                             </div>

@@ -231,7 +231,7 @@ const SystemPanel: React.FC<{
         {!isCode && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Модель</span>
-            <span className={accentColor}>{system.metrics.model || 'llama3.1:8b'}</span>
+            <span className={accentColor}>{system.metrics.model || 'glm-5.1:latest'}</span>
           </div>
         )}
       </div>
@@ -283,7 +283,7 @@ export const UnifiedAutonomyDashboard: React.FC = () => {
       setMetrics({
         timestamp: new Date().toISOString(),
         code_evolution: {
-          name: 'AZR Hyper-Autonomy v45.5',
+          name: 'AZR Hyper-Autonomy v56.5-ELITE',
           status: 'running',
           uptime_hours: 6.5,
           last_cycle: new Date().toISOString(),
@@ -306,7 +306,7 @@ export const UnifiedAutonomyDashboard: React.FC = () => {
           success_rate: 87.2,
           metrics: {
             stage: 'ready',
-            model: 'llama3.1:8b-instruct',
+            model: 'glm-5.1:latest',
             accuracy: 0.89,
             samples_generated: 156,
             h2o_status: 'available'

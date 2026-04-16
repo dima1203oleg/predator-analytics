@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Observer Matrix | v55 Premium Matrix
+ * 👁️ Sovereign Observer Matrix | v56.5-ELITE Premium Matrix
  * PREDATOR SOM (Sovereign Observer Module)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
@@ -9,7 +9,7 @@
  * - Idea Garden (Сад Гіпотез)
  * - Стан "Цифрового двійника" (Digital Twin)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v55
+ * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -132,7 +132,7 @@ const SOMView: React.FC = () => {
       <ViewHeader
         title="Суверенний Наглядач"
         icon={<Eye size={24} />}
-        breadcrumbs={['PREDATOR', 'SOM_V55', 'КОНТРОЛЬ_ЯДРА']}
+        breadcrumbs={['PREDATOR', 'SOM_V56.5', 'КОНТРОЛЬ_ЯДРА']}
         stats={[
           {
             label: 'ЦІЛІСНІСТЬ_КОНСТИТУЦІЇ',
@@ -464,7 +464,7 @@ const SOMView: React.FC = () => {
             </div>
             <div>
               <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-1">Універсальний Моніторинг Суверенітету</h3>
-              <p className="text-xs text-slate-500 font-medium">Повний контроль над цифровим двійником реальності в режимі SOM_V55.</p>
+              <p className="text-xs text-slate-500 font-medium">Повний контроль над цифровим двійником реальності в режимі SOM_V56.5.</p>
             </div>
           </div>
           <div className="flex gap-12">

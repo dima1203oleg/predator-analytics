@@ -15,7 +15,7 @@ import {
   Layers, AlertTriangle, TrendingUp, Cpu, Network,
   Maximize2, Minimize2, Radio, Target, Bell,
   ArrowUpRight, Clock, Box, Eye, CheckCircle2,
-  Lock, Satellite, Radar, Scan, Fingerprint
+  Lock, Satellite, Radar, Scan, Fingerprint, Users, ChevronRight
 } from 'lucide-react';
 import { 
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip,
@@ -46,7 +46,7 @@ const RISK_PIE_DATA = [
 export default function WarRoomView() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [ticker, setTicker] = useState(0);
-  const { isOnline } = useBackendStatus();
+  const { isOffline, sourceLabel, activeFailover, healingProgress } = useBackendStatus();
 
   useEffect(() => {
     const itv = setInterval(() => setTicker(t => t + 1), 5000);
@@ -70,23 +70,23 @@ export default function WarRoomView() {
                     <Target size={48} className="text-red-600 drop-shadow-[0_0_20px_#e11d48]" />
                   </div>
                 </div>
-                <div>
-                   <div className="flex items-center gap-4 mb-2">
-                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_10px_#e11d48]" />
-                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.8em]">
-                       TACTICAL COMMAND CENTER · v56.5-ELITE
-                     </span>
-                   </div>
-                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
-                     WAR <span className="text-red-600 underline decoration-red-600/20 decoration-[12px] underline-offset-8">ROOM</span>
-                   </h1>
-                </div>
+                 <div>
+                    <div className="flex items-center gap-4 mb-2">
+                      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
+                      <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
+                        {isOffline ? 'SOVEREIGN_EMERGENCY' : 'TACTICAL COMMAND CENTER'} · v56.5-ELITE
+                      </span>
+                    </div>
+                    <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
+                      WAR <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-red-600 decoration-red-600/20")}>ROOM</span>
+                    </h1>
+                 </div>
               </div>
             }
             stats={[
               { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'error' },
-              { label: 'UDP_UPTIME', value: '99.98%', icon: <Activity size={14} />, color: 'success' },
-              { label: 'SCAN_PHASE', value: 'ACTIVE', icon: <Scan size={14} />, color: 'primary' }
+              { label: 'NODE_SOURCE', value: activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'OFFLINE' : 'NVIDIA_MASTER', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
+              { label: 'FAILOVER', value: activeFailover ? 'ZROK_TUNNEL' : isOffline ? 'AUTONOMOUS' : 'STANDBY', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' }
             ]}
             actions={
               <div className="flex items-center gap-6">

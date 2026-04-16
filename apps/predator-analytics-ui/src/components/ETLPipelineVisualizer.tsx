@@ -335,7 +335,7 @@ export const ETLPipelineVisualizer: React.FC = () => {
           >
             <TacticalCard
               variant="holographic"
-              title="AUTOMATED_DATA_FABRIC_MODEL_V55"
+              title="AUTOMATED_DATA_FABRIC_MODEL_V56.5"
               className="p-12 border-white/5 bg-slate-950/40 relative overflow-hidden"
             >
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />

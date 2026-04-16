@@ -268,7 +268,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
 ];
 
 /**
- * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v56.2-TITAN OSINT-HUB.
+ * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v56.5-ELITE OSINT-HUB.
  * Шість верхніх блоків зберігають попередні модулі, але прибирають перевантаження на рівні головних секцій.
  */
 const baseNavigationConfig: NavSection[] = [
@@ -318,7 +318,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Стратегічний брифінг v56.2-TITAN',
+        label: 'Стратегічний брифінг v56.5-ELITE',
         path: '/morning-brief',
         icon: Compass,
         description: 'Пріоритетний аналіз суверенних ризиків, ринкових аномалій та критичних цілей на день.',
@@ -514,7 +514,7 @@ const baseNavigationConfig: NavSection[] = [
         icon: ShieldX,
         description: 'Преміальний контур виявлення та моніторингу субʼєктів із високим ризиком зради.',
         group: 'OSINT та розслідування',
-        badge: 'v56.2-TITAN',
+        badge: 'v56.5-ELITE',
         priority: 95,
       },
       {
@@ -785,7 +785,7 @@ const baseNavigationConfig: NavSection[] = [
         icon: Sparkles,
         description: 'Центр предиктивного моделювання: сценарії, прогнози та випереджаючі інсайти.',
         group: 'Користувацький контур',
-        badge: 'v56.2-TITAN_PREDICTIVE',
+        badge: 'v56.5-ELITE_PREDICTIVE',
         priority: 100,
       },
       {

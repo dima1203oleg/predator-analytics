@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Канонічна конфігурація PREDATOR Core API (v55.1 Ironclad)."""
+    """Канонічна конфігурація PREDATOR Core API (v56.5-ELITE)."""
 
     # Основні
     APP_NAME: str = "PREDATOR Analytics Core API"
@@ -97,11 +97,11 @@ class Settings(BaseSettings):
 
     # AI / LiteLLM / MCP
     LITELLM_API_BASE: str = "http://localhost:4000/v1"
-    OLLAMA_MODEL: str = "llama3.2"
+    OLLAMA_MODEL: str = "glm-5.1:latest"
     MCP_ROUTER_URL: str = "http://localhost:8080/v1/query"
-    LITELLM_MODEL: str = "ollama/llama3.2"
+    LITELLM_MODEL: str = "ollama/glm-5.1:latest"
     LITELLM_REASONING_MODEL: str = "ollama/deepseek-r1:latest"
-    LITELLM_ELITE_MODEL: str = "ollama/qwen3.5:latest"
+    LITELLM_ELITE_MODEL: str = "ollama/glm-5.1:latest"
     AI_ENGINE_URL: str = "http://localhost:9050"
     OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
     COPILOT_STREAM_BUFFER: int = 100

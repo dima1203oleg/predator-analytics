@@ -29,6 +29,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
+import { ViewHeader } from '@/components/ViewHeader';
 
 interface Opportunity {
   id: string;

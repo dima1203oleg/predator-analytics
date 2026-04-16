@@ -21,7 +21,7 @@ const EarlyWarningSignals: React.FC = () => {
     const { t } = useTranslation();
     const [signals, setSignals] = useState<EWSignal[]>([]);
 
-    // Симуляція потоку EWS сигналів з v56.2-TITAN-SM Signal Bus
+    // Симуляція потоку EWS сигналів з v56.5-ELITE-SM Signal Bus
     useEffect(() => {
         const initialSignals: EWSignal[] = [
             {
@@ -73,7 +73,7 @@ const EarlyWarningSignals: React.FC = () => {
                                 {t('predictions.ews_title')}
                             </CardTitle>
                             <CardDescription className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-                                Neural Early Warning Engine v56.2-TITAN.5
+                                Neural Early Warning Engine v56.5-ELITE.5
                             </CardDescription>
                         </div>
                     </div>
