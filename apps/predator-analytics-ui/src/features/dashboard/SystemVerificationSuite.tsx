@@ -344,9 +344,9 @@ const SystemVerificationSuite: React.FC = () => {
         icon={<Microscope size={24} />}
         breadcrumbs={['System', 'Verification', 'Control Case']}
         stats={[
-          { label: 'Pipeline State', value: isProcessing ? 'RUNNING' : 'IDLE', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
-          { label: 'Data Version', value: 'v56.5-ELITE-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
-          { label: 'Safety Index', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
+          { label: 'СТАН ПАЙПЛАЙНУ', value: isProcessing ? 'ЗАПУЩЕНО' : 'ОЧІКУВАННЯ', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
+          { label: 'ВЕРСІЯ ДАНИХ', value: 'v56.5-ELITE-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
+          { label: 'ІНДЕКС БЕЗПЕКИ', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
         ]}
       />
 
@@ -518,15 +518,15 @@ const SystemVerificationSuite: React.FC = () => {
           <TacticalCard variant="glass" className="p-8 min-h-[400px] flex flex-col">
             <div className="flex items-center gap-3 mb-8">
               <Terminal size={18} className="text-slate-500" />
-              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Integrated Diagnostics</h3>
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">ІНТЕГРОВАНА ДІАГНОСТИКА</h3>
             </div>
             <div className="space-y-6 flex-1">
               {[
-                { label: 'Backend API Gateway', state: 'ONLINE', val: '12ms', color: '#10b981' },
-                { label: 'Postgres Master-DB', state: 'SYNC', val: 'HEALTHY', color: '#10b981' },
-                { label: 'MinIO Persistence', state: 'MOUNTED', val: 'READY', color: '#10b981' },
-                { label: 'Graph Compute Unit', state: 'ACTIVE', val: 'LOAD: 4%', color: '#3b82f6' },
-                { label: 'OpenSearch Ingester', state: 'WAITING', val: 'IDLE', color: '#64748b' },
+                { label: 'Backend API Шлюз', state: 'ОНЛАЙН', val: '12ms', color: '#10b981' },
+                { label: 'Postgres Master-DB', state: 'СИНХРОННО', val: 'ЗДОРОВИЙ', color: '#10b981' },
+                { label: 'MinIO Сховище', state: 'ПІДКЛЮЧЕНО', val: 'ГОТОВО', color: '#10b981' },
+                { label: 'Вузол Графових Обчислень', state: 'АКТИВНО', val: 'НАВАНТ: 4%', color: '#3b82f6' },
+                { label: 'OpenSearch Інгестер', state: 'ОЧІКУВАННЯ', val: 'ПРОСТІЙ', color: '#64748b' },
               ].map((sys, i) => (
                 <div key={i} className="flex justify-between items-center p-4 bg-black/40 border border-white/5 rounded-2xl group/diag hover:border-white/10">
                   <div>
@@ -541,7 +541,7 @@ const SystemVerificationSuite: React.FC = () => {
             {/* Verification Token */}
             <div className="mt-10 p-6 bg-rose-500/5 border border-dashed border-rose-500/30 rounded-[32px] flex flex-col items-center text-center">
               <Fingerprint size={48} className="text-rose-500/30 mb-4" />
-              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Verification Session Token</span>
+              <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Токен Сесії Верифікації</span>
               <span className="text-[10px] font-mono font-black text-rose-400 select-all tracking-tighter">PRDTR-2026-MAR-E2E-CITADEL-V55-BETA</span>
             </div>
           </TacticalCard>

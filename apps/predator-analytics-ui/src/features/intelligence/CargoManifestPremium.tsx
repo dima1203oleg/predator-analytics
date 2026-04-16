@@ -13,10 +13,10 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileSearch, ShieldAlert, AlertTriangle, CheckCircle, Search, 
+  FileSearch, ShieldAlert, AlertTriangle, CheckCircle, Search,
   Filter, Download, ArrowRight, Layers, Database, Sparkles,
   Zap, Package, Truck, Ship, Anchor, Fingerprint, Activity,
-  Scale, Crosshair, BarChart3, ChevronRight, List, Siren,
+  Scale, Crosshair, BarChart3, ChevronRight, List, Siren, Lock,
   Eye, Target, ShieldCheck, RefreshCw, Box, History
 } from 'lucide-react';
 import { cn } from '@/utils/cn';

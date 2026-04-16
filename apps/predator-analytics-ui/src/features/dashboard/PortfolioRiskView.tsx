@@ -73,7 +73,7 @@ const RISK_POSITIONS: RiskPosition[] = [
     atRisk: '$18.4M',
     riskPct: 100,
     riskLevel: 'critical',
-    trigger: 'SDN List hit — OFAC 2025-03-15',
+    trigger: 'Попадання в список SDN — OFAC 2025-03-15',
     daysToMaturity: 12,
     country: '🇻🇬 BVI',
     action: 'ЗАМОРОЗИТИ РОЗРАХУНКИ',
@@ -115,7 +115,7 @@ const RISK_POSITIONS: RiskPosition[] = [
     atRisk: '$5.8M',
     riskPct: 26,
     riskLevel: 'high',
-    trigger: 'UBO через офшор · Shell структура виявлена',
+    trigger: 'UBO через офшор · Виявлено фіктивну структуру',
     daysToMaturity: 88,
     country: '🇺🇦 Україна',
     action: 'ПЕРЕУКЛАСТИ З ГАРАНТІЯМИ',
@@ -186,7 +186,7 @@ const PortfolioRiskView: React.FC = () => {
                   <div className="flex items-center gap-4 mb-3">
                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#e11d48]" />
                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.6em]">
-                      PORTFOLIO RISK NEXUS · v56.5-ELITE
+                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v56.5-ELITE
                     </span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
@@ -199,8 +199,8 @@ const PortfolioRiskView: React.FC = () => {
               </div>
             }
             stats={[
-              { label: 'У ЗОНІ РИЗИКУ', value: `$${liveRisk}M`, icon: <TrendingUp size={14} />, color: 'error' },
-              { label: 'КРИТИЧНИЙ_NET', value: '$41.8M', icon: <AlertTriangle size={14} />, color: 'error' },
+              { label: 'У ЗОНІ РИЗИКУ', value: `$${liveRisk}M`, icon: <TrendingUp size={14} />, color: 'danger' },
+              { label: 'КРИТИЧНИЙ_NET', value: '$41.8M', icon: <AlertTriangle size={14} />, color: 'danger' },
               { label: 'СИСТЕМНИЙ ПОРТФЕЛЬ', value: '$847M', icon: <Activity size={14} />, color: 'primary' }
             ]}
             actions={
@@ -213,7 +213,7 @@ const PortfolioRiskView: React.FC = () => {
                 </button>
                 <button className="px-14 py-6 bg-red-600 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
                   <Download size={24} />
-                  BOARD_DOSSIER_ELITE
+                  ДОСЬЄ_ПРАВЛІННЯ_ЕЛІТА
                 </button>
               </div>
             }
@@ -223,9 +223,9 @@ const PortfolioRiskView: React.FC = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { l: 'КРИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
-              { l: 'РИЗИК_INDEX',      v: '15.1%',      sub: 'Of Total Assets',       c: '#D4AF37' },
-              { l: 'BREADTH_REACH',    v: '4 Країни',   sub: 'Географічне покриття',  c: '#D4AF37' },
-              { l: 'ALPHA_EXPOSURE',   v: '$127.4M',    sub: 'Sovereign P&L Impact',  c: '#E11D48' },
+              { l: 'РИЗИК_INDEX',      v: '15.1%',      sub: 'Від загальних активів',       c: '#D4AF37' },
+              { l: 'ГЕО_ОХОПЛЕННЯ',    v: '4 Країни',   sub: 'Географічне покриття',  c: '#D4AF37' },
+              { l: 'ВІДКРИТІСТЬ_АЛЬФА',   v: '$127.4M',    sub: 'Вплив на суверенний прибуток',  c: '#E11D48' },
             ].map((m, i) => (
               <motion.div
                 key={m.l}
@@ -357,7 +357,7 @@ const PortfolioRiskView: React.FC = () => {
                              </div>
                              <div className="flex gap-2">
                                 <span className="w-2 h-2 bg-red-600 rounded-full animate-ping" />
-                                <span className="text-[9px] font-black text-red-700 uppercase tracking-widest font-mono italic">ACTIVE_THREAT</span>
+                                <span className="text-[9px] font-black text-red-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГРОЗА</span>
                              </div>
                           </div>
 
@@ -372,8 +372,8 @@ const PortfolioRiskView: React.FC = () => {
                             {[
                               { l: 'ЕКСПОЗИЦІЯ', v: selectedPos.exposure },
                               { l: 'NET_РИЗИК',   v: selectedPos.atRisk },
-                              { l: 'INDEX_X',     v: `${selectedPos.riskPct}%` },
-                              { l: 'MATURITY',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
+                              { l: 'ІНДЕКС_X',     v: `${selectedPos.riskPct}%` },
+                              { l: 'ЗРІЛІСТЬ',     v: selectedPos.daysToMaturity > 0 ? `${selectedPos.daysToMaturity} ДН` : 'ДЕФОЛТ' },
                             ].map((f, i) => (
                               <div key={i} className="p-6 border-2 border-white/5 bg-black rounded-[2.5rem] shadow-inner group hover:border-red-500/20 transition-all">
                                 <p className="text-[9px] text-slate-800 uppercase font-black tracking-widest mb-3 group-hover:text-red-500/60 transition-colors italic">{f.l}</p>
@@ -397,10 +397,10 @@ const PortfolioRiskView: React.FC = () => {
 
                           <div className="space-y-4">
                             <button className="w-full py-8 bg-red-600 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[2.5rem] flex items-center justify-center gap-6 border-4 border-red-500/20">
-                               <Zap size={24} /> EXECUTE_ENFORCEMENT
+                               <Zap size={24} /> ВИКОНАТИ_ПРИМУС
                             </button>
                             <button className="w-full py-6 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] italic hover:text-white hover:border-red-500/30 transition-all rounded-[2.5rem] shadow-2xl">
-                               DOWNLOAD_LEGAL_FILE
+                               ЗАВАНТАЖИТИ_ЮРИДИЧНИЙ_ФАЙЛ
                             </button>
                           </div>
                        </div>
@@ -410,7 +410,7 @@ const PortfolioRiskView: React.FC = () => {
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
                           <Activity size={18} className="text-red-600 animate-pulse" />
-                          RISK_VELOCITY_TIMELINE
+                          ХРОНОЛОГІЯ_ШВИДКОСТІ_РИЗИКУ
                           <div className="ml-auto w-2 h-2 bg-red-600 rounded-full shadow-[0_0_10px_#e11d48]" />
                        </h3>
                        <div className="h-[220px]">
@@ -440,7 +440,7 @@ const PortfolioRiskView: React.FC = () => {
                        <div className="absolute top-0 right-0 p-8 opacity-5">
                           <Radar size={100} className="text-red-500" />
                        </div>
-                       <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none">SECTOR_EXPOSURE_RADAR</h3>
+                       <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 italic leading-none">РАДАР_СЕКТОРНОГО_РИЗИКУ</h3>
                        <div className="flex items-center gap-10">
                           <PieChart width={140} height={140}>
                              <Pie data={RISK_BREAKDOWN} innerRadius={42} outerRadius={62} paddingAngle={4} dataKey="value" cx="50%" cy="50%">

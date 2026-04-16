@@ -35,6 +35,8 @@ import { cn } from '@/utils/cn';
 import { api } from '../../services/api';
 import { useAppStore } from '../../store/useAppStore';
 import { factoryApi } from '../../services/api/factory';
+import { useBackendStatus } from '../../hooks/useBackendStatus';
+import { Terminal } from 'lucide-react';
 
 interface Suggestion {
   id: string;
@@ -47,6 +49,7 @@ interface Suggestion {
 
 export const Predator: React.FC = () => {
   const { isCopilotOpen: isOpen, setCopilotOpen: setIsOpen } = useAppStore();
+  const backendStatus = useBackendStatus();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -76,9 +79,9 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
-            title: 'АНАЛІТИКА ELITE v56.5',
-            description: `У суверенному ядрі ${stats.total_patterns} активних паттернів. Синергія: ${(stats.avg_score || 0).toFixed(1)}%.`,
-            confidence: 0.98,
+            title: 'АНАЛІТИКА GLM-5.1 ELITE',
+            description: `СУВЕРЕННЕ ЯДРО: ${stats.total_patterns} паттернів. ZROK Tunnel: ${backendStatus.nodeSource}.`,
+            confidence: 0.99,
             impact: 'high'
           });
         }
@@ -88,9 +91,9 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `gold-${Date.now()}`,
             type: 'action',
-            title: 'ЗОЛОТИЙ СТРАТЕГІЧНИЙ ПАТЕРН',
-            description: `AI виявив критичну можливість у патерні "${topPattern.name}". Рекомендується негайна активація.`,
-            confidence: topPattern.score / 100,
+            title: 'АҐЕНТНИЙ АНАЛІЗ GLM-5.1',
+            description: `Виявлено критичну аномалію "${topPattern.name}". Рекомендовано SWE-Bench перевірку.`,
+            confidence: 0.98,
             impact: 'high'
           });
         }
@@ -99,8 +102,8 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `default-${Date.now()}`,
             type: 'opportunity',
-            title: 'SOVEREIGN NEXUS ONLINE',
-            description: 'AI Копілот синхронізований з ядром Titan-Alpha. Очікування цілі...',
+            title: 'SOVEREIGN AGENT ONLINE',
+            description: `GLM-5.1 активовано. Вузол: ${backendStatus.nodeSource}. Очікування директив...`,
             confidence: 0.99,
             impact: 'low'
           });
@@ -158,8 +161,8 @@ export const Predator: React.FC = () => {
     const query = forcedQuery || message;
     if (!query.trim()) return;
     if (!forcedQuery) setMessage('');
-    setAiResponse('СКАНУВАННЯ СТРАТЕГІЧНИМ ЯДРОМ...');
-    setActiveAgent('АГЕНТ: ТИТАН-АЛЬФА [v56.5]');
+    setAiResponse('ГЛУБОКЕ СКАНУВАННЯ GLM-5.1 [SOVEREIGN AGENT]...');
+    setActiveAgent(`GLM-5.1 ↔ ZROK [${backendStatus.nodeSource}]`);
     try {
       const res = await api.premium.query(query);
       const answer = res.answer || res.response || res.result;
@@ -247,7 +250,12 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping shadow-[0_0_10px_#d4af37]" />
-                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v56.5</p>
+                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v56.5_GLM-5.1</p>
+                    <div className="flex items-center gap-2 mt-1">
+                       <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-orange-500/40 text-orange-500 bg-orange-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-amber-500/40 text-amber-500 bg-amber-500/5"))}>
+                          ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}
+                       </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,7 +348,7 @@ export const Predator: React.FC = () => {
                     />
                     <div className="absolute top-1/2 right-10 -translate-y-1/2 flex items-center gap-4 text-slate-800">
                         <Terminal size={18} />
-                        <span className="text-[10px] font-black">Ready</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">ГОТОВИЙ</span>
                     </div>
                 </div>
                 <motion.button 
@@ -352,7 +360,7 @@ export const Predator: React.FC = () => {
                   <Send size={32} />
                 </motion.button>
               </div>
-              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">Classified PREDATOR Environment // Authorization Tier 1 Required</p>
+              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">ЗАСЕКРЕЧЕНЕ СЕРЕДОВИЩЕ PREDATOR // ВИМАГАЄТЬСЯ ДОПУСК ТІР-1</p>
             </div>
             <audio ref={audioRef} style={{ display: 'none' }} />
           </motion.div>

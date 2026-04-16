@@ -6,6 +6,7 @@ import {
     CheckCircle, AlertTriangle, FileCheck, Landmark, Scale
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { TacticalCard } from '@/components/TacticalCard';
 import { security } from '@/services/dataService';

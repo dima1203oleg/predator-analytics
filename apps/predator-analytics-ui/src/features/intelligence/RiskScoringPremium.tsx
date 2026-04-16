@@ -17,7 +17,7 @@ import {
   Globe, Calendar, ChevronRight, ChevronDown, Flag, Target,
   Zap, Scale, Fingerprint, Network, Clock, Crown, Lock,
   Unlock, RefreshCw, Activity, Cpu, Layers, Scan, Microscope,
-  Sparkles, Orbit, Database, Crosshair
+  Sparkles, Orbit, Database, Crosshair, Users
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence';
 import { useAppStore } from '@/store/useAppStore';
@@ -27,6 +27,8 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { Cers5LayerGauge } from '@/components/risk/Cers5LayerGauge';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
+import { ViewHeader } from '@/components/ViewHeader';
+
 
 interface RiskEntity {
   id: string;
@@ -161,9 +163,9 @@ export default function RiskScoringPremium() {
               { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
             ]}
             stats={[
-              { label: 'КРИТИЧНО', value: stats.critical, icon: <XCircle />, color: 'danger', animate: stats.critical > 0 },
-              { label: 'ВИСОКИЙ', value: stats.high, icon: <AlertTriangle />, color: 'warning' },
-              { label: 'СЕРЕДНІЙ', value: stats.medium, icon: <AlertCircle />, color: 'primary' },
+              { label: 'КРИТИЧНО', value: String(stats.critical), icon: <XCircle />, color: 'danger', animate: stats.critical > 0 },
+              { label: 'ВИСОКИЙ', value: String(stats.high), icon: <AlertTriangle />, color: 'warning' },
+              { label: 'СЕРЕДНІЙ', value: String(stats.medium), icon: <AlertCircle />, color: 'primary' },
               { label: 'ОБІГ_ПІДОЗР', value: `₴${(stats.totalSuspicious / 1000000).toFixed(1)}M`, icon: <DollarSign />, color: 'danger' },
             ]}
           />

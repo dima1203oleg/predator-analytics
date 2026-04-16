@@ -74,19 +74,19 @@ export default function WarRoomView() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'SOVEREIGN_EMERGENCY' : 'TACTICAL COMMAND CENTER'} · v56.5-ELITE
+                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v56.5-ELITE
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
-                      WAR <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-red-600 decoration-red-600/20")}>ROOM</span>
+                      СИТУАЦІЙНИЙ <span className={cn("underline decoration-[12px] underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-red-600 decoration-red-600/20")}>ЦЕНТР</span>
                     </h1>
                  </div>
               </div>
             }
             stats={[
-              { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'error' },
-              { label: 'NODE_SOURCE', value: activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'OFFLINE' : 'NVIDIA_MASTER', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
-              { label: 'FAILOVER', value: activeFailover ? 'ZROK_TUNNEL' : isOffline ? 'AUTONOMOUS' : 'STANDBY', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' }
+              { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'danger' },
+              { label: 'ДЖЕРЕЛО_ВУЗЛА', value: activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'АВТОНОМНО' : 'NVIDIA_МАЙСТЕР', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
+              { label: 'РЕЗЕРВ', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' }
             ]}
             actions={
               <div className="flex items-center gap-6">
@@ -97,7 +97,7 @@ export default function WarRoomView() {
                     </span>
                  </div>
                  <button className="px-10 py-5 bg-red-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
-                    ДЕФОРМАТУВАТИ // EMERGENCY
+                    ДЕФОРМАТУВАТИ // АВАРІЙНИЙ_ВИХІД
                  </button>
               </div>
             }
@@ -134,17 +134,17 @@ export default function WarRoomView() {
                          </div>
                          <div className="absolute top-6 left-6 z-10 bg-black/80 px-5 py-2.5 rounded-2xl border border-yellow-500/20 backdrop-blur-xl">
                             <p className="text-[10px] font-black text-yellow-500 uppercase italic tracking-widest flex items-center gap-3">
-                               <Satellite size={12} className="animate-pulse" /> ORBITAL_PHASE: ACTIVE
+                               <Satellite size={12} className="animate-pulse" /> ОРБІТАЛЬНА_ФАЗА: АКТИВНО
                             </p>
                          </div>
                       </div>
                       <div className="flex-1 space-y-6 overflow-y-auto pr-4 custom-scrollbar">
                          <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic mb-6">ГАРЯЧІ ЗОНИ КОНФЛІКТУ · {new Date().toLocaleDateString('uk-UA')}</h4>
                          {[
-                            { zone: 'Схід Європи', risk: '98%', status: 'WAR_ACTIVE', c: '#E11D48' },
-                            { zone: 'Червоне море', risk: '84%', status: 'BLOCKADE', c: '#fbbf24' },
-                            { zone: 'Тайваньська прот.', risk: '72%', status: 'SIGNAL_UP', c: '#fbbf24' },
-                            { zone: 'Еквадор', risk: '54%', status: 'STABLE', c: '#D4AF37' },
+                            { zone: 'Схід Європи', risk: '98%', status: 'АКТИВНА_ВІЙНА', c: '#E11D48' },
+                            { zone: 'Червоне море', risk: '84%', status: 'БЛОКАДА', c: '#fbbf24' },
+                            { zone: 'Тайваньська прот.', risk: '72%', status: 'СИГНАЛ_ПРИСУТНІЙ', c: '#fbbf24' },
+                            { zone: 'Еквадор', risk: '54%', status: 'СТАБІЛЬНО', c: '#D4AF37' },
                          ].map((z, i) => (
                             <motion.div 
                                key={i} 
@@ -204,11 +204,11 @@ export default function WarRoomView() {
                          </div>
                          <div className="grid grid-cols-2 gap-6">
                             <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-emerald-500/30 transition-all">
-                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">CPU_COMPUTE</p>
+                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">ОБЧИСЛЕННЯ_ЦП</p>
                                <p className="text-3xl font-black text-emerald-500 font-mono italic tracking-tighter">34.2%</p>
                             </div>
                             <div className="p-6 rounded-3xl bg-black border-2 border-white/5 shadow-inner group hover:border-yellow-500/30 transition-all">
-                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">NEURAL_LOAD</p>
+                               <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-3 italic">НЕЙРО_НАВАНТАЖЕННЯ</p>
                                <p className="text-3xl font-black text-yellow-500 font-mono italic tracking-tighter">12.1T</p>
                             </div>
                          </div>
@@ -217,14 +217,14 @@ export default function WarRoomView() {
                          <div className="absolute inset-0 bg-emerald-500/[0.01] pointer-events-none" />
                          <div className="flex items-center gap-6 mb-6 pb-6 border-b border-white/5">
                             <Terminal size={18} className="text-slate-700 group-hover:text-emerald-500 transition-colors" />
-                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">KERNEL_LIVE_STREAMS</span>
+                            <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">ЖИВІ_ПОТОКИ_ЯДРА</span>
                          </div>
                          <div className="space-y-3 opacity-80 italic font-bold">
-                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">INGESTION:</span> Sync confirmed v56.5</p>
-                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ALARM:</span> Risk threshold POS-001 breach</p>
-                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">SOVEREIGN:</span> Kyoto Holdings resolution active</p>
-                            <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">SYSTEM:</span> Waiting for Kafka cluster burst...</p>
-                            <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_READY_FOR_COMMAND</motion.p>
+                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v56.5</p>
+                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ТРИВОГА:</span> Порушення порогу ризику POS-001</p>
+                            <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
+                            <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>
+                            <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_ГОТОВИЙ_ДО_КОМАНД</motion.p>
                          </div>
                       </div>
                    </div>
@@ -274,7 +274,7 @@ export default function WarRoomView() {
                       </div>
                       <div className="mt-auto p-10 bg-red-600/10 border-2 border-red-500/30 rounded-[3.5rem] text-center shadow-inner relative group">
                          <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                         <p className="text-[10px] font-black text-red-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_EXPOSURE</p>
+                         <p className="text-[10px] font-black text-red-700 uppercase tracking-[0.5em] mb-4 italic">ЕКСПОЗИЦІЯ_РИЗИКУ</p>
                          <p className="text-4xl font-black text-red-500 italic tracking-tighther font-serif leading-none">$127.4M</p>
                       </div>
                    </div>
@@ -295,7 +295,7 @@ export default function WarRoomView() {
                          <div className="p-3 bg-yellow-500/10 rounded-2xl">
                             <Zap size={20} className="text-yellow-500 animate-pulse" />
                          </div>
-                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ELITE_АЛЕРТИ</h3>
+                         <h3 className="text-[11px] font-black text-yellow-500 uppercase tracking-[0.6em] italic">ШІ-ПРОГНОСТИКА ТА ЕЛІТНІ_АЛЕРТИ</h3>
                       </div>
                       <button onClick={() => setExpanded(expanded === 'q4' ? null : 'q4')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q4' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -309,7 +309,7 @@ export default function WarRoomView() {
                                <Radar size={32} className="animate-pulse" />
                             </div>
                             <div>
-                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">SCENARIO: OMEGA-4</h4>
+                               <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНАРІЙ: ОМЕГА-4</h4>
                                <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПРЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ РОЗШИРЕННЯ КОНФЛІКТУ</p>
                             </div>
                          </div>
@@ -335,14 +335,14 @@ export default function WarRoomView() {
                       <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
                          <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-4">
                             <span>АКТИВНІ АЛЕРТИ</span>
-                            <span className="text-yellow-600">PREDATIVE MODE</span>
+                            <span className="text-yellow-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
                          <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
                             {[
-                               { msg: 'Виявлено збіг UBO (POS-001)', type: 'error' },
-                               { msg: 'Нова реєстрація Shell-компанії (BVI)', type: 'warning' },
+                               { msg: 'Виявлено збіг КБВ (POS-001)', type: 'error' },
+                               { msg: 'Нова реєстрація шелл-компанії (БВО)', type: 'warning' },
                                { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
-                               { msg: 'Оновлено реєстр PEP Україна', type: 'info' },
+                               { msg: 'Оновлено реєстр ПЕП Україна', type: 'info' },
                                { msg: 'Детектовано новий паттерн відмивання', type: 'error' },
                             ].map((a, i) => (
                                <motion.div 

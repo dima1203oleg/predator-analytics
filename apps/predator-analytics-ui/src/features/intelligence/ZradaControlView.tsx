@@ -16,7 +16,8 @@ import {
   Trash2, FileText, Activity, Network, MessageSquare, Target,
   Zap, CheckCircle2, TrendingUp, Filter, Link, UserX, ShieldCheck,
   Fingerprint, Mic, Video, Globe, Database, Cpu, Scan, Microscope,
-  FileSearch, Binary, MapPin, Share2, Crosshair, Skull, Crown
+  FileSearch, Binary, MapPin, Share2, Crosshair, Skull, Crown,
+  Lock
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';

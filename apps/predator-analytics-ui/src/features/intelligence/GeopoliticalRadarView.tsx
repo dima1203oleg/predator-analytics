@@ -217,7 +217,7 @@ const GeopoliticalRadarView: React.FC = () => {
             { label: 'LIVE_SAT_LINK', color: 'primary', icon: <Satellite size={10} /> },
           ]}
           stats={[
-            { label: 'ALPHA_ALERTS', value: alertCount, icon: <Radio />, color: 'danger', animate: true },
+            { label: 'ALPHA_ALERTS', value: String(alertCount), icon: <Radio />, color: 'danger', animate: true },
             { label: 'SCAN_INTENS', value: '74.2%', icon: <Radar />, color: 'warning' },
             { label: 'PROTOCOL', value: 'ALPHA', icon: <Zap />, color: 'primary' },
             { label: 'SAT_LINK', value: 'SYNC', icon: <Satellite />, color: 'success' },

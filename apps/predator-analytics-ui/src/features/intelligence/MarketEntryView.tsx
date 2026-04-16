@@ -124,9 +124,13 @@ const MarketEntryView: React.FC = () => {
 
   const { data: markets = MARKETS, isLoading, error } = useQuery<MarketEntry[]>({
     queryKey: ['market-entry-scores'],
-    queryFn: async () => {
-      const result = await intelligence.getMarketEntryAnalysis('UA_RECON');
-      return result || MARKETS;
+    queryFn: async (): Promise<MarketEntry[]> => {
+      try {
+        await intelligence.getMarketEntryAnalysis('UA_RECON');
+      } catch {
+        // ігноруємо помилку — повертаємо статичні ринки
+      }
+      return MARKETS;
     }
   });
 

@@ -77,7 +77,7 @@ const SovereignAZRBrain: React.FC = () => {
   });
 
   const cpuLoad = stats?.cpu_percent || 0;
-  const activeAlertsCount = stats?.active_containers || 0; // Simplified mapping for UI
+  const activeAlertsCount = stats?.active_tasks || 0; // Simplified mapping for UI
   
   const combinedLogs = useMemo(() => {
     const now = new Date();

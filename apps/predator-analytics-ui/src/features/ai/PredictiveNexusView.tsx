@@ -33,6 +33,7 @@ import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
 import { uk } from 'date-fns/locale';
+import { useBackendStatus } from '../../hooks/useBackendStatus';
 
 // Сценарії тепер завантажуються через API
 
@@ -66,6 +67,7 @@ interface Scenario {
 
 export default function PredictiveNexusView() {
     const [isScanning, setIsScanning] = useState(false);
+    const backendStatus = useBackendStatus();
     
     const { data: stats } = useQuery({
         queryKey: ['system', 'stats'],
@@ -104,12 +106,13 @@ export default function PredictiveNexusView() {
                     className="relative z-10 h-full w-full flex flex-col p-6"
                 >
                     <ViewHeader 
-                        title="Predictive Nexus v56.5"
-                        subtitle="Квантовий Контур Прогнозування та Автономного Управління"
+                        title="Predictive Nexus v56.5-ELITE"
+                        subtitle="Квантовий Контур Стратегічного Прогнозування [GLM-5.1 Sovereign]"
                         icon={Brain}
                         badges={[
-                            { label: 'ORACLE_CORE_v1.4', color: 'rose', icon: <Cpu size={10} /> },
-                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'success', icon: <RefreshCw size={10} /> },
+                            { label: `CORE: GLM-5.1`, color: 'rose', icon: <Cpu size={10} /> },
+                            { label: `NODE: ${backendStatus.nodeSource}`, color: backendStatus.activeFailover ? 'warning' : 'success', icon: <Activity size={10} /> },
+                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
                             <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-white gap-2">
@@ -155,7 +158,7 @@ export default function PredictiveNexusView() {
                                             <ShieldCheck size={14} />
                                             <span className="text-[10px] font-black uppercase">Цілісність</span>
                                         </div>
-                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ Colab Mirror: <span className="text-emerald-300">SYNCHRONIZED</span></p>
+                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ ZROK Tunnel: <span className={cn(backendStatus.activeFailover ? "text-amber-300" : "text-emerald-300")}>{backendStatus.activeFailover ? 'ACTIVE_FAILOVER' : 'SYNCHRONIZED'}</span></p>
                                     </div>
                                 </div>
                             </div>

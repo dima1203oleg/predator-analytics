@@ -85,7 +85,7 @@ export default function ExecutiveBriefView() {
       'OSINT: Виявлено 14 нових згадок суб\'єкта в закритих реєстрах',
       'ТРИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
       'СИНХРОНІЗАЦІЯ: Оновлено санкційні списки РНБО та OFAC/EU',
-      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГРО" підвищено до 98.9% (AGENTIC_SYNC)',
+      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГРО" підвищено до 98.9% (АГЕНТСЬКА_СИНХРОНІЗАЦІЯ)',
       'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною — Тунель ZROK активний',
       'ФІНАНСИ: Виявлено ознаки кругової торгівлі у секторі палива'
     ];
@@ -136,7 +136,7 @@ export default function ExecutiveBriefView() {
               СУВЕРЕННЕ <span className="text-red-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v56.5-ELITE (AGENTIC POOL)
+              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v56.5-ELITE (АГЕНТСЬКИЙ_ПУЛ)
             </p>
           </div>
           
@@ -233,7 +233,7 @@ export default function ExecutiveBriefView() {
                     <th className="px-6 py-4">ID_СЕРТИФІКАТ</th>
                     <th className="px-6 py-4">СУБ'ЄКТ_РОЗВІДКИ</th>
                     <th className="px-6 py-4">ОБСЯГ_USD</th>
-                    <th className="px-6 py-4 text-center">РИЗИК_SCORE</th>
+                    <th className="px-6 py-4 text-center">ІНДЕКС_РИЗИКУ</th>
                     <th className="px-6 py-4 text-right">ДІЯ</th>
                   </tr>
                 </thead>
@@ -279,7 +279,7 @@ export default function ExecutiveBriefView() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest lowercase">ORBITAL_PHASE: ACTIVE</span>
+                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest lowercase">ОРБІТАЛЬНА_ФАЗА: АКТИВНО</span>
               </div>
             </div>
             

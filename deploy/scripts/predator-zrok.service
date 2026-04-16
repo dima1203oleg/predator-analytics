@@ -1,0 +1,27 @@
+[Unit]
+Description=PREDATOR ZROK Tunnel (predator.share.zrok.io → Nginx:80)
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=dima
+Environment="HOME=/home/dima"
+Environment="PATH=/usr/local/bin:/usr/bin:/bin:/home/dima/bin"
+
+# Команда запуску зарезервованого тунелю
+ExecStart=/home/dima/bin/zrok share reserved predator \
+    --headless \
+    --override-endpoint http://192.168.88.254:80
+
+# Якщо впав — перезапустити через 10 сек
+Restart=always
+RestartSec=10
+
+# Логування
+StandardOutput=append:/var/log/predator-zrok.log
+StandardError=append:/var/log/predator-zrok.log
+
+[Install]
+WantedBy=multi-user.target

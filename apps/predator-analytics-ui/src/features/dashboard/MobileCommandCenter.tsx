@@ -94,7 +94,7 @@ const MobileCommandCenter: React.FC = () => {
             <h1 className="text-lg font-black text-white uppercase tracking-tighter leading-none">PREDATOR</h1>
             <div className="flex items-center gap-2 mt-1">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">ORBITAL_LINK_7.4</span>
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">ОРБІТАЛЬНИЙ_ЗВ'ЯЗОК_7.4</span>
             </div>
           </div>
         </div>

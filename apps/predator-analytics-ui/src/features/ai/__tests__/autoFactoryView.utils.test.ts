@@ -66,6 +66,7 @@ describe('autoFactoryView.utils', () => {
         indexing_rate: 0,
         total_indices: 0,
         storage_gb: 0,
+        last_sync: null,
         timestamp: '2026-03-30T09:31:00Z',
       },
       {
@@ -78,6 +79,7 @@ describe('autoFactoryView.utils', () => {
         services: [],
         summary: { total: 10, healthy: 9, degraded: 1, failed: 0 },
         metrics: {},
+        last_sync: null,
         timestamp: '2026-03-30T09:31:00Z',
       },
     );

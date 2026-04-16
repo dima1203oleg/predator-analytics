@@ -344,7 +344,7 @@ export default function ConversationIntelView() {
                 </div>
 
                 <div className="max-w-[1880px] mx-auto px-12 pb-20 mt-[-40px] relative z-20">
-                    <DiagnosticsTerminal className="w-full" />
+                    <DiagnosticsTerminal />
                 </div>
 
                 <style dangerouslySetInnerHTML={{ __html: `

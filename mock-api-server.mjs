@@ -5782,6 +5782,132 @@ app.get('/api/v1/system/stats', (req, res) => {
   });
 });
 
+app.get('/api/v1/system/diagnostics', (req, res) => {
+  res.json({
+    status: 'OPTIMAL',
+    timestamp: new Date().toISOString(),
+    results: {
+      health_score: 99.4,
+      checks: [
+        { id: 'gpu', label: 'GPU Readiness', status: 'PASS', value: '80GB VRAM Detected' },
+        { id: 'tunnel', label: 'ZROK Tunnel', status: 'PASS', value: 'STABLE' },
+        { id: 'agent', label: 'GLM-5.1 Sovereign', status: 'PASS', value: 'SOTA' }
+      ],
+      predictions: {
+        disk_exhaustion_days: 145,
+        recommendation: "Система стабільна. GLM-5.1 рекомендує посилити моніторинг сектору 8471."
+      }
+    }
+  });
+});
+
+app.get('/api/v1/system/nexus/scenarios', (req, res) => {
+  res.json([
+    { 
+      id: 'sc-1', 
+      name: 'Аномальний імпорт мікропроцесорів', 
+      probability: 88, 
+      impact: 'High', 
+      description: 'GLM-5.1 виявив патерн обходу санкцій через групу компаній у Туреччині.', 
+      eta: '48г' 
+    },
+    { 
+      id: 'sc-2', 
+      name: 'Зміна бенефіціарів зернового терміналу', 
+      probability: 65, 
+      impact: 'Medium', 
+      description: 'Аналіз зв\'язків у Neo4j вказує на приховану зміну власників.', 
+      eta: '5д' 
+    },
+    { 
+      id: 'sc-3', 
+      name: 'Ризик дефолту великого імпортера палива', 
+      probability: 42, 
+      impact: 'High', 
+      description: 'Фінансові сигнали вказують на суттєве погіршення ліквідності.', 
+      eta: '14д' 
+    }
+  ]);
+});
+
+// =============================================
+// 🤖 OPENAI COMPATIBILITY LAYER (для Cline/Cursor)
+// =============================================
+
+// GET /v1/models — всі доступні суверенні моделі
+app.get(['/v1/models', '/openai/v1/models', '/v1/v1/models', '/models'], (req, res) => {
+  res.json({
+    object: 'list',
+    data: [
+      { id: 'ultra-router-coding',    object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 131072 },
+      { id: 'ultra-router-elite',     object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 131072 },
+      { id: 'ultra-router-reasoning', object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 65536 },
+      { id: 'glm-5.1:latest',         object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 131072 },
+      { id: 'qwen3.5:latest',         object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 131072 },
+      { id: 'deepseek-r1:latest',     object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 65536 },
+      { id: 'llama4:latest',          object: 'model', created: 1700000000, owned_by: 'predator-sovereign', context_window: 131072 },
+    ]
+  });
+});
+
+// POST /v1/chat/completions — OpenAI-сумісний чат
+app.post(['/v1/chat/completions', '/openai/v1/chat/completions', '/v1/v1/chat/completions', '/chat/completions'], (req, res) => {
+  const { messages, model, stream, max_tokens } = req.body || {};
+  const lastMsg = Array.isArray(messages) ? messages[messages.length - 1]?.content : 'привіт';
+  const selectedModel = model || 'ultra-router-coding';
+
+  console.log(`[OPENAI_COMPAT] POST /v1/chat/completions model=${selectedModel}`);
+
+  const responseContent = `[PREDATOR SOVEREIGN MOCK | ${selectedModel}]\n\nЗапит отримано: "${String(lastMsg).slice(0, 120)}"\n\n⚠️ УВАГА: NVIDIA сервер наразі недоступний (ZROK bad gateway). Відповідь генерується Суверенним Mock API.\n\nДля підключення до реальних GPU-моделей (GLM-5.1, Qwen3.5, LLaMA4):\n1. Запустіть ZROK share-reserved на NVIDIA сервері\n2. Оновіть Base URL у Cline на https://predator.share.zrok.io/v1\n\nПідтримувані моделі на NVIDIA:\n• ultra-router-coding (Qwen3.5 72B) — для коду\n• ultra-router-reasoning (DeepSeek R1) — для аналізу  \n• ultra-router-elite (LLaMA4 70B) — universal`;
+
+  if (stream) {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    });
+
+    const words = responseContent.split(' ');
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i >= words.length) {
+        res.write(`data: [DONE]\n\n`);
+        res.end();
+        clearInterval(interval);
+        return;
+      }
+      const chunk = {
+        id: `chatcmpl-mock-${Date.now()}`,
+        object: 'chat.completion.chunk',
+        created: Math.floor(Date.now() / 1000),
+        model: selectedModel,
+        choices: [{ index: 0, delta: { content: (i === 0 ? '' : ' ') + words[i] }, finish_reason: null }]
+      };
+      res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+      i++;
+    }, 30);
+  } else {
+    setTimeout(() => {
+      res.json({
+        id: `chatcmpl-mock-${Date.now()}`,
+        object: 'chat.completion',
+        created: Math.floor(Date.now() / 1000),
+        model: selectedModel,
+        choices: [{
+          index: 0,
+          message: { role: 'assistant', content: responseContent },
+          finish_reason: 'stop'
+        }],
+        usage: {
+          prompt_tokens: String(lastMsg).split(' ').length,
+          completion_tokens: responseContent.split(' ').length,
+          total_tokens: String(lastMsg).split(' ').length + responseContent.split(' ').length
+        }
+      });
+    }, 800);
+  }
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);

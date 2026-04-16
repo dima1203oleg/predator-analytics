@@ -140,7 +140,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
         <div className="space-y-6">
           <div>
             <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2 block flex items-center gap-2">
-              <Terminal size={10} /> CURRENT_DIRECTIVE
+              <Terminal size={10} /> ПОТОЧНА_ДИРЕКТИВА
             </span>
             <p className="text-xs text-slate-300 font-medium leading-relaxed bg-black/40 p-4 border border-white/5 rounded-xl italic">
               {agent.task || "Очікування задачі..."}
@@ -148,7 +148,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
           </div>
           <div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">CONFIDENCE_INDEX</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">ІНДЕКС_ДОВІРИ</span>
               <span className="text-xs font-black text-white font-mono">{agent.confidence}%</span>
             </div>
             <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
@@ -234,10 +234,10 @@ const OmniscienceView: React.FC = () => {
             </div>
             <div>
               <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none font-display">
-                Omniscience Nexus
+                Нексус Всезнання
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                V56.5-ELITE_SYSTEM_KERNEL // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
+                ЯДРО_СИСТЕМИ_V56.5-ELITE // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
@@ -292,10 +292,10 @@ const OmniscienceView: React.FC = () => {
             >
               {/* Top Metrics Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-                <MetricCard icon={Cpu} label={premiumLocales.omniscience.metrics.power} value={metrics.processingPower} unit="GHz" color="#60a5fa" trend="+2.4%" />
-                <MetricCard icon={Database} label="Щільність Знань" value={metrics.knowledgeNodes / 2000} unit="GB/s" color="#10b981" trend="+12.8%" />
-                <MetricCard icon={BrainCircuit} label={premiumLocales.omniscience.stats.autonomy} value={metrics.autonomyLevel} unit="LVL" color="#a78bfa" trend="OPTIMAL" />
-                <MetricCard icon={TrendingUp} label="Нейронна Пропускна Здатність" value={metrics.networkActivity} unit="MB/s" color="#f59e0b" trend="PEAK" />
+                <MetricCard icon={Cpu} label={premiumLocales.omniscience.metrics.power} value={metrics.processingPower} unit="ГГц" color="#60a5fa" trend="+2.4%" />
+                <MetricCard icon={Database} label="Щільність Знань" value={metrics.knowledgeNodes / 2000} unit="ГБ/с" color="#10b981" trend="+12.8%" />
+                <MetricCard icon={BrainCircuit} label={premiumLocales.omniscience.stats.autonomy} value={metrics.autonomyLevel} unit="РІВЕНЬ" color="#a78bfa" trend="ОПТИМАЛЬНО" />
+                <MetricCard icon={TrendingUp} label="Нейронна Пропускна Здатність" value={metrics.networkActivity} unit="МБ/с" color="#f59e0b" trend="ПІК" />
               </div>
 
               <div className="grid grid-cols-12 gap-10">
@@ -326,12 +326,12 @@ const OmniscienceView: React.FC = () => {
                     </div>
                     <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl z-20 flex items-center gap-8">
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">LATENCY</span>
-                        <span className="text-sm font-black text-white font-mono">14ms</span>
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТРИМКА</span>
+                        <span className="text-sm font-black text-white font-mono">14мс</span>
                       </div>
                       <div className="w-px h-8 bg-white/5" />
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">SYNC_RATE</span>
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ШВИДКІСТЬ_СИНХРОНІЗАЦІЇ</span>
                         <span className="text-sm font-black text-emerald-400 font-mono">99.2%</span>
                       </div>
                     </div>
@@ -490,20 +490,20 @@ const OmniscienceView: React.FC = () => {
           </div>
           <div className="flex flex-wrap items-center gap-12">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">SYSTEM_CORE</span>
-              <span className="text-xs font-black text-emerald-400">ACTIVE_STABLE</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ЯДРО_СИСТЕМИ</span>
+              <span className="text-xs font-black text-emerald-400">АКТИВНО_СТАБІЛЬНО</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">QUANTUM_ENTROPY</span>
-              <span className="text-xs font-black text-white">0.0024 ERR/S</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">КВАНТОВА_ЕНТРОПІЯ</span>
+              <span className="text-xs font-black text-white">0.0024 ПОМ/С</span>
             </div>
             <div className="flex flex-col text-right">
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ENCRYPTION</span>
-              <span className="text-xs font-black text-blue-400">PQC_ENABLED</span>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">ШИФРУВАННЯ</span>
+              <span className="text-xs font-black text-blue-400">PQC_АКТИВНО</span>
             </div>
           </div>
           <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4 group">
-            SYNC_NODES <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-1000" />
+            СИНХ_ВУЗЛІВ <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-1000" />
           </button>
         </div>
       </div>
@@ -532,7 +532,7 @@ const ShadowControlView: React.FC = () => (
         </div>
         <h3 className="text-2xl font-black text-white uppercase tracking-tighter mb-4">{ctrl.label}</h3>
         <div className="mt-auto pt-8 border-t border-white/5 flex items-center justify-between">
-          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">COMMAND</span>
+          <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">КОМАНДА</span>
           <span className="px-4 py-1.5 bg-black/60 rounded-xl text-[10px] font-black font-mono border border-white/5" style={{ color: ctrl.color }}>{ctrl.action}</span>
         </div>
       </TacticalCard>

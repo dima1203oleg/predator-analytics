@@ -186,7 +186,7 @@ const HolographicAccessGate: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
               {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
                 <div key={key} className="p-8 bg-white/5 border border-white/5 rounded-[40px] group hover:border-[#D4AF37]/30 transition-all hover:-translate-y-2">
-                  <config.icon className={cn("w-12 h-12 mx-auto mb-6", persona === key ? "text-[#D4AF37]" : "text-slate-500", "group-hover:scale-125 transition-transform")} />
+                  <config.icon className={cn("w-12 h-12 mx-auto mb-6 text-slate-500 group-hover:text-[#D4AF37]", "group-hover:scale-125 transition-transform")} />
                   <h3 className="text-xs font-black text-white uppercase tracking-widest mb-2">{config.title}</h3>
                   <p className="text-[10px] text-slate-500 font-medium px-4">{config.subtitle}</p>
                 </div>

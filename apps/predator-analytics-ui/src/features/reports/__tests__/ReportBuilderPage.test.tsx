@@ -73,6 +73,11 @@ describe('ReportBuilderPage', () => {
             sourceLabel: 'localhost/api/v1',
             sourceType: 'local',
             statusLabel: 'Зʼєднання активне',
+            status: 'online',
+            isOnline: true,
+            healingProgress: 100,
+            activeFailover: false,
+            nodeSource: 'SOVEREIGN_MOCK',
             nodes: [],
         });
 

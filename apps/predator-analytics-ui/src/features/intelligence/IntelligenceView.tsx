@@ -30,6 +30,7 @@ import { cn } from '@/utils/cn';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 
 const IntelligenceView: React.FC = () => {
     const [selectedUeid, setSelectedUeid] = useState<string | null>('12345678');

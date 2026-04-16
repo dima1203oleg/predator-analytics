@@ -58,6 +58,7 @@ const createSystemStatus = (): SystemStatusResponse => ({
     failed: 1,
   },
   metrics: {},
+  last_sync: null,
   timestamp: '2026-03-30T09:16:00.000Z',
 });
 
@@ -87,6 +88,7 @@ const createSystemStats = (): SystemStatsResponse => ({
   indexing_rate: 16,
   total_indices: 28,
   storage_gb: 412,
+  last_sync: null,
   timestamp: '2026-03-30T09:16:30.000Z',
 });
 

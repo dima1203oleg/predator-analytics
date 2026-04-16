@@ -37,7 +37,7 @@ const EVENT_TYPE_CONFIG = {
   case: { icon: FileText, label: 'КЕЙС', color: '#60a5fa' },
   data: { icon: Database, label: 'ДАНІ', color: '#22d3ee' },
   user: { icon: User, label: 'КОРИСТУВАЧ', color: '#c084fc' },
-  ai: { icon: Bot, label: 'AI_SYNTH', color: '#fbbf24' },
+  ai: { icon: Bot, label: 'ШІ_СИНТЕЗ', color: '#fbbf24' },
   system: { icon: Zap, label: 'СИСТЕМА', color: '#94a3b8' },
   security: { icon: Shield, label: 'БЕЗПЕКА', color: '#f87171' },
 };
@@ -165,7 +165,7 @@ const ActivityView: React.FC = () => {
               title: a.intent || 'ЕВОЛЮЦІЙНИЙ_КРОК',
               description: a.request_text,
               timestamp: new Date(a.created_at),
-              actor: 'GLM-5.1 AGENTIC POOL'
+              actor: 'ПУЛ_АГЕНТІВ_GLM-5.1'
             });
           });
         }

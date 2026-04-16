@@ -210,7 +210,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
 
         {/* System Diagnostics */}
         <div className="mt-12">
-          <DiagnosticsTerminal className="w-full" />
+          <DiagnosticsTerminal />
         </div>
       </div>
     </div>

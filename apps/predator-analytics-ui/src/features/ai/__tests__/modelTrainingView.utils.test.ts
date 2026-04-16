@@ -56,6 +56,7 @@ describe('modelTrainingView.utils', () => {
                 indexing_rate: 0,
                 total_indices: 0,
                 storage_gb: 0,
+                last_sync: null,
                 timestamp: '2026-03-30T09:15:00Z',
             },
         );

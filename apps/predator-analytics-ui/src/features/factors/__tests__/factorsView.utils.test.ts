@@ -87,6 +87,7 @@ const systemStats: SystemStatsResponse = {
     indexing_rate: 45,
     total_indices: 12,
     storage_gb: 830,
+    last_sync: null,
     timestamp: '2026-03-30T10:20:00Z',
 };
 

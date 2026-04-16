@@ -1,6 +1,6 @@
 /**
- * 👁️ Sovereign Observer Matrix | v56.5-ELITE Premium Matrix
- * PREDATOR SOM (Sovereign Observer Module)
+ * 👁️ Sovereign Observer Matrix | v56.5-ELITE ПРЕМІУМ-МАТРИЦЯ
+ * PREDATOR SOM (МОДУЛЬ СУВЕРЕННОГО НАГЛЯДУ)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
  * Включає:
@@ -255,7 +255,7 @@ const SOMView: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">NETWORK_PURITY</span>
+                  <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">ЧИСТОТА_МЕРЕЖІ</span>
                   <span className="text-xs font-black text-rose-400 font-mono">94.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
@@ -303,7 +303,7 @@ const SOMView: React.FC = () => {
                 <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
                   <div className="flex items-center gap-3 mb-4">
                     <Database size={16} className="text-slate-500 group-hover/item:text-blue-400" />
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Журнал Істини (Truth Ledger)</span>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЖУРНАЛ_ІСТИНИ (Truth Ledger)</span>
                   </div>
                   <div className="text-3xl font-black text-white font-mono tracking-tighter">42,817</div>
                   <div className="text-[9px] font-black text-emerald-400 uppercase mt-2 font-mono">● СИНХР_0ms</div>
@@ -311,7 +311,7 @@ const SOMView: React.FC = () => {
                 <div className="p-6 bg-slate-950/60 border border-white/5 rounded-[32px] group/item transition-all hover:border-white/20">
                   <div className="flex items-center gap-3 mb-4">
                     <Cpu size={16} className="text-slate-500 group-hover/item:text-amber-400" />
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">RCE Engine Stage</span>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">СТАДІЯ_ДВИГУНА_RCE</span>
                   </div>
                   <div className="text-3xl font-black text-white font-mono tracking-tighter uppercase">Готово</div>
                   <div className="text-[9px] font-black text-blue-400 uppercase mt-2 font-mono">● ПІДГОТОВЛЕНО</div>
@@ -472,7 +472,7 @@ const SOMView: React.FC = () => {
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2">
                 <Shield size={10} /> АНКЛАВ_БЕЗПЕКИ
               </span>
-              <span className="text-xs font-black text-emerald-400">TITANIUM_SHIELD_V4</span>
+              <span className="text-xs font-black text-emerald-400">ТИТАНОВИЙ_ЩИТ_V4</span>
             </div>
             <div className="flex flex-col text-right">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2 justify-end">

@@ -288,13 +288,13 @@ const DashboardView: React.FC = () => {
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
                     <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                      PREDATOR_CENTRAL_COMMAND // v56.5.0-TITAN
+                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v56.5.0-TITAN
                     </span>
                   </div>
                 </div>
               </div>
             }
-            breadcrumbs={['SQUADRON', 'COMMAND', 'TACTICAL_HUB']}
+            breadcrumbs={['ЕСКАДРА', 'КОМАНДУВАННЯ', 'ТАКТИЧНИЙ_ХАБ']}
             stats={[
               { label: 'ЯДРО', value: stats?.totalOPS! > 0 ? `${formatNumber(stats?.totalOPS!)} оп/с` : 'Н/Д', color: 'success', icon: <Activity size={14} />, animate: true },
               { label: 'КРИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
@@ -401,7 +401,7 @@ const DashboardView: React.FC = () => {
                               <p className="text-2xl font-mono font-black text-white italic">{formatNumber(data.throughput)}/с</p>
                             </div>
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">НАТИВА</p>
+                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЗАТРИМКА</p>
                               <p className="text-2xl font-mono font-black text-emerald-400 italic">{data.latency}мс</p>
                             </div>
                             <div className="space-y-1">
@@ -420,8 +420,8 @@ const DashboardView: React.FC = () => {
                             />
                           </div>
                           <div className="flex justify-between mt-4 relative z-10">
-                            <span className="text-[10px] font-black text-slate-600 italic">LOAD: {data.load}%</span>
-                            <span className="text-[10px] font-black text-emerald-500 italic">{data.trend}</span>
+                            <span className="text-[10px] font-black text-slate-600 italic">НАВАНТАЖЕННЯ: {data.load}%</span>
+                            <span className="text-[10px] font-black text-emerald-500 italic">{data.trend.replace('UP', 'ЗРОСТАННЯ').replace('DOWN', 'СПАД')}</span>
                           </div>
                         </motion.div>
                       ))}
@@ -597,7 +597,7 @@ const DashboardView: React.FC = () => {
                                    company.maxRisk > 90 ? "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-rose-500/20" : 
                                    "bg-amber-500/10 text-amber-500 border-amber-500/30 shadow-amber-500/20"
                                 )}>
-                                   <span className="text-[9px] opacity-60 leading-none">RISK</span>
+                                   <span className="text-[9px] opacity-60 leading-none">РИЗИК</span>
                                    <span className="text-xl tracking-tighter">{company.maxRisk}</span>
                                 </div>
                              </div>
@@ -657,7 +657,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="text-right">
                                 <p className="text-xl font-mono font-black text-white italic tracking-tighter">{formatNumber(item.count)}</p>
-                                <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black italic tracking-widest mt-1">ONLINE</Badge>
+                                <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black italic tracking-widest mt-1">ОНЛАЙН</Badge>
                              </div>
                           </div>
                         ))}
@@ -674,7 +674,7 @@ const DashboardView: React.FC = () => {
           <div className="px-12 bg-red-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(220,38,38,0.5)] relative z-10 italic text-white">
             <div className="flex items-center gap-4">
                <Fingerprint size={24} className="text-white animate-pulse" />
-               <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">PREDATOR_SOVEREIGN_LINK</span>
+               <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">СУВЕРЕННИЙ_ЗВ'ЯЗОК_PREDATOR</span>
             </div>
           </div>
           <div className="flex-1 flex items-center">
@@ -688,7 +688,7 @@ const DashboardView: React.FC = () => {
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,
-                `НЕЙРО-АКТИВНІСТЬ: 78% | OODA_LATENCY: 5.8ms`,
+                `НЕЙРО-АКТИВНІСТЬ: 78% | ЗАТРИМКА_OODA: 5.8мс`,
                 `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛАРАЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">

@@ -168,11 +168,11 @@ const ScenarioModeling: React.FC = () => {
             <ViewHeader 
                 title="МОДЕЛЮВАННЯ СЦЕНАРІЇВ"
                 subtitle="WHAT-IF ANALYSIS CORE v56.5-ELITE"
-                badge="SIMULATION_ELITE"
+                badges={[{ label: 'SIMULATION_ELITE', color: 'primary' }]}
                 stats={[
-                    { label: 'ПРОГНОЗ РУХУ', value: '$12.4M', trend: 14.2 },
-                    { label: 'РИЗИК СЦЕНАРІЮ', value: '42/100', trend: -5.1 },
-                    { label: 'AI ТОЧНІСТЬ', value: '94.8%', trend: 0.2 }
+                    { label: 'ПРОГНОЗ РУХУ', value: '$12.4M', color: 'success' },
+                    { label: 'РИЗИК СЦЕНАРІЮ', value: '42/100', color: 'warning' },
+                    { label: 'AI ТОЧНІСТЬ', value: '94.8%', color: 'primary' }
                 ]}
                 actions={
                     <div className="flex gap-3">

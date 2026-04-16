@@ -43,7 +43,16 @@ describe('FinancialDashboard', () => {
     vi.mocked(useBackendStatus).mockReturnValue({
       isOffline: false,
       activeFailover: false,
-      sourceLabel: 'NVIDIA_PRIMARY'
+      sourceLabel: 'NVIDIA_PRIMARY',
+      status: 'online',
+      isOnline: true,
+      healingProgress: 100,
+      nodeSource: 'NVIDIA_DIRECT',
+      isTruthOnly: false,
+      modeLabel: 'Активне з\'єднання',
+      sourceType: 'remote',
+      statusLabel: 'З\'єднання стабільне',
+      nodes: [],
     });
   });
 
@@ -66,7 +75,16 @@ describe('FinancialDashboard', () => {
     vi.mocked(useBackendStatus).mockReturnValue({
       isOffline: true,
       activeFailover: true,
-      sourceLabel: 'MIRROR_NODE'
+      sourceLabel: 'MIRROR_NODE',
+      status: 'offline',
+      isOnline: false,
+      healingProgress: 0,
+      nodeSource: 'SOVEREIGN_MOCK',
+      isTruthOnly: false,
+      modeLabel: 'Аварійний режим',
+      sourceType: 'local',
+      statusLabel: 'Відключено',
+      nodes: [],
     });
 
     vi.mocked(cersService.getFinancialMetrics).mockResolvedValue(mockMetrics);

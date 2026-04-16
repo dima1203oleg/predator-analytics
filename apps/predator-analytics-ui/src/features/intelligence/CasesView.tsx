@@ -13,7 +13,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Archive, Search, Sparkles, Plus, X, AlertOctagon, CheckCircle2, Activity,
   Briefcase, Filter, ChevronRight, LayoutGrid, List, Database, ShieldAlert,
-  Zap, Clock, ArrowUpRight, Target, Fingerprint, Shield, Siren, Cpu, Layers
+  Zap, Clock, ArrowUpRight, Target, Fingerprint, Shield, Siren, Cpu, Layers,
+  ShieldCheck
 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useGlobalState } from '@/context/GlobalContext';
