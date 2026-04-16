@@ -112,54 +112,60 @@ export default function CargoManifestPremium() {
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
           {/* HEADER ELITE HUD */}
-          <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-12 py-10 border-b border-white/[0.04]">
-            <div className="flex items-center gap-12">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-rose-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
-                <div className="relative p-8 bg-black border-2 border-rose-600/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all duration-700">
-                  <Fingerprint size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-12">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-rose-600/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-8 bg-black border-2 border-rose-600/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all duration-700">
+                    <Fingerprint size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-6">
+                    <span className="bg-rose-600/10 border border-rose-600/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                      MANIFEST_FORENSIC // DEEP_SCAN_SYSTEM
+                    </span>
+                    <div className="h-px w-16 bg-rose-600/20" />
+                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                  </div>
+                  <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none text-shadow-elite">
+                    МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФОРЕНЗИКА</span>
+                  </h1>
                 </div>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-6">
-                  <span className="bg-rose-600/10 border border-rose-600/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                    MANIFEST_FORENSIC // DEEP_SCAN_SYSTEM
-                  </span>
-                  <div className="h-px w-16 bg-rose-600/20" />
-                  <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
-                </div>
-                <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none text-shadow-elite">
-                  МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФОРЕНЗИКА</span>
-                </h1>
-                <div className="flex items-center gap-6 text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-8 italic border-l-4 border-rose-600/30 pl-10 opacity-95">
-                  <FileSearch size={16} className="text-rose-500" /> 
-                  <span>АНАЛІЗ ВАНТАЖНИХ МАНІФЕСТІВ ТА ПРЕДИКЦІЯ ШАХРАЙСТВА</span>
-                  <span className="text-slate-900 mx-2">|</span>
-                  <span className="text-yellow-500 animate-pulse flex items-center gap-3 bg-yellow-500/5 px-4 py-2 rounded-2xl border border-yellow-500/20">
-                     <Activity size={16} /> АРХІТЕКТУРА_РИЗИКУ: КРИТИЧНО
-                  </span>
-                </div>
+            }
+            breadcrumbs={['INTEL', 'CUSTOMS', 'FORENSIC_ARRAY']}
+            badges={[
+              { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
+              { label: 'SOVEREIGN_ELITE', color: 'rose', icon: <Siren size={10} /> },
+            ]}
+            stats={[
+              { label: 'ПЕРЕВІРЕНО_24H', value: '1,842', icon: <FileSearch />, color: 'gold' },
+              { label: 'ВИЯВЛЕНО_АНОМАЛІЙ', value: '291', icon: <ShieldAlert />, color: 'danger' },
+              { label: 'АРХІТЕКТУРА_РИЗИКУ', value: '54%', icon: <Activity />, color: 'danger', animate: true },
+              { label: 'AI_CORE_READY', value: 'ACTIVE', icon: <Zap />, color: 'primary' },
+            ]}
+          />
+
+          <div className="flex justify-end gap-6 mb-12">
+             <button 
+              onClick={handleRefresh} 
+              className={cn(
+                "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-rose-500 transition-all shadow-4xl group/btn",
+                refreshing && "animate-spin cursor-not-allowed opacity-50"
+              )}
+            >
+              <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
+            </button>
+            <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
+              <div className="absolute inset-0 bg-gradient-to-r from-rose-700 to-rose-600 transition-transform duration-500 group-hover/main:scale-105" />
+              <div className="relative flex items-center gap-6 text-white font-black uppercase italic tracking-[0.3em] text-[12px]">
+                <Crosshair size={24} /> ЗАПУСТИТИ_СКАНУВАННЯ
               </div>
-            </div>
-            <div className="flex items-center gap-6">
-               <button 
-                onClick={handleRefresh} 
-                className={cn(
-                  "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-rose-500 transition-all shadow-4xl group/btn",
-                  refreshing && "animate-spin cursor-not-allowed opacity-50"
-                )}
-              >
-                <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
-              </button>
-              <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
-                <div className="absolute inset-0 bg-gradient-to-r from-rose-700 to-rose-600 transition-transform duration-500 group-hover/main:scale-105" />
-                <div className="relative flex items-center gap-6 text-white font-black uppercase italic tracking-[0.3em] text-[12px]">
-                  <Crosshair size={24} /> ЗАПУСТИТИ_СКАНУВАННЯ
-                </div>
-                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
-              </button>
-            </div>
-          </header>
+              <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
+            </button>
+          </div>
 
           {/* QUICK METRICS */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">

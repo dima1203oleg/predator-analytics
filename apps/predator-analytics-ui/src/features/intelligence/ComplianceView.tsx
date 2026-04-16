@@ -60,15 +60,43 @@ export const ComplianceView = () => {
         <div className="min-h-screen w-full relative overflow-hidden bg-black pb-20">
             <AdvancedBackground />
 
-            <div className="relative z-10 flex flex-col p-6 max-w-[1600px] mx-auto min-h-screen space-y-8">
+            <CyberGrid color="rgba(16, 185, 129, 0.04)" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.06),transparent_70%)] pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col p-6 max-w-[1750px] mx-auto min-h-screen space-y-12 pt-12">
                 <ViewHeader
-                    title="ЦЕНТР КОМПЛАЄНСУ ТА АУДИТУ"
-                    icon={<ShieldCheck size={24} className="text-emerald-400 neon-text-emerald" />}
-                    breadcrumbs={['СИСТЕМА', 'БЕЗПЕКА', 'АУДИТ']}
+                    title={
+                        <div className="flex items-center gap-10">
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                <div className="relative p-7 bg-black border-2 border-emerald-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                                    <ShieldCheck size={42} className="text-emerald-400 shadow-[0_0_20px_#10b981]" />
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-6">
+                                    <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                        COMPLIANCE_WATCH // AUDIT_TRIAL_v56
+                                    </span>
+                                    <div className="h-px w-12 bg-emerald-500/20" />
+                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                </div>
+                                <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                                    ЦЕНТР <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>
+                                </h1>
+                            </div>
+                        </div>
+                    }
+                    breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_ELITE']}
+                    badges={[
+                        { label: 'IMMUTABLE_LOGS', color: 'success', icon: <Lock size={10} /> },
+                        { label: 'SOVEREIGN_SYSTEM', color: 'primary', icon: <CheckCircle size={10} /> },
+                    ]}
                     stats={[
-                        { label: 'Рівень Довіри', value: '100%', color: 'success', icon: <CheckCircle size={14} /> },
-                        { label: 'Останній Аудит', value: '2хв тому', color: 'primary', icon: <Activity size={14} /> },
-                        { label: 'Статус Регулятора', value: 'COMPLIANT', color: 'success', icon: <Scale size={14} /> },
+                        { label: 'РІВЕНЬ_ДОВІРИ', value: '100.0%', icon: <CheckCircle />, color: 'success' },
+                        { label: 'ОСТАННІЙ_АУДИТ', value: '2хв тому', icon: <Activity />, color: 'primary' },
+                        { label: 'INTEGRITY_INDEX', value: '1.000', icon: <Activity />, color: 'success' },
+                        { label: 'STATUS_CORE', value: 'NOMINAL', icon: <Activity />, color: 'primary' },
                     ]}
                 />
 

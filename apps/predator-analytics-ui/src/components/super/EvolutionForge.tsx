@@ -19,9 +19,9 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
   const [tasks, setTasks] = useState<EvolutionTask[]>([
     { id: '1', component: 'PredictiveNexusView.tsx', type: 'feature', status: 'deployed', progress: 100 },
     { id: '2', component: 'GlobalNeuralMesh.tsx', type: 'aesthetic', status: 'deployed', progress: 100 },
-    { id: '3', component: 'Brain Intelligence Sync (Llama 4)', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '3', component: 'Brain Intelligence Sync (Llama 3.2)', type: 'feature', status: 'deployed', progress: 100 },
     { id: '4', component: 'Gemma 4 E4B Adaptation', type: 'performance', status: 'deployed', progress: 100 },
-    { id: '5', component: 'Sovereign Launch Initiated', type: 'feature', status: 'deployed', progress: 100 },
+    { id: '5', component: 'GLM-5.1 Cloud Node Integration', type: 'feature', status: 'crafting', progress: 15 },
     { id: '6', component: 'SovereignAZRBrain.tsx', type: 'aesthetic', status: 'crafting', progress: 98 },
   ]);
 

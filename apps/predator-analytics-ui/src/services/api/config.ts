@@ -73,7 +73,7 @@ const updateBackendAvailability = async (isOffline: boolean) => {
 
     // Failover Logic: NVIDIA -> Colab -> Local Mock
     if (isOffline) {
-        if (globalWindow.__CURRENT_BACKEND__ !== FALLBACK_URL) {
+        if (globalWindow.__CURRENT_BACKEND__ !== FALLBACK_URL && !FALLBACK_URL.includes('undefined')) {
             console.warn('⚠️ Основний сервер NVIDIA недоступний. Перемикання на Colab (Failover)...');
             API_BASE_URL = FALLBACK_URL;
             apiClient.defaults.baseURL = FALLBACK_URL;
@@ -86,7 +86,7 @@ const updateBackendAvailability = async (isOffline: boolean) => {
                 status: n.url === PRIMARY_URL ? 'offline' : n.status
             }));
         } else {
-            console.warn('🚨 Colab Cluster також недоступний. Активація локального Mock API (Emergency Mode)...');
+            console.warn('🚨 Дистанційні кластери недоступні. Активація СУВЕРЕННОГО Mock API (Emergency Mode)...');
             const MOCK_URL = 'http://localhost:9080/api/v1';
             API_BASE_URL = MOCK_URL;
             apiClient.defaults.baseURL = MOCK_URL;
@@ -94,12 +94,12 @@ const updateBackendAvailability = async (isOffline: boolean) => {
             
             globalWindow.__BACKEND_NODES__ = globalWindow.__BACKEND_NODES__.map(n => ({
                 ...n,
-                active: false,
-                status: n.url === FALLBACK_URL ? 'offline' : 'online'
+                active: n.id === 'nvidia', // We keep NVIDIA active for the UI to show 'offline' status clearly
+                status: 'offline'
             }));
         }
     } else {
-        // If we are online, ensure the active state is reflected
+        // If we represent 'online' state, ensure we are actually on a node
         const currentUrl = globalWindow.__CURRENT_BACKEND__ || PRIMARY_URL;
         globalWindow.__BACKEND_NODES__ = globalWindow.__BACKEND_NODES__.map(n => ({
             ...n,
@@ -121,7 +121,7 @@ export const apiClient = axios.create({
     timeout: DEFAULT_TIMEOUT,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '56.4.0',
+        'X-Client-Version': '56.5.0-ELITE',
     }
 });
 

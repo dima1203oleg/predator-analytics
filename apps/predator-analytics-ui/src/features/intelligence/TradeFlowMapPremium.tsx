@@ -97,48 +97,51 @@ export default function TradeFlowMapPremium() {
 
         <div className="relative z-10 max-w-[1750px] mx-auto p-4 sm:p-12 space-y-12">
            
-           <ViewHeader
-             title={
-               <div className="flex items-center gap-10">
-                  <div className="relative group">
-                     <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
-                        <Globe size={42} className="text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
-                     </div>
-                  </div>
-                  <div className="space-y-2">
-                     <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                          TRADE_MATRIX // FLOW_GEOSPATIAL
-                        </span>
-                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
-                     </div>
-                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       КАРТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8 italic uppercase text-[#D4AF37]">ПОТОКІВ</span>
-                     </h1>
-                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        ГЛОБАЛЬНА ВІЗУАЛІЗАЦІЯ ІМПОРТУ ТА ЛАНЦЮГІВ ПОСТАЧАННЯ
-                     </p>
-                  </div>
-               </div>
-             }
-             stats={[
-               { label: 'ПАРТНЕРІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
-               { label: 'АКТИВНИХ_ЛІНІЙ', value: String(MOCK_FLOWS.length), icon: <Zap size={14} />, color: 'warning', animate: true },
-               { label: 'ОБСЯГ_TRADE (Σ)', value: '$120M', icon: <DollarSign size={14} />, color: 'success' }
-             ]}
-             actions={
-               <div className="flex gap-4">
-                  <button onClick={() => setZoom(z => Math.min(z + 0.2, 2))} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><ZoomIn size={24} /></button>
-                  <button onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl"><ZoomOut size={24} /></button>
-                  <button onClick={handleRefresh} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", refreshing && "animate-spin")}><RefreshCw size={24} /></button>
-                  <button onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-rose-900/10 border border-rose-500/20 text-rose-500" : "bg-emerald-900/10 border border-emerald-500/20 text-emerald-500")}>
-                     {isPlaying ? <Pause size={20} /> : <Play size={20} />} {isPlaying ? 'ПАУЗА_АНІМАЦІЇ' : 'ЗАПУСТИТИ'}
-                  </button>
-               </div>
-             }
-           />
+            <ViewHeader
+              title={
+                <div className="flex items-center gap-10">
+                   <div className="relative group">
+                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                      <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                         <Globe size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
+                      </div>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-6">
+                         <span className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                           TRADE_MATRIX // FLOW_GEOSPATIAL
+                         </span>
+                         <div className="h-px w-12 bg-[#D4AF37]/20" />
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                      </div>
+                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                        КАРТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ПОТОКІВ</span>
+                      </h1>
+                   </div>
+                </div>
+              }
+              breadcrumbs={['INTEL', 'TRADE', 'GLOBAL_FLOW_v5']}
+              badges={[
+                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },
+              ]}
+              stats={[
+                { label: 'КРАЇН-ПАРТНЕРІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
+                { label: 'АКТИВНИХ_ЛІНІЙ', value: String(MOCK_FLOWS.length), icon: <Zap size={14} />, color: 'warning', animate: true },
+                { label: 'ОБСЯГ_TRADE (Σ)', value: '$120.4M', icon: <DollarSign size={14} />, color: 'success' },
+                { label: 'AI_GEOSPATIAL', value: 'READY', icon: <Sparkles size={14} />, color: 'gold' },
+              ]}
+              actions={
+                <div className="flex gap-4">
+                   <button onClick={() => setZoom(z => Math.min(z + 0.2, 2))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomIn size={24} /></button>
+                   <button onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomOut size={24} /></button>
+                   <button onClick={handleRefresh} className={cn("p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl", refreshing && "animate-spin")}><RefreshCw size={24} /></button>
+                   <button onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-rose-900/10 border-2 border-rose-500/20 text-rose-500" : "bg-emerald-900/10 border-2 border-emerald-500/20 text-emerald-500")}>
+                      {isPlaying ? <Pause size={20} /> : <Play size={20} />} {isPlaying ? 'ПАУЗА_АНІМАЦІЇ' : 'ЗАПУСТИТИ'}
+                   </button>
+                </div>
+              }
+            />
 
            <div className="grid grid-cols-12 gap-10">
               

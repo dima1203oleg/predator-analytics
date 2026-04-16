@@ -5682,6 +5682,93 @@ app.get('/api/v1/dashboard/overview', (req, res) => {
     });
 });
 
+// =============================================
+// 🧠 SOVEREIGN AI ENGINE MOCK (v56.5-ELITE)
+// =============================================
+
+const MOCK_MODELS = [
+  { name: 'llama4:latest', modified_at: new Date().toISOString(), size: 42000000000, details: { family: 'llama', parameter_size: '70B' } },
+  { name: 'deepseek-r1:latest', modified_at: new Date().toISOString(), size: 32000000000, details: { family: 'deepseek', parameter_size: '33B' } },
+  { name: 'gemma4:latest', modified_at: new Date().toISOString(), size: 12000000000, details: { family: 'gemma', parameter_size: '9B' } },
+  { name: 'qwen3.5:latest', modified_at: new Date().toISOString(), size: 45000000000, details: { family: 'qwen', parameter_size: '72B' } },
+  { name: 'ultra-router-elite', modified_at: new Date().toISOString(), size: 0, details: { family: 'router', parameter_size: 'hybrid' } }
+];
+
+// Ollama Tags
+app.get(['/api/tags', '/api/v1/ai/models'], (req, res) => {
+  res.json({ models: MOCK_MODELS });
+});
+
+// Ollama Pull simulation
+app.post('/api/pull', (req, res) => {
+  const { name } = req.body;
+  console.log(`[OLLAMA] Pulling model: ${name}...`);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 25;
+    res.write(JSON.stringify({ status: `pulling ${name}`, completed: Math.min(progress, 100), total: 100 }) + '\n');
+    if (progress >= 100) {
+      clearInterval(interval);
+      res.end(JSON.stringify({ status: 'success' }));
+    }
+  }, 500);
+});
+
+// AI Chat Simulation
+app.post('/api/v1/ai/chat', (req, res) => {
+  const { messages, model } = req.body;
+  const lastMsg = messages[messages.length - 1].content;
+  
+  console.log(`[AI] Chat request using model: ${model || 'default'}`);
+  
+  const thoughts = [
+    { id: 'th-1', stage: 'observation', content: 'Отримано запит користувача: ' + lastMsg, confidence: 0.99, timestamp: new Date().toISOString() },
+    { id: 'th-2', stage: 'analysis', content: 'Аналіз митних баз даних для пошуку релевантних паттернів...', confidence: 0.94, timestamp: new Date().toISOString() },
+    { id: 'th-3', stage: 'decision', content: 'Складання стратегічної відповіді на основі суверенного протоколу.', confidence: 0.98, timestamp: new Date().toISOString() }
+  ];
+
+  const content = `СУВЕРЕННИЙ МОЗОК AZR (Failover Mode): Я отримав ваш запит стосовно "${lastMsg}". Оскільки основний сервер NVIDIA зараз недоступний, я працюю у автономному режимі на локальному вузлі. Усі інтелектуальні функції збережені. Чим я можу вам допомогти?`;
+
+  setTimeout(() => {
+    res.json({
+      choices: [{
+        message: {
+          role: 'assistant',
+          content,
+          thought_process: thoughts
+        }
+      }],
+      usage: { total_tokens: 142 },
+      model: model || 'llama3.2'
+    });
+  }, 1000);
+});
+
+app.get('/api/v1/ai/thoughts', (req, res) => {
+  res.json([
+    { id: 'th-sys-1', stage: 'observation', content: '[ELITE-2026] Моніторинг суверенного інтелектуального контуру...', confidence: 1, timestamp: new Date().toISOString() },
+    { id: 'th-sys-2', stage: 'analysis', content: 'Llama 3.2 активна. Виконано семантичне розщеплення потоку OSINT.', confidence: 0.98, timestamp: new Date().toISOString() },
+    { id: 'th-sys-3', stage: 'action', content: 'Активовано протокол DeepSeek-R1 для глибинного логічного аналізу.', confidence: 0.99, timestamp: new Date().toISOString() }
+  ]);
+});
+
+app.get('/api/v1/system/stats', (req, res) => {
+  res.json({
+    cpu_percent: 18 + Math.random() * 5,
+    memory_percent: 32 + Math.random() * 10,
+    disk_percent: 45,
+    gpu_available: true,
+    gpu_name: 'Simulated ELITE A100',
+    gpu_utilization: 12,
+    gpu_mem_total: 85899345920,
+    gpu_mem_used: 10737418240,
+    gpu_available_mem: 75161927680,
+    last_sync: new Date().toISOString(),
+    node_source: 'LOCAL_MOCK_AZR'
+  });
+});
+
 // Catch-all for any missing endpoints (must be last)
 app.use('/api', (req, res) => {
   console.log(`[MOCK] Unhandled ${req.method} ${req.path}`);
@@ -5696,3 +5783,4 @@ app.use('/api', (req, res) => {
 server.listen(PORT, () => {
     console.log(`🚀 Mock API Server running on http://localhost:${PORT}`);
 });
+

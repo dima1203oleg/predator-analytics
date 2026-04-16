@@ -11,7 +11,9 @@ import EvolutionForge from './EvolutionForge';
 import { AutonomousLearningStack } from './AutonomousLearningStack';
 import GlobalNeuralMesh from './GlobalNeuralMesh';
 import { systemApi } from '../../services/api/system';
+import { aiApi, AIThought } from '../../services/api/ai';
 import { useQuery } from '@tanstack/react-query';
+import { useBackendStatus } from '../../hooks/useBackendStatus';
 
 /**
  * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v56.5-ELITE
@@ -32,6 +34,8 @@ const SovereignAZRBrain: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [voiceHint, setVoiceHint] = useState("Нейроінтерфейс активовано");
   
+  const { isOffline, activeFailover, sourceLabel, nodes } = useBackendStatus();
+  
   const { data: stats } = useQuery({
     queryKey: ['system', 'stats'],
     queryFn: systemApi.getStats,
@@ -44,20 +48,51 @@ const SovereignAZRBrain: React.FC = () => {
     refetchInterval: 10000
   });
 
+  const { data: thoughts } = useQuery({
+    queryKey: ['ai', 'thoughts'],
+    queryFn: () => aiApi.getThoughts(10),
+    refetchInterval: 5000
+  });
+
   const cpuLoad = stats?.cpu_percent || 0;
   
-  const v56_Logs = useMemo(() => [
-    { time: '14:20:01', type: 'INFO', msg: 'Ініціалізація SOVEREIGN CORE v56.5-ELITE' },
-    { time: '14:20:05', type: 'HEAL', msg: 'Перевірка цілісності нейронної мережі... OK' },
-    { time: '14:20:08', type: 'INFO', msg: 'Нейронний апгрейд: Llama 4 & Gemma 4 синхронізовано.' },
-    { time: '14:20:10', type: 'HEAL', msg: 'DeepSeek R1 та Qwen 3.5 активовано для стратегічного планування.' },
-    { time: '14:20:12', type: 'THREAT', msg: 'Виявлено спробу аномального доступу до реєстрів. Блокування IP...' },
-    { time: '14:20:15', type: 'INFO', msg: 'Модуль "Oracle" завершив аналіз 1.4В записів.' },
-    { time: '14:20:18', type: 'HEAL', msg: 'Оптимізація GPU кластера NVIDIA A100... Виконано.' },
-    { time: '14:20:22', type: 'HEAL', msg: 'Виверження Gemma 4 (E4B) завершено. Потоки квантовані.' },
-    { time: '14:20:25', type: 'INFO', msg: 'Оновлення стратегічного висновку про митні коридори.' },
-    { time: '14:20:30', type: 'INFO', msg: 'Стан системи: СУВЕРЕННИЙ ДОМІНАНТ (Llama 4 Active).' }
-  ], []);
+  const combinedLogs = useMemo(() => {
+    const now = new Date();
+    const timeStr = (offset: number) => {
+      const d = new Date(now.getTime() - offset * 1000);
+      return d.toLocaleTimeString('uk-UA');
+    };
+
+    const base = [
+      { id: 'v56-log-1', time: timeStr(2), type: 'INFO', msg: `ПОТОЧНИЙ ВУЗОЛ_ID: ${sourceLabel.toUpperCase()}` },
+      { id: 'v56-log-2', time: timeStr(1), type: isOffline ? 'THREAT' : 'HEAL', msg: isOffline ? 'ЗВ\'ЄДОК З NVIDIA_SERVER: ПЕРЕРВАНО [!] EMERGENCY_AUTONOMY' : 'ЗВ\'ЄДОК З NVIDIA_SERVER: ВСТАНОВЛЕНО [OK]' },
+      { id: 'v56-log-3', time: timeStr(0), type: 'INFO', msg: activeFailover ? 'FAILOVER_STRATEGY: GOOGLE COLAB MIRROR ACTIVE' : 'FAILOVER_STRATEGY: STANDBY_MODE' },
+    ];
+
+    if (thoughts) {
+      const aiLogs = thoughts.map((t: AIThought) => ({
+        id: t.id,
+        time: t.timestamp.split('T')[1].split('.')[0],
+        type: t.stage === 'action' ? 'HEAL' : t.stage === 'observation' ? 'INFO' : 'INFO',
+        msg: `[AI_THOUGHT // ${t.stage.toUpperCase()}]: ${t.content}`
+      }));
+      return [...base, ...aiLogs].sort((a,b) => b.time.localeCompare(a.time)).slice(0, 20);
+    }
+
+    return base.reverse();
+  }, [isOffline, activeFailover, sourceLabel, thoughts]);
+
+  useEffect(() => {
+    if (isListening) {
+      setVoiceHint("Нейроінтерфейс: СЛУХАЮ_ЗАПИТ...");
+      const timer = setTimeout(() => {
+        setVoiceHint("АНАЛІЗУЮ_АКУСТИЧНИЙ_ПАТЕРН...");
+      }, 3000);
+      return () => clearTimeout(timer);
+    } else {
+      setVoiceHint("Нейроінтерфейс: ГОТОВИЙ_ДО_ВВОДУ");
+    }
+  }, [isListening]);
 
   return (
     <div className="min-h-screen bg-black text-slate-200 p-8 font-sans selection:bg-yellow-500/30">
@@ -90,18 +125,30 @@ const SovereignAZRBrain: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap gap-4 relative">
-            <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
-              <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1">СИСТЕМНА АВТОНОМНІСТЬ</span>
-              <div className="text-3xl font-black text-white italic tabular-nums">99.98%</div>
+            {isOffline && (
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="px-8 py-5 bg-amber-500/10 border border-amber-500/40 rounded-[24px] backdrop-blur-3xl shadow-[0_0_30px_rgba(245,158,11,0.2)] flex flex-col justify-center"
+              >
+                <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-1 flex items-center gap-2">
+                  <ZapOff size={12} /> СУВЕРЕННИЙ АВТОНОМНИЙ РЕЖИМ
+                </span>
+                <div className="text-xl font-black text-white italic">EMERGENCY_LOCAL</div>
+              </motion.div>
+            )}
+            <div className="px-8 py-5 bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/autonomy">
+              <span className="text-[10px] text-yellow-600 font-black uppercase tracking-widest mb-1 group-hover/autonomy:text-yellow-400 transition-colors">СИСТЕМНА АВТОНОМНІСТЬ</span>
+              <div className="text-3xl font-black text-white italic tabular-nums">{isOffline ? '100.00%' : '99.98%'}</div>
             </div>
-            <div className="px-8 py-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
-              <span className="text-[10px] text-rose-600 font-black uppercase tracking-widest mb-1">РІВЕНЬ ІНТЕЛЕКТУ</span>
+            <div className="px-8 py-5 bg-rose-500/5 border border-rose-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/intel">
+              <span className="text-[10px] text-rose-600 font-black uppercase tracking-widest mb-1 group-hover/intel:text-rose-400 transition-colors">РІВЕНЬ ІНТЕЛЕКТУ</span>
               <div className="text-3xl font-black text-white italic">ORACLE_T1</div>
             </div>
-            <div className="px-8 py-5 bg-emerald-500/5 border border-emerald-500/20 rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center">
-              <span className="text-[10px] text-emerald-600 font-black uppercase tracking-widest mb-1">СТАТУС КЛАСТЕРА</span>
-              <div className="text-3xl font-black text-white italic flex items-center gap-3">
-                 OK <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_#10b981]" />
+            <div className={`px-8 py-5 bg-emerald-500/5 border ${isOffline ? 'border-amber-500/20' : 'border-emerald-500/20'} rounded-[24px] backdrop-blur-3xl shadow-2xl flex flex-col justify-center group/cluster`}>
+              <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1 group-hover/cluster:text-white transition-colors">СТАТУС КЛАСТЕРА</span>
+              <div className={`text-3xl font-black ${isOffline ? 'text-amber-500' : 'text-emerald-500'} italic flex items-center gap-3`}>
+                 {isOffline ? 'OFFLINE' : 'ONLINE'} <div className={`w-3 h-3 ${isOffline ? 'bg-amber-500 shadow-[0_0_15px_#f59e0b]' : 'bg-emerald-500 shadow-[0_0_15px_#10b981]'} rounded-full animate-pulse`} />
               </div>
             </div>
           </div>
@@ -164,31 +211,42 @@ const SovereignAZRBrain: React.FC = () => {
                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="text-rose-500" size={24} />
-                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУРНАЛ САМОВІДНОВЛЕННЯ [ELITE]</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУРНАЛ СУВЕРЕННОГО ПОТОКУ [ELITE]</h3>
                   </div>
                   <div className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    LIVE_FEED
+                    NEURAL_STREAM
                   </div>
                </div>
                
                <div className="space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar font-mono text-[11px]">
-                  {v56_Logs.map((log, i) => (
-                    <motion.div 
-                      key={i}
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: i * 0.08 }}
-                      className={`p-4 rounded-2xl border flex items-start gap-4 hover:translate-x-1 transition-transform group/log ${
-                        log.type === 'HEAL' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
-                        log.type === 'THREAT' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
-                        'bg-yellow-500/5 border-yellow-500/10 text-yellow-200'
-                      }`}
-                    >
-                      <span className="opacity-40 font-black shrink-0 text-[10px]">[{log.time}]</span>
-                      <span className="font-bold flex-1 group-hover/log:text-white transition-colors">{log.msg}</span>
-                    </motion.div>
-                  ))}
+                  <AnimatePresence mode='popLayout'>
+                    {combinedLogs.map((log, i) => (
+                      <motion.div 
+                        key={log.id}
+                        layout
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ delay: i * 0.05 }}
+                        className={`p-4 rounded-2xl border flex items-start gap-4 hover:translate-x-1 transition-transform group/log ${
+                          log.type === 'HEAL' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
+                          log.type === 'THREAT' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
+                          'bg-yellow-500/5 border-yellow-500/10 text-yellow-200'
+                        }`}
+                      >
+                        <span className="opacity-40 font-black shrink-0 text-[10px]">[{log.time}]</span>
+                        <div className="flex-1">
+                          <span className="font-bold group-hover/log:text-white transition-colors block">{log.msg}</span>
+                          {log.id.startsWith('th-') && (
+                            <div className="mt-1 text-[9px] opacity-60 flex items-center gap-1 font-black uppercase">
+                              <Sparkles size={8} /> INTEGRATED_THOUGHT
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                </div>
             </div>
 
@@ -201,7 +259,7 @@ const SovereignAZRBrain: React.FC = () => {
                   <div className="flex items-center gap-3 px-6 py-3 bg-black/60 border border-yellow-500/20 rounded-2xl backdrop-blur-xl">
                     <Globe className="text-yellow-500 animate-spin-slow" size={20} />
                     <div>
-                      <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Sovereign Neural Mesh</h3>
+                      <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_ELITE 2026</span>
                       <div className="text-[9px] text-yellow-600/80 font-black uppercase">Active Nodes: 12,472 UA_SECURE</div>
                     </div>
                   </div>

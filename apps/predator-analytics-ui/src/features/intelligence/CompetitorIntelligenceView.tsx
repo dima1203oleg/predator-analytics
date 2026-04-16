@@ -333,13 +333,38 @@ const CompetitorIntelligenceView: React.FC = () => {
 
         <div className="relative z-20">
           <ViewHeader
-            title={localLocales.title}
-            icon={<Radar size={22} className="text-[#D4AF37] drop-shadow-[0_0_12px_rgba(212,175,55,0.6)]" />}
+            title={
+              <div className="flex items-center gap-10">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                    <Radar size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <span className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                      COMPETITOR_SIGINT // HUB_MATRIX
+                    </span>
+                    <div className="h-px w-12 bg-[#D4AF37]/20" />
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                  </div>
+                  <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                    {localLocales.title}
+                  </h1>
+                </div>
+              </div>
+            }
             breadcrumbs={localLocales.breadcrumbs}
+            badges={[
+              { label: 'DOMINATION_MODE', color: 'gold', icon: <Crown size={10} /> },
+              { label: 'SIGINT_ACTIVE', color: 'primary', icon: <Zap size={10} /> },
+            ]}
             stats={[
               { label: localLocales.stats.database, value: String(competitors.length), icon: <Layers size={14} />, color: 'primary' },
-              { label: localLocales.stats.monitoring, value: String(competitors.filter(c => c.isTracked).length), icon: <Eye size={14} />, color: 'secondary' },
+              { label: localLocales.stats.monitoring, value: String(competitors.filter(c => c.isTracked).length), icon: <Eye size={14} />, color: 'primary' },
               { label: localLocales.stats.risk, value: 'MEDIUM', icon: <ShieldAlert size={14} />, color: 'warning' },
+              { label: 'MATRIX_INDEX', value: '0.842', icon: <Fingerprint />, color: 'gold' },
             ]}
           />
 

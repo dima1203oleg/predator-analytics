@@ -1,8 +1,19 @@
+/**
+ * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v56.5-ELITE
+ * PREDATOR Analytics — Sovereign Investigative Framework
+ * 
+ * Модуль керування оперативними розслідуваннями та чергою подій.
+ * Sovereign Power Design · Strategic Hub · Tier-1
+ * 
+ * © 2026 PREDATOR Analytics — HR-04 (100% українська)
+ */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Archive, Search, Sparkles, Plus, X, AlertOctagon, CheckCircle2, Activity
+  Archive, Search, Sparkles, Plus, X, AlertOctagon, CheckCircle2, Activity,
+  Briefcase, Filter, ChevronRight, LayoutGrid, List, Database, ShieldAlert,
+  Zap, Clock, ArrowUpRight, Target, Fingerprint, Shield, Siren, Cpu, Layers
 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useGlobalState } from '@/context/GlobalContext';
@@ -10,6 +21,9 @@ import { useShell, UIShell } from '@/context/ShellContext';
 
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { cn } from '@/utils/cn';
 
 // Extracted Sub-views
 import { CaseCard, Case, CaseStatus } from '@/components/cases/CaseCard';
@@ -36,7 +50,6 @@ const CasesView: React.FC = () => {
   const loadCases = async () => {
     setLoading(true);
     try {
-      // Fallback to empty array if API fails or returns null
       const data = await (api as any).v45.getCases() || [];
       setCases(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -49,7 +62,7 @@ const CasesView: React.FC = () => {
 
   useEffect(() => {
     loadCases();
-    const interval = setInterval(loadCases, 10000);
+    const interval = setInterval(loadCases, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -114,10 +127,9 @@ const CasesView: React.FC = () => {
         source: 'MANUAL_ENTRY'
       });
 
-      // Reset and reload
       setIsCreateModalOpen(false);
       setNewCaseData({ title: '', description: '', priority: 'medium' });
-      loadCases(); // Refresh list
+      loadCases();
       dispatchEvent('CASE_CREATED', newCaseData.title);
     } catch (err) {
       console.error("Failed to create case", err);
@@ -127,200 +139,275 @@ const CasesView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 max-w-[1700px] mx-auto relative z-10 px-4 xl:px-8">
-      <AdvancedBackground />
+    <PageTransition>
+      <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40 px-4 xl:px-8">
+        <AdvancedBackground />
+        <CyberGrid color="rgba(212, 175, 55, 0.04)" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
 
-      <ViewHeader
-        title={isCommanderShell ? 'Кейси (Case Governance)' : isOperatorShell ? 'Черга (Operational Queue)' : 'Управління Розслідуваннями'}
-        icon={<Archive size={20} className="icon-3d-blue" />}
-        breadcrumbs={['СИСТЕМА', 'КЕЙСИ', 'АКТИВНІ']}
-        stats={[
-          { label: 'Всього Кейсів', value: filteredCases.length.toString(), icon: <Archive size={14} />, color: 'primary' },
-          { label: 'Критичні', value: cases.filter(c => c.status === 'КРИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
-          { label: 'В роботі', value: cases.filter(c => c.status === 'УВАГА').length.toString(), icon: <Activity className="w-3.5 h-3.5" />, color: 'warning' }
-        ]}
-        actions={
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="px-6 py-2.5 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 text-blue-400 hover:text-white font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.2)] flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap text-xs uppercase tracking-wider backdrop-blur-md"
-          >
-            <Plus size={16} />
-            Новий Кейс
-          </button>
-        }
-      />
-
-      <div className="mb-6 relative z-10">
-        <div className="relative flex-1 sm:w-96">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Пошук кейсів..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3.5 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-sm font-mono text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-colors shadow-inner"
-          />
-        </div>
-      </div>
-
-      {cases.some(c => c.status === 'КРИТИЧНО') && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-5 rounded-3xl bg-gradient-to-r from-rose-500/10 to-transparent border border-rose-500/20 mb-8 relative z-10 backdrop-blur-xl"
-        >
-          <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none rounded-3xl"></div>
-          <div className="p-3 bg-rose-500/20 rounded-xl relative z-10 border border-rose-500/30">
-            <AlertOctagon className="w-6 h-6 text-rose-400 animate-pulse" />
-          </div>
-          <div className="flex-1 relative z-10">
-            <div className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1 flex items-center gap-2">
-              <Sparkles size={12} /> Рекомендація AI
-            </div>
-            <div className="text-sm font-medium text-slate-300">
-              Виявлено <span className="font-bold text-rose-400">{cases.filter(c => c.status === 'КРИТИЧНО').length} критичних</span> кейсів.
-              Рекомендую розпочати з <span className="text-white font-bold italic">"{cases.find(c => c.status === 'КРИТИЧНО')?.title}"</span>.
-            </div>
-          </div>
-          <button className="px-6 py-2.5 bg-rose-500/20 hover:bg-rose-500/40 text-rose-400 hover:text-white rounded-xl text-xs font-black uppercase tracking-wider border border-rose-500/30 transition-all shadow-[0_0_15px_rgba(225,29,72,0.2)] relative z-10 active:scale-95">
-            ПЕРЕЙТИ
-          </button>
-        </motion.div>
-      )}
-
-      <CaseStats
-        cases={cases}
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-      />
-
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" />
-        </div>
-      ) : filteredCases.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Archive size={48} className="text-slate-600 mb-4" />
-          <h3 className="text-lg font-bold text-slate-400 mb-2">
-            Кейсів не знайдено
-          </h3>
-          <p className="text-sm text-slate-500 max-w-md">
-            {searchQuery
-              ? 'Спробуйте змінити пошуковий запит або фільтри'
-              : 'Наразі немає активних кейсів у цій категорії. Створіть новий кейс.'
-            }
-          </p>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors"
-          >
-            Створити перший кейс
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <AnimatePresence mode="popLayout">
-            {filteredCases.map((caseItem) => (
-              <CaseCard
-                key={caseItem.id}
-                caseItem={caseItem}
-                onView={handleViewCase}
-                onArchive={handleArchiveCase}
-                onEscalate={handleEscalateCase}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* CREATE MODAL */}
-      <AnimatePresence>
-        {isCreateModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsCreateModalOpen(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10"
-            >
-              <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Нове Розслідування</h3>
-                <button
-                  onClick={() => setIsCreateModalOpen(false)}
-                  aria-label="Закрити"
-                  className="text-slate-500 hover:text-white transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Назва Кейсу</label>
-                  <input
-                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none"
-                    placeholder="Введіть назву..."
-                    value={newCaseData.title}
-                    onChange={(e) => setNewCaseData({ ...newCaseData, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Опис Ситуації</label>
-                  <textarea
-                    className="w-full bg-black/40 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 transition-colors outline-none h-32 resize-none"
-                    placeholder="Опишіть деталі інциденту..."
-                    value={newCaseData.description}
-                    onChange={(e) => setNewCaseData({ ...newCaseData, description: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Пріоритет</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['low', 'medium', 'high'].map(p => (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => setNewCaseData({ ...newCaseData, priority: p })}
-                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border transition-all ${newCaseData.priority === p
-                          ? p === 'high' ? 'bg-rose-500 text-white border-rose-500'
-                            : p === 'medium' ? 'bg-amber-500 text-white border-amber-500'
-                              : 'bg-emerald-500 text-white border-emerald-500'
-                          : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
-                          }`}
-                      >
-                        {p === 'high' ? 'Високий' : p === 'medium' ? 'Середній' : 'Низький'}
-                      </button>
-                    ))}
+        <div className="relative z-10 max-w-[1850px] mx-auto space-y-12 pt-12">
+          
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-8">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-6 bg-black border-2 border-blue-500/40 rounded-[2rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
+                    <Briefcase size={32} className="text-blue-500" />
                   </div>
                 </div>
-                <div className="pt-4">
-                  <button
-                    type="submit"
-                    disabled={createLoading}
-                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {createLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <CheckCircle2 size={18} />}
-                    Створити Кейс
-                  </button>
+                <div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
+                      INSPECT_OPS // ТЕРМІНАЛ КЕЙСІВ
+                    </span>
+                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v56.5-ELITE</span>
+                  </div>
+                  <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                    {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕРАТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
+                  </h1>
                 </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </div>
+            }
+            breadcrumbs={['OPS', 'INVESTIGATIONS', 'CASE_LOG']}
+            badges={[
+              { label: 'CLASSIFIED_S2', color: 'primary', icon: <Shield size={10} /> },
+              { label: 'SOVEREIGN_FORCE', color: 'gold', icon: <Target size={10} /> },
+            ]}
+            stats={[
+              { label: 'АКТИВНІ_КЕЙСИ', value: filteredCases.length.toString(), icon: <Archive size={14} />, color: 'primary' },
+              { label: 'КРИТИЧНІ_ВУЗЛИ', value: cases.filter(c => c.status === 'КРИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
+              { label: 'THROUGHPUT', value: '94%', icon: <Zap size={14} />, color: 'success' },
+            ]}
+            actions={
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="group relative px-10 py-5 overflow-hidden rounded-[1.8rem]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-500 transition-transform duration-500 group-hover:scale-105" />
+                <div className="relative flex items-center gap-4 text-white font-black uppercase italic tracking-[0.2em] text-[11px]">
+                  <Plus size={20} /> НОВЕ_РОЗСЛІДУВАННЯ
+                </div>
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              </button>
+            }
+          />
 
-      <CaseDetailModal
-        selectedCase={selectedCase}
-        onClose={() => setSelectedCase(null)}
-      />
-    </div>
+          {/* SEARCH & FILTER STRATEGIC HUB */}
+          <div className="flex flex-col xl:flex-row gap-8 items-center bg-black/40 p-8 rounded-[3rem] border-2 border-white/[0.03] shadow-4xl backdrop-blur-3xl">
+            <div className="flex-1 relative group w-full">
+              <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors" size={24} />
+              <input
+                type="text"
+                placeholder="ПОШУК В АРХІВІ ТА АКТИВНИХ КЕЙСАХ..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-20 pr-10 py-6 bg-black/60 border-2 border-white/[0.04] rounded-[2rem] text-white placeholder-slate-800 focus:outline-none focus:border-blue-500/50 transition-all font-black text-lg italic tracking-tight"
+              />
+            </div>
+
+            <div className="flex gap-4 w-full xl:w-auto">
+              <CaseStats
+                cases={cases}
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+              />
+              <button className="px-8 py-6 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic hover:text-white transition-all shadow-xl">
+                <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТРИ_ДАНРИХ
+              </button>
+            </div>
+          </div>
+
+          {/* CRITICAL RECOMMENDATION HUD */}
+          {cases.some(c => c.status === 'КРИТИЧНО') && (
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="relative p-10 rounded-[3rem] bg-rose-600/5 border-2 border-rose-600/20 overflow-hidden group/alert"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/10 blur-[80px] -translate-y-1/2 translate-x-1/2" />
+              <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                <div className="p-6 bg-rose-600/20 rounded-[2rem] border-2 border-rose-600/30 shadow-[0_0_30px_rgba(225,29,72,0.3)] animate-pulse">
+                  <Siren size={32} className="text-rose-500" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-2">
+                    <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // ПРІОРИТЕТ 0</span>
+                    <div className="h-px w-20 bg-rose-600/20" />
+                  </div>
+                  <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-tight">
+                    ВИЯВЛЕНО <span className="text-rose-500 underline decoration-rose-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'КРИТИЧНО').length} КЕЙСІВ</span> З КРИТИЧНИМ РІВНЕМ РИЗИКУ. 
+                    <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручання рекомендовано для стабілізації контуру.</span>
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || '')}
+                  className="px-12 py-6 bg-rose-600 hover:bg-rose-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
+                >
+                  ПЕРЕЙТИ_ДО_ВІРУСУ
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* MAIN LIST SELECTION */}
+          <div className="relative">
+            {loading ? (
+              <div className="py-40 flex flex-col items-center justify-center gap-10">
+                <div className="relative">
+                  <div className="w-[100px] h-[100px] rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Database className="text-blue-500 animate-pulse" size={32} />
+                  </div>
+                </div>
+                <p className="text-blue-500 font-black text-[12px] animate-pulse uppercase tracking-[0.4em] italic leading-none">FETCHING_INVESTIGATION_LOGS // STAND_BY...</p>
+              </div>
+            ) : filteredCases.length === 0 ? (
+              <div className="py-40 text-center bg-black/40 border-4 border-dashed border-white/[0.04] rounded-[5rem] backdrop-blur-3xl shadow-4xl space-y-8">
+                <Archive size={64} className="text-slate-800 mx-auto opacity-20" />
+                <div className="space-y-3">
+                  <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic shadow-sm">ЧЕРГА_ПОРОЖНЯ</h3>
+                  <p className="text-slate-900 font-black uppercase tracking-[0.4em] italic text-xs max-w-xl mx-auto opacity-60">АКТИВНИХ РОЗСЛІДУВАНЬ ЗА ВКАЗАНИМИ ПАРАМЕТРАМИ НЕ ВИЯВЛЕНО</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-32">
+                <AnimatePresence mode="popLayout">
+                  {filteredCases.map((caseItem, idx) => (
+                    <motion.div
+                      key={caseItem.id}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <CaseCard
+                        caseItem={caseItem}
+                        onView={handleViewCase}
+                        onArchive={handleArchiveCase}
+                        onEscalate={handleEscalateCase}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* CREATE MODAL ELITE */}
+        <AnimatePresence>
+          {isCreateModalOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsCreateModalOpen(false)}
+                className="absolute inset-0 bg-black/95 backdrop-blur-2xl"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, rotateX: -20 }}
+                animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                exit={{ opacity: 0, scale: 0.9, rotateX: 20 }}
+                className="relative w-full max-w-[800px] max-h-[90vh] overflow-y-auto bg-black border-2 border-white/[0.05] rounded-[4rem] shadow-4xl z-10 no-scrollbar p-12 perspective-1000"
+              >
+                 <div className="absolute top-0 right-0 p-10">
+                   <button onClick={() => setIsCreateModalOpen(false)} className="text-slate-700 hover:text-white transition-colors">
+                     <X size={40} />
+                   </button>
+                 </div>
+
+                 <header className="space-y-6 mb-16">
+                    <div className="flex items-center gap-6">
+                       <div className="p-5 bg-blue-500/10 border-2 border-blue-500/30 rounded-3xl text-blue-500">
+                          <Plus size={32} />
+                       </div>
+                       <div>
+                          <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">НОВЕ РОЗСЛІДУВАННЯ</h2>
+                          <p className="text-xs font-black text-slate-800 uppercase tracking-[0.4em] italic mt-2">INITIALIZING_NEW_ENTITY_RECON</p>
+                       </div>
+                    </div>
+                    <div className="h-1 w-full bg-gradient-to-r from-blue-500/40 via-blue-500/10 to-transparent rounded-full" />
+                 </header>
+
+                 <form onSubmit={handleCreateSubmit} className="space-y-12">
+                   <div className="space-y-6">
+                      <label className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                        <Target size={16} /> НАЗВА КЕЙСУ // OBJECT_ID
+                      </label>
+                      <input
+                        className="w-full bg-white/[0.02] border-2 border-white/[0.04] rounded-[2rem] px-10 py-7 text-2xl font-black italic text-white placeholder-slate-900 focus:outline-none focus:border-blue-500/50 transition-all shadow-inset"
+                        placeholder="ВВЕДІТЬ НАЗВУ ОБ'ЄКТА..."
+                        value={newCaseData.title}
+                        onChange={(e) => setNewCaseData({ ...newCaseData, title: e.target.value })}
+                        required
+                      />
+                   </div>
+
+                   <div className="space-y-6">
+                      <label className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                        <Layers size={16} /> ДЕТАЛІ СИТУАЦІЇ // INTEL_LOG
+                      </label>
+                      <textarea
+                        className="w-full bg-white/[0.02] border-2 border-white/[0.04] rounded-[3rem] px-10 py-7 text-lg font-black italic text-slate-300 placeholder-slate-900 focus:outline-none focus:border-blue-500/50 transition-all h-48 resize-none shadow-inset"
+                        placeholder="ОПИШІТЬ ПРИЧИНИ ВІДКРИТТЯ КЕЙСУ..."
+                        value={newCaseData.description}
+                        onChange={(e) => setNewCaseData({ ...newCaseData, description: e.target.value })}
+                      />
+                   </div>
+
+                   <div className="space-y-6">
+                      <label className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                        <Siren size={16} /> ПРІОРИТЕТ ОПЕРАЦІЇ // PRIORITY_LVL
+                      </label>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {['low', 'medium', 'high'].map(p => (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setNewCaseData({ ...newCaseData, priority: p })}
+                            className={cn(
+                              "py-8 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-4 transition-all duration-500",
+                              newCaseData.priority === p
+                                ? p === 'high' ? 'bg-rose-600 border-rose-500 text-white shadow-4xl'
+                                  : p === 'medium' ? 'bg-amber-500 border-amber-400 text-black shadow-4xl'
+                                  : 'bg-emerald-500 border-emerald-400 text-black shadow-4xl'
+                                : 'bg-white/[0.02] border-white/[0.05] text-slate-700 hover:border-white/10'
+                            )}
+                          >
+                            {p === 'high' ? 'КРИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
+                          </button>
+                        ))}
+                      </div>
+                   </div>
+
+                   <button
+                     type="submit"
+                     disabled={createLoading}
+                     className="w-full py-10 bg-blue-600 hover:bg-blue-500 text-white font-black text-2xl italic tracking-widest uppercase rounded-[3rem] shadow-4xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-6 group/submit"
+                   >
+                     {createLoading ? <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : <ShieldCheck size={32} className="group-hover/submit:scale-125 transition-transform" />}
+                     ЗАРЕЄСТРУВАТИ КЕЙС У КОНТУРІ
+                   </button>
+                 </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        <CaseDetailModal
+          selectedCase={selectedCase}
+          onClose={() => setSelectedCase(null)}
+        />
+        
+        {/* CUSTOM GLOBAL STYLES */}
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(59,130,246,0.02); }
+            .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), inset 0 0 100px rgba(59,130,246,0.01); }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+        `}} />
+      </div>
+    </PageTransition>
   );
 };
 

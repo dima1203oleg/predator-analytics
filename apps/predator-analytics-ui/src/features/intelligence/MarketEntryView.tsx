@@ -170,46 +170,46 @@ const MarketEntryView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК ELITE ── */}
-        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
-          <div className="flex items-center gap-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
-              <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
-                <Globe size={54} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-600 rounded-full border-4 border-black animate-pulse" />
+        <ViewHeader
+          title={
+            <div className="flex items-center gap-10">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full scale-150 animate-pulse group-hover:bg-yellow-500/30 transition-all duration-[5s]" />
+                <div className="relative p-7 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform rotate-3 hover:rotate-0 transition-all cursor-crosshair">
+                  <Globe size={48} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center gap-6">
+                  <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                    MARKET_ENTRY_SIGINT // ACTIVE_SCORE_ARRAY
+                  </span>
+                  <div className="h-px w-12 bg-yellow-500/20" />
+                  <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                </div>
+                <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                  MARKET ENTRY <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCORE</span>
+                </h1>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-4 mb-3">
-                <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
-                <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
-                  MARKET ENTRY · STRATEGIC INTELLIGENCE · v56.5-ELITE
-                </span>
-              </div>
-              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
-                MARKET ENTRY <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCORE</span>
-              </h1>
-              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-yellow-500/30 pl-8 opacity-90 max-w-2xl">
-                ГЛОБАЛЬНИЙ СКОРИНГ РИНКІВ · ПРЕДИКТИВНА МОДЕЛЬ РОСТУ · РЕКОМЕНДАЦІЇ ELITE TIER
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="px-10 py-6 bg-black border-2 border-yellow-500/20 rounded-3xl flex items-center gap-6 shadow-3xl group hover:border-yellow-500/40 transition-all">
-              <TrendingUp size={24} className="text-yellow-500 shadow-[0_0_15px_#d4af37]" />
-              <div>
-                <p className="text-[10px] text-slate-700 uppercase font-black tracking-widest leading-none mb-2">Ринків проаналізовано</p>
-                <p className="text-2xl font-black text-yellow-500 font-mono leading-none italic">{markets.length} АКТИВНО</p>
-              </div>
-            </div>
+          }
+          breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v56.5']}
+          badges={[
+            { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Lock size={10} /> },
+            { label: 'PREDICTIVE_CORE_v5', color: 'primary', icon: <Cpu size={10} /> },
+          ]}
+          stats={[
+            { label: 'РИНКІВ АКТИВНО', value: String(markets.length), icon: <TrendingUp />, color: 'gold' },
+            { label: 'ALPHA_TARGET', value: sorted[0]?.country ?? '—', icon: <Target />, color: 'gold' },
+            { label: 'RELIABILITY_INDEX', value: '96.4%', icon: <Fingerprint />, color: 'success' },
+          ]}
+          actions={
             <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
               <Download size={24} />
               MARKET_STRATEGY_ELITE
             </button>
-          </div>
-        </div>
+          }
+        />
 
         {/* ── МЕТРИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">

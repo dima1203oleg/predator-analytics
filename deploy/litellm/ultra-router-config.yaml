@@ -72,6 +72,10 @@ model_list:
 
   - model_name: ultra-router-fast
     litellm_params:
+      model: ollama/llama3.2
+      api_base: http://194.177.1.240:11434
+  - model_name: ultra-router-fast
+    litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: ${GROQ_API_KEY}
   - model_name: ultra-router-fast
@@ -112,12 +116,12 @@ model_list:
       api_key: ${GROQ_API_KEY_10}
 
   # ==============================================================
-  # ELITE — Вершина інтелекту 2026 (Llama 4 & Gemma 4)
+  # ELITE — Вершина інтелекту 2026 (Llama 3.2 & Gemma 4)
   # ==============================================================
   - model_name: ultra-router-elite
     litellm_params:
-      model: groq/llama-4-70b
-      api_key: ${GROQ_API_KEY}
+      model: ollama/llama3.2
+      api_base: http://194.177.1.240:11434
   - model_name: ultra-router-elite
     litellm_params:
       model: ollama/gemma4:latest
@@ -125,6 +129,10 @@ model_list:
   - model_name: ultra-router-elite
     litellm_params:
       model: ollama/qwen3.5:latest
+      api_base: http://194.177.1.240:11434
+  - model_name: ultra-router-elite
+    litellm_params:
+      model: ollama/glm-5.1:cloud
       api_base: http://194.177.1.240:11434
 
   # ==============================================================

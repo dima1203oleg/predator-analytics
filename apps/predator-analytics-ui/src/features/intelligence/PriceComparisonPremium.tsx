@@ -98,45 +98,48 @@ export default function PriceComparisonPremium() {
 
         <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-12 space-y-12">
            
-           <ViewHeader
-             title={
-               <div className="flex items-center gap-10">
-                  <div className="relative group">
-                     <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-[#D4AF37]/40 rounded-[2.5rem] shadow-2xl">
-                        <DollarSign size={42} className="text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.5)]" />
-                     </div>
-                  </div>
-                  <div className="space-y-2">
-                     <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                          MARKET_SIGINT // PRICE_DYNAMICS
-                        </span>
-                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
-                     </div>
-                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       ПОРІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8 italic uppercase text-[#D4AF37]">ЦІН</span>
-                     </h1>
-                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        АНАЛІЗ НАЙКРАЩИХ ПРОПОЗИЦІЙ ТА ДЕМПІНГ-ДЕТЕКЦІЯ
-                     </p>
-                  </div>
-               </div>
-             }
-             stats={[
-               { label: 'ТОВАРІВ_У_БАЗІ', value: '47K', icon: <Box size={14} />, color: 'primary' },
-               { label: 'ЕКОНОМІЯ_Σ', value: '28%', icon: <TrendingDown size={14} />, color: 'success', animate: true },
-               { label: 'ПРОПОЗИЦІЙ', value: '1.2M', icon: <Layers size={14} />, color: 'warning' }
-             ]}
-             actions={
-               <div className="flex gap-4">
-                  <button className="px-10 py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-2xl transition-all flex items-center gap-4">
-                     <Sparkles size={20} /> AI_ПОШУК_ЦІН
-                  </button>
-               </div>
-             }
-           />
+            <ViewHeader
+              title={
+                <div className="flex items-center gap-10">
+                   <div className="relative group">
+                      <div className="absolute inset-0 bg-[#D4AF37]/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                      <div className="relative p-7 bg-black border-2 border-[#D4AF37]/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                         <DollarSign size={42} className="text-[#D4AF37] shadow-[0_0_20px_#d4af37]" />
+                      </div>
+                   </div>
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-6">
+                         <span className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                           MARKET_SIGINT // PRICE_DYNAMICS
+                         </span>
+                         <div className="h-px w-12 bg-[#D4AF37]/20" />
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                      </div>
+                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                        ПОРІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>
+                      </h1>
+                   </div>
+                </div>
+              }
+              breadcrumbs={['INTEL', 'MARKET', 'PRICE_MATRIX_v3']}
+              badges={[
+                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'CLASSIFIED_T1', color: 'primary', icon: <Target size={10} /> },
+              ]}
+              stats={[
+                { label: 'ТОВАРІВ_У_БАЗІ', value: '47,201', icon: <Box size={14} />, color: 'primary' },
+                { label: 'СЕРЕДНЯ_ЕКОНОМІЯ', value: '28.4%', icon: <TrendingDown size={14} />, color: 'success', animate: true },
+                { label: 'АКТИВНИХ_OFFERS', value: '1.2M+', icon: <Layers size={14} />, color: 'warning' },
+                { label: 'CORE_PRICE_INDEX', value: '1.042', icon: <Zap size={14} />, color: 'gold' },
+              ]}
+              actions={
+                <div className="flex gap-4">
+                   <button className="px-10 py-5 bg-[#D4AF37] text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4">
+                      <Sparkles size={20} /> AI_ПОШУК_ЦІН
+                   </button>
+                </div>
+              }
+            />
 
            {/* SEARCH HUD */}
            <section className="p-8 rounded-[3rem] bg-black border border-white/[0.04] shadow-3xl space-y-6 flex items-center gap-6">
@@ -237,6 +240,7 @@ export default function PriceComparisonPremium() {
 
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
+            .shadow-4xl { box-shadow: 0 40px 80px -20px rgba(212,175,55,0.3); }
             .no-scrollbar::-webkit-scrollbar { display: none; }
         `}} />
       </div>

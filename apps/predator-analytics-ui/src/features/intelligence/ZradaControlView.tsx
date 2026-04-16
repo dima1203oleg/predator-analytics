@@ -134,31 +134,34 @@ export default function ZradaControlView() {
                <div className="flex items-center gap-10">
                   <div className="relative group">
                      <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-rose-900/40 rounded-[2.5rem] shadow-2xl">
-                        <ShieldX size={42} className="text-rose-600" />
+                     <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                        <ShieldX size={42} className="text-rose-600 shadow-[0_0_20px_#e11d48]" />
                      </div>
                   </div>
                   <div className="space-y-2">
-                     <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-rose-600/10 border border-rose-600/20 text-rose-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                     <div className="flex items-center gap-4">
+                        <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
                           INTEGRITY_WATCH // CONTOUR_ZRADA
                         </span>
-                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5 ELITE</span>
+                        <div className="h-px w-12 bg-rose-500/20" />
+                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
                      </div>
-                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                       СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/20 decoration-8 italic">ЗРАДА</span>
+                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                       СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗРАДА</span>
                      </h1>
-                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        КОНТРОЛЬ КОЛАБОРАЦІЇ, КОРУПЦІЇ ТА ПРОМИСЛОВОГО ШПИГУНСТВА
-                     </p>
                   </div>
                </div>
              }
+             breadcrumbs={['INTEL', 'INTEGRITY', 'ZRADA_SCREEN']}
+             badges={[
+               { label: 'CLASSIFIED_S2', color: 'rose', icon: <Lock size={10} /> },
+               { label: 'SENTINEL_SHIELD', color: 'primary', icon: <ShieldCheck size={10} /> },
+             ]}
              stats={[
                { label: 'ПІД_НАГЛЯДОМ', value: String(stats.total), icon: <Users size={14} />, color: 'primary' },
                { label: 'CONFIRMED_ZRADA', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
-               { label: 'РИЗИК (Σ)', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' }
+               { label: 'СЕРЕДНІЙ_РИЗИК', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' },
+               { label: 'INTEGRITY_INDEX', value: '0.912', icon: <Fingerprint />, color: 'success' },
              ]}
              actions={
                <div className="flex gap-4">
