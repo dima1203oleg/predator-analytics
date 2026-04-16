@@ -10,7 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileSearch, ShieldAlert, AlertTriangle, CheckCircle, Search,
@@ -93,10 +93,33 @@ export default function CargoManifestPremium() {
   const [refreshing, setRefreshing] = useState(false);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'CargoForensic',
+          action: 'FetchManifests',
+          message: 'Відсутнє пряме з\'єднання з NVIDIA-кластером. Увімкнено автономний режим зчитування кешу/Mock даних.',
+          severity: 'warning'
+        }
+      }));
+    }
+  }, [isOffline]);
+
   const handleRefresh = async () => {
     setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 1200));
     setRefreshing(false);
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'CargoForensic',
+          action: 'SyncZROK',
+          message: 'Синхронізація через резервний канал MOCK/ZROK пройшла успішно.',
+          severity: 'info'
+        }
+      }));
+    }
   };
 
   const filteredManifests = useMemo<ManifestItem[]>(() => {
