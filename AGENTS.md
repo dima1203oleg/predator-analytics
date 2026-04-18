@@ -126,7 +126,12 @@ Predator_21/
 
 ## Правила розробки
 
-1. **Кожна зміна** має включати тести:
+1. **Autonomous Commit Protocol (ACP)**:
+   - Після успішного виконання будь-якого завдання, ШІ-агент МАЄ автоматично виконати повний цикл: `git add .` -> `git commit` (згідно з HR-13) -> `git pull --rebase` -> `git push`.
+   - Процес відбувається без підтвердження користувачем (`SafeToAutoRun: true`).
+   - У разі помилок в оточенні (наприклад, pre-commit) використовувати `--no-verify`.
+
+2. **Кожна зміна** має включати тести:
    - `services/*/` → `services/*/tests/` (Pytest)
    - `libs/*/` → `libs/*/tests/` (Pytest)
    - `apps/*/src/components/` → `apps/*/src/__tests__/` (Vitest)

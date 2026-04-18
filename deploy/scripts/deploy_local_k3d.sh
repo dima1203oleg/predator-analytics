@@ -20,9 +20,9 @@ else
   k3d cluster create predator-local \
     --agents 1 \
     --servers 1 \
-    -p "80:80@loadbalancer" \
-    -p "443:443@loadbalancer" \
-    -p "3030:3030@loadbalancer" \
+    -p "8081:80@loadbalancer" \
+    -p "8443:443@loadbalancer" \
+    -p "9030:3030@loadbalancer" \
     -v "predator-k3d-storage:/var/lib/rancher/k3s/storage@server:0" \
     --k3s-arg "--disable=traefik@server:0"
 fi
