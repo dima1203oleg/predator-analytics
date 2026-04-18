@@ -116,8 +116,10 @@ export function getStatusTone(
 /** Форматує витрати USD */
 export function formatSpentUsd(value: number | null | undefined): string {
   if (value == null || !Number.isFinite(value)) return '—';
+  if (value === 0) return 'FREE';
   return `$${value.toFixed(2)}`;
 }
+
 
 /** Локалізована мітка статусу задачі */
 export function getTaskStatusLabel(status: AgentTaskStatus): string {
@@ -225,45 +227,54 @@ export function createEmptyOrchestratorStatus(): AntigravityOrchestratorStatus {
 }
 
 // ─── Нормалізація задач ───────────────────────────────────────────────────────
+const validStatuses: AgentTaskStatus[] = [
+  'pending', 'in_progress', 'waiting_for_input', 'completed', 'failed', 'cancelled',
+];
+const validPriorities: AgentTaskPriority[] = ['low', 'medium', 'high', 'critical'];
 
 /** Нормалізує одну підзадачу */
 function normalizeSubtask(raw: unknown): AgentSubtask {
   const r = (raw ?? {}) as Record<string, unknown>;
-  const validStatuses: AgentTaskStatus[] = [
-    'pending', 'in_progress', 'waiting_for_input', 'completed', 'failed', 'cancelled',
-  ];
-  return {
-    id: typeof r['id'] === 'string' ? r['id'] : String(Math.random()),
-    agent_type: parseAgentType(r['agent_type']),
-    description: typeof r['description'] === 'string' ? r['description'] : '—',
-    status: validStatuses.includes(r['status'] as AgentTaskStatus)
-      ? (r['status'] as AgentTaskStatus)
-      : 'pending',
-    started_at: typeof r['started_at'] === 'string' ? r['started_at'] : null,
-    completed_at: typeof r['completed_at'] === 'string' ? r['completed_at'] : null,
-  };
+    const rawStatus = r['status'] as string;
+    const finalStatus = rawStatus === 'running' ? 'in_progress' : rawStatus;
+
+    return {
+      id: typeof r['id'] === 'string' ? r['id'] : String(Math.random()),
+      agent_type: parseAgentType(r['agent_type']),
+      description: typeof r['description'] === 'string' ? r['description'] : '—',
+      status: validStatuses.includes(finalStatus as AgentTaskStatus)
+        ? (finalStatus as AgentTaskStatus)
+        : 'pending',
+      started_at: typeof r['started_at'] === 'string' ? r['started_at'] : null,
+      completed_at: typeof r['completed_at'] === 'string' ? r['completed_at'] : null,
+    };
 }
 
 /** Нормалізує одну AGI-задачу */
 function normalizeTask(raw: unknown): AgentTask {
   const r = (raw ?? {}) as Record<string, unknown>;
-  const validStatuses: AgentTaskStatus[] = [
-    'pending', 'in_progress', 'waiting_for_input', 'completed', 'failed', 'cancelled',
-  ];
-  const validPriorities: AgentTaskPriority[] = ['low', 'medium', 'high', 'critical'];
+  const rawStatus = r['status'] as string;
+  const finalStatus = rawStatus === 'running' ? 'in_progress' : rawStatus;
+
+  let progressLabel: string | null = null;
+  if (typeof r['progress'] === 'string') {
+    progressLabel = r['progress'];
+  } else if (typeof r['progress'] === 'number') {
+    progressLabel = `${r['progress']}%`;
+  }
 
   return {
     task_id: typeof r['task_id'] === 'string' ? r['task_id'] : String(Math.random()),
     description: typeof r['description'] === 'string' ? r['description'] : '—',
-    status: validStatuses.includes(r['status'] as AgentTaskStatus)
-      ? (r['status'] as AgentTaskStatus)
+    status: validStatuses.includes(finalStatus as AgentTaskStatus)
+      ? (finalStatus as AgentTaskStatus)
       : 'pending',
     priority: validPriorities.includes(r['priority'] as AgentTaskPriority)
       ? (r['priority'] as AgentTaskPriority)
       : 'medium',
     created_at: typeof r['created_at'] === 'string' ? r['created_at'] : new Date().toISOString(),
     updated_at: typeof r['updated_at'] === 'string' ? r['updated_at'] : new Date().toISOString(),
-    progress: typeof r['progress'] === 'string' ? r['progress'] : null,
+    progress: progressLabel,
     spent_usd: Number.isFinite(Number(r['spent_usd'])) ? Number(r['spent_usd']) : null,
     max_budget_usd: Number.isFinite(Number(r['max_budget_usd'])) ? Number(r['max_budget_usd']) : null,
     subtasks: Array.isArray(r['subtasks']) ? r['subtasks'].map(normalizeSubtask) : [],
@@ -333,7 +344,8 @@ export function buildAntigravitySnapshot(
     limitLabel: formatSpentUsd(limit),
     llmStatus: status.llm_gateway_status,
     sandboxStatus: status.sandbox_status,
-    activeModel: status.active_model ?? 'LiteLLM Gateway',
+    activeModel: status.active_model ?? 'Gemini 2.0 Flash (Free)',
+
     lastUpdateLabel,
     agents,
   };

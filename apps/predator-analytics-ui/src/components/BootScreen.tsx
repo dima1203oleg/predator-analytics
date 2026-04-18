@@ -20,13 +20,14 @@ import { useBackendStatus } from '../hooks/useBackendStatus';
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 
 const PHASE_DURATIONS: Record<Phase, number> = {
-  0: 2000,  // VOID ACTIVATION
-  1: 2400,  // CRYPTOGRAPHIC INIT
-  2: 3500,  // GLOBAL DOMINANCE
-  3: 6200,  // TARGET ACQUISITION (SEARCH + LOCK)
-  4: 7500,  // SOVEREIGN REVEAL (GOLD & COAL)
-  5: 1600,  // FADE OUT
+  0: 400,   // VOID ACTIVATION
+  1: 600,   // CRYPTOGRAPHIC INIT
+  2: 800,   // ADVANCED ANALYTICS
+  3: 1200,  // TARGET ACQUISITION
+  4: 2000,  // SOVEREIGN REVEAL (GOLD)
+  5: 400,   // FADE OUT
 };
+
 
 /* ─────────────────────────────────────────────────────────────────────────────
    WEB AUDIO ENGINE — Синтезовані звуки без зовнішніх файлів
@@ -34,7 +35,7 @@ const PHASE_DURATIONS: Record<Phase, number> = {
 class SoundEngine {
   private ctx: AudioContext | null = null;
 
-  private getCtx(): AudioContext | null {
+  public getCtx(): AudioContext | null {
     if (!this.ctx) {
       try {
         this.ctx = new (
@@ -44,6 +45,10 @@ class SoundEngine {
       } catch { return null; }
     }
     return this.ctx;
+  }
+
+  resume() {
+    return this.getCtx()?.resume();
   }
 
   /** Підземний гул ядра що пробуджується */
@@ -297,9 +302,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
   // Фазові тексти (HR-04: 100% Українська)
   const PHASE_TEXTS: Record<number, string> = {
+
     0: '',
-    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [GLM-5.1 WRAITH]...',
-    2: '> БЛОКУВАННЯ ГЛОБАЛЬНОГО СПЕКТРУ: 47 СУПУТНИКІВ / 1,217 ДАТАЦЕНТРІВ',
+    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [V58.2-WRAITH]...',
+    2: '> БЛОКУВАННЯ СПЕКТРУ: 47 ВУЗЛІВ / 1,217 ПОТОКІВ КРИПТОАНАЛІЗУ',
     3: '> НЕЙРОННИЙ ПЕРЕХОПЛЮВАЧ ОНЛАЙН: ПЕРЕХРЕСНЕ ВІДСТЕЖЕННЯ ТРАФІКУ...',
     4: '> ДОСТУП РІВНЯ TIER-1 ПІДТВЕРДЖЕНО — PREDATOR АКТИВОВАНО',
   };
@@ -373,15 +379,68 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     return () => { clearInterval(iId); clearInterval(sId); clearInterval(hId); };
   }, [phase]);
 
-  /* ── Звуки ── */
+  /* ── Звуки + Голос ── */
+  const speak = useCallback((text: string) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    
+    // Resume audio context on any speech if it was suspended
+    soundEngine.getCtx()?.resume();
+
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'uk-UA';
+    utter.rate = 1.05;
+    utter.pitch = 0.8;
+    utter.volume = 1.0;
+
+    // Ensure voices are loaded
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+    const ukVoice = voices.find(v => v.lang.includes('uk'));
+    if (ukVoice) {
+      utter.voice = ukVoice;
+    } else {
+      // If voices not loaded yet, wait for them
+      synth.onvoiceschanged = () => {
+        const v2 = synth.getVoices();
+        const ukV2 = v2.find(v => v.lang.includes('uk'));
+        if (ukV2) utter.voice = ukV2;
+        synth.speak(utter);
+        synth.onvoiceschanged = null;
+      };
+      if (voices.length > 0) synth.speak(utter);
+      return;
+    }
+    
+    synth.cancel();
+    synth.speak(utter);
+  }, []);
+
+
   useEffect(() => {
-    if (phase === 0) soundEngine.playAwaken();
-    if (phase === 1) soundEngine.playQuantumTone();
-    if (phase === 2) soundEngine.playRadarPing();
-    if (phase === 3) soundEngine.playLockOn();
-    if (phase === 4) { soundEngine.playImpact(); droneStopRef.current = soundEngine.startDrone(); }
-    if (phase === 5) { droneStopRef.current?.(); soundEngine.playTelemetry(350); }
-  }, [phase]);
+    if (phase === 0) {
+      soundEngine.playAwaken();
+    }
+    if (phase === 1) {
+      soundEngine.playQuantumTone();
+      speak("Ініціалізація квантового протоколу.");
+    }
+    if (phase === 2) {
+      soundEngine.playRadarPing();
+    }
+    if (phase === 3) {
+      soundEngine.playLockOn();
+      speak("Ціль ідентифіковано. Встановлення контролю.");
+    }
+    if (phase === 4) {
+      soundEngine.playImpact();
+      droneStopRef.current = soundEngine.startDrone();
+      speak("Доступ дозволено. Вітаємо в системі Предатор.");
+    }
+    if (phase === 5) {
+      droneStopRef.current?.();
+      soundEngine.playTelemetry(350);
+    }
+  }, [phase, speak]);
 
   /* ── Детонація при lock-on ── */
   useEffect(() => {
@@ -429,11 +488,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
     /* ── Атмосферне світіння (завжди) ── */
     if (cp < 5) {
-      // Червоне центральне -> Бурштинове-золоте
-      const ri = cp === 4 ? 0.18 : cp === 3 ? 0.1 : 0.04;
-      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.6);
-      rg.addColorStop(0, `rgba(212,175,55,${ri})`); // Sovereign Gold
-      rg.addColorStop(0.5, `rgba(180,83,9,${ri * 0.3})`); // Deep Amber
+      // Sovereign Gold / Amber Glow
+      const ri = cp === 4 ? 0.25 : cp === 3 ? 0.15 : 0.08;
+      const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
+      rg.addColorStop(0, `rgba(251, 191, 36, ${ri})`); // Amber-400
+      rg.addColorStop(0.5, `rgba(180, 83, 9, ${ri * 0.4})`); // Amber-900
       rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       // Холодний синій акцент зверху залишаємо як констраст
@@ -474,27 +533,27 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[0]);
       // Хаотичні глітч-рядки
       for (let i = 0; i < 35; i++) {
-        ctx.fillStyle = `rgba(200,15,15,${(1 - p) * 0.18 * Math.random()})`;
+        ctx.fillStyle = `rgba(251, 191, 36, ${(1 - p) * 0.15 * Math.random()})`;
         ctx.fillRect(Math.random() * W * 0.35, Math.random() * H, Math.random() * W * 0.45, Math.random() * 6 + 1);
       }
       // Бінарний дощ
       ctx.font = '9px monospace';
       for (let col = 0; col < W; col += 16) {
         for (let row = 0; row < Math.random() * 6 + 1; row++) {
-          ctx.fillStyle = `rgba(200,15,15,${(Math.random() * 0.35 + 0.05) * p})`;
+          ctx.fillStyle = `rgba(180, 140, 20, ${(Math.random() * 0.3 + 0.05) * p})`;
           ctx.fillText('01'[Math.floor(Math.random() * 2)], col, Math.random() * H);
         }
       }
       // Сітка що проявляється
-      ctx.strokeStyle = `rgba(200,15,15,${0.07 * p})`; ctx.lineWidth = 0.8;
+      ctx.strokeStyle = `rgba(180, 140, 20, ${0.08 * p})`; ctx.lineWidth = 0.8;
       for (let x = 0; x < W; x += 55) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
       for (let y = 0; y < H; y += 55) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
       // Сканлінія
       const sy2 = (elapsed / PHASE_DURATIONS[0]) * H;
       const sg = ctx.createLinearGradient(0, sy2 - 4, 0, sy2 + 4);
-      sg.addColorStop(0, 'rgba(220,38,38,0)');
-      sg.addColorStop(0.5, `rgba(220,38,38,${0.7 * p})`);
-      sg.addColorStop(1, 'rgba(220,38,38,0)');
+      sg.addColorStop(0, 'rgba(251, 191, 36, 0)');
+      sg.addColorStop(0.5, `rgba(251, 191, 36, ${0.8 * p})`);
+      sg.addColorStop(1, 'rgba(251, 191, 36, 0)');
       ctx.fillStyle = sg; ctx.fillRect(0, sy2 - 4, W, 8);
     }
 
@@ -505,7 +564,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       const maxR = Math.min(W, H) * 0.38;
 
       // Фіббоначчі спіраль
-      ctx.strokeStyle = `rgba(220,38,38,${0.22 * p})`; ctx.lineWidth = 0.9;
+      ctx.strokeStyle = `rgba(251, 191, 36, ${0.25 * p})`; ctx.lineWidth = 0.9;
       ctx.beginPath();
       for (let t = 0; t < 720 * p; t += 2) {
         const r = (maxR / 720) * t;
@@ -519,7 +578,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const rr = (maxR / 7) * ring;
         const pulse = Math.sin(now * 0.0018 + ring * 0.6) * 0.5 + 0.5;
         ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(220,38,38,${(0.05 + pulse * 0.09) * p})`;
+        ctx.strokeStyle = `rgba(180, 140, 20, ${(0.06 + pulse * 0.1) * p})`;
         ctx.lineWidth = ring === 7 ? 1.8 : 0.7; ctx.stroke();
       }
 
@@ -531,7 +590,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.beginPath();
         ctx.moveTo(Math.cos(a) * ir2, Math.sin(a) * ir2);
         ctx.lineTo(Math.cos(a) * or2, Math.sin(a) * or2);
-        ctx.strokeStyle = `rgba(220,38,38,${(isLong ? 0.55 : 0.22) * p})`;
+        ctx.strokeStyle = `rgba(251, 191, 36, ${(isLong ? 0.65 : 0.25) * p})`;
         ctx.lineWidth = isLong ? 1.8 : 0.7; ctx.stroke();
       }
 
@@ -576,8 +635,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           const gz = globeR * Math.sin(phi) * Math.sin(theta - rot);
           if (gz > 0) {
             const bright = Math.pow(gz / globeR, 0.5);
-            ctx.fillStyle = `rgba(220,38,38,${(0.25 + bright * 0.4) * p})`;
-            ctx.fillRect(gx, gy, 1.6, 1.6);
+            ctx.fillStyle = `rgba(251, 191, 36, ${(0.3 + bright * 0.45) * p})`;
+            ctx.fillRect(gx, gy, 1.8, 1.8);
           }
         }
       }
@@ -589,7 +648,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const rw = Math.sqrt(Math.max(0, globeR * globeR - yOff * yOff));
         if (rw > 0) {
           ctx.beginPath(); ctx.ellipse(0, yOff, rw, rw * 0.14, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(220,38,38,${0.18 * p})`; ctx.stroke();
+          ctx.strokeStyle = `rgba(180, 140, 20, ${0.22 * p})`; ctx.stroke();
         }
       }
       for (let i = 0; i < 16; i++) {
@@ -597,7 +656,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const cw = globeR * Math.abs(Math.cos(a));
         if (cw > 0.5) {
           ctx.beginPath(); ctx.ellipse(0, 0, cw, globeR, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(220,38,38,${(Math.sin(a) < 0 ? 0.07 : 0.32) * p})`; ctx.stroke();
+          ctx.strokeStyle = `rgba(251, 191, 36, ${(Math.sin(a) < 0 ? 0.08 : 0.38) * p})`; ctx.stroke();
         }
       }
 
@@ -1008,13 +1067,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {/* ─── КУТОВІ L-МАРКЕРИ ПРИЦІЛУ ─── */}
             {([['top-0 left-0',0],['top-0 right-0',1],['bottom-0 left-0',2],['bottom-0 right-0',3]] as [string,number][]).map(([pos,i]) => (
               <div key={i} className={`absolute ${pos} w-24 h-24`}>
-                <div className="absolute inset-3 border-red-700/60" style={{
+                <div className="absolute inset-3 border-amber-700/60" style={{
+
                   borderTopWidth:    i < 2  ? '1.5px' : 0,
                   borderBottomWidth: i >= 2 ? '1.5px' : 0,
                   borderLeftWidth:   i%2===0 ? '1.5px' : 0,
                   borderRightWidth:  i%2!==0 ? '1.5px' : 0,
                 }}/>
-                <div className="absolute inset-6 border-red-800/25" style={{
+                <div className="absolute inset-6 border-amber-800/25" style={{
+
                   borderTopWidth:    i < 2  ? '1px' : 0,
                   borderBottomWidth: i >= 2 ? '1px' : 0,
                   borderLeftWidth:   i%2===0 ? '1px' : 0,
@@ -1028,10 +1089,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               {/* Статус LIVE */}
               <div className="flex items-center gap-2.5 mb-1">
                 <div className="relative w-2 h-2">
-                  <div className="w-full h-full bg-amber-500 rounded-full shadow-[0_0_12px_#f59e0b,0_0_24px_rgba(245,158,11,0.5)]"/>
-                  <div className="absolute inset-0 bg-amber-500 rounded-full animate-ping opacity-30"/>
+                  <div className="w-full h-full bg-yellow-500 rounded-full shadow-[0_0_12px_#fbbf24,0_0_24px_rgba(251,191,36,0.5)]"/>
+                  <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-30"/>
                 </div>
-                <span className="text-[9px] font-black tracking-[0.6em] text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.7)] uppercase">
+                <span className="text-[9px] font-black tracking-[0.6em] text-yellow-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)] uppercase">
                   ПРЕДАТОР МЕРЕЖА: ОНЛАЙН
                 </span>
               </div>
@@ -1051,7 +1112,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
               {/* Tier badge */}
               <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-amber-900/30 via-yellow-800/10 to-transparent border border-amber-600/30 px-3 py-1">
-                <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase drop-shadow-[0_0_4px_rgba(245,158,11,0.4)]">
+                <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase drop-shadow-[0_0_4px_rgba(251,191,36,0.4)]">
                   ◆ ГЛОБАЛЬНА РОЗВІДУВАЛЬНА МОНОПОЛІЯ ◆
                 </span>
               </div>
@@ -1065,8 +1126,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <motion.div
                 animate={{ opacity: [0.65, 1, 0.65] }}
                 transition={{ duration: 0.28, repeat: Infinity }}
-                className="text-2xl font-black text-red-600 font-mono tabular-nums tracking-widest"
-                style={{ textShadow:'0 0 20px rgba(220,38,38,0.8),0 0 40px rgba(220,38,38,0.3)' }}
+                className="text-2xl font-black text-yellow-500 font-mono tabular-nums tracking-widest"
+                style={{ textShadow:'0 0 20px rgba(251,191,36,0.8),0 0 40px rgba(251,191,36,0.3)' }}
               >
                 {interceptCount.toLocaleString()}
               </motion.div>
@@ -1083,7 +1144,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 {Array.from({length:12},(_,i)=>(
                   <motion.div
                     key={i}
-                    className="w-1 bg-red-800/60 rounded-sm"
+                    className="w-1 bg-amber-800/60 rounded-sm"
+
                     animate={{ height: ['4px',`${8+Math.random()*8}px`,'4px'] }}
                     transition={{ duration:0.4+i*0.05, repeat:Infinity, delay:i*0.06 }}
                   />
@@ -1101,7 +1163,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   key={`${code}-${idx}`}
                   initial={{ opacity:0, x:-6 }}
                   animate={{ opacity: Math.max(0, 0.75-idx*0.1) }}
-                  className="text-[6.5px] text-red-600/60 font-mono tracking-wider"
+                  className="text-[6.5px] text-yellow-600/60 font-mono tracking-wider"
                 >
                   {['ЯДРО.СИСТ','КВАНТ.БЕЗП', 'AZR.ЯДРО','OSINT.','ПОТІК.ШІ'][idx%5]} ▸ {code} ▸ ДОСТУП:ОК
                 </motion.div>
@@ -1123,7 +1185,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   </div>
                   <div className="h-[2px] bg-slate-900 overflow-hidden rounded-full">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-yellow-600 via-orange-500 to-red-600"
+                      className="h-full bg-gradient-to-r from-yellow-600 via-yellow-500 to-amber-600"
+
                       style={{ width:`${threatLevel}%`, boxShadow:'0 0 8px #ef4444' }}
                     />
                   </div>
@@ -1133,12 +1196,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <div className="space-y-1">
                 <div className="flex justify-between text-[7px] text-slate-700 uppercase tracking-[0.3em] font-black">
                   <span>ГЛОБАЛЬНЕ СКАНУВАННЯ</span>
-                  <span className="text-red-500">{Math.floor(scanPct)}%</span>
+                  <span className="text-amber-500">{Math.floor(scanPct)}%</span>
+
                 </div>
                 <div className="h-[2px] bg-slate-900/80 overflow-hidden relative rounded-full border border-slate-800/30">
                   <motion.div
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-red-900 via-red-600 to-red-400"
-                    style={{ boxShadow:'0 0 12px #dc2626,0 0 24px rgba(220,38,38,0.25)' }}
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-900 via-yellow-600 to-amber-400"
+                    style={{ boxShadow:'0 0 12px #fbbf24,0 0 24px rgba(251,191,36,0.25)' }}
                     animate={{ width:`${scanPct}%` }}
                     transition={{ duration:0.25, ease:'linear' }}
                   />
@@ -1165,20 +1229,20 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 PREDATOR ANALYTICS · СУВЕРЕННИЙ РОЗВІДУВАЛЬНИЙ АКТИВ
               </div>
               <div className="text-[5.5px] text-yellow-600/70 tracking-[0.4em] uppercase font-black">
-                ВЕРСІЯ 56.5-WRAITH · ЗБІРКА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
+                ВЕРСІЯ 58.2-WRAITH · ЗБІРКА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
               </div>
             </div>
 
             {/* ─── ТЕРМІНАЛ ВНИЗУ ─── */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
-              <div className="inline-flex items-center gap-2.5 bg-black/90 border border-red-900/35 px-7 py-2.5"
-                style={{ boxShadow:'0 0 30px rgba(220,38,38,0.08),inset 0 0 20px rgba(0,0,0,0.6)' }}>
+              <div className="inline-flex items-center gap-2.5 bg-black/90 border border-amber-900/35 px-7 py-2.5"
+                style={{ boxShadow:'0 0 30px rgba(251,191,36,0.08),inset 0 0 20px rgba(0,0,0,0.6)' }}>
                 <motion.span
                   animate={{ opacity:[0,1,0] }}
                   transition={{ duration:0.8, repeat:Infinity }}
-                  className="w-1.5 h-1.5 bg-red-500 rounded-full"
+                  className="w-1.5 h-1.5 bg-yellow-500 rounded-full"
                 />
-                <span className="text-[8px] font-black tracking-[0.28em] text-red-400/90 uppercase">
+                <span className="text-[8px] font-black tracking-[0.28em] text-yellow-400/90 uppercase">
                   {typeText}
                   <span className="animate-[blink_0.75s_step-end_infinite]">▌</span>
                 </span>
@@ -1213,13 +1277,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <motion.div
                 animate={{ opacity:[0.4,1,0.4], letterSpacing:['0.5em','0.8em','0.5em'] }}
                 transition={{ duration:0.7, repeat:Infinity }}
-                className="text-[11px] font-black tracking-[-0.05em] uppercase text-red-800"
-              >ЯДРО АКТИВУЄТЬСЯ</motion.div>
+                className="text-[11px] font-black tracking-[-0.05em] uppercase text-amber-600"
+              >СИСТЕМА ІНІЦІАЛІЗУЄТЬСЯ</motion.div>
               <motion.div
                 animate={{ opacity:[0.2,0.6,0.2] }}
                 transition={{ duration:0.5, repeat:Infinity }}
-                className="text-[7px] text-red-900/60 tracking-[0.5em] uppercase font-black"
-              >СУВЕРЕННЕ РОЗВІДУВАЛЬНЕ ЯДРО · GLM-5.1 INITIALIZING</motion.div>
+                className="text-[7px] text-amber-900/60 tracking-[0.5em] uppercase font-black"
+              >СУВЕРЕННЕ РОЗВІДУВАЛЬНЕ ЯДРО · GLM-5.2 INITIALIZING</motion.div>
             </div>
           </motion.div>
         )}
@@ -1229,15 +1293,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
           <motion.div key="p1" variants={fadeV} initial="initial" animate="animate" exit="exit"
             transition={smooth} className="absolute inset-0 flex items-center justify-center z-30">
             <div className="text-center space-y-3">
-              <div className="text-[10px] font-black tracking-[0.8em] uppercase text-red-800/70">
+              <div className="text-[10px] font-black tracking-[0.8em] uppercase text-amber-800/70">
                 КВАНТОВИЙ ПРОТОКОЛ
               </div>
               <motion.div
                 animate={{ letterSpacing:['0.4em','1em','0.4em'] }}
                 transition={{ duration:1.8, repeat:Infinity }}
                 className="text-[16px] font-black text-white tracking-[0.6em] uppercase"
-                style={{ textShadow:'0 0 25px rgba(220,38,38,0.9)' }}
+                style={{ textShadow:'0 0 25px rgba(212,175,55,0.9)' }}
               >ІНІЦІАЛІЗАЦІЯ</motion.div>
+
               <div className="text-[7px] text-slate-700 tracking-widest uppercase">
                 CRYSTALS-KYBER-1024 · ВІДПОВІДНІСТЬ NSA SUITE-B
               </div>
@@ -1253,8 +1318,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               <motion.div
                 animate={{ opacity:[0.7,1,0.7] }}
                 transition={{ duration:0.35, repeat:Infinity }}
-                className="text-[10px] font-black tracking-[0.9em] uppercase text-red-600"
-              >ПЛАНЕТАРНИЙ МОНІТОРИНГ</motion.div>
+                className="text-[10px] font-black tracking-[0.9em] uppercase text-yellow-600"
+              >РОЗШИРЕНИЙ АНАЛІЗ</motion.div>
               <div className="text-[7px] text-slate-700 tracking-[0.45em] uppercase">
                 47 СУПУТНИКІВ · 892 ВУЗЛИ · 23 ДЕРЖРЕЄСТРИ · 1.2 PB/ГОД
               </div>
@@ -1269,14 +1334,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
             {/* Ліва панель — DB scan */}
             <div className="absolute left-8 top-1/2 -translate-y-1/2 w-80 hidden lg:block">
-              <div className="border border-red-900/30 bg-black/60 p-4 space-y-2"
+              <div className="border border-amber-900/30 bg-black/60 p-4 space-y-2"
+
                 style={{ backdropFilter:'blur(8px)' }}>
-                <div className="flex items-center gap-2 pb-2 border-b border-red-900/30">
-                  <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"/>
-                  <span className="text-[7px] font-black text-red-700 tracking-[0.45em] uppercase">
+                <div className="flex items-center gap-2 pb-2 border-b border-amber-900/30">
+                  <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse"/>
+                  <span className="text-[7px] font-black text-amber-700 tracking-[0.45em] uppercase">
                     РУШІЙ РОЗВІДУВАЛЬНИХ ЗАПИТІВ
                   </span>
                 </div>
+
                 {dbLines.map((line, idx) => (
                   <motion.div key={idx}
                     initial={{ opacity:0, x:-10 }}
@@ -1284,7 +1351,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     transition={{ duration:0.18 }}
                     className={`text-[7px] font-mono tracking-wider flex items-start gap-1.5 ${
                       line.includes('TARGET IDENTIFIED')
-                        ? 'text-red-500 font-black animate-pulse'
+                        ? 'text-amber-500 font-black animate-pulse'
+
                         : line.includes('CRITICAL')
                         ? 'text-orange-500 font-bold'
                         : 'text-slate-600'
@@ -1330,7 +1398,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <motion.div
                   animate={{ opacity:[0.5,1,0.5] }}
                   transition={{ duration:0.5, repeat:Infinity }}
-                  className="text-[11px] font-black tracking-[0.6em] text-red-800 uppercase"
+                  className="text-[11px] font-black tracking-[0.6em] text-amber-600 uppercase"
+
                 >АНАЛІЗ ЦІЛІ...</motion.div>
               )}
             </div>
@@ -1347,7 +1416,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 </div>
                 {([
                   {l:'ТОЧНІСТЬ ЗБІГУ',    v:'97.4%',  c:'text-green-500'},
-                  {l:'ІНДЕКС РИЗИКУ',    v:'9.8/10', c:'text-red-500'},
+                  {l:'ІНДЕКС РИЗИКУ',    v:'9.8/10', c:'text-amber-500'},
+
                   {l:'ДЖЕРЕЛА ДАНИХ',    v:'1,847',  c:'text-blue-400'},
                   {l:'ПЕРЕХРЕСНІ ПОСИЛАННЯ', v:'12,394', c:'text-slate-400'},
                   {l:'ДОВІРА ШІ',        v:'99.1%',  c:'text-yellow-500'},
@@ -1388,9 +1458,9 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             >
               {/* Зовнішні кільця */}
               <motion.div animate={{ rotate:360 }} transition={{ duration:20, repeat:Infinity, ease:'linear' }}
-                className="absolute -inset-6 rounded-full border border-red-800/30" style={{ borderStyle:'dashed' }}/>
+                className="absolute -inset-6 rounded-full border border-amber-800/30" style={{ borderStyle:'dashed' }}/>
               <motion.div animate={{ rotate:-360 }} transition={{ duration:32, repeat:Infinity, ease:'linear' }}
-                className="absolute -inset-11 rounded-full border border-red-900/15" style={{ borderStyle:'dotted' }}/>
+                className="absolute -inset-11 rounded-full border border-amber-900/15" style={{ borderStyle:'dotted' }}/>
               {/* Золоте кільце */}
               <motion.div
                 animate={{ rotate:360, opacity:[0.3,0.6,0.3] }}
@@ -1403,18 +1473,20 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 animate={{ scale:[1,1.1,1], opacity:[0.35,0.75,0.35] }}
                 transition={{ duration:2.2, repeat:Infinity }}
                 className="absolute -inset-4 rounded-full"
-                style={{ background:'radial-gradient(circle, rgba(220,38,38,0.18) 0%, transparent 70%)' }}
+                style={{ background:'radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%)' }}
               />
               {/* Герб */}
               <div className="w-full h-full rounded-full flex items-center justify-center relative overflow-hidden"
                 style={{
-                  background:'radial-gradient(circle at 38% 32%, rgba(35,5,5,0.97) 0%, rgba(1,4,9,0.99) 100%)',
-                  border:'2px solid rgba(220,38,38,0.75)',
-                  boxShadow:'0 0 70px rgba(220,38,38,0.45),0 0 140px rgba(220,38,38,0.2),inset 0 0 40px rgba(220,38,38,0.07)',
+                  background:'radial-gradient(circle at 38% 32%, rgba(20,15,5,0.97) 0%, rgba(1,4,9,0.99) 100%)',
+                  border:'2px solid rgba(212,175,55,0.75)',
+                  boxShadow:'0 0 70px rgba(212,175,55,0.45),0 0 140px rgba(212,175,55,0.2),inset 0 0 40px rgba(212,175,55,0.07)',
                 }}>
+
                 {/* Внутрішні деталі */}
-                <div className="absolute inset-3 rounded-full border border-red-700/18"/>
-                <div className="absolute inset-6 rounded-full border border-red-900/10"/>
+                <div className="absolute inset-3 rounded-full border border-amber-700/18"/>
+                <div className="absolute inset-6 rounded-full border border-amber-900/10"/>
+
                 {/* Золота горизонтальна лінія */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-full h-px opacity-20" style={{
@@ -1529,7 +1601,8 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 >
                   МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНІ ДЛЯ ЗВИЧАЙНИХ СИСТЕМ
                 </motion.p>
-                <p className="text-[7px] text-red-700/90 tracking-[0.55em] uppercase font-bold bg-red-950/30 py-1.5 px-4 rounded inline-block border border-red-900/30">
+                <p className="text-[7px] text-amber-700/90 tracking-[0.55em] uppercase font-bold bg-amber-950/30 py-1.5 px-4 rounded inline-block border border-amber-900/30">
+
                   ⚠️ КРИТИЧНА ПОПЕРЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТОРИЗОВАНИХ ОСІБ TIER-1
                 </p>
               </motion.div>

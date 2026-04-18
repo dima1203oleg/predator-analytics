@@ -1,0 +1,109 @@
+# ══════════════════════════════════════════════════════════════════
+# LiteLLM AI Gateway — INVINCIBLE CASCADE ROUTING (v56.5-ELITE)
+# ══════════════════════════════════════════════════════════════════
+
+model_list:
+  # === РІВЕНЬ 1: БЕЗКОШТОВНИЙ ПУЛ (PRIMARY FREE CLOUD) ===
+  
+  # Google Gemini 1.5 Pro - Багатоакаунтова ротація
+  - model_name: primary-coder
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_KEY_1
+      rpm: 2
+  - model_name: primary-coder
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_KEY_2
+      rpm: 2
+  - model_name: primary-coder
+    litellm_params:
+      model: gemini/gemini-1.5-pro
+      api_key: os.environ/GEMINI_KEY_3
+      rpm: 2
+
+  # Groq Llama 3 - Пакетна обробка та JSON
+  - model_name: primary-coder
+    litellm_params:
+      model: groq/llama3-70b-8192
+      api_key: os.environ/GROQ_KEY_1
+      rpm: 30
+
+  # Mistral Codestral - Резервна логіка
+  - model_name: primary-coder
+    litellm_params:
+      model: mistral/codestral-latest
+      api_key: os.environ/MISTRAL_KEY_1
+
+  # === CLOUD OVERRIDE: ЕЛІТНИЙ РЕЗЕРВ (GLM-5.1 & AZURE) ===
+  
+  # GLM-5.1 - Lead Architect (Z.AI)
+  - model_name: lead-architect
+    litellm_params:
+      model: zai/glm-5.1
+      api_key: os.environ/ZAI_API_KEY
+      api_base: https://open.bigmodel.cn/api/paas/v4
+
+  - model_name: lead-architect
+    litellm_params:
+      model: azure/gpt-4o-mini
+      api_base: os.environ/AZURE_API_BASE
+      api_key: os.environ/AZURE_API_KEY
+      api_version: "2024-02-15-preview"
+
+  # === РІВЕНЬ 1: БЕЗКОШТОВНИЙ ПУЛ (PRIMARY FREE CLOUD) ===
+
+  # === РІВЕНЬ 3: ЛОКАЛЬНИЙ МЕТАЛ (LOCAL SOVEREIGN) ===
+  - model_name: local-sovereign-logic
+    litellm_params:
+      model: ollama/phi4-mini
+      api_base: http://ollama:11434
+
+  - model_name: surgical-coder
+    litellm_params:
+      model: ollama/qwen3-coder:7b
+      api_base: http://ollama:11434
+
+  - model_name: light-parser
+    litellm_params:
+      model: ollama/gemma4:e2b
+      api_base: http://ollama:11434
+
+router_settings:
+  routing_strategy: least_busy
+  num_retries: 5
+  retry_after: 3
+  
+  # 3-State Routing Fallbacks
+  fallbacks: 
+    - {"lead-architect": ["primary-coder", "fallback-azure"]}
+    - {"surgical-coder": ["primary-coder", "local-sovereign-logic"]}
+    - {"local-sovereign-logic": ["light-parser"]}
+
+  # Балансування всередині груп (Tri-State Logic)
+  model_group_alias:
+    "SOVEREIGN_GROUP": ["local-sovereign-logic", "surgical-coder"]
+    "HYBRID_GROUP": ["primary-coder", "local-sovereign-logic"]
+    "CLOUD_GROUP": ["lead-architect", "primary-coder"]
+
+  # Redis для кешу та стану
+  redis_host: redis
+  redis_port: 6379
+  redis_password: os.environ/REDIS_PASSWORD_LITE
+
+  cache_params:
+    type: redis
+    supported_call_types:
+      - acompletion
+      - completion
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+  allow_origins: ["*"]
+
+litellm_settings:
+  success_callback: ["prometheus"]
+  failure_callback: ["prometheus"]
+  json_logs: true
+  drop_params: true

@@ -23,6 +23,8 @@ import { factoryApi, monitoringApi, apiClient, api } from '@/services/api';
 import { systemApi } from '@/services/api/system';
 import { RegistryStats } from './components/RegistryStats';
 import { AntigravityAgiTab } from './components/AntigravityAgiTab';
+import { FabrykaAutonomousTab } from './components/FabrykaAutonomousTab';
+import { EvolutionAgentPanel } from './components/EvolutionAgentPanel';
 import {
   createEmptyRegistryStats,
   deriveImprovementProgress,
@@ -68,7 +70,7 @@ export default function SystemFactoryView() {
     coverage: null,
     security: null,
   });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health' | 'antigravity'>('infinite');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health' | 'antigravity' | 'autonomous' | 'evolution'>('autonomous');
 
 
   // ═══ Ingestion State ═══
@@ -701,6 +703,8 @@ export default function SystemFactoryView() {
 
   // ── Tab config ──────────────────────────────────────────────────────────────
   const TABS = [
+    { id: 'autonomous',  label: 'FABRYKA v2.0',      icon: Sparkles,      color: 'gold',    glow: 'rgba(212,175,55,0.7)' },
+    { id: 'evolution',   label: 'EvolutionAgent',    icon: BrainCircuit,  color: 'gold',    glow: 'rgba(212,175,55,0.5)' },
     { id: 'infinite',    label: 'OODA Loop',         icon: Infinity,      color: 'amber',   glow: 'rgba(212,175,55,0.4)' },
     { id: 'improve',     label: 'Вдосконалення',     icon: Sparkles,      color: 'gold',    glow: 'rgba(217,119,6,0.4)' },
     { id: 'bugfix',      label: 'Автофікс',           icon: Bug,           color: 'amber',   glow: 'rgba(239,68,68,0.4)'  },
@@ -759,7 +763,9 @@ export default function SystemFactoryView() {
               <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">Factory v57.2-WRAITH</span>
             </div>
             <div className="text-[9px] text-slate-500 font-mono">
-              {infiniteRunning ? (
+              {activeTab === 'autonomous' || activeTab === 'evolution' ? (
+                <span className="text-amber-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse inline-block" />FABRYKA v2.0</span>
+              ) : infiniteRunning ? (
                 <span className="text-emerald-400 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />OODA активний</span>
               ) : (
                 <span className="text-slate-500">OODA в очікуванні</span>
@@ -840,6 +846,16 @@ export default function SystemFactoryView() {
           </div>
 
           <AnimatePresence mode="wait">
+             {activeTab === 'autonomous' && (
+               <motion.div key="autonomous" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-0">
+                 <FabrykaAutonomousTab />
+               </motion.div>
+             )}
+             {activeTab === 'evolution' && (
+               <motion.div key="evolution" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-0">
+                 <EvolutionAgentPanel />
+               </motion.div>
+             )}
              {activeTab === 'antigravity' && (
                <motion.div key="antigravity" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-0">
                  <AntigravityAgiTab />

@@ -19,8 +19,9 @@ import {
     ShieldCheck, Flame, Info, Crosshair, Network, Lock, Cpu, Fingerprint, Radar
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
-import { analyticsService } from '@/services/unified/analytics.service';
+import { analyticsService, AMLResult, AMLFactor, BatchResultData } from '@/services/unified/analytics.service';
 import { RiskLevelValue } from '@/types/intelligence';
+import { AxiosError } from 'axios';
 
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
@@ -31,49 +32,18 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
 // Типи
 // ========================
 
-interface AMLFactor {
-    category: string;
-    name: string;
-    description: string;
-    weight: number;
-    detected: boolean;
-    details: string;
-    source: string;
-}
-
-interface AMLResult {
-    entity_id: string;
-    entity_name: string;
-    entity_type: string;
-    total_score: number;
-    risk_level: RiskLevelValue;
-    factors: AMLFactor[];
-    recommendations: string[];
-    calculated_at: string;
-}
-
+// Використовуємо типи з analyticsService
 interface BatchEntry {
     id: string;
     entity_id: string;
     entity_name: string;
     entity_type: string;
-}
-
-interface BatchResultData {
-    total: number;
-    distribution: Record<string, number>;
-    scores: {
-        entity_id: string;
-        entity_name: string;
-        risk_level: string;
-        total_score: number;
-        detected_factors: number;
-    }[];
 }
 
 interface RiskLevelInfo {
@@ -138,8 +108,8 @@ const RiskBadge: React.FC<{ level: string }> = ({ level }) => {
 
 const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
     const indicators = factors.map(f => ({
-        name: FACTOR_LABELS[f.category] || f.category,
-        max: f.weight,
+        name: FACTOR_LABELS[f.category as keyof typeof FACTOR_LABELS] || f.name || f.category,
+        max: f.weight || 100,
     }));
     const values = factors.map(f => f.detected ? f.weight : 0);
 
@@ -185,14 +155,25 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
 // Background Scanning HUD
 // ========================
 
-const ScanningHUD: React.FC = () => {
+const WRAITH_Overlay: React.FC = () => (
+    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden mix-blend-overlay opacity-30">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+        <div className="absolute inset-0 animate-scanline bg-[linear-gradient(to_bottom,transparent_0%,rgba(212,175,55,0.02)_50%,transparent_100%)] bg-[length:100%_4px]" />
+        <div className="absolute inset-0 bg-noise opacity-10" />
+    </div>
+);
+
+const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> = ({ vramStatus }) => {
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 opacity-20">
             {/* Лазерна лінія */}
             <motion.div
                 animate={{ y: ['-10%', '110%'] }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent shadow-[0_0_20px_rgba(217,119,6,0.3)]"
+                className={cn(
+                    "absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent to-transparent shadow-[0_0_20px_rgba(217,119,6,0.3)]",
+                    vramStatus === 'critical' ? 'via-rose-500/80 shadow-[0_0_30px_rgba(244,63,94,0.5)]' : 'via-amber-500/50'
+                )}
             />
 
             {/* Координати та цифри */}
@@ -200,7 +181,7 @@ const ScanningHUD: React.FC = () => {
                 {[...Array(5)].map((_, i) => (
                     <motion.span
                         key={i}
-                        animate={{ opacity: [0.2, 0.8, 0.2] }}
+                        animate={{ opacity: [0.2, 1, 0.2] }}
                         transition={{ duration: 2, delay: i * 0.4, repeat: Infinity }}
                     >
                         LAT: {Math.random().toFixed(4)} // LNG: {Math.random().toFixed(4)}
@@ -208,10 +189,13 @@ const ScanningHUD: React.FC = () => {
                 ))}
             </div>
 
-            <div className="absolute bottom-20 left-10 flex flex-col gap-1 font-mono text-[8px] text-amber-500/40 italic">
-                <span className="uppercase tracking-[0.3em] font-black">ЯДРО_ТЕМП: 42°C</span>
+            <div className="absolute bottom-24 left-10 flex flex-col gap-1 font-mono text-[8px] text-amber-500/40 italic">
+                <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-rose-500 animate-pulse' : '')}>
+                    {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯДРО_ТЕМП: 42°C'}
+                </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
-                <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ: 99.8%</span>
+                <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕРА: 99.8%</span>
+                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v3.0_ELITE</span>
             </div>
         </div>
     );
@@ -221,25 +205,27 @@ const ScanningHUD: React.FC = () => {
 // Live Cognitive Terminal v57.2
 // ========================
 
-const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }> = ({ active, targetName }) => {
+const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' }> = ({ active, targetName, mode }) => {
     const [lines, setLines] = useState<string[]>([]);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const RAW_CHUNKS = [
-        "ЗБІР_МЕТАДАНИХ...",
-        "ДЕШИФРУВАННЯ_UBO_ШАРІВ...",
-        "ДОСТУП_ДО_РЕЄСТРУ_V4",
-        "ПЕРЕВІРКА_ОФШОРНИХ_ЗВ'ЯЗКІВ",
-        "СПІВСТАВЛЕННЯ_ЄДРПОУ_ХЕШІВ...",
-        "АНАЛІЗ_ВОЛАТИЛЬНОСТІ_ТРАНЗАКЦІЙ",
-        "ПОШУК_ОЗНАК_ФІКТИВНОСТІ...",
-        "СКАНУВАННЯ_САНКЦІЙНИХ_СПИСКІВ",
-        "ІДЕНТИФІКАЦІЯ_PEP_ЗВ'ЯЗКІВ",
-        "РЕКОНСТРУКЦІЯ_МАСИВУ...",
-        "ВЕРИФІКАЦІЯ_АДРЕСНОЇ_ІСТОРІЇ",
-        "ПОШУК_АНАЛОГІВ_В_АРХІВІ",
-        "АНАЛІЗ_МЕДІА_ПОТОКІВ"
+    const CHUNKS_SOVEREIGN = [
+        "NEMOTRON: ПЕРЕВІРКА_ЛОКАЛЬНИХ_РЕЄСТРІВ...",
+        "SURGICAL_CODER: ВАЛІДАЦІЯ_ХЕШІВ_ЄДРПОУ",
+        "БЕЗПЕКА: AIR_GAPPED_АНАЛІЗ_АКТИВНО",
+        "ОБМЕЖЕННЯ: VRAM_LIMIT_GUARD",
+        "СИНТЕЗ: ЛОКАЛЬНА_РЕКОНСТРУКЦІЯ..."
     ];
+
+    const CHUNKS_CLOUD = [
+        "GLM-5.1: SYNTHESIZING_FORENSIC_LINKS...",
+        "LEAD_ARCHITECT: DEEP_OSINT_TRAVERSAL",
+        "CLOUD_CORE: MULTI_TRANS_LAYER_DECODER",
+        "AI_COORD: ОРКЕСТРАЦІЯ_ВУЗЛІВ_ZAI",
+        "ВЕРДИКТ: ГЕНЕРУВАННЯ_ЕЛІТНОГО_ЗВІТУ..."
+    ];
+
+    const chunks = mode === 'SOVEREIGN' ? CHUNKS_SOVEREIGN : CHUNKS_CLOUD;
 
     useEffect(() => {
         if (!active) {
@@ -249,13 +235,15 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }
 
         let i = 0;
         const interval = setInterval(() => {
-            const newLine = `[${new Date().toLocaleTimeString()}] ${RAW_CHUNKS[i % RAW_CHUNKS.length]} | СТАТУС: OK | ${Math.random().toString(16).substring(2, 10).toUpperCase()}`;
-            setLines(prev => [...prev.slice(-15), newLine]);
+            const currentChunk = chunks[i % chunks.length];
+            const newLine = `[${new Date().toLocaleTimeString()}] ${currentChunk} | СТАТУС: OK | ${Math.random().toString(16).substring(2, 10).toUpperCase()}`;
+            setLines(prev => [...prev.slice(-20), newLine]);
+            SovereignAudio.playScanPulse();
             i++;
-        }, 120);
+        }, 150);
 
         return () => clearInterval(interval);
-    }, [active]);
+    }, [active, targetName, mode, chunks]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -353,8 +341,8 @@ const FactorCard: React.FC<{ factor: AMLFactor }> = ({ factor }) => {
                     style={{ color: factor.detected ? '#D97706' : '#334155' }}
                 />
             </div>
-            {factor.detected && factor.details && (
-                <p className="text-[10px] text-slate-500 mt-4 leading-relaxed italic font-medium uppercase tracking-tight">{factor.details}</p>
+            {factor.detected && factor.description && (
+                <p className="text-[10px] text-slate-500 mt-4 leading-relaxed italic font-medium uppercase tracking-tight">{factor.description}</p>
             )}
         </motion.div>
     );
@@ -426,32 +414,33 @@ const AMLScoringView: React.FC = () => {
         return () => clearInterval(t);
     }, []);
 
-    const { isOffline, nodeSource, healingProgress, activeFailover } = useBackendStatus();
+    const { isOffline, nodeSource, healingProgress, activeFailover, llmTriStateMode, vramMetrics } = useBackendStatus();
 
     // Monitoring autonomous mode via predator-error protocol
     useEffect(() => {
-        if (isOffline) {
+        if (llmTriStateMode === 'SOVEREIGN') {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'AML_Scoring',
-                    message: `РЕЖИМ АВТОНОМНОГО КОМПЛАЄНСУ [${nodeSource}]: Використовується MIRROR_VAULT. Можливе обмеження по глибині UBO.`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'AML_OFFLINE'
-                }
-            }));
-        } else {
-            window.dispatchEvent(new CustomEvent('predator-error', {
-                detail: {
-                    service: 'AML_Scoring',
-                    message: `AML_ВУЗОЛ [${nodeSource}]: Когнітивний аналізувач активовано. Готовність до скорінгу.`,
+                    message: `SOVEREIGN_MODE: Працює локальний інтелект (Nemotron). Глибина аналізу оптимізована під 8GB VRAM.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
-                    code: 'AML_SUCCESS'
+                    code: 'AML_SOVEREIGN'
                 }
             }));
         }
-    }, [isOffline, nodeSource]);
+        if (vramMetrics.status === 'critical') {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'AML_Scoring',
+                    message: `CUDA_GUARD: Критичне заповнення VRAM (${vramMetrics.used.toFixed(1)}GB). Деякі аналітичні шари можуть бути обмежені.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'AML_VRAM_CRITICAL'
+                }
+            }));
+        }
+    }, [llmTriStateMode, vramMetrics.status]);
 
     useEffect(() => {
         analyticsService.getAMLRiskLevels()
@@ -478,17 +467,23 @@ const AMLScoringView: React.FC = () => {
                 entityType
             );
             setResult(data);
+            SovereignAudio.playImpact();
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'AML_Scoring',
                     message: `СКОРІНГ_ВЕРДИКТ [${nodeSource}]: ${entityName} (${entityId}) проаналізовано. Рівень: ${data.risk_level.toUpperCase()}.`,
-                    severity: data.total_score > 70 ? 'warning' : 'info',
+                    severity: data.total_score > 70 ? 'critical' : 'info',
                     timestamp: new Date().toISOString(),
                     code: 'AML_SCAN_SUCCESS'
                 }
             }));
-        } catch (e: any) { // type: ignore - axios error fallback
-            setError(e?.response?.data?.detail || 'Помилка розрахунку. Перевірте зв\'язок з ядром PREDATOR.');
+            if (data.total_score > 70) {
+                SovereignAudio.playAlert();
+            }
+        } catch (e) {
+            const err = e as AxiosError<{ detail?: string }>;
+            setError(err?.response?.data?.detail || 'Помилка розрахунку. Перевірте зв\'язок з ядром PREDATOR.');
+            SovereignAudio.playAlert();
         } finally {
             setLoading(false);
         }
@@ -516,8 +511,9 @@ const AMLScoringView: React.FC = () => {
                     code: 'AML_BATCH_SUCCESS'
                 }
             }));
-        } catch (e: any) { // type: ignore - axios error fallback
-            setError(e?.response?.data?.detail || 'Помилка пакетного сканування.');
+        } catch (e) {
+            const err = e as AxiosError<{ detail?: string }>;
+            setError(err?.response?.data?.detail || 'Помилка пакетного сканування.');
         } finally {
             setBatchLoading(false);
         }
@@ -549,8 +545,9 @@ const AMLScoringView: React.FC = () => {
     return (
         <PageTransition>
             <div className="min-h-screen p-12 flex flex-col gap-12 relative overflow-hidden bg-[#020202]">
+                <WRAITH_Overlay />
                 <AdvancedBackground />
-                <ScanningHUD />
+                <ScanningHUD vramStatus={vramMetrics.status} />
                 <CyberGrid color="rgba(212, 175, 55, 0.04)" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(217,119,6,0.06),transparent_70%)] pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(212,175,55,0.03),transparent_60%)] pointer-events-none" />
@@ -593,7 +590,8 @@ const AMLScoringView: React.FC = () => {
                             color: isOffline ? 'warning' : 'gold',
                             animate: isOffline
                         },
-                        { label: 'СТАБІЛЬНІСТЬ', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'warning' : 'success', icon: <ShieldCheck size={14} /> }
+                        { label: 'СТАБІЛЬНІСТЬ', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'warning' : 'success', icon: <ShieldCheck size={14} /> },
+                        { label: 'AI_TIER', value: llmTriStateMode, color: llmTriStateMode === 'CLOUD' ? 'gold' : llmTriStateMode === 'HYBRID' ? 'primary' : 'warning', icon: <Cpu size={14} /> }
                     ]}
                 />
 
@@ -704,13 +702,13 @@ const AMLScoringView: React.FC = () => {
                                             <span>EXECUTE_DEEP_SCAN</span>
                                         </div>
                                     )}
-                                    {!loading && <span className="text-[8px] opacity-40 group-hover/btn:opacity-100 transition-opacity">TIER-1 ACCESS AUTHORIZED // ENCRYPTION: AES-512</span>}
+                                    {!loading && <span className="text-[8px] opacity-40 group-hover/btn:opacity-100 transition-opacity">ДОСТУП TIER-1 АВТОРИЗОВАНО // ШИФРУВАННЯ: AES-512</span>}
                                     
                                     {/* Ефект пульсації при наведенні */}
                                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/btn:opacity-100 group-active:bg-white/10 transition-all pointer-events-none" />
                                 </button>
 
-                                <CognitiveParsingTerminal active={loading} targetName={entityName} />
+                                <CognitiveParsingTerminal active={loading} targetName={entityName} mode={llmTriStateMode} />
 
                                 {error && (
                                     <div className="p-6 bg-amber-950/20 border-2 border-amber-500/30 rounded-2xl flex items-start gap-5 shadow-inner">
@@ -845,7 +843,7 @@ const AMLScoringView: React.FC = () => {
                                                         <div className="flex-1 space-y-2">
                                                             <span className="text-xl font-black text-white italic font-serif group-hover:text-amber-500 transition-colors uppercase leading-none">{s.entity_name}</span>
                                                             <div className="flex items-center gap-4">
-                                                                <span className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.3em] italic">IDENT: {s.entity_id}</span>
+                                                                <span className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.3em] italic">ІДЕНТ: {s.entity_id}</span>
                                                                 <div className="h-px w-6 bg-slate-900" />
                                                                 <span className="text-[9px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{s.detected_factors}_ВЕКТОРІВ_РИЗИКУ</span>
                                                             </div>
@@ -886,7 +884,7 @@ const AMLScoringView: React.FC = () => {
                                                     <div className="flex items-center gap-6">
                                                         <div className="flex items-center gap-3 bg-white/5 px-5 py-2 rounded-xl border border-white/5">
                                                             <Fingerprint size={14} className="text-slate-700" />
-                                                            <span className="text-[11px] font-mono text-slate-500 uppercase italic">UID: {result.entity_id}</span>
+                                                            <span className="text-[11px] font-mono text-slate-500 uppercase italic">ІДЕНТ: {result?.entity_id}</span>
                                                         </div>
                                                         <Badge variant="outline" className="border-white/5 text-slate-700 text-[9px] px-4 py-2 uppercase font-black tracking-[0.3em] bg-black italic">
                                                             {result.entity_type === 'organization' ? 'ЮРИДИЧНА_ОСОБА' : 'ПЕРСОНАЛЬНИЙ_ВУЗОЛ'}
@@ -950,7 +948,7 @@ const AMLScoringView: React.FC = () => {
                                     </div>
 
                                     {/* Рекомендації WRAITH */}
-                                    {result.recommendations?.length > 0 && (
+                                    {(result.recommendations?.length || 0) > 0 && (
                                         <TacticalCard variant="cyber" className="p-12 rounded-[5rem] border-amber-500/20 bg-amber-950/10 shadow-4xl relative overflow-hidden">
                                             <div className="absolute -left-12 -top-12 opacity-5 rotate-45 pointer-events-none">
                                                  <Flame size={200} className="text-amber-500" />
@@ -959,7 +957,7 @@ const AMLScoringView: React.FC = () => {
                                                 <Flame size={32} className="animate-pulse" /> ВЕРДИКТИ_СТРАТЕГІЧНОЇ_ПІДТРИМКИ
                                             </h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                                                {result.recommendations.map((rec, i) => (
+                                                {result.recommendations?.map((rec, i) => (
                                                     <div key={i} className="flex items-start gap-6 p-8 bg-black border-2 border-amber-500/10 rounded-[2.5rem] group hover:border-amber-500/30 transition-all shadow-inner">
                                                         <ChevronRight size={24} className="text-amber-600 shrink-0 mt-1 transform group-hover:translate-x-1 transition-transform" />
                                                         <p className="text-[13px] font-black text-slate-300 leading-relaxed italic uppercase tracking-tight">{rec}</p>

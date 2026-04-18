@@ -1,6 +1,7 @@
 #!/bin/bash
 # PREDATOR Analytics UI - Auto Start Script
-cd /Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui
+cd /Users/Shared/Predator_60/apps/predator-analytics-ui
+export PATH="/opt/homebrew/bin:$PATH"
 
 echo "🚀 Starting PREDATOR Analytics UI..."
 

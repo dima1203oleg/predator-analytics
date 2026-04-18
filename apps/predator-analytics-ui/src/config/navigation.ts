@@ -41,14 +41,9 @@ import {
 } from 'lucide-react';
 
 export type NavAccent =
+  | 'gold'
   | 'amber'
-  | 'emerald'
-  | 'cyan'
-  | 'sky'
-  | 'violet'
-  | 'rose'
-  | 'indigo'
-  | 'red'
+  | 'warn'
   | 'slate';
 
 export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
@@ -121,86 +116,41 @@ export const navAccentStyles: Record<
     softText: string;
   }
 > = {
+  gold: {
+    badge: 'bg-yellow-500/15 text-yellow-500 border-yellow-400/20',
+    dot: 'bg-yellow-500',
+    glow: 'from-yellow-600/20 via-yellow-500/5 to-transparent',
+    icon: 'text-yellow-500',
+    iconBorder: 'border-yellow-400/25 bg-yellow-500/10',
+    sectionBorder: 'border-yellow-400/15',
+    softText: 'text-yellow-400/90',
+  },
   amber: {
-    badge: 'bg-amber-500/15 text-amber-300 border-amber-400/20',
-    dot: 'bg-amber-400',
-    glow: 'from-amber-500/18 via-amber-400/5 to-transparent',
-    icon: 'text-amber-300',
-    iconBorder: 'border-amber-400/20 bg-amber-500/10',
-    sectionBorder: 'border-amber-400/12',
-    softText: 'text-amber-200/85',
+    badge: 'bg-amber-500/15 text-amber-500 border-amber-400/20',
+    dot: 'bg-amber-500',
+    glow: 'from-amber-600/20 via-amber-500/5 to-transparent',
+    icon: 'text-amber-500',
+    iconBorder: 'border-amber-400/25 bg-amber-500/10',
+    sectionBorder: 'border-amber-400/15',
+    softText: 'text-amber-400/90',
   },
-  emerald: {
-    badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-400/20',
-    dot: 'bg-emerald-400',
-    glow: 'from-emerald-500/18 via-emerald-400/5 to-transparent',
-    icon: 'text-emerald-300',
-    iconBorder: 'border-emerald-400/20 bg-emerald-500/10',
-    sectionBorder: 'border-emerald-400/12',
-    softText: 'text-emerald-200/85',
-  },
-  cyan: {
-    badge: 'bg-cyan-500/15 text-cyan-300 border-cyan-400/20',
-    dot: 'bg-cyan-400',
-    glow: 'from-cyan-500/18 via-cyan-400/5 to-transparent',
-    icon: 'text-cyan-300',
-    iconBorder: 'border-cyan-400/20 bg-cyan-500/10',
-    sectionBorder: 'border-cyan-400/12',
-    softText: 'text-cyan-200/85',
-  },
-  sky: {
-    badge: 'bg-sky-500/15 text-sky-300 border-sky-400/20',
-    dot: 'bg-sky-400',
-    glow: 'from-sky-500/18 via-sky-400/5 to-transparent',
-    icon: 'text-sky-300',
-    iconBorder: 'border-sky-400/20 bg-sky-500/10',
-    sectionBorder: 'border-sky-400/12',
-    softText: 'text-sky-200/85',
-  },
-  violet: {
-    badge: 'bg-violet-500/15 text-violet-300 border-violet-400/20',
-    dot: 'bg-violet-400',
-    glow: 'from-violet-500/18 via-violet-400/5 to-transparent',
-    icon: 'text-violet-300',
-    iconBorder: 'border-violet-400/20 bg-violet-500/10',
-    sectionBorder: 'border-violet-400/12',
-    softText: 'text-violet-200/85',
-  },
-  rose: {
-    badge: 'bg-rose-500/15 text-rose-300 border-rose-400/20',
-    dot: 'bg-rose-400',
-    glow: 'from-rose-500/18 via-rose-400/5 to-transparent',
-    icon: 'text-rose-300',
-    iconBorder: 'border-rose-400/20 bg-rose-500/10',
-    sectionBorder: 'border-rose-400/12',
-    softText: 'text-rose-200/85',
-  },
-  indigo: {
-    badge: 'bg-indigo-500/15 text-indigo-300 border-indigo-400/20',
-    dot: 'bg-indigo-400',
-    glow: 'from-indigo-500/18 via-indigo-400/5 to-transparent',
-    icon: 'text-indigo-300',
-    iconBorder: 'border-indigo-400/20 bg-indigo-500/10',
-    sectionBorder: 'border-indigo-400/12',
-    softText: 'text-indigo-200/85',
-  },
-  red: {
-    badge: 'bg-red-500/15 text-red-300 border-red-400/20',
-    dot: 'bg-red-400',
-    glow: 'from-red-500/18 via-red-400/5 to-transparent',
-    icon: 'text-red-300',
-    iconBorder: 'border-red-400/20 bg-red-500/10',
-    sectionBorder: 'border-red-400/12',
-    softText: 'text-red-200/85',
+  warn: {
+    badge: 'bg-orange-500/15 text-orange-500 border-orange-400/20',
+    dot: 'bg-orange-600',
+    glow: 'from-orange-600/20 via-orange-500/5 to-transparent',
+    icon: 'text-orange-500',
+    iconBorder: 'border-orange-400/25 bg-orange-500/10',
+    sectionBorder: 'border-orange-400/15',
+    softText: 'text-orange-400/90',
   },
   slate: {
-    badge: 'bg-slate-500/15 text-slate-300 border-slate-400/20',
-    dot: 'bg-slate-400',
-    glow: 'from-slate-500/18 via-slate-400/5 to-transparent',
-    icon: 'text-slate-300',
-    iconBorder: 'border-slate-400/20 bg-slate-500/10',
-    sectionBorder: 'border-slate-400/12',
-    softText: 'text-slate-200/85',
+    badge: 'bg-slate-500/15 text-slate-400 border-slate-400/20',
+    dot: 'bg-slate-500',
+    glow: 'from-slate-600/20 via-slate-500/5 to-transparent',
+    icon: 'text-slate-400',
+    iconBorder: 'border-slate-400/25 bg-slate-500/10',
+    sectionBorder: 'border-slate-400/15',
+    softText: 'text-slate-400/90',
   },
 };
 
@@ -277,7 +227,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'КОМАНДНИЙ ЦЕНТР',
     description: 'CEO-рівень: стратегічний контроль, P&L ризиків, ранковий брифінг, оперативний пульс.',
     outcome: 'Sovereign Command: Повний 360° контроль над бізнес-периметром за 3 секунди.',
-    accent: 'emerald',
+    accent: 'gold',
     items: [
       {
         id: 'dashboard',
@@ -318,7 +268,7 @@ const baseNavigationConfig: NavSection[] = [
       },
       {
         id: 'morning-brief',
-        label: 'Стратегічний брифінг v57.2-WRAITH',
+        label: 'Стратегічний брифінг v58.2-WRAITH',
         path: '/morning-brief',
         icon: Compass,
         description: 'Пріоритетний аналіз суверенних ризиків, ринкових аномалій та критичних цілей на день.',
@@ -360,7 +310,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'РОЗВІДКА КОНТРАГЕНТІВ',
     description: 'Due Diligence 360°, AML, санкції, UBO-структура, досьє компаній і персон.',
     outcome: 'Total Intelligence: Повна картина будь-якого контрагента за 30 секунд — для M&A, закупівель, безпеки.',
-    accent: 'cyan',
+    accent: 'gold',
     items: [
       {
         id: 'intelligence',
@@ -514,7 +464,7 @@ const baseNavigationConfig: NavSection[] = [
         icon: ShieldX,
         description: 'Преміальний контур виявлення та моніторингу субʼєктів із високим ризиком зради.',
         group: 'OSINT та розслідування',
-        badge: 'v57.2-WRAITH',
+        badge: 'v58.2-WRAITH',
         priority: 95,
       },
       {
@@ -590,7 +540,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'ФІНАНСОВА РОЗВІДКА',
     description: 'SWIFT-перехват, офшорні структури, транзакційні аномалії, банківські ризики.',
     outcome: 'Financial SIGINT: Виявлення незаконних фінансових потоків та захист активів.',
-    accent: 'rose',
+    accent: 'amber',
     items: [
       {
         id: 'swift-monitor',
@@ -702,7 +652,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'БІЗНЕС-МОЖЛИВОСТІ',
     description: 'M&A Scanner, конкурентна розвідка, тендери, ринкові можливості, клієнти, постачальники.',
     outcome: 'Business Growth Intel: Перші побачити можливість — перші зайняти позицію.',
-    accent: 'indigo',
+    accent: 'gold',
     items: [
       {
         id: 'clients',
@@ -758,7 +708,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'ШІ-ЛАБОРАТОРІЯ',
     description: 'Sovereign AI: автономні агенти, hypothesis engine, предиктивний nexus, звіти.',
     outcome: 'AI-First Intelligence: Synthetic insights що замінюють 10 аналітиків — за секунди.',
-    accent: 'violet',
+    accent: 'amber',
     items: [
       {
         id: 'agents',
@@ -785,7 +735,7 @@ const baseNavigationConfig: NavSection[] = [
         icon: Sparkles,
         description: 'Центр предиктивного моделювання: сценарії, прогнози та випереджаючі інсайти.',
         group: 'Користувацький контур',
-        badge: 'v57.2-WRAITH_PREDICTIVE',
+        badge: 'v58.2-WRAITH_PREDICTIVE',
         priority: 100,
       },
       {

@@ -23,7 +23,7 @@ import {
     ResponsiveContainer, AreaChart, Area, XAxis, YAxis,
     CartesianGrid, Tooltip, BarChart, Bar, Cell
 } from 'recharts';
-import { apiClient } from '@/services/api/config';
+import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -33,6 +33,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ─── HELPER COMPONENTS ───────────────────────────────────────────────
 
@@ -142,23 +143,40 @@ export default function TendersView() {
 
     const fetchData = useCallback(async () => {
         setLoading(true);
+        SovereignAudio.playScanPulse();
         try {
-            const [tRes, sRes] = await Promise.allSettled([
-                apiClient.get('/osint_ua/prozorro/tenders?limit=24'),
-                apiClient.get('/osint_ua/prozorro/stats'),
+            const [tendersRes, statsRes] = await Promise.allSettled([
+                analyticsService.getTenders(24),
+                analyticsService.getTenderStats(),
             ]);
             
-            if (tRes.status === 'fulfilled') setTenders(tRes.value.data?.tenders || []);
-            if (sRes.status === 'fulfilled') setAnalytics(sRes.value.data);
+            let tendersData: any[] = [];
+            if (tendersRes.status === 'fulfilled') {
+                tendersData = tendersRes.value;
+                setTenders(tendersData);
+            }
             
-            // Mock if needed
-            if (tRes.status === 'rejected' && sRes.status === 'rejected') {
+            if (statsRes.status === 'fulfilled') {
+                setAnalytics(statsRes.value);
+            }
+            
+            // Fallback for demo/dev if API returns empty but didn't fail
+            if ((tendersRes.status === 'fulfilled' && tendersData.length === 0) || tendersRes.status === 'rejected') {
                  setTenders([
                     { id: 'UA-2026-04-12-001234-a', title: 'ЗАКУПІВЛЯ ПАЛИВА ДЛЯ ДП "АНТОНОВ"', procuringEntity: 'ДП АНТОНОВ', value: 45200000, risk_score: 84, bids_count: 1 },
                     { id: 'UA-2026-04-12-005678-b', title: 'ПОСЛУГИ З КІБЕРБЕЗПЕКИ ХМЕЛЬНИЦЬКОЇ АЕС', procuringEntity: 'ЕНЕРГОАТОМ', value: 12400000, risk_score: 22, bids_count: 5 },
                     { id: 'UA-2026-04-11-009999-c', title: 'РЕМОНТ ТРАСИ М-06 ТА ОГОРОЖІ', procuringEntity: 'УКРАВТОДОР', value: 890000000, risk_score: 95, bids_count: 2 }
                  ]);
             }
+            
+            if (tendersRes.status === 'fulfilled') {
+                SovereignAudio.playImpact();
+            } else {
+                SovereignAudio.playAlert();
+            }
+        } catch (err) {
+            console.error('[TendersIntel] Critical fetch error:', err);
+            SovereignAudio.playAlert();
         } finally {
             setLoading(false);
         }

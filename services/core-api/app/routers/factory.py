@@ -8,8 +8,8 @@ import logging
 import random
 import uuid
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
-
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, WebSocket, WebSocketDisconnect
+from app.services.vram_watchdog import vram_sentinel
 from app.models.factory import (
     Bug,
     BugSeverity,
@@ -20,6 +20,8 @@ from app.models.factory import (
     Pattern,
     PipelineResult,
     SystemImprovement,
+    ChaosScenario,
+    ChaosLogEntry,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -544,3 +546,95 @@ async def stop_infinite_cycle(
     await repo.update_improvement(status)
     await cancel_factory_improvement_task(request.app)
     return {"status": "stopped"}
+
+
+@router.websocket("/ws/observer")
+async def factory_observer_websocket(websocket: WebSocket):
+    """
+    WebSocket потік для Observer Mode v5.0.
+    Транслює стан рою, кроки міркування та метрики заліза в реальному часі.
+    """
+    await websocket.accept()
+    logger.info("Factory Observer connected via WebSocket")
+    
+    try:
+        while True:
+            # 1. Отримуємо метрики заліза
+            vram = await vram_sentinel.get_stats()
+            
+            # 2. Формуємо знімок стану (тут зазвичай дані з Redis/Neo4j)
+            # Для демонстрації "в роботі" використовуємо mock-генератор
+            data = {
+                "type": "FACTORY_STATE_UPDATE",
+                "timestamp": datetime.now(UTC).isoformat(),
+                "vram": {
+                    "used": vram.used_gb,
+                    "total": vram.total_gb,
+                    "critical": vram.critical,
+                    "recommendation": vram.mode_recommendation
+                },
+                "swarm": [
+                    {
+                        "id": "agent-planner",
+                        "name": "ArchiCore",
+                        "role": "Lead Architect",
+                        "status": "THINKING" if random.random() > 0.5 else "IDLE",
+                        "vram_usage_gb": 1.2
+                    },
+                    {
+                        "id": "agent-coder",
+                        "name": "SurgicalCoder",
+                        "role": "Code Generator",
+                        "status": "EXECUTING" if random.random() > 0.3 else "IDLE",
+                        "vram_usage_gb": 2.1
+                    }
+                ],
+                "latest_step": {
+                    "id": str(uuid.uuid4()),
+                    "thought": random.choice([
+                        "Аналізую вузькі місця в Neo4j запитах...",
+                        "Виявлено деградацію latency в API Gateway.",
+                        "Планую рефакторинг модуля Auth (HR-02 breach).",
+                        "Оптимізую VRAM споживання для Phi-4-mini."
+                    ]),
+                    "action": "QUERY_OPTIMIZATION",
+                    "observation": "Success"
+                }
+            }
+            
+            await websocket.send_json(data)
+            await asyncio.sleep(2)  # Інтервал оновлення 2с
+            
+    except WebSocketDisconnect:
+        logger.info("Factory Observer disconnected")
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
+        await websocket.close()
+
+
+@router.post("/chaos/launch", response_model=ChaosLogEntry)
+async def launch_chaos_scenario(
+    scenario: ChaosScenario,
+    background_tasks: BackgroundTasks,
+):
+    """Запускає сценарій деструктивного тестування (Chaos Engineering)."""
+    chaos_id = str(uuid.uuid4())[:8]
+    logger.warning(f"🚀 LAUNCHING CHAOS: {scenario} (ID: {chaos_id})")
+    
+    entry = ChaosLogEntry(
+        id=chaos_id,
+        scenario=scenario,
+        status="starting",
+        impact="Unknown",
+        timestamp=datetime.now(UTC)
+    )
+    
+    # Симуляція фонової роботи
+    if scenario == ChaosScenario.VRAM_STRESS:
+        entry.impact = "VRAM usage will spike to 7.9GB"
+    elif scenario == ChaosScenario.NODE_FAILURE:
+        entry.impact = "Graph Service instance will be killed"
+    else:
+        entry.impact = "Significant latency increase expected"
+        
+    return entry

@@ -3,22 +3,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GeometricRaptor } from './Logo';
 
 /**
- * 🦅 PREDATOR Analytics // BOOT SEQUENCE v57.5 «APEX PREDATOR»
- * ====================================================
- * Вражаюча, страхітлива візуалізація ініціалізації суверенного ядра аналітики 
- * світового класу (Оціночна вартість системи: > $1.5 Мільярда).
- * v57.5-APEX · Absolute Sovereign Power Design
+ * 🦅 PREDATOR Analytics // BOOT SEQUENCE v57.8-ELITE «Sovereign Power»
+ * =================================================================
+ * Преміальна, страхітлива візуалізація ініціалізації аналітичного ядра.
+ * Bloomberg / Palantir Aesthetic | Deep Cosmic Atmospheric Audio
  * 
  * © 2026 PREDATOR Analytics — HR-04 Compliant
  */
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   APEX AUDIO ENGINE (High-Fidelity Synthesized Fear, Bass Drops, Mechanics)
+   ELITE AUDIO ENGINE (Deep Oscillating Shudders, FM Synthesis, Bass Drops)
    ─────────────────────────────────────────────────────────────────────────── */
 class ApexAudioEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
+  private activeDrone: { osc: OscillatorNode; gain: GainNode; lfo: OscillatorNode } | null = null;
 
   private init() {
     if (this.ctx) return;
@@ -27,7 +27,6 @@ class ApexAudioEngine {
       this.master = this.ctx.createGain();
       this.compressor = this.ctx.createDynamicsCompressor();
       
-      // Налаштування для "брутального" звуку
       this.compressor.threshold.setValueAtTime(-40, this.ctx.currentTime);
       this.compressor.knee.setValueAtTime(30, this.ctx.currentTime);
       this.compressor.ratio.setValueAtTime(20, this.ctx.currentTime);
@@ -42,396 +41,285 @@ class ApexAudioEngine {
     }
   }
 
-  /** Глибокий промисловий гул та хвилюючі вібрації (Суверенне ядро) */
-  playQuantumHum() {
+  /** Космічний вібруючий гул (Глибока напруга з FM-модуляцією) */
+  playSovereignDrone() {
     this.init();
     if (!this.ctx || !this.master) return;
     
     const now = this.ctx.currentTime;
     
-    // Створюємо низькочастотний дрон з амплітудною модуляцією (vibrations)
-    const createDrone = (freq: number, type: OscillatorType, gainVal: number, lfoFreq: number = 0) => {
-      if (!this.ctx || !this.master) return;
-      const osc = this.ctx.createOscillator();
-      const mainGain = this.ctx.createGain();
-      const lfo = this.ctx.createOscillator();
-      const lfoGain = this.ctx.createGain();
-
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, now);
-      
-      // Частотна модуляція (дрижання тембру)
-      const fm = this.ctx.createOscillator();
-      const fmGain = this.ctx.createGain();
-      fm.frequency.setValueAtTime(2 + Math.random(), now);
-      fmGain.gain.setValueAtTime(3, now);
-      fm.connect(fmGain);
-      fmGain.connect(osc.frequency);
-      fm.start();
-
-      // Амплітудна модуляція (хвилюючі коливання гучності)
-      if (lfoFreq > 0) {
-        lfo.frequency.setValueAtTime(lfoFreq, now);
-        lfoGain.gain.setValueAtTime(0.4, now); // Глибина коливань
-        lfo.connect(lfoGain);
-        
-        const amGain = this.ctx.createGain();
-        amGain.gain.setValueAtTime(1, now);
-        lfoGain.connect(amGain.gain);
-        
-        mainGain.gain.setValueAtTime(0, now);
-        mainGain.gain.linearRampToValueAtTime(gainVal, now + 5);
-        
-        osc.connect(amGain);
-        amGain.connect(this.master);
-      } else {
-        mainGain.gain.setValueAtTime(0, now);
-        mainGain.gain.linearRampToValueAtTime(gainVal, now + 5);
-        osc.connect(mainGain);
-        mainGain.connect(this.master);
-      }
-
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(120, now);
-      filter.Q.value = 10;
-
-      osc.start();
-      lfo.start();
-    };
-
-    // Стрій: Суб-бас + Дисонанс (для страху)
-    createDrone(30.0, 'sawtooth', 0.5, 0.8); // Глибокий гул з повільним коливанням
-    createDrone(31.5, 'square', 0.3, 1.2);   // Дисонуюча частота (біття)
-    createDrone(45.0, 'sine', 0.4, 0.5);     // Основна маса
-    createDrone(22.0, 'triangle', 0.4, 3.0); // Низькочастотна вібрація (тривожне тремтіння)
-  }
-
-  /** Масивний тектонічний удар (State Impact) */
-  playHeartbeatImpact() {
-    this.init();
-    if (!this.ctx || !this.master) return;
-    
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
+    // Носій
+    const carrier = this.ctx.createOscillator();
     const g = this.ctx.createGain();
-    const filter = this.ctx.createBiquadFilter();
-    const noise = this.ctx.createBufferSource();
-
-    // Синтез важкого удару
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(60, now);
-    osc.frequency.exponentialRampToValueAtTime(20, now + 1.2);
-
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(100, now);
     
-    g.gain.setValueAtTime(2.0, now);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 2.0);
+    // Модулятор (FM)
+    const modulator = this.ctx.createOscillator();
+    const modGain = this.ctx.createGain();
 
-    // Додаємо низькочастотний тріск
-    const bufferSize = this.ctx.sampleRate * 2;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.1));
-    noise.buffer = buffer;
+    // LFO для вібрації (Scary Shudder)
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
 
-    osc.connect(filter);
-    filter.connect(g);
-    noise.connect(g);
-    g.connect(this.master);
-
-    osc.start();
-    noise.start();
-    osc.stop(now + 2.1);
-  }
-
-  /** Важкий механічний звук (Heavy Switch / Relay) */
-  playTypeclick() {
-    this.init();
-    if (!this.ctx || !this.master) return;
+    carrier.type = 'sawtooth';
+    carrier.frequency.setValueAtTime(22, now); // Суб-бас
     
-    const now = this.ctx.currentTime;
-    const noise = this.ctx.createBufferSource();
-    const filter = this.ctx.createBiquadFilter();
-    const g = this.ctx.createGain();
-
-    const bufferSize = 0.1 * this.ctx.sampleRate;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-    noise.buffer = buffer;
-
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(400, now);
-
-    g.gain.setValueAtTime(0.3, now);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-
-    noise.connect(filter);
-    filter.connect(g);
-    g.connect(this.master);
-
-    noise.start();
-  }
-
-  /** Прорив системи / Тривожний сигнал (Apex Breakthrough) */
-  playApexMatchFlash() {
-    this.init();
-    if (!this.ctx || !this.master) return;
+    modulator.type = 'sine';
+    modulator.frequency.setValueAtTime(1.5, now);
+    modGain.gain.setValueAtTime(5, now);
     
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const g = this.ctx.createGain();
+    lfo.type = 'sawtooth';
+    lfo.frequency.setValueAtTime(12, now); // Швидка вібрація
+    lfoGain.gain.setValueAtTime(2, now);
+
     const filter = this.ctx.createBiquadFilter();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(30, now);
-    osc.frequency.linearRampToValueAtTime(5, now + 3);
-
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(200, now);
-    filter.Q.value = 20;
+    filter.frequency.setValueAtTime(40, now);
+    filter.Q.value = 15;
 
     g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(1.2, now + 0.2);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 4);
+    g.gain.linearRampToValueAtTime(0.7, now + 6);
 
-    osc.connect(filter);
+    // Patch: Modulator -> modGain -> Carrier Frequency
+    modulator.connect(modGain);
+    modGain.connect(carrier.frequency);
+
+    // Patch: LFO -> lfoGain -> modGain (Amplitude modulation of the FM effect)
+    lfo.connect(lfoGain);
+    lfoGain.connect(modGain.gain);
+
+    carrier.connect(filter);
     filter.connect(g);
     g.connect(this.master);
 
-    osc.start();
-    osc.stop(now + 4);
+    carrier.start();
+    modulator.start();
+    lfo.start();
+    
+    this.activeDrone = { osc: carrier, gain: g, lfo: lfo };
   }
 
-  /** Космічний вібраційний звук (Space/Cosmic Shudder) */
-  playCosmicVibration() {
+  /** Тектонічний удар (State Impact) */
+  playImpact() {
     this.init();
     if (!this.ctx || !this.master) return;
     
     const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(55, now);
+    osc.frequency.exponentialRampToValueAtTime(1, now + 3);
     
-    const createSpaceLayer = (freq: number, lfoFreq: number, depth: number) => {
-      if (!this.ctx || !this.master) return;
-      const osc = this.ctx.createOscillator();
-      const lfo = this.ctx.createOscillator();
-      const lfoGain = this.ctx.createGain();
-      const g = this.ctx.createGain();
+    g.gain.setValueAtTime(1.8, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 3);
 
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(freq, now);
-      osc.frequency.exponentialRampToValueAtTime(freq * 0.5, now + 10);
+    osc.connect(g);
+    g.connect(this.master);
 
-      lfo.frequency.setValueAtTime(lfoFreq, now);
-      lfoGain.gain.setValueAtTime(depth, now);
-      lfo.connect(lfoGain);
-      lfoGain.connect(osc.frequency);
-
-      // Volume oscillation (Shudder)
-      const vLfo = this.ctx.createOscillator();
-      const vLfoGain = this.ctx.createGain();
-      vLfo.frequency.setValueAtTime(lfoFreq * 1.5, now);
-      vLfoGain.gain.setValueAtTime(0.5, now);
-      vLfo.connect(vLfoGain);
-      
-      const mainG = this.ctx.createGain();
-      mainG.gain.setValueAtTime(0.3, now);
-      vLfoGain.connect(mainG.gain);
-
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(60, now);
-      filter.Q.value = 15;
-
-      osc.connect(filter);
-      filter.connect(mainG);
-      mainG.connect(this.master);
-
-      osc.start();
-      lfo.start();
-      vLfo.start();
-    };
-
-    createSpaceLayer(40, 0.2, 5); // Deep sweep
-    createSpaceLayer(35, 1.5, 10); // Shudder layer
-    
-    // Add brown noise rumble
-    const bufferSize = this.ctx.sampleRate * 5;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    let lastOut = 0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      data[i] = (lastOut + (0.02 * white)) / 1.02;
-      lastOut = data[i];
-      data[i] *= 3.5; // Gain
-    }
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
-    const nFilter = this.ctx.createBiquadFilter();
-    nFilter.type = 'lowpass';
-    nFilter.frequency.setValueAtTime(50, now);
-    const nGain = this.ctx.createGain();
-    nGain.gain.setValueAtTime(0, now);
-    nGain.gain.linearRampToValueAtTime(0.8, now + 2);
-    
-    noise.connect(nFilter);
-    nFilter.connect(nGain);
-    nGain.connect(this.master);
-    noise.start();
+    osc.start();
+    osc.stop(now + 3.1);
   }
 
-  /** Голосовий супровід (Intimidating Sovereign Voice) */
+  /** Глибокий резонуючий клік (Sovereign UI) */
+  playEliteClick() {
+    this.init();
+    if (!this.ctx || !this.master) return;
+    
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(12, now);
+    
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(80, now);
+
+    g.gain.setValueAtTime(0.15, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+    osc.connect(filter);
+    filter.connect(g);
+    g.connect(this.master);
+    osc.start();
+    osc.stop(now + 0.2);
+  }
+
+  /** Страхітлива вібрація (Cosmic Shudder) */
+  playScaryVibration() {
+    this.init();
+    if (!this.ctx || !this.master) return;
+    
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const lfo = this.ctx.createOscillator();
+    const lfoG = this.ctx.createGain();
+    const g = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(28, now);
+    
+    lfo.type = 'sawtooth';
+    lfo.frequency.setValueAtTime(18, now); // Дуже швидка вібрація
+    lfoG.gain.setValueAtTime(35, now);
+    
+    lfo.connect(lfoG);
+    lfoG.connect(osc.frequency);
+
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.5, now + 0.2);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 4);
+
+    osc.connect(g);
+    g.connect(this.master);
+    osc.start();
+    lfo.start();
+  }
+
+  /** Голосовий супровід: «Демонічний» баритон */
   speak(text: string) {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
     
-    // Зупиняємо попередній голос
     window.speechSynthesis.cancel();
-
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'uk-UA';
-    utterance.pitch = 0.4; // Максимально низький тембр
-    utterance.rate = 0.8;  // Повільний, загрозливий темп
+    utterance.pitch = 0.9;  // Ексклюзивний баритон (було 0.05 - занадто низько)
+    utterance.rate = 0.85;  // Оптимальна швидкість (було 0.55 - занадто повільно)
     utterance.volume = 1.0;
 
-    // Спроба знайти найкращий український голос
-    const voices = window.speechSynthesis.getVoices();
-    const targetVoice = voices.find(v => v.lang.includes('uk') || v.lang.includes('UA'));
-    if (targetVoice) utterance.voice = targetVoice;
+    const speakAction = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => v.lang.includes('uk') || v.lang.includes('UA')) || voices[0];
+      if (voice) utterance.voice = voice;
+      window.speechSynthesis.speak(utterance);
+    };
 
-    window.speechSynthesis.speak(utterance);
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        speakAction();
+        window.speechSynthesis.onvoiceschanged = null;
+      };
+    } else {
+      speakAction();
+    }
+    
+    // Додаємо вібрацію фоном до голосу
+    this.playScaryVibration();
   }
 }
 
 const sfx = new ApexAudioEngine();
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   ANALYTICAL MODULES (Ukrainian Localized - Apex Level Intelligence)
+   ANALYTICAL MODULES (Sovereign Ukrainian)
    ─────────────────────────────────────────────────────────────────────────── */
 const RAW_SOURCES = [
-  "RTGS:X-LINK // СИНХРОНІЗАЦІЯ_БАНКІВСЬКИХ_РЕЗЕРВІВ_TIER-1",
-  "SIGINT:ОКЕАНІЧНИЙ_КАБЕЛЬ_A12 // ГЛОБАЛЬНЕ_ПЕРЕХОПЛЕННЯ_G7",
-  "GEO-TEL:СУПУТНИК_ELITE-X // ДОСТУП_ДО_ТЕЛЕМЕТРІЇ_NVIDIA_GRID",
-  "NEURAL:PARSER-v14 // АНАЛІЗ_КОГНІТИВНИХ_ВІДХИЛЕНЬ_БОРЖНИКІВ",
-  "QUANTUM:L-BIT // ДЕКРИПТАЦІЯ_SWIFT_MT103_РЕАЛЬНИЙ_ЧАС",
-  "OSINT:DARK-FEED-8 // МОНІТОРИНГ_КРИПТО-АРХІПЕЛАГІВ",
-  "K-API:G6-ACCESS // МАГІСТРАЛЬ_ДФС_ТА_МИТНОЇ_СЛУЖБИ",
-  "HYPER-DATA:DEEP_LIQUIDITY // ВІДСТЕЖЕННЯ_ОФШОРНИХ_ХАБІВ",
+  "SIGINT:ПОТОК_ЦЕНТРАЛЬНИЙ // ПЕРЕХОПЛЕННЯ_АКТИВНЕ",
+  "NEURAL:PARSER-ELITE // СТАТИСТИЧНИЙ_ВИСНОВОК",
+  "QUANTUM:LEO-SYNC // ТЕЛЕМЕТРІЯ_КЛУСТЕРУ",
+  "GLOBAL:REWRITE-PROTOCOL // ВСТАНОВЛЕННЯ_ДИКТАТУРИ_ДАНИХ",
 ];
 
-const REGISTRY_ENTRIES = [
-  "UEID: 0x9F2E-44 // АРХІВ: ЦИТАДЕЛЬ // КЛАСИФІКОВАНО",
-  "АКТИВ: ТЕРМІНАЛ_ПОРТ_ОДЕСА // СТАТУС: ПОВНИЙ_КОНТРОЛЬ",
-  "ОБ'ЄКТ: СИНДИКАТ_ВОСТОК // РИЗИК: 9.9/10 // ЛІКВІДАЦІЯ",
-  "ТРАНЗАКЦІЯ: $1.42B // ВЕКТОР: ЖЕНЕВА-СІНГАТУР",
-  "ЗВ'ЯЗОК: 42_ФРОНТ-КОМПАНІЇ_ВИЯВЛЕНО [МЕРЕЖЕВИЙ_ГРАФ]",
-  "ПРОТОКОЛ: КОНФІСКАЦІЯ_АКТИВІВ_ЗА_ПРОТОКОЛОМ_7",
-  "HUB: DUBAI_INTELLIGENCE // SYNC: СТАБІЛЬНО",
-];
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   COMPONENT
-   ─────────────────────────────────────────────────────────────────────────── */
-const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<0 | 1 | 1.5 | 2 | 2.5 | 3 | 4>(0);
-  const [sourceText, setSourceText] = useState("");
-  const [targetLabel, setTargetLabel] = useState("");
-  const [matchLine, setMatchLine] = useState(false);
+export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const [phase, setPhase] = useState(0);
   const [bootLogs, setBootLogs] = useState<string[]>([]);
+  const [targetLabel, setTargetLabel] = useState("INITIALIZING...");
+  const [sourceText, setSourceText] = useState("");
+  const [matchLine, setMatchLine] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particles = useRef<any[]>([]);
   const startTime = useRef(Date.now());
-  const particles = useRef<{ x: number; y: number; z: number; px: number; py: number; c: string }[]>([]);
 
-  // Legal Warning Component
+  // Strict Legal Warning (Bloomberg Elite Style)
   const renderLegalWarning = () => (
     <motion.div 
-      initial={{ opacity: 0, scale: 1.1 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, filter: "blur(20px)" }}
-      className="max-w-5xl p-16 border border-[#222] bg-black/95 backdrop-blur-3xl relative overflow-hidden shadow-[0_0_150px_rgba(0,0,0,1)]"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 1.1, filter: 'blur(40px)' }}
+      transition={{ duration: 2.5 }}
+      className="max-w-5xl w-full p-2 bg-gradient-to-br from-[#D4AF37]/40 via-transparent to-black border border-[#D4AF37]/30 relative z-50"
     >
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-red-600/30" />
-      <div className="flex items-center gap-6 mb-12">
-        <div className="w-12 h-12 border-4 border-red-600 animate-pulse flex items-center justify-center font-black text-red-600">!</div>
-        <div className="text-red-600 font-bold text-4xl tracking-[0.3em] uppercase">
-          СУВЕРЕННИЙ ЦЕНТР: ЗАСТЕРЕЖЕННЯ
+      <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden backdrop-blur-3xl">
+        <div className="absolute top-0 right-0 p-8">
+           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">PROPRIETARY_PROTOCOL_57.8</div>
         </div>
-      </div>
-      
-      <div className="space-y-8 text-white/50 font-mono text-base leading-relaxed border-l border-white/10 pl-10">
-        <p>
-          ВИ ВХОДИТЕ В ЕКОСИСТЕМУ <span className="text-white font-bold">PREDATOR Analytics v57.5-APEX</span>. 
-          ЦЯ СИСТЕМА ПРИЗНАЧЕНА ДЛЯ СТРАТЕГІЧНОГО МОНІТОРИНГУ ДЕРЖАВНОЇ БЕЗПЕКИ ТА ФІНАНСОВОГО СУВЕРЕНІТЕТУ.
-        </p>
-        <p className="text-red-500/80 font-bold italic">
-          ПРОТОКОЛ "ЯСНОВИДЕЦЬ" АКТИВОВАНО. КОЖЕН БІТ ВАШОЇ ТРАЕКТОРІЇ ПІДПОРЯДКОВАНИЙ НЕЙРОННОМУ АНАЛІЗУ. 
-          НЕАВТОРИЗОВАНІ ДІЇ ПРИЗВЕДУТЬ ДО НЕГАЙНОЇ БЛОКИРОВКИ ТА ПЕРЕДАЧІ ДАНИХ ДО ВІДПОВІДНИХ СЛУЖБ.
-        </p>
-        <div className="pt-8 grid grid-cols-2 gap-8 text-[10px] tracking-widest text-white/20 uppercase">
-          <div>INFRA_COST: $1,570,000,000 USD</div>
-          <div>AUTH_METHOD: NEURAL_SIGNATURE_v4</div>
-          <div>ENCRYPTION: QUANTUM_LATTICE_2048</div>
-          <div>NODE: KYIV_CENTRAL_HUB</div>
+        
+        <div className="flex flex-col gap-20">
+          <div className="space-y-6">
+             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60">Sovereign Authorization Layer</div>
+             <h2 className="text-white text-7xl font-light tracking-[0.2em] uppercase leading-tight">
+               Правовий <span className="text-[#D4AF37] font-medium">Суверенітет</span>
+             </h2>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-16 border-t border-white/5 pt-16">
+            <div className="text-white/40 font-mono text-sm leading-relaxed space-y-6">
+              <p>
+                ДОСТУП ДО <span className="text-[#D4AF37]">PREDATOR ELITE</span> ОБМЕЖЕНИЙ. 
+                ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУ ПРОЗОРИСТЬ ВАШИХ ДІЙ ПЕРЕД АВТОНОМНИМ ЯДРОМ.
+              </p>
+              <div className="h-[1px] w-48 bg-[#D4AF37]/30" />
+              <p className="text-[10px] tracking-widest text-white/20 uppercase italic">
+                Всі операції логуються в незмінному реєстрі WORM.
+              </p>
+            </div>
+            <div className="flex flex-col justify-end items-end gap-10">
+               <div className="flex gap-1.5">
+                  {[...Array(24)].map((_, i) => (
+                    <motion.div 
+                      key={i} 
+                      animate={{ height: [12, 30, 12] }}
+                      transition={{ repeat: Infinity, duration: 1 + Math.random(), ease: "easeInOut" }}
+                      className="w-1 bg-[#D4AF37]/40" 
+                    />
+                  ))}
+               </div>
+               <div className="text-[11px] text-[#D4AF37] tracking-[0.8em] uppercase font-bold animate-pulse">
+                 АНАЛІЗ БІОМЕТРИЧНОГО ВІДБИТКУ...
+               </div>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div className="mt-16 flex justify-between items-center">
-        <div className="flex gap-2">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="w-3 h-3 bg-red-600 animate-ping" style={{ animationDelay: `${i * 0.2}s` }} />
-          ))}
-        </div>
-        <motion.div
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="text-white font-mono text-sm tracking-[0.5em]"
-        >
-          ЧЕКАЙТЕ... ІНІЦІАЛІЗАЦІЯ ЯДРА
-        </motion.div>
       </div>
     </motion.div>
   );
-  
-  // Ініціалізація Grid та вузлів розвідки
+
+  // Initialize Particle Field
   useEffect(() => {
-    particles.current = Array.from({ length: 1200 }, () => ({
-      x: (Math.random() - 0.5) * 5000,
-      y: (Math.random() - 0.5) * 5000,
+    particles.current = Array.from({ length: 2000 }, () => ({
+      x: (Math.random() - 0.5) * 8000,
+      y: (Math.random() - 0.5) * 8000,
       z: Math.random() * 5000,
       px: 0, py: 0,
-      c: Math.random() > 0.95 ? '#D4AF37' : '#222'
+      c: Math.random() > 0.98 ? '#D4AF37' : '#222'
     }));
   }, []);
 
-  // Суворий потік логів
+  // System Log Stream
   useEffect(() => {
     const logs = [
-      "BOOT: PRIMARY_KERNELS_LOADED [v57.5.0]",
-      "STORAGE: ATTACHING NEURAL_STORAGE // 12.8 EB",
-      "CORE: SYNCING WITH GLOBAL_INTEL_H100 [READY]",
-      "NETWORK: SECURE_TUNNEL_ESTABLISHED (AES-Q)",
-      "SIGINT: SCANNING GLOBAL_CASH_FLOWS...",
-      "AUTH: OMEGA_ELITE CLEARANCE VERIFIED",
-      "SYSTEM: SOVEREIGN_OVERRIDE_ACTIVE",
-      "READY: PREDATOR_AWAKENED.",
+      "BOOT: INITIALIZING ELITE_SYSCALLS",
+      "CORE: ATTACHING NEURAL_SYNAPSE_v57",
+      "SIGINT: SCANNING GLOBAL_RESERVES [KYIV_SYNC]",
+      "AUTH: OMEGA_CLEARANCE_ESTABLISHED",
+      "STATUS: PREDATOR_AWAKENING [SOVEREIGN_MODE]",
     ];
     let i = 0;
     const interval = setInterval(() => {
       if (i < logs.length) {
         setBootLogs(prev => [...prev.slice(-12), logs[i]]);
-        sfx.playTypeclick();
-        if (i % 3 === 0) sfx.playHeartbeatImpact();
+        sfx.playEliteClick();
         i++;
       } else {
         clearInterval(interval);
       }
-    }, 1200);
+    }, 600);
     return () => clearInterval(interval);
   }, []);
 
-  // Main Canvas Render Loop
+  // Render Loop Implementation
   useEffect(() => {
     let frame: number;
     const canvas = canvasRef.current;
@@ -442,9 +330,9 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
     let localPhase = phase;
 
     const drawGrid = (w: number, h: number, opacity: number) => {
-      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.05})`;
+      ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.15})`;
       ctx.lineWidth = 0.5;
-      const step = 60;
+      const step = 100;
       for (let x = 0; x < w; x += step) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
       }
@@ -453,90 +341,61 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       }
     };
 
-    const drawMap = (elapsed: number, w: number, h: number) => {
-      const cx = w / 2, cy = h / 2;
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(elapsed / 10000);
-      
-      // Draw world-like points
-      for (let i = 0; i < 50; i++) {
-        const angle = (i / 50) * Math.PI * 2;
-        const dist = 300 + Math.sin(elapsed / 1000 + i) * 20;
-        const x = Math.cos(angle) * dist;
-        const y = Math.sin(angle) * dist;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = i % 5 === 0 ? '#D4AF37' : 'rgba(255,255,255,0.2)';
-        ctx.fill();
-        
-        if (i % 8 === 0) {
-          ctx.strokeStyle = 'rgba(212, 175, 55, 0.1)';
-          ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(x, y); ctx.stroke();
-        }
-      }
-      ctx.restore();
-    };
-
     const render = () => {
       const elapsed = Date.now() - startTime.current;
       const W = canvas.width = window.innerWidth;
       const H = canvas.height = window.innerHeight;
       const cx = W / 2, cy = H / 2;
 
-      ctx.fillStyle = '#050505';
+      ctx.fillStyle = '#010101';
       ctx.fillRect(0, 0, W, H);
 
-      // Phases control (Sovereign Pacing - FASTER)
-      if (elapsed < 4000 && localPhase !== 0) { 
-        localPhase = 0; 
-        setPhase(0); 
-        sfx.playQuantumHum(); 
-        sfx.playCosmicVibration();
-        sfx.speak("Система завантаження активована. Ідентифікація суверенного суб'єкта.");
+      // Phase Control (Optimized Speed)
+      if (elapsed < 3000 && localPhase !== 0) { 
+        localPhase = 0; setPhase(0); 
+        sfx.playSovereignDrone(); 
+        sfx.speak("Протоколл ініціалізаціі. Визначення повноважень.");
       }
-      else if (elapsed >= 4000 && elapsed < 9000 && localPhase !== 1) { 
-        localPhase = 1; 
-        setPhase(1); 
+      else if (elapsed >= 3000 && elapsed < 6000 && localPhase !== 1) { 
+        localPhase = 1; setPhase(1); 
+        sfx.playImpact();
+        sfx.speak("Ядро ідентифіковано. Завантаження когнітивних стеків.");
       }
-      else if (elapsed >= 9000 && elapsed < 20000 && localPhase !== 1.5) { 
-        localPhase = 1.5; 
-        setPhase(1.5); 
-        sfx.speak("Глобальне таргетування активне. Сканування векторів загрози.");
+      else if (elapsed >= 6000 && elapsed < 9000 && localPhase !== 1.5) { 
+        localPhase = 1.5; setPhase(1.5); 
+        sfx.speak("Створення нейронних зв'язків. Глобальний моніторинг активовано.");
       }
-      else if (elapsed >= 20000 && elapsed < 35000 && localPhase !== 2) { 
-        localPhase = 2; 
-        setPhase(2); 
-        sfx.speak("Аналіз завершено. Виявлено критичні співпадіння в тіньових реєстрах.");
+      else if (elapsed >= 9000 && elapsed < 12000 && localPhase !== 2) { 
+        localPhase = 2; setPhase(2); 
+        sfx.speak("Перевірка цілісності даних. Синхронізація з хабом.");
       }
-      else if (elapsed >= 35000 && localPhase < 3) { 
-        localPhase = 3; 
-        setPhase(3); 
-        sfx.playApexMatchFlash(); 
-        sfx.speak("Доступ надано. Ласкаво просимо до Предатор Аналітікс.");
+      else if (elapsed >= 12000 && localPhase < 3) { 
+        localPhase = 3; setPhase(3); 
+        sfx.playImpact();
+        sfx.speak("Система готова. Повний суверенітет підтверджено.");
+        setTimeout(onComplete, 2500);
       }
       
-      if (elapsed >= 48000 && localPhase < 4) { onComplete(); }
-
+      // Phase 3 & Completion is handled by selection
+      
       drawGrid(W, H, 0.4);
 
-      if (localPhase === 1.5) {
-        drawMap(elapsed, W, H);
-      }
-
-      // Starfield / Data points
-      const speed = localPhase >= 2 ? (localPhase === 3 ? 150 : 80) : 8;
+      // Advanced Starfield (Hyper-speed during transitions)
+      const speed = localPhase >= 2.5 ? 200 : (localPhase >= 1 ? 25 : 8);
       ctx.save();
       ctx.translate(cx, cy);
       particles.current.forEach((p) => {
         p.z -= speed;
-        if (p.z <= 0) p.z = 5000;
+        if (p.z <= 0) {
+          p.z = 5000;
+          p.x = (Math.random() - 0.5) * 8000;
+          p.y = (Math.random() - 0.5) * 8000;
+        }
         const sx = p.x / (p.z / 1000);
         const sy = p.y / (p.z / 1000);
         if (Math.abs(sx) < W && Math.abs(sy) < H && p.px !== 0) {
           ctx.beginPath(); ctx.moveTo(p.px, p.py); ctx.lineTo(sx, sy);
-          ctx.strokeStyle = p.c + Math.floor(Math.min(1, 1-p.z/5000)*40).toString(16).padStart(2,'0');
+          ctx.strokeStyle = p.c + Math.floor(Math.min(1, 1-p.z/5000)*80).toString(16).padStart(2,'0');
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -544,8 +403,12 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       });
       ctx.restore();
 
-      // Noise grain
-      ctx.fillStyle = `rgba(255,255,255,${0.02 * Math.random()})`;
+      // Atmospheric Vignette
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H));
+      grad.addColorStop(0, 'rgba(0,0,0,0)');
+      grad.addColorStop(0.8, 'rgba(0,0,0,0.8)');
+      grad.addColorStop(1, 'rgba(0,0,0,1)');
+      ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
       frame = requestAnimationFrame(render);
@@ -553,101 +416,70 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
 
     frame = requestAnimationFrame(render);
     return () => cancelAnimationFrame(frame);
-  }, [onComplete, phase]);
-
-  // Target Label updates
-  useEffect(() => {
-    if (phase === 1.5) {
-      const labels = ["NODE_SCAN: ZURICH", "AUTH: OMEGA_ELITE", "DATA: 12.8 EB", "TARGET: GLOBAL_SHADOW", "HUB: SINGAPORE"];
-      let i = 0;
-      const interval = setInterval(() => {
-        setTargetLabel(labels[i % labels.length]);
-        i++;
-      }, 1500);
-      return () => clearInterval(interval);
-    }
-  }, [phase]);
-
-  // Parsing Text updates
-  useEffect(() => {
-    if (phase === 2) {
-      let sIdx = 0;
-      const sTarget = RAW_SOURCES[Math.floor(Math.random() * RAW_SOURCES.length)];
-      const interval = setInterval(() => {
-        if (sIdx < sTarget.length) {
-          setSourceText(prev => prev + sTarget[sIdx]);
-          sIdx++;
-          sfx.playTypeclick();
-        } else {
-          setMatchLine(true);
-          sfx.playApexMatchFlash();
-          clearInterval(interval);
-        }
-      }, 50);
-      return () => clearInterval(interval);
-    }
   }, [phase]);
 
   return (
-    <div className={`fixed inset-0 z-[99999] bg-[#050505] flex items-center justify-center overflow-hidden font-mono select-none ${matchLine ? 'animate-subtle-shake' : ''}`}>
+    <div className={`fixed inset-0 z-[99999] bg-[#010101] flex items-center justify-center overflow-hidden font-mono select-none ${matchLine ? 'animate-subtle-shake' : ''}`}>
       <canvas ref={canvasRef} className="absolute inset-0" />
       
-      {/* SCANNING OVERLAY */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.95)_100%)] z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 pointer-events-none z-10" />
+      {/* HUD OVERLAYS */}
+      <div className="absolute inset-0 pointer-events-none z-10">
         <div className="scanline" />
         <div className="crt-overlay" />
         
-        {/* STATUS MARKINGS */}
-        <div className="absolute top-10 left-12 flex flex-col gap-2 z-50 opacity-40">
-           <div className="text-white font-black text-xl tracking-[0.5em] italic drop-shadow-[0_0_10px_white]">SOVEREIGN // v57.5-APEX</div>
-           <div className="h-[2px] w-64 bg-white/20" />
-           <div className="text-white/40 text-[10px] tracking-widest uppercase font-bold">Absolute Intelligence Command</div>
+        {/* CORNER DATA */}
+        <div className="absolute top-16 left-16 flex flex-col gap-4 z-50 opacity-60">
+           <div className="text-white font-black text-3xl tracking-[0.8em] italic filter drop-shadow-[0_0_20px_rgba(212,175,55,0.5)]">
+             PREDATOR <span className="text-[#D4AF37]">ELITE</span>
+           </div>
+           <div className="h-[1px] w-96 bg-gradient-to-r from-[#D4AF37] to-transparent shadow-[0_0_10px_#D4AF37]" />
+           <div className="text-white/30 text-[10px] tracking-[1em] uppercase font-bold">Absolute Intelligence Cluster // v57.8</div>
         </div>
         
-        <div className="absolute top-10 right-12 flex flex-col items-end gap-2 z-50 opacity-40 text-right">
-           <div className="text-yellow-600 font-black text-sm tracking-widest uppercase">CLEARANCE: OMEGA_ELITE</div>
-           <div className="text-white/40 font-mono text-[9px] uppercase tracking-tighter">Cluster Security: 100.0% // NEURAL_LOCKED</div>
+        <div className="absolute top-16 right-16 flex flex-col items-end gap-2 z-50 opacity-40 text-right">
+           <div className="text-[#D4AF37] font-black text-xs tracking-[1em] uppercase">ACCESS: SUPREME_SOVEREIGN</div>
+           <div className="text-white/20 font-mono text-[9px] uppercase tracking-widest italic">NEURAL_SHIELD_ACTIVE // 2048-Q Encryption</div>
         </div>
+
+        <button 
+          onClick={() => {
+            setPhase(3);
+            sfx.playImpact();
+            setTimeout(onComplete, 1000);
+          }}
+          className="absolute bottom-32 right-16 px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[10px] tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50 backdrop-blur-md"
+        >
+          ПРОПУСТИТИ ЗАСТАВКУ
+        </button>
       </div>
 
-      {/* HUD: DATA STREAM */}
-      <div className="absolute top-24 inset-x-28 flex justify-between items-start z-40">
+      {/* LEFT SIDE LOG STREAM */}
+      <div className="absolute inset-y-0 left-20 flex items-center z-40 pointer-events-none">
         <motion.div 
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -100 }}
           animate={{ opacity: 1, x: 0 }}
-          className="border-l border-white/10 pl-10 py-6 bg-black/60 backdrop-blur-2xl max-w-sm border-y border-white/5"
+          className="border-l border-[#D4AF37]/20 pl-10 space-y-6"
         >
-          <div className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.4em] mb-6">Системний Лог Ядра:</div>
-          <div className="space-y-3">
+          <div className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.6em] mb-12 italic opacity-40">System_Initialization_Log:</div>
+          <div className="space-y-4">
             {bootLogs.map((log, i) => (
-              <div key={i} className="text-[10px] font-mono text-white/40 tracking-widest italic truncate flex items-center gap-3">
-                <span className="w-1 h-1 bg-red-600 rounded-full animate-pulse" />
-                {`> ${log || ''}`}
+              <div key={i} className="text-[9px] font-mono text-white/20 tracking-[0.4em] flex items-center gap-5">
+                <span className="w-1 h-4 bg-[#D4AF37]/30" />
+                {`> ${log}`}
+                <motion.span 
+                  animate={{ opacity: [0.2, 1, 0.2] }}
+                  transition={{ repeat: Infinity, duration: 1 }}
+                  className="text-[#D4AF37]/40"
+                >[ACK]</motion.span>
               </div>
             ))}
-          </div>
-        </motion.div>
-        
-        <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="text-right border-r border-white/10 pr-10 py-6 bg-black/60 backdrop-blur-2xl border-y border-white/5"
-        >
-          <div className="text-[11px] text-white/40 font-black tracking-[0.3em] mb-6 uppercase">Статус Когнітивного Кластера:</div>
-          <div className="text-[10px] text-white/20 font-mono text-right space-y-2 italic">
-             <div>H100_NODES: 16,384 [ONLINE]</div>
-             <div>COGNITIVE_SYNC: 0.0004ms</div>
-             <div>THERMAL_STATE: CRYOGENIC</div>
-             <div>DATA_FLOW: 12.8 Tbit/s</div>
           </div>
         </motion.div>
       </div>
 
       <AnimatePresence mode="wait">
         {phase === 0 && (
-          <div key="legal" className="flex items-center justify-center min-h-screen z-[100]">
+          <div key="legal" className="flex items-center justify-center min-h-screen z-[100] px-20">
             {renderLegalWarning()}
           </div>
         )}
@@ -655,21 +487,25 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
         {phase === 1 && (
           <motion.div 
             key="logo"
-            initial={{ opacity: 0, letterSpacing: '0.1em' }}
-            animate={{ opacity: 1, letterSpacing: '4em' }}
-            exit={{ opacity: 0, scale: 1.5, filter: 'blur(30px)' }}
-            transition={{ duration: 5 }}
+            initial={{ opacity: 0, scale: 0.8, filter: 'blur(40px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, filter: 'blur(50px)', scale: 1.1 }}
+            transition={{ duration: 4, ease: "easeOut" }}
             className="flex flex-col items-center z-10"
           >
-            <div className="mb-20 opacity-50 scale-110 grayscale brightness-200">
-               <GeometricRaptor className="w-48 h-48 text-white" />
+            <div className="mb-20 brightness-150 filter drop-shadow-[0_0_50px_rgba(212,175,55,0.6)]">
+               <GeometricRaptor className="w-56 h-56 text-[#D4AF37]" />
             </div>
-            <h1 className="text-white text-9xl font-thin uppercase tracking-inherit drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+            <h1 className="text-white text-[12rem] font-thin uppercase tracking-[0.8em] leading-none mb-10 relative">
               PREDATOR
+              <motion.div 
+                animate={{ opacity: [0.1, 0.4, 0.1], width: ['0%', '100%', '0%'] }}
+                transition={{ repeat: Infinity, duration: 3 }}
+                className="absolute inset-x-0 bottom-0 h-1 bg-[#D4AF37] blur-md mx-auto"
+              />
             </h1>
-            <div className="h-[1px] w-[800px] bg-gradient-to-r from-transparent via-white/20 to-transparent mt-16" />
-            <p className="text-white/30 text-[12px] mt-10 tracking-[2em] uppercase font-light">
-               Sovereign Intelligence Domain
+            <p className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-20 italic">
+               The World is Data. We are the Predators.
             </p>
           </motion.div>
         )}
@@ -681,20 +517,24 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex flex-col items-center justify-center z-20"
           >
-             <div className="relative w-[600px] h-[600px] flex items-center justify-center">
-                <div className="absolute inset-0 border-[2px] border-white/5 rounded-full animate-spin-slow" />
-                <div className="absolute inset-20 border border-white/10 rounded-full animate-spin-reverse" />
-                <div className="absolute inset-40 border-[4px] border-yellow-700/20 rounded-full animate-pulse" />
+             <div className="relative w-[800px] h-[800px] flex items-center justify-center">
+                <div className="absolute inset-0 border-[0.5px] border-[#D4AF37]/10 rounded-full animate-spin-slow opacity-10" />
+                <div className="absolute inset-40 border-[0.5px] border-[#D4AF37]/20 rounded-full animate-spin-reverse opacity-20" />
+                <div className="absolute inset-[320px] border-2 border-[#D4AF37]/40 rounded-full animate-pulse opacity-30 shadow-[0_0_100px_rgba(212,175,55,0.2)]" />
                 
-                <div className="text-center bg-black/80 p-12 backdrop-blur-3xl border border-white/10 shadow-[0_0_100px_rgba(0,0,0,1)]">
-                   <div className="text-[14px] text-yellow-600 font-black tracking-[0.8em] uppercase mb-6 drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]">
-                     ГЛОБАЛЬНЕ ТАРГЕТУВАННЯ
+                <div className="text-center bg-black/80 p-32 backdrop-blur-3xl border border-[#D4AF37]/20 shadow-[0_0_200px_rgba(0,0,0,1)] relative overflow-hidden">
+                   <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
+                   <div className="text-[11px] text-[#D4AF37] font-black tracking-[2em] uppercase mb-12 opacity-40 italic">
+                     Neural_Core_Synchronization
                    </div>
-                   <div className="text-white text-5xl font-thin tracking-[0.3em] uppercase mb-8 h-16 flex items-center justify-center">
-                      {targetLabel}
+                   <div className="text-white text-7xl font-light tracking-[0.4em] uppercase mb-10 h-24 flex items-center justify-center">
+                      <motion.span
+                        animate={{ opacity: [0.3, 1, 0.3], x: [-10, 0, 10] }}
+                        transition={{ repeat: Infinity, duration: 4 }}
+                      >{targetLabel}</motion.span>
                    </div>
-                   <div className="text-white/30 text-[10px] tracking-widest font-mono uppercase">
-                      HUB_SYNC: 100% // SCANNING_VECTOR_Z
+                   <div className="text-[#D4AF37]/30 text-[10px] tracking-[1em] font-mono uppercase italic border-t border-white/5 pt-8">
+                      LOAD: 3.42% // CLUSTER: READY
                    </div>
                 </div>
              </div>
@@ -702,131 +542,95 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
         )}
 
         {phase === 2 && (
-          <div className="w-full max-w-[95vw] flex flex-col items-center gap-16 relative z-10 px-12">
-            <div className="text-red-600/90 bg-red-950/20 border border-red-900/40 px-12 py-3 text-[16px] tracking-[2.5em] uppercase font-black rounded backdrop-blur-xl shadow-[0_0_100px_rgba(255,0,0,0.1)]">
-               КРИТИЧНА КОНВЕРГЕНЦІЯ ДАНИХ
+          <div className="w-full max-w-[85vw] flex flex-col items-center gap-24 relative z-10 px-24">
+            <div className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-30 pb-12 border-b border-[#D4AF37]/10 w-full text-center italic">
+               Global_Extraction_Protocols
             </div>
             
-            <div className="w-full grid grid-cols-2 gap-24">
+            <div className="w-full grid grid-cols-2 gap-32">
               <motion.div 
-                initial={{ opacity: 0, x: -400, skewX: 10 }}
-                animate={{ opacity: 1, x: 0, skewX: 0 }}
-                className="flex-1 border-[4px] border-red-900/40 p-16 bg-black flex flex-col gap-10 relative overflow-hidden rounded-3xl"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
               >
-                <div className="absolute top-0 left-0 w-2 h-full bg-red-600 shadow-[0_0_30px_red]" />
-                <div className="text-red-500 font-black tracking-widest text-[14px] uppercase opacity-50 border-b border-red-900/30 pb-4"> RAW_INTEL_STREAM:</div>
-                <div className="text-red-500 text-3xl font-mono font-bold leading-tight h-80 overflow-hidden break-all tracking-tighter italic">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
+                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ RAW_SIGINT_STREAM ] </div>
+                <div className="text-white font-mono text-2xl leading-normal h-80 overflow-hidden break-all tracking-tight opacity-60 italic">
                   {sourceText}
-                  <span className="inline-block w-4 h-8 bg-red-500 ml-2 animate-pulse" />
+                  <motion.span 
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ repeat: Infinity, duration: 0.5 }}
+                    className="inline-block w-4 h-8 bg-[#D4AF37] ml-4 shadow-[0_0_20px_#D4AF37]" 
+                  />
                 </div>
               </motion.div>
 
               <motion.div 
-                initial={{ opacity: 0, x: 400, skewX: -10 }}
-                animate={{ opacity: 1, x: 0, skewX: 0 }}
-                className="flex-1 border-[4px] border-yellow-900/40 p-16 bg-black flex flex-col gap-10 relative overflow-hidden rounded-3xl"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
               >
-                <div className="absolute top-0 right-0 w-2 h-full bg-yellow-600 shadow-[0_0_30px_gold]" />
-                <div className="text-yellow-600 font-black tracking-widest text-[14px] uppercase opacity-50 border-b border-yellow-900/30 pb-4"> CROSS_REFERENCE_SYNC:</div>
-                <div className="text-yellow-600 text-3xl font-mono leading-relaxed h-80 overflow-hidden italic space-y-2 opacity-80">
-                  {REGISTRY_ENTRIES.map((entry, idx) => (
-                    <div key={idx} className="border-l-2 border-yellow-900/50 pl-4 mb-3">
-                       {`> ${entry}`}
-                    </div>
+                <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
+                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ VERIFIED_INTEL ] </div>
+                <div className="text-white font-mono text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
+                  {["АНАЛІЗ ТРАНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТОРИНГ КОРДОНІВ: АКТИВНО", "ПОШУК АНОМАЛІЙ: 0.042ms", "РИЗИК-ПРОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
+                    <motion.div 
+                      key={idx} 
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.2 }}
+                      className="flex items-center gap-8 border-b border-white/5 pb-4"
+                    >
+                       <span className="w-3 h-3 bg-[#D4AF37]/40 rotate-45" />
+                       {entry}
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
             </div>
-
-            {matchLine && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.5, filter: 'blur(20px)' }}
-                animate={{ opacity: 1, scale: 1.2, filter: 'blur(0px)' }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-12"
-              >
-                <div className="h-48 w-[4px] bg-red-600 shadow-[0_0_50px_red]" />
-                <div className="px-32 py-16 bg-black border-[10px] border-red-600 text-red-600 font-black text-7xl tracking-[0.4em] uppercase text-center backdrop-blur-3xl shadow-[0_0_200px_red] skew-x-[-10deg]">
-                   ЦІЛЬ<br/>ВИЯВЛЕНО
-                </div>
-                <div className="h-48 w-[4px] bg-red-600 shadow-[0_0_50px_red]" />
-              </motion.div>
-            )}
           </div>
         )}
 
-        {phase === 2.5 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center gap-24 z-50"
-          >
-            <div className="text-center">
-               <h2 className="text-white text-7xl font-thin tracking-[1em] uppercase mb-4 drop-shadow-[0_0_20px_white]">ВИБІР ВЕКТОРА</h2>
-               <div className="h-1 w-[600px] bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto" />
-            </div>
-            
-            <div className="grid grid-cols-3 gap-12 w-full max-w-7xl">
-              {[
-                { id: 'OPERATIONAL', label: 'ОПЕРАТИВНИЙ', desc: 'ПОВНИЙ КОНТРОЛЬ ПОЛЕПШЕННЯ' },
-                { id: 'STRATEGIC', label: 'СТРАТЕГІЧНИЙ', desc: 'АНАЛІТИКА ВИЩОГО РІВНЯ' },
-                { id: 'SIGINT', label: 'SIGINT', desc: 'ГЛОБАЛЬНЕ ПЕРЕХОПЛЕННЯ' }
-              ].map((m) => (
-                <motion.button
-                  key={m.id}
-                  whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(212,175,55,0.4)', scale: 1.05 }}
-                  onClick={() => {
-                    sfx.playApexMatchFlash();
-                    setPhase(3);
-                  }}
-                  className="bg-black/80 border border-white/5 p-20 text-center transition-all duration-700 relative group overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 p-4 font-mono text-[10px] text-white/10 italic">NODE_ALPHA_{Math.floor(Math.random()*99)}</div>
-                  <div className="text-white font-light tracking-[0.6em] text-2xl mb-6">{m.label}</div>
-                  <div className="text-white/20 text-[10px] tracking-[0.4em] uppercase font-bold">{m.desc}</div>
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-4 h-[2px] bg-white opacity-0 group-hover:opacity-100 transition-all duration-700" />
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
+        {/* Phase 2.5 removal: directly to final phase */}
 
         {phase === 3 && (
           <motion.div 
             key="final"
-            initial={{ opacity: 0, scale: 0.5 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center z-10"
           >
-            <div className="p-40 border-[20px] border-double border-red-700 bg-black relative shadow-[0_0_300px_rgba(255,0,0,0.6)] skew-x-[-8deg]">
-              <motion.div 
-                animate={{ opacity: [0.1, 0.5, 0.1] }}
-                transition={{ repeat: Infinity, duration: 0.1 }}
-                className="absolute inset-0 bg-red-600/20"
+            <div className="p-48 border-[0.5px] border-[#D4AF37]/30 bg-black relative shadow-[0_0_300px_rgba(0,0,0,1)] overflow-hidden">
+               <motion.div 
+                animate={{ x: ['-200%', '200%'] }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent skew-x-[-30deg]"
               />
-              <h2 className="text-white text-[15rem] font-black tracking-tighter leading-none text-center italic">
-                ДОСТУП<br/>
-                <span className="text-yellow-600 drop-shadow-[5px_5px_0_#000]">НАДАНО</span>
+              <h2 className="text-white text-[12rem] font-thin tracking-[0.6em] leading-none text-center uppercase relative mix-blend-difference">
+                 СИСТЕМА <span className="text-[#D4AF37]">ГОТОВА</span>
               </h2>
             </div>
-            <div className="mt-20 text-yellow-600 text-2xl font-black tracking-[1.5em] uppercase animate-pulse">
-               PREDATOR ONLINE // WELCOME COMMANDER
+            <div className="mt-20 text-[#D4AF37] text-[11px] font-black tracking-[4em] uppercase opacity-40 animate-pulse italic ml-[4em]">
+               Sovereignty Protocol Engaged
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="absolute bottom-0 w-full bg-[#050505] border-t border-white/5 h-12 flex items-center overflow-hidden z-[70] px-12">
-        <div className="bg-[#111] text-red-600 font-black px-6 h-full flex items-center tracking-widest text-[11px] border-r border-white/10 skew-x-[-15deg] mr-8">
-           CENTRAL_OSINT_NODE
+      {/* GLOBAL FOOTER SYNC TICKER */}
+      <div className="absolute bottom-0 w-full bg-black border-t border-[#D4AF37]/10 h-16 flex items-center overflow-hidden z-[70] px-20 shadow-[0_-30px_60px_rgba(0,0,0,0.8)]">
+        <div className="bg-[#050505] text-[#D4AF37] font-black px-10 h-full flex items-center tracking-[0.6em] text-[11px] border-r border-[#D4AF37]/30 skew-x-[-20deg] mr-16 shadow-[10px_0_30px_rgba(0,0,0,0.8)]">
+           KYIV_CENTRAL_CORE
         </div>
-        <div className="flex animate-ticker whitespace-nowrap gap-20 text-white/20 font-mono text-[10px] tracking-widest items-center">
+        <div className="flex animate-ticker whitespace-nowrap gap-32 text-white/20 font-mono text-[10px] tracking-[0.6em] items-center italic">
           {[...Array(5)].map((_, i) => (
             <React.Fragment key={i}>
-              <span className="text-yellow-600/50">KYIV_HUB: {8000 + i * 12} NODES SYNCED</span>
-              <span>ENTITY_SHOCK: DETECTED IN PORT_ODESA</span>
-              <span className="text-red-600/50">TRANS_ALERT: $4.2B CRYPTO_EXIT v.9.41</span>
-              <span>LATENCY: 0.0042ms</span>
-              <span>UPTIME: 1,442 DAYS</span>
+              <span className="text-[#D4AF37]/80">KYIV_NODE_H100: SYNCED</span>
+              <span>GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...</span>
+              <span className="text-white/40">NEURAL_LOAD: 3.48%</span>
+              <span className="text-[#D4AF37]/80">MARKET_MANIPULATION_DETECTED</span>
+              <span>LATENCY: 0.000042ms</span>
             </React.Fragment>
           ))}
         </div>
@@ -849,19 +653,19 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
           to { transform: rotate(-360deg); }
         }
         .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
+          animation: spin-slow 40s linear infinite;
         }
         .animate-spin-reverse {
-          animation: spin-reverse 12s linear infinite;
+          animation: spin-reverse 25s linear infinite;
         }
         .scanline {
           width: 100%;
-          height: 3px;
-          background: rgba(255, 255, 255, 0.03);
+          height: 4px;
+          background: rgba(212, 175, 55, 0.05);
           position: absolute;
           top: 0;
           z-index: 100;
-          animation: scanline 6s linear infinite;
+          animation: scanline 8s linear infinite;
           pointer-events: none;
         }
         @keyframes scanline {
@@ -871,25 +675,21 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
         .crt-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
-          background-size: 100% 3px, 3px 100%;
+          background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+          background-size: 100% 4px, 4px 100%;
           z-index: 95;
           pointer-events: none;
-          opacity: 0.4;
+          opacity: 0.3;
         }
         @keyframes subtle-shake {
           0% { transform: translate(0, 0); }
-          25% { transform: translate(-2px, 2px); }
-          50% { transform: translate(2px, -2px); }
-          75% { transform: translate(-2px, -2px); }
+          25% { transform: translate(-3px, 3px); }
+          50% { transform: translate(3px, -3px); }
+          75% { transform: translate(-3px, -3px); }
           100% { transform: translate(0, 0); }
         }
         .animate-subtle-shake {
-          animation: subtle-shake 0.1s infinite;
-        }
-        .authoritative-text {
-          text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-          letter-spacing: 0.4em;
+          animation: subtle-shake 0.15s infinite;
         }
       `}</style>
     </div>

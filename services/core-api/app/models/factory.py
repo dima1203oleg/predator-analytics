@@ -143,11 +143,62 @@ class Bug(BaseModel):
     fixed_at: datetime | None = None
 
 
+class ChaosScenario(str, Enum):
+    VRAM_STRESS = "vram_stress"
+    KAFKA_LAG = "kafka_lag"
+    DB_LATENCY = "db_latency"
+    NODE_FAILURE = "node_failure"
+    API_TIMEOUT = "api_timeout"
+
+
+class ChaosLogEntry(BaseModel):
+    id: str
+    scenario: ChaosScenario
+    status: str  # "starting", "running", "stabilizing", "resolved"
+    impact: str
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
 class ImprovementPhase(str, Enum):
     OBSERVE = "observe"
     ORIENT = "orient"
     DECIDE = "decide"
     ACT = "act"
+
+
+class SwarmAgentStatus(str, Enum):
+    IDLE = "IDLE"
+    THINKING = "THINKING"
+    EXECUTING = "EXECUTING"
+    HALTED = "HALTED"
+
+
+class SwarmAgent(BaseModel):
+    """Модель агента в автономному рої"""
+    id: str
+    name: str
+    role: str
+    status: SwarmAgentStatus = SwarmAgentStatus.IDLE
+    vram_usage_gb: float = 0.0
+    current_task: str | None = None
+
+
+class ReasoningStep(BaseModel):
+    """Крок міркування агента"""
+    id: str
+    agent_id: str
+    thought: str
+    action: str | None = None
+    observation: str | None = None
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+class SandboxSession(BaseModel):
+    """Модель ізольованої пісочниці E2B"""
+    session_id: str
+    status: str  # "running" | "terminating" | "closed"
+    logs: list[str] = Field(default_factory=list)
+    uptime_seconds: int = 0
 
 
 class SystemImprovement(BaseModel):
@@ -159,3 +210,7 @@ class SystemImprovement(BaseModel):
     improvements_made: int = 0
     logs: list[str] = Field(default_factory=list)
     last_update: datetime = Field(default_factory=datetime.utcnow)
+    # Observer Mode v5.0 additions
+    swarm: list[SwarmAgent] = Field(default_factory=list)
+    active_steps: list[ReasoningStep] = Field(default_factory=list)
+    sandbox: SandboxSession | None = None

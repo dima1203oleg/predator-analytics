@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v57.2 — EXECUTIVE BOARD (WRAITH CORE)
+ * 🦅 PREDATOR v58.2 — EXECUTIVE BOARD (WRAITH CORE)
  * Головна панель CEO: Ризики, Гроші, Стратегія — за 3 секунди.
  * 
  * Розділ I.1 — Командний Центр
@@ -112,12 +112,10 @@ const scaleIn = {
 
 /* ── Кольорова палітра ── */
 const tones = {
-  emerald: { bg: 'bg-emerald-500/8 border-emerald-400/15', icon: 'text-emerald-400', glow: 'group-hover:shadow-[0_0_40px_rgba(16,185,129,0.12)]', line: 'from-emerald-500 to-teal-400' },
-  cyan: { bg: 'bg-cyan-500/8 border-cyan-400/15', icon: 'text-cyan-400', glow: 'group-hover:shadow-[0_0_40px_rgba(6,182,212,0.12)]', line: 'from-cyan-500 to-sky-400' },
-  rose: { bg: 'bg-rose-500/8 border-rose-400/15', icon: 'text-rose-400', glow: 'group-hover:shadow-[0_0_40px_rgba(244,63,94,0.12)]', line: 'from-rose-500 to-pink-400' },
-  amber: { bg: 'bg-amber-500/8 border-amber-400/15', icon: 'text-amber-400', glow: 'group-hover:shadow-[0_0_40px_rgba(245,158,11,0.12)]', line: 'from-amber-500 to-yellow-400' },
-  indigo: { bg: 'bg-indigo-500/8 border-indigo-400/15', icon: 'text-indigo-400', glow: 'group-hover:shadow-[0_0_40px_rgba(99,102,241,0.12)]', line: 'from-indigo-500 to-violet-400' },
-  violet: { bg: 'bg-violet-500/8 border-violet-400/15', icon: 'text-violet-400', glow: 'group-hover:shadow-[0_0_40px_rgba(139,92,246,0.12)]', line: 'from-violet-500 to-purple-400' },
+  gold: { bg: 'bg-yellow-500/8 border-yellow-400/15', icon: 'text-yellow-500', glow: 'group-hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]', line: 'from-yellow-600 to-yellow-400' },
+  amber: { bg: 'bg-amber-600/8 border-amber-500/15', icon: 'text-amber-500', glow: 'group-hover:shadow-[0_0_40px_rgba(180,83,9,0.15)]', line: 'from-amber-600 to-amber-400' },
+  orange: { bg: 'bg-orange-500/8 border-orange-400/15', icon: 'text-orange-400', glow: 'group-hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]', line: 'from-orange-600 to-orange-400' },
+  warm: { bg: 'bg-yellow-600/10 border-yellow-500/20', icon: 'text-yellow-400', glow: 'group-hover:shadow-[0_0_40px_rgba(234,179,8,0.12)]', line: 'from-yellow-700 to-yellow-500' },
 } as const;
 
 /* ══════════════════════════════════════════════════════════════
@@ -157,10 +155,10 @@ const PredatorV24 = () => {
 
   /* ── 4 головні KPI ── */
   const kpis = useMemo(() => [
-    { label: 'Обсяг операцій', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'emerald' as const },
-    { label: 'Декларації', value: s ? formatNumber(s.total_declarations) : '—', hint: 'Підтверджених записів', icon: Activity, tone: 'cyan' as const },
-    { label: 'Ризикових сигналів', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'rose' as const },
-    { label: 'Граф зв\'язків', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'indigo' as const },
+    { label: 'Обсяг операцій', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'gold' as const },
+    { label: 'Декларації', value: s ? formatNumber(s.total_declarations) : '—', hint: 'Підтверджених записів', icon: Activity, tone: 'warm' as const },
+    { label: 'Ризикових сигналів', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'amber' as const },
+    { label: 'Граф зв\'язків', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'orange' as const },
   ], [s]);
 
   /* ── Навігаційні секції з іконками ── */
@@ -188,17 +186,14 @@ const PredatorV24 = () => {
 
         {/* Верхній рядок: badge + status */}
         <div className="relative z-10 flex flex-wrap items-center gap-2.5 mb-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase">
-            <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
-            PREDATOR v57.2-WRAITH
+          <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-yellow-500 uppercase italic">
+            <div className="h-1.5 w-1.5 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(212,175,55,0.8)] animate-pulse" />
+            PREDATOR v58.2-WRAITH
           </div>
           <div className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase",
-            backendStatus.isOffline
-              ? "border-rose-400/20 bg-rose-500/10 text-rose-400"
-              : "border-cyan-400/20 bg-cyan-500/10 text-cyan-400"
+            "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase italic text-yellow-600 border-yellow-500/20 bg-yellow-500/10",
           )}>
-            <div className={cn("h-1.5 w-1.5 rounded-full", backendStatus.isOffline ? "bg-rose-400" : "bg-cyan-400 animate-pulse")} />
+            <div className={cn("h-1.5 w-1.5 rounded-full bg-yellow-500 animate-pulse")} />
             {backendStatus.statusLabel}
           </div>
           <div className="ml-auto text-[10px] font-mono text-slate-600 tracking-wider">
@@ -326,7 +321,7 @@ const PredatorV24 = () => {
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-black text-white flex items-center gap-2">
-                <Flame className="h-4 w-4 text-rose-400" />
+                <Flame className="h-4 w-4 text-amber-500" />
                 Критичні сигнали
               </h2>
               <div className="inline-flex items-center gap-1 rounded-full border border-rose-400/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-400">
@@ -385,19 +380,19 @@ const PredatorV24 = () => {
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-black text-white flex items-center gap-2">
-                <Database className="h-4 w-4 text-emerald-400" />
+                <Database className="h-4 w-4 text-yellow-500" />
                 Покриття даних
               </h2>
-              <div className="inline-flex items-center gap-1 rounded-full border border-emerald-400/15 bg-emerald-500/8 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+              <div className="inline-flex items-center gap-1 rounded-full border border-yellow-500/15 bg-yellow-500/8 px-2 py-0.5 text-[10px] font-bold text-yellow-500">
                 Онлайн
               </div>
             </div>
 
             <div className="space-y-1.5">
               {[
-                { label: 'Пошуковий індекс', value: s ? formatNumber(s.search_documents) : '—', hint: 'документів', icon: Search, tone: tones.cyan },
-                { label: 'Векторні ембедінги', value: s ? formatNumber(s.vectors) : '—', hint: 'записів', icon: Brain, tone: tones.violet },
-                { label: 'Митні офіси', value: overview ? formatNumber(Object.keys(overview.customs_offices || {}).length) : '—', hint: 'активних', icon: ShieldCheck, tone: tones.emerald },
+                { label: 'Пошуковий індекс', value: s ? formatNumber(s.search_documents) : '—', hint: 'документів', icon: Search, tone: tones.warm },
+                { label: 'Векторні ембедінги', value: s ? formatNumber(s.vectors) : '—', hint: 'записів', icon: Brain, tone: tones.gold },
+                { label: 'Митні офіси', value: overview ? formatNumber(Object.keys(overview.customs_offices || {}).length) : '—', hint: 'активних', icon: ShieldCheck, tone: tones.gold },
                 { label: 'Пайплайни', value: s ? formatNumber(s.active_pipelines) : '—', hint: `${s ? formatNumber(s.completed_pipelines) : '—'} завершених`, icon: Zap, tone: tones.amber },
               ].map((item) => (
                 <div

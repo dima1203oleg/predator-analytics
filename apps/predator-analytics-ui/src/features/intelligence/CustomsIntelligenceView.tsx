@@ -35,7 +35,7 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
-import { useSoundFx } from '@/hooks/useSoundFx';
+import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
 // Background Scanning HUD v57.2
@@ -65,7 +65,6 @@ const ScanningHUD: React.FC = () => {
 const ManifestXrayTerminal: React.FC = () => {
     const [lines, setLines] = useState<string[]>([]);
     const [isActive, setIsActive] = useState(true);
-    const { play } = useSoundFx();
 
     const logPool = [
         "ОТРИМАННЯ: RAW_CARGO_MANIFEST_ID_{ID}",
@@ -88,10 +87,10 @@ const ManifestXrayTerminal: React.FC = () => {
                 .replace("{EDR}", Math.floor(Math.random() * 80000000 + 10000000).toString());
             
             setLines(prev => [newLine, ...prev].slice(0, 15));
-            play('TRANSITION');
-        }, 800);
+            SovereignAudio.playScanPulse();
+        }, 1200); // Increased interval to avoid audio clutter
         return () => clearInterval(interval);
-    }, [isActive, play]);
+    }, [isActive]);
 
     return (
         <div className="w-full h-80 bg-black/60 border-2 border-yellow-500/10 rounded-[3rem] p-8 font-mono text-[10px] overflow-hidden relative group">
@@ -140,7 +139,8 @@ const CATEGORY_DATA = [
   { name: 'ІНШЕ', value: 8, color: '#64748b' },
 ];
 
-const TOP_IMPORTERS = [
+// Manifest X-Ray log messages - Ukrainian (HR-04)
+const MOCK_TOP_IMPORTERS = [
   { name: 'ТОВ "МЕТАЛ-ТРЕЙД ОПТ"', value: '$14.2M', share: '12%', trend: 'up' },
   { name: 'ПРАТ "ЕНЕРГО-СИСТЕМИ"', value: '$9.8M', share: '8%', trend: 'up' },
   { name: 'ТОВ "АГРО-ІМПОРТ ПЛЮС"', value: '$7.4M', share: '6%', trend: 'down' },
@@ -176,6 +176,11 @@ const RISK_ALERTS: RiskAlert[] = [
 export default function CustomsIntelligenceView() {
   const [activeTab, setActiveTab] = useState<'analytics' | 'importers' | 'risks' | 'signals'>('analytics');
   const [refreshing, setRefreshing] = useState(false);
+  const [tradeVolume, setTradeVolume] = useState<any[]>(TRADE_VOLUME_DATA);
+  const [categoryData, setCategoryData] = useState<any[]>(CATEGORY_DATA);
+  const [topImporters, setTopImporters] = useState<any[]>(MOCK_TOP_IMPORTERS);
+  const [riskAlerts, setRiskAlerts] = useState<RiskAlert[]>(RISK_ALERTS);
+
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   useEffect(() => {
@@ -194,16 +199,25 @@ export default function CustomsIntelligenceView() {
 
   const handleRefresh = async () => {
       setRefreshing(true);
+      SovereignAudio.playScanPulse();
       try {
           // Реальне оновлення через сервіс
-          await Promise.all([
+          const [volume, categories, importers, alerts] = await Promise.all([
               analyticsService.getTradeVolume(),
               analyticsService.getCategoryStructure(),
               analyticsService.getTopImporters(),
               analyticsService.getRiskAlerts()
           ]);
+
+          if (volume.length) setTradeVolume(volume);
+          if (categories.length) setCategoryData(categories);
+          if (importers.length) setTopImporters(importers);
+          if (alerts.length) setRiskAlerts(alerts);
+          
+          SovereignAudio.playImpact();
       } catch (err) {
           console.error('[CustomsIntel] Refresh error:', err);
+          SovereignAudio.playAlert();
       }
       setRefreshing(false);
       
@@ -219,6 +233,10 @@ export default function CustomsIntelligenceView() {
         }
       }));
   };
+
+  useEffect(() => {
+    handleRefresh();
+  }, []);
 
   return (
     <PageTransition>
@@ -340,7 +358,7 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="h-[500px]">
                              <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={TRADE_VOLUME_DATA}>
+                                <AreaChart data={tradeVolume}>
                                    <defs>
                                       <linearGradient id="yellowGrad" x1="0" y1="0" x2="0" y2="1">
                                          <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.2} />
@@ -365,8 +383,8 @@ export default function CustomsIntelligenceView() {
                           <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] pb-8 border-b border-white/[0.04] font-serif">СТРУКТУРА_ТОВАРНИХ_ГРУП</h2>
                           <div className="flex justify-center p-10 bg-black/40 rounded-[4rem] border-2 border-white/[0.02] shadow-inner">
                              <RePieChart width={320} height={320}>
-                                <Pie data={CATEGORY_DATA} innerRadius={80} outerRadius={130} paddingAngle={6} dataKey="value" cx="50%" cy="50%">
-                                   {CATEGORY_DATA.map((entry, i) => (
+                                <Pie data={categoryData} innerRadius={80} outerRadius={130} paddingAngle={6} dataKey="value" cx="50%" cy="50%">
+                                   {categoryData.map((entry, i) => (
                                       <Cell key={i} fill={entry.color} stroke="transparent" />
                                    ))}
                                 </Pie>
@@ -376,7 +394,7 @@ export default function CustomsIntelligenceView() {
                              </RePieChart>
                           </div>
                           <div className="space-y-6">
-                             {CATEGORY_DATA.map(d => (
+                             {categoryData.map(d => (
                                <div key={d.name} className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.01] border-2 border-white/[0.03] hover:border-yellow-500/20 transition-all group">
                                   <div className="flex items-center gap-6">
                                      <div className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: d.color }} />
@@ -406,7 +424,7 @@ export default function CustomsIntelligenceView() {
                              </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 relative z-10">
-                             {TOP_IMPORTERS.map((comp, i) => (
+                             {topImporters.map((comp, i) => (
                                <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] hover:border-yellow-500/40 transition-all group space-y-8 shadow-inner">
                                   <div className="flex items-center justify-between">
                                      <div className="p-6 bg-yellow-500/10 border-2 border-yellow-500/20 rounded-[2rem] text-yellow-500 transform group-hover:rotate-6 transition-transform">
@@ -418,7 +436,7 @@ export default function CustomsIntelligenceView() {
                                   </div>
                                   <div className="space-y-3">
                                      <h4 className="text-2xl font-black text-white italic uppercase leading-tight group-hover:text-yellow-500 transition-colors font-serif">{comp.name}</h4>
-                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic font-mono">ІДЕНТИФІКАТОР_ЄДРПОУ: {Math.floor(Math.random() * 90000000 + 10000000)}</p>
+                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic font-mono">ІДЕНТИФІКАТОР_ЄДРПОУ: {comp.edrpou || Math.floor(Math.random() * 90000000 + 10000000)}</p>
                                   </div>
                                   <div className="pt-8 border-t-2 border-white/[0.04] flex items-end justify-between">
                                      <div>
@@ -450,7 +468,7 @@ export default function CustomsIntelligenceView() {
                              <button className="px-14 py-6 bg-amber-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold uppercase">РОЗГОРНУТИ_АНТИФРОД_МАСИВ</button>
                           </div>
                           <div className="space-y-8 relative z-10">
-                             {RISK_ALERTS.map((alert, i) => (
+                             {riskAlerts.map((alert, i) => (
                                <div key={i} className="p-12 rounded-[4rem] bg-black border-2 border-amber-500/10 hover:border-amber-500/40 transition-all group flex items-center gap-14 shadow-inner relative overflow-hidden">
                                   <div className="absolute top-0 right-0 w-48 h-full bg-gradient-to-l from-amber-500/5 to-transparent pointer-events-none" />
                                   <div className={cn("p-8 rounded-[2.5rem] border-4 bg-black shadow-2xl transform group-hover:scale-110 transition-transform", alert.severity === 'critical' ? "text-amber-600 border-amber-600/20" : "text-amber-500 border-amber-500/20")}>

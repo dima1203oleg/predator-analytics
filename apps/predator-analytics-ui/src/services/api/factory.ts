@@ -131,4 +131,9 @@ export const factoryApi = {
     const res = await apiClient.get(`/antigravity/tasks/${taskId}/logs`);
     return Array.isArray(res.data) ? res.data : [];
   },
+
+  /** Запустити Chaos Engineering сценарій */
+  launchChaos: async (scenario: string) => {
+    return (await apiClient.post(`/factory/chaos/launch?scenario=${scenario}`)).data;
+  },
 };

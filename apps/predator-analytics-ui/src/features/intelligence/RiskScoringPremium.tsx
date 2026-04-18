@@ -20,7 +20,7 @@ import {
   Sparkles, Orbit, Database, Crosshair, Users
 } from 'lucide-react';
 import { RiskEntity, RiskLevelValue } from '@/types/intelligence';
-import { diligenceApi } from '@/features/diligence';
+import { analyticsService } from '@/services/unified/analytics.service';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -30,7 +30,7 @@ import { Cers5LayerGauge } from '@/components/risk/Cers5LayerGauge';
 import { SovereignReportWidget } from '@/components/intelligence/SovereignReportWidget';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
-import { useSoundFx } from '@/hooks/useSoundFx';
+import { SovereignAudio } from '@/utils/sovereign-audio';
 
 
 
@@ -89,7 +89,6 @@ const ScanningHUD: React.FC = () => {
 
 const RiskCognitiveParser: React.FC = () => {
     const [lines, setLines] = useState<string[]>([]);
-    const { play } = useSoundFx();
 
     const logPool = [
         "PARSING: ENTITY_EDRPOU_STREAM...",
@@ -108,10 +107,10 @@ const RiskCognitiveParser: React.FC = () => {
                 .replace("{ID}", Math.floor(Math.random() * 9000).toString());
             
             setLines(prev => [newLine, ...prev].slice(0, 12));
-            play('TRANSITION');
+            SovereignAudio.playScanPulse();
         }, 1200);
         return () => clearInterval(interval);
-    }, [play]);
+    }, []);
 
     return (
         <div className="w-full h-48 bg-black/60 border-2 border-amber-500/10 rounded-[2.5rem] p-6 font-mono text-[9px] overflow-hidden relative group">
@@ -144,10 +143,9 @@ export default function RiskScoringPremium() {
   const [selectedEntity, setSelectedEntity] = useState<RiskEntity | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
-  const { play } = useSoundFx();
 
   useEffect(() => {
-    play('BOOT');
+    SovereignAudio.playImpact();
     fetchData();
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
@@ -165,7 +163,8 @@ export default function RiskScoringPremium() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await diligenceApi.searchCompanies() as any;
+      SovereignAudio.playScanPulse();
+      const response = await analyticsService.searchCompanies(searchQuery) as any;
       const entitiesData = response.items || response.results || [];
 
       const mappedEntities: RiskEntity[] = (entitiesData as any[]).map(e => ({
@@ -185,6 +184,7 @@ export default function RiskScoringPremium() {
       setRiskEntities(mappedEntities);
       
       if (!isOffline && mappedEntities.length > 0) {
+        SovereignAudio.playImpact();
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'RiskProtocol',
@@ -197,6 +197,7 @@ export default function RiskScoringPremium() {
       }
     } catch (err) {
       console.error("Failed to fetch risk data", err);
+      SovereignAudio.playAlert();
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'RiskProtocol',

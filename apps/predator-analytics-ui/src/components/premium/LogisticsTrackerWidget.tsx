@@ -20,7 +20,8 @@ export const LogisticsTrackerWidget: React.FC<{ persona: string }> = ({ persona 
   const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState<TrackingStep[] | null>(null);
 
-  if (persona !== 'TITAN') return null;
+  if (persona !== 'TITAN' && persona !== 'SOVEREIGN') return null;
+
 
   const handleSearch = async () => {
     if (!trackingId) return;

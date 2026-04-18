@@ -55,7 +55,8 @@ const InsightCard: React.FC<{
 }> = ({ insight, persona, onAction }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+  const personaColor = (persona === 'TITAN' || persona === 'SOVEREIGN') ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+
 
   const typeConfig = {
     prediction: { icon: TrendingUp, color: 'emerald', label: premiumLocales.aiInsights.types.prediction },
@@ -252,7 +253,8 @@ export const AIInsightsPanel: React.FC<{
   const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+  const personaColor = (persona === 'TITAN' || persona === 'SOVEREIGN') ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+
 
   useEffect(() => {
     const fetchInsights = async () => {

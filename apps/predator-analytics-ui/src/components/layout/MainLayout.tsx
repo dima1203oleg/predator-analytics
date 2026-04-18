@@ -1,5 +1,5 @@
 /**
- * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v57.2-WRAITH (AGENTIC)
+ * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v58.2-WRAITH (AGENTIC)
  * Підтримка гібридного вузла та суверенного дизайну.
  */
 import React, { useEffect, useState } from 'react';
@@ -141,8 +141,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       >
         <div className="flex items-center gap-5 min-w-0 overflow-hidden">
           <div className="flex items-center gap-1.5 shrink-0">
-            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", isOffline ? "bg-rose-500 shadow-[0_0_6px_#f43f5e]" : "bg-emerald-400 shadow-[0_0_6px_#34d399]")} />
-            <span className={cn("text-[8px] font-black uppercase tracking-[0.2em]", isOffline ? "text-rose-500/80" : "text-emerald-400/80")}>
+            <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", isOffline ? "bg-amber-600 shadow-[0_0_6px_#d97706]" : "bg-yellow-500 shadow-[0_0_6px_#f59e0b]")} />
+            <span className={cn("text-[8px] font-black uppercase tracking-[0.2em]", isOffline ? "text-amber-600/80" : "text-yellow-500/80")}>
               {isOffline ? 'СИСТЕМА_В_РЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
             </span>
           </div>
@@ -188,7 +188,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           <div className="h-3.5 w-px bg-white/10" />
           <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/20">
-            PREDATOR <span className="text-yellow-500/70">WRAITH</span> v57.2
+            PREDATOR <span className="text-yellow-500/70">WRAITH</span> v58.2
           </div>
         </div>
       </motion.div>

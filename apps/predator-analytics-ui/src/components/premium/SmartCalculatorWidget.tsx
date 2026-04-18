@@ -12,7 +12,8 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
   const [calculating, setCalculating] = useState(false);
   const [result, setResult] = useState<{ duty: number; vat: number; total: number; risk: boolean } | null>(null);
 
-  if (persona !== 'TITAN') return null;
+  if (persona !== 'TITAN' && persona !== 'SOVEREIGN') return null;
+
 
   const handleCalculate = () => {
     if (!value || !hsCode) return;

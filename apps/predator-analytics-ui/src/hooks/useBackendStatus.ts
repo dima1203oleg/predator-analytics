@@ -58,6 +58,20 @@ export interface BackendStatusSnapshot {
     sourceLabel: string;
     /** Тип з'єднання: локальне або дистанційне */
     sourceType: 'local' | 'remote';
+    /** Три-позиційний режим ШІ (SOVEREIGN | HYBRID | CLOUD) */
+    llmTriStateMode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD';
+    /** Рівень каскаду LLM (1-4) */
+    llmLevel: 1 | 2 | 3 | 4;
+    /** Назва активного шару LLM */
+    llmLayerName: string;
+    /** Метрики VRAM (для 8GB заліза) */
+    vramMetrics: {
+        total: number;
+        localReserve: number; // 5.5 GB
+        uiReserve: number;    // 2.5 GB
+        used: number;
+        status: 'nominal' | 'warning' | 'critical';
+    };
     /** Текстовий статус */
     statusLabel: string;
     /** Загальний статус системи */
@@ -84,6 +98,18 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     const [nodes, setNodes]                 = useState<BackendNode[]>(readNodes);
     const [healingProgress, setHealingProgress] = useState(isOffline ? 0 : 100);
     const [currentApiUrl, setCurrentApiUrl] = useState(API_BASE_URL);
+    
+    // v3.0 Headless State
+    const [llmTriStateMode, setLlmTriStateMode] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>('HYBRID');
+    const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
+    const [llmLayerName, setLlmLayerName] = useState('LEVEL 1: CLOUD POOL');
+    const [vramMetrics, setVramMetrics] = useState<BackendStatusSnapshot['vramMetrics']>({
+        total: 8.0,
+        localReserve: 5.5,
+        uiReserve: 2.5,
+        used: 4.2,
+        status: 'nominal',
+    });
 
     const activeFailover = useMemo(
         () => nodes.some(n => n.id === NODE_IDS.ZROK && n.active),
@@ -94,8 +120,13 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         const syncState = (e?: any) => {
             setIsOffline(readOfflineState());
             setCurrentApiUrl(API_BASE_URL);
-            if (e?.detail?.nodes) {
-                setNodes(e.detail.nodes);
+            
+            if (e?.detail) {
+                if (e.detail.nodes) setNodes(e.detail.nodes);
+                if (e.detail.llmTriStateMode) setLlmTriStateMode(e.detail.llmTriStateMode);
+                if (e.detail.llmLevel) setLlmLevel(e.detail.llmLevel);
+                if (e.detail.llmLayerName) setLlmLayerName(e.detail.llmLayerName);
+                if (e.detail.vramMetrics) setVramMetrics(e.detail.vramMetrics);
             } else {
                 setNodes(readNodes());
             }
@@ -104,6 +135,8 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         window.addEventListener('predator-backend-online',         syncState);
         window.addEventListener('predator-backend-offline',        syncState);
         window.addEventListener('predator-backend-status-change',  syncState);
+        window.addEventListener('predator-vram-update',           syncState);
+        window.addEventListener('predator-llm-mode-change',       syncState);
 
         // Прогрес авто-відновлення
         let interval: ReturnType<typeof setInterval> | undefined;
@@ -120,6 +153,8 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
             window.removeEventListener('predator-backend-online',         syncState);
             window.removeEventListener('predator-backend-offline',        syncState);
             window.removeEventListener('predator-backend-status-change',  syncState);
+            window.removeEventListener('predator-vram-update',           syncState);
+            window.removeEventListener('predator-llm-mode-change',       syncState);
             if (interval) clearInterval(interval);
         };
     }, [isOffline]);
@@ -139,5 +174,9 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         healingProgress,
         activeFailover,
         nodeSource:    getNodeSource(),
-    }), [isOffline, nodes, healingProgress, activeFailover, currentApiUrl]);
+        llmTriStateMode,
+        llmLevel,
+        llmLayerName,
+        vramMetrics,
+    }), [isOffline, nodes, healingProgress, activeFailover, currentApiUrl, llmTriStateMode, llmLevel, llmLayerName, vramMetrics]);
 };

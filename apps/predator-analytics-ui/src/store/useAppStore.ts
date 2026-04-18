@@ -50,7 +50,8 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       userRole: UserRole.CLIENT_BASIC,
-      persona: 'TITAN',
+      persona: 'SOVEREIGN',
+
       deviceMode: 'desktop',
       isSidebarOpen: true,
       language: 'ua',

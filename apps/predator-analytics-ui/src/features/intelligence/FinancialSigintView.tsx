@@ -27,17 +27,17 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar as RechartsRadar
 } from 'recharts';
 import { cn } from '@/utils/cn';
-import { apiClient as api } from '@/services/api/config';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { Badge } from '@/components/ui/badge';
-import { analyticsService } from '@/services/unified/analytics.service';
+import { analyticsService, FinancialSigintResult, SwiftFlowData, OffshoreData, SuspiciousTx, FrozenAsset, AmlRadarData } from '@/services/unified/analytics.service';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
-import { useSoundFx } from '@/hooks/useSoundFx';
+import { SovereignAudio } from '@/utils/sovereign-audio';
+import { AxiosError } from 'axios';
 
 // ========================
 // Background Scanning HUD v57.2
@@ -66,7 +66,6 @@ const ScanningHUD: React.FC = () => {
 
 const FinancialInterceptorTerminal: React.FC = () => {
     const [logs, setLogs] = useState<string[]>([]);
-    const { play } = useSoundFx();
 
     const txPool = [
         "ПЕРЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
@@ -85,10 +84,10 @@ const FinancialInterceptorTerminal: React.FC = () => {
         const interval = setInterval(() => {
             const newLog = txPool[Math.floor(Math.random() * txPool.length)];
             setLogs(prev => [newLog, ...prev].slice(0, 10));
-            play('TRANSITION');
+            SovereignAudio.playScanPulse();
         }, 1200);
         return () => clearInterval(interval);
-    }, [play]);
+    }, []);
 
     return (
         <div className="w-full h-48 bg-black/80 border-2 border-yellow-500/10 rounded-[2.5rem] p-6 font-mono text-[9px] overflow-hidden relative group">
@@ -113,28 +112,7 @@ const FinancialInterceptorTerminal: React.FC = () => {
     );
 };
 
-// ─── TYPES ───────────────────────────────────────────────────────────
-
-interface SuspiciousTx {
-  id: string;
-  from: string;
-  to: string;
-  amount: string;
-  currency: string;
-  time: string;
-  risk: number;
-  type: string;
-  route: string;
-}
-
-interface FrozenAsset {
-  entity: string;
-  amount: string;
-  date: string;
-  authority: string;
-  reason: string;
-  status: string;
-}
+// Використовуємо типи з analytics.service.ts
 
 // ─── MOCK DATA (Fallback) ───────────────────────────────────────────
 
@@ -198,14 +176,28 @@ export default function FinancialSigintView() {
     try {
       const result = await analyticsService.getFinancialSigint();
       if (result) {
-        if (result.swift) setSwiftData(result.swift);
-        if (result.offshore) setOffshoreData(result.offshore);
+        if (result.swift) setSwiftData(result.swift as any); // matching recharts expectation
+        if (result.offshore) setOffshoreData(result.offshore as any);
         if (result.suspicious) setSuspiciousTx(result.suspicious);
         if (result.frozen) setFrozenAssets(result.frozen);
-        if (result.aml) setAmlRadar(result.aml);
+        if (result.aml) setAmlRadar(result.aml as any);
       }
     } catch (error) {
-       console.error('[FinancialSigint] Помилка завантаження реальних даних:', error);
+       const axiosError = error as AxiosError<{ detail?: string }>;
+       const errorMsg = axiosError.response?.data?.detail || axiosError.message || 'Unknown SIGINT error';
+       
+       console.error('[FinancialSigint] Помилка завантаження реальних даних:', errorMsg);
+       
+       window.dispatchEvent(new CustomEvent('predator-error', {
+           detail: {
+               service: 'FinancialSigint',
+               message: `ПОМИЛКА_СИНХРОНІЗАЦІЇ_SIGINT: ${errorMsg}`,
+               severity: 'critical',
+               timestamp: new Date().toISOString(),
+               code: 'SIGINT_SYNC_ERROR'
+           }
+       }));
+       SovereignAudio.playAlert();
     }
   };
 
@@ -242,6 +234,7 @@ export default function FinancialSigintView() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    SovereignAudio.playScanPulse();
     
     window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
@@ -255,6 +248,7 @@ export default function FinancialSigintView() {
 
     await fetchData();
     setRefreshing(false);
+    SovereignAudio.playImpact();
   };
 
   const modules = useMemo(() => [

@@ -47,6 +47,106 @@ export interface SchemeData {
   type: 'carousel' | 'price' | 'transit' | 'offshore';
 }
 
+export interface AMLFactor {
+  id: string;
+  name: string;
+  category: string;
+  score: number;
+  weight: number;
+  detected: boolean;
+  description: string;
+  evidence_count: number;
+}
+
+export interface AMLResult {
+  total_score: number;
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  factors: AMLFactor[];
+  summary: string;
+  calculated_at: string;
+  entity_id: string;
+  entity_name: string;
+  entity_type: 'organization' | 'person';
+  recommendations?: string[];
+  meta: {
+    node_source: string;
+    latency_ms: number;
+    stability_score: number;
+    timestamp: string;
+  };
+}
+
+export interface SwiftFlowData {
+  hour: string;
+  normal: number;
+  suspicious: number;
+}
+
+export interface OffshoreData {
+  name: string;
+  value: number;
+  amount: string;
+  color: string;
+}
+
+export interface SuspiciousTx {
+  id: string;
+  from: string;
+  to: string;
+  amount: string;
+  currency: string;
+  time: string;
+  risk: number;
+  type: string;
+  route: string;
+}
+
+export interface FrozenAsset {
+  entity: string;
+  amount: string;
+  date: string;
+  authority: string;
+  reason: string;
+  status: string;
+}
+
+export interface AmlRadarData {
+  subject: string;
+  A: number;
+  B: number;
+}
+
+export interface FinancialSigintResult {
+  swift: SwiftFlowData[];
+  offshore: OffshoreData[];
+  suspicious: SuspiciousTx[];
+  frozen: FrozenAsset[];
+  aml: AmlRadarData[];
+}
+
+export interface UBONode {
+  id: string;
+  name: string;
+  type: 'person' | 'company' | 'offshore' | 'state';
+  share?: number;
+  nationality?: string;
+  risk: number; // 0-100
+  pep?: boolean;
+  sanctioned?: boolean;
+  country?: string;
+  children?: UBONode[];
+}
+
+export interface BatchResultData {
+  total: number;
+  distribution: Record<string, number>;
+  scores: (AMLResult & { 
+    entity_id: string; 
+    entity_name: string; 
+    detected_factors: number;
+  })[];
+}
+
 import { RiskEntity } from '@/types/intelligence';
 
 export class AnalyticsService {
@@ -138,10 +238,7 @@ export class AnalyticsService {
       return [];
     }
   }
-  /**
-   * Запустити AML скорінг для сутності
-   */
-  async getAMLScore(entity_id: string, entity_name: string, entity_type: 'organization' | 'person'): Promise<any> {
+  async getAMLScore(entity_id: string, entity_name: string, entity_type: 'organization' | 'person'): Promise<AMLResult> {
     try {
       const res = await apiClient.post('/analytics/aml/score', {
         entity_id,
@@ -159,7 +256,7 @@ export class AnalyticsService {
   /**
    * Запустити пакетний AML скорінг
    */
-  async getAMLBatch(entities: { entity_id: string, entity_name: string, entity_type: string }[]): Promise<any> {
+  async getAMLBatch(entities: { entity_id: string, entity_name: string, entity_type: string }[]): Promise<BatchResultData> {
     try {
       const res = await apiClient.post('/analytics/aml/batch', {
         entities: entities.map(e => ({ ...e, data: {} })),
@@ -261,10 +358,72 @@ export class AnalyticsService {
   }
 
   /**
+   * Отримати карту бенефіціарів (UBO Map)
+   */
+  async getUBOMap(ueid: string): Promise<UBONode | null> {
+    try {
+      const res = await apiClient.get(`/intelligence/ubo-map/${ueid}`);
+      return res.data;
+    } catch (err) {
+      console.warn('[AnalyticsService] getUBOMap API недоступний:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Пошук компаній за запитом
+   */
+  async searchCompanies(query: string): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/company/search', { params: { q: query } });
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] searchCompanies API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Отримати потік сигналів (Signal Feed)
+   */
+  async getSignalFeed(): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/telegram/feed');
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getSignalFeed API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * 🏛️ PROZORRO INTELLIGENCE // КОНТУР ЗАКУПІВЕЛЬ
+   */
+  async getTenders(limit: number = 24): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/osint_ua/prozorro/tenders', { params: { limit } });
+      return res.data?.tenders || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getTenders API недоступний:', err);
+      return [];
+    }
+  }
+
+  async getTenderStats(): Promise<any> {
+    try {
+      const res = await apiClient.get('/osint_ua/prozorro/stats');
+      return res.data;
+    } catch (err) {
+      console.warn('[AnalyticsService] getTenderStats API недоступний:', err);
+      return null;
+    }
+  }
+
+  /**
    * 💰 FINANCIAL SIGINT // ФІНАНСОВА РОЗВІДКА
    * Отримує комплексний зріз фінансової розвідки: SWIFT, офшори, заморожені активи.
    */
-  async getFinancialSigint(ueid?: string): Promise<any> {
+  async getFinancialSigint(ueid?: string): Promise<FinancialSigintResult | null> {
     try {
       if (ueid) {
         // Якщо вказано конкретний ідентифікатор - генеруємо звіт за ним

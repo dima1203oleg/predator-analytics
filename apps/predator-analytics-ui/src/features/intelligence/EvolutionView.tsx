@@ -48,7 +48,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
-import { cn } from '@/utils/cn'; // standardizing utility import
+import { cn } from '@/utils/cn';
 
 interface TabConfig {
     id: string;
@@ -75,7 +75,7 @@ const EvolutionView: React.FC = () => {
         if (tab && tabs.some(t => t.id === tab)) {
             setActiveTab(tab);
         }
-    }, [tabs]);
+    }, []);
 
     useEffect(() => {
         if (isOffline) {
@@ -138,7 +138,6 @@ const EvolutionView: React.FC = () => {
 
                 <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
                     
-                    {/* HEADER WRAITH HUD */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-12">
@@ -194,7 +193,6 @@ const EvolutionView: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* QUICK METRICS */}
                     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                         {[
                             { label: 'ЦИКЛИ СИНТЕЗУ', value: '2,847', sub: 'Активні AZR ітерації', icon: RefreshCw, color: '#D4AF37' },
@@ -219,7 +217,6 @@ const EvolutionView: React.FC = () => {
                         ))}
                     </section>
 
-                    {/* TABS SOVEREIGN */}
                     <div className="flex flex-wrap gap-6 p-4 bg-black/80 border-2 border-white/[0.03] rounded-[3.5rem] w-fit shadow-4xl backdrop-blur-3xl mx-auto items-center">
                         <span className="px-6 text-[10px] font-black text-slate-800 uppercase tracking-[0.5em] italic border-r-2 border-white/5 h-10 flex items-center">MATRIX_SELECT</span>
                         {tabs.map(mod => (
@@ -238,7 +235,6 @@ const EvolutionView: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* CONTENT SOVEREIGN HUB */}
                     <div className="grid grid-cols-12 gap-12">
                         <AnimatePresence mode="wait">
                             {activeTab === 'overview' && (
@@ -268,9 +264,9 @@ const EvolutionView: React.FC = () => {
                                                     </h4>
                                                     <EvolutionForge />
                                                 </div>
-                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-amber-950/20 shadow-4xl space-y-10 relative overflow-hidden">
+                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden">
                                                     <h4 className="text-[12px] font-black text-amber-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-amber-500/10 pb-8">
-                                                        <Gauge size={20} /> МЕТРИКИ ДОМІНУВАННЯ
+                                                        <Gauge size={20} /> МЕТРИКИ СИСТЕМИ
                                                     </h4>
                                                     <div className="space-y-6 pt-4 italic">
                                                         {[
@@ -422,7 +418,6 @@ const EvolutionView: React.FC = () => {
                         </AnimatePresence>
                     </div>
 
-                    {/* FOOTER STATUS SOVEREIGN */}
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}

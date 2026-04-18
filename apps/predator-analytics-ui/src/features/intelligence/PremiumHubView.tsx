@@ -1,8 +1,8 @@
 /**
  * PREDATOR v57.2-WRAITH | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
  * 
- * Персоналізований хаб для VIP-аналітики та стратегічного домінування:
- * - TITAN (Market Dominance): Конкуренти, ринкові прогнози, інсайди
+ * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
+ * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
  * - INQUISITOR (Risk Sovereignty): Аномалії, схеми, компромат
  * - SOVEREIGN (Macro Architect): Тренди, кореляції, макро-прогнози
  * 
@@ -79,7 +79,7 @@ const PERSONA_CONFIG = {
   TITAN: {
     name: 'TITAN',
     title: 'РИНКОВИЙ ТИТАН',
-    subtitle: 'Агресивне домінування та конкурентна розвідка',
+    subtitle: 'Стратегічний аналіз та конкурентна розвідка',
     icon: Target,
     color: 'amber',
     gradient: 'from-[#D4AF37] via-amber-600 to-[#D4AF37]',
@@ -184,15 +184,13 @@ const HolographicAccessGate: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-              {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
-                <div key={key} className="p-8 bg-white/5 border border-white/5 rounded-[40px] group hover:border-[#D4AF37]/30 transition-all hover:-translate-y-2">
-                  <config.icon className={cn("w-12 h-12 mx-auto mb-6 text-slate-500 group-hover:text-[#D4AF37]", "group-hover:scale-125 transition-transform")} />
-                  <h3 className="text-xs font-black text-white uppercase tracking-widest mb-2">{config.title}</h3>
-                  <p className="text-[10px] text-slate-500 font-medium px-4">{config.subtitle}</p>
-                </div>
-              ))}
+            <div className="flex items-center gap-8 justify-center">
+              <div className="p-8 bg-white/5 border border-[#D4AF37]/30 rounded-[40px] group transition-all">
+                <Crown size={48} className="text-[#D4AF37] mb-4 mx-auto" />
+                <h3 className="text-xs font-black text-white uppercase tracking-widest">SOVEREIGN CORE ACTIVE</h3>
+              </div>
             </div>
+
 
             <button className="px-20 py-8 bg-[#D4AF37] hover:brightness-110 text-black text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#D4AF37]/40 border border-[#D4AF37]/30 transition-all hover:scale-105 active:scale-95 group italic">
               <span className="flex items-center gap-4">
@@ -340,28 +338,12 @@ const PremiumHubView: React.FC = () => {
             {/* Persona Switcher & Tactical Nav (v57.2-WRAITH) */}
             <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#D4AF37]/10">
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
-                    {Object.entries(PERSONA_CONFIG).map(([key, config]) => (
-                        <button
-                            key={key}
-                            onClick={() => setPersona(key as InterlinkPersona)}
-                            className={cn(
-                                "px-10 py-4 rounded-[24px] text-xs font-black uppercase tracking-widest transition-all flex items-center gap-3 relative overflow-hidden italic",
-                                persona === key 
-                                    ? `bg-gradient-to-r ${config.gradient} text-black shadow-xl shadow-[#D4AF37]/20`
-                                    : "text-slate-500 hover:text-white hover:bg-white/5"
-                            )}
-                        >
-                            <config.icon size={18} />
-                            <span>{key}</span>
-                            {persona === key && (
-                                <motion.div 
-                                    layoutId="active-pill" 
-                                    className="absolute inset-x-0 bottom-0 h-1 bg-white/40" 
-                                />
-                            )}
-                        </button>
-                    ))}
+                    <div className="px-10 py-4 flex items-center gap-3 text-[#D4AF37]">
+                        <Crown size={18} />
+                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕРЕННИЙ РЕЖИМ</span>
+                    </div>
                 </div>
+
 
                 <div className="flex items-center gap-2 p-1.5 bg-black/40 rounded-[28px] overflow-x-auto no-scrollbar max-w-[800px]">
                     {[

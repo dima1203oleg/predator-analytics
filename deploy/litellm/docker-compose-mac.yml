@@ -15,11 +15,8 @@ services:
     environment:
       LOG_LEVEL: "WARNING"
       STORE_MODEL_IN_DB: "False"
-    command:
-      - --config
-      - /app/config.yaml
-      - --port
-      - "4000"
+      DATABASE_URL: ""
+    entrypoint: ["/bin/sh", "-c", "python3 -m litellm.proxy.proxy_server --config /app/config.yaml --port 4000 --host 0.0.0.0"]
     volumes:
       - ./config-mac-local.yaml:/app/config.yaml:ro
       - ./logs:/app/logs
@@ -27,8 +24,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
-          cpus: "0.5"
+          memory: 1024M
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')\" || exit 1"]
       interval: 15s

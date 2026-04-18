@@ -7,7 +7,8 @@ export const ExecutiveBriefingWidget: React.FC<{
   persona: string;
   onOpenDossier?: (name: string) => void;
 }> = ({ persona, onOpenDossier }) => {
-  if (persona !== 'TITAN') return null;
+  if (persona !== 'TITAN' && persona !== 'SOVEREIGN') return null;
+
 
   return (
     <div className="bg-slate-950/80 border border-slate-800 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">

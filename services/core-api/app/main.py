@@ -54,6 +54,7 @@ from app.routers import (
     stats_router,
     system_router,
     warroom_router,
+    antigravity_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -218,6 +219,8 @@ ROUTERS = [
     ("/api/v1", som_router),
     ("/api/v1", warroom_router),
     ("/api/v1", ml_studio_router),
+    ("/api/v1", agents_router),
+    ("/api/v1", antigravity_router),
     ("/api/v1", system_router),
     ("/api/v1", stats_router),
 ]

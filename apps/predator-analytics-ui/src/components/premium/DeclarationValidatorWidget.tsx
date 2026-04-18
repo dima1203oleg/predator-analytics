@@ -14,7 +14,8 @@ export const DeclarationValidatorWidget: React.FC<{ persona: string }> = ({ pers
   const [status, setStatus] = useState<'idle' | 'scanning' | 'safe' | 'risk'>('idle');
   const [score, setScore] = useState(0);
 
-  if (persona !== 'TITAN') return null;
+  if (persona !== 'TITAN' && persona !== 'SOVEREIGN') return null;
+
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();

@@ -5139,6 +5139,168 @@ app.get('/api/v1/factory/logs', (req, res) => {
     });
 });
 
+// ─── Antigravity AGI Orchestrator (Mock) ─────────────────────────────────────
+
+/** In-memory сховище AGI-задач */
+let AGI_TASKS = [
+  {
+    task_id: 'agt-001',
+    description: 'Реалізувати FastAPI ендпоїнт /risk/company/{ueid} з кешуванням Redis та покриттям Pytest 90%+',
+    status: 'in_progress',
+    priority: 'high',
+    created_at: new Date(Date.now() - 1800000).toISOString(),
+    updated_at: new Date(Date.now() - 120000).toISOString(),
+    progress: 'Агент-Хірург генерує патч для core-api. Фаза: написання тестів.',
+    spent_usd: 0.84,
+    max_budget_usd: 5.00,
+    subtasks: [
+      { id: 'sub-001-1', agent_type: 'architect', description: 'Розробка OpenAPI схеми ендпоїнту', status: 'completed', started_at: new Date(Date.now() - 1800000).toISOString(), completed_at: new Date(Date.now() - 1200000).toISOString() },
+      { id: 'sub-001-2', agent_type: 'surgeon', description: 'Реалізація бізнес-логіки та Redis-кешування', status: 'in_progress', started_at: new Date(Date.now() - 900000).toISOString(), completed_at: null },
+      { id: 'sub-001-3', agent_type: 'qa_browser', description: 'E2E перевірка ендпоїнту у браузері', status: 'pending', started_at: null, completed_at: null },
+    ]
+  },
+  {
+    task_id: 'agt-002',
+    description: 'Рефакторинг модуля FinancialSigintView — усунення прямих імпортів легаційного API та впровадження TanStack Query v5',
+    status: 'completed',
+    priority: 'medium',
+    created_at: new Date(Date.now() - 86400000).toISOString(),
+    updated_at: new Date(Date.now() - 72000000).toISOString(),
+    progress: 'Виконано. Усі тести пройшли.',
+    spent_usd: 2.11,
+    max_budget_usd: 10.00,
+    subtasks: []
+  },
+  {
+    task_id: 'agt-003',
+    description: 'Аналіз та патч вразливостей у Dockerfile всіх мікросервісів: перехід на non-root USER predator',
+    status: 'pending',
+    priority: 'critical',
+    created_at: new Date(Date.now() - 300000).toISOString(),
+    updated_at: new Date(Date.now() - 300000).toISOString(),
+    progress: null,
+    spent_usd: null,
+    max_budget_usd: 3.00,
+    subtasks: []
+  },
+];
+
+/** Статус AGI-оркестратора */
+const AGI_ORCHESTRATOR_STATUS = {
+  is_running: true,
+  active_tasks: 1,
+  completed_tasks: 7,
+  failed_tasks: 0,
+  total_spent_usd: 12.45,
+  budget_limit_usd: 100.00,
+  llm_gateway_status: 'online',
+  sandbox_status: 'online',
+  active_model: 'gemini-2.5-flash (LiteLLM Gateway)',
+  last_update: new Date().toISOString(),
+  agents: [
+    { type: 'architect', name: 'Агент-Архітектор (OpenHands)', is_busy: false, current_task_id: null, tasks_completed: 12 },
+    { type: 'surgeon', name: 'Агент-Хірург (Aider)', is_busy: true, current_task_id: 'agt-001', tasks_completed: 8 },
+    { type: 'qa_browser', name: 'QA Браузер (Playwright)', is_busy: false, current_task_id: null, tasks_completed: 6 },
+    { type: 'qa_devtools', name: 'QA DevTools (Chrome CDP)', is_busy: false, current_task_id: null, tasks_completed: 4 },
+  ]
+};
+
+/** Логи по задачах */
+const AGI_TASK_LOGS = {
+  'agt-001': [
+    { id: 'log-001-1', timestamp: new Date(Date.now() - 1800000).toISOString(), level: 'info', agent_type: 'architect', message: 'Задачу отримано. Аналіз вимог та розбивка на підзадачі...' },
+    { id: 'log-001-2', timestamp: new Date(Date.now() - 1750000).toISOString(), level: 'info', agent_type: 'architect', message: 'OpenAPI схема розроблена: GET /api/v1/risk/company/{ueid} → RiskCompanyResponse' },
+    { id: 'log-001-3', timestamp: new Date(Date.now() - 1200000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Клонування репозиторію core-api до ізольованого середовища Kata Containers...' },
+    { id: 'log-001-4', timestamp: new Date(Date.now() - 1100000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Генерація патчу: services/core-api/routers/risk.py (+78 рядків)' },
+    { id: 'log-001-5', timestamp: new Date(Date.now() - 900000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Впровадження Redis-кешування: @cache_result(ttl=300) на метод get_company_risk()' },
+    { id: 'log-001-6', timestamp: new Date(Date.now() - 600000).toISOString(), level: 'warn', agent_type: 'surgeon', message: 'Mypy помилка: implicitly returns None — виправляється...' },
+    { id: 'log-001-7', timestamp: new Date(Date.now() - 450000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Виправлено: додано явний return type Optional[RiskCompanyResponse]' },
+    { id: 'log-001-8', timestamp: new Date(Date.now() - 120000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Pytest: 12/14 тестів пройшли. Написання залишкових тест-кейсів...' },
+  ],
+  'agt-002': [
+    { id: 'log-002-1', timestamp: new Date(Date.now() - 86400000).toISOString(), level: 'info', agent_type: 'architect', message: 'Рефакторинг FinancialSigintView — план: замінити useEffect + fetch на useSuspenseQuery' },
+    { id: 'log-002-2', timestamp: new Date(Date.now() - 85000000).toISOString(), level: 'info', agent_type: 'surgeon', message: 'Патч застосовано. Видалено 47 рядків легаційного коду.' },
+    { id: 'log-002-3', timestamp: new Date(Date.now() - 84000000).toISOString(), level: 'info', agent_type: 'qa_browser', message: 'E2E Playwright: компонент завантажено, дані відображено коректно ✓' },
+    { id: 'log-002-4', timestamp: new Date(Date.now() - 72000000).toISOString(), level: 'info', agent_type: null, message: 'Задачу виконано. PR #247 відкрито у репозиторії.' },
+  ],
+};
+
+/** GET /api/v1/factory/antigravity/status */
+app.get('/api/v1/factory/antigravity/status', (req, res) => {
+  AGI_ORCHESTRATOR_STATUS.last_update = new Date().toISOString();
+  // Симуляція динамічних даних
+  AGI_ORCHESTRATOR_STATUS.total_spent_usd = parseFloat((12.45 + Math.random() * 0.05).toFixed(2));
+  res.json(AGI_ORCHESTRATOR_STATUS);
+});
+
+/** GET /api/v1/factory/antigravity/tasks */
+app.get('/api/v1/factory/antigravity/tasks', (req, res) => {
+  res.json(AGI_TASKS);
+});
+
+/** POST /api/v1/factory/antigravity/tasks */
+app.post('/api/v1/factory/antigravity/tasks', (req, res) => {
+  const { description, priority = 'medium', max_budget_usd = null } = req.body || {};
+  if (!description || description.trim().length < 5) {
+    return res.status(400).json({ error: 'Опис задачі обов\'язковий (мін. 5 символів)' });
+  }
+  const newTask = {
+    task_id: `agt-${Date.now().toString(36)}`,
+    description: description.trim(),
+    status: 'pending',
+    priority,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    progress: 'Задача поставлена в чергу AGI-оркестратора',
+    spent_usd: null,
+    max_budget_usd,
+    subtasks: [],
+  };
+  AGI_TASKS.unshift(newTask);
+  AGI_ORCHESTRATOR_STATUS.active_tasks = AGI_TASKS.filter(t => t.status === 'in_progress' || t.status === 'pending').length;
+  console.log(`[AGI] Нова задача: ${newTask.task_id} — "${description.slice(0, 60)}…"`);
+  // Симуляція переходу в in_progress через 3с
+  setTimeout(() => {
+    const t = AGI_TASKS.find(t => t.task_id === newTask.task_id);
+    if (t && t.status === 'pending') {
+      t.status = 'in_progress';
+      t.progress = 'Агент-Архітектор аналізує вимоги та декомпозує задачу...';
+      t.updated_at = new Date().toISOString();
+      AGI_TASK_LOGS[newTask.task_id] = [
+        { id: `log-${newTask.task_id}-0`, timestamp: new Date().toISOString(), level: 'info', agent_type: 'architect', message: `Задачу отримано: "${description.slice(0, 80)}"` },
+      ];
+    }
+  }, 3000);
+  res.status(201).json(newTask);
+});
+
+/** GET /api/v1/factory/antigravity/tasks/:taskId */
+app.get('/api/v1/factory/antigravity/tasks/:taskId', (req, res) => {
+  const task = AGI_TASKS.find(t => t.task_id === req.params.taskId);
+  if (!task) return res.status(404).json({ error: 'Задачу не знайдено' });
+  res.json(task);
+});
+
+/** POST /api/v1/factory/antigravity/tasks/:taskId/cancel */
+app.post('/api/v1/factory/antigravity/tasks/:taskId/cancel', (req, res) => {
+  const task = AGI_TASKS.find(t => t.task_id === req.params.taskId);
+  if (!task) return res.status(404).json({ error: 'Задачу не знайдено' });
+  if (task.status === 'completed' || task.status === 'cancelled') {
+    return res.status(400).json({ error: `Задача вже у статусі: ${task.status}` });
+  }
+  task.status = 'cancelled';
+  task.updated_at = new Date().toISOString();
+  task.progress = 'Задачу скасовано оператором';
+  AGI_ORCHESTRATOR_STATUS.active_tasks = AGI_TASKS.filter(t => t.status === 'in_progress' || t.status === 'pending').length;
+  console.log(`[AGI] Скасовано задачу: ${task.task_id}`);
+  res.json({ ok: true, message: 'Задачу скасовано', task_id: task.task_id });
+});
+
+/** GET /api/v1/factory/antigravity/tasks/:taskId/logs */
+app.get('/api/v1/factory/antigravity/tasks/:taskId/logs', (req, res) => {
+  const logs = AGI_TASK_LOGS[req.params.taskId] || [];
+  res.json(logs);
+});
 
 // --- Analytics Endpoints ---
 app.get('/api/v1/analytics/forecast', (req, res) => {

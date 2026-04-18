@@ -47,33 +47,19 @@ const sectionColorMap: Record<string, {
   activeIndicator: string;
   hoverBg: string;
 }> = {
-  emerald: {
-    bg: 'rgba(16,185,129,0.04)',
-    border: 'rgba(16,185,129,0.18)',
-    headerBg: 'rgba(16,185,129,0.08)',
-    headerText: '#6ee7b7',
-    dotColor: '#10b981',
-    glowColor: 'rgba(16,185,129,0.4)',
-    activeItemBg: 'rgba(16,185,129,0.08)',
-    activeItemBorder: 'rgba(16,185,129,0.25)',
-    activeIconBg: 'rgba(16,185,129,0.15)',
-    activeIconColor: '#6ee7b7',
-    activeIndicator: 'from-emerald-500/80 to-emerald-400/20',
-    hoverBg: 'rgba(16,185,129,0.05)',
-  },
-  cyan: {
-    bg: 'rgba(6,182,212,0.04)',
-    border: 'rgba(6,182,212,0.18)',
-    headerBg: 'rgba(6,182,212,0.08)',
-    headerText: '#67e8f9',
-    dotColor: '#06b6d4',
-    glowColor: 'rgba(6,182,212,0.4)',
-    activeItemBg: 'rgba(6,182,212,0.08)',
-    activeItemBorder: 'rgba(6,182,212,0.25)',
-    activeIconBg: 'rgba(6,182,212,0.15)',
-    activeIconColor: '#67e8f9',
-    activeIndicator: 'from-cyan-500/80 to-cyan-400/20',
-    hoverBg: 'rgba(6,182,212,0.05)',
+  gold: {
+    bg: 'rgba(212,175,55,0.04)',
+    border: 'rgba(212,175,55,0.18)',
+    headerBg: 'rgba(212,175,55,0.08)',
+    headerText: '#d4af37',
+    dotColor: '#d4af37',
+    glowColor: 'rgba(212,175,55,0.4)',
+    activeItemBg: 'rgba(212,175,55,0.08)',
+    activeItemBorder: 'rgba(212,175,55,0.25)',
+    activeIconBg: 'rgba(212,175,55,0.15)',
+    activeIconColor: '#d4af37',
+    activeIndicator: 'from-yellow-500/80 to-yellow-400/20',
+    hoverBg: 'rgba(212,175,55,0.05)',
   },
   amber: {
     bg: 'rgba(245,158,11,0.04)',
@@ -89,47 +75,19 @@ const sectionColorMap: Record<string, {
     activeIndicator: 'from-amber-500/80 to-amber-400/20',
     hoverBg: 'rgba(245,158,11,0.05)',
   },
-  indigo: {
-    bg: 'rgba(99,102,241,0.04)',
-    border: 'rgba(99,102,241,0.18)',
-    headerBg: 'rgba(99,102,241,0.08)',
-    headerText: '#a5b4fc',
-    dotColor: '#6366f1',
-    glowColor: 'rgba(99,102,241,0.4)',
-    activeItemBg: 'rgba(99,102,241,0.08)',
-    activeItemBorder: 'rgba(99,102,241,0.25)',
-    activeIconBg: 'rgba(99,102,241,0.15)',
-    activeIconColor: '#a5b4fc',
-    activeIndicator: 'from-indigo-500/80 to-indigo-400/20',
-    hoverBg: 'rgba(99,102,241,0.05)',
-  },
-  violet: {
-    bg: 'rgba(139,92,246,0.04)',
-    border: 'rgba(139,92,246,0.18)',
-    headerBg: 'rgba(139,92,246,0.08)',
-    headerText: '#c4b5fd',
-    dotColor: '#8b5cf6',
-    glowColor: 'rgba(139,92,246,0.4)',
-    activeItemBg: 'rgba(139,92,246,0.08)',
-    activeItemBorder: 'rgba(139,92,246,0.25)',
-    activeIconBg: 'rgba(139,92,246,0.15)',
-    activeIconColor: '#c4b5fd',
-    activeIndicator: 'from-violet-500/80 to-violet-400/20',
-    hoverBg: 'rgba(139,92,246,0.05)',
-  },
-  rose: {
-    bg: 'rgba(244,63,94,0.04)',
-    border: 'rgba(244,63,94,0.18)',
-    headerBg: 'rgba(244,63,94,0.08)',
-    headerText: '#fda4af',
-    dotColor: '#f43f5e',
-    glowColor: 'rgba(244,63,94,0.4)',
-    activeItemBg: 'rgba(244,63,94,0.08)',
-    activeItemBorder: 'rgba(244,63,94,0.25)',
-    activeIconBg: 'rgba(244,63,94,0.15)',
-    activeIconColor: '#fda4af',
-    activeIndicator: 'from-rose-500/80 to-rose-400/20',
-    hoverBg: 'rgba(244,63,94,0.05)',
+  warn: {
+    bg: 'rgba(251,146,60,0.04)',
+    border: 'rgba(251,146,60,0.18)',
+    headerBg: 'rgba(251,146,60,0.08)',
+    headerText: '#fb923c',
+    dotColor: '#f97316',
+    glowColor: 'rgba(251,146,60,0.4)',
+    activeItemBg: 'rgba(251,146,60,0.08)',
+    activeItemBorder: 'rgba(251,146,60,0.25)',
+    activeIconBg: 'rgba(251,146,60,0.15)',
+    activeIconColor: '#fb923c',
+    activeIndicator: 'from-orange-500/80 to-orange-400/20',
+    hoverBg: 'rgba(251,146,60,0.05)',
   },
   slate: {
     bg: 'rgba(71,85,105,0.05)',
@@ -144,34 +102,6 @@ const sectionColorMap: Record<string, {
     activeIconColor: '#94a3b8',
     activeIndicator: 'from-slate-500/80 to-slate-400/20',
     hoverBg: 'rgba(71,85,105,0.07)',
-  },
-  sky: {
-    bg: 'rgba(56,189,248,0.04)',
-    border: 'rgba(56,189,248,0.18)',
-    headerBg: 'rgba(56,189,248,0.08)',
-    headerText: '#7dd3fc',
-    dotColor: '#38bdf8',
-    glowColor: 'rgba(56,189,248,0.4)',
-    activeItemBg: 'rgba(56,189,248,0.08)',
-    activeItemBorder: 'rgba(56,189,248,0.25)',
-    activeIconBg: 'rgba(56,189,248,0.15)',
-    activeIconColor: '#7dd3fc',
-    activeIndicator: 'from-sky-500/80 to-sky-400/20',
-    hoverBg: 'rgba(56,189,248,0.05)',
-  },
-  red: {
-    bg: 'rgba(239,68,68,0.04)',
-    border: 'rgba(239,68,68,0.18)',
-    headerBg: 'rgba(239,68,68,0.08)',
-    headerText: '#fca5a5',
-    dotColor: '#ef4444',
-    glowColor: 'rgba(239,68,68,0.4)',
-    activeItemBg: 'rgba(239,68,68,0.08)',
-    activeItemBorder: 'rgba(239,68,68,0.25)',
-    activeIconBg: 'rgba(239,68,68,0.15)',
-    activeIconColor: '#fca5a5',
-    activeIndicator: 'from-red-500/80 to-red-400/20',
-    hoverBg: 'rgba(239,68,68,0.05)',
   },
 };
 
@@ -334,7 +264,7 @@ export const Sidebar: React.FC = () => {
         <div
           className="absolute top-0 left-0 right-0 h-[40%]"
           style={{
-            background: 'radial-gradient(ellipse at 50% -20%, rgba(16,185,129,0.05) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse at 50% -20%, rgba(212,175,55,0.08) 0%, transparent 70%)',
           }}
         />
         <div
@@ -354,7 +284,7 @@ export const Sidebar: React.FC = () => {
         {/* Верхня лінія акценту */}
         <div
           className="absolute top-0 left-0 right-0 h-[2px]"
-          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.6) 50%, transparent 100%)' }}
+          style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.6) 50%, transparent 100%)' }}
         />
         <div className="flex items-center gap-3 px-3 py-3">
           <Logo size="sm" animated={false} className="shrink-0" />
@@ -370,7 +300,7 @@ export const Sidebar: React.FC = () => {
               >
                 <div
                   className="text-[13px] font-black uppercase tracking-[0.18em] leading-none"
-                  style={{ color: '#10b981', textShadow: '0 0 12px rgba(16,185,129,0.5)' }}
+                  style={{ color: '#d4af37', textShadow: '0 0 12px rgba(212,175,55,0.5)' }}
                 >
                   PREDATOR
                 </div>
@@ -401,7 +331,7 @@ export const Sidebar: React.FC = () => {
                 <span
                   className={cn(
                     'text-[9px] font-black uppercase tracking-[0.14em]',
-                    backendStatus.isOffline ? 'text-rose-300' : 'text-emerald-300',
+                    backendStatus.isOffline ? 'text-amber-600' : 'text-yellow-500',
                   )}
                 >
                   {backendStatus.statusLabel}
@@ -411,8 +341,8 @@ export const Sidebar: React.FC = () => {
                 className={cn(
                   'rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.12em]',
                   backendStatus.isOffline
-                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-300'
-                    : 'border-emerald-400/20 bg-emerald-500/10 text-emerald-300',
+                    ? 'border-amber-600/20 bg-amber-600/10 text-amber-500'
+                    : 'border-yellow-500/20 bg-yellow-500/10 text-yellow-500',
                 )}
               >
                 {backendStatus.isTruthOnly ? 'Правда' : 'Проксі'}
@@ -443,7 +373,7 @@ export const Sidebar: React.FC = () => {
                       cn(
                         'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[9px] font-bold uppercase tracking-[0.1em] transition-all',
                         isActive
-                          ? 'border-emerald-400/30 bg-emerald-500/15 text-emerald-300'
+                          ? 'border-yellow-400/30 bg-yellow-500/15 text-yellow-500'
                           : 'border-white/[0.07] bg-white/[0.03] text-slate-400 hover:border-white/[0.12] hover:text-white',
                       )
                     }
@@ -505,16 +435,16 @@ export const Sidebar: React.FC = () => {
               className="h-7 w-full rounded-lg border text-xs text-white outline-none transition-all placeholder:text-slate-600"
               style={{
                 background: 'rgba(255,255,255,0.04)',
-                borderColor: search ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)',
+                borderColor: search ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)',
                 paddingLeft: '2rem',
                 paddingRight: '2.5rem',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)';
+                e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)';
                 e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = search ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.borderColor = search ? 'rgba(212,175,55,0.3)' : 'rgba(255,255,255,0.08)';
                 e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
               }}
             />
@@ -783,7 +713,7 @@ export const Sidebar: React.FC = () => {
         {/* Горизонтальна лінія градієнту */}
         <div
           className="absolute top-0 left-0 right-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }}
         />
         <div
           className={cn(
@@ -795,9 +725,9 @@ export const Sidebar: React.FC = () => {
           {/* Аватар */}
           <div
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
-            style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)' }}
+            style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.25)' }}
           >
-            <User className="h-3.5 w-3.5" style={{ color: '#a5b4fc' }} />
+            <User className="h-3.5 w-3.5" style={{ color: '#d4af37' }} />
           </div>
 
           {isOpen && (
@@ -811,8 +741,8 @@ export const Sidebar: React.FC = () => {
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition-all"
                 style={{ color: '#475569' }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(244,63,94,0.12)';
-                  e.currentTarget.style.color = '#fda4af';
+                  e.currentTarget.style.background = 'rgba(245,158,11,0.12)';
+                  e.currentTarget.style.color = '#fcd34d';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'transparent';
@@ -838,9 +768,9 @@ export const Sidebar: React.FC = () => {
           color: '#64748b',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'rgba(16,185,129,0.4)';
-          e.currentTarget.style.color = '#6ee7b7';
-          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 8px rgba(16,185,129,0.2)';
+          e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)';
+          e.currentTarget.style.color = '#d4af37';
+          e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 8px rgba(212,175,55,0.2)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';

@@ -53,7 +53,8 @@ export const TenderIntelligenceWidget: React.FC<{ persona: string }> = ({ person
     }
   ]);
 
-  if (persona !== 'TITAN') return null;
+  if (persona !== 'TITAN' && persona !== 'SOVEREIGN') return null;
+
 
   return (
     <div className="bg-slate-950/80 border border-blue-500/20 rounded-[24px] backdrop-blur-xl overflow-hidden h-full flex flex-col relative group">

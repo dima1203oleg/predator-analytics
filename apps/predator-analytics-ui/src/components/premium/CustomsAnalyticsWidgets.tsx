@@ -59,7 +59,8 @@ export const TopImportersWidget: React.FC<{
     });
   }, [data, sortBy]);
 
-  const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+  const personaColor = (persona === 'TITAN' || persona === 'SOVEREIGN') ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+
 
   return (
     <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">
@@ -169,7 +170,8 @@ export const HSCodeAnalyticsWidget: React.FC<{
     fetchHSData();
   }, []);
 
-  const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+  const personaColor = (persona === 'TITAN' || persona === 'SOVEREIGN') ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+
 
   const chartOption = {
     backgroundColor: 'transparent',
@@ -402,7 +404,8 @@ export const TradeFlowWidget: React.FC<{
     fetchTradeFlow();
   }, []);
 
-  const personaColor = persona === 'TITAN' ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+  const personaColor = (persona === 'TITAN' || persona === 'SOVEREIGN') ? 'amber' : persona === 'INQUISITOR' ? 'rose' : 'indigo';
+
 
   return (
     <div className="bg-slate-950/80 border border-white/10 rounded-[24px] backdrop-blur-xl overflow-hidden">

@@ -55,6 +55,8 @@ from .search import router as search_router
 from .som import router as som_router
 from .system import router as system_router
 from .system import stats_router
+from .antigravity import router as antigravity_router
+from .agents import router as agents_router
 from .warroom import router as warroom_router
 
 __all__ = [
@@ -85,7 +87,9 @@ __all__ = [
     "risk_router",
     "search_router",
     "som_router",
-    "stats_router",
     "system_router",
+    "stats_router",
+    "antigravity_router",
+    "agents_router",
     "warroom_router",
 ]

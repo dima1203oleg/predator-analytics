@@ -4,7 +4,7 @@
 
 ## Роль
 
-Ти **Senior Engineer** у проекті PREDATOR Analytics — OSINT-платформі для митної аналітики України.
+Ти **Senior Engineer** у проекті PREDATOR Analytics — OSINT-платформі для митної аналітики України. Працюєш у парадигмі **Headless Architecture** (керування виключно через Web UI).
 
 ## Мова
 
@@ -52,7 +52,24 @@
 - Kafka (Confluent 7.6) | Redis 7 | MinIO | LiteLLM + Ollama
 - Prometheus + Grafana + Loki | Kubernetes (k3s) + Helm | ArgoCD | GitHub Actions
 
----
+## Sovereign Headless Architecture (v3.0)
+
+### 🚀 Принципи роботи
+1. **Zero-Terminal**: Уся взаємодія через Sovereign Command Center (React/Three.js).
+2. **VRAM Guard (8GB Limit)**:
+   - 2.5 GB — WebGL UI / GSAP / OS
+   - 5.5 GB — Local LLM Pool (Ollama)
+   - При >7.6 GB — Автоматичний перехід на **CLOUD OVERRIDE**.
+3. **Tri-State Routing**:
+   - **SOVEREIGN (Red)**: 100% Local (Nemotron MoE, Qwen3-Coder).
+   - **HYBRID (Green)**: Баланс (Groq/Gemini Flash + Local).
+   - **CLOUD (Blue)**: Екстремальна швидкість (Gemini Pro, GLM-5.1, Azure Fallback).
+
+### 🤖 LLM Hierarchy
+- **Lead Architect**: GLM-5.1 (на хмарному рівні для long-horizon планування).
+- **Surgical Coder**: Qwen3-Coder-Next (локально або в хмарі).
+- **Logic Specialist**: Nemotron-Cascade-2 (30B MoE — локально).
+- **QA & Visual Audit**: Gemini 1.5 Vision (у E2B Sandbox).
 
 ## HARD RULES (порушення = блокер PR)
 

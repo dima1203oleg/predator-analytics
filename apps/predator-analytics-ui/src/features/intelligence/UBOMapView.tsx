@@ -16,27 +16,16 @@ import {
   Crosshair, Zap, Lock, Star, Target, Radar, Cpu, Activity
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { intelligence } from '@/services/dataService';
+import { analyticsService, UBONode } from '@/services/unified/analytics.service';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { CyberOrb } from '@/components/CyberOrb';
+import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ─── TYPES ──────────────────────────────────────────────────────────
-
-type UBONode = {
-  id: string;
-  name: string;
-  type: 'person' | 'company' | 'offshore' | 'state';
-  share?: number;
-  nationality?: string;
-  risk: number; // 0-100
-  pep?: boolean;
-  sanctioned?: boolean;
-  country?: string;
-  children?: UBONode[];
-};
+// UBONode imported from analyticsService
 
 const MOCK_UBO_TREE: UBONode = {
   id: 'root',
@@ -202,16 +191,16 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
             <div className="flex items-center gap-6 mt-2">
               {node.share !== undefined && (
                 <span className="text-[10px] font-black text-slate-500 font-mono tracking-widest uppercase">
-                  SHARE: <span className="text-yellow-500 italic font-black">{node.share}%</span>
+                  ЧАСТКА: <span className="text-yellow-500 italic font-black">{node.share}%</span>
                 </span>
               )}
               <span className="text-[10px] font-black text-slate-500 font-mono tracking-widest uppercase">
-                RISK_SCORE: <span style={{ color: node.risk > 80 ? '#D97706' : node.risk > 60 ? '#f59e0b' : '#10b981' }} className="italic font-black">
+                ПОКАЗНИК_РИЗИКУ: <span style={{ color: node.risk > 80 ? '#D97706' : node.risk > 60 ? '#f59e0b' : '#10b981' }} className="italic font-black">
                   {node.risk}%
                 </span>
               </span>
               {node.nationality && (
-                <span className="text-[9px] text-slate-700 font-black tracking-widest uppercase italic">{node.nationality} NATIONALITY</span>
+                <span className="text-[9px] text-slate-700 font-black tracking-widest uppercase italic">ГРОМАДЯНСТВО: {node.nationality}</span>
               )}
             </div>
           </div>
@@ -283,21 +272,24 @@ const UBOMapView: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const result = await intelligence.getUBOMap('12345678');
+      SovereignAudio.playScanPulse();
+      const result = await analyticsService.getUBOMap('12345678');
       if (result) {
         setUboData(result);
         setCompany(result.name);
+        SovereignAudio.playImpact();
       } else {
-        setError('Дані про бенефіціарів відсутні або недоступні');
+        setError('Дані про бенефіціарів відсутні або недоступні в поточному секторі');
       }
     } catch (err) {
       console.error('UBO Fetch Error:', err);
-      setError('Помилка з\'єднання з сервером розвідки');
+      setError('Критична помилка з\'єднання з сервером розвідки Neo4j');
+      SovereignAudio.playAlert();
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'UBONexus',
           action: 'FetchUBO',
-          message: 'Критична помилка отримання даних бенефіціарів. Перевірте статус Neo4j.',
+          message: 'Збій ядра UBO_NEXUS. Перевірте статус Neo4j TITAN та ZROK-тунель.',
           severity: 'critical'
         }
       }));
