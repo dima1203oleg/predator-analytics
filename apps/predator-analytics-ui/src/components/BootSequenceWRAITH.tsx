@@ -205,6 +205,84 @@ class ApexAudioEngine {
     osc.stop(now + 4);
   }
 
+  /** Космічний вібраційний звук (Space/Cosmic Shudder) */
+  playCosmicVibration() {
+    this.init();
+    if (!this.ctx || !this.master) return;
+    
+    const now = this.ctx.currentTime;
+    
+    const createSpaceLayer = (freq: number, lfoFreq: number, depth: number) => {
+      if (!this.ctx || !this.master) return;
+      const osc = this.ctx.createOscillator();
+      const lfo = this.ctx.createOscillator();
+      const lfoGain = this.ctx.createGain();
+      const g = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.5, now + 10);
+
+      lfo.frequency.setValueAtTime(lfoFreq, now);
+      lfoGain.gain.setValueAtTime(depth, now);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+
+      // Volume oscillation (Shudder)
+      const vLfo = this.ctx.createOscillator();
+      const vLfoGain = this.ctx.createGain();
+      vLfo.frequency.setValueAtTime(lfoFreq * 1.5, now);
+      vLfoGain.gain.setValueAtTime(0.5, now);
+      vLfo.connect(vLfoGain);
+      
+      const mainG = this.ctx.createGain();
+      mainG.gain.setValueAtTime(0.3, now);
+      vLfoGain.connect(mainG.gain);
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(60, now);
+      filter.Q.value = 15;
+
+      osc.connect(filter);
+      filter.connect(mainG);
+      mainG.connect(this.master);
+
+      osc.start();
+      lfo.start();
+      vLfo.start();
+    };
+
+    createSpaceLayer(40, 0.2, 5); // Deep sweep
+    createSpaceLayer(35, 1.5, 10); // Shudder layer
+    
+    // Add brown noise rumble
+    const bufferSize = this.ctx.sampleRate * 5;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    let lastOut = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      data[i] = (lastOut + (0.02 * white)) / 1.02;
+      lastOut = data[i];
+      data[i] *= 3.5; // Gain
+    }
+    const noise = this.ctx.createBufferSource();
+    noise.buffer = buffer;
+    noise.loop = true;
+    const nFilter = this.ctx.createBiquadFilter();
+    nFilter.type = 'lowpass';
+    nFilter.frequency.setValueAtTime(50, now);
+    const nGain = this.ctx.createGain();
+    nGain.gain.setValueAtTime(0, now);
+    nGain.gain.linearRampToValueAtTime(0.8, now + 2);
+    
+    noise.connect(nFilter);
+    nFilter.connect(nGain);
+    nGain.connect(this.master);
+    noise.start();
+  }
+
   /** Голосовий супровід (Intimidating Sovereign Voice) */
   speak(text: string) {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -410,41 +488,36 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, W, H);
 
-      // Phases control (Sovereign Pacing)
-      if (elapsed < 8000 && localPhase !== 0) { 
+      // Phases control (Sovereign Pacing - FASTER)
+      if (elapsed < 4000 && localPhase !== 0) { 
         localPhase = 0; 
         setPhase(0); 
         sfx.playQuantumHum(); 
+        sfx.playCosmicVibration();
         sfx.speak("Система завантаження активована. Ідентифікація суверенного суб'єкта.");
       }
-      else if (elapsed >= 8000 && elapsed < 20000 && localPhase !== 1) { 
+      else if (elapsed >= 4000 && elapsed < 9000 && localPhase !== 1) { 
         localPhase = 1; 
         setPhase(1); 
       }
-      else if (elapsed >= 20000 && elapsed < 45000 && localPhase !== 1.5) { 
+      else if (elapsed >= 9000 && elapsed < 20000 && localPhase !== 1.5) { 
         localPhase = 1.5; 
         setPhase(1.5); 
         sfx.speak("Глобальне таргетування активне. Сканування векторів загрози.");
       }
-      else if (elapsed >= 45000 && elapsed < 75000 && localPhase !== 2) { 
+      else if (elapsed >= 20000 && elapsed < 35000 && localPhase !== 2) { 
         localPhase = 2; 
         setPhase(2); 
         sfx.speak("Аналіз завершено. Виявлено критичні співпадіння в тіньових реєстрах.");
       }
-      else if (elapsed >= 75000 && elapsed < 100000 && localPhase !== 2.5) { 
-        localPhase = 2.5; 
-        setPhase(2.5); 
-        sfx.playApexMatchFlash(); 
-        sfx.speak("Оберіть оперативний вектор втручання.");
-      }
-      else if (elapsed >= 100000 && localPhase < 3) { 
+      else if (elapsed >= 35000 && localPhase < 3) { 
         localPhase = 3; 
         setPhase(3); 
         sfx.playApexMatchFlash(); 
         sfx.speak("Доступ надано. Ласкаво просимо до Предатор Аналітікс.");
       }
       
-      if (elapsed >= 130000 && localPhase < 4) { onComplete(); }
+      if (elapsed >= 48000 && localPhase < 4) { onComplete(); }
 
       drawGrid(W, H, 0.4);
 
