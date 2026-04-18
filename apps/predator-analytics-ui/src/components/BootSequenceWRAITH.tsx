@@ -42,48 +42,69 @@ class ApexAudioEngine {
     }
   }
 
-  /** Глибокий промисловий гул (Суверенне ядро) — БАГАТОШАРОВИЙ */
+  /** Глибокий промисловий гул та хвилюючі вібрації (Суверенне ядро) */
   playQuantumHum() {
     this.init();
     if (!this.ctx || !this.master) return;
     
     const now = this.ctx.currentTime;
     
-    // Створюємо низькочастотний дрон
-    const createDrone = (freq: number, type: OscillatorType, gainVal: number) => {
+    // Створюємо низькочастотний дрон з амплітудною модуляцією (vibrations)
+    const createDrone = (freq: number, type: OscillatorType, gainVal: number, lfoFreq: number = 0) => {
       if (!this.ctx || !this.master) return;
       const osc = this.ctx.createOscillator();
-      const g = this.ctx.createGain();
+      const mainGain = this.ctx.createGain();
       const lfo = this.ctx.createOscillator();
       const lfoGain = this.ctx.createGain();
 
       osc.type = type;
       osc.frequency.setValueAtTime(freq, now);
       
-      lfo.frequency.setValueAtTime(0.5 + Math.random(), now);
-      lfoGain.gain.setValueAtTime(5, now);
-      lfo.connect(lfoGain);
-      lfoGain.connect(osc.frequency);
+      // Частотна модуляція (дрижання тембру)
+      const fm = this.ctx.createOscillator();
+      const fmGain = this.ctx.createGain();
+      fm.frequency.setValueAtTime(2 + Math.random(), now);
+      fmGain.gain.setValueAtTime(3, now);
+      fm.connect(fmGain);
+      fmGain.connect(osc.frequency);
+      fm.start();
 
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(gainVal, now + 5);
+      // Амплітудна модуляція (хвилюючі коливання гучності)
+      if (lfoFreq > 0) {
+        lfo.frequency.setValueAtTime(lfoFreq, now);
+        lfoGain.gain.setValueAtTime(0.4, now); // Глибина коливань
+        lfo.connect(lfoGain);
+        
+        const amGain = this.ctx.createGain();
+        amGain.gain.setValueAtTime(1, now);
+        lfoGain.connect(amGain.gain);
+        
+        mainGain.gain.setValueAtTime(0, now);
+        mainGain.gain.linearRampToValueAtTime(gainVal, now + 5);
+        
+        osc.connect(amGain);
+        amGain.connect(this.master);
+      } else {
+        mainGain.gain.setValueAtTime(0, now);
+        mainGain.gain.linearRampToValueAtTime(gainVal, now + 5);
+        osc.connect(mainGain);
+        mainGain.connect(this.master);
+      }
 
       const filter = this.ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(80, now);
-      filter.Q.value = 5;
+      filter.frequency.setValueAtTime(120, now);
+      filter.Q.value = 10;
 
-      osc.connect(filter);
-      filter.connect(g);
-      g.connect(this.master);
-      
       osc.start();
       lfo.start();
     };
 
-    createDrone(27.5, 'sawtooth', 0.4); // A0
-    createDrone(28.0, 'square', 0.3);   // Detuned
-    createDrone(55.0, 'sine', 0.3);     // Harmonic
+    // Стрій: Суб-бас + Дисонанс (для страху)
+    createDrone(30.0, 'sawtooth', 0.5, 0.8); // Глибокий гул з повільним коливанням
+    createDrone(31.5, 'square', 0.3, 1.2);   // Дисонуюча частота (біття)
+    createDrone(45.0, 'sine', 0.4, 0.5);     // Основна маса
+    createDrone(22.0, 'triangle', 0.4, 3.0); // Низькочастотна вібрація (тривожне тремтіння)
   }
 
   /** Масивний тектонічний удар (State Impact) */
