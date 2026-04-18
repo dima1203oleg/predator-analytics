@@ -1355,7 +1355,7 @@ function runRssPipeline(jobId, feedUrl) {
 // =============================================
 
 // Universal Health
-app.get(['/api/v1/health', '/api/v1/monitoring/health', '/v1/monitoring/health'], (req, res) => {
+app.get(['/health', '/health/live', '/health/ready', '/api/v1/health', '/api/v1/monitoring/health', '/api/v1/monitoring/system-health', '/v1/monitoring/health'], (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -2687,6 +2687,54 @@ app.get('/api/v1/system/infrastructure', (req, res) => {
       redis: { status: 'UP', version: '7.2', latency_ms: 1, keys: Object.keys(DB_PIPELINE_STATE).length }
     }
   });
+});
+
+app.get('/api/v1/system/nodes', (req, res) => {
+  res.json([
+    {
+      id: 'nvidia',
+      name: 'NVIDIA MASTER',
+      type: 'SERVER',
+      status: 'online',
+      cpu: { used: 42, total: 100, unit: '%' },
+      ram: { used: 32.4, total: 128, unit: 'GB' },
+      disk: { used: 2.1, total: 10, unit: 'TB' },
+      gpu: [
+        { model: 'RTX 4090', vram_used: 12.4, vram_total: 24, temp: 62 },
+        { model: 'RTX 4090', vram_used: 4.2, vram_total: 24, temp: 54 }
+      ],
+      location: 'Data Center (Kyiv)',
+      uptime: '142h 12m'
+    },
+    {
+      id: 'macbook',
+      name: 'MACBOOK PRO (LOCAL)',
+      type: 'LAPTOP',
+      status: 'online',
+      cpu: { used: 15, total: 100, unit: '%' },
+      ram: { used: 18.2, total: 32, unit: 'GB' },
+      disk: { used: 450, total: 1000, unit: 'GB' },
+      gpu: [
+        { model: 'Apple M3 Max', vram_used: 4.5, vram_total: 16, temp: 42 }
+      ],
+      location: 'Local (Home Office)',
+      uptime: '12h 45m'
+    },
+    {
+      id: 'colab',
+      name: 'GOOGLE COLAB MIRROR',
+      type: 'CLOUD',
+      status: 'online',
+      cpu: { used: 8, total: 100, unit: '%' },
+      ram: { used: 4.1, total: 12, unit: 'GB' },
+      disk: { used: 25, total: 80, unit: 'GB' },
+      gpu: [
+        { model: 'Tesla T4', vram_used: 0.5, vram_total: 16, temp: 38 }
+      ],
+      location: 'Google Cloud (US-East)',
+      uptime: '2h 15m'
+    }
+  ]);
 });
 
 // Premium
@@ -4489,7 +4537,12 @@ const wss = new WebSocketServer({ noServer: true });
 server.on('upgrade', (request, socket, head) => {
   const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
 
-  if (pathname === '/api/v45/ws/omniscience' || pathname === '/api/v1/ws/system/events') {
+  if (
+    pathname === '/api/v45/ws/omniscience' || 
+    pathname === '/api/v1/ws/system/events' ||
+    pathname === '/api/v1/factory/ws/observer' ||
+    pathname === '/factory/ws/observer'
+  ) {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
     });
@@ -4498,18 +4551,25 @@ server.on('upgrade', (request, socket, head) => {
   }
 });
 
-wss.on('connection', (ws) => {
-  console.log('✅ New Omniscience WS Client connected');
+
+wss.on('connection', (ws, request) => {
+  const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
+  console.log(`✅ New WS Client connected to ${pathname}`);
 
   const interval = setInterval(() => {
     if (ws.readyState !== 1) return;
 
     const cpu = 24 + Math.random() * 15;
     const ram = 45 + Math.random() * 20;
+    const gpus = [
+      { id: 0, load: 45 + Math.random() * 30, mem: 5600 + Math.random() * 1000, temp: 62 + Math.random() * 5 },
+      { id: 1, load: 12 + Math.random() * 10, mem: 1200 + Math.random() * 500, temp: 48 + Math.random() * 3 }
+    ];
     const timestamp = new Date().toISOString();
     const pulseScore = Math.floor(85 + Math.random() * 15);
 
-    ws.send(JSON.stringify({
+    // Common telemetry
+    const commonUpdate = {
       pulse: {
         score: pulseScore,
         status: pulseScore > 90 ? 'HEALTHY' : 'DEGRADED',
@@ -4521,7 +4581,8 @@ wss.on('connection', (ws) => {
         memory_percent: ram,
         timestamp: timestamp,
         active_containers: 12,
-        container_raw: "v45-ready-nvidia"
+        container_raw: "v45-ready-nvidia",
+        gpus: gpus
       },
       training: { active: false, progress: 0 },
       audit_logs: [],
@@ -4531,11 +4592,39 @@ wss.on('connection', (ws) => {
         memory: ram,
         timestamp: timestamp
       }
-    }));
+    };
+
+    ws.send(JSON.stringify(commonUpdate));
+
+    // Specific updates for Factory Observer
+    if (pathname.includes('/factory/ws/observer')) {
+      ws.send(JSON.stringify({
+        type: 'FACTORY_STATE_UPDATE',
+        swarm: [
+          { id: 'agent-planner', name: 'Master Planner', role: 'PLANNER', status: Math.random() > 0.5 ? 'THINKING' : 'IDLE', vram_usage_gb: 1.2, last_activity: timestamp },
+          { id: 'agent-coder', name: 'Surgical Coder', role: 'CODER', status: Math.random() > 0.3 ? 'EXECUTING' : 'THINKING', vram_usage_gb: 3.5, active_task: 'refactor(core): sync with colab mirror', last_activity: timestamp },
+          { id: 'agent-qa', name: 'QA Sentry', role: 'QA_BVR', status: 'IDLE', vram_usage_gb: 0.8, last_activity: timestamp }
+        ],
+        latest_step: {
+          id: `step-${Date.now()}`,
+          agent_id: 'agent-coder',
+          thought: 'Аналіз розбіжностей між локальним станом та дзеркалом Colab...',
+          action: 'git_sync',
+          observation: 'Синхронізація успішна. Delta: 0.02s',
+          timestamp: timestamp
+        },
+        vram: {
+          used: 5.5 + Math.random() * 1.5,
+          total: 8.0,
+          critical: ram > 90
+        }
+      }));
+    }
   }, 2000);
 
   ws.on('close', () => clearInterval(interval));
 });
+
 
 export default app;
 

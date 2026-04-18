@@ -29,7 +29,12 @@ const getSourceLabel = (): string => {
 
 /** Людиночитана мітка активного вузла для відображення в UI */
 const getNodeSource = (): string => {
-    if (API_BASE_URL.includes('zrok.io'))     return 'NVIDIA_VIA_ZROK';
+    if (API_BASE_URL.includes('zrok.io')) {
+        // У кожній зміні API_BASE_URL в config.ts ми можемо імпортувати актуальні константи
+        // Проте для хука безпечніше перевіряти за входженням підрядка, якщо ми не хочемо циклічних імпортів
+        if (API_BASE_URL.includes('mirror')) return 'COLAB_MIRROR';
+        return 'NVIDIA_VIA_ZROK';
+    }
     if (API_BASE_URL.includes('194.177.1'))   return 'NVIDIA_DIRECT';
     if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('9080')) return 'SOVEREIGN_MOCK';
     return 'UNKNOWN';

@@ -2,8 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
-import { Search, ShieldAlert, Activity, GitBranch, Target, Zap, Clock, AlertTriangle, CheckCircle2, TrendingDown, Award } from 'lucide-react';
+import { 
+    Search, 
+    ShieldAlert, 
+    Activity, 
+    GitBranch, 
+    Target, 
+    Zap, 
+    Clock, 
+    AlertTriangle, 
+    CheckCircle2, 
+    TrendingDown, 
+    Award,
+    Cpu,
+    Fingerprint,
+    Boxes,
+    FileText,
+    Share2,
+    Download
+} from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
+import { VramSentinel } from '@/components/intelligence/VramSentinel';
+import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 
 const normalizeRiskLevel = (value?: string): string => {
     switch (value) {
@@ -27,16 +47,16 @@ const getGradeConfig = (value?: string) => {
 
     switch (riskLevel) {
         case 'critical':
-            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500' };
+            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50' };
         case 'high':
-            return { grade: 'C', color: 'text-amber-500', ringColor: 'stroke-amber-500' };
+            return { grade: 'C', color: 'text-amber-500', ringColor: 'stroke-amber-500', glow: 'shadow-amber-500/50' };
         case 'elevated':
         case 'medium':
-            return { grade: 'B-', color: 'text-yellow-500', ringColor: 'stroke-yellow-500' };
+            return { grade: 'B-', color: 'text-yellow-500', ringColor: 'stroke-yellow-500', glow: 'shadow-yellow-500/50' };
         case 'watchlist':
-            return { grade: 'B', color: 'text-cyan-400', ringColor: 'stroke-cyan-400' };
+            return { grade: 'B', color: 'text-cyan-400', ringColor: 'stroke-cyan-400', glow: 'shadow-cyan-400/50' };
         default:
-            return { grade: 'A', color: 'text-emerald-500', ringColor: 'stroke-emerald-500' };
+            return { grade: 'A', color: 'text-emerald-500', ringColor: 'stroke-emerald-500', glow: 'shadow-emerald-500/50' };
     }
 };
 
@@ -45,7 +65,7 @@ function CERSRadarECharts({ data }: { data: any[] }) {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'item',
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            backgroundColor: 'rgba(7, 15, 28, 0.95)',
             borderColor: 'rgba(16, 185, 129, 0.3)',
             textStyle: { color: '#fff', fontSize: 12 },
             padding: [8, 12]
@@ -53,18 +73,18 @@ function CERSRadarECharts({ data }: { data: any[] }) {
         radar: {
             indicator: data.map(d => ({ name: d.subject, max: d.fullMark })),
             shape: 'polygon',
-            splitNumber: 4,
+            splitNumber: 5,
             name: {
-                textStyle: { color: '#94a3b8', fontSize: 11 }
+                textStyle: { color: '#94a3b8', fontSize: 11, fontWeight: 'bold' }
             },
             splitLine: {
                 lineStyle: {
-                    color: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.08)', 'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.04)']
+                    color: ['rgba(255,255,255,0.05)', 'rgba(52, 211, 153, 0.1)', 'rgba(255,255,255,0.05)']
                 }
             },
             splitArea: {
                 areaStyle: {
-                    color: ['rgba(16, 185, 129, 0.05)', 'rgba(16, 185, 129, 0.03)']
+                    color: ['rgba(16, 185, 129, 0.02)', 'rgba(16, 185, 129, 0.05)']
                 }
             },
             axisLine: {
@@ -78,24 +98,33 @@ function CERSRadarECharts({ data }: { data: any[] }) {
                 name: 'CERS Оцінка',
                 value: data.map(d => d.A),
                 areaStyle: {
-                    color: 'rgba(16, 185, 129, 0.3)'
+                    color: {
+                        type: 'radial',
+                        x: 0.5, y: 0.5, r: 0.5,
+                        colorStops: [
+                            { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
+                            { offset: 1, color: 'rgba(16, 185, 129, 0.1)' }
+                        ]
+                    }
                 },
                 lineStyle: {
                     color: '#10b981',
-                    width: 2.5
+                    width: 3,
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(16, 185, 129, 0.5)'
                 },
                 itemStyle: {
                     color: '#10b981',
-                    borderColor: '#059669',
-                    borderWidth: 2
+                    borderColor: '#fff',
+                    borderWidth: 1
                 },
-                symbolSize: 7
+                symbolSize: 6
             }
         ]
     };
 
     return (
-        <div className="h-72 w-full">
+        <div className="h-full w-full min-h-[300px]">
             <ReactECharts option={radarOption} style={{ height: '100%', width: '100%' }} />
         </div>
     );
@@ -107,55 +136,55 @@ function SHAPChart({ data }: { data: any[] }) {
         tooltip: {
             trigger: 'axis',
             axisPointer: { type: 'shadow' },
-            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            backgroundColor: 'rgba(7, 15, 28, 0.95)',
             borderColor: 'rgba(244, 63, 94, 0.3)',
             textStyle: { color: '#fff', fontSize: 12 },
-            padding: [8, 12],
-            formatter: (params: any) => {
-                if (Array.isArray(params) && params.length > 0) {
-                    const p = params[0];
-                    return `${p.name}<br/>${p.seriesName}: ${(p.value > 0 ? '+' : '')}${(p.value * 100).toFixed(1)}%`;
-                }
-                return '';
-            }
+            padding: [8, 12]
         },
         grid: {
-            left: '15%',
-            right: '5%',
-            bottom: '10%',
+            left: '5%',
+            right: '8%',
+            bottom: '5%',
             top: '5%',
             containLabel: true
         },
         xAxis: {
             type: 'value',
-            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
-            axisLabel: { color: '#64748b', fontSize: 11 }
+            axisLine: { show: false },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)', type: 'dashed' } },
+            axisLabel: { color: '#64748b', fontSize: 10 }
         },
         yAxis: {
             type: 'category',
             data: data.map(d => d.feature),
             axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
-            axisLabel: { color: '#94a3b8', fontSize: 11 }
+            axisLabel: { color: '#cbd5e1', fontSize: 11, width: 120, overflow: 'truncate' }
         },
         series: [
             {
-                name: 'Вплив на ризик',
+                name: 'Вплив',
                 type: 'bar',
                 data: data.map(d => d.impact),
                 itemStyle: {
                     color: (params: any) => {
-                        return data[params.dataIndex].impact < 0 ? '#f43f5e' : '#10b981';
+                        return data[params.dataIndex].impact < 0 ? 
+                            '#f43f5e' : '#10b981';
                     },
                     borderRadius: [0, 4, 4, 0]
                 },
-                barWidth: '60%'
+                barWidth: '50%',
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 15,
+                        shadowColor: 'rgba(0,0,0,0.5)'
+                    }
+                }
             }
         ]
     };
 
     return (
-        <div className="h-72 w-full">
+        <div className="h-full w-full min-h-[300px]">
             <ReactECharts option={shapOption} style={{ height: '100%', width: '100%' }} />
         </div>
     );
@@ -163,7 +192,7 @@ function SHAPChart({ data }: { data: any[] }) {
 
 export function CompanyCERSDashboard() {
     const { id } = useParams();
-    const [inputValue, setInputValue] = useState(id || 'ТОВ ЕНЕРГО-РЕСУРС 41829391');
+    const [inputValue, setInputValue] = useState(id || '');
     const [searchQuery, setSearchQuery] = useState(id || 'ТОВ ЕНЕРГО-РЕСУРС 41829391');
 
     const [companyData, setCompanyData] = useState<any>(null);
@@ -200,11 +229,12 @@ export function CompanyCERSDashboard() {
                             feature: s.feature_name,
                             impact: s.shap_value,
                             type: s.shap_value > 0 ? 'positive' : 'negative'
-                        })).sort((a: any, b: any) => a.impact - b.impact) : [],
+                        })).sort((a: any, b: any) => Math.abs(a.impact) - Math.abs(b.impact)) : [],
                         score: profile.risk_score || 0,
                         grade: gradeConfig.grade,
                         color: gradeConfig.color,
                         ringColor: gradeConfig.ringColor,
+                        glow: gradeConfig.glow
                     });
                 } else {
                     setCompanyData(null);
@@ -225,266 +255,353 @@ export function CompanyCERSDashboard() {
         setSearchQuery(inputValue);
     };
 
-    const displayRadar = companyData?.radar || [
-        { subject: 'Інституційний', A: 0, fullMark: 100 },
-        { subject: 'Структурний', A: 0, fullMark: 100 },
-        { subject: 'Поведінковий', A: 0, fullMark: 100 },
-        { subject: 'Впливовий', A: 0, fullMark: 100 },
-        { subject: 'Предиктивний', A: 0, fullMark: 100 },
-    ];
-    
+    const displayRadar = companyData?.radar || [];
     const displayShap = companyData?.shap || [];
     const displayEvents = companyData?.profile?.events || [];
+    const profile = companyData?.profile || {};
     
+    const score = companyData?.score || 0;
     const cersGradeColor = companyData?.color || "text-slate-500";
     const cersRingColor = companyData?.ringColor || "stroke-slate-700";
-    const bgRingColor = "stroke-slate-800";
-    const score = companyData?.score || 0;
-    
-    // Safely mapping profile info
-    const profile = companyData?.profile || {};
-    const companyName = profile.name || searchQuery;
-    const companyCode = profile.edrpou || profile.id || "Невідомо";
-    const companyStatus = profile.status || "Активний";
 
     return (
-        <div className="flex flex-col h-full bg-slate-950 p-4 lg:p-8 text-white overflow-y-auto w-full relative">
-            {/* Background aesthetics */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="flex flex-col h-full bg-[#030712] text-white overflow-hidden w-full relative">
+            {/* Background Aesthetics */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
 
-            {/* Header & Search */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8 relative z-10 w-full">
-                <div>
-                    <h1 className="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 flex items-center gap-3">
-                        <ShieldAlert className="w-8 h-8 text-emerald-400" />
-                        CERS КОМАНДНИЙ ЦЕНТР
-                    </h1>
-                    <p className="text-slate-400 mt-2 font-mono text-sm max-w-2xl">
-                        Аналіз Сукупного Економічного Ризику (CERS) із SHAP-декомпозицією та нейро-скорингом у реальному часі.
-                    </p>
+            {/* Tactical Top Bar */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20">
+                <div className="flex items-center gap-4">
+                    <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                        <ShieldAlert className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-black tracking-widest text-white uppercase italic">
+                            CERS <span className="text-emerald-500">TACTICAL</span> HUD
+                        </h1>
+                        <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-tighter">Sovereign Analysis v57.2</span>
+                            <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+                            <span className="text-[10px] font-mono text-slate-500 uppercase">Статус: Оперативний</span>
+                        </div>
+                    </div>
                 </div>
 
-                <form onSubmit={handleSearch} className="relative w-full lg:w-96 group">
-                    <input
-                        type="text"
-                        value={inputValue}
-                        onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Введіть ЄДРПОУ або Назву..."
-                        className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all font-mono text-sm shadow-lg shadow-black/20 group-hover:border-slate-600"
-                        disabled={loadingData}
-                    />
-                    <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${loadingData ? 'text-emerald-500 animate-pulse' : 'text-slate-500 group-hover:text-emerald-400'}`} />
-                    <button type="submit" className="hidden" />
-                </form>
+                <div className="flex items-center gap-6">
+                    <form onSubmit={handleSearch} className="relative group w-80">
+                        <div className="absolute inset-0 bg-emerald-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
+                            className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-emerald-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
+                        />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors z-10" />
+                    </form>
+                    
+                    <div className="flex items-center gap-2">
+                        <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                            <Share2 className="w-4 h-4" />
+                        </button>
+                        <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                            <Download className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <AnimatePresence mode="wait">
-                {loadingData && (
-                    <motion.div
-                        key="loading"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="w-full flex-1 flex flex-col items-center justify-center min-h-[400px]"
-                    >
-                        <div className="relative w-24 h-24">
-                            <div className="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"></div>
-                            <div className="absolute inset-2 border-r-2 border-cyan-400 rounded-full animate-spin direction-reverse"></div>
-                            <Activity className="absolute inset-0 m-auto w-8 h-8 text-emerald-400 animate-pulse" />
-                        </div>
-                        <p className="mt-6 font-mono text-emerald-400 text-sm tracking-widest animate-pulse">РАХУЄМО МАТРИЦЮ РИЗИКІВ...</p>
-                    </motion.div>
-                )}
-
-                {!loadingData && companyData && (
-                    <motion.div
-                        key="results"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.5, staggerChildren: 0.1 }}
-                        className="w-full flex flex-col gap-6 relative z-10"
-                    >
-                        {/* Top Row: Meta info & Score */}
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-                            {/* Entity Context Card */}
-                            <motion.div className="col-span-1 lg:col-span-2 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative overflow-hidden group hover:border-slate-600 transition-colors">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors" />
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-mono text-emerald-400 uppercase bg-emerald-500/10 px-2 py-1 rounded">Аналіз об'єкта</span>
-                                    <span className="text-xs font-mono text-slate-500">оновлено щойно</span>
-                                </div>
-                                <h2 className="text-2xl font-bold mb-1">{companyName}</h2>
-                                <div className="text-slate-400 font-mono text-sm mb-6 flex items-center gap-4">
-                                    <span>ЄДРПОУ: {companyCode}</span>
-                                    {profile.kved && (
-                                        <>
-                                            <span className="w-1 h-1 bg-slate-600 rounded-full"></span>
-                                            <span className="truncate max-w-[200px]">{profile.kved}</span>
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-slate-950/50 rounded-xl p-3 border border-slate-800">
-                                        <span className="block text-xs text-slate-500 font-mono mb-1">Статус</span>
-                                        <span className="flex items-center gap-2 text-sm text-white font-medium">
-                                            {companyStatus === 'Активний' ? (
-                                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                            ) : (
-                                                <AlertTriangle className="w-4 h-4 text-amber-500" />
-                                            )} <span className="capitalize">{companyStatus}</span>
-                                        </span>
+            <div className="flex flex-1 overflow-hidden">
+                {/* Left Sidebar: Intelligence HUD */}
+                <div className="w-80 border-r border-white/5 flex flex-col bg-slate-900/20 backdrop-blur-sm z-10">
+                    <div className="p-4 space-y-6 flex-1 overflow-y-auto custom-scrollbar">
+                        <VramSentinel />
+                        
+                        <div className="space-y-3">
+                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Метрики Вузла</h3>
+                            <div className="grid grid-cols-1 gap-2">
+                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-emerald-500/20 transition-colors">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <Cpu className="w-3.5 h-3.5 text-emerald-400" />
+                                        <span className="text-[10px] font-mono text-slate-500">LLM LOAD</span>
                                     </div>
-                                    <div className="bg-slate-950/50 rounded-xl p-3 border border-slate-800">
-                                        <span className="block text-xs text-slate-500 font-mono mb-1">Офшори</span>
-                                        <span className={`flex items-center gap-2 text-sm font-medium ${profile.has_offshores ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                            {profile.has_offshores ? <AlertTriangle className="w-4 h-4" /> : null} 
-                                            {profile.has_offshores ? 'Виявлено' : 'Чисто'}
-                                        </span>
-                                    </div>
-                                    <div className="bg-slate-950/50 rounded-xl p-3 border border-slate-800">
-                                        <span className="block text-xs text-slate-500 font-mono mb-1">Реєстр боржників</span>
-                                        <span className={`flex items-center gap-2 text-sm font-medium ${profile.is_debtor ? 'text-amber-400' : 'text-emerald-400'}`}>
-                                            {profile.is_debtor ? <AlertTriangle className="w-4 h-4" /> : null} 
-                                            {profile.is_debtor ? 'Присутній' : 'Відсутній'}
-                                        </span>
-                                    </div>
-                                    <div className="bg-slate-950/50 rounded-xl p-3 border border-slate-800">
-                                        <span className="block text-xs text-slate-500 font-mono mb-1">Санкції</span>
-                                        <span className={`flex items-center gap-2 text-sm font-medium ${profile.is_sanctioned ? 'text-rose-500' : 'text-emerald-400'}`}>
-                                            {profile.is_sanctioned ? <AlertTriangle className="w-4 h-4" /> : null} 
-                                            {profile.is_sanctioned ? 'Під санкціями' : 'Чисто'}
-                                        </span>
+                                    <div className="text-lg font-black text-white">42.8%</div>
+                                    <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
+                                        <div className="h-full bg-emerald-500 w-[42.8%]" />
                                     </div>
                                 </div>
-                            </motion.div>
-
-                            {/* CERS Score Radial Control */}
-                            <motion.div className="col-span-1 lg:col-span-1 bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-700/50 rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center relative hover:border-amber-500/30 transition-colors">
-                                <span className="absolute top-4 left-4 text-xs font-mono text-slate-500 uppercase">Рейтинг CERS</span>
-
-                                <div className="relative w-40 h-40 flex items-center justify-center mt-4">
-                                    {/* SVG progress ring */}
-                                    <svg className="w-full h-full transform -rotate-90">
-                                        <circle cx="80" cy="80" r="70" className={`${bgRingColor} fill-none`} strokeWidth="8" />
-                                        <circle
-                                            cx="80" cy="80" r="70"
-                                            className={`${cersRingColor} fill-none stroke-current drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] transition-all duration-1000 ease-out`}
-                                            strokeWidth="8"
-                                            strokeDasharray="439.8"
-                                            strokeDashoffset={439.8 - (score / 100) * 439.8}
-                                            strokeLinecap="round"
-                                        />
-                                    </svg>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                        <span className={`text-4xl font-black ${cersGradeColor} drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]`}>{companyData?.grade || 'N/A'}</span>
-                                        <span className="text-sm font-mono text-slate-400 mt-1">{score} / 100</span>
+                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-cyan-500/20 transition-colors">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                                        <span className="text-[10px] font-mono text-slate-500">I/O STATS</span>
                                     </div>
+                                    <div className="text-lg font-black text-white">1.2 GB/s</div>
+                                    <div className="text-[10px] font-mono text-cyan-500/60 mt-1 uppercase tracking-tighter">Висока пропускна здатність</div>
                                 </div>
-                                <div className="mt-4 text-center">
-                                    <span className={`px-3 py-1 bg-slate-800 text-white text-xs uppercase font-bold tracking-widest rounded-full border border-slate-700`}>
-                                        Ризик: {(profile.risk_level || 'Невідомо').toUpperCase()}
-                                    </span>
-                                </div>
-                            </motion.div>
-
-                            {/* Quick AI Action Card */}
-                            <motion.div className="col-span-1 lg:col-span-1 bg-[#0A111F] border border-cyan-500/20 rounded-2xl p-6 shadow-2xl shadow-cyan-900/20 relative overflow-hidden flex flex-col justify-between">
-                                <div>
-                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
-                                    <h3 className="text-sm font-mono text-cyan-400 mb-4 flex items-center gap-2">
-                                        <Zap className="w-4 h-4" /> AI КОНСІЛІУМ
-                                    </h3>
-                                    <p className="text-sm text-slate-300 mb-6 leading-relaxed">
-                                        {profile.ai_summary || "Аналіз зібраних даних свідчить про наявність певних фінансових чи структурних ризиків. Досьє сформовано."}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col gap-2 mt-auto">
-                                    <button className="w-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 py-2 px-4 rounded-lg text-sm font-mono transition-colors flex items-center justify-between group">
-                                        <span>Побудувати Тіньову Карту</span>
-                                        <Target className="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                                    </button>
-                                    <button className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 py-2 px-4 rounded-lg text-sm font-mono transition-colors flex items-center justify-between group">
-                                        <span>Згенерувати Досьє</span>
-                                        <Activity className="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                                    </button>
-                                </div>
-                            </motion.div>
+                            </div>
                         </div>
 
-                        {/* Middle Row: Radar & SHAP */}
-                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 min-h-[400px]">
-
-                            {/* 5-Layer Radar Chart */}
-                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative hover:border-emerald-500/20 transition-colors">
-                                <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
-                                    <GitBranch className="w-4 h-4" /> 5-ШАРОВА ОЦІНКА CERS
-                                </h3>
-                                {displayRadar.every((r: any) => r.A === 0) ? (
-                                    <div className="h-72 w-full flex items-center justify-center text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                                        Детальна інформація відсутня
+                        <div className="space-y-3">
+                            <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Сигнали Ризику</h3>
+                            <div className="space-y-2">
+                                {displayEvents.slice(0, 3).map((event: any, i: number) => (
+                                    <div key={i} className="bg-slate-950/30 border-l-2 border-emerald-500/50 p-2 rounded-r-lg">
+                                        <div className="text-[9px] font-mono text-slate-500 mb-1">{event.date}</div>
+                                        <div className="text-[11px] text-slate-300 leading-tight line-clamp-2">{event.text}</div>
                                     </div>
-                                ) : (
-                                    <CERSRadarECharts data={displayRadar} />
-                                )}
-                            </motion.div>
-
-                            {/* SHAP Values Chart */}
-                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl relative hover:border-rose-500/20 transition-colors">
-                                <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
-                                    <Activity className="w-4 h-4" /> SHAP ДЕКОМПОЗИЦІЯ РИЗИКУ (ДРАЙВЕРИ)
-                                </h3>
-                                {displayShap.length === 0 ? (
-                                    <div className="h-72 w-full flex items-center justify-center text-slate-500 border border-dashed border-slate-700 rounded-lg">
-                                        SHAP декомпозиція відсутня
-                                    </div>
-                                ) : (
-                                    <SHAPChart data={displayShap} />
-                                )}
-                            </motion.div>
+                                ))}
+                            </div>
                         </div>
+                    </div>
+                    
+                    <div className="p-4 border-t border-white/5">
+                        <LiveAgentTerminal />
+                    </div>
+                </div>
 
-                        {/* Bottom Row: Timeline */}
-                        {displayEvents.length > 0 && (
-                            <motion.div className="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
-                                <h3 className="text-sm font-mono text-slate-400 mb-6 flex items-center gap-2">
-                                    <Clock className="w-4 h-4" /> ХРОНОЛОГІЯ ТА СИГНАЛИ
-                                </h3>
-                                <div className="flex flex-col gap-0 border-l px-4 border-slate-700/50 py-2 ml-4">
-                                    {displayEvents.map((event: any, i: number) => (
-                                        <div key={i} className="relative pb-6 last:pb-0">
-                                            <div className={`absolute -left-[23px] top-1 w-3 h-3 rounded-full border-2 border-slate-900 ${event.type === 'alert' ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]' :
-                                                event.type === 'warning' ? 'bg-amber-500' :
-                                                    event.type === 'success' ? 'bg-emerald-500' : 'bg-blue-500'
-                                                }`} />
-                                            <div className="flex flex-col">
-                                                <span className="text-xs font-mono text-slate-500 mb-1">{event.date}</span>
-                                                <p className="text-sm text-slate-300 leading-relaxed">{event.text}</p>
+                {/* Main Content Area */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar bg-slate-950/50">
+                    <AnimatePresence mode="wait">
+                        {loadingData ? (
+                            <motion.div 
+                                className="h-full flex flex-col items-center justify-center p-20"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            >
+                                <div className="relative w-32 h-32">
+                                    <div className="absolute inset-0 border-2 border-emerald-500/20 rounded-full"></div>
+                                    <div className="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"></div>
+                                    <div className="absolute inset-4 border-2 border-cyan-500/20 rounded-full"></div>
+                                    <div className="absolute inset-4 border-b-2 border-cyan-500 rounded-full animate-spin-reverse"></div>
+                                    <ShieldAlert className="absolute inset-0 m-auto w-10 h-10 text-emerald-500 animate-pulse" />
+                                </div>
+                                <h2 className="mt-8 text-xl font-black italic tracking-widest text-white uppercase animate-pulse">
+                                    Ініціалізація <span className="text-emerald-500">WRAITH</span> Сканера
+                                </h2>
+                                <p className="mt-2 text-slate-500 font-mono text-xs uppercase tracking-widest">
+                                    Декомпозиція SHAP-векторів та нейронний скоринг...
+                                </p>
+                            </motion.div>
+                        ) : companyData ? (
+                            <motion.div 
+                                className="p-6 space-y-6 max-w-[1600px] mx-auto"
+                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                            >
+                                {/* Top Row: Company Profile & Grade */}
+                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                                    {/* Company Identity Card */}
+                                    <div className="xl:col-span-8 bg-slate-900/60 border border-white/10 rounded-3xl p-8 relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] -mr-32 -mt-32 transition-colors group-hover:bg-emerald-500/10" />
+                                        
+                                        <div className="relative z-10">
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-widest italic">
+                                                    Верифікований Об'єкт
+                                                </span>
+                                                <span className="w-1.5 h-1.5 bg-slate-700 rounded-full"></span>
+                                                <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">ID: {profile.edrpou || profile.id}</span>
+                                            </div>
+                                            
+                                            <h2 className="text-4xl font-black text-white mb-2 tracking-tight line-clamp-1 uppercase italic">
+                                                {profile.name || searchQuery}
+                                            </h2>
+                                            
+                                            <div className="flex flex-wrap gap-4 mt-6">
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
+                                                    <Fingerprint className="w-4 h-4 text-emerald-500" />
+                                                    <span className="text-xs font-mono text-slate-300">ЄДРПОУ: {profile.edrpou || "Н/Д"}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
+                                                    <Boxes className="w-4 h-4 text-cyan-500" />
+                                                    <span className="text-xs font-mono text-slate-300 max-w-[200px] truncate">{profile.kved || "КВЕД не вказано"}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
+                                                    <CheckCircle2 className={`w-4 h-4 ${profile.status === 'Активний' ? 'text-emerald-500' : 'text-amber-500'}`} />
+                                                    <span className="text-xs font-mono text-slate-300 uppercase">{profile.status || "Активний"}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                                {[
+                                                    { label: 'SANC-SCAN', status: profile.is_sanctioned ? 'FAILED' : 'CLEAN', color: profile.is_sanctioned ? 'rose' : 'emerald' },
+                                                    { label: 'OFF-SHORE', status: profile.has_offshores ? 'DETECTED' : 'NONE', color: profile.has_offshores ? 'amber' : 'emerald' },
+                                                    { label: 'DEBT-REG', status: profile.is_debtor ? 'FLAGGED' : 'CLEAR', color: profile.is_debtor ? 'amber' : 'emerald' },
+                                                    { label: 'LEGAL-W', status: 'STABLE', color: 'emerald' }
+                                                ].map((item, idx) => (
+                                                    <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
+                                                        <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
+                                                        <span className={`text-xs font-mono font-bold text-${item.color}-400`}>{item.status}</span>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-                    </motion.div>
-                )}
+                                    </div>
 
-                {/* No results placeholder */}
-                {!loadingData && hasAttempted && !companyData && (
-                    <motion.div
-                        key="no-results"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="w-full flex-1 flex flex-col items-center justify-center min-h-[400px] text-slate-400"
-                    >
-                        <AlertTriangle className="w-12 h-12 text-slate-600 mb-4" />
-                        <h3 className="text-lg font-bold mb-2">Об'єкт не знайдено або відсутнє індексування CERS.</h3>
-                        <p className="text-sm text-slate-500 max-w-md text-center">
-                            Можливо, підприємство ще не додано до загального індексу або введений код є хибним. Зверніться до CERS API.
-                        </p>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                    {/* CERS Score Radial Card */}
+                                    <div className="xl:col-span-4 bg-slate-900/60 border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center relative group">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5 opacity-50" />
+                                        
+                                        <div className="relative w-48 h-48 mb-6">
+                                            <svg className="w-full h-full transform -rotate-90">
+                                                <circle cx="96" cy="96" r="86" className="stroke-slate-800 fill-none" strokeWidth="8" />
+                                                <circle
+                                                    cx="96" cy="96" r="86"
+                                                    className={`${cersRingColor} fill-none transition-all duration-1000 ease-out`}
+                                                    strokeWidth="10"
+                                                    strokeDasharray="540"
+                                                    strokeDashoffset={540 - (score / 100) * 540}
+                                                    strokeLinecap="round"
+                                                    style={{ filter: 'drop-shadow(0 0 12px currentColor)' }}
+                                                />
+                                            </svg>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-2xl`}>
+                                                    {companyData?.grade || 'N/A'}
+                                                </span>
+                                                <span className="text-xs font-mono text-slate-400 mt-2 uppercase tracking-widest">Оцінка: {score}/100</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="text-center w-full">
+                                            <div className="px-6 py-2 bg-slate-950/80 rounded-2xl border border-white/5 inline-block">
+                                                <span className={`text-xs font-black uppercase tracking-widest ${cersGradeColor}`}>
+                                                    РІВЕНЬ РИЗИКУ: {profile.risk_level || 'Н/Д'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* AI Intelligence & Analysis Rows */}
+                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                                    {/* SHAP Decomposition */}
+                                    <div className="xl:col-span-7 bg-slate-900/60 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-2">
+                                                <Activity className="w-4 h-4 text-emerald-400" />
+                                                <h3 className="text-sm font-black text-white uppercase tracking-widest italic">SHAP ДЕКОМПОЗИЦІЯ (ДРАЙВЕРИ РИЗИКУ)</h3>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Vector Analysis Alpha</span>
+                                        </div>
+                                        {displayShap.length > 0 ? (
+                                            <SHAPChart data={displayShap} />
+                                        ) : (
+                                            <div className="h-full min-h-[300px] flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-slate-500 italic">
+                                                Дані декомпозиції відсутні для цього вузла
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* AI Summary Panel */}
+                                    <div className="xl:col-span-5 flex flex-col gap-6">
+                                        <div className="flex-1 bg-gradient-to-br from-[#0A111F] to-[#040811] border border-cyan-500/20 rounded-3xl p-6 shadow-2xl shadow-cyan-900/10 relative overflow-hidden flex flex-col">
+                                            <div className="absolute top-0 right-0 p-8 opacity-10">
+                                                <Zap className="w-32 h-32 text-cyan-500" />
+                                            </div>
+                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                                            
+                                            <h3 className="text-sm font-black text-cyan-400 mb-4 flex items-center gap-2 uppercase tracking-widest italic">
+                                                <Target className="w-4 h-4" /> AI КОНСІЛІУМ (РЕЗЮМЕ)
+                                            </h3>
+                                            
+                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-6">
+                                                <p className="text-sm text-slate-300 leading-relaxed italic">
+                                                    " {profile.ai_summary || "Аналіз OSINT-вузлів вказує на стабільний фінансовий стан при низькому рівні структурних загроз. Рекомендовано плановий моніторинг діяльності."} "
+                                                </p>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 gap-2">
+                                                <button className="flex items-center justify-between w-full p-4 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-cyan-300 transition-all group">
+                                                    <span>Побудувати Тіньову Карту Зв'язків</span>
+                                                    <GitBranch className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                                </button>
+                                                <button className="flex items-center justify-between w-full p-4 bg-slate-800/40 hover:bg-slate-800/60 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white transition-all group">
+                                                    <span>Експортувати Повний Звіт (PDF)</span>
+                                                    <FileText className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-all" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Bottom Row: 5-Layer Radar & Timeline */}
+                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                                    <div className="xl:col-span-12 bg-slate-900/60 border border-white/10 rounded-3xl p-6">
+                                        <div className="flex items-center gap-2 mb-8">
+                                            <Boxes className="w-4 h-4 text-emerald-400" />
+                                            <h3 className="text-sm font-black text-white uppercase tracking-widest italic">5-ШАРОВА СТРУКТУРНА ОЦІНКА CERS</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                                            <div className="lg:col-span-1 flex flex-col justify-center gap-4">
+                                                {displayRadar.map((r, i) => (
+                                                    <div key={i} className="flex flex-col gap-1">
+                                                        <div className="flex justify-between items-end">
+                                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{r.subject}</span>
+                                                            <span className="text-xs font-mono text-emerald-400">{r.A}%</span>
+                                                        </div>
+                                                        <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-emerald-500/50" style={{ width: `${r.A}%` }} />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="lg:col-span-3 min-h-[350px]">
+                                                <CERSRadarECharts data={displayRadar} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Timeline */}
+                                {displayEvents.length > 0 && (
+                                    <div className="bg-slate-900/60 border border-white/10 rounded-3xl p-8">
+                                        <div className="flex items-center gap-2 mb-10">
+                                            <Clock className="w-4 h-4 text-slate-400" />
+                                            <h3 className="text-sm font-black text-white uppercase tracking-widest italic">ОПЕРАТИВНА ХРОНОЛОГІЯ</h3>
+                                        </div>
+                                        <div className="relative border-l border-white/10 ml-4 pl-10 space-y-10">
+                                            {displayEvents.map((event: any, i: number) => (
+                                                <div key={i} className="relative">
+                                                    <div className={`absolute -left-[50px] top-1 w-5 h-5 rounded-full border-4 border-slate-950 ${
+                                                        event.type === 'alert' ? 'bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]' :
+                                                        event.type === 'warning' ? 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]' :
+                                                        'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+                                                    }`} />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] mb-2">{event.date}</span>
+                                                        <p className="text-white text-md font-semibold leading-relaxed">{event.text}</p>
+                                                        <div className="mt-3 flex gap-2">
+                                                            <span className="text-[9px] px-2 py-0.5 bg-white/5 rounded text-slate-500 uppercase font-mono">Верифіковано</span>
+                                                            <span className="text-[9px] px-2 py-0.5 bg-white/5 rounded text-slate-500 uppercase font-mono">Агент-04</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </motion.div>
+                        ) : hasAttempted ? (
+                            <motion.div 
+                                className="h-full flex flex-col items-center justify-center p-20 text-center"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                            >
+                                <AlertTriangle className="w-16 h-16 text-slate-800 mb-6" />
+                                <h3 className="text-2xl font-black text-white uppercase italic tracking-widest transition-all">Об'єкт Не Знайдено</h3>
+                                <p className="mt-4 text-slate-500 max-w-md font-mono text-xs uppercase tracking-widest leading-loose">
+                                    ВУЗОЛ НЕ ПОВЕРНУВ ПЕРЕВІРЕНИХ ДАНИХ ДЛЯ ЗАПИТУ "{searchQuery}". ПЕРЕВІРТЕ ЄДРПОУ АБО СКОРИСТАЙТЕСЬ ГЛОБАЛЬНИМ ПОШУКОМ.
+                                </p>
+                                <button 
+                                    onClick={() => setSearchQuery('ТОВ ЕНЕРГО-РЕСУРС 41829391')}
+                                    className="mt-8 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all"
+                                >
+                                    Повернутись до Прикладу
+                                </button>
+                            </motion.div>
+                        ) : null}
+                    </AnimatePresence>
+                </div>
+            </div>
         </div>
     );
 }

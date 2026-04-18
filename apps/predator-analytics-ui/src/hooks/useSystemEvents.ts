@@ -7,6 +7,8 @@ export interface SystemEvent {
   [key: string]: any;
 }
 
+import { API_BASE_URL } from '@/services/api/config';
+
 export const useSystemEvents = () => {
   const [lastEvent, setLastEvent] = useState<SystemEvent | null>(null);
   const [events, setEvents] = useState<SystemEvent[]>([]);
@@ -15,17 +17,8 @@ export const useSystemEvents = () => {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const connect = () => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    // Use the backend URL from environment or fallback to current host
-    // In dev environment, API usually runs on :8000
-    // @ts-ignore
-    const metaEnv = (import.meta as any).env || {};
-    const envApiUrl = metaEnv.VITE_API_URL || metaEnv.REACT_APP_API_URL;
-
-    const baseUrl = envApiUrl
-      ? envApiUrl.replace(/^http/, 'ws')
-      : `${protocol}//${window.location.host}/api/v1`;
-
+    // Формуємо WS URL на основі активного API_BASE_URL
+    const baseUrl = API_BASE_URL.replace(/^http/, 'ws');
     const socket = new WebSocket(`${baseUrl}/ws/system/events`);
 
     socket.onopen = () => {

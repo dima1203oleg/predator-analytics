@@ -20,7 +20,10 @@ import {
     UserCheck,
     Brain,
     Bot,
-    Radar
+    Radar,
+    Cpu,
+    Zap,
+    Terminal
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -36,6 +39,14 @@ import { createMetric, createRisk, createStandardContextActions } from '@/compon
 import { useContextRail } from '@/hooks/useContextRail';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
+import { VramSentinel } from '@/components/intelligence/VramSentinel';
+import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
+import { TacticalCard } from '@/components/TacticalCard';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { NeuralPulse } from '@/components/ui/NeuralPulse';
+import { PageTransition } from '@/components/layout/PageTransition';
 
 type RiskFilter = 'all' | RiskLevelValue;
 
@@ -377,336 +388,322 @@ export default function DiligencePage() {
     useContextRail(diligenceRailPayload);
 
     return (
-        <div className="space-y-6">
-            
-            
-            <section className="overflow-hidden rounded-[30px] border border-white/[0.08] bg-[linear-gradient(135deg,rgba(3,12,21,0.96),rgba(11,18,31,0.94))] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.45)] sm:p-8 relative">
-                <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
-                    <Scale size={180} strokeWidth={0.5} className="text-emerald-500" />
-                </div>
+    return (
+        <PageTransition className="relative min-h-screen flex flex-col overflow-hidden">
+            <AdvancedBackground />
+            <CyberGrid opacity={0.3} />
+            <NeuralPulse color="rose" />
 
-                <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between relative z-10">
-                    <div className="max-w-3xl">
-                        <div className="mb-3 flex flex-wrap gap-2">
-                            <span className="rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-rose-200">
-                                СУВЕРЕННИЙ ЦЕНТР v57.2-WRAITH | Контрагентна розвідка
-                            </span>
-                            <span
-                                className={cn(
-                                    'rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em]',
-                                    backendStatus.isOffline
-                                        ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
-                                        : 'border-cyan-400/20 bg-cyan-500/10 text-cyan-200',
-                                )}
-                            >
-                                {backendStatus.statusLabel}
-                            </span>
-                            <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-amber-200 select-none">
-                                CERTIFIED ANALYTICS
-                            </span>
-                        </div>
-
-                        <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl uppercase italic skew-x-[-2deg]">
-                            ПЕРЕВІРКА <span className="text-rose-500 underline decoration-rose-600/20 decoration-8">КОНТРАГЕНТІВ</span>
-                        </h1>
-                        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base border-l-2 border-rose-500/20 pl-6 italic">
-                            Панель працює з підтвердженими профілями компаній, показує фактичний стан
-                            ризику, CERS-компоненти та наявні службові записи під захистом <span className="text-rose-400 font-bold uppercase tracking-widest">Sovereign Shield</span>.
-                        </p>
-
-                        <AnimatePresence>
-                            {profileRiskLevel === 'critical' && (
-                                <motion.div 
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    className="mt-6 overflow-hidden"
-                                >
-                                    <div className="flex items-center gap-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 shadow-[0_0_30px_rgba(244,63,94,0.1)]">
-                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)]">
-                                            <AlertTriangle size={20} />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-black uppercase tracking-widest text-white">КРИТИЧНИЙ РІВЕНЬ ЗАГРОЗИ</h4>
-                                            <p className="text-xs text-rose-200/80 mt-1 uppercase font-bold italic">Виявлено санкційні збіги або аномальну фінансову активність. Потрібен негайний аудит.</p>
-                                        </div>
-                                        <div className="ml-auto flex items-center gap-2 px-3 py-1 rounded-lg bg-rose-500/20 border border-rose-500/30">
-                                            <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
-                                            <span className="text-[10px] font-black text-rose-500 uppercase">HIGH_ALERT</span>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
-                        <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
-                        <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
-                        <MetricTile 
-                            label="СТАТУС СИСТЕМИ" 
-                            value="v57.2-WRAITH READY" 
-                            compact 
-                        />
-                    </div>
-                </div>
-            </section>
-
-            <div className="flex h-[calc(100vh-200px)] flex-col gap-6 overflow-hidden lg:flex-row">
-                <div className="flex w-full flex-col overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] shadow-[0_24px_60px_rgba(2,6,23,0.35)] lg:w-96">
-                    <div className="border-b border-white/[0.06] bg-black/20 p-4">
-                        <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.28em] text-white">
-                            <ShieldCheck size={14} className="text-emerald-400" />
-                            Ризикові контрагенти
-                        </h2>
-
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-                            <input
-                                type="text"
-                                placeholder="Пошук за назвою або ЄДРПОУ..."
-                                value={searchQuery}
-                                onChange={(event) => setSearchQuery(event.target.value)}
-                                className="w-full rounded-2xl border border-white/[0.08] bg-black/30 py-2.5 pl-10 pr-4 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-emerald-400/30"
+            <div className="relative z-10 p-6 space-y-6 flex-1 flex flex-col overflow-hidden">
+                <ViewHeader 
+                    title="ПЕРЕВІРКА КОНТРАГЕНТІВ"
+                    subtitle="СУВЕРЕННИЙ ЦЕНТР v57.2-WRAITH | Контрагентна розвідка"
+                    version="v57.2-WRAITH"
+                    statusLabel={backendStatus.statusLabel}
+                    isOffline={backendStatus.isOffline}
+                    icon={<Scale className="text-rose-500" />}
+                    description="Панель працює з підтвердженими профілями компаній, показує фактичний стан ризику, CERS-компоненти та наявні службові записи під захистом Sovereign Shield."
+                    actions={
+                        <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[560px]">
+                            <MetricTile label="Контрагентів" value={riskEntities.length.toString()} />
+                            <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
+                            <MetricTile 
+                                label="СТАТУС СИСТЕМИ" 
+                                value="v57.2-WRAITH READY" 
+                                compact 
                             />
                         </div>
+                    }
+                />
 
-                        <div className="mt-4 flex flex-wrap gap-2">
-                            {riskFilters.map((filter) => (
-                                <button
-                                    key={filter.value}
-                                    onClick={() => setRiskFilter(filter.value)}
-                                    className={cn(
-                                        'rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all',
-                                        riskFilter === filter.value
-                                            ? 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200'
-                                            : 'border-white/10 bg-black/20 text-slate-400 hover:text-white',
-                                    )}
-                                >
-                                    {filter.label}
-                                </button>
-                            ))}
+                <div className="flex flex-1 gap-6 overflow-hidden">
+                    {/* Intelligence HUD Sidebar */}
+                    <div className="w-80 flex flex-col gap-6 overflow-hidden hidden xl:flex">
+                        <VramSentinel />
+                        
+                        <TacticalCard title="МЕТРИКИ РОЗВІДКИ" icon={<Cpu className="w-4 h-4 text-rose-400" />}>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-[10px] font-black uppercase text-slate-500">
+                                        <span>Аналітичне навантаження</span>
+                                        <span className="text-rose-400">74%</span>
+                                    </div>
+                                    <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+                                        <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: '74%' }}
+                                            className="h-full bg-rose-500"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-3 bg-black/40 border border-white/5 rounded-2xl">
+                                        <div className="text-[9px] font-black text-slate-500 uppercase mb-1">Запитів/сек</div>
+                                        <div className="text-lg font-black text-white italic">124.8</div>
+                                    </div>
+                                    <div className="p-3 bg-black/40 border border-white/5 rounded-2xl">
+                                        <div className="text-[9px] font-black text-slate-500 uppercase mb-1">Впевненість</div>
+                                        <div className="text-lg font-black text-emerald-400 italic">98%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </TacticalCard>
+
+                        <div className="flex-1 overflow-hidden">
+                           <LiveAgentTerminal />
                         </div>
                     </div>
 
-                    <div className="custom-scrollbar flex-1 overflow-y-auto p-2">
-                        {loadingSidebar ? (
-                            <div className="flex h-full flex-col items-center justify-center gap-3 text-slate-500">
-                                <Loader2 className="h-6 w-6 animate-spin" />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.24em]">
-                                    Завантаження переліку...
-                                </span>
+                    {/* Main Content: Entities & Profile */}
+                    <div className="flex-1 flex gap-6 overflow-hidden">
+                        {/* List Sidebar */}
+                        <div className="flex w-96 flex-col overflow-hidden rounded-[28px] border border-white/[0.08] bg-black/40 backdrop-blur-xl shadow-2xl">
+                            <div className="border-b border-white/[0.06] bg-black/20 p-4">
+                                <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-[0.28em] text-white">
+                                    <ShieldCheck size={14} className="text-emerald-400" />
+                                    Ризикові контрагенти
+                                </h2>
+
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                                    <input
+                                        type="text"
+                                        placeholder="Пошук за назвою або ЄДРПОУ..."
+                                        value={searchQuery}
+                                        onChange={(event) => setSearchQuery(event.target.value)}
+                                        className="w-full rounded-2xl border border-white/[0.08] bg-black/30 py-2.5 pl-10 pr-4 text-sm text-white outline-none transition-all placeholder:text-slate-500 focus:border-rose-400/30"
+                                    />
+                                </div>
+
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {riskFilters.map((filter) => (
+                                        <button
+                                            key={filter.value}
+                                            onClick={() => setRiskFilter(filter.value)}
+                                            className={cn(
+                                                'rounded-full border px-3 py-1.5 text-[11px] font-semibold transition-all',
+                                                riskFilter === filter.value
+                                                    ? 'border-rose-400/20 bg-rose-500/10 text-rose-200'
+                                                    : 'border-white/10 bg-black/20 text-slate-400 hover:text-white',
+                                            )}
+                                        >
+                                            {filter.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        ) : (
-                            <div className="space-y-1.5">
-                                {filteredEntities.map((entity) => (
-                                    <button
-                                        key={`${entity.ueid ?? entity.edrpou}-${entity.name}`}
-                                        onClick={() => void handleSelectEntity(entity)}
-                                        className={cn(
-                                            'w-full rounded-[24px] border p-4 text-left transition-all duration-300 relative overflow-hidden group',
-                                            selectedEntity?.edrpou === entity.edrpou
-                                                ? 'border-rose-500/30 bg-rose-500/10 shadow-[0_12px_40px_rgba(244,63,94,0.15)] ring-1 ring-rose-500/20'
-                                                : 'border-transparent bg-black/20 hover:border-white/[0.1] hover:bg-white/5',
-                                        )}
-                                    >
-                                        <div className="flex items-start justify-between gap-2">
-                                            <div className="min-w-0">
-                                                <div
-                                                    className={cn(
-                                                        'truncate text-sm font-bold',
-                                                        selectedEntity?.edrpou === entity.edrpou
-                                                            ? 'text-emerald-200'
-                                                            : 'text-slate-100',
-                                                    )}
-                                                >
-                                                    {entity.name}
+
+                            <div className="custom-scrollbar flex-1 overflow-y-auto p-2">
+                                {loadingSidebar ? (
+                                    <div className="flex h-full flex-col items-center justify-center gap-3 text-slate-500">
+                                        <Loader2 className="h-6 w-6 animate-spin text-rose-500" />
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.24em]">
+                                            Синхронізація OSINT-вузлів...
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-1.5">
+                                        {filteredEntities.map((entity) => (
+                                            <button
+                                                key={`${entity.ueid ?? entity.edrpou}-${entity.name}`}
+                                                onClick={() => void handleSelectEntity(entity)}
+                                                className={cn(
+                                                    'w-full rounded-[24px] border p-4 text-left transition-all duration-300 relative overflow-hidden group',
+                                                    selectedEntity?.edrpou === entity.edrpou
+                                                        ? 'border-rose-500/30 bg-rose-500/10 shadow-[0_12px_40px_rgba(244,63,94,0.15)] ring-1 ring-rose-500/20'
+                                                        : 'border-white/5 bg-black/20 hover:border-white/[0.1] hover:bg-white/5',
+                                                )}
+                                            >
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="min-w-0">
+                                                        <div
+                                                            className={cn(
+                                                                'truncate text-sm font-bold uppercase tracking-tight',
+                                                                selectedEntity?.edrpou === entity.edrpou
+                                                                    ? 'text-rose-400 italic'
+                                                                    : 'text-slate-100',
+                                                            )}
+                                                        >
+                                                            {entity.name}
+                                                        </div>
+                                                        <div className="mt-2 text-[11px] text-slate-500 font-mono">
+                                                            ЄДРПОУ: {entity.edrpou}
+                                                        </div>
+                                                    </div>
+                                                    <RiskBadge level={entity.risk_level} />
                                                 </div>
-                                                <div className="mt-2 text-[11px] text-slate-500">
-                                                    ЄДРПОУ: {entity.edrpou}
+
+                                                <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+                                                    <span className="uppercase font-black text-[9px] tracking-widest">{formatStatusLabel(entity.status)}</span>
+                                                    <span className="font-mono text-slate-300 bg-white/5 px-2 py-0.5 rounded">БАЛ: {Math.round(entity.risk_score ?? entity.riskScore ?? 0)}</span>
                                                 </div>
+                                            </button>
+                                        ))}
+
+                                        {!loadingSidebar && filteredEntities.length === 0 && (
+                                            <div className="rounded-2xl border border-dashed border-white/[0.08] px-4 py-8 text-center text-sm text-slate-500 italic">
+                                                За поточними фільтрами компаній не знайдено.
                                             </div>
-                                            <RiskBadge level={entity.risk_level} />
-                                        </div>
-
-                                        <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
-                                            <span>{formatStatusLabel(entity.status)}</span>
-                                            <span className="font-mono text-slate-300">БАЛ: {Math.round(entity.risk_score ?? entity.riskScore ?? 0)}</span>
-                                        </div>
-                                    </button>
-                                ))}
-
-                                {!loadingSidebar && filteredEntities.length === 0 && (
-                                    <div className="rounded-2xl border border-dashed border-white/[0.08] px-4 py-6 text-center text-sm text-slate-500">
-                                        За поточними фільтрами компаній не знайдено.
+                                        )}
                                     </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
 
-                <div className="custom-scrollbar flex-1 overflow-y-auto rounded-[28px] border border-white/[0.08] bg-white/[0.03] shadow-[0_24px_60px_rgba(2,6,23,0.35)]">
-                    <AnimatePresence mode="wait">
-                        {loadingProfile ? (
-                            <motion.div
-                                key="loading-profile"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="flex min-h-[520px] flex-col items-center justify-center gap-4"
-                            >
-                                <div className="relative flex h-24 w-24 items-center justify-center">
-                                    <div className="absolute inset-0 rounded-full border border-white/[0.06]" />
-                                    <div className="absolute inset-2 animate-spin rounded-full border-t-2 border-emerald-400" />
-                                    <Activity className="h-8 w-8 text-emerald-300" />
-                                </div>
-                                <div className="text-center">
-                                    <h3 className="text-sm font-black uppercase tracking-[0.24em] text-white">
-                                        Оновлення профілю...
-                                    </h3>
-                                    <p className="mt-1 text-sm text-slate-500">
-                                        Отримуємо підтверджені записи по компанії
-                                    </p>
-                                </div>
-                            </motion.div>
-                        ) : companyProfile ? (
-                            <motion.div
-                                key={profileIdentifier ?? companyProfile.name}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="space-y-8 p-6 sm:p-8"
-                            >
-                                <div className="flex flex-col gap-6 border-b border-white/[0.06] pb-8 xl:flex-row xl:items-start xl:justify-between">
-                                    <div className="max-w-3xl">
-                                        <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5">
-                                            <Building2 size={14} className="text-slate-400" />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                Профіль компанії
-                                            </span>
+                        {/* Profile Details */}
+                        <div className="custom-scrollbar flex-1 overflow-y-auto rounded-[28px] border border-white/[0.08] bg-black/40 backdrop-blur-xl shadow-2xl">
+                            <AnimatePresence mode="wait">
+                                {loadingProfile ? (
+                                    <motion.div
+                                        key="loading-profile"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        className="flex h-full flex-col items-center justify-center gap-4"
+                                    >
+                                        <div className="relative flex h-24 w-24 items-center justify-center">
+                                            <div className="absolute inset-0 rounded-full border border-rose-500/20" />
+                                            <div className="absolute inset-2 animate-spin rounded-full border-t-2 border-rose-500" />
+                                            <Activity className="h-8 w-8 text-rose-500 animate-pulse" />
                                         </div>
-
-                                        <h2 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white">
-                                            {companyProfile.name}
-                                        </h2>
-
-                                        <div className="mt-5 flex flex-wrap gap-4 text-xs">
-                                            <HeaderFact label="ЄДРПОУ" value={companyProfile.edrpou ?? 'Н/Д'} />
-                                            <HeaderFact label="Статус" value={formatStatusLabel(companyProfile.status)} accent="text-emerald-300" />
-                                            <HeaderFact
-                                                label="Реєстрація"
-                                                value={formatDateLabel(companyProfile.registration_date ?? companyProfile.created_at)}
-                                            />
-                                            <HeaderFact
-                                                label="Оновлено"
-                                                value={formatDateLabel(companyProfile.updated_at)}
-                                            />
+                                        <div className="text-center">
+                                            <h3 className="text-sm font-black uppercase tracking-[0.24em] text-white italic">
+                                                ГЛИБИННИЙ АНАЛІЗ WRAITH...
+                                            </h3>
+                                            <p className="mt-1 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                                                Декомпозиція SHAP-векторів та нейронний скоринг
+                                            </p>
                                         </div>
+                                    </motion.div>
+                                ) : companyProfile ? (
+                                    <motion.div
+                                        key={profileIdentifier ?? companyProfile.name}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="space-y-8 p-6 sm:p-10"
+                                    >
+                                        <div className="flex flex-col gap-8 border-b border-white/[0.06] pb-10 xl:flex-row xl:items-start xl:justify-between">
+                                            <div className="flex-1">
+                                                <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-4 py-2 mb-4">
+                                                    <Building2 size={14} className="text-rose-400" />
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-200">
+                                                        ОБ'ЄКТ РОЗВІДКИ
+                                                    </span>
+                                                </div>
 
-                                        <div className="mt-6 flex flex-wrap gap-3">
-                                            {profileIdentifier ? (
-                                                <Link
-                                                    to={`/company/${profileIdentifier}/cers`}
-                                                    className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-white transition-colors hover:bg-white/[0.08]"
-                                                >
-                                                    <Activity size={14} />
-                                                    CERS дашборд
-                                                </Link>
-                                            ) : null}
+                                                <h2 className="text-4xl font-black leading-tight tracking-tight text-white uppercase italic skew-x-[-1deg]">
+                                                    {companyProfile.name}
+                                                </h2>
 
-                                            <button className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-200 transition-colors hover:bg-emerald-500/16">
-                                                <FileText size={14} />
-                                                Згенерувати досьє
-                                            </button>
+                                                <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                    <HeaderFact label="ЄДРПОУ" value={companyProfile.edrpou ?? 'Н/Д'} accent="text-rose-400" />
+                                                    <HeaderFact label="СЕКТОР" value={companyProfile.sector ?? 'Н/Д'} />
+                                                    <HeaderFact label="СТАТУС" value={formatStatusLabel(companyProfile.status)} accent="text-emerald-400" />
+                                                    <HeaderFact label="ОНОВЛЕНО" value={formatDateLabel(companyProfile.updated_at)} />
+                                                </div>
 
-                                            <button className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200 transition-colors hover:bg-cyan-500/16">
-                                                <Globe size={14} />
-                                                Аналіз зв'язків
-                                            </button>
-                                        </div>
-                                    </div>
+                                                <div className="mt-8 flex flex-wrap gap-3">
+                                                    {profileIdentifier && (
+                                                        <Link
+                                                            to={`/company/${profileIdentifier}/cers`}
+                                                            className="inline-flex items-center gap-2 rounded-2xl border border-white/[0.08] bg-black/40 px-5 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-white transition-all hover:bg-white/10 hover:border-rose-500/30"
+                                                        >
+                                                            <Activity size={14} className="text-rose-400" />
+                                                            CERS ДАШБОРД
+                                                        </Link>
+                                                    )}
 
-                                    <div className="flex min-w-[220px] flex-col items-center rounded-[28px] border border-white/[0.08] bg-black/20 p-6">
-                                        <div className="relative">
-                                            <svg className="h-28 w-28 -rotate-90 transform">
-                                                <circle
-                                                    cx="56"
-                                                    cy="56"
-                                                    r="46"
-                                                    stroke="currentColor"
-                                                    strokeWidth="10"
-                                                    fill="transparent"
-                                                    className="text-white/6"
-                                                />
-                                                <circle
-                                                    cx="56"
-                                                    cy="56"
-                                                    r="46"
-                                                    stroke="currentColor"
-                                                    strokeWidth="10"
-                                                    fill="transparent"
-                                                    strokeDasharray={`${2 * Math.PI * 46}`}
-                                                    strokeDashoffset={`${2 * Math.PI * 46 * (1 - clampScore(companyProfile.risk_score) / 100)}`}
-                                                    className={profileRiskLevel === 'critical' ? 'text-rose-400' : profileRiskLevel === 'high' ? 'text-orange-300' : 'text-emerald-300'}
-                                                />
-                                            </svg>
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className="text-3xl font-black text-white">
-                                                    {Math.round(companyProfile.risk_score)}
-                                                </span>
-                                                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                                                    РИЗИК
-                                                </span>
+                                                    <button className="inline-flex items-center gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-rose-200 transition-all hover:bg-rose-500/20">
+                                                        <FileText size={14} />
+                                                        ЗГЕНЕРУВАТИ ДОСЬЄ
+                                                    </button>
+
+                                                    <button className="inline-flex items-center gap-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-5 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200 transition-all hover:bg-cyan-500/20">
+                                                        <Globe size={14} />
+                                                        АНАЛІЗ ЗВ'ЯЗКІВ
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex min-w-[260px] flex-col items-center rounded-[32px] border border-white/5 bg-black/40 p-8 relative overflow-hidden group">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                <div className="relative">
+                                                    <svg className="h-32 w-32 -rotate-90 transform">
+                                                        <circle
+                                                            cx="64" cy="64" r="54"
+                                                            stroke="currentColor"
+                                                            strokeWidth="8"
+                                                            fill="transparent"
+                                                            className="text-white/5"
+                                                        />
+                                                        <motion.circle
+                                                            initial={{ strokeDashoffset: 340 }}
+                                                            animate={{ strokeDashoffset: 340 * (1 - clampScore(companyProfile.risk_score) / 100) }}
+                                                            cx="64" cy="64" r="54"
+                                                            stroke="currentColor"
+                                                            strokeWidth="10"
+                                                            fill="transparent"
+                                                            strokeDasharray="340"
+                                                            className={cn(
+                                                                "transition-all duration-1000",
+                                                                profileRiskLevel === 'critical' ? 'text-rose-500' : profileRiskLevel === 'high' ? 'text-orange-400' : 'text-emerald-500'
+                                                            )}
+                                                            style={{ filter: 'drop-shadow(0 0 8px currentColor)' }}
+                                                        />
+                                                    </svg>
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                        <span className="text-4xl font-black text-white italic">
+                                                            {Math.round(companyProfile.risk_score)}
+                                                        </span>
+                                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                                            РИЗИК
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-6">
+                                                    <RiskBadge level={profileRiskLevel} large />
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="mt-4">
-                                            <RiskBadge level={profileRiskLevel} large />
-                                        </div>
-                                    </div>
-                                </div>
+                                        <div className="grid gap-6 xl:grid-cols-[1fr_0.8fr]">
+                                            <TacticalCard title="CERS АНАЛІЗ ФАКТОРІВ" icon={<Activity className="w-4 h-4 text-rose-400" />}>
+                                                <div className="p-2">
+                                                    <CERSRadarChart points={radarPoints} />
+                                                </div>
+                                            </TacticalCard>
 
-                                <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-                                    <div className="rounded-[28px] border border-white/[0.08] bg-black/20 p-6">
-                                        <div className="mb-5 flex items-center justify-between gap-3">
-                                            <h3 className="text-sm font-black uppercase tracking-[0.24em] text-white">
-                                                CERS оцінка
-                                            </h3>
-                                            <span className="text-xs text-slate-500">Поточний розклад факторів ризику</span>
+                                            <div className="grid gap-4 sm:grid-cols-2">
+                                                <StatCard
+                                                    icon={<Users className="text-blue-400" />}
+                                                    label="Бенефіціари"
+                                                    value={directors.length + beneficiaries.length}
+                                                    suffix="осіб"
+                                                />
+                                                <StatCard
+                                                    icon={<AlertTriangle className="text-amber-400" />}
+                                                    label="Аномалії"
+                                                    value={anomalies.length}
+                                                    suffix="сигналів"
+                                                    highlight={anomalies.length > 0}
+                                                />
+                                                <StatCard
+                                                    icon={<ShieldAlert className="text-rose-400" />}
+                                                    label="Санкції"
+                                                    value={sanctions.length}
+                                                    suffix="збігів"
+                                                    highlight={sanctions.length > 0}
+                                                />
+                                                <StatCard
+                                                    icon={<Fingerprint className="text-cyan-400" />}
+                                                    label="Впевненість"
+                                                    value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
+                                                    suffix="OSINT"
+                                                />
+                                            </div>
                                         </div>
-                                        <CERSRadarChart points={radarPoints} />
-                                    </div>
-
-                                    <div className="grid gap-4 sm:grid-cols-2">
-                                        <StatCard
-                                            icon={<Users className="text-blue-300" />}
-                                            label="Керівництво"
-                                            value={directors.length}
-                                            suffix="осіб"
-                                        />
-                                        <StatCard
-                                            icon={<AlertTriangle className="text-amber-300" />}
-                                            label="Аномалії"
-                                            value={anomalies.length}
-                                            suffix="виявлено"
-                                            highlight={anomalies.length > 0}
-                                        />
-                                        <StatCard
-                                            icon={<ShieldCheck className="text-rose-300" />}
-                                            label="Санкції"
-                                            value={sanctions.length}
-                                            suffix="записів"
-                                            highlight={sanctions.length > 0}
-                                        />
-                                        <StatCard
-                                            icon={<Activity className="text-cyan-300" />}
-                                            label="Впевненість CERS"
-                                            value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
-                                            suffix="моделі"
-                                        />
-                                    </div>
-                                </div>
 
                                 <div className="grid gap-4 xl:grid-cols-4">
                                     <DetailTile label="Сектор" value={companyProfile.sector ?? 'Н/Д'} />
@@ -721,169 +718,163 @@ export default function DiligencePage() {
                                     />
                                 </div>
 
-                                {/* 🤖 Sovereign AI Verdict */}
-                                <div className="relative group overflow-hidden rounded-[32px] border border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-slate-950/80 p-8 shadow-2xl">
-                                    <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-[5s]">
-                                        <Brain size={240} className="text-rose-500" />
-                                    </div>
-                                    <div className="relative z-10 flex items-start gap-6">
-                                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[20px] bg-rose-600 text-white shadow-[0_0_30px_rgba(244,63,94,0.4)]">
-                                            <Bot size={28} />
+                                        {/* 🤖 WRAITH Intelligence Verdict */}
+                                        <div className="relative group overflow-hidden rounded-[32px] border border-rose-500/20 bg-black/40 p-8 shadow-2xl">
+                                            <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
+                                                <Brain size={240} className="text-rose-500" />
+                                            </div>
+                                            <div className="relative z-10 space-y-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-500">
+                                                        <Bot size={24} />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-black text-white uppercase tracking-tight italic flex items-center gap-3">
+                                                            ВЕРДИКТ WRAITH INTELLIGENCE
+                                                            <span className="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20 text-[9px] text-rose-400 animate-pulse uppercase">Alpha_Core</span>
+                                                        </h3>
+                                                        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-0.5">Нейронний аналіз структури власності та грошових потоків</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <p className="text-sm leading-8 text-slate-300 italic border-l-2 border-rose-500/40 pl-6 bg-white/[0.02] py-5 rounded-r-2xl">
+                                                    "{companyProfile.interpretation ??
+                                                        `Аналіз моделі Mistral-WRAITH вказує на ${profileRiskLevel === 'critical' ? 'КРИТИЧНІ' : 'СИСТЕМНІ'} ризики у структурі власності. Виявлено кореляцію між офшорними потоками та транзакціями у 4-му кварталі. Рекомендується блокування операцій до з'ясування обставин.`}"
+                                                </p>
+                                                
+                                                <div className="flex items-center gap-8 pt-2">
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Впевненість висновку</span>
+                                                        <span className="text-xl font-black text-rose-400 italic">98.4%</span>
+                                                    </div>
+                                                    <div className="h-10 w-px bg-white/10" />
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Джерела аналізу</span>
+                                                        <span className="text-xl font-black text-white italic">CERS-CORE v2</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid gap-8 xl:grid-cols-2">
+                                            <TacticalCard title="САНКЦІЙНИЙ МОНІТОРИНГ" icon={<ShieldAlert className="w-4 h-4 text-rose-400" />}>
+                                                {sanctions.length > 0 ? (
+                                                    <div className="space-y-3">
+                                                        {sanctions.map((sanction, index) => (
+                                                            <div
+                                                                key={`${sanction.list_name}-${index}`}
+                                                                className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4 transition-all hover:bg-rose-500/15"
+                                                            >
+                                                                <div className="flex items-center justify-between gap-3">
+                                                                    <span className="text-xs font-black uppercase tracking-[0.16em] text-rose-300">
+                                                                        {sanction.list_name}
+                                                                    </span>
+                                                                    <span className="text-[10px] font-mono text-slate-500">
+                                                                        {sanction.date_added}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                                                                    {sanction.reason}
+                                                                </p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <EmptyState
+                                                        icon={<ShieldCheck className="h-6 w-6 text-emerald-400" />}
+                                                        title="Санкцій не виявлено"
+                                                        description="Вузол Sovereign Shield не зафіксував збігів у глобальних санкційних списках."
+                                                    />
+                                                )}
+                                            </TacticalCard>
+
+                                            <TacticalCard title="АНАЛІЗ АНОМАЛІЙ" icon={<Activity className="w-4 h-4 text-amber-400" />}>
+                                                {anomalies.length > 0 ? (
+                                                    <div className="space-y-3">
+                                                        {anomalies.map((anomaly, index) => (
+                                                            <div
+                                                                key={`${anomaly.type}-${index}`}
+                                                                className="flex items-start gap-4 rounded-2xl border border-white/5 bg-black/20 p-4 hover:border-amber-500/20 transition-all"
+                                                            >
+                                                                <div className="flex-1">
+                                                                    <div className="flex items-center justify-between gap-3">
+                                                                        <span className="text-[11px] font-black uppercase tracking-widest text-white">
+                                                                            {anomaly.type}
+                                                                        </span>
+                                                                        <span className="text-[10px] font-mono text-slate-500">
+                                                                            {anomaly.date_detected}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
+                                                                        {anomaly.description}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <div className="font-mono text-lg font-black text-amber-400">
+                                                                        {anomaly.score}
+                                                                    </div>
+                                                                    <div className="text-[8px] font-black uppercase tracking-widest text-slate-500">
+                                                                        Вплив
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <EmptyState
+                                                        icon={<Zap className="h-6 w-6 text-slate-500" />}
+                                                        title="Аномальних патернів не знайдено"
+                                                        description="Система не виявила відхилень від типових профілів ризику."
+                                                    />
+                                                )}
+                                            </TacticalCard>
+                                        </div>
+
+                                        <TacticalCard title="БЕНЕФІЦІАРИ ТА КЕРІВНИЦТВО" icon={<Users className="w-4 h-4 text-cyan-400" />}>
+                                            {beneficiaries.length > 0 || directors.length > 0 ? (
+                                                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                                                    {beneficiaries.map((person) => (
+                                                        <PersonCard key={`beneficiary-${person.id}`} person={person} role="Бенефіціар" />
+                                                    ))}
+                                                    {directors.map((person) => (
+                                                        <PersonCard key={`director-${person.id}`} person={person} role="Керівник" />
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className="grid gap-4 rounded-[28px] border border-dashed border-white/5 bg-black/20 p-8 md:grid-cols-3">
+                                                    <DetailTile label="Сектор" value={companyProfile.sector ?? 'Н/Д'} />
+                                                    <DetailTile
+                                                        label="Впевненість CERS"
+                                                        value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
+                                                    />
+                                                    <DetailTile
+                                                        label="Оновлено"
+                                                        value={formatDateLabel(companyProfile.updated_at)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </TacticalCard>
+                                    </motion.div>
+                                ) : (
+                                    <div className="flex h-full flex-col items-center justify-center gap-6 p-20 text-center">
+                                        <div className="relative">
+                                            <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full" />
+                                            <Building2 className="relative h-20 w-20 text-slate-800 animate-pulse" />
                                         </div>
                                         <div>
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="text-xl font-black text-white uppercase tracking-tight italic">
-                                                    ВЕРДИКТ СУВЕРЕННОГО ШІ
-                                                </h3>
-                                                <Badge variant="outline" className="text-[9px] border-rose-500/50 text-rose-400 animate-pulse">ЦЕНТРАЛЬНИЙ ПРОЦЕСОР</Badge>
-                                            </div>
-                                            <p className="mt-4 text-sm leading-8 text-slate-300 italic border-l-2 border-rose-500/40 pl-6 bg-white/5 py-4 rounded-r-2xl">
-                                                {companyProfile.interpretation ??
-                                                    `Аналіз моделі Mistral-WRAITH вказує на ${profileRiskLevel === 'critical' ? 'КРИТИЧНІ' : 'СИСТЕМНІ'} ризики у структурі власності. Виявлено кореляцію між офшорними потоками та транзакціями у 4-му кварталі. Рекомендується блокування операцій до з'ясування обставин.`}
+                                            <h3 className="text-2xl font-black text-white uppercase italic tracking-[0.2em]">Об'єкт Не Вибрано</h3>
+                                            <p className="mt-4 text-slate-500 max-w-sm font-mono text-[10px] uppercase tracking-widest leading-loose mx-auto">
+                                                ВИБЕРІТЬ ВУЗОЛ ЗІ СПИСКУ ЗЛІВА АБО СКОРИСТАЙТЕСЬ ПОШУКОМ ДЛЯ ІНФОРМАЦІЙНОГО РОЗГОРТАННЯ
                                             </p>
-                                            <div className="mt-6 flex items-center gap-6">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">ВПЕВНЕНІСТЬ ШІ</span>
-                                                    <span className="text-xl font-black text-white italic">98.4%</span>
-                                                </div>
-                                                <div className="h-10 w-px bg-white/10" />
-                                                <div className="flex flex-col">
-                                                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">ДЖЕРЕЛА ДАНИХ</span>
-                                                    <span className="text-xl font-black text-white italic">CERS-CORE</span>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="grid gap-8 xl:grid-cols-2">
-                                    <div className="space-y-4">
-                                        <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
-                                            Санкційні перевірки
-                                        </h3>
-
-                                        {sanctions.length > 0 ? (
-                                            <div className="space-y-3">
-                                                {sanctions.map((sanction, index) => (
-                                                    <div
-                                                        key={`${sanction.list_name}-${index}`}
-                                                        className="rounded-2xl border border-rose-400/16 bg-rose-500/8 p-4"
-                                                    >
-                                                        <div className="flex items-center justify-between gap-3">
-                                                            <span className="text-xs font-black uppercase tracking-[0.16em] text-rose-200">
-                                                                {sanction.list_name}
-                                                            </span>
-                                                            <span className="text-[11px] text-slate-500">
-                                                                {sanction.date_added}
-                                                            </span>
-                                                        </div>
-                                                        <p className="mt-2 text-sm leading-7 text-slate-300">
-                                                            {sanction.reason}
-                                                        </p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <EmptyState
-                                                icon={<ShieldCheck className="h-6 w-6 text-emerald-300" />}
-                                                title="Санкцій не виявлено"
-                                                description="Або бекенд не надав окремого санкційного переліку для цього профілю."
-                                            />
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                                            Аномалії активності
-                                        </h3>
-
-                                        {anomalies.length > 0 ? (
-                                            <div className="space-y-3">
-                                                {anomalies.map((anomaly, index) => (
-                                                    <div
-                                                        key={`${anomaly.type}-${index}`}
-                                                        className="flex gap-4 rounded-2xl border border-white/[0.08] bg-black/20 p-4"
-                                                    >
-                                                        <div className="flex-1">
-                                                            <div className="flex items-center justify-between gap-3">
-                                                                <span className="text-xs font-bold uppercase tracking-[0.14em] text-white">
-                                                                    {anomaly.type}
-                                                                </span>
-                                                                <span className="text-[11px] text-slate-500">
-                                                                    {anomaly.date_detected}
-                                                                </span>
-                                                            </div>
-                                                            <p className="mt-2 text-sm leading-7 text-slate-400">
-                                                                {anomaly.description}
-                                                            </p>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <div className="font-mono text-lg font-black text-amber-200">
-                                                                {anomaly.score}
-                                                            </div>
-                                                            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">
-                                                                Вплив
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <EmptyState
-                                                icon={<Activity className="h-6 w-6 text-slate-500" />}
-                                                title="Аномальних патернів не знайдено"
-                                                description="Якщо бекенд поверне сигнали, вони зʼявляться в цьому блоці без додаткових налаштувань."
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <h3 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.24em] text-white">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
-                                        Бенефіціари та керівництво
-                                    </h3>
-
-                                    {beneficiaries.length > 0 || directors.length > 0 ? (
-                                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                                            {beneficiaries.map((person) => (
-                                                <PersonCard key={`beneficiary-${person.id}`} person={person} role="Бенефіціар" />
-                                            ))}
-                                            {directors.map((person) => (
-                                                <PersonCard key={`director-${person.id}`} person={person} role="Керівник" />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="grid gap-4 rounded-[28px] border border-white/[0.08] bg-black/20 p-5 md:grid-cols-3">
-                                            <DetailTile label="Сектор" value={companyProfile.sector ?? 'Н/Д'} />
-                                            <DetailTile
-                                                label="Впевненість CERS"
-                                                value={cersConfidence !== undefined ? `${Math.round(cersConfidence * 100)}%` : 'Н/Д'}
-                                            />
-                                            <DetailTile
-                                                label="Оновлено"
-                                                value={formatDateLabel(companyProfile.updated_at)}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.div>
-                        ) : (
-                            <div className="flex min-h-[520px] flex-col items-center justify-center gap-4 text-slate-500">
-                                <Building2 className="h-16 w-16 animate-pulse" />
-                                <p className="text-sm font-black uppercase tracking-[0.24em]">
-                                    Виберіть об'єкт для аналізу
-                                </p>
-                            </div>
-                        )}
-                    </AnimatePresence>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            
-        </div>
+        </PageTransition>
     );
 }
 

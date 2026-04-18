@@ -27,6 +27,8 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { CyberOrb } from '@/components/CyberOrb';
+import { VramSentinel } from '@/components/intelligence/VramSentinel';
+import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 
 // ========================
 // Sub-Components
@@ -227,45 +229,74 @@ const IntelligencePage: React.FC = () => {
                                  />
                              </div>
 
-                              {/* Central Strategic Visualizer */}
-                              <TacticalCard variant="holographic" className="h-[550px] relative overflow-hidden group/viz" noPadding>
-                                  <AdvancedBackground />
-                                  <CyberGrid color="rgba(212, 175, 55, 0.05)" />
+                               {/* Central Strategic Visualizer & VRAM Guard */}
+                               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                                   <TacticalCard variant="holographic" className="h-[450px] relative overflow-hidden group/viz" noPadding>
+                                       <AdvancedBackground />
+                                       <CyberGrid color="rgba(212, 175, 55, 0.05)" />
 
-                                  <div className="absolute inset-0 flex items-center justify-center">
-                                      <div className="relative w-full h-full flex items-center justify-center">
-                                          <div className="absolute inset-0 bg-[#D4AF37]/10 blur-[150px] rounded-full animate-pulse" />
-                                          <CyberOrb size={300} color="#D4AF37" intensity={0.4} pulse />
+                                       <div className="absolute inset-0 flex items-center justify-center">
+                                           <div className="relative w-full h-full flex items-center justify-center">
+                                               <div className="absolute inset-0 bg-[#D4AF37]/10 blur-[150px] rounded-full animate-pulse" />
+                                               <CyberOrb size={250} color="#D4AF37" intensity={0.4} pulse />
 
-                                          <div className="relative flex items-center justify-center">
-                                              <div className="relative w-48 h-48 border-2 border-dashed border-[#D4AF37]/20 rounded-full animate-[spin_20s_linear_infinite]" />
-                                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                                  <Brain size={64} className="text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
-                                              </div>
-                                          </div>
+                                               <div className="relative flex items-center justify-center">
+                                                   <div className="relative w-32 h-32 border-2 border-dashed border-[#D4AF37]/20 rounded-full animate-[spin_20s_linear_infinite]" />
+                                                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                                       <Brain size={48} className="text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                                                   </div>
+                                               </div>
 
-                                          <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
-                                              <div className="space-y-4">
-                                                  <h4 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.5em] italic">СТАБІЛЬНІСТЬ_ЯДРА</h4>
-                                                  <div className="flex gap-1">
-                                                      {[...Array(30)].map((_, i) => (
-                                                          <motion.div
-                                                              key={i}
-                                                              animate={{ height: [10, 30, 10] }}
-                                                              transition={{ repeat: Infinity, duration: 1 + Math.random(), delay: i * 0.05 }}
-                                                              className="w-1.5 bg-[#D4AF37]/30 rounded-full"
-                                                          />
-                                                      ))}
-                                                  </div>
-                                              </div>
-                                              <div className="text-right space-y-2">
-                                                  <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">НЕЙРО_НАВАНТАЖЕННЯ: {metrics?.cpu_percent ? `${metrics.cpu_percent}%` : '42.8%'}</p>
-                                                  <p className="text-[14px] font-black text-white italic uppercase tracking-widest leading-none">ГОРИЗОНТ_ПРОГНОЗУВА: 72Г</p>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </TacticalCard>
+                                               <div className="absolute bottom-6 left-10 right-10 flex justify-between items-end">
+                                                   <div className="space-y-4">
+                                                       <h4 className="text-[9px] font-black text-[#D4AF37] uppercase tracking-[0.4em] italic leading-none">СТАБІЛЬНІСТЬ_ЯДРА</h4>
+                                                       <div className="flex gap-1">
+                                                           {[...Array(20)].map((_, i) => (
+                                                               <motion.div
+                                                                   key={i}
+                                                                   animate={{ height: [8, 24, 8] }}
+                                                                   transition={{ repeat: Infinity, duration: 1 + Math.random(), delay: i * 0.05 }}
+                                                                   className="w-1.5 bg-[#D4AF37]/30 rounded-full"
+                                                               />
+                                                           ))}
+                                                       </div>
+                                                   </div>
+                                                   <div className="text-right space-y-2">
+                                                       <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest leading-none">НЕЙРО_НАВАНТАЖЕННЯ: {metrics?.cpu_percent ? `${metrics.cpu_percent}%` : '42.8%'}</p>
+                                                       <p className="text-[12px] font-black text-white italic uppercase tracking-widest leading-none">ГОРИЗОНТ: 72Г</p>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </TacticalCard>
+
+                                   <div className="space-y-10">
+                                       <VramSentinel />
+                                       <div className="bg-[#0a0a0a]/60 backdrop-blur-3xl border border-white/5 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
+                                           <div className="flex items-center justify-between mb-6">
+                                               <h4 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] italic">ГЕОПРОСТОРОВИЙ_СКАНЕР</h4>
+                                               <Globe size={18} className="text-[#D4AF37]/40 animate-[spin_10s_linear_infinite]" />
+                                           </div>
+                                           <div className="aspect-video bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden">
+                                               <div className="absolute inset-0 opacity-20 bg-[url('https://grain-size.com/wp-content/uploads/2021/04/map-grid.png')] bg-center bg-cover" />
+                                               <div className="absolute inset-0 flex items-center justify-center">
+                                                   <div className="relative">
+                                                       <div className="w-16 h-16 border-2 border-[#D4AF37]/40 rounded-full animate-ping" />
+                                                       <Target size={24} className="absolute inset-0 m-auto text-rose-500" />
+                                                   </div>
+                                               </div>
+                                               <div className="absolute top-4 right-4 text-[8px] font-mono text-[#D4AF37] bg-black/80 px-2 py-1 rounded border border-[#D4AF37]/20 uppercase">
+                                                   LOC: 50.4501, 30.5234
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+
+                               {/* Live Activity Stream */}
+                               <div className="h-[400px]">
+                                   <LiveAgentTerminal />
+                               </div>
                         </div>
 
                         {/* Sidebar Intel */}

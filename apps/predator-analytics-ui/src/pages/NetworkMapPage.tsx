@@ -23,6 +23,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
+import { FinancialFlowPanel } from '@/components/graph/FinancialFlowPanel';
+import { analyticsService } from '@/services/unified/analytics.service';
+import { HoloContainer } from '@/components/HoloContainer';
 
 
 const NetworkMapPage: React.FC = () => {
@@ -323,6 +326,17 @@ const NetworkMapPage: React.FC = () => {
                                                 <p className="text-3xl font-black text-amber-500 italic font-mono">{selectedNode.primary_risk === 'high' ? 'CRIT' : 'STBL'}</p>
                                             </div>
                                         </div>
+
+                                        {/* Financial Flows Integration */}
+                                        <HoloContainer className="p-8 bg-black/40 rounded-[2.5rem] border-white/5">
+                                            <FinancialFlowPanel 
+                                               flows={[
+                                                   { from: selectedNode.label, to: 'CYPRUS_HOLDING', amount: 12500000, currency: 'USD', date: '2026-04-12', risk_score: 0.85 },
+                                                   { from: 'EXT_SOURCE_PANAMA', to: selectedNode.label, amount: 480000, currency: 'EUR', date: '2026-04-15', risk_score: 0.42 },
+                                                   { from: selectedNode.label, to: 'LOCAL_VENDOR_X', amount: 2100000, currency: 'UAH', date: '2026-04-18', risk_score: 0.15 },
+                                               ]} 
+                                            />
+                                        </HoloContainer>
                                     </div>
 
                                     <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">

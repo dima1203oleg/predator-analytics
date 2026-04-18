@@ -18,12 +18,14 @@ const metaEnv = getMetaEnv();
 // ─── Точки підключення ───────────────────────────────────────────────────────
 const NVIDIA_DIRECT_URL  = 'http://194.177.1.240:8000/api/v1';
 const NVIDIA_ZROK_URL    = 'https://predator.share.zrok.io/api/v1';
+const NVIDIA_COLAB_URL   = metaEnv.VITE_COLAB_URL || 'https://predator-mirror.share.zrok.io/api/v1';
 const MOCK_URL           = 'http://localhost:9080/api/v1';
 
 // Мітки для зручної ідентифікації в useBackendStatus
 export const NODE_IDS = {
     NVIDIA:  'nvidia',
     ZROK:    'zrok',
+    COLAB:   'colab',
     MOCK:    'mock',
 } as const;
 
@@ -44,7 +46,10 @@ export const API_V45_URL = metaEnv.VITE_V45_API_URL || 'http://localhost:9080/ap
 
 /** Визначає поточний вузол за URL */
 const resolveNodeId = (url: string): string => {
-    if (url.includes('zrok.io'))    return NODE_IDS.ZROK;
+    if (url.includes('zrok.io')) {
+        if (url === NVIDIA_COLAB_URL) return NODE_IDS.COLAB;
+        return NODE_IDS.ZROK;
+    }
     if (url.includes('localhost') || url.includes('9080')) return NODE_IDS.MOCK;
     return NODE_IDS.NVIDIA;
 };
@@ -65,6 +70,7 @@ interface BackendNodeInternal {
 const ALL_NODES: BackendNodeInternal[] = [
     { id: NODE_IDS.NVIDIA, name: 'NVIDIA_MASTER',   url: NVIDIA_DIRECT_URL, active: false, status: 'checking' },
     { id: NODE_IDS.ZROK,   name: 'NVIDIA_VIA_ZROK', url: NVIDIA_ZROK_URL,   active: false, status: 'checking' },
+    { id: NODE_IDS.COLAB,  name: 'COLAB_MIRROR',    url: NVIDIA_COLAB_URL,  active: false, status: 'checking' },
     { id: NODE_IDS.MOCK,   name: 'SOVEREIGN_MOCK',  url: MOCK_URL,          active: false, status: 'checking' },
 ];
 
@@ -100,7 +106,7 @@ const dispatchStatusEvent = (isOffline: boolean) => {
 };
 
 // ─── Перемикання на вузол ─────────────────────────────────────────────────────
-const switchToNode = (nodeId: string, targetUrl: string) => {
+export const switchToNode = (nodeId: string, targetUrl: string) => {
     const gw = getGlobalWindow();
     API_BASE_URL = targetUrl;
     apiClient.defaults.baseURL = targetUrl;
@@ -127,7 +133,7 @@ const switchToNode = (nodeId: string, targetUrl: string) => {
 
 // ─── Автоматичне перемикання при збої ────────────────────────────────────────
 let _failoverAttempts = 0;
-const MAX_FAILOVER_ATTEMPTS = 2;
+const MAX_FAILOVER_ATTEMPTS = 3;
 
 const triggerFailover = async () => {
     if (typeof window === 'undefined') return;
@@ -145,20 +151,28 @@ const triggerFailover = async () => {
         return;
     }
 
-    // Каскад: NVIDIA → ZROK → Mock
+    // Каскад: NVIDIA Direct → NVIDIA ZROK → GOOGLE COLAB → Mock
     if (currentId === NODE_IDS.NVIDIA) {
         console.warn('[PREDATOR] ⚠️ NVIDIA Direct недоступний. Спроба ZROK...');
-        // Перевіряємо ZROK перед перемиканням
         try {
             await axios.get(`${NVIDIA_ZROK_URL.replace('/api/v1', '')}/health`, { timeout: 4000 });
             switchToNode(NODE_IDS.ZROK, NVIDIA_ZROK_URL);
             _failoverAttempts = 0;
         } catch {
-            console.warn('[PREDATOR] ⚠️ ZROK також недоступний. Активація Mock...');
-            switchToNode(NODE_IDS.MOCK, MOCK_URL);
+            await triggerFailover(); // Перейти до наступного у каскаді
         }
     } else if (currentId === NODE_IDS.ZROK) {
-        console.warn('[PREDATOR] ⚠️ ZROK недоступний. Активація Mock...');
+        console.warn('[PREDATOR] ⚠️ NVIDIA ZROK недоступний. Перемикання на GOOGLE COLAB MIRROR...');
+        try {
+            await axios.get(`${NVIDIA_COLAB_URL.replace('/api/v1', '')}/health`, { timeout: 4000 });
+            switchToNode(NODE_IDS.COLAB, NVIDIA_COLAB_URL);
+            _failoverAttempts = 0;
+        } catch {
+            console.warn('[PREDATOR] ⚠️ Google Colab також недоступний. Активація Mock...');
+            switchToNode(NODE_IDS.MOCK, MOCK_URL);
+        }
+    } else if (currentId === NODE_IDS.COLAB) {
+        console.warn('[PREDATOR] ⚠️ Google Colab недоступний. Активація Mock...');
         switchToNode(NODE_IDS.MOCK, MOCK_URL);
     }
 };

@@ -116,12 +116,19 @@ export interface AmlRadarData {
   B: number;
 }
 
+export interface TransactionFlow {
+  source: string;
+  target: string;
+  value: number;
+}
+
 export interface FinancialSigintResult {
   swift: SwiftFlowData[];
   offshore: OffshoreData[];
   suspicious: SuspiciousTx[];
   frozen: FrozenAsset[];
   aml: AmlRadarData[];
+  flow?: TransactionFlow[];
 }
 
 export interface UBONode {

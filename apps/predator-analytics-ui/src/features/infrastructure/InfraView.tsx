@@ -9,27 +9,35 @@ import {
   ShieldCheck, 
   RefreshCw,
   AlertCircle,
-  Bot 
+  Bot,
+  Layers
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ServiceStatusGrid } from './components/ServiceStatusGrid';
-import { GpuGauge } from './components/GpuGauge';
 import { StorageChart } from './components/StorageChart';
 import { ResourceDynamicsChart } from './components/ResourceDynamicsChart';
 import { OODALoopPanel } from './components/OODALoopPanel';
+import { BackendSwitcher } from './components/BackendSwitcher';
+import { ResourceNodeCard } from './components/ResourceNodeCard';
 import { OODAStatus, OODAStep } from './ooda-types';
 import { infraApi } from '@/services/api/infra';
 import { useAgents } from '@/context/AgentContext';
 import { cn } from '@/utils/cn';
 
 export default function InfraView() {
-  const { data: infrastructure, isLoading, error } = useQuery({
+  const { data: infrastructure, isLoading: isInfraLoading, error: infraError } = useQuery({
     queryKey: ['system', 'infrastructure'],
     queryFn: infraApi.getInfrastructure,
     refetchInterval: 15000,
+  });
+
+  const { data: nodes, isLoading: isNodesLoading } = useQuery({
+    queryKey: ['system', 'nodes'],
+    queryFn: infraApi.getNodes,
+    refetchInterval: 10000,
   });
 
   const { data: predictions } = useQuery({
@@ -45,7 +53,7 @@ export default function InfraView() {
 
   const alertLevel = React.useMemo(() => {
     if (!infrastructure) return 'NORMAL';
-    const issues = Object.values(infrastructure.components).filter((c: any) => c.status !== 'UP').length;
+    const issues = Object.values(infrastructure.components || {}).filter((c: any) => c.status !== 'UP').length;
     if (issues > 2) return 'CRITICAL';
     if (issues > 0) return 'ELEVATED';
     return 'NORMAL';
@@ -70,15 +78,15 @@ export default function InfraView() {
       if (pending.length > 0) {
         const timer = setTimeout(() => {
           pending.forEach(inc => handleApprove(inc.id));
-        }, 3000); // 3 seconds "thinking" before auto-acting
+        }, 3000);
         return () => clearTimeout(timer);
       }
     }
   }, [isFullyAutomated, activeIncidents]);
 
-  // Simple OODA Cycle Simulation based on infra status
+  // Simple OODA Cycle Simulation
   React.useEffect(() => {
-    if (!infrastructure) return;
+    if (!infrastructure?.components) return;
 
     const issues = Object.entries(infrastructure.components)
       .filter(([_, comp]) => (comp as any).status !== 'UP')
@@ -116,7 +124,10 @@ export default function InfraView() {
     } else {
       setOodaStatus('OBSERVING');
     }
-  }, [infrastructure, agents, oodaStatus]);
+  }, [infrastructure, agents, oodaStatus, isFullyAutomated]);
+
+  const isLoading = isInfraLoading || isNodesLoading;
+  const error = infraError;
 
   return (
     <PageTransition>
@@ -133,11 +144,15 @@ export default function InfraView() {
           <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
-              subtitle="Моніторинг NVIDIA Server, GPU та Кластерів"
+              subtitle="Моніторинг NVIDIA Server, MacBook та Google Colab"
               icon={Server}
             />
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <BackendSwitcher />
+              
+              <div className="h-10 w-px bg-white/10" />
+
               <div className="flex flex-col items-end">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">РЕЖИМ АВТОМАТИЗАЦІЇ</span>
                 <div 
@@ -160,7 +175,7 @@ export default function InfraView() {
 
           {/* Content */}
           <div className="flex-1 overflow-auto p-6">
-            {isLoading ? (
+            {isLoading && !infrastructure ? (
               <div className="flex items-center justify-center h-full">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
                   <RefreshCw className="w-8 h-8 text-yellow-400" />
@@ -181,8 +196,8 @@ export default function InfraView() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
                     { icon: Activity, label: 'Статус Сервісів', value: 'Online', color: 'emerald' },
-                    { icon: Cpu, label: 'GPU Утилізація', value: '72%', color: 'amber' },
-                    { icon: DatabaseIcon, label: 'Диски: Використано', value: '2.4 TB', color: 'yellow' },
+                    { icon: Cpu, label: 'Сумарна RAM', value: '172 GB', color: 'amber' },
+                    { icon: DatabaseIcon, label: 'Загальне Сховище', value: '11.5 TB', color: 'yellow' },
                     { icon: ShieldCheck, label: 'Uptime', value: '30 дн.', color: 'violet' },
                   ].map((stat, idx) => (
                     <motion.div
@@ -203,6 +218,23 @@ export default function InfraView() {
                       </div>
                     </motion.div>
                   ))}
+                </div>
+
+                {/* Hardare Nodes Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tighter">
+                      <Layers className="text-blue-500 w-6 h-6" /> 
+                      Моніторинг Апаратних Вузлів
+                    </h2>
+                    <span className="text-[10px] text-slate-500 font-mono">3 СИСТЕМИ ВИЯВЛЕНО</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {nodes?.map((node: any) => (
+                      <ResourceNodeCard key={node.id} node={node} />
+                    ))}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -245,32 +277,6 @@ export default function InfraView() {
                         onApprove={handleApprove}
                         onDecline={handleDecline}
                       />
-                    </div>
-
-                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm space-y-6">
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <Cpu className="w-5 h-5 text-amber-400" /> Кластер NVIDIA RTX
-                      </h3>
-                      
-                      <div className="space-y-4">
-                        {[
-                          { id: 'gpu-01', label: 'node-gpu-01', model: 'RTX 4090', usage: 85, temp: '68°C', vram: '21.4/24' },
-                          { id: 'gpu-02', label: 'node-gpu-02', model: 'RTX 4090', usage: 42, temp: '54°C', vram: '11.2/24' },
-                          { id: 'gpu-03', label: 'node-gpu-03', model: 'RTX A6000', usage: 98, temp: '78°C', vram: '46.1/48' },
-                        ].map(gpu => (
-                          <div key={gpu.id} className="bg-white/5 border border-white/10 rounded-lg p-4">
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-bold text-white">{gpu.label}</span>
-                              <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded">Active</span>
-                            </div>
-                            <GpuGauge utilization={gpu.usage} label={gpu.model} />
-                            <div className="flex justify-between text-xs text-slate-400 px-4 mt-2">
-                              <span>Temp: {gpu.temp}</span>
-                              <span>{gpu.vram} GB</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
