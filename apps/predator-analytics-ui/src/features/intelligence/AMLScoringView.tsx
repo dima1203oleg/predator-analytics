@@ -64,6 +64,18 @@ interface BatchEntry {
     entity_type: string;
 }
 
+interface BatchResultData {
+    total: number;
+    distribution: Record<string, number>;
+    scores: {
+        entity_id: string;
+        entity_name: string;
+        risk_level: string;
+        total_score: number;
+        detected_factors: number;
+    }[];
+}
+
 interface RiskLevelInfo {
     level: string;
     range: string;
@@ -402,7 +414,7 @@ const AMLScoringView: React.FC = () => {
 
     const [batchMode, setBatchMode]   = useState(false);
     const [batchList, setBatchList]   = useState<BatchEntry[]>([]);
-    const [batchResult, setBatchResult] = useState<any | null>(null);
+    const [batchResult, setBatchResult] = useState<BatchResultData | null>(null);
     const [batchLoading, setBatchLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -475,7 +487,7 @@ const AMLScoringView: React.FC = () => {
                     code: 'AML_SCAN_SUCCESS'
                 }
             }));
-        } catch (e: any) {
+        } catch (e: any) { // type: ignore - axios error fallback
             setError(e?.response?.data?.detail || 'Помилка розрахунку. Перевірте зв\'язок з ядром PREDATOR.');
         } finally {
             setLoading(false);
@@ -504,7 +516,7 @@ const AMLScoringView: React.FC = () => {
                     code: 'AML_BATCH_SUCCESS'
                 }
             }));
-        } catch (e: any) {
+        } catch (e: any) { // type: ignore - axios error fallback
             setError(e?.response?.data?.detail || 'Помилка пакетного сканування.');
         } finally {
             setBatchLoading(false);
@@ -802,7 +814,7 @@ const AMLScoringView: React.FC = () => {
                                             РОЗПОДІЛ_МАСИВУ // {batchResult.total}_ВУЗЛІВ_ПЕРЕВІРЕНО
                                         </h3>
                                         <div className="grid grid-cols-5 gap-6 relative z-10">
-                                            {Object.entries(batchResult.distribution || {}).map(([lvl, cnt]: any) => {
+                                            {Object.entries(batchResult.distribution || {}).map(([lvl, cnt]) => {
                                                 const conf = RISK_CONFIG[lvl] || RISK_CONFIG.minimal;
                                                 const pct = batchResult.total ? Math.round((cnt / batchResult.total) * 100) : 0;
                                                 return (
@@ -822,7 +834,7 @@ const AMLScoringView: React.FC = () => {
                                     <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-white/5 shadow-4xl bg-black/60 relative overflow-hidden">
                                         <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">РЕЄСТР_ПАКЕТНОГО_ВВОДУ // ПОВНЕ_РОЗКРИТТЯ</h3>
                                         <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-4">
-                                            {batchResult.scores?.map((s: any) => {
+                                            {batchResult.scores?.map((s) => {
                                                 const conf = RISK_CONFIG[s.risk_level] || RISK_CONFIG.minimal;
                                                 return (
                                                     <div key={s.entity_id} className={cn("flex items-center gap-10 px-8 py-6 rounded-[2.5rem] border-2 italic group hover:bg-white/[0.02] transition-all", conf.border, conf.bg)}>
