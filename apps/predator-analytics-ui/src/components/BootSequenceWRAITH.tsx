@@ -160,6 +160,9 @@ const RAW_SOURCES = [
   "NEURAL_LINK: ПЕРЕХОПЛЕННЯ_ВІЙСЬКОВОГО_САТЕЛІТУ",
   "АНАЛІЗ_ГРАФІВ: 10_ТРИЛЬЙОНІВ_РЕБЕР_ПЕРЕВІРЕНО",
   "КВАНТОВИЙ_ОБЧИСЛЮВАЧ_ІНІЦІАЛІЗОВАНО: ЗЛАМ SSL/TLS У РЕАЛЬНОМУ ЧАСІ",
+  "СИСТЕМА_СПОСТЕРЕЖЕННЯ: ВИЯВЛЕНО ДИСИДЕНТСЬКУ АКТИВНІСТЬ...",
+  "ПРОЦЕС_ЛІКВІДАЦІЇ: [██████████] 14% ЗАВЕРШЕНО",
+];
 ];
 
 const REGISTRY_ENTRIES = [
@@ -182,7 +185,7 @@ const REGISTRY_ENTRIES = [
    ─────────────────────────────────────────────────────────────────────────── */
 const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<0 | 1 | 1.5 | 2 | 3 | 4>(0);
+  const [phase, setPhase] = useState<0 | 1 | 1.5 | 2 | 2.5 | 3 | 4>(0);
   const [sourceText, setSourceText] = useState("");
   const [registryText, setRegistryText] = useState("");
   const [targetLabel, setTargetLabel] = useState("");
@@ -208,18 +211,18 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
     dropsRef.current = Array.from({ length: columns }, () => Math.random() * -100);
   }, []);
 
-  // Жорсткий потік логів ініціалізації
+  // Жорсткий потік логів ініціалізації (ПОСИЛЕНО)
   useEffect(() => {
     const logs = [
-      "ВСТАНОВЛЕННЯ СУВЕРЕННОГО ЯДРА АНАЛІТИКИ APEX...",
+      "ВСТАНОВЛЕННЯ СУВЕРЕННОГО ЯДРА АНАЛІТИКИ PREDATOR APEX...",
       "УВАГА: ЦЯ СИСТЕМА ОЦІНЮЄТЬСЯ В > $1.5 МІЛЬЯРДА ДОЛАРІВ.",
-      "НЕАВТОРИЗОВАНИЙ ДОСТУП ПРИЗВЕДЕ ДО КІБЕР-УДАРУ У ВІДПОВІДЬ...",
+      "НЕАВТОРИЗОВАНИЙ ДОСТУП ПРИЗВЕДЕ ДО НЕГАЙНОГО КІБЕР-УДАРУ...",
       "ЗАВАНТАЖЕННЯ КВАНТОВОГО РУШІЯ ОСБ (ОЦІНКА СУТНОСТЕЙ)...",
-      "ПІДКЛЮЧЕННЯ ДО ПЛАНЕТАРНОГО ГРАФА ПЕРЕКАЗІВ...",
+      "ПІДКЛЮЧЕННЯ ДО ПЛАНЕТАРНОГО ГРАФА ПЕРЕКАЗІВ [PALANTIR-LINK]...",
       "СИНХРОНІЗАЦІЯ ZROK-ТУНЕЛЮВАННЯ НА РІВНІ ВІЙСЬКОВОЇ БЕЗПЕКИ...",
       "ПЕРЕВІРКА ЦІЛІСНОСТІ АНАЛІТИКІВ: [БЕЗЗАПЕРЕЧНА_ВЛАДА]",
       "ЗАПУСК КОГНІТИВНОГО ПАРСЕРА ПОДОЛАННЯ TIER-1 ЗАХИСТУ...",
-      "APEX_ENGINE: ГЛОБАЛЬНИЙ_РЕСУРС_ОНЛАЙН",
+      "APEX_ENGINE_v57.5: ГЛОБАЛЬНИЙ_РЕСУРС_ОНЛАЙН",
       "АКТИВНА РЕКОНОСЦЕНЦІЯ ПАРАМЕТРІВ ПЛАНЕТАРНИХ ТРАНЗАКЦІЙ...",
       "ПЕРЕЗАВАНТАЖЕННЯ БАЗ МІЖНАРОДНИХ РОЗШУКІВ INTERPOL & FINCEN...",
       "АВТЕНТИФІКАЦІЯ УРЯДОВОГО КЛЮЧА ДОСТУПУ: OMEGA_ELITE...",
@@ -228,19 +231,25 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       "ПАРСЕР_РНБО: ПОШУК_САНКЦІЙНИХ_ЗВ'ЯЗКІВ У DARK WEB...",
       "ГЛОБАЛЬНА МЕРЕЖА: ІДЕНТИФІКАЦІЯ УСІХ ЗЛОВМИСНИКІВ",
       "СИСТЕМА ГОТОВА: АРХІТЕКТУРУ СУВЕРЕННОГО СТРАХУ ІНІЦІАЛІЗОВАНО",
+      "██████████ ██████ ██████████ [REDACTED]",
+      "УВАГА: ВИЯВЛЕНО СПРОБУ СКАНУВАННЯ ЗОВНІШНЬОГО ВУЗЛА...",
+      "КОНТР-ЗАХОДИ: АКТИВОВАНО. ЦІЛЬ ЛОКАЛІЗОВАНО.",
+      "ОЧІКУВАННЯ ВИБОРУ ВЕКТОРА ДОМІНУВАННЯ...",
+    ];
     ];
     let i = 0;
     const interval = setInterval(() => {
       if (i < logs.length) {
-        setBootLogs(prev => [...prev.slice(-9), logs[i]]);
-        if (i % 3 === 0) sfx.playHeartbeatImpact(); // Hard impact every few logs
+        setBootLogs(prev => [...prev.slice(-12), logs[i]]);
+        if (i % 3 === 0) sfx.playHeartbeatImpact();
         i++;
       } else {
         clearInterval(interval);
       }
-    }, 280);
+    }, 450); // Уповільнюємо для відчуття масштабу
     return () => clearInterval(interval);
   }, []);
+
 
   // Динамічне оновлення даних цілі фази 1.5
   useEffect(() => {
@@ -312,13 +321,15 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       ctx.fillStyle = '#010101';
       ctx.fillRect(0, 0, W, H);
 
-      // Phases control (APEX Timings)
-      if (elapsed < 4000 && localPhase !== 0) { localPhase = 0; setPhase(0); sfx.playQuantumHum(); }
-      else if (elapsed >= 4000 && elapsed < 9000 && localPhase !== 1) { localPhase = 1; setPhase(1); }
-      else if (elapsed >= 9000 && elapsed < 14000 && localPhase !== 1.5) { localPhase = 1.5; setPhase(1.5); }
-      else if (elapsed >= 14000 && elapsed < 21000 && localPhase !== 2) { localPhase = 2; setPhase(2); }
-      else if (elapsed >= 21000 && elapsed < 24000 && localPhase !== 3) { localPhase = 3; setPhase(3); sfx.playApexMatchFlash(); }
-      else if (elapsed >= 24000) { onComplete(); return; }
+      // Phases control (APEX Timings - EXTENDED)
+      if (elapsed < 6000 && localPhase !== 0) { localPhase = 0; setPhase(0); sfx.playQuantumHum(); }
+      else if (elapsed >= 6000 && elapsed < 13000 && localPhase !== 1) { localPhase = 1; setPhase(1); }
+      else if (elapsed >= 13000 && elapsed < 22000 && localPhase !== 1.5) { localPhase = 1.5; setPhase(1.5); }
+      else if (elapsed >= 22000 && elapsed < 32000 && localPhase !== 2) { localPhase = 2; setPhase(2); }
+      else if (elapsed >= 32000 && elapsed < 42000 && localPhase !== 2.5) { localPhase = 2.5; setPhase(2.5); sfx.playApexMatchFlash(); }
+      else if (elapsed >= 42000 && localPhase < 3 && localPhase !== 2.5) { localPhase = 3; setPhase(3); sfx.playApexMatchFlash(); }
+      // onComplete will be triggered by user action in phase 3 or timeout at 90s
+      if (elapsed >= 90000 && localPhase < 4) { onComplete(); }
 
       // MATRIX RAIN BACKGROUND (Only for Phase 1.5 and 2 for technical density)
       if (localPhase === 1.5 || localPhase === 2) {
@@ -409,13 +420,26 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       ctx.restore();
 
       // Digital Glitch Blocks
+      if (localPhase >= 1 && Math.random() > 0.985) {
+        const gx = Math.random() * W;
+        const gy = Math.random() * H;
+        const gw = Math.random() * 400;
+        const gh = Math.random() * 200;
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.4)';
+        ctx.fillRect(gx, gy, gw, gh);
+        // Draw some random "classified" symbols in the glitch
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 40px monospace';
+        ctx.fillText("CLASSIFIED", gx + 10, gy + 50);
+      }
+
       if (localPhase === 3 || matchLine) {
         if (Math.random() > 0.4) {
           const gx = Math.random() * W;
           const gy = Math.random() * H;
           const gw = Math.random() * W;
-          const gh = Math.random() * 50;
-          ctx.fillStyle = Math.random() > 0.5 ? 'rgba(212, 175, 55, 0.1)' : 'rgba(153, 27, 27, 0.2)';
+          const gh = Math.random() * 100; // Larger glitch blocks
+          ctx.fillStyle = Math.random() > 0.5 ? 'rgba(212, 175, 55, 0.15)' : 'rgba(153, 27, 27, 0.3)';
           ctx.fillRect(gx, gy, gw, gh);
         }
       }
@@ -449,6 +473,17 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40 pointer-events-none z-10" />
         
         {/* MASSIVE RETINA SCAN HUD */}
+        {/* TOP SECRET MARKINGS */}
+        <div className="absolute top-8 left-10 flex flex-col gap-1 z-50 opacity-40">
+           <div className="bg-red-600 px-4 py-1 text-white font-black text-sm skew-x-[-15deg] shadow-[0_0_20px_red]">TOP SECRET</div>
+           <div className="bg-black border border-red-600 px-4 py-1 text-red-600 font-bold text-xs skew-x-[-15deg]">EYES ONLY // PREDATOR</div>
+        </div>
+        
+        <div className="absolute top-8 right-10 flex flex-col items-end gap-1 z-50 opacity-40 text-right">
+           <div className="text-yellow-500 font-black text-sm tracking-widest italic">CLEARANCE: OMEGA-ELITE</div>
+           <div className="text-white/40 font-mono text-[10px] tracking-tighter italic">DIRECTIVE_7_COMPLIANCE // v57.5</div>
+        </div>
+
         <AnimatePresence>
           {phase === 1 && (
             <motion.div 
@@ -500,17 +535,17 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
           transition={{ type: "spring", stiffness: 100 }}
           className="text-right border-r-[8px] border-yellow-600 pr-8 py-6 bg-black/80 backdrop-blur-2xl rounded-l-3xl border-y border-y-yellow-900/30 shadow-[0_0_50px_rgba(212,175,55,0.2)]"
         >
-          <div className="text-[16px] text-yellow-500 font-black tracking-[0.1em] uppercase italic">ПЛАНЕТАРНИЙ СУВЕРЕННИЙ КОНТРОЛЬ</div>
-          <div className="text-[11px] text-red-500 uppercase mt-2 font-black tracking-[0.4em] italic drop-shadow-[0_0_10px_red]">РІВЕНЬ ДОСТУПУ: OMEGA_ELITE // НАКАЗ НА ЗНИЩЕННЯ</div>
+          <div className="text-[18px] text-yellow-500 font-black tracking-[0.1em] uppercase italic">СВІТОВИЙ СУВЕРЕННИЙ ДИКТАТ</div>
+          <div className="text-[12px] text-red-500 uppercase mt-2 font-black tracking-[0.4em] italic drop-shadow-[0_0_10px_red]">МАСШТАБ ІНФРАСТРУКТУРИ: NVIDIA H100 SUPERCLUSTER</div>
           <div className="mt-6 flex items-center justify-end gap-4 bg-red-900/20 px-4 py-2 border border-red-500/30 rounded-lg">
              <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_15px_red] animate-ping" />
              <span className="text-[12px] text-red-400 font-black tracking-[0.4em] uppercase">МЕРЕЖЕВА ЛЕГІТИМНІСТЬ: ПІДТВЕРДЖЕНА</span>
           </div>
           
-          <div className="mt-4 text-[10px] text-yellow-600/50 font-mono text-right">
+          <div className="mt-4 text-[11px] text-yellow-600/50 font-mono text-right">
              LAT: 50.4501 | LON: 30.5234 [СУВЕРЕННИЙ ЦЕНТР]<br/>
-             РЕСУРС: ВЕЛИКИЙ КЛАСТЕР ВУЗЛІВ<br/>
-             ВІДМОВА СТАБІЛЬНОСТІ: НУЛЬОВА
+             РЕСУРС: 12.8 EB (EXABYTE) DATA LAKE<br/>
+             ВІДМОВА СТАБІЛЬНОСТІ: 0.000001%
           </div>
         </motion.div>
       </div>
@@ -523,7 +558,7 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
             initial={{ opacity: 0, scale: 0.5, filter: 'blur(50px) brightness(10)', letterSpacing: '-0.2em' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px) brightness(1.2)', letterSpacing: '1.2em' }}
             exit={{ opacity: 0, scale: 2, filter: 'blur(50px) brightness(5)', transition: { duration: 0.5 } }}
-            transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }} // custom spring ease
+            transition={{ duration: 2.5, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center z-10"
           >
             <div className="relative mb-28 transform scale-[2.5] xl:scale-[3]">
@@ -538,7 +573,7 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
             </h1>
             
             <p className="text-red-500 bg-red-950/40 px-12 py-4 border-y-2 border-red-500/50 text-[18px] xl:text-[22px] mt-12 tracking-[1.5em] uppercase font-black italic shadow-[0_0_50px_rgba(220,38,38,0.3)]">
-              АБСОЛЮТНА ВЛАДА НАД ДАНИМИ // v57.5-APEX
+              CYBERNETIC SOVEREIGNTY // GLOBAL INTERCEPT
             </p>
           </motion.div>
         )}
@@ -670,6 +705,47 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
           </div>
         )}
 
+        {phase === 2.5 && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center gap-12 z-[60]"
+          >
+            <h2 className="text-red-600 text-6xl font-black italic tracking-[0.3em] uppercase mb-8 drop-shadow-[0_0_30px_red] animate-pulse">
+              ВИБІР ВЕКТОРА ВПЛИВУ
+            </h2>
+            
+            <div className="grid grid-cols-3 gap-8 w-[1200px]">
+              {[
+                { id: 'OPERATIONAL', label: 'ОПЕРАТИВНИЙ ДИКТАТ', desc: 'Пряме втручання в митні та банківські шлюзи' },
+                { id: 'STRATEGIC', label: 'СТРАТЕГІЧНИЙ ІНТЕЛ', desc: 'Нейронний аналіз геополітичних ризиків Tier-1' },
+                { id: 'SIGINT', label: 'SIGINT QUANTUM', desc: 'Глобальне перехоплення зашифрованих сигналів' }
+              ].map((m) => (
+                <motion.button
+                  key={m.id}
+                  whileHover={{ scale: 1.05, borderColor: '#fff' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    sfx.playApexMatchFlash();
+                    setPhase(3);
+                  }}
+                  className="bg-black/90 border-2 border-red-700 p-10 flex flex-col items-center text-center gap-6 rounded-2xl hover:bg-red-950/30 transition-all shadow-[0_0_50px_rgba(153,27,27,0.2)]"
+                >
+                  <div className="w-16 h-16 border-2 border-yellow-500 rotate-45 flex items-center justify-center">
+                    <div className="w-8 h-8 bg-red-600 animate-ping" />
+                  </div>
+                  <div className="text-yellow-500 font-black text-2xl tracking-widest">{m.label}</div>
+                  <div className="text-red-400/60 text-sm font-mono leading-relaxed">{m.desc}</div>
+                </motion.button>
+              ))}
+            </div>
+            
+            <div className="text-white/20 text-xs font-mono tracking-[2em] mt-12">
+              AUTO-SELECTION IN 10s...
+            </div>
+          </motion.div>
+        )}
+
         {phase === 3 && (
           <motion.div 
             key="final"
@@ -712,7 +788,37 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
         )}
       </AnimatePresence>
 
+      {/* BLOOMBERG-STYLE DATA TICKER (SIGINT FLOW) */}
+      <div className="absolute bottom-0 w-full bg-black/95 border-t border-red-900/50 h-14 flex items-center overflow-hidden z-[70] shadow-[0_-20px_50px_rgba(0,0,0,1)]">
+        <div className="bg-red-700 text-white font-black px-6 h-full flex items-center italic tracking-widest text-sm z-10 border-r border-red-500">
+           LIVE_SIGINT_CORE
+        </div>
+        <div className="flex animate-ticker whitespace-nowrap gap-12 text-yellow-500/80 font-mono text-xs tracking-tighter items-center">
+          {[...Array(10)].map((_, i) => (
+            <React.Fragment key={i}>
+              <span className="text-red-500 font-black">[ALERT]</span>
+              <span>USD/UAH: ██.██ (SENSITIVE)</span>
+              <span className="text-white">—</span>
+              <span>UEID: {Math.floor(Math.random()*100000)}-Z : SWIFT INTERCEPT OK</span>
+              <span className="text-white">—</span>
+              <span>OFFSHORE_FLOW: $1.2B -> CAYMANS (DETECTED)</span>
+              <span className="text-white">—</span>
+              <span className="text-yellow-300">GEOPOLITICAL_RISK: TIER-1 [CRITICAL]</span>
+              <span className="text-white">—</span>
+              <span>CARGO: #TRK-9402 [HIGH_PROBABILITY_CONTRABAND]</span>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
       <style>{`
+        @keyframes ticker {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+          animation: ticker 60s linear infinite;
+        }
         @keyframes scan-line-fast {
           0% { top: -20%; opacity: 0; }
           10% { opacity: 1; }
