@@ -45,11 +45,28 @@ spec:
           resources:
             {{- toYaml .Values.coreApi.resources | nindent 12 }}
           env:
-            - name: POSTGRES_URL
-              valueFrom:
-                secretKeyRef:
-                  name: db-secrets
-                  key: url
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+            - name: REDIS_URL
+              value: "redis://{{ .Values.global.redis.host }}:6379/0"
+            - name: NEO4J_URI
+              value: "bolt://{{ .Values.global.neo4j.host }}:7687"
+            - name: NEO4J_USER
+              value: "neo4j"
+            - name: NEO4J_PASSWORD
+              value: "{{ .Values.neo4j.neo4j.password }}"
+            - name: LITELLM_GATEWAY_URL
+              value: "{{ .Values.coreApi.env.LITELLM_GATEWAY_URL }}"
+            - name: ANTIGRAVITY_ENABLED
+              value: "{{ .Values.coreApi.env.ANTIGRAVITY_ENABLED }}"
+            - name: ANTIGRAVITY_AGENT_MODEL
+              value: "{{ .Values.coreApi.env.ANTIGRAVITY_AGENT_MODEL }}"
+            - name: SECRET_KEY
+              value: "{{ .Values.coreApi.env.SECRET_KEY }}"
+            - name: ENV
+              value: "{{ .Values.coreApi.env.ENV }}"
+            - name: DEBUG
+              value: "{{ .Values.coreApi.env.DEBUG }}"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

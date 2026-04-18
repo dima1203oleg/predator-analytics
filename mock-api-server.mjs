@@ -1513,18 +1513,6 @@ app.get(['/api/v1/documents', '/v1/documents'], (req, res) => {
   res.json(DB_FILES);
 });
 
-// System Stats Integration
-app.get(['/api/v1/system/stats', '/v1/system/stats'], (req, res) => {
-  res.json({
-    total_declarations: DB_FACTS.length,
-    total_entities: DB_GRAPH.nodes.length,
-    total_docs: DB_SEARCH_INDEX.length,
-    active_pipelines: etlJobs.filter(j => j.state !== 'READY').length,
-    risk_alerts: DB_FACTS.filter(d => d.risk_score > 80).length,
-    timestamp: new Date().toISOString()
-  });
-});
-
 // 📊 Prozorro Analytics Endpoints
 app.get('/api/v1/osint_ua/prozorro/stats', (req, res) => {
   res.json({
@@ -2684,10 +2672,7 @@ app.get('/api/v1/graph/search', (req, res) => {
 });
 app.get('/api/v1/sources/', (req, res) => { res.json([]); });
 
-// System status
-app.get('/api/v1/system/status', (req, res) => {
-  res.json({ status: 'OPERATIONAL', stage: 'SOVEREIGN', uptime: '7d 14h', total_records: DB_FACTS.length });
-});
+// ─── Infrastructure Endpoints ───────────────────────────────────────────────
 app.get('/api/v1/system/stage', (req, res) => { res.json('SOVEREIGN'); });
 
 app.get('/api/v1/system/infrastructure', (req, res) => {
@@ -4956,6 +4941,47 @@ app.get('/api/v1/system/cluster', (req, res) => {
     ]);
 });
 
+// --- Health & System ---
+app.get('/api/v1/health', (req, res) => {
+    res.json({ status: 'ok', environment: 'sovereign_mock', version: '56.5.0-WRAITH-MOCK' });
+});
+
+app.get('/api/v1/system/status', (req, res) => {
+    res.json({
+        status: 'ok',
+        healthy: true,
+        overall_status: 'OPTIMAL',
+        version: '56.5.0-WRAITH-MOCK',
+        environment: 'sovereign_mock',
+        uptime: '142h 12m',
+        last_sync: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
+        services: [
+            { name: 'core-api', status: 'healthy', label: 'API Gateway', latency_ms: 12 },
+            { name: 'graph-service', status: 'healthy', label: 'Neural Graph', latency_ms: 45 },
+            { name: 'ingestion-worker', status: 'healthy', label: 'ETL Pipeline', latency_ms: 8 },
+            { name: 'search-engine', status: 'healthy', label: 'OpenSearch', latency_ms: 15 },
+            { name: 'qdrant', status: 'healthy', label: 'Vector DB', latency_ms: 5 },
+            { name: 'redis', status: 'healthy', label: 'Cache/PubSub', latency_ms: 1 }
+        ],
+        summary: {
+            total: 6,
+            healthy: 6,
+            degraded: 0,
+            failed: 0
+        },
+        metrics: {
+            cpu_percent: 12.5 + Math.random() * 5,
+            memory_percent: 42.8 + Math.random() * 10,
+            disk_percent: 15.2,
+            avg_latency: 18.4,
+            active_tasks: 12,
+            risk_score: 4.2
+        },
+        timestamp: new Date().toISOString()
+    });
+});
+
 // --- System & Dashboard ---
 app.get('/api/v1/system/engines', (req, res) => {
     res.json({
@@ -4990,6 +5016,17 @@ app.get('/api/v1/factory/patterns', (req, res) => {
 
 app.get('/api/v1/factory/patterns/gold', (req, res) => {
     res.json(DB_FACTORY_PATTERNS.filter(p => p.gold));
+});
+
+app.post('/api/v1/factory/chaos/launch', (req, res) => {
+    const { scenario } = req.query;
+    res.json({
+        status: 'LAUNCHED',
+        scenario: scenario || 'UNKNOWN',
+        impact: 'SIMULATED',
+        timestamp: new Date().toISOString(),
+        message: `Chaos scenario '${scenario}' has been initiated on the mock cluster.`
+    });
 });
 
 app.post('/api/v1/factory/ingest', (req, res) => {
@@ -5225,21 +5262,21 @@ const AGI_TASK_LOGS = {
   ],
 };
 
-/** GET /api/v1/factory/antigravity/status */
-app.get('/api/v1/factory/antigravity/status', (req, res) => {
+/** GET /api/v1/(factory/)?antigravity/status */
+app.get(['/api/v1/factory/antigravity/status', '/api/v1/antigravity/status'], (req, res) => {
   AGI_ORCHESTRATOR_STATUS.last_update = new Date().toISOString();
   // Симуляція динамічних даних
   AGI_ORCHESTRATOR_STATUS.total_spent_usd = parseFloat((12.45 + Math.random() * 0.05).toFixed(2));
   res.json(AGI_ORCHESTRATOR_STATUS);
 });
 
-/** GET /api/v1/factory/antigravity/tasks */
-app.get('/api/v1/factory/antigravity/tasks', (req, res) => {
+/** GET /api/v1/(factory/)?antigravity/tasks */
+app.get(['/api/v1/factory/antigravity/tasks', '/api/v1/antigravity/tasks'], (req, res) => {
   res.json(AGI_TASKS);
 });
 
-/** POST /api/v1/factory/antigravity/tasks */
-app.post('/api/v1/factory/antigravity/tasks', (req, res) => {
+/** POST /api/v1/(factory/)?antigravity/tasks */
+app.post(['/api/v1/factory/antigravity/tasks', '/api/v1/antigravity/tasks'], (req, res) => {
   const { description, priority = 'medium', max_budget_usd = null } = req.body || {};
   if (!description || description.trim().length < 5) {
     return res.status(400).json({ error: 'Опис задачі обов\'язковий (мін. 5 символів)' });
@@ -5274,15 +5311,15 @@ app.post('/api/v1/factory/antigravity/tasks', (req, res) => {
   res.status(201).json(newTask);
 });
 
-/** GET /api/v1/factory/antigravity/tasks/:taskId */
-app.get('/api/v1/factory/antigravity/tasks/:taskId', (req, res) => {
+/** GET /api/v1/(factory/)?antigravity/tasks/:taskId */
+app.get(['/api/v1/factory/antigravity/tasks/:taskId', '/api/v1/antigravity/tasks/:taskId'], (req, res) => {
   const task = AGI_TASKS.find(t => t.task_id === req.params.taskId);
   if (!task) return res.status(404).json({ error: 'Задачу не знайдено' });
   res.json(task);
 });
 
-/** POST /api/v1/factory/antigravity/tasks/:taskId/cancel */
-app.post('/api/v1/factory/antigravity/tasks/:taskId/cancel', (req, res) => {
+/** POST /api/v1/(factory/)?antigravity/tasks/:taskId/cancel */
+app.post(['/api/v1/factory/antigravity/tasks/:taskId/cancel', '/api/v1/antigravity/tasks/:taskId/cancel'], (req, res) => {
   const task = AGI_TASKS.find(t => t.task_id === req.params.taskId);
   if (!task) return res.status(404).json({ error: 'Задачу не знайдено' });
   if (task.status === 'completed' || task.status === 'cancelled') {
@@ -5930,16 +5967,40 @@ app.get('/api/v1/ai/thoughts', (req, res) => {
 
 app.get('/api/v1/system/stats', (req, res) => {
   res.json({
+    cpu_usage: 1.2,
     cpu_percent: 18 + Math.random() * 5,
+    cpu_count: 8,
+    memory_usage: 4 * 1024 * 1024 * 1024,
     memory_percent: 32 + Math.random() * 10,
+    memory_total: 16 * 1024 * 1024 * 1024,
+    memory_used: 5 * 1024 * 1024 * 1024,
+    memory_available: 11 * 1024 * 1024 * 1024,
+    disk_usage: 250 * 1024 * 1024 * 1024,
     disk_percent: 45,
+    disk_total: 500 * 1024 * 1024 * 1024,
+    disk_used: 250 * 1024 * 1024 * 1024,
+    disk_free: 250 * 1024 * 1024 * 1024,
     gpu_available: true,
     gpu_name: 'Simulated ELITE A100',
-    gpu_utilization: 12,
+    gpu_utilization: 12 + Math.random() * 5,
     gpu_mem_total: 85899345920,
     gpu_mem_used: 10737418240,
     gpu_available_mem: 75161927680,
+    gpu_temp: 45 + Math.random() * 10,
+    network_bytes_sent: 1024 * 1024 * 50,
+    network_bytes_recv: 1024 * 1024 * 120,
+    active_connections: 42,
+    active_tasks: 12,
+    uptime: '142h 12m',
+    uptime_seconds: 512000,
+    documents_total: DB_FACTS.length,
+    search_rate: 5.4,
+    avg_latency: 0.12,
+    indexing_rate: 1.2,
+    total_indices: 24,
+    storage_gb: 45.5,
     last_sync: new Date().toISOString(),
+    timestamp: new Date().toISOString(),
     node_source: 'NVIDIA_VIA_ZROK'
   });
 });

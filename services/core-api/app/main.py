@@ -139,7 +139,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         except Exception as e:
             logger.warning(f"Factory OODA initialization failed: {e}. System Factory features will be unavailable.")
 
-        # 7. Start Sovereign Guardian (Auto-Healing)
+        # 7. Start Resident AGIs (Antigravity Orchestrator)
+        from app.services.antigravity_orchestrator import orchestrator
+        await orchestrator.start()
+        logger.info("Antigravity AGI Orchestrator started")
+
+        # 8. Start Sovereign Guardian (Auto-Healing)
         app.state.guardian_task = asyncio.create_task(guardian_service.run_loop())
         logger.info("Sovereign Guardian task started")
 
@@ -150,6 +155,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Зупинка Core API...")
     # Graceful shutdown
     if not settings.TESTING:
+        # Stop AGI Orchestrator
+        from app.services.antigravity_orchestrator import orchestrator
+        orchestrator.status.is_running = False
+        
         guardian_service.stop()
         if hasattr(app.state, 'guardian_task'):
             app.state.guardian_task.cancel()

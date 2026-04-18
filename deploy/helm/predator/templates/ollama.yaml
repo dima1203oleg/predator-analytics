@@ -1,0 +1,80 @@
+{{- if .Values.ollama.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-ollama
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: ollama
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: ollama
+    spec:
+      runtimeClassName: nvidia # Використовуємо NVIDIA runtime для GPU
+      containers:
+        - name: ollama
+          image: "{{ .Values.ollama.image.repository }}:{{ .Values.ollama.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 11434
+              protocol: TCP
+          env:
+            - name: OLLAMA_HOST
+              value: "0.0.0.0"
+          volumeMounts:
+            - name: data
+              mountPath: /root/.ollama
+          resources:
+            {{- toYaml .Values.ollama.resources | nindent 12 }}
+      volumes:
+        - name: data
+          {{- if .Values.ollama.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "predator.fullname" . }}-ollama-data
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-ollama
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.ollama.service.type }}
+  ports:
+    - port: {{ .Values.ollama.service.port }}
+      targetPort: 11434
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: ollama
+---
+{{- if .Values.ollama.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "predator.fullname" . }}-ollama-data
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.ollama.persistence.size }}
+  {{- if .Values.ollama.persistence.storageClass }}
+  storageClassName: {{ .Values.ollama.persistence.storageClass }}
+  {{- end }}
+{{- end }}
+{{- end }}

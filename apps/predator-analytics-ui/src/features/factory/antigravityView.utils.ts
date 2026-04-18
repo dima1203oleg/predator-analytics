@@ -263,6 +263,10 @@ function normalizeTask(raw: unknown): AgentTask {
     progressLabel = `${r['progress']}%`;
   }
 
+  const spent = typeof r['actual_cost_usd'] === 'number' 
+    ? r['actual_cost_usd'] 
+    : (typeof r['spent_usd'] === 'number' ? r['spent_usd'] : null);
+
   return {
     task_id: typeof r['task_id'] === 'string' ? r['task_id'] : String(Math.random()),
     description: typeof r['description'] === 'string' ? r['description'] : '—',
@@ -275,7 +279,7 @@ function normalizeTask(raw: unknown): AgentTask {
     created_at: typeof r['created_at'] === 'string' ? r['created_at'] : new Date().toISOString(),
     updated_at: typeof r['updated_at'] === 'string' ? r['updated_at'] : new Date().toISOString(),
     progress: progressLabel,
-    spent_usd: Number.isFinite(Number(r['spent_usd'])) ? Number(r['spent_usd']) : null,
+    spent_usd: spent,
     max_budget_usd: Number.isFinite(Number(r['max_budget_usd'])) ? Number(r['max_budget_usd']) : null,
     subtasks: Array.isArray(r['subtasks']) ? r['subtasks'].map(normalizeSubtask) : [],
   };

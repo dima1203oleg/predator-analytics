@@ -1,0 +1,67 @@
+{{- if .Values.litellm.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "predator.fullname" . }}-litellm-config
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    {{- .Values.litellm.config.content | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "predator.fullname" . }}-litellm
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.litellm.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "predator.selectorLabels" . | nindent 6 }}
+      app: litellm
+  template:
+    metadata:
+      labels:
+        {{- include "predator.selectorLabels" . | nindent 8 }}
+        app: litellm
+    spec:
+      containers:
+        - name: litellm
+          image: "{{ .Values.litellm.image.repository }}:{{ .Values.litellm.image.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          command: ["/bin/sh", "-c"]
+          args: ["litellm --config /app/config.yaml --port 4000 --detailed_debug"]
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+          resources:
+            {{- toYaml .Values.litellm.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "predator.fullname" . }}-litellm-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "predator.fullname" . }}-litellm
+  labels:
+    {{- include "predator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.litellm.service.type }}
+  ports:
+    - port: {{ .Values.litellm.service.port }}
+      targetPort: 4000
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "predator.selectorLabels" . | nindent 4 }}
+    app: litellm
+{{- end }}

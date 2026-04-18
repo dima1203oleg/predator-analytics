@@ -16,6 +16,25 @@ import { API_BASE_URL } from '@/services/api/config';
 export const InfrastructureFailoverBanner: React.FC = () => {
   const status = useBackendStatus();
   const { isOffline, nodes, llmLevel, llmTriStateMode, vramMetrics } = status;
+  
+  const [isVisible, setIsVisible] = React.useState(true);
+  const [lastMode, setLastMode] = React.useState(llmTriStateMode);
+
+  // Автоматичне приховування через 5 секунд
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [isVisible]);
+
+  // Показувати знову, якщо змінився режим (наприклад, з SOVEREIGN на CLOUD)
+  React.useEffect(() => {
+    if (llmTriStateMode !== lastMode) {
+      setIsVisible(true);
+      setLastMode(llmTriStateMode);
+    }
+  }, [llmTriStateMode, lastMode]);
 
   const activeNode = nodes.find(n => n.active);
   const isMirror = activeNode?.id === 'colab' || activeNode?.id === 'zrok';
@@ -48,7 +67,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
 
   const mode = getModeStyles(llmTriStateMode);
 
-  if (!activeNode && !isOffline) return null;
+  if (!isVisible || (!activeNode && !isOffline)) return null;
 
   return (
     <AnimatePresence>
@@ -57,10 +76,18 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         animate={{ y: 0, x: '-50%', opacity: 1 }}
         exit={{ y: -100, x: '-50%', opacity: 0 }}
         className={cn(
-          "fixed top-6 left-1/2 z-[100] px-8 py-4 rounded-[3rem] border-2 flex items-center gap-8 shadow-4xl backdrop-blur-3xl transition-all duration-700",
+          "fixed top-6 left-1/2 z-[100] px-8 py-4 rounded-[3rem] border-2 flex items-center gap-8 shadow-4xl backdrop-blur-3xl transition-all duration-700 group",
           mode.bg, mode.border
         )}
       >
+        {/* Кнопка закриття */}
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-black border border-white/20 flex items-center justify-center text-white/50 hover:text-white hover:border-white/40 transition-all opacity-0 group-hover:opacity-100"
+        >
+          <Zap size={12} className="rotate-45" />
+        </button>
+
         {/* Core Status Block */}
         <div className="flex items-center gap-4">
           <div className="relative">
