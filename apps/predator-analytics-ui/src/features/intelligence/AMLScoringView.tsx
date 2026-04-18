@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.5-ELITE | AML Когнітивний Аналізатор
+ * PREDATOR v57.2-WRAITH | AML Когнітивний Аналізатор
  *
  * Anti-Money Laundering Scoring Engine — повне підключення до бекенду.
  * Маршрут: /aml
@@ -19,16 +19,18 @@ import {
     ShieldCheck, Flame, Info, Crosshair, Network, Lock, Cpu, Fingerprint, Radar
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
-import { apiClient as api } from '@/services/api';
+import { analyticsService } from '@/services/unified/analytics.service';
+import { RiskLevelValue } from '@/types/intelligence';
+
+import { cn } from '@/utils/cn';
+import { Badge } from '@/components/ui/badge';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
-import { Badge } from '@/components/ui/badge';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
-import { cn } from '@/utils/cn';
-import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
 
 // ========================
 // Типи
@@ -49,7 +51,7 @@ interface AMLResult {
     entity_name: string;
     entity_type: string;
     total_score: number;
-    risk_level: 'critical' | 'high' | 'medium' | 'low' | 'minimal';
+    risk_level: RiskLevelValue;
     factors: AMLFactor[];
     recommendations: string[];
     calculated_at: string;
@@ -69,15 +71,15 @@ interface RiskLevelInfo {
 }
 
 // ========================
-// Константи ELITE
+// Константи WRAITH
 // ========================
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
-    critical: { label: 'КРИТИЧНИЙ',   color: '#D97706', bg: 'bg-amber-950/20',    border: 'border-amber-500/40',    glow: 'shadow-[0_0_40px_rgba(217,119,6,0.3)]' },
-    high:     { label: 'ВИСОКИЙ',     color: '#f97316', bg: 'bg-orange-900/20',  border: 'border-orange-500/40',  glow: 'shadow-[0_0_30px_rgba(249,115,22,0.2)]' },
+    critical: { label: 'КРИТИЧНИЙ',   color: '#D4AF37', bg: 'bg-amber-950/20',    border: 'border-amber-500/40',    glow: 'shadow-[0_0_40px_rgba(212,175,55,0.3)]' },
+    high:     { label: 'ВИСОКИЙ',     color: '#B45309', bg: 'bg-orange-950/20',   border: 'border-orange-500/40',   glow: 'shadow-[0_0_30px_rgba(180,83,9,0.2)]' },
     medium:   { label: 'СЕРЕДНІЙ',    color: '#D4AF37', bg: 'bg-yellow-900/20',   border: 'border-yellow-500/40',   glow: 'shadow-[0_0_30px_rgba(212,175,55,0.2)]' },
-    low:      { label: 'НИЗЬКИЙ',     color: '#22c55e', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none' },
-    minimal:  { label: 'МІНІМАЛЬНИЙ', color: '#06b6d4', bg: 'bg-cyan-900/20',    border: 'border-cyan-500/40',    glow: 'shadow-none' },
+    low:      { label: 'НИЗЬКИЙ',     color: '#71717a', bg: 'bg-zinc-900/20',     border: 'border-zinc-500/40',     glow: 'shadow-none' },
+    minimal:  { label: 'МІНІМАЛЬНИЙ', color: '#3f3f46', bg: 'bg-zinc-950/20',     border: 'border-zinc-800/40',     glow: 'shadow-none' },
 };
 
 const FACTOR_LABELS: Record<string, string> = {
@@ -86,7 +88,7 @@ const FACTOR_LABELS: Record<string, string> = {
     tax:                  'Податкові борги',
     offshore:             'Офшорні зв\'язки',
     shell_company:        'Ознаки фіктивності',
-    pep:                  'Пол. значуща особа',
+    pep:                  'Політ. значуща особа',
     beneficial_ownership: 'Проблеми з UBO',
     management:           'Зміни керівництва',
     financial:            'Фінансові аномалії',
@@ -107,7 +109,7 @@ const FACTOR_ICONS: Record<string, React.ReactNode> = {
 };
 
 // ========================
-// Підкомпоненти ELITE
+// Підкомпоненти WRAITH
 // ========================
 
 const RiskBadge: React.FC<{ level: string }> = ({ level }) => {
@@ -195,9 +197,9 @@ const ScanningHUD: React.FC = () => {
             </div>
 
             <div className="absolute bottom-20 left-10 flex flex-col gap-1 font-mono text-[8px] text-amber-500/40 italic">
-                <span className="uppercase tracking-[0.3em] font-black">CORE_TEMP: 42°C</span>
-                <span className="uppercase tracking-[0.3em] font-black">NODE_LOAD: {Math.floor(Math.random() * 100)}%</span>
-                <span className="uppercase tracking-[0.3em] font-black">BUFFER_HEALTH: 99.8%</span>
+                <span className="uppercase tracking-[0.3em] font-black">ЯДРО_ТЕМП: 42°C</span>
+                <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
+                <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ: 99.8%</span>
             </div>
         </div>
     );
@@ -212,19 +214,19 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const RAW_CHUNKS = [
-        "FETCHING_RAW_METADATA...",
-        "DECRYPTING_UBO_LAYERS...",
-        "ACCESSING_LOCAL_REGISTRY_V4",
-        "CROSS_REFERENCING_OFFSHORE_LEAKS",
-        "MATCHING_TAX_ID_HASHES...",
-        "ANALYZING_TRANSACTION_VOLATILITY",
-        "DETECTING_SHELL_PATTERNS...",
-        "SCANNING_SANCTION_LISTS_UN_EU_US",
-        "IDENTIFYING_PEP_CONNECTIONS",
-        "COGNITIVE_ARRAY_RECONSTRUCTING...",
-        "MATCHING_ENTITY_FINGERPRINTS",
-        "VERIFYING_ADDRESS_HISTORY",
-        "CHECKING_ADVERSE_MEDIA_STREAMS"
+        "ЗБІР_МЕТАДАНИХ...",
+        "ДЕШИФРУВАННЯ_UBO_ШАРІВ...",
+        "ДОСТУП_ДО_РЕЄСТРУ_V4",
+        "ПЕРЕВІРКА_ОФШОРНИХ_ЗВ'ЯЗКІВ",
+        "СПІВСТАВЛЕННЯ_ЄДРПОУ_ХЕШІВ...",
+        "АНАЛІЗ_ВОЛАТИЛЬНОСТІ_ТРАНЗАКЦІЙ",
+        "ПОШУК_ОЗНАК_ФІКТИВНОСТІ...",
+        "СКАНУВАННЯ_САНКЦІЙНИХ_СПИСКІВ",
+        "ІДЕНТИФІКАЦІЯ_PEP_ЗВ'ЯЗКІВ",
+        "РЕКОНСТРУКЦІЯ_МАСИВУ...",
+        "ВЕРИФІКАЦІЯ_АДРЕСНОЇ_ІСТОРІЇ",
+        "ПОШУК_АНАЛОГІВ_В_АРХІВІ",
+        "АНАЛІЗ_МЕДІА_ПОТОКІВ"
     ];
 
     useEffect(() => {
@@ -235,7 +237,7 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }
 
         let i = 0;
         const interval = setInterval(() => {
-            const newLine = `[${new Date().toLocaleTimeString()}] ${RAW_CHUNKS[i % RAW_CHUNKS.length]} | STATUS: OK | ${Math.random().toString(16).substring(2, 10).toUpperCase()}`;
+            const newLine = `[${new Date().toLocaleTimeString()}] ${RAW_CHUNKS[i % RAW_CHUNKS.length]} | СТАТУС: OK | ${Math.random().toString(16).substring(2, 10).toUpperCase()}`;
             setLines(prev => [...prev.slice(-15), newLine]);
             i++;
         }, 120);
@@ -262,11 +264,11 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }
             <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                 <div className="flex items-center gap-3">
                     <Cpu size={14} className="text-amber-500 animate-pulse" />
-                    <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em] italic">PROCESSING: {targetName?.toUpperCase() || 'UNKNOWN_NODE'}</span>
+                    <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em] italic">ОБРОБКА: {targetName?.toUpperCase() || 'НЕВІДОМИЙ_ВУЗОЛ'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Activity size={10} className="text-amber-500" />
-                    <span className="text-[8px] font-mono text-slate-800 uppercase italic">1.4 TB/S_RAW_STREAM</span>
+                    <span className="text-[8px] font-mono text-slate-800 uppercase italic">1.4 ТБ/С_ПОТІК_ДАНИХ</span>
                 </div>
             </div>
             <div ref={scrollRef} className="space-y-1 h-56 overflow-y-hidden font-mono scroll-smooth">
@@ -292,7 +294,7 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string }
                         className="h-full w-1/3 bg-gradient-to-r from-transparent via-amber-500 to-transparent shadow-[0_0_10px_rgba(217,119,6,0.5)]"
                     />
                 </div>
-                <span className="text-[8px] font-black text-amber-900 uppercase italic animate-pulse">PARSING_ARRAY...</span>
+                <span className="text-[8px] font-black text-amber-900 uppercase italic animate-pulse">ПАРСИНГ_МАСИВУ...</span>
             </div>
         </motion.div>
     );
@@ -323,10 +325,10 @@ const FactorCard: React.FC<{ factor: AMLFactor }> = ({ factor }) => {
                     </span>
                 </div>
                 <div className="flex items-center gap-4">
-                    <span className="text-[9px] font-black font-mono text-slate-800 italic uppercase">WT: {factor.weight}</span>
+                    <span className="text-[9px] font-black font-mono text-slate-800 italic uppercase">ВАГА: {factor.weight}</span>
                     {factor.detected
-                        ? <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">POSITIVE</span>
-                        : <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">CLEAR_X</span>
+                        ? <span className="text-[9px] font-black text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">ВИЯВЛЕНО</span>
+                        : <span className="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">ЧИСТО</span>
                     }
                 </div>
             </div>
@@ -378,7 +380,7 @@ const ScoreMeter: React.FC<{ score: number; level: string }> = ({ score, level }
                     >
                         {score}
                     </motion.span>
-                    <span className="text-[12px] text-slate-700 font-black uppercase tracking-[0.4em] mt-2 italic shadow-sm">SCORE_FIDELITY</span>
+                    <span className="text-[12px] text-slate-700 font-black uppercase tracking-[0.4em] mt-2 italic shadow-sm">ТОЧНІСТЬ_СКОРІНГУ</span>
                 </div>
             </div>
             <RiskBadge level={level} />
@@ -387,7 +389,7 @@ const ScoreMeter: React.FC<{ score: number; level: string }> = ({ score, level }
 };
 
 // ========================
-// Головний компонент ELITE
+// Головний компонент WRAITH
 // ========================
 
 const AMLScoringView: React.FC = () => {
@@ -440,10 +442,10 @@ const AMLScoringView: React.FC = () => {
     }, [isOffline, nodeSource]);
 
     useEffect(() => {
-        api.get('/analytics/aml/risk-levels')
-            .then((r: any) => setRiskLevels(r.data?.levels || []))
+        analyticsService.getAMLRiskLevels()
+            .then((levels: RiskLevelInfo[]) => setRiskLevels(levels))
             .catch(() => setRiskLevels([
-                { level: 'critical', range: '80-100', description: 'Критичний ризик — блокировка / ДМС' },
+                { level: 'critical', range: '80-100', description: 'Критичний ризик — блокування / ДМС' },
                 { level: 'high',     range: '60-79',  description: 'Високий ризик — посилена перевірка' },
                 { level: 'medium',   range: '40-59',  description: 'Середній ризик — розширений моніторинг' },
                 { level: 'low',      range: '20-39',  description: 'Низький ризик — стандартний протокол' },
@@ -458,18 +460,17 @@ const AMLScoringView: React.FC = () => {
         setResult(null);
 
         try {
-            const res = await api.post('/analytics/aml/score', {
-                entity_id:   entityId.trim(),
-                entity_name: entityName.trim(),
-                entity_type: entityType,
-                data: {},
-            });
-            setResult(res.data);
+            const data = await analyticsService.getAMLScore(
+                entityId.trim(),
+                entityName.trim(),
+                entityType
+            );
+            setResult(data);
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'AML_Scoring',
-                    message: `СКОРІНГ_ВЕРДИКТ [${nodeSource}]: ${entityName} (${entityId}) проаналізовано. Рівень: ${res.data.risk_level.toUpperCase()}.`,
-                    severity: res.data.total_score > 70 ? 'warning' : 'info',
+                    message: `СКОРІНГ_ВЕРДИКТ [${nodeSource}]: ${entityName} (${entityId}) проаналізовано. Рівень: ${data.risk_level.toUpperCase()}.`,
+                    severity: data.total_score > 70 ? 'warning' : 'info',
                     timestamp: new Date().toISOString(),
                     code: 'AML_SCAN_SUCCESS'
                 }
@@ -486,19 +487,18 @@ const AMLScoringView: React.FC = () => {
         setBatchLoading(true);
 
         try {
-            const res = await api.post('/analytics/aml/batch', {
-                entities: batchList.map(e => ({
+            const data = await analyticsService.getAMLBatch(
+                batchList.map(e => ({
                     entity_id:   e.entity_id,
                     entity_name: e.entity_name,
                     entity_type: e.entity_type,
-                    data: {},
-                })),
-            });
-            setBatchResult(res.data);
+                }))
+            );
+            setBatchResult(data);
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'AML_Scoring',
-                    message: `BATCH_ВЕРДИКТ [${nodeSource}]: Пакет з ${batchList.length} сутностей проаналізовано. Виявлено критичних: ${res.data.distribution?.critical || 0}.`,
+                    message: `BATCH_ВЕРДИКТ [${nodeSource}]: Пакет з ${batchList.length} сутностей проаналізовано. Виявлено критичних: ${data.distribution?.critical || 0}.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'AML_BATCH_SUCCESS'
@@ -543,7 +543,7 @@ const AMLScoringView: React.FC = () => {
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(217,119,6,0.06),transparent_70%)] pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(212,175,55,0.03),transparent_60%)] pointer-events-none" />
 
-                {/* === ViewHeader ELITE === */}
+                {/* === ViewHeader WRAITH === */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-10">
@@ -556,10 +556,10 @@ const AMLScoringView: React.FC = () => {
                             <div className="space-y-2">
                                 <div className="flex items-center gap-4">
                                     <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        COMPLIANCE_ENGINE // AML_SCORING
+                                        МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКОРІНГ
                                     </span>
                                     <div className="h-px w-12 bg-amber-500/20" />
-                                    <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                    <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">версія v57.2-WRAITH</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     AML <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКОРІНГ</span>
@@ -569,36 +569,36 @@ const AMLScoringView: React.FC = () => {
                     }
                     breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML_COGNITIVE_ARRAY']}
                     badges={[
-                        { label: 'SOVEREIGN_ELITE_v56.5', color: 'amber', icon: <Zap size={10} /> },
+                        { label: 'SOVEREIGN_WRAITH_v57.2', color: 'amber', icon: <Zap size={10} /> },
                         { label: 'CLASSIFIED_T1_ACCESS', color: 'primary', icon: <Lock size={10} /> },
                     ]}
                     stats={[
                         { label: 'ФАКТОРІВ_РИЗИКУ',  value: '10',      icon: <AlertTriangle />, color: 'danger'  },
                         { 
-                            label: isOffline ? 'MIRROR_RECOVERY' : 'ВУЗОЛ_SOURCE', 
+                            label: isOffline ? 'ДЗЕРКАЛЬНЕ_ВІДНОВЛЕННЯ' : 'ДЖЕРЕЛО_ВУЗЛА', 
                             value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
                             icon: isOffline ? <Activity /> : <Cpu />, 
                             color: isOffline ? 'warning' : 'gold',
                             animate: isOffline
                         },
-                        { label: 'STABILITY', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'warning' : 'success', icon: <ShieldCheck size={14} /> }
+                        { label: 'СТАБІЛЬНІСТЬ', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'warning' : 'success', icon: <ShieldCheck size={14} /> }
                     ]}
                 />
 
-                {/* === Статус-бар ELITE === */}
+                {/* === Статус-бар WRAITH === */}
                 <div className="z-10 flex items-center gap-6 py-4 px-8 bg-black border-2 border-white/5 rounded-[2rem] shadow-4xl backdrop-blur-3xl w-fit">
                     <div className="flex items-center gap-3">
                         <span className="w-3 h-3 rounded-full bg-amber-600 animate-pulse shadow-[0_0_8px_rgba(212,175,55,0.6)]" />
                         <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] font-mono italic">
-                            ENGINE_STATUS: NOMINAL // SCANNING_MODE: DEEP_COGNITIVE // {liveTime}
+                            СТАТУС_ЯДРА: НОМІНАЛЬНИЙ // РЕЖИМ: ГЛИБОКИЙ_СКАН // {liveTime}
                         </span>
                     </div>
                 </div>
 
-                {/* === Режими ELITE === */}
+                {/* === Режими WRAITH === */}
                 <div className="z-10 flex gap-6">
                     {[
-                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_ELITE',    icon: <Target size={18} /> },
+                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_WRAITH',    icon: <Target size={18} /> },
                         { id: true,  label: 'ПАКЕТНИЙ_ДЕПЛОЙ_CSV', icon: <Upload size={18} /> },
                     ].map(({ id, label, icon }) => (
                         <button
@@ -617,13 +617,13 @@ const AMLScoringView: React.FC = () => {
                 </div>
 
                 <div className="z-10 grid grid-cols-12 gap-12">
-                    {/* ===== ЛІВА ПАНЕЛЬ: форма ELITE ===== */}
+                    {/* ===== ЛІВА ПАНЕЛЬ: форма WRAITH ===== */}
                     <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
 
                         {!batchMode ? (
                             <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-amber-500/10 shadow-4xl bg-black/60 backdrop-blur-3xl">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Crosshair size={24} className="text-amber-500 animate-pulse" /> SCAN_PARAMETERS_TI
+                                    <Crosshair size={24} className="text-amber-500 animate-pulse" /> ПАРАМЕТРИ_СКАНУВАННЯ
                                 </h3>
 
                                 <div className="flex gap-4">
@@ -710,17 +710,17 @@ const AMLScoringView: React.FC = () => {
                         ) : (
                             <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-amber-500/10 shadow-4xl bg-black/60 backdrop-blur-3xl">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Upload size={24} className="text-amber-500" /> MASS_ARRAY_INGESTION
+                                    <Upload size={24} className="text-amber-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
                                 </h3>
                                 <p className="text-[10px] text-slate-700 leading-relaxed uppercase font-black tracking-widest bg-white/[0.02] p-4 rounded-xl border border-white/5 italic">
-                                    FORMAT: entity_id, name, type (org/pers) // LIMIT: 100_NODES
+                                    ФОРМАТ: entity_id, name, type (org/pers) // ЛІМІТ: 100_ВУЗЛІВ
                                 </p>
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     className="py-12 border-4 border-dashed border-white/5 rounded-[2.5rem] text-slate-700 hover:border-amber-500/40 hover:text-amber-500 transition-all flex flex-col items-center gap-6 bg-black/40 group shadow-inner"
                                 >
                                     <Upload size={40} className="group-hover:scale-110 transition-transform opacity-40 group-hover:opacity-100" />
-                                    <span className="text-[11px] font-black uppercase tracking-[0.4em] italic">IMPORT_TARGET_CSV</span>
+                                    <span className="text-[11px] font-black uppercase tracking-[0.4em] italic">ІМПОРТ_ЦІЛЬОВОГО_CSV</span>
                                 </button>
                                 <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
 
@@ -728,7 +728,7 @@ const AMLScoringView: React.FC = () => {
                                     <div className="flex flex-col gap-3 max-h-60 overflow-y-auto custom-scrollbar pr-2">
                                         <div className="flex items-center justify-between mb-2">
                                             <span className="text-[10px] text-yellow-600 font-black uppercase tracking-[0.4em] italic">
-                                                INGESTED: {batchList.length}_NODES
+                                                ЗАВАНТАЖЕНО: {batchList.length}_ВУЗЛІВ
                                             </span>
                                             <button onClick={() => setBatchList([])} className="p-2 text-slate-800 hover:text-amber-500 transition-colors">
                                                 <X size={18} />
@@ -750,17 +750,17 @@ const AMLScoringView: React.FC = () => {
                                     className="w-full py-8 bg-amber-600 text-white font-black text-sm rounded-[2rem] uppercase tracking-[0.4em] italic hover:brightness-110 transition-all shadow-4xl disabled:opacity-40 flex items-center justify-center gap-6 font-bold border-4 border-amber-500/20"
                                 >
                                     {batchLoading
-                                        ? <><RefreshCw size={24} className="animate-spin" /> SCANNING_ARRAY...</>
-                                        : <><Zap size={24} /> EXECUTE_BATCH_SCAN</>
+                                        ? <><RefreshCw size={24} className="animate-spin" /> СКАНУВАННЯ_МАСИВУ...</>
+                                        : <><Zap size={24} /> ЗАПУСТИТИ_ПАКЕТНИЙ_СКАН</>
                                     }
                                 </button>
                             </TacticalCard>
                         )}
 
-                        {/* Шкала ризику ELITE */}
+                        {/* Шкала ризику WRAITH */}
                         <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                                <Info size={16} className="text-yellow-600/40" /> RISK_VALUATION_MATRIX
+                                <Info size={16} className="text-yellow-600/40" /> МАТРИЦЯ_ОЦІНКИ_РИЗИКІВ
                             </h3>
                             <div className="flex flex-col gap-4">
                                 {riskLevels.map(l => {
@@ -782,11 +782,11 @@ const AMLScoringView: React.FC = () => {
                         </TacticalCard>
                     </div>
 
-                    {/* ===== ПРАВА ПАНЕЛЬ: результати ELITE ===== */}
+                    {/* ===== ПРАВА ПАНЕЛЬ: результати WRAITH ===== */}
                     <div className="col-span-12 lg:col-span-8 flex flex-col gap-10">
                         <AnimatePresence mode="wait">
 
-                            {/* --- Batch результат ELITE --- */}
+                            {/* --- Batch результат WRAITH --- */}
                             {batchMode && batchResult && (
                                 <motion.div
                                     key="batch-result"
@@ -799,7 +799,7 @@ const AMLScoringView: React.FC = () => {
                                         </div>
                                         <h3 className="text-[16px] font-black text-white uppercase tracking-[0.5em] mb-12 flex items-center gap-8 italic font-serif">
                                             <BarChart3 size={32} className="text-amber-500" />
-                                            ARRAY_DISTRIBUTION // {batchResult.total}_NODES_SCANNED
+                                            РОЗПОДІЛ_МАСИВУ // {batchResult.total}_ВУЗЛІВ_ПЕРЕВІРЕНО
                                         </h3>
                                         <div className="grid grid-cols-5 gap-6 relative z-10">
                                             {Object.entries(batchResult.distribution || {}).map(([lvl, cnt]: any) => {
@@ -812,7 +812,7 @@ const AMLScoringView: React.FC = () => {
                                                         <div className="w-full h-1 bg-black rounded-full overflow-hidden mt-2 border border-white/5">
                                                             <div className="h-full bg-slate-900" style={{ width: `${pct}%`, backgroundColor: conf.color }} />
                                                         </div>
-                                                        <span className="text-[9px] font-black text-slate-800 mt-2">{pct}%_SHARE</span>
+                                                        <span className="text-[9px] font-black text-slate-800 mt-2">{pct}%_ЧАСТКА</span>
                                                     </div>
                                                 );
                                             })}
@@ -820,7 +820,7 @@ const AMLScoringView: React.FC = () => {
                                     </TacticalCard>
 
                                     <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-white/5 shadow-4xl bg-black/60 relative overflow-hidden">
-                                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">BATCH_ENTRY_LEDGER // FULL_DISCLOSURE</h3>
+                                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">РЕЄСТР_ПАКЕТНОГО_ВВОДУ // ПОВНЕ_РОЗКРИТТЯ</h3>
                                         <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-4">
                                             {batchResult.scores?.map((s: any) => {
                                                 const conf = RISK_CONFIG[s.risk_level] || RISK_CONFIG.minimal;
@@ -835,7 +835,7 @@ const AMLScoringView: React.FC = () => {
                                                             <div className="flex items-center gap-4">
                                                                 <span className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.3em] italic">IDENT: {s.entity_id}</span>
                                                                 <div className="h-px w-6 bg-slate-900" />
-                                                                <span className="text-[9px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{s.detected_factors}_RISK_VECTORS</span>
+                                                                <span className="text-[9px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{s.detected_factors}_ВЕКТОРІВ_РИЗИКУ</span>
                                                             </div>
                                                         </div>
                                                         <ChevronRight size={24} className="text-slate-900 group-hover:text-white transition-colors" />
@@ -847,7 +847,7 @@ const AMLScoringView: React.FC = () => {
                                 </motion.div>
                             )}
 
-                            {/* --- Single result ELITE --- */}
+                            {/* --- Single result WRAITH --- */}
                             {!batchMode && result && (
                                 <motion.div
                                     key={result.entity_id}
@@ -865,10 +865,10 @@ const AMLScoringView: React.FC = () => {
                                                 <div>
                                                     <div className="flex items-center gap-6 mb-4">
                                                         <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                                            IDENTIFIED_TARGET
+                                                            ІДЕНТИФІКОВАНА_ЦІЛЬ
                                                         </span>
                                                         <div className="h-px w-10 bg-amber-500/20" />
-                                                        <span className="text-[10px] font-black text-slate-800 font-mono tracking-widest uppercase italic">X_COGNITIVE_ARRAY</span>
+                                                        <span className="text-[10px] font-black text-slate-800 font-mono tracking-widest uppercase italic">X_КОГНІТИВНИЙ_МАСИВ</span>
                                                     </div>
                                                     <h2 className="text-5xl font-black text-white uppercase tracking-tighter italic font-serif leading-none mb-6">{result.entity_name}</h2>
                                                     <div className="flex items-center gap-6">
@@ -877,7 +877,7 @@ const AMLScoringView: React.FC = () => {
                                                             <span className="text-[11px] font-mono text-slate-500 uppercase italic">UID: {result.entity_id}</span>
                                                         </div>
                                                         <Badge variant="outline" className="border-white/5 text-slate-700 text-[9px] px-4 py-2 uppercase font-black tracking-[0.3em] bg-black italic">
-                                                            {result.entity_type === 'organization' ? 'LEGAL_ENTITY' : 'INDIVIDUAL_NODE'}
+                                                            {result.entity_type === 'organization' ? 'ЮРИДИЧНА_ОСОБА' : 'ПЕРСОНАЛЬНИЙ_ВУЗОЛ'}
                                                         </Badge>
                                                     </div>
                                                 </div>
@@ -889,7 +889,7 @@ const AMLScoringView: React.FC = () => {
                                                         </div>
                                                         <div>
                                                             <div className="text-4xl font-black text-amber-500 font-mono italic tracking-tighter leading-none mb-2">{detectedCount}</div>
-                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">VECTORS_DETECTED</div>
+                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">ВЕКТОРІВ_ВИЯВЛЕНО</div>
                                                         </div>
                                                     </div>
                                                     <div className="p-8 bg-emerald-950/20 border-2 border-emerald-500/20 rounded-[2.5rem] flex items-center gap-8 shadow-inner group hover:border-emerald-500/40 transition-all">
@@ -898,7 +898,7 @@ const AMLScoringView: React.FC = () => {
                                                         </div>
                                                         <div>
                                                             <div className="text-4xl font-black text-emerald-500 font-mono italic tracking-tighter leading-none mb-2">{result.factors.length - detectedCount}</div>
-                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">INTEGRITY_SAFE</div>
+                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">ЦІЛІСНІСТЬ_БЕЗПЕЧНА</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -906,7 +906,7 @@ const AMLScoringView: React.FC = () => {
                                                 <div className="flex items-center gap-4 pt-4 opacity-30">
                                                     <Clock size={14} className="text-slate-700" />
                                                     <span className="text-[10px] font-mono text-slate-800 uppercase italic tracking-widest">
-                                                        TIMESTAMP: {new Date(result.calculated_at).toLocaleString('uk-UA').toUpperCase()}
+                                                        ЧАС_ФІКСАЦІЇ: {new Date(result.calculated_at).toLocaleString('uk-UA').toUpperCase()}
                                                     </span>
                                                 </div>
                                             </div>
@@ -919,14 +919,14 @@ const AMLScoringView: React.FC = () => {
                                                <Radar size={150} className="text-yellow-600" />
                                             </div>
                                             <h3 className="text-[11px] font-black text-yellow-600/70 uppercase tracking-[0.5em] mb-10 italic font-serif">
-                                                COGNITIVE_RISK_TOPOLOGY
+                                                ТОПОЛОГІЯ_КОГНІТИВНИХ_РИЗИКІВ
                                             </h3>
                                             <RadarChart factors={result.factors} />
                                         </TacticalCard>
 
                                         <TacticalCard variant="holographic" className="p-10 rounded-[4rem] border-white/5 bg-black/80 backdrop-blur-3xl shadow-4xl relative overflow-hidden">
                                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">
-                                                VECTOR_DISCLOSURE // {result.factors.length}_ANALYZED
+                                                РОЗКРИТТЯ_ВЕКТОРІВ // {result.factors.length}_ПРОАНАЛІЗОВАНО
                                             </h3>
                                             <div className="flex flex-col gap-4 max-h-[380px] overflow-y-auto custom-scrollbar pr-4">
                                                 {result.factors
@@ -937,14 +937,14 @@ const AMLScoringView: React.FC = () => {
                                         </TacticalCard>
                                     </div>
 
-                                    {/* Рекомендації ELITE */}
+                                    {/* Рекомендації WRAITH */}
                                     {result.recommendations?.length > 0 && (
                                         <TacticalCard variant="cyber" className="p-12 rounded-[5rem] border-amber-500/20 bg-amber-950/10 shadow-4xl relative overflow-hidden">
                                             <div className="absolute -left-12 -top-12 opacity-5 rotate-45 pointer-events-none">
                                                  <Flame size={200} className="text-amber-500" />
                                             </div>
                                             <h3 className="text-2xl font-black text-amber-500 uppercase tracking-[0.4em] mb-12 flex items-center gap-6 italic font-serif">
-                                                <Flame size={32} className="animate-pulse" /> STRATEGIC_MITIGATION_VERDICTS
+                                                <Flame size={32} className="animate-pulse" /> ВЕРДИКТИ_СТРАТЕГІЧНОЇ_ПІДТРИМКИ
                                             </h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                                                 {result.recommendations.map((rec, i) => (
@@ -956,10 +956,10 @@ const AMLScoringView: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-8 mt-12 relative z-10">
                                                 <button className="flex-1 py-6 bg-white/[0.02] border-2 border-white/5 rounded-[2rem] text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] italic hover:text-white hover:bg-amber-600 hover:border-amber-500 transition-all flex items-center justify-center gap-5 shadow-xl font-bold">
-                                                    <Download size={24} /> DOWNLOAD_FORENSIC_PDF
+                                                    <Download size={24} /> ЗАВАНТАЖИТИ_ЗВІТ_PDF
                                                 </button>
                                                 <button className="flex-1 py-6 bg-white/[0.02] border-2 border-white/5 rounded-[2rem] text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] italic hover:text-white hover:bg-yellow-600 hover:border-yellow-500 transition-all flex items-center justify-center gap-5 shadow-xl font-bold">
-                                                    <FileText size={24} /> PUSH_TO_TARGET_CASE
+                                                    <FileText size={24} /> ДОДАТИ_ДО_СПРАВИ
                                                 </button>
                                             </div>
                                         </TacticalCard>
@@ -967,7 +967,7 @@ const AMLScoringView: React.FC = () => {
                                 </motion.div>
                             )}
 
-                            {/* --- Заглушка ELITE --- */}
+                            {/* --- Заглушка WRAITH --- */}
                             {!result && !batchResult && !loading && (
                                 <motion.div
                                     key="empty"
@@ -980,7 +980,7 @@ const AMLScoringView: React.FC = () => {
                                     </div>
                                     <div className="text-center space-y-6 relative z-10">
                                         <p className="text-[18px] font-black uppercase tracking-[1em] animate-pulse italic text-slate-700">
-                                            AWAITING_TARGET_SIGNAL
+                                            ОЧІКУВАННЯ_СИГНАЛУ
                                         </p>
                                         <div className="h-px w-32 bg-slate-900 mx-auto" />
                                         <p className="text-[11px] font-black text-slate-900 uppercase tracking-[0.5em] italic">
@@ -990,7 +990,7 @@ const AMLScoringView: React.FC = () => {
                                 </motion.div>
                             )}
 
-                            {/* --- Loading ELITE --- */}
+                            {/* --- Loading WRAITH --- */}
                             {loading && (
                                 <motion.div
                                     key="loading"
@@ -1003,8 +1003,8 @@ const AMLScoringView: React.FC = () => {
                                         <Zap size={32} className="absolute inset-0 m-auto text-amber-500 animate-pulse" />
                                     </div>
                                     <div className="text-center space-y-4">
-                                        <p className="text-xl font-black text-amber-500 uppercase tracking-[0.6em] animate-pulse italic font-serif">AML_COGNITIVE_SCAN_IN_PROGRESS</p>
-                                        <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.4em] italic leading-none border-b border-slate-900 pb-2">DECRYPTING_10_CATEGORIES // SOVEREIGN_CORE</p>
+                                        <p className="text-xl font-black text-amber-500 uppercase tracking-[0.6em] animate-pulse italic font-serif">AML_КОГНІТИВНЕ_СКАНУВАННЯ...</p>
+                                        <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.4em] italic leading-none border-b border-slate-900 pb-2">ДЕШИФРУВАННЯ_10_КАТЕГОРІЙ // SOVEREIGN_CORE</p>
                                     </div>
                                 </motion.div>
                             )}
