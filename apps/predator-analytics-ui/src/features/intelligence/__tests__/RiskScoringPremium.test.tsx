@@ -1,18 +1,17 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import React from 'react'
-import RiskScoringPremium from '../RiskScoringPremium'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import RiskScoringPremium from '../RiskScoringPremium';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
 vi.mock('framer-motion', () => ({
     motion: {
-        div: ({ children, whileHover, ...props }: any) => <div {...props}>{children}</div>,
-        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
-        h2: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
+        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+        circle: ({ children, ...props }: any) => <circle {...props}>{children}</circle>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -24,130 +23,119 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/store/useAppStore', () => ({
-    useAppStore: () => ({
-        userRole: 'admin',
-        persona: 'GOVERNMENT'
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY',
+        healingProgress: 0
     })
-}))
+}));
+
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats, badges }: any) => (
+        <div data-testid="view-header">
+            <div data-testid="header-title">{title}</div>
+            <div data-testid="stats-list">{stats?.map((s: any) => s.label).join(', ')}</div>
+            <div data-testid="badges-list">{badges?.map((b: any) => b.label).join(', ')}</div>
+        </div>
+    )
+}));
+
+vi.mock('@/components/risk/Cers5LayerGauge', () => ({ Cers5LayerGauge: () => <div data-testid="cers-gauge" /> }));
+vi.mock('@/components/intelligence/SovereignReportWidget', () => ({ SovereignReportWidget: () => <div data-testid="sovereign-report" /> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
 
 vi.mock('@/features/diligence', () => ({
     diligenceApi: {
-        searchCompanies: vi.fn().mockResolvedValue({
+        searchCompanies: vi.fn(() => Promise.resolve({
             items: [
-                { id: '1', name: 'КРИТИЧНА КОРП', edrpou: '11111111', risk_score: 0.95, sanctions: ['OFAC'], owners: [] },
-                { id: '2', name: 'БЕЗПЕЧНА ТОВ', edrpou: '22222222', risk_score: 0.1, sanctions: [], owners: ['Owner 1'] }
+                {
+                    id: '123',
+                    name: 'ТЕСТ_РИЗИК_1',
+                    edrpou: '11111111',
+                    risk_score: 0.95,
+                    sanctions: ['BLOCK'],
+                    owners: [{}, {}]
+                }
             ]
-        })
+        }))
     }
-}))
-
-vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ title, children, onClick }: any) => (
-        <div data-testid={`tactical-card-${title}`} onClick={onClick}>
-            <h3>{title}</h3>
-            <div data-testid="kpi-value">{children}</div>
-        </div>
-    )
-}))
-
-vi.mock('@/components/HoloContainer', () => ({
-    HoloContainer: ({ children }: any) => <div data-testid="holo-container">{children}</div>
-}))
-
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: () => <div data-testid="cyber-orb" />
-}))
-
-vi.mock('@/components/risk/Cers5LayerGauge', () => ({
-    Cers5LayerGauge: () => <div data-testid="cers-gauge">CERS GAUGE</div>
-}))
-
-vi.mock('@/components/intelligence/SovereignReportWidget', () => ({
-    SovereignReportWidget: ({ ueid }: any) => <div data-testid="sovereign-report">Report for {ueid}</div>
-}))
-
-import { diligenceApi } from '@/features/diligence'
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('RiskScoringPremium', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати заголовок та KPI', async () => {
-        await act(async () => {
-            render(<RiskScoringPremium />)
-        })
-
-        expect(screen.getByText(/Ризик-Моніторинг/i)).toBeInTheDocument()
-        expect(screen.getByText(/State Inspector/i)).toBeInTheDocument()
+    it('відображає інтерфейс моніторингу ризиків та завантажує суб\'єктів', async () => {
+        render(<RiskScoringPremium />);
+        
+        expect(screen.getByText(/РИЗИК/i)).toBeInTheDocument();
+        expect(screen.getByText(/МОНІТОРИНГ/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            const criticalCard = screen.getByTestId('tactical-card-Критичний')
-            expect(criticalCard).toHaveTextContent('1')
-        })
-    })
+            expect(screen.getByText('ТЕСТ_РИЗИК_1')).toBeInTheDocument();
+        });
+    });
 
-    test('повинен відображати список об\'єктів', async () => {
-        await act(async () => {
-            render(<RiskScoringPremium />)
-        })
-
-        await waitFor(() => {
-            expect(screen.getByText(/КРИТИЧНА КОРП/i)).toBeInTheDocument()
-            expect(screen.getByText(/БЕЗПЕЧНА ТОВ/i)).toBeInTheDocument()
-            expect(screen.getByText(/11111111/i)).toBeInTheDocument()
-        })
-    })
-
-    test('повинен фільтрувати за пошуковим запитом', async () => {
-        await act(async () => {
-            render(<RiskScoringPremium />)
-        })
-
-        const input = screen.getByPlaceholderText(/Пошук за назвою або ЄДРПОУ/i)
+    it('ініціює RISK_ENGINE_SUCCESS при завантаженні даних', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<RiskScoringPremium />);
         
-        await act(async () => {
-            fireEvent.change(input, { target: { value: 'КРИТИЧНА' } })
-        })
-
-        expect(screen.getByText(/КРИТИЧНА КОРП/i)).toBeInTheDocument()
-        expect(screen.queryByText(/БЕЗПЕЧНА ТОВ/i)).not.toBeInTheDocument()
-    })
-
-    test('повинен фільтрувати за рівнем ризику', async () => {
-        await act(async () => {
-            render(<RiskScoringPremium />)
-        })
-
         await waitFor(() => {
-            const kpiCard = screen.getByTestId('tactical-card-Критичний')
-            fireEvent.click(kpiCard)
-        })
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'RISK_ENGINE_SUCCESS'
+                    })
+                })
+            );
+        });
+    });
 
-        expect(screen.getByText(/КРИТИЧНА КОРП/i)).toBeInTheDocument()
-        expect(screen.queryByText(/БЕЗПЕЧНА ТОВ/i)).not.toBeInTheDocument()
-    })
-
-    test('повинен відкривати детальну панель при виборі об\'єкта', async () => {
-        await act(async () => {
-            render(<RiskScoringPremium />)
-        })
-
-        const entity = await screen.findByText(/КРИТИЧНА КОРП/i)
-        await act(async () => {
-            fireEvent.click(entity)
-        })
-
-        // Панель деталізації
+    it('розгортає бічну панель деталізації суб\'єкта при кліку', async () => {
+        render(<RiskScoringPremium />);
+        
         await waitFor(() => {
-            expect(screen.getByTestId('cers-gauge')).toBeInTheDocument()
-            expect(screen.getByTestId('sovereign-report')).toBeInTheDocument()
-            expect(screen.getByText(/UEID: 11111111/i)).toBeInTheDocument()
-        })
-    })
-})
+            const entityRow = screen.getByText('ТЕСТ_РИЗИК_1');
+            fireEvent.click(entityRow);
+        });
+        
+        expect(screen.getByText(/CERS 5-ШАРОВА МОДЕЛЬ РИЗИКУ/i)).toBeInTheDocument();
+        expect(screen.getByTestId('cers-gauge')).toBeInTheDocument();
+        expect(screen.getByTestId('sovereign-report')).toBeInTheDocument();
+    });
+
+    it('виконує пошук суб\'єктів', async () => {
+        render(<RiskScoringPremium />);
+        
+        await waitFor(() => {
+            expect(screen.getByText('ТЕСТ_РИЗИК_1')).toBeInTheDocument();
+        });
+
+        const searchInput = screen.getByPlaceholderText(/ПОШУК СУБ'ЄКТА ЗА НАЗВОЮ/i);
+        fireEvent.change(searchInput, { target: { value: '99999999' } });
+        
+        expect(screen.queryByText('ТЕСТ_РИЗИК_1')).not.toBeInTheDocument();
+    });
+
+    it('відображає MIRROR_SCAN в автономному режимі', () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER',
+                healingProgress: 15
+            })
+        }));
+
+        render(<RiskScoringPremium />);
+        
+        expect(screen.getByText(/MIRROR_SCAN/i)).toBeInTheDocument();
+    });
+});

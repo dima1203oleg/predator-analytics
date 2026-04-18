@@ -24,7 +24,7 @@ const KillChainViz = () => {
     const steps = [
         { id: 'RECON', label: 'Розвідка (Recon)', blocked: 450, color: 'bg-slate-700' },
         { id: 'WEAPON', label: 'Озброєння (Weaponization)', blocked: 120, color: 'bg-blue-900' },
-        { id: 'DELIVER', label: 'Доставка (Delivery)', blocked: 85, color: 'bg-indigo-900' },
+        { id: 'DELIVER', label: 'Доставка (Delivery)', blocked: 85, color: 'bg-yellow-900' },
         { id: 'EXPLOIT', label: 'Експлуатація (Exploit)', blocked: 12, color: 'bg-purple-900' },
         { id: 'INSTALL', label: 'Інсталяція (Install)', blocked: 0, color: 'bg-red-900' },
         { id: 'C2', label: 'Командування (C2)', blocked: 0, color: 'bg-red-900' },
@@ -163,7 +163,7 @@ const SecurityView: React.FC = () => {
 
     const getDefconColor = (level: number) => {
         switch (level) {
-            case 1: return 'bg-rose-600 shadow-[0_0_25px_rgba(225,29,72,0.4)]';
+            case 1: return 'bg-amber-600 shadow-[0_0_25px_rgba(225,29,72,0.4)]';
             case 2: return 'bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.3)]';
             case 3: return 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]';
             case 4: return 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)]';
@@ -187,14 +187,14 @@ const SecurityView: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 pointer-events-none z-[100] border-[20px] border-rose-600/10 mix-blend-overlay"
+                            className="fixed inset-0 pointer-events-none z-[100] border-[20px] border-amber-600/10 mix-blend-overlay"
                         />
-                        <div className="fixed top-24 left-8 z-[100] font-mono text-rose-500 text-[10px] space-y-2 pointer-events-none uppercase tracking-widest opacity-60">
+                        <div className="fixed top-24 left-8 z-[100] font-mono text-amber-500 text-[10px] space-y-2 pointer-events-none uppercase tracking-widest opacity-60">
                             <div>COMBAT_SESSION_ACTIVE</div>
                             <div>ENCRYPTION: QUANTUM_SECURE</div>
                             <div>THREAT_VECTORS: MONITORING</div>
                         </div>
-                        <div className="fixed bottom-8 right-8 z-[100] font-mono text-rose-500 text-[10px] text-right pointer-events-none uppercase tracking-widest opacity-60">
+                        <div className="fixed bottom-8 right-8 z-[100] font-mono text-amber-500 text-[10px] text-right pointer-events-none uppercase tracking-widest opacity-60">
                             <div>REGION: EUR-CENTER-01</div>
                             <div>DEFENSE_RINGS: 4/4_ACTIVE</div>
                             <div className="animate-pulse">SYSTEM_OVERLOAD_PREVENTION: ON</div>
@@ -317,11 +317,11 @@ const SecurityView: React.FC = () => {
                                     >
                                         <span className="w-20 text-slate-600">{log.time}</span>
                                         <span className="w-32 text-slate-400">{log.ip}</span>
-                                        <span className="flex-1 text-rose-500/90 font-bold flex items-center gap-2">
+                                        <span className="flex-1 text-amber-500/90 font-bold flex items-center gap-2">
                                             <Skull size={10} className="shrink-0" /> {log.type}
                                         </span>
                                         <span className="w-20 text-right">
-                                            <span className="bg-rose-900/40 text-rose-400 px-1.5 py-0.5 rounded border border-rose-500/30 text-[9px] font-bold tracking-tighter uppercase whitespace-nowrap">
+                                            <span className="bg-amber-900/40 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/30 text-[9px] font-bold tracking-tighter uppercase whitespace-nowrap">
                                                 ЗАБЛОКОВАНО
                                             </span>
                                         </span>

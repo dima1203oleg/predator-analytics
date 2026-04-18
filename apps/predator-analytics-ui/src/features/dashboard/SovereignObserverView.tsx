@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Observer Matrix | v56.5-ELITE ПРЕМІУМ-МАТРИЦЯ
+ * 👁️ Sovereign Observer Matrix | v57.2-WRAITH ПРЕМІУМ-МАТРИЦЯ
  * PREDATOR SOM (МОДУЛЬ СУВЕРЕННОГО НАГЛЯДУ)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
@@ -9,7 +9,7 @@
  * - Idea Garden (Сад Гіпотез)
  * - Стан "Цифрового двійника" (Digital Twin)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -204,15 +204,15 @@ const SOMView: React.FC = () => {
             </div>
           </section>
 
-          <section className="page-section section-rose p-10 relative group/emerg shadow-xl mt-10">
+          <section className="page-section section-amber p-10 relative group/emerg shadow-xl mt-10">
             <div className="section-header">
-              <div className="section-dot-rose" />
+              <div className="section-dot-amber" />
               <div>
                 <h2 className="section-title">Суверенний Екстрений Протокол</h2>
                 <p className="section-subtitle">Рішення останньої інстанції</p>
               </div>
             </div>
-            <p className="text-xs text-rose-300/60 leading-relaxed mb-6 mt-4">
+            <p className="text-xs text-amber-300/60 leading-relaxed mb-6 mt-4">
               Активація апаратної ізоляції SOM-модуля. Це призведе до фізичного розірвання зв'язків з усіма зовнішніми системами. Дія незворотна без фізичного втручання.
             </p>
 
@@ -222,7 +222,7 @@ const SOMView: React.FC = () => {
                 "w-full mt-4 py-6 rounded-[24px] font-black tracking-[0.3em] text-[12px] uppercase flex items-center justify-center gap-4 transition-all duration-700 shadow-2xl overflow-hidden relative",
                 emergencyMode
                   ? "bg-slate-900 text-slate-600 cursor-not-allowed border border-slate-800"
-                  : "bg-gradient-to-r from-rose-600 to-rose-800 text-white border border-rose-400/30 hover:shadow-rose-500/40 hover:scale-[1.02]"
+                  : "bg-gradient-to-r from-amber-600 to-amber-800 text-white border border-amber-400/30 hover:shadow-amber-500/40 hover:scale-[1.02]"
               )}
             >
               {emergencyMode ? (
@@ -255,11 +255,11 @@ const SOMView: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest">ЧИСТОТА_МЕРЕЖІ</span>
-                  <span className="text-xs font-black text-rose-400 font-mono">94.2%</span>
+                  <span className="text-[9px] font-black text-amber-500 uppercase tracking-widest">ЧИСТОТА_МЕРЕЖІ</span>
+                  <span className="text-xs font-black text-amber-400 font-mono">94.2%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]" />
+                  <motion.div initial={{ width: 0 }} animate={{ width: '94.2%' }} className="h-full bg-amber-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]" />
                 </div>
               </div>
               <div className="p-6 bg-slate-950/40 border border-white/5 rounded-[32px] panel-3d">
@@ -275,7 +275,7 @@ const SOMView: React.FC = () => {
 
             <div className="p-8 bg-slate-950/60 border border-white/5 rounded-[32px]">
               <div className="flex items-center gap-3 mb-6">
-                <Layers size={16} className="text-indigo-400" />
+                <Layers size={16} className="text-yellow-400" />
                 <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Стан Проходження Пайплайнів</span>
               </div>
               <div className="flex items-center gap-2 mb-4">
@@ -457,9 +457,9 @@ const SOMView: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="flex items-center gap-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full scale-110 animate-pulse" />
-              <div className="p-4 bg-slate-900 border border-rose-500/30 rounded-full">
-                <Globe size={32} className="text-rose-500 animate-spin-slow" />
+              <div className="absolute inset-0 bg-amber-500/20 blur-3xl rounded-full scale-110 animate-pulse" />
+              <div className="p-4 bg-slate-900 border border-amber-500/30 rounded-full">
+                <Globe size={32} className="text-amber-500 animate-spin-slow" />
               </div>
             </div>
             <div>
@@ -481,7 +481,7 @@ const SOMView: React.FC = () => {
               <span className="text-xs font-black text-white uppercase font-mono">ШИФРУВАННЯ_AES256</span>
             </div>
           </div>
-          <button className="px-10 py-5 bg-rose-500 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-600 transition-all shadow-xl flex items-center gap-3">
+          <button className="px-10 py-5 bg-amber-500 text-white rounded-[24px] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-amber-600 transition-all shadow-xl flex items-center gap-3">
             {"РОЗШИРИТИ_ГОРИЗОНТ_НАГЛЯДУ"} <ArrowUpRight size={18} />
           </button>
         </div>

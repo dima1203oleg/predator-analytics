@@ -37,11 +37,11 @@ import { cn } from '@/utils/cn';
 import { normalizeFactorsSnapshot, type FactorTone } from './factorsView.utils';
 
 const toneClasses: Record<FactorTone, { icon: string; badge: string; border: string; glow: string }> = {
-    indigo: {
-        icon: 'border-indigo-500/25 bg-indigo-500/10 text-indigo-300',
-        badge: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
-        border: 'border-indigo-500/15',
-        glow: 'from-indigo-500/20 via-indigo-500/5 to-transparent',
+    yellow: {
+        icon: 'border-yellow-500/25 bg-yellow-500/10 text-yellow-300',
+        badge: 'border-yellow-500/30 bg-yellow-500/10 text-yellow-200',
+        border: 'border-yellow-500/15',
+        glow: 'from-yellow-500/20 via-yellow-500/5 to-transparent',
     },
     amber: {
         icon: 'border-amber-500/25 bg-amber-500/10 text-amber-300',
@@ -49,12 +49,7 @@ const toneClasses: Record<FactorTone, { icon: string; badge: string; border: str
         border: 'border-amber-500/15',
         glow: 'from-amber-500/20 via-amber-500/5 to-transparent',
     },
-    rose: {
-        icon: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-200',
-        border: 'border-rose-500/15',
-        glow: 'from-rose-500/20 via-rose-500/5 to-transparent',
-    },
+
     emerald: {
         icon: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300',
         badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
@@ -162,7 +157,7 @@ export default function FactorsView() {
                 <AdvancedBackground />
                 <CyberGrid opacity={0.08} />
 
-                <div className="pointer-events-none fixed inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-indigo-500/40 to-transparent" />
+                <div className="pointer-events-none fixed inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-yellow-500/40 to-transparent" />
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -174,23 +169,23 @@ export default function FactorsView() {
                         title={(
                             <div className="flex items-center gap-8">
                                 <div className="relative">
-                                    <div className="absolute inset-0 scale-150 rounded-full bg-indigo-500/25 blur-[60px]" />
-                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-indigo-500/25 bg-slate-950/90 shadow-2xl">
-                                        <Factory size={32} className="text-indigo-300 drop-shadow-[0_0_14px_rgba(129,140,248,0.85)]" />
+                                    <div className="absolute inset-0 scale-150 rounded-full bg-yellow-500/25 blur-[60px]" />
+                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-yellow-500/25 bg-slate-950/90 shadow-2xl">
+                                        <Factory size={32} className="text-yellow-300 drop-shadow-[0_0_14px_rgba(129,140,248,0.85)]" />
                                     </div>
                                 </div>
                                 <div>
                                     <h1 className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
-                                        Центр <span className="text-indigo-400">факторів</span>
+                                        Центр <span className="text-yellow-400">факторів</span>
                                     </h1>
-                                    <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.45em] text-indigo-300/75">
+                                    <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.45em] text-yellow-300/75">
                                         <Activity size={12} className="animate-pulse" />
                                         Робочий контур факторних модулів без синтетичних метрик
                                     </p>
                                 </div>
                             </div>
                         )}
-                        icon={<Factory size={22} className="text-indigo-400" />}
+                        icon={<Factory size={22} className="text-yellow-400" />}
                         breadcrumbs={['PREDATOR', 'Система', 'Борд факторів']}
                         stats={[
                             {
@@ -233,7 +228,7 @@ export default function FactorsView() {
                         <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
                             <div>
                                 <div className="flex flex-wrap items-center gap-3">
-                                    <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.cyan.badge)}>
+                                    <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.cyan.badge)}>
                                         {backendStatus.statusLabel}
                                     </Badge>
                                     <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -254,7 +249,7 @@ export default function FactorsView() {
                                 </p>
 
                                 {error && (
-                                    <div className="mt-5 rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
+                                    <div className="mt-5 rounded-[24px] border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
                                         {error}
                                     </div>
                                 )}
@@ -265,7 +260,7 @@ export default function FactorsView() {
                                     {
                                         label: 'Активні фактори',
                                         value: snapshot.summary.activeFactors,
-                                        tone: 'indigo' as const,
+                                        tone: 'yellow' as const,
                                         icon: Factory,
                                     },
                                     {

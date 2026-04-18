@@ -35,15 +35,15 @@ export function GoogleIntegralityCard({
            <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase() === 'CONNECTED' ? 'ПІДКЛЮЧЕНО' : googleStatus.drive.toUpperCase()}</Badge>
         </div>
 
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
-           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-yellow-500/20">
+           <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-400">
              <Scan size={20} />
            </div>
            <div className="flex-1">
              <div className="text-[11px] font-black uppercase text-white">Агент Gemini OSINT</div>
-             <div className="text-[8px] text-indigo-400 font-mono">Шар API Pro v1.5</div>
+             <div className="text-[8px] text-yellow-400 font-mono">Шар API Pro v1.5</div>
            </div>
-           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-400 text-[8px]">{googleStatus.gemini.toUpperCase() === 'ACTIVE' ? 'АКТИВНИЙ' : googleStatus.gemini.toUpperCase()}</Badge>
+           <Badge variant="cyber" className="bg-yellow-500/20 text-yellow-400 text-[8px]">{googleStatus.gemini.toUpperCase() === 'ACTIVE' ? 'АКТИВНИЙ' : googleStatus.gemini.toUpperCase()}</Badge>
         </div>
 
         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">

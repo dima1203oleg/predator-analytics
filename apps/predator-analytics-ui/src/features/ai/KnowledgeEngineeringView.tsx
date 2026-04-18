@@ -19,8 +19,10 @@ import { api } from '@/services/api';
 import {
   Workflow, Shield, Users, GitBranch, Activity,
   Scale, FileText, UserCheck, DollarSign,
-  Settings, Zap, RefreshCw, Database, Globe
+  Settings, Zap, RefreshCw, Database, Globe, Server
 } from 'lucide-react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { ViewHeader } from '@/components/ViewHeader';
 
 // Import sub-components
 import { ReviewQueue } from '@/components/review/ReviewQueue';
@@ -41,10 +43,35 @@ const KNOWLEDGE_TABS = [
 ];
 
 export const KnowledgeEngineeringView: React.FC = () => {
+  const { isOffline, nodeSource } = useBackendStatus();
   const [activeTab, setActiveTab] = useState('quality');
   const [rules, setRules] = useState<any[]>([]);
   const [costs, setCosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Knowledge_Engineering',
+          message: 'ПОМИЛКА ЗВ’ЯЗКУ З ІНЖЕНЕРНИМ КОНТУРОМ (KNOWLEDGE_OFFLINE). Активовано локальний кеш правил.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'KNOWLEDGE_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Knowledge_Engineering',
+          message: 'ІНЖЕНЕРНИЙ КОНТУР СИНХРОНІЗОВАНО (KNOWLEDGE_SUCCESS). Дані валідації актуальні.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'KNOWLEDGE_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,7 +169,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <p className="text-xs text-slate-500 mt-2 font-mono">ЄДРПОУ: 12345678</p>
                     <div className="mt-4 flex gap-2">
                       <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[9px] font-bold border border-emerald-500/20 uppercase">Trade Data Active</span>
-                      <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 text-[9px] font-bold border border-indigo-500/20 uppercase">Registry Verified</span>
+                      <span className="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[9px] font-bold border border-yellow-500/20 uppercase">Registry Verified</span>
                     </div>
                   </div>
 
@@ -153,8 +180,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <span className="text-[10px] text-cyan-400 font-black uppercase tracking-[0.3em]">CROSS-FUSION</span>
                   </div>
 
-                  <div className="flex-1 w-full p-6 bg-slate-950/50 rounded-2xl border border-indigo-500/20">
-                    <span className="text-[10px] text-indigo-400 uppercase font-black tracking-[0.2em] block mb-3">Об'єкт Б (Тір 3)</span>
+                  <div className="flex-1 w-full p-6 bg-slate-950/50 rounded-2xl border border-yellow-500/20">
+                    <span className="text-[10px] text-yellow-400 uppercase font-black tracking-[0.2em] block mb-3">Об'єкт Б (Тір 3)</span>
                     <h4 className="text-xl font-bold text-white uppercase tracking-tight">ROMASHKA INVESTMENT LLC</h4>
                     <p className="text-xs text-slate-500 mt-2 font-mono">LEI: 549300V55...</p>
                     <div className="mt-4 flex gap-2">
@@ -173,8 +200,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <p className="text-xs text-slate-400 leading-relaxed font-medium">Збіг адрес доставки та вантажоодержувачів у митних деклараціях (Customs/Logistics Fusion)</p>
                   </div>
 
-                  <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-500/20 hover:bg-indigo-500/10 transition-colors">
-                    <div className="flex items-center gap-2 mb-3 text-indigo-400">
+                  <div className="p-5 bg-yellow-500/5 rounded-2xl border border-yellow-500/20 hover:bg-yellow-500/10 transition-colors">
+                    <div className="flex items-center gap-2 mb-3 text-yellow-400">
                       <Database size={16} />
                       <span className="text-[10px] font-black uppercase tracking-wider">2️⃣ Тір: Інституційні Реєстри</span>
                     </div>
@@ -211,7 +238,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                   <div key={rule.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl">
                     <div>
                       <h4 className="text-white font-medium">{rule.name}</h4>
-                      <span className={`text-xs px-2 py-0.5 rounded ${rule.category === 'fraud' ? 'bg-rose-500/20 text-rose-400' :
+                      <span className={`text-xs px-2 py-0.5 rounded ${rule.category === 'fraud' ? 'bg-amber-500/20 text-amber-400' :
                         rule.category === 'sanctions' ? 'bg-amber-500/20 text-amber-400' :
                           rule.category === 'customs' ? 'bg-blue-500/20 text-blue-400' :
                             'bg-slate-700 text-slate-400'
@@ -281,17 +308,17 @@ export const KnowledgeEngineeringView: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-white flex items-center gap-3 uppercase tracking-tighter italic">
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
-            <Zap size={28} className="text-white" />
-          </div>
-          Knowledge Engineering <span className="text-slate-600">/ v56.5-ELITE</span>
-        </h1>
-        <p className="text-slate-500 mt-3 ml-20 text-sm font-medium uppercase tracking-[0.2em]">
-          9 критичних рівнів формування знань економічного інтелекту
-        </p>
-      </div>
+      <ViewHeader
+        title="Knowledge Engineering"
+        subtitle="9 критичних рівнів формування знань економічного інтелекту"
+        icon={<Zap size={20} className="text-white" />}
+        breadcrumbs={['ШІ', 'ІНЖЕНЕРІЯ ЗНАНЬ']}
+        stats={[
+          { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'LAYER', value: KNOWLEDGE_TABS.find(t => t.id === activeTab)?.label || '...', icon: <Database size={14} />, color: 'primary' },
+          { label: 'RULES', value: rules.length.toString(), icon: <Scale size={14} />, color: 'success' },
+        ]}
+      />
 
       {/* Tab Navigation */}
       <div className="grid grid-cols-9 gap-2 mb-6">

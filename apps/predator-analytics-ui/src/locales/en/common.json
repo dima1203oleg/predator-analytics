@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Predator v56.5-ELITE | Economic Radar",
+    "title": "Predator v57.2-WRAITH | Economic Radar",
     "subtitle": "Early Warning, Risk Analysis & Information Advantage System",
     "loading": "Loading system...",
     "access_denied": "Access Denied",
     "not_found": "Page not found",
-    "version": "v56.5-ELITE.0"
+    "version": "v57.2-WRAITH.0"
   },
   "auth": {
     "login": "Sign In",

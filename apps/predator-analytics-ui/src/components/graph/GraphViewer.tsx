@@ -22,6 +22,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { RiskLevelValue } from '@/types/intelligence';
 
 // Типи вузлів
 export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset' | 'Indicator';
@@ -30,7 +31,7 @@ export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset
 export type EdgeType = 'OWNS' | 'MANAGES' | 'CONTROLS' | 'REGISTERED_AT' | 'INVOLVED_IN' | 'RELATED_TO';
 
 // Рівні ризику
-export type RiskLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
+// export type RiskLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
 
 // Інтерфейс вузла
 export interface GraphNode {
@@ -38,7 +39,7 @@ export interface GraphNode {
   label: string;
   type: NodeType;
   riskScore?: number;
-  riskLevel?: RiskLevel;
+  riskLevel?: RiskLevelValue;
   properties?: Record<string, unknown>;
 }
 
@@ -77,7 +78,7 @@ const NODE_COLORS: Record<NodeType, string> = {
 };
 
 // Кольори для рівнів ризику
-const RISK_COLORS: Record<RiskLevel, string> = {
+const RISK_COLORS: Partial<Record<RiskLevelValue, string>> = {
   critical: '#ef4444', // red-500
   high: '#f97316',     // orange-500
   medium: '#eab308',   // yellow-500

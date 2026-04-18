@@ -868,7 +868,7 @@ const ClientSegmentView: React.FC = () => {
                 placeholder="Наприклад: критерії ризику, пороги, шаблон запиту, обовʼязкові кроки перевірки…"
                 className={cn(
                   'w-full rounded-xl border border-slate-700/60 bg-slate-950/40 p-3 text-sm text-slate-200',
-                  'placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/40'
+                  'placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/40'
                 )}
               />
               <div className="flex flex-col sm:flex-row gap-2">

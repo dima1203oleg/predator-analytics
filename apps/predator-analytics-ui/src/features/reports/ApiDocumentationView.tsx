@@ -194,7 +194,7 @@ const methodColors: Record<HttpMethod, string> = {
   GET: 'emerald',
   POST: 'cyan',
   PUT: 'amber',
-  DELETE: 'rose',
+  DELETE: 'amber',
   PATCH: 'purple'
 };
 

@@ -92,4 +92,43 @@ export const factoryApi = {
   getLogs: async () => {
     return (await apiClient.get('/factory/logs')).data;
   },
+
+  // ─── Antigravity AGI Orchestrator ─────────────────────────────────────────
+
+  /** Отримати статус AGI-оркестратора (агенти, бюджет, LLM Gateway, Sandbox) */
+  getAntigravityStatus: async () => {
+    return (await apiClient.get('/antigravity/status')).data;
+  },
+
+  /** Отримати список AGI-задач */
+  getAntigravityTasks: async () => {
+    const res = await apiClient.get('/antigravity/tasks');
+    return Array.isArray(res.data) ? res.data : [];
+  },
+
+  /** Створити нову AGI-задачу */
+  createAntigravityTask: async (payload: {
+    description: string;
+    priority: string;
+    max_budget_usd?: number | null;
+    context?: Record<string, string>;
+  }) => {
+    return (await apiClient.post('/antigravity/tasks', payload)).data;
+  },
+
+  /** Отримати деталі конкретної AGI-задачі з підзадачами */
+  getAntigravityTaskById: async (taskId: string) => {
+    return (await apiClient.get(`/antigravity/tasks/${taskId}`)).data;
+  },
+
+  /** Скасувати AGI-задачу */
+  cancelAntigravityTask: async (taskId: string) => {
+    return (await apiClient.post(`/antigravity/tasks/${taskId}/cancel`)).data;
+  },
+
+  /** Отримати логи конкретної AGI-задачі */
+  getAntigravityTaskLogs: async (taskId: string) => {
+    const res = await apiClient.get(`/antigravity/tasks/${taskId}/logs`);
+    return Array.isArray(res.data) ? res.data : [];
+  },
 };

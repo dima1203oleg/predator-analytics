@@ -91,7 +91,7 @@ const TEMPLATES: ReportTemplate[] = [
         name: 'Повʼязаність і змова',
         description: 'Акцент на бенефіціарах, графі звʼязків і можливих узгоджених діях.',
         icon: GitBranch,
-        color: 'text-rose-300',
+        color: 'text-amber-300',
         modeLabel: 'Звіт + Copilot',
     },
 ];
@@ -627,7 +627,7 @@ const ReportBuilderPage: React.FC = () => {
 
                                 <button
                                     onClick={clearAiChat}
-                                    className="flex items-center gap-1 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-[8px] font-black uppercase tracking-wide text-rose-300 transition-all hover:bg-rose-500/20"
+                                    className="flex items-center gap-1 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[8px] font-black uppercase tracking-wide text-amber-300 transition-all hover:bg-amber-500/20"
                                 >
                                     <Trash2 size={10} />
                                     Очистити
@@ -718,7 +718,7 @@ const ReportBuilderPage: React.FC = () => {
                                             generationState === 'success'
                                                 ? 'text-emerald-300'
                                                 : generationState === 'error'
-                                                  ? 'text-rose-300'
+                                                  ? 'text-amber-300'
                                                   : generationState === 'running'
                                                     ? 'text-amber-300'
                                                     : 'text-slate-300',
@@ -788,7 +788,7 @@ const ReportBuilderPage: React.FC = () => {
                                                 {card.tone === 'ready' ? (
                                                     <CheckCircle2 size={16} className="text-emerald-300" />
                                                 ) : card.tone === 'inactive' ? (
-                                                    <AlertCircle size={16} className="text-rose-300" />
+                                                    <AlertCircle size={16} className="text-amber-300" />
                                                 ) : (
                                                     <Clock size={16} className="text-amber-300" />
                                                 )}
@@ -804,7 +804,7 @@ const ReportBuilderPage: React.FC = () => {
                                 </div>
 
                                 {generationError && (
-                                    <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm text-rose-100">
+                                    <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
                                         {generationError}
                                     </div>
                                 )}
@@ -839,7 +839,7 @@ const ReportBuilderPage: React.FC = () => {
                                                                 ? 'bg-emerald-500/15 text-emerald-200'
                                                                 : item.status === 'partial'
                                                                   ? 'bg-amber-500/15 text-amber-200'
-                                                                  : 'bg-rose-500/15 text-rose-200',
+                                                                  : 'bg-amber-500/15 text-amber-200',
                                                         )}
                                                     >
                                                         {item.status === 'ready'
@@ -918,7 +918,7 @@ const ReportBuilderPage: React.FC = () => {
                                                         ? 'bg-emerald-500/15 text-emerald-200'
                                                         : previewReport.status === 'partial'
                                                           ? 'bg-amber-500/15 text-amber-200'
-                                                          : 'bg-rose-500/15 text-rose-200',
+                                                          : 'bg-amber-500/15 text-amber-200',
                                                 )}
                                             >
                                                 {previewReport.status === 'ready'
@@ -946,7 +946,7 @@ const ReportBuilderPage: React.FC = () => {
 
                                     <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                                         {previewReport.report ? (
-                                            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-amber-200 prose-li:text-slate-300">
+                                            <div className="pamber pamber-invert max-w-none pamber-headings:text-white pamber-p:text-slate-300 pamber-strong:text-amber-200 pamber-li:text-slate-300">
                                                 <ReactMarkdown>{previewReport.report}</ReactMarkdown>
                                             </div>
                                         ) : (

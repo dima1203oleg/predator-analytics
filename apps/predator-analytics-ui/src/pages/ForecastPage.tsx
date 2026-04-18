@@ -138,7 +138,7 @@ const createScenarioPoints = (points: ForecastPoint[], multiplier: number): Fore
         confidence_upper: Math.round(point.confidence_upper * multiplier),
     }));
 
-// --- MOCK DATA FALLBACK (v56.5-ELITE-ELITE) ---
+// --- MOCK DATA FALLBACK (v57.2-WRAITH-WRAITH) ---
 const MOCK_FORECAST: ForecastResponse = {
   product_code: '84713000',
   product_name: 'Обчислювальні машини',
@@ -273,7 +273,7 @@ export default function ForecastPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-red">
-                                <span className="relative z-10 text-white font-black italic">PREDATOR v56.5-ELITE | ML-FORECASTING</span>
+                                <span className="relative z-10 text-white font-black italic">PREDATOR v57.2-WRAITH | ML-FORECASTING</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -306,7 +306,7 @@ export default function ForecastPage() {
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">ПРОЕКТИВНЕ ЯДРО</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model}</div>
-                            <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v56 SOVEREIGN</div>
+                            <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v57 SOVEREIGN</div>
                         </div>
 
                         <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative overflow-hidden">

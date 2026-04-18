@@ -3,7 +3,7 @@ import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/s
 
 export type SegmentKey = 'business' | 'banking' | 'government' | 'law' | 'regulators' | 'legal';
 export type ClientPersona = 'BUSINESS' | 'BANKING' | 'GOVERNMENT' | 'INTELLIGENCE';
-export type ClientsHubTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate';
+export type ClientsHubTone = 'emerald' | 'amber' | 'sky' | 'slate';
 
 export interface ClientsHubMetric {
   label: string;
@@ -251,7 +251,7 @@ export const normalizeClientsHubSnapshot = (
       label: 'Високий ризик',
       value: formatCount(summary?.high_risk_count),
       hint: 'Кількість високоризикових записів.',
-      tone: 'rose',
+      tone: 'amber',
     },
     {
       id: 'graph',

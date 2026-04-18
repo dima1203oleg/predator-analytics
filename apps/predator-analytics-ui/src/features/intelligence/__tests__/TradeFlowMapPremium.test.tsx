@@ -1,18 +1,27 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, act, waitFor, fireEvent } from '@testing-library/react'
-import React from 'react'
-import TradeFlowMapPremium from '../TradeFlowMapPremium'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import TradeFlowMapPremium from '../TradeFlowMapPremium';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        g: ({ children, ...props }: any) => <g {...props}>{children}</g>,
-        path: ({ children, ...props }: any) => <path {...props}>{children}</path>,
-    },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock('framer-motion', () => {
+    const motionProxy = new Proxy(
+        {},
+        {
+            get: (_target, prop) => {
+                return ({ children, ...props }: any) => {
+                    const Tag = typeof prop === 'string' ? prop : 'div';
+                    return <Tag {...props}>{children}</Tag>;
+                };
+            },
+        }
+    );
+    return {
+        motion: motionProxy,
+        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    };
+});
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -24,107 +33,115 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/services/api', () => ({
-    api: {
-        premium: {
-            getTradeFlows: vi.fn().mockResolvedValue({
-                countries: [
-                    { id: 'ua', name: 'Україна', code: 'UA', x: 55, y: 35, imports: 0, exports: 0 },
-                    { id: 'cn', name: 'Китай', code: 'CN', x: 80, y: 40, imports: 100000000, exports: 50000000 }
-                ],
-                flows: [
-                    { id: 'f1', from: 'cn', to: 'ua', value: 30000000, product: 'Електроніка', color: '#22d3ee' }
-                ]
-            })
-        }
-    }
-}))
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats, actions }: any) => (
+        <div data-testid="view-header">
+            {title}
+            <div data-testid="stats-count">{stats?.length}</div>
+            <div data-testid="view-actions">{actions}</div>
+        </div>
+    )
+}));
 
-import { api } from '@/services/api'
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('TradeFlowMapPremium', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати заголовок та підвал зі статистикою', async () => {
-        render(<TradeFlowMapPremium />)
-
-        expect(screen.getByText(/Карта Торгових Потоків/i)).toBeInTheDocument()
+    it('відображає карту та заголовок', async () => {
+        render(<TradeFlowMapPremium />);
         
+        expect(screen.getByText(/КАРТА/i)).toBeInTheDocument();
+        expect(screen.getByText(/ПОТОКІВ/i)).toBeInTheDocument();
+        expect(screen.getByText(/UA/i)).toBeInTheDocument(); // Code on map
+        expect(screen.getByText(/АКТИВНІ_ПОТОКИ/i)).toBeInTheDocument();
+    });
+
+    it('дозволяє зумувати карту', async () => {
+        render(<TradeFlowMapPremium />);
+        
+        const zoomInBtn = screen.getByTestId('icon-zoomin').parentElement!;
+        fireEvent.click(zoomInBtn);
+        
+        expect(screen.getByText(/x1.2/i)).toBeInTheDocument();
+    });
+
+    it('вибирає країну при кліку', async () => {
+        render(<TradeFlowMapPremium />);
+        
+        const countryNode = screen.getByText(/CN/i);
+        fireEvent.click(countryNode);
+
         await waitFor(() => {
-            expect(screen.getByText(/Загальний імпорт/i)).toBeInTheDocument()
-            expect(screen.getByText(/Загальний експорт/i)).toBeInTheDocument()
-            expect(screen.getByText(/Торгових потоків/i)).toBeInTheDocument()
-        })
-    })
+            expect(screen.getByText(/Китай/i)).toBeInTheDocument();
+            expect(screen.getByText(/ІМПОРТ_З_КРАЇНИ/i)).toBeInTheDocument();
+        });
+    });
 
-    test('повинен завантажувати та відображати країни на карті', async () => {
-        render(<TradeFlowMapPremium />)
+    it('ініціює predator-error при автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-        // Коди країн на карті мають з'явитися
-        expect(await screen.findByText('UA')).toBeInTheDocument()
-        expect(await screen.findByText('CN')).toBeInTheDocument()
-    })
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-    test('повинен відображати легенду та дозволяти вибір потоку', async () => {
-        render(<TradeFlowMapPremium />)
+        render(<TradeFlowMapPremium />);
 
         await waitFor(() => {
-            expect(screen.getByText(/Торгові потоки/i)).toBeInTheDocument()
-            expect(screen.getByText(/Електроніка/i)).toBeInTheDocument()
-        })
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'GeoIntel',
+                        code: 'GEOSPATIAL_NODES'
+                    })
+                })
+            );
+        });
+    });
 
-        const flowBtn = screen.getByText(/Електроніка/i).closest('button')
-        expect(flowBtn).toBeInTheDocument()
+    it('ініціює predator-error при успішному оновленні в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-        await act(async () => {
-            fireEvent.click(flowBtn!)
-        })
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-        // Кнопка має отримати клас активності
-        expect(flowBtn).toHaveClass('bg-white/10')
-    })
+        render(<TradeFlowMapPremium />);
 
-    test('повинен відображати статистику країни при кліку', async () => {
-        render(<TradeFlowMapPremium />)
-
-        const countryNode = await screen.findByText('CN')
+        const refreshBtn = screen.getByTestId('icon-refreshcw').parentElement!;
         
         await act(async () => {
-            fireEvent.click(countryNode)
-        })
+            fireEvent.click(refreshBtn);
+        });
 
-        // Статистика Китаю має з'явитися
         await waitFor(() => {
-            expect(screen.getByText('Китай')).toBeInTheDocument()
-            expect(screen.getByText(/Імпорт в Україну/i)).toBeInTheDocument()
-            // imports: 100000000 -> $100M
-            expect(screen.getByText(/\$100M/i)).toBeInTheDocument()
-        })
-    })
-
-    test('повинен керувати анімацією та повноекранним режимом', async () => {
-        render(<TradeFlowMapPremium />)
-
-        // Пауза (шукаємо за заголовком або роллю, якщо можливо, але Title найнадійніший тут)
-        const pauseBtn = await screen.findByTitle('Пауза')
-        await act(async () => {
-            fireEvent.click(pauseBtn)
-        })
-        
-        // Маємо дочекатися зміни на Play
-        expect(await screen.findByTitle('Відтворити')).toBeInTheDocument()
-
-        // Fullscreen
-        const fullBtn = screen.getByTitle('Повноекранний')
-        await act(async () => {
-            fireEvent.click(fullBtn)
-        })
-        expect(screen.getByTitle('Вийти')).toBeInTheDocument()
-    })
-})
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        message: expect.stringContaining('Геопросторова синхронізація через MIRROR_CHANNEL завершена успішно')
+                    })
+                })
+            );
+        }, { timeout: 2000 });
+    });
+});

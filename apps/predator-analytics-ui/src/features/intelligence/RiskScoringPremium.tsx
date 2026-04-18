@@ -1,9 +1,9 @@
 /**
- * 🚨 RISK SCORING PREMIUM // МОНІТОРИНГ РИЗИКІВ | v56.5-ELITE
+ * 🚨 RISK SCORING PREMIUM // МОНІТОРИНГ РИЗИКІВ | v57.2-WRAITH
  * PREDATOR Analytics — Advanced Risk Assessment & Forensic Investigation
  * 
  * Система виявлення схем, санкційного комплаєнсу та глибокої перевірки суб'єктів.
- * Sovereign Power Design · Tactical · Tier-1
+ * PREDATOR_WRATH v57.2 · Tactical · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -19,6 +19,7 @@ import {
   Unlock, RefreshCw, Activity, Cpu, Layers, Scan, Microscope,
   Sparkles, Orbit, Database, Crosshair, Users
 } from 'lucide-react';
+import { RiskEntity, RiskLevelValue } from '@/types/intelligence';
 import { diligenceApi } from '@/features/diligence';
 import { useAppStore } from '@/store/useAppStore';
 import { cn } from '@/utils/cn';
@@ -32,25 +33,12 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 import { useSoundFx } from '@/hooks/useSoundFx';
 
 
-interface RiskEntity {
-  id: string;
-  name: string;
-  edrpou: string;
-  riskScore: number;
-  riskLevel: 'critical' | 'high' | 'medium' | 'low';
-  flags: string[];
-  lastActivity: string;
-  totalOperations: number;
-  suspiciousAmount: number;
-  linkedEntities: number;
-  investigations: number;
-}
 
 interface Investigation {
   id: string;
   entityName: string;
   status: 'open' | 'in_progress' | 'closed' | 'escalated';
-  priority: 'critical' | 'high' | 'medium' | 'low';
+  priority: RiskLevelValue;
   assignedTo: string;
   createdAt: string;
   findings: number;
@@ -62,6 +50,10 @@ const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; bo
   high: { label: 'ВИСОКИЙ', color: '#f97316', bg: 'bg-orange-900/20', border: 'border-orange-500/40', glow: 'shadow-[0_0_30px_rgba(249,115,22,0.2)]', icon: AlertTriangle },
   medium: { label: 'СЕРЕДНІЙ', color: '#D4AF37', bg: 'bg-yellow-900/20', border: 'border-yellow-500/40', glow: 'shadow-[0_0_30px_rgba(212,175,55,0.2)]', icon: AlertCircle },
   low: { label: 'НИЗЬКИЙ', color: '#22c55e', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
+  minimal: { label: 'МІНІМАЛЬНИЙ', color: '#64748b', bg: 'bg-slate-900/20', border: 'border-slate-500/40', glow: 'shadow-none', icon: CheckCircle },
+  stable: { label: 'СТАБІЛЬНИЙ', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
+  watchlist: { label: 'НАГЛЯД', color: '#8b5cf6', bg: 'bg-violet-900/20', border: 'border-violet-500/40', glow: 'shadow-none', icon: AlertCircle },
+  elevated: { label: 'ПІДВИЩЕНИЙ', color: '#f59e0b', bg: 'bg-amber-900/20', border: 'border-amber-500/40', glow: 'shadow-none', icon: AlertTriangle },
 };
 
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -181,7 +173,7 @@ export default function RiskScoringPremium() {
         name: e.name,
         edrpou: e.edrpou,
         riskScore: Math.round(e.risk_score * 100) || 42,
-        riskLevel: e.risk_score >= 0.8 ? 'critical' : e.risk_score >= 0.6 ? 'high' : e.risk_score >= 0.4 ? 'medium' : 'low',
+        riskLevel: (e.risk_score >= 0.8 ? 'critical' : e.risk_score >= 0.6 ? 'high' : e.risk_score >= 0.4 ? 'medium' : 'low') as RiskLevelValue,
         flags: e.sanctions?.length > 0 ? ['САНКЦІЇ', 'ВІЙСЬКОВИЙ_ЛОГ'] : ['КВОРУМ', 'БОРГ'],
         lastActivity: '12:45 UTC',
         totalOperations: Math.floor(Math.random() * 1000),
@@ -208,7 +200,7 @@ export default function RiskScoringPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'RiskProtocol',
-          message: `ПОМИЛКА СКАНУВАННЯ RISK_PROTOCOL_ELITE: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
+          message: `ПОМИЛКА СКАНУВАННЯ RISK_PROTOCOL_WRAITH: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'RISK_PROTOCOL_CRITICAL'
@@ -238,7 +230,7 @@ export default function RiskScoringPremium() {
     high: riskEntities.filter(e => e.riskLevel === 'high').length,
     medium: riskEntities.filter(e => e.riskLevel === 'medium').length,
     low: riskEntities.filter(e => e.riskLevel === 'low').length,
-    totalSuspicious: riskEntities.reduce((acc, e) => acc + e.suspiciousAmount, 0)
+    totalSuspicious: riskEntities.reduce((acc, e) => acc + (e.suspiciousAmount ?? 0), 0)
   }), [riskEntities]);
 
   return (
@@ -251,7 +243,7 @@ export default function RiskScoringPremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* ELITE HEADER HUD */}
+          {/* WRAITH HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -289,6 +281,19 @@ export default function RiskScoringPremium() {
             ]}
           />
 
+          {/* COGNITIVE HUB v57.2 */}
+          <div className="grid grid-cols-12 gap-10">
+              <div className="col-span-12 xl:col-span-8">
+                  <RiskCognitiveParser />
+              </div>
+              <div className="col-span-12 xl:col-span-4 flex items-center justify-end">
+                  <div className="text-right space-y-2">
+                      <p className="text-[10px] font-black text-amber-500/40 uppercase tracking-[0.4em] italic">MONITOR_STATUS</p>
+                      <p className="text-3xl font-black text-white italic tracking-tighter uppercase">WRAITH_ACTIVE</p>
+                  </div>
+              </div>
+          </div>
+
           <div className="flex justify-end gap-6">
              <button 
               onClick={() => { setRefreshing(true); fetchData().then(() => setRefreshing(false)); }}
@@ -308,7 +313,7 @@ export default function RiskScoringPremium() {
             </button>
           </div>
 
-          {/* METRICS GRID ELITE */}
+          {/* METRICS GRID WRAITH */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
               {[
                 { label: 'КРИТИЧНИЙ_РИЗИК', value: stats.critical, level: 'critical', icon: XCircle },
@@ -421,7 +426,7 @@ export default function RiskScoringPremium() {
                                </div>
                                <div className="flex gap-8 items-center">
                                   <div className="text-right space-y-1">
-                                     <p className="text-4xl font-black text-white italic font-mono tracking-tighter leading-none mb-1 group-hover:scale-105 transition-transform duration-700 leading-none">₴{(entity.suspiciousAmount / 1000000).toFixed(1)}M</p>
+                                     <p className="text-4xl font-black text-white italic font-mono tracking-tighter leading-none mb-1 group-hover:scale-105 transition-transform duration-700 leading-none">₴{((entity.suspiciousAmount || 0) / 1000000).toFixed(1)}M</p>
                                      <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest italic">СУМНІВНИЙ_ОБІГ</p>
                                   </div>
                                   <div className="p-4 bg-black border-2 border-white/5 rounded-3xl group-hover:bg-amber-600 group-hover:border-amber-500 transition-all">
@@ -480,7 +485,7 @@ export default function RiskScoringPremium() {
                   </button>
                </div>
 
-               {/* QUICK ACTIONS ELITE */}
+               {/* QUICK ACTIONS WRAITH */}
                <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                   <h3 className="text-[14px] font-black text-slate-700 italic uppercase tracking-[0.6em] border-b border-white/[0.03] pb-8 relative z-10 flex items-center justify-between">
                      ТАКТИЧНІ_МАНЕВРИ <Crosshair size={18} />
@@ -512,7 +517,7 @@ export default function RiskScoringPremium() {
           </div>
         </div>
 
-        {/* DETAILS SIDE PANEL ELITE */}
+        {/* DETAILS SIDE PANEL WRAITH */}
         <AnimatePresence>
           {selectedEntity && (
             <>
@@ -595,7 +600,7 @@ export default function RiskScoringPremium() {
 
         <DiagnosticsTerminal />
 
-        {/* ELITE CUSTOM STYLES */}
+        {/* WRAITH CUSTOM STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(217,119,6,0.02); }
             .animate-spin-slow { animation: spin 20s linear infinite; }

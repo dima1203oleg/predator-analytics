@@ -16,9 +16,17 @@ import { api, apiClient, v45Client } from './api';
 const logError = (service: string, operation: string, error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(`[${service}] ${operation} failed:`, message);
-  // TRACE: v56.5-ELITE Error Protocol
+  // TRACE: v8.0-WRAITH Error Protocol
   if (window.dispatchEvent) {
-    window.dispatchEvent(new CustomEvent('predator-error', { detail: { service, operation, message } }));
+    window.dispatchEvent(new CustomEvent('predator-error', { 
+      detail: { 
+        service, 
+        message: `${operation}: ${message}`,
+        severity: 'error',
+        timestamp: new Date().toISOString(),
+        code: `${service.toUpperCase()}_API_ERROR`
+      } 
+    }));
   }
 };
 
@@ -341,7 +349,7 @@ class CatalogService {
 }
 
 // ============================================================================
-// INTELLIGENCE & OSINT - v56.5-ELITE Core
+// INTELLIGENCE & OSINT - v57.2-WRAITH Core
 // ============================================================================
 
 class IntelligenceService {
@@ -389,13 +397,17 @@ class IntelligenceService {
     }
   }
 
+  async getMarketOpportunities(source: string) {
+    return this.getMarketEntryAnalysis({ source });
+  }
+
   /**
    * 📡 SIGNAL FEED - OSINT & Signal Decoding
    * Отримує потік сигналів з Telegram, ЗМІ та інших джерел.
    */
   async getSignalFeed() {
     try {
-      // Trace: v56.5-ELITE Signal Acquisition
+      // Trace: v57.2-WRAITH Signal Acquisition
       const res = await apiClient.get('/telegram/feed');
       return Array.isArray(res.data) ? res.data : [];
     } catch (error) {
@@ -410,6 +422,16 @@ class IntelligenceService {
     } catch (error) {
       logError('IntelligenceService', 'Fetch War Room Summary', error);
       return null;
+    }
+  }
+
+  async searchCompanies(query: string) {
+    try {
+      const res = await apiClient.get('/company/search', { params: { q: query } });
+      return res.data;
+    } catch (error) {
+      logError('IntelligenceService', 'Search Companies', error);
+      return [];
     }
   }
 }

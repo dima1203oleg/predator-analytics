@@ -1,5 +1,5 @@
 /**
- * BootScreen — PREDATOR NEXUS v56.5-ELITE — SOVEREIGN CLASSIFIED INTRO
+ * BootScreen — PREDATOR NEXUS v57.2-WRAITH — SOVEREIGN CLASSIFIED INTRO
  * ===============================================================
  * Billion-dollar intelligence platform. Доступ виключно для авторизованого персоналу.
  * Кінематографічна заставка рівня державної розвідки.
@@ -9,7 +9,7 @@
  *  1 → CRYPTOGRAPHIC INIT   — квантова геометрія, шифрування рівня TOP SECRET
  *  2 → GLOBAL DOMINANCE     — планетарне сканування, 47 супутників
  *  3 → TARGET ACQUISITION   — lock-on приціл, AI аналіз, THREAT CONFIRMED
- *  4 → SOVEREIGN REVEAL     — PREDATOR logo, золото + кров, ELITE ACCESS
+ *  4 → SOVEREIGN REVEAL     — PREDATOR logo, золото + кров, WRAITH ACCESS
  *  5 → FADE INTO SYSTEM
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -291,32 +291,32 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       s: Math.random() * 2.5 + 1.2,
       vx: (Math.random() - 0.5) * 0.8,
       vy: (Math.random() - 0.5) * 0.8,
-      c: Math.random() > 0.65 ? '#D4AF37' : '#dc2626' // Gold & Rose
+      c: Math.random() > 0.85 ? '#D4AF37' : '#B45309' // Gold & Deep Amber (expensive, no bright red)
     }));
   }, []);
 
   // Фазові тексти (HR-04: 100% Українська)
   const PHASE_TEXTS: Record<number, string> = {
     0: '',
-    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [GLM-5.1 ELITE]...',
-    2: '> ГЛОБАЛЬНИЙ СПЕКТР: 47 СУПУТНИКІВ / 1,217 ВУЗЛІВ / 42 КРАЇНИ',
-    3: '> НЕЙРОННЕ ЯДРО: ПЕРЕХРЕСНА ВЕРИФІКАЦІЯ... РІВЕНЬ ЗАГРОЗИ: КРИТИЧНИЙ',
-    4: '> SOVEREIGN PREDATOR: ДОСТУП ТІР-1 ПІДТВЕРДЖЕНО — ВІТАЄМО В ЕЛІТІ',
+    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГО ПРОТОКОЛУ [GLM-5.1 WRAITH]...',
+    2: '> БЛОКУВАННЯ ГЛОБАЛЬНОГО СПЕКТРУ: 47 СУПУТНИКІВ / 1,217 ДАТАЦЕНТРІВ',
+    3: '> НЕЙРОННИЙ ПЕРЕХОПЛЮВАЧ ОНЛАЙН: ПЕРЕХРЕСНЕ ВІДСТЕЖЕННЯ ТРАФІКУ...',
+    4: '> ДОСТУП РІВНЯ TIER-1 ПІДТВЕРДЖЕНО — PREDATOR АКТИВОВАНО',
   };
 
   const DB_SCAN_LINES = [
-    'АНАЛІЗ МУЛЬТИ-ЮРИСДИКЦІЙНИХ БАЗ ДАНИХ...',
-    'ГЛОБАЛЬНІ ДАТА-ЦЕНТРИ ОНЛАЙН [12.4 ЕКЗАБАЙТ]...',
-    'СКАНУВАННЯ UA_CUSTOMS_ASYCUDA: ПОШУК ЗАПИСІВ...',
-    'ПЕРЕХОПЛЕННЯ БАНКІВСЬКОГО ТРАФІКУ SWIFT/SEPA...',
-    'ПЕРЕВІРКА ЧЕРВОНИХ КОРТОЧОК ІНТЕРПОЛУ ТА OFAC...',
-    'NEO4J_GRAPH: ГЛИБОКИЙ ОБХІД ГРАФА [РІВЕНЬ 15]...',
-    'ДЕ-АНОНІМІЗАЦІЯ ОФШОРНИХ БЕНЕФІЦІАРІВ...',
-    'ПРОТОКОЛ AI HUNTER-KILLER: ЗАХОПЛЕННЯ ЦІЛІ...',
-    'ЗБІГ ЦИФРОВОГО ПІДПИСУ: 99.99%',
-    'КООРДИНАТИ: ШИР 50.4501 ДОВГ 30.5234',
-    '▌ ПІДГОТОВКА ЦИФРОВОЇ ДЕТОНАЦІЇ...',
-    '▌ ЦІЛЬ ІДЕНТИФІКОВАНО. ВІД НАС НЕ СХОВАЄШСЯ.',
+    'СИНХРОНІЗАЦІЯ З ЗАКРИТИМИ БАЗАМИ INTERPOL & NSA...',
+    'АКТИВАЦІЯ ПРОТОКОЛУ СУВЕРЕННОГО ПЕРЕХОПЛЕННЯ ТРАФІКУ (SWIFT/SEPA)...',
+    'МОНІТОРИНГ ГЛОБАЛЬНИХ ЛАНЦЮГІВ ПОСТАЧАННЯ (12.4 ЕКЗАБАЙТ ДАНИХ)...',
+    'ДЕ-АНОНІМІЗАЦІЯ ПАРАВАННИХ ОФШОРНИХ СТРУКТУР (BERMUDA, BVI)...',
+    'AI-ПОШУК ПРИХОВАНИХ БЕНЕФІЦІАРІВ ЧЕРЕЗ АЛГОРИТМИ НЕЙРОГРАФІВ...',
+    'ОЦІНКА ВІРОГІДНОСТІ ТРАНЗАКЦІЙ... ВІДХИЛЕННЯ 0.0001%...',
+    'QUANTUM_DECRYPTION: ЗЛАМ СИМЕТРИЧНИХ КЛЮЧІВ КОНТРАГЕНТА...',
+    'МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНА ДЛЯ КОМЕРЦІЙНИХ СИСТЕМ...',
+    'АБСОЛЮТНИЙ ЗБІГ ЦИФРОВОГО СЛІДУ: 99.998%',
+    'ФІКСАЦІЯ КООРДИНАТ ЦІЛІ БЕЗ МОЖЛИВОСТІ БЛОКУВАННЯ...',
+    '▌ ГЛОБАЛЬНЕ ВЗЯТТЯ НА СУПРОВІД. ЦІЛЬ ЗАФІКСОВАНО.',
+    '▌ СТАТУС ВУЗЛА: БЕЗВІДМОВНИЙ. СХОВАТИСЯ НЕМОЖЛИВО.',
   ];
 
   /* ── Typewriter ── */
@@ -419,7 +419,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     // Detonation Flash
     if (targetLocked) {
       const flashAlpha = Math.sin(now * 0.05) * 0.3 + 0.4;
-      ctx.fillStyle = `rgba(255, 0, 0, ${flashAlpha})`;
+      ctx.fillStyle = `rgba(245, 158, 11, ${flashAlpha * 0.7})`; // Deep Amber Flash
       ctx.fillRect(0, 0, W, H);
       // Chromatic anomaly
       ctx.translate((Math.random()-0.5)*15, (Math.random()-0.5)*15);
@@ -429,14 +429,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
     /* ── Атмосферне світіння (завжди) ── */
     if (cp < 5) {
-      // Червоне центральне
+      // Червоне центральне -> Бурштинове-золоте
       const ri = cp === 4 ? 0.18 : cp === 3 ? 0.1 : 0.04;
       const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.6);
-      rg.addColorStop(0, `rgba(200,15,15,${ri})`);
-      rg.addColorStop(0.5, `rgba(80,5,5,${ri * 0.25})`);
+      rg.addColorStop(0, `rgba(212,175,55,${ri})`); // Sovereign Gold
+      rg.addColorStop(0.5, `rgba(180,83,9,${ri * 0.3})`); // Deep Amber
       rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
-      // Холодний синій акцент зверху
+      // Холодний синій акцент зверху залишаємо як констраст
+
       if (cp >= 2) {
         const bg = ctx.createRadialGradient(W * 0.12, H * 0.12, 0, W * 0.12, H * 0.12, W * 0.45);
         bg.addColorStop(0, `rgba(5,20,120,${cp === 3 ? 0.05 : 0.025})`);
@@ -1027,31 +1028,31 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               {/* Статус LIVE */}
               <div className="flex items-center gap-2.5 mb-1">
                 <div className="relative w-2 h-2">
-                  <div className="w-full h-full bg-red-600 rounded-full shadow-[0_0_12px_#dc2626,0_0_24px_rgba(220,38,38,0.5)]"/>
-                  <div className="absolute inset-0 bg-red-600 rounded-full animate-ping opacity-30"/>
+                  <div className="w-full h-full bg-amber-500 rounded-full shadow-[0_0_12px_#f59e0b,0_0_24px_rgba(245,158,11,0.5)]"/>
+                  <div className="absolute inset-0 bg-amber-500 rounded-full animate-ping opacity-30"/>
                 </div>
-                <span className="text-[9px] font-black tracking-[0.6em] text-red-600 drop-shadow-[0_0_8px_rgba(220,38,38,0.7)] uppercase">
-                  АКТИВНА СЕСІЯ
+                <span className="text-[9px] font-black tracking-[0.6em] text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.7)] uppercase">
+                  ПРЕДАТОР МЕРЕЖА: ОНЛАЙН
                 </span>
               </div>
 
               {/* Рівень допуску */}
-              <div className="space-y-[3px] pl-4 border-l border-red-900/40">
-                <p className="text-[7px] font-black tracking-[0.45em] text-red-500/80 uppercase">
-                  РІВЕНЬ ДОПУСКУ: РІВЕНЬ-5 / СУВЕРЕННИЙ
+              <div className="space-y-[3px] pl-4 border-l border-amber-900/40">
+                <p className="text-[7px] font-black tracking-[0.45em] text-amber-600/90 uppercase text-shadow">
+                  АБСОЛЮТНИЙ КОНТРОЛЬ: ДОСТУП РІВНЯ TIER-1
                 </p>
-                <p className="text-[6px] text-slate-600 tracking-[0.35em] uppercase">
-                  КЛАСИФІКАЦІЯ: ЦІЛКОМ ТАЄМНО // ТІЛЬКИ ДЛЯ PREDATOR
+                <p className="text-[6px] text-slate-500 tracking-[0.35em] uppercase">
+                  КЛАСИФІКАЦІЯ: БЕЗПРЕЦЕДЕНТНА ДЕРЖАВНА ТАЄМНИЦЯ
                 </p>
-                <p className="text-[6px] text-slate-700 tracking-[0.3em] uppercase">
-                  ЛІЦЕНЗІЯ: КОРПОРАТИВНА ТАЄМНА · СЕРІЙНИЙ НОМЕР #{rndHex(6)}
+                <p className="text-[6px] text-slate-600 tracking-[0.3em] uppercase">
+                  ЛІЦЕНЗІЯ: УРЯДОВИЙ АКТИВ · ВАРТІСТЬ: НЕ ОЦІНЮЄТЬСЯ
                 </p>
               </div>
 
               {/* Tier badge */}
-              <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-yellow-900/20 via-yellow-800/10 to-transparent border border-yellow-600/20 px-3 py-1">
-                <span className="text-[6px] font-black tracking-[0.4em] text-yellow-600/90 uppercase">
-                  ◆ РОЗВІДУВАЛЬНИЙ АКТИВ TIER-1 ◆
+              <div className="mt-2 inline-flex items-center gap-2 bg-gradient-to-r from-amber-900/30 via-yellow-800/10 to-transparent border border-amber-600/30 px-3 py-1">
+                <span className="text-[6px] font-black tracking-[0.4em] text-amber-500 uppercase drop-shadow-[0_0_4px_rgba(245,158,11,0.4)]">
+                  ◆ ГЛОБАЛЬНА РОЗВІДУВАЛЬНА МОНОПОЛІЯ ◆
                 </span>
               </div>
             </div>
@@ -1164,7 +1165,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 PREDATOR ANALYTICS · СУВЕРЕННИЙ РОЗВІДУВАЛЬНИЙ АКТИВ
               </div>
               <div className="text-[5.5px] text-yellow-600/70 tracking-[0.4em] uppercase font-black">
-                ВЕРСІЯ 56.5-ELITE · ЗБІРКА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
+                ВЕРСІЯ 56.5-WRAITH · ЗБІРКА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
               </div>
             </div>
 
@@ -1313,16 +1314,16 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <motion.div
                     animate={{
                       opacity:[0.85,1,0.85],
-                      textShadow:['0 0 40px rgba(255,0,0,0.8)','0 0 80px rgba(255,0,0,1)','0 0 40px rgba(255,0,0,0.8)'],
-                      scale:[1, 1.05, 1]
+                      textShadow:['0 0 40px rgba(245,158,11,0.6)','0 0 80px rgba(245,158,11,0.9)','0 0 40px rgba(245,158,11,0.6)'],
+                      scale:[1, 1.03, 1]
                     }}
-                    transition={{ duration:0.25, repeat:Infinity }}
-                    className="text-[24px] font-black tracking-[0.35em] text-red-600 uppercase"
+                    transition={{ duration:2, repeat:Infinity }}
+                    className="text-[24px] font-black tracking-[0.35em] text-amber-500 uppercase"
                   >
-                    ✛ ЦІЛЬ НЕЙТРАЛІЗОВАНО. ВІД НАС НЕ СХОВАЄШСЯ.
+                    ✛ ІМПЕРАТИВНИЙ КОНТРОЛЬ ВСТАНОВЛЕНО
                   </motion.div>
                   <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase animate-pulse">
-                    ЗАГРОЗУ НЕЙТРАЛІЗОВАНО · ЦИФРОВУ ДЕТОНАЦІЮ ПІДТВЕРДЖЕНО
+                    ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕРАТИВНА ГОТОВНІСТЬ ПІДТВЕРДЖЕНА
                   </div>
                 </motion.div>
               ) : (
@@ -1463,15 +1464,15 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 transition={{ delay:1.35, duration:1.1, ease:'easeOut' }}
                 className="flex items-center justify-center gap-4"
               >
-                <div className="h-px w-32 bg-gradient-to-r from-transparent via-red-700 to-transparent"/>
+                <div className="h-px w-48 bg-gradient-to-r from-transparent via-amber-700/60 to-transparent"/>
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-1 bg-yellow-600/60 rotate-45"/>
-                  <h2 className="text-[11px] md:text-[16px] font-black tracking-[0.8em] text-yellow-500/90 uppercase whitespace-nowrap italic skew-x-[-12deg]">
-                    СУВЕРЕННИЙ ПРЕДАТОР · ЕЛІТНИЙ АКТИВ
+                  <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
+                  <h2 className="text-[12px] md:text-[18px] font-black tracking-[0.9em] text-amber-500 uppercase whitespace-nowrap italic skew-x-[-12deg] drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]">
+                    БЕЗПРЕЦЕДЕНТНИЙ СУВЕРЕННИЙ АКТИВ
                   </h2>
-                  <div className="w-1 h-1 bg-yellow-600/60 rotate-45"/>
+                  <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
                 </div>
-                <div className="h-px w-32 bg-gradient-to-l from-transparent via-red-700 to-transparent"/>
+                <div className="h-px w-48 bg-gradient-to-l from-transparent via-amber-700/60 to-transparent"/>
               </motion.div>
 
               {/* Підзаголовок */}
@@ -1479,13 +1480,13 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 initial={{ opacity:0 }}
                 animate={{ opacity:1 }}
                 transition={{ delay:1.85, duration:0.9 }}
-                className="space-y-1.5"
+                className="space-y-2 mt-4"
               >
-                <div className="text-[9px] text-slate-600 tracking-[0.55em] uppercase">
-                  OSINT · МИТНА РОЗВІДКА · КОРПОРАТИВНИЙ КОНТРОЛЬ · СУВЕРЕННИЙ ПРЕДАТОР
+                <div className="text-[10px] text-slate-500 tracking-[0.65em] uppercase font-bold">
+                  НАЙДОРОЖЧА ПЛАТФОРМА ФІНАНСОВОЇ РОЗВІДКИ В ІСТОРІЇ
                 </div>
-                <div className="text-[7px] text-slate-800 tracking-[0.4em] uppercase">
-                  12.4 ЕКЗАБАЙТ · 47 СУПУТНИКОВИХ ПОТОКІВ · 23 ДЕРЖРЕЄСТРИ · ЯДРО GLM-5.1 ELITE
+                <div className="text-[8px] text-slate-600 tracking-[0.45em] uppercase font-bold">
+                  АБСОЛЮТНА ГЕОПОЛІТИЧНА ПЕРЕВАГА · ЯДРО ШІ GLM-5.1 · КВАНТОВА ДЕКРИПЦІЯ
                 </div>
               </motion.div>
 
@@ -1494,42 +1495,42 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 initial={{ opacity:0, y:12 }}
                 animate={{ opacity:1, y:0 }}
                 transition={{ delay:2.3, duration:0.9 }}
-                className="space-y-4"
+                className="space-y-5"
               >
                 <motion.p
                   animate={{
-                    opacity:[0.8,1,0.8],
+                    opacity:[0.85,1,0.85],
                     textShadow:[
-                      '0 0 20px rgba(180,140,20,0.6)',
-                      '0 0 40px rgba(220,38,38,1)',
-                      '0 0 20px rgba(180,140,20,0.6)',
+                      '0 0 25px rgba(212,175,55,0.7)',
+                      '0 0 50px rgba(212,175,55,1)',
+                      '0 0 25px rgba(212,175,55,0.7)',
                     ],
                   }}
-                  transition={{ duration:2, repeat:Infinity }}
-                  className="text-[20px] md:text-[32px] font-black tracking-[0.3em] text-white uppercase italic"
+                  transition={{ duration:2.5, repeat:Infinity }}
+                  className="text-[20px] md:text-[34px] font-black tracking-[0.4em] text-white uppercase italic"
                 >
-                  НІХТО НЕ ЗМІГ СХОВАТИСЯ.
+                  ГЛОБАЛЬНИЙ СУВЕРЕННИЙ КОНТРОЛЬ.
                 </motion.p>
                 <div className="flex items-center justify-center gap-6">
-                  <div className="h-px w-20 bg-red-900/30"/>
+                  <div className="h-px w-24 bg-amber-900/40"/>
                   <motion.p
-                    animate={{ opacity:[0.4,0.9,0.4] }}
+                    animate={{ opacity:[0.5,1,0.5] }}
                     transition={{ duration:3, repeat:Infinity, delay:0.8 }}
-                    className="text-[10px] text-red-100 tracking-[0.65em] uppercase font-black italic"
+                    className="text-[11px] text-amber-200 tracking-[0.75em] uppercase font-black italic"
                   >
-                    ПОВНА ВИДИМІСТЬ · НУЛЬОВА НЕВИЗНАЧЕНІСТЬ
+                    АБСОЛЮТНА ТОЧНІСТЬ · МИТТЄВА ЛІКВІДАЦІЯ ТІНЬОВИХ СХЕМ
                   </motion.p>
-                  <div className="h-px w-20 bg-red-900/30"/>
+                  <div className="h-px w-24 bg-amber-900/40"/>
                 </div>
                 <motion.p
                   animate={{ opacity:[0.4,0.8,0.4] }}
                   transition={{ duration:3.5, repeat:Infinity, delay:0.8 }}
-                  className="text-[9px] text-red-800/70 tracking-[0.55em] uppercase font-black"
+                  className="text-[10px] text-amber-700/80 tracking-[0.6em] uppercase font-black"
                 >
-                  ПОВНА ВИДИМІСТЬ &nbsp;◊&nbsp; НУЛЬОВА НЕВИЗНАЧЕНІСТЬ &nbsp;◊&nbsp; АБСОЛЮТНА ТОЧНІСТЬ
+                  МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНІ ДЛЯ ЗВИЧАЙНИХ СИСТЕМ
                 </motion.p>
-                <p className="text-[7px] text-slate-700 tracking-[0.5em] uppercase font-bold">
-                  ТІЛЬКИ ДЛЯ АВТОРИЗОВАНОГО ПЕРСОНАЛУ &nbsp;·&nbsp; ТАЄМНА РОЗВІДУВАЛЬНА ПЛАТФОРМА &nbsp;·&nbsp; TIER-1
+                <p className="text-[7px] text-red-700/90 tracking-[0.55em] uppercase font-bold bg-red-950/30 py-1.5 px-4 rounded inline-block border border-red-900/30">
+                  ⚠️ КРИТИЧНА ПОПЕРЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТОРИЗОВАНИХ ОСІБ TIER-1
                 </p>
               </motion.div>
 
@@ -1554,21 +1555,21 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 </motion.div>
 
                 {/* Кнопка входу */}
-                <div className="inline-block relative group" onClick={onComplete}>
-                  <div className="absolute inset-0 bg-red-700 blur-2xl opacity-25 group-hover:opacity-55 transition-opacity duration-500"/>
+                <div className="inline-block relative group mt-4" onClick={onComplete}>
+                  <div className="absolute inset-0 bg-amber-700 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"/>
                   {/* Золота рамка */}
-                  <div className="absolute -inset-px bg-gradient-to-r from-yellow-900/35 via-red-600/50 to-yellow-900/35"/>
+                  <div className="absolute -inset-px bg-gradient-to-r from-amber-900/50 via-yellow-600/60 to-amber-900/50"/>
                   <div
-                    className="relative text-[11px] text-white font-black tracking-[1.4em] uppercase px-14 py-4 bg-gradient-to-r from-slate-950 via-red-950/90 to-slate-950 cursor-pointer border border-red-700/60 group-hover:border-red-500/90 transition-all duration-400"
-                    style={{ boxShadow:'0 0 60px rgba(220,38,38,0.5),0 0 120px rgba(220,38,38,0.2),inset 0 1px 0 rgba(255,255,255,0.08)' }}
+                    className="relative text-[11px] text-white font-black tracking-[1.4em] uppercase px-16 py-4 bg-gradient-to-r from-slate-950 via-amber-950/70 to-slate-950 cursor-pointer border border-amber-700/50 group-hover:border-amber-500/80 transition-all duration-400"
+                    style={{ boxShadow:'0 0 60px rgba(245,158,11,0.3),0 0 120px rgba(245,158,11,0.1),inset 0 1px 0 rgba(255,255,255,0.1)' }}
                   >
                     <motion.div
                       className="absolute inset-0"
-                      animate={{ opacity:[0,0.3,0] }}
-                      transition={{ duration:1.6, repeat:Infinity }}
-                      style={{ background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)' }}
+                      animate={{ opacity:[0,0.25,0] }}
+                      transition={{ duration:2.5, repeat:Infinity }}
+                      style={{ background:'linear-gradient(90deg,transparent,rgba(245,158,11,0.1),transparent)' }}
                     />
-                    УВІЙТИ ДО СИСТЕМИ
+                    ІНІЦІЮВАТИ ДОСТУП TIER-1
                   </div>
                 </div>
 

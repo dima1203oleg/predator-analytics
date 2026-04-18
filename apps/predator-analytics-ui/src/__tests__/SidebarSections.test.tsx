@@ -78,14 +78,14 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('6 бізнес-блоків')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
+    expect(screen.getByText('МІСІЯ-КОНТРОЛЬ')).toBeInTheDocument();
     expect(screen.getByText('ШІ-рекомендації')).toBeInTheDocument();
     expect(screen.getByText('ШІ-асистент')).toBeInTheDocument();
     expect(screen.getByText('Оперативний огляд')).toBeInTheDocument();
-    expect(screen.getByText('LLM-студія')).toBeInTheDocument();
-    expect(screen.getByText('Системна фабрика')).toBeInTheDocument();
-    expect(screen.getByText('Центр керування ШІ')).toBeInTheDocument();
-    expect(screen.getByText('Суверенне врядування')).toBeInTheDocument();
+    expect(screen.getAllByText('Фабрика').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Центр керування ШІ').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Суверенне врядування').length).toBeGreaterThan(0);
   });
 
   it('не показує адміністративні пункти для не-адміністратора', () => {
@@ -97,9 +97,9 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Розвідка')).toBeInTheDocument();
+    expect(screen.getByText('РОЗВІДКА КОНТРАГЕНТІВ')).toBeInTheDocument();
     expect(screen.getByText('OSINT та розслідування')).toBeInTheDocument();
-    expect(screen.queryByText('LLM-студія')).toBeNull();
+    expect(screen.queryByText('Фабрика')).toBeNull();
     expect(screen.queryByText('Центр керування ШІ')).toBeNull();
     expect(screen.queryByText('Суверенне врядування')).toBeNull();
   });

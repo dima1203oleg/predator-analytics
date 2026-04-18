@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v56.5-ELITE
+ * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v57.2-WRAITH
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  * 
  * Знаходження найкращих пропозицій від глобальних постачальників.
@@ -83,10 +83,26 @@ const MOCK_PRODUCTS: Product[] = [
   }
 ];
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export default function PriceComparisonPremium() {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedProduct, setExpandedProduct] = useState<string | null>('p1');
   const [loading, setLoading] = useState(false);
+  const { isOffline, nodeSource } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'PriceIntel',
+          action: 'CompareOffers',
+          message: 'Автономний режим: порівняння цін базується на локальному реєстрі PROCUREMENT_CACHED.',
+          severity: 'info'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const formatPrice = (p: number) => `$${p.toLocaleString()}`;
 
@@ -113,7 +129,7 @@ export default function PriceComparisonPremium() {
                            MARKET_SIGINT // PRICE_DYNAMICS
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         ПОРІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>
@@ -123,7 +139,7 @@ export default function PriceComparisonPremium() {
               }
               breadcrumbs={['INTEL', 'MARKET', 'PRICE_MATRIX_v3']}
               badges={[
-                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Crown size={10} /> },
                 { label: 'CLASSIFIED_T1', color: 'primary', icon: <Target size={10} /> },
               ]}
               stats={[
@@ -157,7 +173,11 @@ export default function PriceComparisonPremium() {
 
            {/* PRODUCTS GRID */}
            <div className="space-y-10">
-              {MOCK_PRODUCTS.map((product) => (
+              {MOCK_PRODUCTS.filter(p => 
+                p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.hsCode.toLowerCase().includes(searchQuery.toLowerCase())
+              ).map((product) => (
                 <div key={product.id} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-8 overflow-hidden">
                    <div className="flex items-center justify-between pb-8 border-b border-white/[0.04]">
                       <div className="flex items-center gap-8">
@@ -218,7 +238,7 @@ export default function PriceComparisonPremium() {
                                       </div>
                                       <div className="text-right border-l border-white/5 pl-10">
                                          <p className="text-3xl font-black text-white italic font-mono tracking-tighter leading-none">{formatPrice(offer.price)}</p>
-                                         <p className={cn("text-[9px] font-black italic mt-1", offer.price < product.avgPrice ? "text-[#D4AF37]" : "text-rose-500")}>
+                                         <p className={cn("text-[9px] font-black italic mt-1", offer.price < product.avgPrice ? "text-[#D4AF37]" : "text-amber-500")}>
                                             {offer.price < product.avgPrice ? <TrendingDown size={14} className="inline mr-1" /> : <TrendingUp size={14} className="inline mr-1" />}
                                             {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕРЕДНЬОЇ
                                          </p>

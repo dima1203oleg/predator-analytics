@@ -52,8 +52,11 @@ describe('ContextRail', () => {
     );
 
     expect(screen.getByTestId('context-rail')).toBeInTheDocument();
-    expect(screen.getByText('Контекстна панель')).toBeInTheDocument();
-    expect(screen.getByText('Запитати ШІ')).toBeInTheDocument();
+    expect(screen.getByText(/INTEL · CLASSIFIED CONTEXT/i)).toBeInTheDocument();
+    
+    const rail = screen.getByTestId('context-rail');
+    expect(rail.textContent).toContain('Огляд системи');
+    expect(rail.textContent).toContain('Активний модуль');
   });
 
   it('показує payload, переданий зі сторінки', async () => {

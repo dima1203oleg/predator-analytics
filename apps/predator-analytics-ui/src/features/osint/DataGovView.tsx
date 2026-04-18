@@ -1,5 +1,5 @@
 /**
- * 🌐 OPEN DATA MATRIX // МАТРИЦЯ ВІДКРИТИХ ДАНИХ | v56.5-ELITE
+ * 🌐 OPEN DATA MATRIX // МАТРИЦЯ ВІДКРИТИХ ДАНИХ | v57.2-WRAITH
  * PREDATOR Analytics — Governance OSINT & Dataset Discovery
  * 
  * Модуль інтеграції з порталом data.gov.ua: пошук та аналіз датасетів.
@@ -16,7 +16,7 @@ import {
     ArrowRight, Globe, Shield, RefreshCw, X, AlertCircle,
     Server, Share2, Layers, Zap, Clock, TrendingUp,
     ChevronDown, ChevronUp, History, Bookmark, Settings2,
-    Lock, CheckCircle, InfoIcon, Layout, RefreshCcw, Satellite, Radar, Target
+    Lock, CheckCircle, InfoIcon, Layout, RefreshCcw, Satellite, Radar, Target as LucideTarget
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -36,7 +36,7 @@ const DataBadge: React.FC<{ format: string }> = ({ format }) => {
         'CSV': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
         'JSON': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
         'XML': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-        'XLSX': 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+        'XLSX': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
     };
     const cls = colors[format.toUpperCase()] || 'bg-slate-500/10 text-slate-400 border-slate-500/20';
 
@@ -100,7 +100,7 @@ export default function DataGovView() {
                                   OPEN_DATA_MATRIX // GOVERNMENT_SCAN
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                ДЕРЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">РЕЄСТРИ</span>
@@ -147,7 +147,7 @@ export default function DataGovView() {
                            onClick={() => searchDatasets(searchTerm)}
                            className="mr-3 px-16 py-8 bg-blue-700 text-white font-black rounded-[2.5rem] uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl shadow-blue-900/40 active:scale-95 transition-all duration-500 flex items-center gap-6"
                          >
-                            {loading ? <RefreshCcw className="animate-spin" /> : <>ЦІЛЬ <Target size={24} /></>}
+                            {loading ? <RefreshCcw className="animate-spin" /> : <>ЦІЛЬ <LucideTarget size={24} /></>}
                          </button>
                       </div>
                    </div>
@@ -193,7 +193,7 @@ export default function DataGovView() {
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>
                                        <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПОРТ <span className="text-blue-500">РЕЄСТРУ</span></h2>
                                     </div>
-                                    <button onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-rose-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></button>
+                                    <button onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-amber-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></button>
                                  </div>
                                  
                                  <div className="space-y-8 overflow-y-auto max-h-[500px] no-scrollbar pr-4">

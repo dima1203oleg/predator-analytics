@@ -47,14 +47,7 @@ export interface SchemeData {
   type: 'carousel' | 'price' | 'transit' | 'offshore';
 }
 
-export interface RiskEntity {
-  id: string;
-  name: string;
-  type: 'company' | 'person' | 'location';
-  riskScore: number;
-  flags: string[];
-  connections: number;
-}
+import { RiskEntity } from '@/types/intelligence';
 
 export class AnalyticsService {
   private static instance: AnalyticsService;
@@ -143,6 +136,148 @@ export class AnalyticsService {
     } catch (err) {
       console.warn('[AnalyticsService] getDetectedSchemes API недоступний:', err);
       return [];
+    }
+  }
+  /**
+   * Запустити AML скорінг для сутності
+   */
+  async getAMLScore(entity_id: string, entity_name: string, entity_type: 'organization' | 'person'): Promise<any> {
+    try {
+      const res = await apiClient.post('/analytics/aml/score', {
+        entity_id,
+        entity_name,
+        entity_type,
+        data: {},
+      });
+      return res.data;
+    } catch (err) {
+      console.error('[AnalyticsService] getAMLScore помилка:', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Запустити пакетний AML скорінг
+   */
+  async getAMLBatch(entities: { entity_id: string, entity_name: string, entity_type: string }[]): Promise<any> {
+    try {
+      const res = await apiClient.post('/analytics/aml/batch', {
+        entities: entities.map(e => ({ ...e, data: {} })),
+      });
+      return res.data;
+    } catch (err) {
+      console.error('[AnalyticsService] getAMLBatch помилка:', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Отримати налаштування рівнів ризику
+   */
+  async getAMLRiskLevels(): Promise<any> {
+    try {
+      const res = await apiClient.get('/analytics/aml/risk-levels');
+      return res.data?.levels || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getAMLRiskLevels API недоступний:', err);
+      return [];
+    }
+  }
+  /**
+   * Отримати обсяги торгівлі (Trade Volume)
+   */
+  async getTradeVolume(range: string = '1m'): Promise<any[]> {
+    try {
+      const res = await apiClient.get(`/analytics/customs/volume?range=${range}`);
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getTradeVolume API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Отримати структуру категорій товарів
+   */
+  async getCategoryStructure(): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/analytics/customs/categories');
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getCategoryStructure API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Отримати топ імпортерів
+   */
+  async getTopImporters(limit: number = 5): Promise<any[]> {
+    try {
+      const res = await apiClient.get(`/analytics/customs/top-importers?limit=${limit}`);
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getTopImporters API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Отримати сигнали митних ризиків
+   */
+  async getRiskAlerts(): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/analytics/customs/risks');
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getRiskAlerts API недоступний:', err);
+      return [];
+    }
+  }
+  /**
+   * Отримати геополітичні гарячі точки
+   */
+  async getGeopoliticalHotspots(): Promise<any[]> {
+    try {
+      const res = await apiClient.get('/analytics/geopolitical/hotspots');
+      return Array.isArray(res.data) ? res.data : res.data?.items || [];
+    } catch (err) {
+      console.warn('[AnalyticsService] getGeopoliticalHotspots API недоступний:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Отримати глобальний профіль ризику
+   */
+  async getGlobalRiskProfile(): Promise<any> {
+    try {
+      const res = await apiClient.get('/analytics/geopolitical/profile');
+      return res.data;
+    } catch (err) {
+      console.warn('[AnalyticsService] getGlobalRiskProfile API недоступний:', err);
+      return null;
+    }
+  }
+
+  /**
+   * 💰 FINANCIAL SIGINT // ФІНАНСОВА РОЗВІДКА
+   * Отримує комплексний зріз фінансової розвідки: SWIFT, офшори, заморожені активи.
+   */
+  async getFinancialSigint(ueid?: string): Promise<any> {
+    try {
+      if (ueid) {
+        // Якщо вказано конкретний ідентифікатор - генеруємо звіт за ним
+        const res = await apiClient.get(`/intelligence/report/${ueid}`);
+        return res.data;
+      }
+      
+      // В іншому випадку отримуємо загальний потік через фінансовий API
+      const res = await apiClient.post('/finance/portfolio-risk/var', {});
+      return res.data;
+    } catch (err) {
+      console.warn('[AnalyticsService] getFinancialSigint API недоступний або стався збій:', err);
+      return null;
     }
   }
 }

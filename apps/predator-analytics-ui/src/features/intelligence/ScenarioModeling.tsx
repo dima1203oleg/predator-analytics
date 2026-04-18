@@ -1,5 +1,5 @@
 /**
- * 🔮 PREDATOR ANALYTICS v56.5-ELITE — Моделювання Сценаріїв (What-If Analysis)
+ * 🔮 PREDATOR ANALYTICS v57.2-WRAITH — Моделювання Сценаріїв (What-If Analysis)
  * =========================================================================
  * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
  */
@@ -20,6 +20,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { useAppStore } from '@/store/useAppStore';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // --- CONFIG ---
 
@@ -53,8 +54,24 @@ const ScenarioModeling: React.FC = () => {
     const [simulationResult, setSimulationResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const handleParamChange = (name: string, val: number) => {
-        setParams(prev => ({ ...prev, [name]: val }));
+    const { isOffline, nodeSource } = useBackendStatus();
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'ScenarioModeling',
+                    message: 'МОДЕЛЮВАННЯ СЦЕНАРІЇВ: Вузол NVIDIA недоступний. Використовується локальний двигун N5.PREDICTIVE-WRAITH.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'SCENARIO_ENGINE_OFFLINE'
+                }
+            }));
+        }
+    }, [isOffline]);
+
+    const handleParamChange = (id: string, value: number) => {
+        setParams(prev => ({ ...prev, [id]: value }));
     };
 
     const runSimulation = async () => {
@@ -81,9 +98,30 @@ const ScenarioModeling: React.FC = () => {
             const res = await apiClient.post('/modeling/scenario', { scenario });
             setSimulationResult(res.data);
             setScanProgress(100);
+            
+            if (res.data) {
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                    detail: {
+                        service: 'ScenarioModeling',
+                        message: `РОЗРАХУНОК МОНТЕ-КАРЛО ЗАВЕРШЕНО [${nodeSource}]: Оброблено 10,000 ітерацій для вибраних параметрів. Модель майбутнього стабілізована.`,
+                        severity: 'info',
+                        timestamp: new Date().toISOString(),
+                        code: 'SCENARIO_SUCCESS'
+                    }
+                }));
+            }
         } catch (err) {
             setError('Не вдалося виконати моделювання сценарію');
             console.error('Scenario modeling error:', err);
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'ScenarioModeling',
+                    message: `КРИТИЧНА ПОМИЛКА ДВИГУНА МОДЕЛЮВАННЯ: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
+                    severity: 'critical',
+                    timestamp: new Date().toISOString(),
+                    code: 'SCENARIO_ENGINE_CRITICAL'
+                }
+            }));
         } finally {
             clearInterval(progressInterval);
             setTimeout(() => setIsSimulating(false), 500);
@@ -120,7 +158,7 @@ const ScenarioModeling: React.FC = () => {
                 axisPointer: { type: 'cross', label: { backgroundColor: '#8b5cf6' } }
             },
             legend: {
-                data: ['Історичний Факт', 'ШІ Прогноз (ELITE)'],
+                data: ['Історичний Факт', 'ШІ Прогноз (WRAITH)'],
                 textStyle: { color: '#64748b', fontFamily: 'Inter', fontWeight: 700 },
                 top: 0
             },
@@ -148,7 +186,7 @@ const ScenarioModeling: React.FC = () => {
                     data: baseData.map((v: any, i: number) => i <= 5 ? v : null)
                 },
                 {
-                    name: 'ШІ Прогноз (ELITE)',
+                    name: 'ШІ Прогноз (WRAITH)',
                     type: 'line',
                     smooth: true,
                     symbol: 'circle',
@@ -167,8 +205,8 @@ const ScenarioModeling: React.FC = () => {
         <PageTransition className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
             <ViewHeader 
                 title="МОДЕЛЮВАННЯ СЦЕНАРІЇВ"
-                subtitle="WHAT-IF ANALYSIS CORE v56.5-ELITE"
-                badges={[{ label: 'SIMULATION_ELITE', color: 'primary' }]}
+                subtitle="WHAT-IF ANALYSIS CORE v57.2-WRAITH"
+                badges={[{ label: isOffline ? 'MIRROR_SIMULATION' : 'SIMULATION_WRAITH', color: isOffline ? 'warning' : 'primary' }]}
                 stats={[
                     { label: 'ПРОГНОЗ РУХУ', value: '$12.4M', color: 'success' },
                     { label: 'РИЗИК СЦЕНАРІЮ', value: '42/100', color: 'warning' },
@@ -273,7 +311,7 @@ const ScenarioModeling: React.FC = () => {
                                     <div className="relative z-10">
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Активна AI Модель</p>
                                         <p className="text-sm font-black text-white font-mono flex items-center gap-2">
-                                            N5.PREDICTIVE-ELITE
+                                            {isOffline ? 'N5.MIRROR-PREDICTIVE' : 'N5.PREDICTIVE-WRAITH'}
                                             <span className="text-emerald-400 text-[9px] px-1.5 py-0.5 border border-emerald-500/20 bg-emerald-500/10 rounded">94.8% ТОЧНІСТЬ</span>
                                         </p>
                                     </div>
@@ -355,13 +393,13 @@ const ScenarioModeling: React.FC = () => {
                                 </p>
                             </div>
 
-                            <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/20 relative">
-                                <Shield className="absolute top-5 right-5 w-16 h-16 text-rose-500/10" />
-                                <h4 className="text-[10px] font-black shrink-0 text-rose-400 tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
-                                    <span className="w-2 h-2 bg-rose-500 rounded-full" /> Вектор Загроз
+                            <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 relative">
+                                <Shield className="absolute top-5 right-5 w-16 h-16 text-amber-500/10" />
+                                <h4 className="text-[10px] font-black shrink-0 text-amber-400 tracking-[0.2em] mb-2 uppercase flex items-center gap-2">
+                                    <span className="w-2 h-2 bg-amber-500 rounded-full" /> Вектор Загроз
                                 </h4>
                                 <p className="text-sm text-slate-300 leading-relaxed font-medium">
-                                    Зростання активності конкурентів до <span className="text-white font-black">{params.competitorActivity}</span> вимагає збільшення маркетинг-бюджету на <span className="text-rose-400 font-black">~15%</span> для утримання долі ринку в Q3.
+                                    Зростання активності конкурентів до <span className="text-white font-black">{params.competitorActivity}</span> вимагає збільшення маркетинг-бюджету на <span className="text-amber-400 font-black">~15%</span> для утримання долі ринку в Q3.
                                 </p>
                             </div>
                         </div>

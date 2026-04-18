@@ -1,5 +1,5 @@
 /**
- * 📱 Mobile Command Center | v56.5-ELITE Orbital Matrix
+ * 📱 Mobile Command Center | v57.2-WRAITH Orbital Matrix
  * PREDATOR Mobile - Цитадель оперативного управління у вашій кишені.
  * 
  * Включає:
@@ -8,7 +8,7 @@
  * - 🛡️ Моніторинг ризиків (Risk Watch)
  * - 🛰️ Супутниковий зв'язок (Orbital Link)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect } from 'react';
@@ -58,7 +58,7 @@ const MobileStatCard: React.FC<{ stat: QuickStat }> = ({ stat }) => (
       <div className="p-3 bg-black/40 border border-white/5 rounded-2xl" style={{ color: stat.color }}>
         <stat.icon size={20} className="drop-shadow-[0_0_8px_currentColor]" />
       </div>
-      <div className={cn("text-[10px] font-black font-mono", stat.isPositive ? "text-emerald-400" : "text-rose-400")}>
+      <div className={cn("text-[10px] font-black font-mono", stat.isPositive ? "text-emerald-400" : "text-amber-400")}>
         {stat.change}
       </div>
     </div>
@@ -102,7 +102,7 @@ const MobileCommandCenter: React.FC = () => {
         <div className="flex items-center gap-3">
           <button className="p-3 bg-white/5 border border-white/10 rounded-2xl relative">
             <Bell size={20} className="text-slate-400" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-amber-500 rounded-full shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
           </button>
           <button onClick={() => setIsMenuOpen(true)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
             <Menu size={20} className="text-slate-400" />
@@ -161,7 +161,7 @@ const MobileCommandCenter: React.FC = () => {
                 <div className="relative p-4 bg-black/40 border border-white/5 rounded-2xl group-active:scale-90 transition-transform" style={{ color: item.color }}>
                   <item.icon size={22} className="drop-shadow-[0_0_5px_currentColor]" />
                   {item.badge && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-slate-900">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-slate-900">
                       {item.badge}
                     </span>
                   )}
@@ -174,20 +174,20 @@ const MobileCommandCenter: React.FC = () => {
 
         {/* AI Insight Card */}
         <section>
-          <div className="p-8 bg-gradient-to-br from-indigo-500/20 via-blue-500/10 to-transparent border border-indigo-500/30 rounded-[40px] relative overflow-hidden group">
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-500/20 blur-[60px] rounded-full animate-pulse" />
+          <div className="p-8 bg-gradient-to-br from-yellow-500/20 via-blue-500/10 to-transparent border border-yellow-500/30 rounded-[40px] relative overflow-hidden group">
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-500/20 blur-[60px] rounded-full animate-pulse" />
             <div className="flex items-start gap-6 relative z-10">
-              <div className="w-14 h-14 bg-indigo-500 border border-indigo-400 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.5)]">
+              <div className="w-14 h-14 bg-yellow-500 border border-yellow-400 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.5)]">
                 <Brain size={28} className="text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Neural Intelligence</span>
-                  <Sparkles size={12} className="text-indigo-400 animate-spin-slow" />
+                  <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em]">Neural Intelligence</span>
+                  <Sparkles size={12} className="text-yellow-400 animate-spin-slow" />
                 </div>
                 <h4 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Цінова аномалія</h4>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  Постачальник <span className="text-indigo-400">SunLogistics</span> знизив ціну на 30% на оптові партії. Рекомендуємо перегляд контракту протягом 2 годин.
+                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії. Рекомендуємо перегляд контракту протягом 2 годин.
                 </p>
               </div>
             </div>
@@ -213,7 +213,7 @@ const MobileCommandCenter: React.FC = () => {
               >
                 <div className={cn(
                   "w-12 h-12 rounded-2xl flex items-center justify-center",
-                  item.type === 'error' ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' :
+                  item.type === 'error' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
                     item.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
                       'bg-blue-500/10 text-blue-500 border border-blue-500/20'
                 )}>
@@ -253,7 +253,7 @@ const MobileCommandCenter: React.FC = () => {
               <div className="relative">
                 <tab.icon size={24} className={cn("transition-transform", activeTab === tab.id && "scale-110 drop-shadow-[0_0_8px_currentColor]")} />
                 {tab.badge && (
-                  <span className="absolute -top-1 -right-2 w-4 h-4 bg-rose-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-slate-950">
+                  <span className="absolute -top-1 -right-2 w-4 h-4 bg-amber-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-slate-950">
                     {tab.badge}
                   </span>
                 )}
@@ -292,9 +292,9 @@ const MobileCommandCenter: React.FC = () => {
                 {[
                   { icon: BarChart3, label: 'Глобальна Аналітика', color: 'blue' },
                   { icon: Target, label: premiumLocales.competitorIntelligence.premium.title, color: 'purple', badge: '3' },
-                  { icon: Shield, label: 'Цільові Ризики', color: 'rose', badge: '!' },
+                  { icon: Shield, label: 'Цільові Ризики', color: 'amber', badge: '!' },
                   { icon: MapIcon, label: 'Логістична Навігатор', color: 'amber' },
-                  { icon: Globe, label: 'Матриця Світу', color: 'indigo' },
+                  { icon: Globe, label: 'Матриця Світу', color: 'yellow' },
                   { icon: Settings, label: 'Нейронні Параметри', color: 'slate' },
                 ].map((item, i) => (
                   <button key={i} className="w-full flex items-center gap-6 p-6 bg-black/40 border border-white/5 rounded-[32px] hover:border-white/20 transition-all group overflow-hidden relative">
@@ -305,7 +305,7 @@ const MobileCommandCenter: React.FC = () => {
                     {item.badge && (
                       <span className={cn(
                         "px-3 py-1 text-[10px] font-black rounded-lg",
-                        item.badge === '!' ? 'bg-rose-500/20 text-rose-400' : 'bg-blue-500/20 text-blue-400'
+                        item.badge === '!' ? 'bg-amber-500/20 text-amber-400' : 'bg-blue-500/20 text-blue-400'
                       )}>
                         {item.badge}
                       </span>
@@ -322,7 +322,7 @@ const MobileCommandCenter: React.FC = () => {
                     <div className="text-[10px] font-black text-slate-500 uppercase">Sovereign Admin</div>
                   </div>
                 </div>
-                <button className="p-3 bg-white/5 border border-white/10 rounded-2xl text-rose-500">
+                <button className="p-3 bg-white/5 border border-white/10 rounded-2xl text-amber-500">
                   <Power size={20} />
                 </button>
               </div>

@@ -1,5 +1,5 @@
 /**
- * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v56.5-ELITE
+ * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v57.2-WRAITH
  * PREDATOR Analytics — Sovereign Investigative Framework
  * 
  * Модуль керування оперативними розслідуваннями та чергою подій.
@@ -162,7 +162,7 @@ const CasesView: React.FC = () => {
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
                       INSPECT_OPS // ТЕРМІНАЛ КЕЙСІВ
                     </span>
-                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕРАТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
@@ -224,26 +224,26 @@ const CasesView: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="relative p-10 rounded-[3rem] bg-rose-600/5 border-2 border-rose-600/20 overflow-hidden group/alert"
+              className="relative p-10 rounded-[3rem] bg-amber-600/5 border-2 border-amber-600/20 overflow-hidden group/alert"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-rose-600/10 blur-[80px] -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-600/10 blur-[80px] -translate-y-1/2 translate-x-1/2" />
               <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                <div className="p-6 bg-rose-600/20 rounded-[2rem] border-2 border-rose-600/30 shadow-[0_0_30px_rgba(225,29,72,0.3)] animate-pulse">
-                  <Siren size={32} className="text-rose-500" />
+                <div className="p-6 bg-amber-600/20 rounded-[2rem] border-2 border-amber-600/30 shadow-[0_0_30px_rgba(225,29,72,0.3)] animate-pulse">
+                  <Siren size={32} className="text-amber-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-2">
-                    <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // ПРІОРИТЕТ 0</span>
-                    <div className="h-px w-20 bg-rose-600/20" />
+                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // ПРІОРИТЕТ 0</span>
+                    <div className="h-px w-20 bg-amber-600/20" />
                   </div>
                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                    ВИЯВЛЕНО <span className="text-rose-500 underline decoration-rose-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'КРИТИЧНО').length} КЕЙСІВ</span> З КРИТИЧНИМ РІВНЕМ РИЗИКУ. 
+                    ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'КРИТИЧНО').length} КЕЙСІВ</span> З КРИТИЧНИМ РІВНЕМ РИЗИКУ. 
                     <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручання рекомендовано для стабілізації контуру.</span>
                   </h3>
                 </div>
                 <button 
                   onClick={() => handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || '')}
-                  className="px-12 py-6 bg-rose-600 hover:bg-rose-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
+                  className="px-12 py-6 bg-amber-600 hover:bg-amber-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
                 >
                   ПЕРЕЙТИ_ДО_ВІРУСУ
                 </button>
@@ -295,7 +295,7 @@ const CasesView: React.FC = () => {
           </div>
         </div>
 
-        {/* CREATE MODAL ELITE */}
+        {/* CREATE MODAL WRAITH */}
         <AnimatePresence>
           {isCreateModalOpen && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12">
@@ -370,7 +370,7 @@ const CasesView: React.FC = () => {
                             className={cn(
                               "py-8 rounded-[2.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic border-4 transition-all duration-500",
                               newCaseData.priority === p
-                                ? p === 'high' ? 'bg-rose-600 border-rose-500 text-white shadow-4xl'
+                                ? p === 'high' ? 'bg-amber-600 border-amber-500 text-white shadow-4xl'
                                   : p === 'medium' ? 'bg-amber-500 border-amber-400 text-black shadow-4xl'
                                   : 'bg-emerald-500 border-emerald-400 text-black shadow-4xl'
                                 : 'bg-white/[0.02] border-white/[0.05] text-slate-700 hover:border-white/10'

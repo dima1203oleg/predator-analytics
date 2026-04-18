@@ -395,7 +395,7 @@ export const premiumLocales = {
       expandAnalytics: 'Відкрити Прогнози',
       collapseAnalytics: 'Згорнути Аналітику',
       liveData: 'ЖИВІ ДАНІ',
-      footer: 'PREDATOR ANALYTICS v56.5-ELITE • NEXUS STRATEGIC CORE',
+      footer: 'PREDATOR ANALYTICS v57.2-WRAITH • NEXUS STRATEGIC CORE',
       confidence: 'Впевненість',
       growth: 'Зростання',
       decline: 'Спад',
@@ -602,7 +602,7 @@ export const premiumLocales = {
     intelBriefing: '{persona}_INTEL_BRIEFING',
     commandCenter: 'КОМАНДНИЙ ЦЕНТР',
     situationCommandCenter: 'СИТУАЦІЙНИЙ КОМАНДНИЙ ЦЕНТР',
-    godModeActive: 'v56.5-ELITE NEXUS РЕЖИМ БОГА АКТИВОВАНО',
+    godModeActive: 'v57.2-WRAITH NEXUS РЕЖИМ БОГА АКТИВОВАНО',
     sovereigntyProtocol: 'Протокол Суверенітету NEXUS в реальному часі активовано',
     systemMap: 'Карта Системи',
     pulseSync: 'Синхронізація Пульсу',
@@ -1064,8 +1064,8 @@ export const premiumLocales = {
   // Semantic Radar (Analytics View)
   // ============================================
   semanticRadar: {
-    title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ ELITE",
-    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v56.5'],
+    title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ WRAITH",
+    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v57.2'],
     stats: {
       nodes: 'Вузли',
       edges: 'Зв\'язки',
@@ -1087,7 +1087,7 @@ export const premiumLocales = {
     },
     entityHud: {
       params: 'ПАРАМЕТРИ ОБ\'ЄКТА',
-      aiInsight: 'AI ІНСАЙТ ELITE-2026',
+      aiInsight: 'AI ІНСАЙТ WRAITH-2026',
       safe: 'БЕЗПЕЧНО',
       risk: 'РИЗИК',
       selectNode: 'Виберіть вузол для аналізу',
@@ -1200,8 +1200,8 @@ export const premiumLocales = {
       descriptionEnd: 'інструменту конкурентної розвідки. Аналізуйте ціни, ринкові частки, стратегії та слабкі місця ваших конкурентів.',
       upgrade: 'ОНОВИТИ ДО ПРЕМІУМ',
       forgeView: {
-        title: 'КУЗНЯ ЕВОЛЮЦІЇ ELITE',
-        subtitle: 'Ковальський Цех Нейронних Моделей v56.5',
+        title: 'КУЗНЯ ЕВОЛЮЦІЇ WRAITH',
+        subtitle: 'Ковальський Цех Нейронних Моделей v57.2',
         liveActive: 'АКТИВНЕ КУВАННЯ',
       },
       features: {
@@ -1574,8 +1574,8 @@ export const premiumLocales = {
   // Evolution Engine
   // ============================================
   evolution: {
-    title: 'ДВИГУН ЕВОЛЮЦІЇ ELITE',
-    subtitle: 'Цикл Автономного Самовдосконалення v56.5_Активний',
+    title: 'ДВИГУН ЕВОЛЮЦІЇ WRAITH',
+    subtitle: 'Цикл Автономного Самовдосконалення v57.2_Активний',
     stats: {
       azrCycles: 'AZR_CYCLES',
       ledgerEntries: 'LEDGER_ENTRIES',

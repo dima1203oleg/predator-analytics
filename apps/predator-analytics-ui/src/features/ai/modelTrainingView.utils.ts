@@ -2,7 +2,7 @@ import type { SystemStatsResponse } from '@/services/api/system';
 
 type UnknownRecord = Record<string, unknown>;
 
-export type TrainingTone = 'emerald' | 'amber' | 'rose' | 'slate' | 'sky';
+export type TrainingTone = 'emerald' | 'amber' | 'slate' | 'sky';
 export type TrainingStatusKey = 'IDLE' | 'TRAINING' | 'COMPLETED' | 'ERROR';
 
 export interface TrainingMetricPoint {
@@ -192,7 +192,7 @@ const getStatusMeta = (statusKey: TrainingStatusKey): { label: string; tone: Tra
     }
 
     if (statusKey === 'ERROR') {
-        return { label: 'Помилка', tone: 'rose', isRunning: false };
+        return { label: 'Помилка', tone: 'amber', isRunning: false };
     }
 
     return { label: 'Очікування', tone: 'slate', isRunning: false };

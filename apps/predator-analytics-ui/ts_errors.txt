@@ -1,114 +1,23 @@
-src/components/client/Search/index.tsx(24,32): error TS2339: Property 'results' does not exist on type 'RiskEntity[] | CompanySearchResponse'.
-  Property 'results' does not exist on type 'RiskEntity[]'.
-src/components/client/Search/index.tsx(25,29): error TS2339: Property 'results' does not exist on type 'RiskEntity[] | CompanySearchResponse'.
-  Property 'results' does not exist on type 'RiskEntity[]'.
-src/components/layout/__tests__/ContextRail.test.tsx(48,9): error TS2322: Type '{ children: Element; initialValues: ((never[] | WritableAtom<string[], [SetStateActionWithReset<string[]>], void>)[] | (boolean | (PrimitiveAtom<...> & WithInitialValue<...>))[])[]; }' is not assignable to type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-  Property 'initialValues' does not exist on type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-src/components/layout/__tests__/ContextRail.test.tsx(69,9): error TS2322: Type '{ children: Element; initialValues: ((never[] | WritableAtom<string[], [SetStateActionWithReset<string[]>], void>)[] | (boolean | (PrimitiveAtom<...> & WithInitialValue<...>))[])[]; }' is not assignable to type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-  Property 'initialValues' does not exist on type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-src/components/layout/__tests__/ShellCommandPalette.test.tsx(39,9): error TS2322: Type '{ children: Element; initialValues: ((boolean | (PrimitiveAtom<boolean> & WithInitialValue<boolean>))[] | (string[] | WritableAtom<string[], [SetStateActionWithReset<string[]>], void>)[])[]; }' is not assignable to type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-  Property 'initialValues' does not exist on type 'IntrinsicAttributes & { children?: ReactNode; store?: Store | undefined; }'.
-src/components/layout/Sidebar.tsx(337,46): error TS2345: Argument of type '(currentMode: NavWorkspaceMode) => NavWorkspaceMode | undefined' is not assignable to parameter of type 'SetStateAction<NavWorkspaceMode>'.
-  Type '(currentMode: NavWorkspaceMode) => NavWorkspaceMode | undefined' is not assignable to type '(prevState: NavWorkspaceMode) => NavWorkspaceMode'.
-    Type 'NavWorkspaceMode | undefined' is not assignable to type 'NavWorkspaceMode'.
-      Type 'undefined' is not assignable to type 'NavWorkspaceMode'.
-src/components/premium/DashboardBuilder/WidgetRenderer.tsx(193,38): error TS2339: Property 'tryAgain' does not exist on type '{ online: string; offline: string; local: string; cloud: string; unknownLabel: string; refresh: string; premium: string; free: string; upgrade: string; loading: string; error: string; retry: string; ... 50 more ...; offlineBanner: { ...; }; }'.
-src/components/shells/OperatorShell.tsx(34,24): error TS2339: Property 'temperature' does not exist on type 'SystemStatsResponse'.
-src/components/super/SovereignAZRBrain.tsx(46,32): error TS2339: Property 'cpu_load' does not exist on type 'SystemStatsResponse'.
-src/config/__tests__/navigation.test.ts(27,65): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/__tests__/navigation.test.ts(37,86): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/__tests__/navigation.test.ts(38,86): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/navigation.ts(1025,56): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/navigation.ts(1031,5): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/navigation.ts(1051,24): error TS18048: 'section.items' is possibly 'undefined'.
-src/config/navigation.ts(1059,29): error TS2488: Type 'NavItem[] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
-src/config/navigation.ts(1072,5): error TS18048: 'section.items' is possibly 'undefined'.
-src/context/SuperIntelligenceContext.tsx(249,37): error TS2339: Property 'stage' does not exist on type 'SystemStatusResponse'.
-src/context/SuperIntelligenceContext.tsx(312,72): error TS2339: Property 'cpu_usage' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-src/context/SuperIntelligenceContext.tsx(312,108): error TS2339: Property 'cpu_usage' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-src/features/ai/aiControlPlane.utils.ts(176,5): error TS2322: Type '{ key: string; engine: unknown; }[]' is not assignable to type '{ key: string; engine: EngineInfo | UnknownRecord; }[]'.
-  Type '{ key: string; engine: unknown; }' is not assignable to type '{ key: string; engine: EngineInfo | UnknownRecord; }'.
-    Types of property 'engine' are incompatible.
-      Type 'unknown' is not assignable to type 'EngineInfo | UnknownRecord'.
-src/features/ai/DatasetsStudioView.tsx(161,43): error TS2322: Type '"success" | "warning" | "secondary"' is not assignable to type '"default" | "neon" | "outline" | "secondary" | "cyber" | "holographic" | "destructive" | undefined'.
-  Type '"success"' is not assignable to type '"default" | "neon" | "outline" | "secondary" | "cyber" | "holographic" | "destructive" | undefined'.
-src/features/ai/ModelTrainingView.tsx(381,53): error TS2769: No overload matches this call.
-  Overload 1 of 2, '(props: TooltipProps<ValueType, string>): Tooltip<ValueType, string>', gave the following error.
-    Type '(value: number | null, name: string) => [string, string]' is not assignable to type 'Formatter<ValueType, string>'.
-      Types of parameters 'value' and 'value' are incompatible.
-        Type 'ValueType' is not assignable to type 'number | null'.
-          Type 'string' is not assignable to type 'number'.
-  Overload 2 of 2, '(props: TooltipProps<ValueType, string>, context: any): Tooltip<ValueType, string>', gave the following error.
-    Type '(value: number | null, name: string) => [string, string]' is not assignable to type 'Formatter<ValueType, string>'.
-      Types of parameters 'value' and 'value' are incompatible.
-        Type 'ValueType' is not assignable to type 'number | null'.
-          Type 'string' is not assignable to type 'number'.
-src/features/ai/modelTrainingView.utils.ts(310,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(311,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(312,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(313,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(314,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(316,40): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(316,70): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(317,38): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(318,43): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(330,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(331,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(332,32): error TS18046: 'record' is of type 'unknown'.
-src/features/ai/modelTrainingView.utils.ts(454,94): error TS18047: 'systemStats' is possibly 'null'.
-src/features/ai/modelTrainingView.utils.ts(455,96): error TS18047: 'systemStats' is possibly 'null'.
-src/features/ai/SystemPromptsView.tsx(106,28): error TS2322: Type '"success" | "warning"' is not assignable to type '"default" | "neon" | "outline" | "secondary" | "cyber" | "holographic" | "destructive" | undefined'.
-  Type '"success"' is not assignable to type '"default" | "neon" | "outline" | "secondary" | "cyber" | "holographic" | "destructive" | undefined'.
-src/features/clients/ClientsHubView.tsx(339,18): error TS2345: Argument of type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; }' is not assignable to parameter of type 'ContextRailPayload'.
-  The types of 'status.tone' are incompatible between these types.
-    Type 'string' is not assignable to type 'ContextTone'.
-src/features/dashboard/dimensional/AdaptiveDashboard.tsx(104,26): error TS2339: Property 'cpu' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-  Property 'cpu' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-src/features/dashboard/dimensional/AdaptiveDashboard.tsx(105,29): error TS2339: Property 'memory' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-  Property 'memory' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-src/features/dashboard/dimensional/AdaptiveDashboard.tsx(107,51): error TS2339: Property 'services' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-  Property 'services' does not exist on type '{}'.
-src/features/factory/__tests__/SystemFactoryView.test.tsx(59,59): error TS2322: Type '{ suppressHydrationWarning?: boolean | undefined; className?: string | undefined; color?: string | undefined; height?: string | number | undefined; id?: string | undefined; lang?: string | undefined; ... 470 more ...; "data-testid": string; }' is not assignable to type 'DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>'.
-  Type '{ suppressHydrationWarning?: boolean | undefined; className?: string | undefined; color?: string | undefined; height?: string | number | undefined; id?: string | undefined; lang?: string | undefined; ... 470 more ...; "data-testid": string; }' is not assignable to type 'ClassAttributes<HTMLSpanElement>'.
-    Types of property 'ref' are incompatible.
-      Type 'LegacyRef<SVGSVGElement> | undefined' is not assignable to type 'LegacyRef<HTMLSpanElement> | undefined'.
-        Type '(instance: SVGSVGElement | null) => void' is not assignable to type 'LegacyRef<HTMLSpanElement> | undefined'.
-          Type '(instance: SVGSVGElement | null) => void' is not assignable to type '(instance: HTMLSpanElement | null) => void'.
-            Types of parameters 'instance' and 'instance' are incompatible.
-              Type 'HTMLSpanElement | null' is not assignable to type 'SVGSVGElement | null'.
-                Type 'HTMLSpanElement' is missing the following properties from type 'SVGSVGElement': currentScale, currentTranslate, height, width, and 55 more.
-src/features/factory/SystemFactoryView.tsx(578,56): error TS2345: Argument of type '"bot"' is not assignable to parameter of type '"analyze" | "test" | "build" | "deploy" | "kubectl" | undefined'.
-src/features/factory/SystemFactoryView.tsx(621,74): error TS2345: Argument of type '"bot"' is not assignable to parameter of type '"analyze" | "test" | "build" | "deploy" | "kubectl" | undefined'.
-src/features/factory/SystemFactoryView.tsx(624,78): error TS2345: Argument of type '"bot"' is not assignable to parameter of type '"analyze" | "test" | "build" | "deploy" | "kubectl" | undefined'.
-src/features/factory/SystemFactoryView.tsx(676,71): error TS2345: Argument of type '"bot"' is not assignable to parameter of type '"analyze" | "test" | "build" | "deploy" | "kubectl" | undefined'.
-src/features/intelligence/CustomsIntelligenceView.tsx(121,20): error TS2345: Argument of type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; }' is not assignable to parameter of type 'ContextRailPayload'.
-  The types of 'status.tone' are incompatible between these types.
-    Type 'string' is not assignable to type 'ContextTone'.
-src/features/intelligence/RiskScoringPremium.tsx(300,39): error TS2339: Property 'items' does not exist on type 'RiskEntity[] | CompanySearchResponse'.
-  Property 'items' does not exist on type 'RiskEntity[]'.
-src/features/intelligence/SupplierDiscoveryPremium.tsx(424,18): error TS2345: Argument of type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; } | null' is not assignable to parameter of type 'ContextRailPayload | null'.
-  Type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; }' is not assignable to type 'ContextRailPayload'.
-    The types of 'status.tone' are incompatible between these types.
-      Type 'string' is not assignable to type 'ContextTone'.
-src/features/osint/SearchView.tsx(508,37): error TS2322: Type 'unknown' is not assignable to type 'Explanation | undefined'.
-src/features/reports/ReportBuilderPage.tsx(185,9): error TS7053: Element implicitly has an 'any' type because expression of type 'TemplateId' can't be used to index type 'Record<"customs" | "executive" | "cartel", string>'.
-  Property 'sovereign' does not exist on type 'Record<"customs" | "executive" | "cartel", string>'.
-src/hooks/useOptimizedData.ts(28,23): error TS2339: Property 'data' does not exist on type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...'.
-src/pages/DiligencePage.tsx(351,20): error TS2345: Argument of type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; } | null' is not assignable to parameter of type 'ContextRailPayload | null'.
-  Type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; }' is not assignable to type 'ContextRailPayload'.
-    The types of 'status.tone' are incompatible between these types.
-      Type 'string' is not assignable to type 'ContextTone'.
-src/pages/MarketPage.tsx(397,18): error TS2345: Argument of type '{ entityId: string; entityType: string; title: string; subtitle: string; status: { label: string; tone: string; }; actions: ContextRailAction[]; insights: ContextRailMetric[]; relations: ContextRailMetric[]; documents: { ...; }[]; risks: ContextRailRisk[]; sourcePath: string; }' is not assignable to parameter of type 'ContextRailPayload'.
-  The types of 'status.tone' are incompatible between these types.
-    Type 'string' is not assignable to type 'ContextTone'.
-src/pages/MarketPage.tsx(547,27): error TS2339: Property 'icon' does not exist on type '{ title: string; }'.
-src/pages/MarketPage.tsx(552,28): error TS2339: Property 'positive' does not exist on type '{ title: string; }'.
-src/pages/MarketPage.tsx(557,27): error TS2339: Property 'positive' does not exist on type '{ title: string; }'.
-src/pages/MarketPage.tsx(558,27): error TS2339: Property 'change' does not exist on type '{ title: string; }'.
-src/pages/MarketPage.tsx(562,147): error TS2339: Property 'value' does not exist on type '{ title: string; }'.
-src/pages/MarketPage.tsx(603,109): error TS2339: Property 'name' does not exist on type '{ code: string; }'.
-src/pages/MarketPage.tsx(606,117): error TS2339: Property 'value' does not exist on type '{ code: string; }'.
-src/pages/MarketPage.tsx(615,35): error TS2339: Property 'change' does not exist on type '{ code: string; }'.
-src/pages/MarketPage.tsx(620,34): error TS2339: Property 'change' does not exist on type '{ code: string; }'.
-src/pages/MarketPage.tsx(621,43): error TS2339: Property 'change' does not exist on type '{ code: string; }'.
-src/services/dataService.ts(75,7): error TS2739: Type '{ status: string; healthy: boolean; overall_status: string; cluster_health: string; rps: number; latency: { p50: number; }; errorRate: number; services: { name: string; status: string; label: string; latency_ms: number; details?: Record<...> | undefined; error?: string | ... 1 more ... | undefined; }[]; cpu_percent:...' is missing the following properties from type 'SystemMetrics': disk_usage, active_containers, uptime
+src/components/premium/CERSScoreCard.tsx(40,17): error TS2322: Type '(string | undefined)[]' is not assignable to type 'string[]'.
+  Type 'string | undefined' is not assignable to type 'string'.
+    Type 'undefined' is not assignable to type 'string'.
+src/features/factory/components/KnowledgeMapGraph.tsx(2,45): error TS2614: Module '"@/components/graph/GraphViewer"' has no exported member 'RiskLevel'. Did you mean to use 'import RiskLevel from "@/components/graph/GraphViewer"' instead?
+src/features/intelligence/AMLScoringView.tsx(1014,18): error TS2304: Cannot find name 'DiagnosticsTerminal'.
+src/features/intelligence/GeopoliticalRadarView.tsx(178,35): error TS2304: Cannot find name 'analyticsService'.
+src/features/intelligence/RiskScoringPremium.tsx(233,60): error TS18048: 'e.suspiciousAmount' is possibly 'undefined'.
+src/features/osint/SearchView.tsx(42,10): error TS2305: Module '"@/features/osint/searchView.utils"' has no exported member 'RiskLevel'.
+src/pages/DiligencePage.tsx(95,79): error TS2739: Type '{ ueid: string | undefined; edrpou: string; name: string; risk_score: number; risk_level: RiskLevelValue; last_updated: string | undefined; created_at: string | undefined; updated_at: string | undefined; status: string | undefined; sector: string | null; cers_confidence: number | undefined; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(175,85): error TS2339: Property 'institutional' does not exist on type 'RiskDetails'.
+src/pages/DiligencePage.tsx(176,83): error TS2339: Property 'structural' does not exist on type 'RiskDetails'.
+src/pages/DiligencePage.tsx(177,84): error TS2339: Property 'behavioral' does not exist on type 'RiskDetails'.
+src/pages/DiligencePage.tsx(178,81): error TS2339: Property 'influence' does not exist on type 'RiskDetails'.
+src/pages/DiligencePage.tsx(179,84): error TS2339: Property 'predictive' does not exist on type 'RiskDetails'.
+src/pages/DiligencePage.tsx(200,3): error TS2739: Type '{ ueid: string; edrpou: string; name: string; risk_score: number; risk_level: "critical"; status: string; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(201,3): error TS2739: Type '{ ueid: string; edrpou: string; name: string; risk_score: number; risk_level: "high"; status: string; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(202,3): error TS2739: Type '{ ueid: string; edrpou: string; name: string; risk_score: number; risk_level: "medium"; status: string; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(203,3): error TS2739: Type '{ ueid: string; edrpou: string; name: string; risk_score: number; risk_level: "stable"; status: string; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(204,3): error TS2739: Type '{ ueid: string; edrpou: string; name: string; risk_score: number; risk_level: "elevated"; status: string; }' is missing the following properties from type 'RiskEntity': id, riskScore, riskLevel, flags
+src/pages/DiligencePage.tsx(223,38): error TS18048: 'right.risk_score' is possibly 'undefined'.
+src/pages/DiligencePage.tsx(223,57): error TS18048: 'left.risk_score' is possibly 'undefined'.
+src/pages/DiligencePage.tsx(530,105): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+  Type 'undefined' is not assignable to type 'number'.

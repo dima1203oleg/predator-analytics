@@ -1,5 +1,5 @@
 /**
- * 🌌 Hyper-Omniscience Nexus | v56.5-ELITE Premium Matrix
+ * 🌌 Hyper-Omniscience Nexus | v57.2-WRAITH Premium Matrix
  * PREDATOR Omniscience - Центр всеосяжного контролю та нейронного управління.
  * 
  * Включає:
@@ -9,7 +9,7 @@
  * - 🛡️ Тіньовий Контроль (Shadow Control)
  * - 🧬 Революція AZR (AZR Evolution)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -155,7 +155,7 @@ const AgentCard: React.FC<{ agent: AgentStatus }> = ({ agent }) => {
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${agent.confidence}%` }}
-                className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 shadow-[0_0_10px_rgba(37,99,235,0.4)]"
+                className="h-full bg-gradient-to-r from-blue-600 to-yellow-600 shadow-[0_0_10px_rgba(37,99,235,0.4)]"
               />
             </div>
           </div>
@@ -237,12 +237,12 @@ const OmniscienceView: React.FC = () => {
                 Нексус Всезнання
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                ЯДРО_СИСТЕМИ_V56.5-ELITE // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
+                ЯДРО_СИСТЕМИ_V56.5-WRAITH // ГЛОБАЛЬНА_МАТРИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
         }
-        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-ELITE']}
+        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-WRAITH']}
         stats={[
           { label: 'ЗДОРОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
           { label: 'ВУЗЛИ', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
@@ -577,7 +577,7 @@ const AdvancedBackground: React.FC = () => (
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />
     <div className="absolute top-[20%] left-[10%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-pulse" />
-    <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[40%] bg-indigo-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="absolute bottom-[20%] right-[10%] w-[40%] h-[40%] bg-yellow-600/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
   </div>
 );
 

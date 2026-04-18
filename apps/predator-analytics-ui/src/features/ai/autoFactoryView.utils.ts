@@ -176,7 +176,7 @@ const getStatusMeta = (status?: string | null): { label: string; tone: AutoFacto
   }
 
   if (['error', 'failed', 'critical'].includes(normalized)) {
-    return { label: 'Помилка', tone: 'rose' };
+    return { label: 'Помилка', tone: 'amber' };
   }
 
   return { label: 'Невідомо', tone: 'slate' };
@@ -258,7 +258,7 @@ const inferLogMeta = (message: string): { levelLabel: string; tone: AutoFactoryT
   const upper = message.toUpperCase();
 
   if (upper.includes('ERROR') || upper.includes('FAIL')) {
-    return { levelLabel: 'ПОМИЛКА', tone: 'rose' };
+    return { levelLabel: 'ПОМИЛКА', tone: 'amber' };
   }
 
   if (upper.includes('WARN') || upper.includes('LATENCY')) {
@@ -471,7 +471,7 @@ export const normalizeAutoFactorySnapshot = (
           bugRecords.length > 0
             ? `${formatCount(bugRecords.length)} записів у /factory/bugs`
             : 'Бекенд не повернув баги для цього контуру',
-        tone: bugRecords.length > 0 ? 'rose' : 'slate',
+        tone: bugRecords.length > 0 ? 'amber' : 'slate',
       },
       {
         id: 'telemetry',
@@ -515,7 +515,7 @@ export const normalizeAutoFactorySnapshot = (
         value: normalizeRatioPercent(bugResolutionPercent),
         valueLabel: formatPercent(bugResolutionPercent),
         hint: 'Частка завершених елементів черги `/factory/bugs`.',
-        tone: 'rose',
+        tone: 'amber',
       },
     ],
     hasAnyData: Boolean(

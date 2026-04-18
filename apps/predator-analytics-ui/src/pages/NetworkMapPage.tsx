@@ -180,7 +180,7 @@ const NetworkMapPage: React.FC = () => {
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v56.5-ELITE.4</span>
+                            <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v57.2-WRAITH.4</span>
                             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                         </div>
                         <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕРЕЖЕВИЙ <span className="text-amber-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>

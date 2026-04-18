@@ -41,7 +41,7 @@ export const ComponentsRegistryView: React.FC = () => {
 
   const getStatusIcon = (status: PredatorComponent['status']) => {
     if (status.health === 'degraded') return <AlertTriangle size={14} className="text-amber-400" />;
-    if (status.health === 'offline') return <XCircle size={14} className="text-rose-400" />;
+    if (status.health === 'offline') return <XCircle size={14} className="text-amber-400" />;
 
     // Healthy logic: must be used to be fully green
     if (status.used) return <CheckCircle size={14} className="text-emerald-400" />;
@@ -61,7 +61,7 @@ export const ComponentsRegistryView: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <motion.div
-              className="p-5 rounded-3xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-2xl shadow-purple-500/20"
+              className="p-5 rounded-3xl bg-gradient-to-br from-purple-500 to-yellow-600 shadow-2xl shadow-purple-500/20"
               animate={{ rotate: [0, 5, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -361,20 +361,20 @@ export const ComponentsRegistryView: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/10 blur-3xl" />
+            <div className="absolute right-0 top-0 w-32 h-32 bg-yellow-500/10 blur-3xl" />
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-3xl col-span-2 text-white flex items-center justify-between relative overflow-hidden group">
+          <div className="bg-gradient-to-br from-yellow-600 to-purple-700 p-6 rounded-3xl col-span-2 text-white flex items-center justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <h3 className="text-2xl font-black mb-2">Open Source Power</h3>
-              <p className="opacity-90 max-w-sm text-sm leading-relaxed text-indigo-100">
+              <p className="opacity-90 max-w-sm text-sm leading-relaxed text-yellow-100">
                 Predator v45 | Neural Analyticsпобудований на плечах гігантів. <br />
                 200+ компонентів інтегровано в єдину екосистему.
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-white/20 border-2 border-indigo-500 flex items-center justify-center">
+                    <div key={i} className="w-8 h-8 rounded-full bg-white/20 border-2 border-yellow-500 flex items-center justify-center">
                       <Globe size={14} className="text-white" />
                     </div>
                   ))}

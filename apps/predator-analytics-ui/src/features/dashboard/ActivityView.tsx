@@ -1,5 +1,5 @@
 /**
- * Predator v56.5-ELITE | Sovereign Activity Ledger — Журнал Подій
+ * Predator v57.2-WRAITH | Sovereign Activity Ledger — Журнал Подій
  * Хронологічна матриця всіх системних маневрів та нейронних зсувів.
  */
 
@@ -96,7 +96,7 @@ const EventCard: React.FC<{ event: ActivityEvent }> = ({ event }) => {
                   {event.timestamp.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
               </div>
-              <h4 className="text-lg font-black text-white tracking-tight uppercase group-hover:text-indigo-400 transition-colors">
+              <h4 className="text-lg font-black text-white tracking-tight uppercase group-hover:text-yellow-400 transition-colors">
                 {event.title}
               </h4>
               {event.description && (
@@ -203,7 +203,7 @@ const ActivityView: React.FC = () => {
       <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-10 space-y-12">
         <ViewHeader
           title="ЛОГ_СУВЕРЕННОЇ_АКТИВНОСТІ"
-          icon={<Activity size={24} className="text-indigo-500 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)]" />}
+          icon={<Activity size={24} className="text-yellow-500 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)]" />}
           breadcrumbs={['PREDATOR', 'СИСТЕМА', 'АКТИВНІСТЬ']}
           stats={[
             { label: 'ПОДІЙ_СЬОГОДНІ', value: String(events.length), color: 'primary', icon: <Boxes size={14} /> },
@@ -242,7 +242,7 @@ const ActivityView: React.FC = () => {
                 className={cn(
                   "flex items-center gap-3 px-6 py-3 rounded-[22px] text-[10px] font-black tracking-widest uppercase transition-all border border-transparent",
                   activeFilter === type
-                    ? "bg-indigo-600/20 text-indigo-400 border-indigo-500/30 scale-105"
+                    ? "bg-yellow-600/20 text-yellow-400 border-yellow-500/30 scale-105"
                     : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
                 )}
               >
@@ -260,9 +260,9 @@ const ActivityView: React.FC = () => {
           {loading ? (
             <div className="py-40 flex flex-col items-center justify-center text-center space-y-6">
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}>
-                <RefreshCw size={48} className="text-indigo-500 opacity-20" />
+                <RefreshCw size={48} className="text-yellow-500 opacity-20" />
               </motion.div>
-              <p className="text-indigo-400 font-black tracking-[0.3em] uppercase text-xs animate-pulse font-mono">СКАНОГРАМУВАННЯ_ЧАСУ...</p>
+              <p className="text-yellow-400 font-black tracking-[0.3em] uppercase text-xs animate-pulse font-mono">СКАНОГРАМУВАННЯ_ЧАСУ...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="py-40 flex flex-col items-center justify-center bg-slate-900/10 rounded-[48px] border-2 border-dashed border-white/5 relative overflow-hidden">
@@ -277,10 +277,10 @@ const ActivityView: React.FC = () => {
                 <div key={date} className="relative">
                   {/* Date Separator */}
                   <div className="flex items-center gap-6 mb-12 sticky top-4 z-20">
-                    <div className="px-6 py-2.5 bg-slate-950 border border-indigo-500/30 rounded-2xl shadow-3xl">
-                      <span className="text-xs font-black text-indigo-400 tracking-[0.2em] font-mono">{date}</span>
+                    <div className="px-6 py-2.5 bg-slate-950 border border-yellow-500/30 rounded-2xl shadow-3xl">
+                      <span className="text-xs font-black text-yellow-400 tracking-[0.2em] font-mono">{date}</span>
                     </div>
-                    <div className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 to-transparent" />
+                    <div className="flex-1 h-px bg-gradient-to-r from-yellow-500/20 to-transparent" />
                     <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">{dayEvents.length} ПОДІЙ</span>
                   </div>
 

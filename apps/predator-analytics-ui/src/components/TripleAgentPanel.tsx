@@ -1,10 +1,10 @@
 /**
- * Панель Trinity Nexus | v56.5-ELITE Trident Agent Controller
+ * Панель Trinity Nexus | v57.2-WRAITH Trident Agent Controller
  * 
  * Синхронізоване керування трьома автономними агентами:
  * Governance (WinSURF), Synthesis (Gemini), Audit (Copilot).
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -149,7 +149,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2 px-3 py-1 bg-purple-500/10 rounded-full border border-purple-500/20">
                                     <Bot size={14} className="text-purple-400" />
-                                    <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest">CHAIN_v56.5-ELITE</span>
+                                    <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest">CHAIN_v57.2-WRAITH</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className={cn("w-2 h-2 rounded-full animate-pulse", isProcessing ? "bg-purple-500 shadow-[0_0_10px_#a855f7]" : "bg-emerald-500 shadow-[0_0_10px_#10b981]")} />
@@ -341,7 +341,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                                 <div className="p-2 bg-purple-500/20 rounded-lg text-purple-400">
                                                     <Code size={14} />
                                                 </div>
-                                                <span className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase">generated_output_v56.5-ELITE.py</span>
+                                                <span className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase">generated_output_v57.2-WRAITH.py</span>
                                             </div>
                                             <div className="flex gap-4">
                                                 <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 border border-white/5 rounded-lg text-[9px] text-slate-500 font-mono">
@@ -379,7 +379,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                         </div>
                         <h4 className="text-xl font-black text-slate-700 uppercase tracking-[0.4em] mb-4">Orchestration Standby</h4>
                         <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] max-w-sm text-center leading-relaxed">
-                            Trident Nexus чекає вашої директиви для ініціалізації ланцюга автономної розробки v56.5-ELITE.
+                            Trident Nexus чекає вашої директиви для ініціалізації ланцюга автономної розробки v57.2-WRAITH.
                         </p>
                         <div className="mt-8 flex gap-3">
                             {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-800 animate-pulse" style={{ animationDelay: `${i * 0.3}s` }} />)}

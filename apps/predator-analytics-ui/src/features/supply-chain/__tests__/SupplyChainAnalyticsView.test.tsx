@@ -80,7 +80,7 @@ vi.mock('@/services/api/config', () => ({
 const statsPayload = {
     globalStats: [
         { label: 'ТОВАРИ В РУСІ', value: '18 ОБʼЄКТІВ', sub: '6 кораблів, 8 фур, 4 поїзди', icon: 'Package', color: 'text-cyan-400' },
-        { label: 'РИЗИК ЛАНЦЮГА', value: 'HIGH', sub: '4 критичні аномалії', icon: 'ShieldAlert', color: 'text-rose-400' },
+        { label: 'РИЗИК ЛАНЦЮГА', value: 'HIGH', sub: '4 критичні аномалії', icon: 'ShieldAlert', color: 'text-amber-400' },
         { label: 'ЕКОНОМІЯ AI', value: '$120K', sub: 'Оцінка оптимізації', icon: 'DollarSign', color: 'text-emerald-400' },
     ],
     generated_at: '2026-03-30T10:00:00Z',

@@ -9,6 +9,7 @@ import {
   CircleDot, Fingerprint, Microscope, Scan, ShieldCheck, History as HistoryIcon,
   ServerCrash, ShieldAlert
 } from 'lucide-react';
+import { RiskLevelValue } from '@/types/intelligence';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -21,6 +22,7 @@ import { Progress } from '@/components/ui/progress';
 import { factoryApi, monitoringApi, apiClient, api } from '@/services/api';
 import { systemApi } from '@/services/api/system';
 import { RegistryStats } from './components/RegistryStats';
+import { AntigravityAgiTab } from './components/AntigravityAgiTab';
 import {
   createEmptyRegistryStats,
   deriveImprovementProgress,
@@ -51,7 +53,7 @@ export default function SystemFactoryView() {
     {
       id: 'msg-0',
       sender: 'system',
-      text: 'ЗАВОД PREDATOR v56.5-ELITE ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
+      text: 'ЗАВОД PREDATOR v57.2-WRAITH ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
       timestamp: new Date()
     }
   ]);
@@ -66,7 +68,7 @@ export default function SystemFactoryView() {
     coverage: null,
     security: null,
   });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health'>('infinite');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health' | 'antigravity'>('infinite');
 
 
   // ═══ Ingestion State ═══
@@ -79,7 +81,7 @@ export default function SystemFactoryView() {
     { id: 'INJ-0xE5F7', source: 'OpenData API', entity: 'Бенефіціар ЄДРПОУ 12345678', latency: '178ms', time: '14:32:09' },
   ]);
 
-  type BugSeverity = 'critical' | 'high' | 'medium' | 'low';
+  type BugSeverity = RiskLevelValue;
   type BugStatus = 'detected' | 'fixing' | 'fixed';
   type InfinitePhase = 'observe' | 'orient' | 'decide' | 'act';
 
@@ -699,26 +701,27 @@ export default function SystemFactoryView() {
 
   // ── Tab config ──────────────────────────────────────────────────────────────
   const TABS = [
-    { id: 'infinite',  label: 'OODA Loop',       icon: Infinity,    color: 'violet',  glow: 'rgba(139,92,246,0.4)' },
-    { id: 'improve',   label: 'Вдосконалення',   icon: Sparkles,    color: 'fuchsia', glow: 'rgba(217,70,239,0.4)' },
-    { id: 'bugfix',    label: 'Автофікс',         icon: Bug,         color: 'rose',    glow: 'rgba(239,68,68,0.4)'  },
-    { id: 'health',    label: 'Health Check',     icon: HeartPulse,  color: 'teal',    glow: 'rgba(20,184,166,0.4)' },
-    { id: 'k8s',       label: 'Kubernetes',       icon: Layers,      color: 'indigo',  glow: 'rgba(79,70,229,0.4)'  },
-    { id: 'cicd',      label: 'CI/CD Pipeline',   icon: GitBranch,   color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
-    { id: 'ingestion', label: 'Інгестія',         icon: Scan,        color: 'orange',  glow: 'rgba(249,115,22,0.4)' },
-    { id: 'network',   label: 'Мережа',           icon: Network,     color: 'cyan',    glow: 'rgba(6,182,212,0.4)'  },
+    { id: 'infinite',    label: 'OODA Loop',         icon: Infinity,      color: 'amber',   glow: 'rgba(212,175,55,0.4)' },
+    { id: 'improve',     label: 'Вдосконалення',     icon: Sparkles,      color: 'gold',    glow: 'rgba(217,119,6,0.4)' },
+    { id: 'bugfix',      label: 'Автофікс',           icon: Bug,           color: 'amber',   glow: 'rgba(239,68,68,0.4)'  },
+    { id: 'health',      label: 'Health Check',       icon: HeartPulse,    color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
+    { id: 'antigravity', label: 'Antigravity AGI',    icon: BrainCircuit,  color: 'gold',    glow: 'rgba(212,175,55,0.6)' },
+    { id: 'k8s',         label: 'Kubernetes',         icon: Layers,        color: 'amber',   glow: 'rgba(212,115,55,0.4)'  },
+    { id: 'cicd',        label: 'CI/CD Pipeline',     icon: GitBranch,     color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
+    { id: 'ingestion',   label: 'Інгестія',           icon: Scan,          color: 'amber',   glow: 'rgba(249,115,22,0.4)' },
+    { id: 'network',     label: 'Мережа',             icon: Network,       color: 'amber',   glow: 'rgba(6,182,212,0.4)'  },
   ] as const;
 
   return (
     <PageTransition>
       <div className="min-h-screen pb-20 bg-[#020617] text-slate-200 relative overflow-hidden font-sans">
         <AdvancedBackground />
-        <CyberGrid color="rgba(139, 92, 246, 0.03)" />
+        <CyberGrid color="rgba(212, 175, 55, 0.05)" />
       
       <ViewHeader 
         title="СУВЕРЕННИЙ ЗАВОД PREDATOR"
         subtitle="Автономне вдосконалення · Kubernetes · CI/CD · Моніторинг інфраструктури"
-        icon={<Factory size={24} className="text-violet-400" />}
+        icon={<Factory size={24} className="text-amber-500" />}
         breadcrumbs={['ПРЕДАТОР', 'АДМІНІСТРУВАННЯ', 'ЗАВОД']}
         stats={[
           {
@@ -748,12 +751,12 @@ export default function SystemFactoryView() {
         {/* ── Вертикальний Sidebar-Навігатор ── */}
         <div className="hidden xl:flex flex-col gap-1.5 w-48 shrink-0">
           {/* Логотип Factory */}
-          <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-violet-900/40 to-fuchsia-900/20 border border-violet-500/20">
+          <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-amber-900/40 to-amber-950/20 border border-amber-500/20">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-7 h-7 rounded-lg bg-violet-500/20 border border-violet-500/40 flex items-center justify-center">
-                <Factory size={14} className="text-violet-400" />
+              <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+                <Factory size={14} className="text-amber-400" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-violet-300">Factory v56.5-ELITE</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">Factory v57.2-WRAITH</span>
             </div>
             <div className="text-[9px] text-slate-500 font-mono">
               {infiniteRunning ? (
@@ -768,14 +771,15 @@ export default function SystemFactoryView() {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             const colorMap: Record<string, string> = {
-              violet: 'text-violet-400 bg-violet-500/15 border-violet-500/40',
-              fuchsia: 'text-fuchsia-400 bg-fuchsia-500/15 border-fuchsia-500/40',
-              rose: 'text-rose-400 bg-rose-500/15 border-rose-500/40',
-              teal: 'text-teal-400 bg-teal-500/15 border-teal-500/40',
-              indigo: 'text-indigo-400 bg-indigo-500/15 border-indigo-500/40',
+              violet: 'text-amber-400 bg-amber-500/15 border-amber-500/40',
+              fuchsia: 'text-amber-400 bg-amber-500/15 border-amber-500/40',
+              amber: 'text-amber-400 bg-amber-500/15 border-amber-500/40',
+              gold: 'text-amber-500 bg-amber-600/15 border-amber-500/40',
+              teal: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/40',
+              yellow: 'text-amber-400 bg-amber-500/15 border-amber-500/40',
               emerald: 'text-emerald-400 bg-emerald-500/15 border-emerald-500/40',
               orange: 'text-orange-400 bg-orange-500/15 border-orange-500/40',
-              cyan: 'text-cyan-400 bg-cyan-500/15 border-cyan-500/40',
+              cyan: 'text-amber-400 bg-amber-500/15 border-amber-500/40',
             };
             return (
               <button
@@ -792,7 +796,7 @@ export default function SystemFactoryView() {
                 <Icon size={14} className="shrink-0" />
                 <span className="truncate uppercase tracking-wider">{tab.label}</span>
                 {tab.id === 'bugfix' && bugs.filter(b => b.status === 'detected').length > 0 && (
-                  <span className="ml-auto shrink-0 w-4 h-4 rounded-full bg-rose-500 text-white text-[8px] font-black flex items-center justify-center">
+                  <span className="ml-auto shrink-0 w-4 h-4 rounded-full bg-amber-500 text-white text-[8px] font-black flex items-center justify-center">
                     {bugs.filter(b => b.status === 'detected').length}
                   </span>
                 )}
@@ -806,9 +810,9 @@ export default function SystemFactoryView() {
           {/* Quick Stats */}
           <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
             {[
-              { label: 'Цикли OODA', value: infiniteStats.cycles, color: 'text-violet-400' },
+              { label: 'Цикли OODA', value: infiniteStats.cycles, color: 'text-amber-400' },
               { label: 'Покращень', value: infiniteStats.improvements, color: 'text-emerald-400' },
-              { label: 'Відкритих багів', value: bugs.filter(b => b.status !== 'fixed').length, color: 'text-rose-400' },
+              { label: 'Відкритих багів', value: bugs.filter(b => b.status !== 'fixed').length, color: 'text-amber-400' },
             ].map(s => (
               <div key={s.label} className="flex items-center justify-between px-1">
                 <span className="text-[9px] text-slate-500 uppercase font-bold tracking-wider">{s.label}</span>
@@ -836,27 +840,34 @@ export default function SystemFactoryView() {
           </div>
 
           <AnimatePresence mode="wait">
+             {activeTab === 'antigravity' && (
+               <motion.div key="antigravity" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-0">
+                 <AntigravityAgiTab />
+               </motion.div>
+             )}
              {activeTab === 'improve' && (
                 <motion.div key="improve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   
                   {/* Sovereign Control Center Header */}
                   <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] items-center gap-6 p-6 bg-slate-900/40 border border-white/10 rounded-3xl backdrop-blur-md shadow-2xl relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/5 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent pointer-events-none" />
                     <div className="relative z-10 flex items-center gap-5">
-                      <div className="w-14 h-14 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-400 shadow-[0_0_20px_rgba(217,70,239,0.3)] shrink-0">
+                      <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_20px_rgba(212,175,55,0.3)] shrink-0">
                         <Factory size={28} />
                       </div>
                       <div className="min-w-0">
                         <h3 className="text-base lg:text-lg font-black uppercase tracking-widest text-white truncate">ГОЛОВНИЙ ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 font-mono text-[10px] uppercase">
-                          <span className={cn(infiniteRunning ? "text-emerald-400" : "text-fuchsia-500")}>
+                          <span className={cn(infiniteRunning ? "text-emerald-400" : "text-amber-500")}>
                              <span className="opacity-50 text-slate-400 mr-1.5">СТАТУС:</span>
                              {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : 'РЕЖИМ ОЧІКУВАННЯ'}
                           </span>
                           <span className="text-slate-500">|</span>
-                          <span className="text-sky-400">
+                          <span className="text-amber-400">
                              <span className="opacity-50 text-slate-400 mr-1.5">ФАЗА:</span>
-                             {infinitePhase.toUpperCase()}
+                             {infinitePhase === 'observe' ? 'СПОСТЕРЕЖЕННЯ' : 
+                              infinitePhase === 'orient' ? 'ОРІЄНТАЦІЯ' : 
+                              infinitePhase === 'decide' ? 'РІШЕННЯ' : 'ДІЯ'}
                           </span>
                         </div>
                       </div>
@@ -874,7 +885,7 @@ export default function SystemFactoryView() {
                        <Button 
                          variant="neon" 
                          size="sm" 
-                         className="flex-1 lg:flex-none px-6 bg-indigo-600/20 text-indigo-400 border-indigo-500/50 text-[10px] uppercase font-black h-11"
+                         className="flex-1 lg:flex-none px-6 bg-yellow-600/20 text-yellow-400 border-yellow-500/50 text-[10px] uppercase font-black h-11"
                          onClick={() => { setImprovementStatus('running'); setActiveCycle('building'); handleStartImprovement(); }}
                        >
                          <Play size={14} className="mr-2" /> ЗАПУСТИТИ
@@ -882,7 +893,7 @@ export default function SystemFactoryView() {
                        <Button 
                          variant="cyber" 
                          size="sm" 
-                         className="flex-1 lg:flex-none px-4 bg-rose-600/10 text-rose-500 border-rose-500/40 text-[10px] uppercase font-black h-11"
+                         className="flex-1 lg:flex-none px-4 bg-amber-600/10 text-amber-500 border-amber-500/40 text-[10px] uppercase font-black h-11"
                          onClick={async () => {
                            setImprovementStatus('idle');
                            setImprovementProgress(0);
@@ -902,15 +913,15 @@ export default function SystemFactoryView() {
                         onClick={() => setImprovementMode('tech')}
                         variant={improvementMode === 'tech' ? 'neon' : 'cyber'}
                         className={cn("h-auto py-10 rounded-2xl flex flex-col items-center gap-5 transition-all relative overflow-hidden group", 
-                          improvementMode === 'tech' ? 'border-indigo-500/60 shadow-[0_0_30px_rgba(79,70,229,0.3)] bg-indigo-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
+                          improvementMode === 'tech' ? 'border-yellow-500/60 shadow-[0_0_30px_rgba(79,70,229,0.3)] bg-yellow-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
                       >
-                        {improvementMode === 'tech' && <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />}
-                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 transition-transform">
-                          <Binary size={32} className="text-indigo-400" />
+                        {improvementMode === 'tech' && <div className="absolute inset-0 bg-yellow-500/5 animate-pulse" />}
+                        <div className="w-16 h-16 rounded-2xl bg-yellow-500/20 flex items-center justify-center border border-yellow-500/30 group-hover:scale-110 transition-transform">
+                          <Binary size={32} className="text-yellow-400" />
                         </div>
                         <div className="text-center">
                           <span className="text-[13px] font-black uppercase tracking-[0.15em] block">Технологічна Вертикаль</span>
-                          <span className="text-[9px] text-indigo-400/80 font-mono mt-2 uppercase tracking-wide">Інфраструктура та Core API</span>
+                          <span className="text-[9px] text-yellow-400/80 font-mono mt-2 uppercase tracking-wide">Інфраструктура та Core API</span>
                         </div>
                       </Button>
                       <Button 
@@ -932,15 +943,15 @@ export default function SystemFactoryView() {
                         onClick={() => setImprovementMode('complex')}
                         variant={improvementMode === 'complex' ? 'neon' : 'cyber'}
                         className={cn("h-auto py-10 rounded-2xl flex flex-col items-center gap-5 transition-all relative overflow-hidden group", 
-                          improvementMode === 'complex' ? 'border-fuchsia-500/60 shadow-[0_0_30px_rgba(217,70,239,0.3)] bg-fuchsia-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
+                          improvementMode === 'complex' ? 'border-amber-500/60 shadow-[0_0_30px_rgba(212,175,55,0.3)] bg-amber-500/10' : 'border-white/5 text-slate-500 opacity-60 hover:opacity-100')}
                       >
-                        {improvementMode === 'complex' && <div className="absolute inset-0 bg-fuchsia-500/5 animate-pulse" />}
-                        <div className="w-16 h-16 rounded-2xl bg-fuchsia-500/20 flex items-center justify-center border border-fuchsia-500/30 group-hover:scale-110 transition-transform">
-                          <Sparkles size={32} className="text-fuchsia-400" />
+                        {improvementMode === 'complex' && <div className="absolute inset-0 bg-amber-500/5 animate-pulse" />}
+                        <div className="w-16 h-16 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/30 group-hover:scale-110 transition-transform">
+                          <Sparkles size={32} className="text-amber-400" />
                         </div>
                         <div className="text-center">
                           <span className="text-[13px] font-black uppercase tracking-[0.15em] block text-white">Комплексний Нагляд</span>
-                          <span className="text-[9px] text-fuchsia-400/80 font-mono mt-2 uppercase tracking-wide">Суверенне Розгортання</span>
+                          <span className="text-[9px] text-amber-400/80 font-mono mt-2 uppercase tracking-wide">Суверенне Розгортання</span>
                         </div>
                       </Button>
                   </div>
@@ -948,26 +959,26 @@ export default function SystemFactoryView() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Technical Column */}
                     {(improvementMode === 'tech' || improvementMode === 'complex') && (
-                      <section className="page-section section-indigo border-indigo-500/30 shadow-xl overflow-hidden">
+                      <section className="page-section section-yellow border-yellow-500/30 shadow-xl overflow-hidden">
                         <div className="section-header">
-                          <div className="section-dot-indigo" />
+                          <div className="section-dot-yellow" />
                           <h2 className="section-title">Технологічний Стек</h2>
                         </div>
                         <div className="p-4 space-y-4">
                           <div className="grid grid-cols-1 gap-2">
                              {techOptions.map(opt => (
                                <label key={opt.id} className={cn("flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer", 
-                                 techComponents.includes(opt.id) ? "bg-indigo-500/10 border-indigo-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
-                                  <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-indigo-500 w-4 h-4" />
+                                 techComponents.includes(opt.id) ? "bg-yellow-500/10 border-yellow-500/40" : "bg-black/20 border-white/5 hover:border-white/10")}>
+                                  <input type="checkbox" checked={techComponents.includes(opt.id)} onChange={() => toggleSelection(opt.id, techComponents, setTechComponents)} className="accent-yellow-500 w-4 h-4" />
                                   <div className="flex flex-col">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-200">{opt.label}</span>
-                                    {techComponents.includes(opt.id) && <span className="text-[8px] text-indigo-400 animate-pulse uppercase tracking-[0.2em]">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
+                                    {techComponents.includes(opt.id) && <span className="text-[8px] text-yellow-400 animate-pulse uppercase tracking-[0.2em]">ПРИЗНАЧЕНО ДЛЯ ОПТИМІЗАЦІЇ</span>}
                                   </div>
                                </label>
                              ))}
                           </div>
                           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                             <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-indigo-600/20 text-indigo-400 border-indigo-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
+                             <Button onClick={handleStartImprovement} variant="neon" className="w-full bg-yellow-600/20 text-yellow-400 border-yellow-500/50 font-black uppercase tracking-widest text-[10px] h-11"><Wrench size={14} className="mr-2"/> Оптимізувати Ядро</Button>
                              <div className="grid grid-cols-2 gap-2">
                                <Button variant="cyber" className="text-[9px] h-9"><HistoryIcon size={12} className="mr-1"/> Відкат (Rollback)</Button>
                                <Button variant="cyber" className="text-[9px] h-9 text-emerald-400 border-emerald-500/20"><Scan size={12} className="mr-1"/> Сканування Безпеки</Button>
@@ -1022,15 +1033,15 @@ export default function SystemFactoryView() {
                            <Badge variant="cyber" className="bg-slate-500/20 text-slate-300 text-[8px]">ВИМКНЕНО</Badge>
                         </div>
 
-                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-indigo-500/20">
-                           <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+                        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-yellow-500/20">
+                           <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-400">
                              <Server size={20} />
                            </div>
                            <div className="flex-1">
                              <div className="text-[11px] font-black uppercase text-white">Серверні інтеграції</div>
-                             <div className="text-[8px] text-indigo-400 font-mono">Показуються лише підтверджені внутрішні сервіси з health telemetry</div>
+                             <div className="text-[8px] text-yellow-400 font-mono">Показуються лише підтверджені внутрішні сервіси з health telemetry</div>
                            </div>
-                           <Badge variant="cyber" className="bg-indigo-500/20 text-indigo-300 text-[8px]">{healthChecks.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</Badge>
+                           <Badge variant="cyber" className="bg-yellow-500/20 text-yellow-300 text-[8px]">{healthChecks.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</Badge>
                         </div>
 
                         <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
@@ -1055,42 +1066,42 @@ export default function SystemFactoryView() {
 
                   {/* Realtime Progress & Results UI */}
                   {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
-                    <section className="page-section section-fuchsia border-fuchsia-500/20 shadow-xl overflow-hidden mt-6">
+                    <section className="page-section section-amber border-amber-500/20 shadow-xl overflow-hidden mt-6">
                       <div className="section-header">
-                        <div className="section-dot-fuchsia" />
+                        <div className="section-dot-amber" />
                         <h2 className="section-title">Канал Подій Заводу (Events)</h2>
                       </div>
                       <div className="p-6">
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
                           <div>
                              <div className="flex items-center justify-between mb-3">
-                               <span className="text-[11px] font-black uppercase tracking-wider text-fuchsia-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
+                               <span className="text-[11px] font-black uppercase tracking-wider text-amber-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
                                <span className="font-mono text-xl font-black text-white">{improvementProgress}%</span>
                              </div>
-                             <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_15px_rgba(217,70,239,0.2)]" />
+                             <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
                              
                              <div className="mt-8 grid grid-cols-2 gap-4">
                                <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
-                                 <Microscope size={24} className="text-cyan-400 mb-2" />
+                                 <Microscope size={24} className="text-amber-400 mb-2" />
                                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
                                  <Badge variant="cyber" className="mt-1">ЗАВЕРШЕНО</Badge>
                                </div>
                                <div className="bg-black/40 border border-white/5 rounded-2xl p-4 flex flex-col items-center">
-                                 <Fingerprint size={24} className="text-indigo-400 mb-2" />
+                                 <Fingerprint size={24} className="text-yellow-400 mb-2" />
                                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
                                  <Badge variant="cyber" className="mt-1">ПЕРЕВІРЕНО</Badge>
                                </div>
                              </div>
                           </div>
 
-                          <div className="bg-slate-950/80 rounded-2xl p-4 border border-fuchsia-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner">
-                             <div className="text-fuchsia-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
+                          <div className="bg-slate-950/80 rounded-2xl p-4 border border-amber-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner">
+                             <div className="text-amber-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
                              {infiniteLogs.length > 0 ? (
                                <div className="space-y-1">
                                  {infiniteLogs.slice(-8).map((log, index) => (
                                    <div key={`${index}-${log}`} className={cn(
                                      'break-words',
-                                     log.includes('ERROR') ? 'text-rose-300' : log.includes('SYSTEM') ? 'text-indigo-300' : 'text-slate-300',
+                                     log.includes('ERROR') ? 'text-amber-300' : log.includes('SYSTEM') ? 'text-yellow-300' : 'text-slate-300',
                                    )}>
                                      {log}
                                    </div>
@@ -1125,7 +1136,7 @@ export default function SystemFactoryView() {
                                  </thead>
                                  <tbody>
                                    <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
-                                     <td className="p-3 text-indigo-400 font-bold border-l-2 border-indigo-500">Технологічна</td>
+                                     <td className="p-3 text-yellow-400 font-bold border-l-2 border-yellow-500">Технологічна</td>
                                      <td className="p-3 text-slate-200">Стан за OODA та telemetry</td>
                                      <td className="p-3 text-emerald-400 font-bold">{infiniteRunning ? 'АКТИВНО' : 'ОЧІКУВАННЯ'}</td>
                                    </tr>
@@ -1140,7 +1151,7 @@ export default function SystemFactoryView() {
 
                              <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-white/5">
                                <Button variant="ghost" className="bg-white/5 text-slate-400 text-[9px] font-black uppercase tracking-widest hover:text-white">ЕКСПОРТ (JSON)</Button>
-                               <Button variant="cyber" className="bg-indigo-500/20 text-indigo-400 border-indigo-500/30 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-500/30">Звіт (PDF)</Button>
+                               <Button variant="cyber" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-[9px] font-black uppercase tracking-widest hover:bg-yellow-500/30">Звіт (PDF)</Button>
                              </div>
                           </div>
                         )}
@@ -1177,7 +1188,7 @@ export default function SystemFactoryView() {
                                         <div>
                                            <div className="text-[13px] font-bold text-white flex items-center gap-2">
                                               {pod.name}
-                                              <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-indigo-400">×{pod.replicas}</span>
+                                              <span className="text-[9px] font-black tracking-widest bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-yellow-400">×{pod.replicas}</span>
                                            </div>
                                            <div className="text-[10px] text-slate-500 font-mono mt-1">ID: {pod.id} | Аптайм: {pod.uptime}</div>
                                         </div>
@@ -1192,8 +1203,8 @@ export default function SystemFactoryView() {
                                   </td>
                                   <td className="p-4 text-[11px] font-mono text-slate-300">
                                      <div className="flex items-center gap-2">
-                                        <Cpu size={12} className="text-blue-400" /> {pod.cpu}
-                                        <HardDrive size={12} className="text-purple-400 ml-2" /> {pod.mem}
+                                        <Cpu size={12} className="text-amber-400" /> {pod.cpu}
+                                        <HardDrive size={12} className="text-slate-400 ml-2" /> {pod.mem}
                                      </div>
                                   </td>
                                    <td className="p-4">
@@ -1203,7 +1214,7 @@ export default function SystemFactoryView() {
                                           disabled
                                           variant="ghost"
                                           size="icon"
-                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 flex flex-col items-center justify-center hover:border-rose-500/50 rounded-lg border border-transparent transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
+                                          className="p-2 h-10 w-10 bg-slate-800 hover:bg-amber-500/20 hover:text-amber-400 flex flex-col items-center justify-center hover:border-amber-500/50 rounded-lg border border-transparent transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                         >
                                            <Power size={14} />
                                         </Button>
@@ -1213,7 +1224,7 @@ export default function SystemFactoryView() {
                                             disabled
                                             variant="ghost"
                                             size="icon"
-                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all border-r border-white/5 disabled:opacity-40" title="Оркестраційний endpoint не підключено"
+                                            className="p-2 h-10 w-10 hover:bg-yellow-500/20 hover:text-yellow-400 transition-all border-r border-white/5 disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                           >
                                              <Plus size={14} />
                                           </Button>
@@ -1222,7 +1233,7 @@ export default function SystemFactoryView() {
                                             disabled
                                             variant="ghost"
                                             size="icon"
-                                            className="p-2 h-10 w-10 hover:bg-indigo-500/20 hover:text-indigo-400 transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
+                                            className="p-2 h-10 w-10 hover:bg-yellow-500/20 hover:text-yellow-400 transition-all disabled:opacity-40" title="Оркестраційний endpoint не підключено"
                                           >
                                              <Minus size={14} />
                                           </Button>
@@ -1290,9 +1301,9 @@ export default function SystemFactoryView() {
              {activeTab === 'network' && (
                <motion.div key="network" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                   <RegistryStats stats={registryStats} />
-                  <section className="page-section section-cyan shadow-xl overflow-hidden mt-6">
+                  <section className="page-section section-amber shadow-xl overflow-hidden mt-6">
                      <div className="section-header">
-                       <div className="section-dot-cyan" />
+                       <div className="section-dot-amber" />
                        <h2 className="section-title">Топологія Мережі та Інфраструктура</h2>
                      </div>
                      <div className="p-8 relative min-h-[300px] flex items-center justify-center">
@@ -1301,27 +1312,27 @@ export default function SystemFactoryView() {
                         <div className="relative w-full max-w-3xl flex justify-between items-center z-10">
                            {/* Frontend Section */}
                            <div className="flex flex-col items-center gap-2">
-                              <div className="w-16 h-16 rounded-xl bg-cyan-500/10 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                              <div className="w-16 h-16 rounded-xl bg-amber-500/10 border-2 border-amber-500 flex items-center justify-center text-amber-400 shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                                  <Network size={24} />
                               </div>
-                              <span className="text-[10px] font-black uppercase text-cyan-400 tracking-widest mt-2">Nginx / UI</span>
+                              <span className="text-[10px] font-black uppercase text-amber-400 tracking-widest mt-2">Nginx / UI</span>
                            </div>
 
-                           <div className="h-1 flex-1 bg-gradient-to-r from-cyan-500 to-indigo-500 mx-4 opacity-50 relative">
+                           <div className="h-1 flex-1 bg-gradient-to-r from-amber-500 to-yellow-500 mx-4 opacity-50 relative">
                               <span className="absolute -top-4 w-full text-center text-[9px] text-slate-400 font-mono tracking-widest">TLS / WAF</span>
                            </div>
 
                            {/* Core API */}
                            <div className="flex flex-col items-center gap-2">
-                              <div className="w-20 h-20 rounded-2xl bg-indigo-500/20 border-2 border-indigo-500 flex flex-col items-center justify-center text-indigo-400 relative shadow-[0_0_30px_rgba(79,70,229,0.4)]">
+                              <div className="w-20 h-20 rounded-2xl bg-yellow-500/20 border-2 border-yellow-500 flex flex-col items-center justify-center text-yellow-400 relative shadow-[0_0_30px_rgba(79,70,229,0.4)]">
                                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-emerald-500 rounded-full animate-pulse border border-black shadow-[0_0_5px_#10b981]" />
                                  <Server size={32} />
                                  <span className="text-[8px] mt-1 font-black leading-none uppercase">API Gateway</span>
                               </div>
-                              <span className="text-[10px] font-black uppercase text-indigo-400 tracking-widest mt-2">Core API</span>
+                              <span className="text-[10px] font-black uppercase text-yellow-400 tracking-widest mt-2">Core API</span>
                            </div>
 
-                           <div className="h-1 flex-1 bg-gradient-to-r from-indigo-500 to-rose-500 mx-4 opacity-50 relative flex flex-col items-center">
+                           <div className="h-1 flex-1 bg-gradient-to-r from-yellow-500 to-amber-500 mx-4 opacity-50 relative flex flex-col items-center">
                               <span className="absolute -top-4 w-full text-center text-[9px] text-slate-400 font-mono tracking-widest">gRPC / NAT</span>
                            </div>
 
@@ -1334,10 +1345,10 @@ export default function SystemFactoryView() {
                                  <span className="text-[10px] font-black uppercase text-orange-400 tracking-widest">PostgreSQL</span>
                               </div>
                               <div className="flex items-center gap-4">
-                                 <div className="w-12 h-12 rounded-lg bg-rose-500/10 border border-rose-500/50 flex items-center justify-center text-rose-400">
+                                 <div className="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/50 flex items-center justify-center text-amber-400">
                                     <ActivitySquare size={20} />
                                  </div>
-                                 <span className="text-[10px] font-black uppercase text-rose-400 tracking-widest">Neo4j</span>
+                                 <span className="text-[10px] font-black uppercase text-amber-400 tracking-widest">Neo4j</span>
                               </div>
                               <div className="flex items-center gap-4">
                                  <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
@@ -1356,7 +1367,7 @@ export default function SystemFactoryView() {
                            <span className="text-xs font-mono text-white">Н/д</span>
                         </div>
                         <div className="flex flex-col gap-1 items-center border-r border-white/5">
-                           <HardDrive size={14} className="text-violet-400 mb-1" />
+                           <HardDrive size={14} className="text-slate-400 mb-1" />
                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Постійні Томи (Vol)</span>
                            <span className="text-xs font-mono text-white">Потрібен endpoint</span>
                         </div>
@@ -1372,9 +1383,9 @@ export default function SystemFactoryView() {
 
              {activeTab === 'cicd' && (
                <motion.div key="cicd" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                  <section className="page-section section-violet shadow-xl overflow-hidden mt-6">
+                  <section className="page-section section-amber shadow-xl overflow-hidden mt-6">
                     <div className="section-header">
-                      <div className="section-dot-violet" />
+                      <div className="section-dot-amber" />
                       <h2 className="section-title">Конвеєр Вдосконалення Системи</h2>
                     </div>
                     <div className="p-6 relative overflow-hidden">
@@ -1408,20 +1419,20 @@ export default function SystemFactoryView() {
                        </div>
                        
                        <div className="mt-8 grid grid-cols-3 gap-4">
-                          <div className="bg-slate-900/50 p-4 border border-indigo-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-indigo-500 transition-all duration-1000" style={{ width: `${systemScore.quality ?? 0}%` }} />
+                          <div className="bg-slate-900/50 p-4 border border-yellow-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-yellow-500 transition-all duration-1000" style={{ width: `${systemScore.quality ?? 0}%` }} />
                              <div className="text-[10px] text-slate-500 uppercase font-black">Якість Коду (Sonar)</div>
-                             <div className="text-2xl font-black text-indigo-400 mt-1">{systemScore.quality == null ? 'Н/д' : `${systemScore.quality}%`}</div>
+                             <div className="text-2xl font-black text-yellow-400 mt-1">{systemScore.quality == null ? 'Н/д' : `${systemScore.quality}%`}</div>
                           </div>
-                          <div className="bg-slate-900/50 p-4 border border-violet-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-violet-500 transition-all duration-1000" style={{ width: `${systemScore.coverage ?? 0}%` }} />
+                          <div className="bg-slate-900/50 p-4 border border-amber-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-amber-500 transition-all duration-1000" style={{ width: `${systemScore.coverage ?? 0}%` }} />
                              <div className="text-[10px] text-slate-500 uppercase font-black">Тестове покриття</div>
-                             <div className="text-2xl font-black text-violet-400 mt-1">{systemScore.coverage == null ? 'Н/д' : `${systemScore.coverage}%`}</div>
+                             <div className="text-2xl font-black text-amber-400 mt-1">{systemScore.coverage == null ? 'Н/д' : `${systemScore.coverage}%`}</div>
                           </div>
-                          <div className="bg-slate-900/50 p-4 border border-rose-500/20 rounded-xl relative overflow-hidden group">
-                             <div className="absolute bottom-0 left-0 h-1 bg-rose-500 transition-all duration-1000" style={{ width: `${systemScore.security ?? 0}%` }} />
+                          <div className="bg-slate-900/50 p-4 border border-amber-500/20 rounded-xl relative overflow-hidden group">
+                             <div className="absolute bottom-0 left-0 h-1 bg-amber-500 transition-all duration-1000" style={{ width: `${systemScore.security ?? 0}%` }} />
                              <div className="text-[10px] text-slate-500 uppercase font-black">Безпека (Trivy + OPA)</div>
-                             <div className="text-2xl font-black text-rose-400 mt-1">{systemScore.security == null ? 'Н/д' : `${systemScore.security}%`}</div>
+                             <div className="text-2xl font-black text-amber-400 mt-1">{systemScore.security == null ? 'Н/д' : `${systemScore.security}%`}</div>
                           </div>
                        </div>
                     </div>
@@ -1431,9 +1442,9 @@ export default function SystemFactoryView() {
 
               {activeTab === 'bugfix' && (
                 <motion.div key="fix" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-950/40 to-slate-900/40 border border-red-500/20 rounded-2xl backdrop-blur-md">
+                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-amber-950/40 to-slate-900/40 border border-amber-500/20 rounded-2xl backdrop-blur-md">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+                      <div className="w-14 h-14 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
                         <Bug size={28} />
                       </div>
                       <div>
@@ -1443,7 +1454,7 @@ export default function SystemFactoryView() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="neon" className="bg-rose-600/20 text-rose-300 border-rose-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
+                    <Button variant="neon" className="bg-amber-600/20 text-amber-300 border-amber-500/50 text-[9px] uppercase font-black" onClick={() => bugs.filter(b => b.status === 'detected').forEach(b => handleFixBug(b.id))}>
                       <Zap size={12} className="mr-1" /> Автовиправити все
                     </Button>
                   </div>
@@ -1454,14 +1465,14 @@ export default function SystemFactoryView() {
                         "p-4 rounded-xl border backdrop-blur-md flex items-center justify-between transition-all",
                         bug.status === 'fixed' && "bg-emerald-950/20 border-emerald-500/20",
                         bug.status === 'fixing' && "bg-amber-950/20 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
-                        bug.status === 'detected' && "bg-red-950/20 border-red-500/20",
+                        bug.status === 'detected' && "bg-amber-950/10 border-amber-500/10",
                       )}>
                         <div className="flex items-center gap-4 w-full">
                           <div className={cn(
                             "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border",
-                            bug.severity === 'critical' ? "bg-red-500/20 text-red-400 border-red-500/50" : 
+                            bug.severity === 'critical' ? "bg-amber-600/20 text-amber-400 border-amber-500/50" : 
                             bug.severity === 'high' ? "bg-orange-500/20 text-orange-400 border-orange-500/50" : 
-                            bug.severity === 'medium' ? "bg-amber-500/20 text-amber-400 border-amber-500/50" : "bg-blue-500/20 text-blue-400 border-blue-500/50"
+                            bug.severity === 'medium' ? "bg-amber-500/20 text-amber-400 border-amber-500/50" : "bg-slate-700/20 text-slate-400 border-slate-500/50"
                           )}>
                              {bug.severity === 'critical' || bug.severity === 'high' ? <Flame size={18} /> : <Bug size={18} />}
                           </div>
@@ -1469,10 +1480,10 @@ export default function SystemFactoryView() {
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-[10px] font-mono text-slate-500">{bug.id}</span>
                               <Badge variant={bug.severity === 'critical' ? 'destructive' : bug.severity === 'high' ? 'outline' : 'default'} className={cn("text-[9px]", 
-                                  bug.severity === 'critical' && "bg-red-500/20 text-red-400",
+                                  bug.severity === 'critical' && "bg-amber-600/20 text-amber-400",
                                   bug.severity === 'high' && "bg-orange-500/20 text-orange-400",
                                   bug.severity === 'medium' && "bg-amber-500/20 text-amber-400",
-                                  bug.severity === 'low' && "bg-blue-500/20 text-blue-400"
+                                  bug.severity === 'low' && "bg-slate-700/20 text-slate-400"
                               )}>{bug.severity}</Badge>
                               <span className="text-[10px] text-slate-500 font-mono">{bug.component}</span>
                             </div>
@@ -1496,7 +1507,7 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="shrink-0">
                             {bug.status === 'detected' && (
-                              <Button variant="neon" size="sm" className="bg-red-600/20 text-red-300 border-red-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
+                              <Button variant="neon" size="sm" className="bg-amber-600/20 text-amber-300 border-amber-500/50 text-[9px] uppercase font-black" onClick={() => handleFixBug(bug.id)}>
                                 <Wrench size={12} className="mr-1" /> Виправити
                               </Button>
                             )}
@@ -1520,14 +1531,14 @@ export default function SystemFactoryView() {
 
               {activeTab === 'health' && (
                 <motion.div key="health" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
-                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-teal-950/40 to-cyan-950/40 border border-teal-500/30 rounded-2xl backdrop-blur-md">
+                  <div className="flex items-center justify-between p-5 bg-gradient-to-r from-amber-950/40 to-slate-900/40 border border-amber-500/30 rounded-2xl backdrop-blur-md">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
+                      <div className="w-14 h-14 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
                         <HeartPulse size={28} />
                       </div>
                       <div>
                         <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
-                        <p className="text-[10px] font-mono text-teal-400 uppercase">
+                        <p className="text-[10px] font-mono text-amber-400 uppercase">
                           СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
                         </p>
                       </div>
@@ -1548,13 +1559,13 @@ export default function SystemFactoryView() {
                         "p-4 rounded-xl border backdrop-blur-md flex items-center gap-4 transition-all",
                         hc.status === 'healthy' && "bg-emerald-950/10 border-emerald-500/20",
                         hc.status === 'degraded' && "bg-amber-950/10 border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
-                        hc.status === 'down' && "bg-red-950/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.1)]",
+                        hc.status === 'down' && "bg-amber-950/20 border-amber-600/30 shadow-[0_0_15px_rgba(245,158,11,0.1)]",
                       )}>
                         <div className={cn(
                           "w-10 h-10 rounded-lg border flex items-center justify-center shrink-0",
                           hc.status === 'healthy' && "bg-emerald-500/20 border-emerald-400/50 text-emerald-400",
                           hc.status === 'degraded' && "bg-amber-500/20 border-amber-400/50 text-amber-400",
-                          hc.status === 'down' && "bg-red-500/20 border-red-400/50 text-red-400",
+                          hc.status === 'down' && "bg-amber-600/20 border-amber-400/50 text-amber-500",
                         )}>
                            {hc.status === 'healthy' ? <CheckCircle2 size={20} /> : hc.status === 'degraded' ? <AlertTriangle size={20} /> : <XCircle size={20} />}
                         </div>
@@ -1565,7 +1576,7 @@ export default function SystemFactoryView() {
                           </div>
                           <div className="flex items-center gap-4 text-[10px] font-mono">
                             <span className={cn(
-                              hc.latency == null ? 'text-slate-500' : hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-red-400'
+                              hc.latency == null ? 'text-slate-500' : hc.latency < 20 ? 'text-emerald-400' : hc.latency < 50 ? 'text-amber-400' : 'text-amber-600'
                             )}>⚡ {hc.latency == null ? 'Н/д' : `${hc.latency}ms`}</span>
                             <span className="text-slate-500">Uptime: {hc.uptime}</span>
                             <span className="text-slate-600">{hc.lastCheckLabel}</span>
@@ -1575,7 +1586,7 @@ export default function SystemFactoryView() {
                           "px-3 py-1 rounded-lg text-[9px] font-black uppercase",
                           hc.status === 'healthy' && "bg-emerald-500/20 text-emerald-400",
                           hc.status === 'degraded' && "bg-amber-500/20 text-amber-400",
-                          hc.status === 'down' && "bg-red-500/20 text-red-400",
+                          hc.status === 'down' && "bg-amber-600/20 text-amber-400",
                         )}>
                           {hc.status === 'healthy' ? 'ЗДОРОВИЙ' : hc.status === 'degraded' ? 'ДЕГРАДАЦІЯ' : 'НЕДОСТУПНИЙ'}
                         </div>
@@ -1612,12 +1623,12 @@ export default function SystemFactoryView() {
                        </div>
                        <CheckCircle2 className="text-emerald-500/50" size={32} />
                      </div>
-                     <div className="bg-slate-900/50 border border-cyan-500/20 p-4 rounded-xl flex items-center justify-between">
-                       <div>
-                         <div className="text-[10px] text-slate-500 uppercase font-black uppercase tracking-widest">Ротація Проксі (Proxy)</div>
-                         <div className="text-2xl text-cyan-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
+                     <div className="bg-slate-900/50 border border-amber-500/20 p-4 rounded-xl flex items-center justify-between">
+                       <div className="flex flex-col">
+                         <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Ротація Проксі (Proxy)</span>
+                         <div className="text-2xl text-amber-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
                        </div>
-                       <Network className="text-cyan-500/50" size={32} />
+                       <Network className="text-amber-500/50" size={32} />
                      </div>
                    </div>
 
@@ -1627,8 +1638,8 @@ export default function SystemFactoryView() {
                          <Terminal size={14} className="text-orange-500" /> Жива Стрічка Інгестії
                        </span>
                        <div className="flex gap-2">
-                         <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                         <div className="text-[10px] text-red-400 font-mono font-bold uppercase">Запис (Recording)</div>
+                         <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                         <div className="text-[10px] text-amber-400 font-mono font-bold uppercase">Запис</div>
                        </div>
                      </div>
                      <div className="divide-y divide-slate-800/50 h-[300px] overflow-y-auto custom-scrollbar">
@@ -1660,10 +1671,10 @@ export default function SystemFactoryView() {
                 <motion.div key="infinite" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
 
                   {/* ═══ 1. ЗАГОЛОВОК OODA ═══ */}
-                  <div className="relative rounded-3xl border border-violet-500/30 bg-gradient-to-br from-violet-950/60 via-slate-950/80 to-fuchsia-950/40 backdrop-blur-xl p-6 lg:p-8">
+                  <div className="relative rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/60 via-slate-950/80 to-yellow-950/40 backdrop-blur-xl p-6 lg:p-8 shadow-[0_0_50px_rgba(212,175,55,0.1)]">
                     {infiniteRunning && (
                       <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-violet-500/5 animate-ping" style={{ animationDuration: '3s' }} />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-amber-500/5 animate-ping" style={{ animationDuration: '3s' }} />
                       </div>
                     )}
                     <div className="relative z-10 flex flex-col gap-6">
@@ -1672,17 +1683,17 @@ export default function SystemFactoryView() {
                         <div className="flex items-center gap-5 min-w-0">
                           <div className="relative shrink-0">
                             <div className={cn('w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 flex items-center justify-center transition-all duration-500',
-                              infiniteRunning ? 'bg-violet-500/20 border-violet-400 shadow-[0_0_30px_rgba(139,92,246,0.6)]' : 'bg-slate-900/80 border-slate-600'
+                              infiniteRunning ? 'bg-amber-500/20 border-amber-400 shadow-[0_0_30px_rgba(212,175,55,0.6)]' : 'bg-slate-900/80 border-slate-600'
                             )}>
-                              <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-violet-300 animate-pulse' : 'text-slate-500')} />
+                              <Infinity size={28} className={cn('transition-all', infiniteRunning ? 'text-amber-300 animate-pulse' : 'text-slate-500')} />
                             </div>
-                            {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-violet-400/30 animate-ping opacity-40" />}
+                            {infiniteRunning && <div className="absolute -inset-1 rounded-2xl border border-amber-400/30 animate-ping opacity-40" />}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-[10px] text-violet-400 font-black uppercase tracking-[0.15em] mb-1">🔄 ЦИКЛ OODA • АВТОНОМНИЙ ДВИГУН ВДОСКОНАЛЕННЯ</div>
+                            <div className="text-[10px] text-amber-400 font-black uppercase tracking-[0.15em] mb-1">🔄 ЦИКЛ OODA • АВТОНОМНИЙ ДВИГУН ВДОСКОНАЛЕННЯ</div>
                             <h2 className="text-lg lg:text-2xl font-black text-white leading-tight">
                               {infiniteRunning ? (
-                                <><span className="text-violet-300">АКТИВНИЙ</span> <span className="text-slate-500">—</span> Цикл <span className="text-violet-200 font-mono">#{infiniteStats.cycles + 1}</span></>
+                                <><span className="text-amber-300">АКТИВНИЙ</span> <span className="text-slate-500">—</span> Цикл <span className="text-amber-200 font-mono">#{infiniteStats.cycles + 1}</span></>
                               ) : (
                                 <><span className="text-slate-400">ЗУПИНЕНО</span> <span className="text-slate-600">—</span> <span className="text-slate-500">Очікує команди</span></>
                               )}
@@ -1697,8 +1708,8 @@ export default function SystemFactoryView() {
                           onClick={handleInfiniteCycle}
                           className={cn('h-12 px-8 font-black tracking-widest uppercase text-sm transition-all shrink-0 w-full lg:w-auto rounded-xl',
                             infiniteRunning
-                              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_25px_rgba(225,29,72,0.5)] border border-rose-400/30'
-                              : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-[0_0_25px_rgba(139,92,246,0.5)] border border-violet-400/30'
+                              ? 'bg-amber-700 hover:bg-amber-600 text-white shadow-[0_0_25px_rgba(212,175,55,0.4)] border border-amber-400/30'
+                              : 'bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white shadow-[0_0_25px_rgba(212,175,55,0.5)] border border-amber-400/30'
                           )}
                         >
                           {infiniteRunning ? <><Power size={16} className="mr-2" />ЗУПИНИТИ</> : <><Play size={16} className="mr-2" />ЗАПУСТИТИ</>}
@@ -1706,7 +1717,7 @@ export default function SystemFactoryView() {
                       </div>
 
                       {/* Рядок бейджів */}
-                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-violet-500/5 border border-violet-500/15 rounded-2xl p-4">
+                      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center bg-amber-500/5 border border-amber-500/15 rounded-2xl p-4">
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge className={cn(
                             'border text-[10px] font-black uppercase tracking-widest px-3 py-1',
@@ -1716,10 +1727,10 @@ export default function SystemFactoryView() {
                           )}>
                             Сервер: {infiniteRunning ? 'АКТИВНИЙ' : 'ЗУПИНЕНИЙ'}
                           </Badge>
-                          <Badge className="border border-violet-400/20 bg-violet-500/10 text-violet-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
+                          <Badge className="border border-amber-400/20 bg-amber-500/10 text-amber-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                             Автовідновлення
                           </Badge>
-                          <Badge className="border border-sky-400/20 bg-sky-500/10 text-sky-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
+                          <Badge className="border border-slate-400/20 bg-slate-500/10 text-slate-200 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                             Збереження стану
                           </Badge>
                         </div>
@@ -1734,9 +1745,9 @@ export default function SystemFactoryView() {
                   {/* ═══ 2. СТАТИСТИКА ═══ */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20' },
+                      { label: 'Циклів OODA', value: infiniteStats.cycles, icon: RefreshCw, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
                       { label: 'Покращень', value: infiniteStats.improvements, icon: Zap, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
-                      { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20' },
+                      { label: 'Багів виправлено', value: bugs.filter(b => b.status === 'fixed').length, icon: CheckCircle2, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
                     ].map(s => {
                       const Icon = s.icon;
                       return (
@@ -1756,17 +1767,17 @@ export default function SystemFactoryView() {
                   {/* ═══ 3. OODA ФАЗИ ═══ */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
-                      { id: 'observe', label: 'ОБСЕРВАЦІЯ', sub: 'Збір метрик', icon: Eye, color: 'cyan' },
-                      { id: 'orient', label: 'ОРІЄНТАЦІЯ', sub: 'Аналіз даних', icon: BrainCircuit, color: 'fuchsia' },
-                      { id: 'decide', label: 'РІШЕННЯ', sub: 'Вибір стратегії', icon: Cog, color: 'amber' },
+                      { id: 'observe', label: 'ОБСЕРВАЦІЯ', sub: 'Збір метрик', icon: Eye, color: 'slate' },
+                      { id: 'orient', label: 'ОРІЄНТАЦІЯ', sub: 'Аналіз даних', icon: BrainCircuit, color: 'amber' },
+                      { id: 'decide', label: 'РІШЕННЯ', sub: 'Вибір стратегії', icon: Cog, color: 'orange' },
                       { id: 'act', label: 'ДІЯ', sub: 'Деплой / Фікс', icon: Zap, color: 'emerald' },
                     ].map((phase, idx) => {
                       const Icon = phase.icon;
                       const isActive = infinitePhase === phase.id && infiniteRunning;
                       const colorStyles: Record<string, { border: string; text: string; bg: string; glow: string }> = {
-                        cyan:    { border: 'border-cyan-500/60',    text: 'text-cyan-300',    bg: 'bg-cyan-900/30',    glow: '0 0 20px rgba(6,182,212,0.5)' },
-                        fuchsia: { border: 'border-fuchsia-500/60', text: 'text-fuchsia-300', bg: 'bg-fuchsia-900/30', glow: '0 0 20px rgba(217,70,239,0.5)' },
+                        slate:   { border: 'border-slate-500/60',   text: 'text-slate-300',   bg: 'bg-slate-900/30',   glow: '0 0 20px rgba(148,163,184,0.3)' },
                         amber:   { border: 'border-amber-500/60',   text: 'text-amber-300',   bg: 'bg-amber-900/30',   glow: '0 0 20px rgba(245,158,11,0.5)' },
+                        orange:  { border: 'border-orange-500/60',  text: 'text-orange-300',  bg: 'bg-orange-900/30',  glow: '0 0 20px rgba(249,115,22,0.5)' },
                         emerald: { border: 'border-emerald-500/60', text: 'text-emerald-300', bg: 'bg-emerald-900/30', glow: '0 0 20px rgba(16,185,129,0.5)' },
                       };
                       const cs = colorStyles[phase.color];
@@ -1796,16 +1807,16 @@ export default function SystemFactoryView() {
                   </div>
 
                   {/* ═══ 4. ЖИВИЙ ТЕРМІНАЛ ═══ */}
-                  <div className="rounded-2xl border border-slate-800 bg-slate-950/90 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-slate-900/60">
+                  <div className="rounded-2xl border border-amber-500/20 bg-slate-950/90 overflow-hidden shadow-inner">
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-amber-500/20 bg-amber-500/5">
                       <div className="flex items-center gap-2 min-w-0">
                         <div className="flex gap-1.5 shrink-0">
-                          <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                           <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                         </div>
                         <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2 truncate">
-                          <Terminal size={11} className="inline mr-1 text-violet-400" />
+                          <Terminal size={11} className="inline mr-1 text-amber-400" />
                           PREDATOR-OODA — ЖИВА ТРАНСЛЯЦІЯ
                         </span>
                       </div>
@@ -1815,9 +1826,9 @@ export default function SystemFactoryView() {
                             key="rec"
                             animate={{ opacity: [1, 0.3, 1] }}
                             transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-                            className="flex items-center gap-1.5 text-rose-400 text-[9px] font-black uppercase"
+                            className="flex items-center gap-1.5 text-amber-400 text-[9px] font-black uppercase"
                           >
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" /> REC
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> REC
                           </motion.div>
                         )}
                         <span className="text-[9px] font-mono text-slate-600">логи: {infiniteLogs.length}/50</span>
@@ -1832,12 +1843,12 @@ export default function SystemFactoryView() {
                       )}
                       {infiniteLogs.map((log, i) => {
                         let cls = 'text-slate-400';
-                        if (log.includes('OBSERVE')) cls = 'text-cyan-400';
-                        else if (log.includes('ORIENT')) cls = 'text-fuchsia-400';
-                        else if (log.includes('DECIDE')) cls = 'text-amber-400';
+                        if (log.includes('OBSERVE')) cls = 'text-slate-300';
+                        else if (log.includes('ORIENT')) cls = 'text-amber-400';
+                        else if (log.includes('DECIDE')) cls = 'text-orange-400';
                         else if (log.includes('ACT') || log.includes('✅')) cls = 'text-emerald-400';
-                        else if (log.includes('SYSTEM')) cls = 'text-violet-300 font-black';
-                        else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-rose-400';
+                        else if (log.includes('SYSTEM')) cls = 'text-amber-300 font-black';
+                        else if (log.includes('❌') || log.includes('ERROR')) cls = 'text-amber-500';
                         return (
                           <motion.div
                             key={i}
@@ -1851,7 +1862,7 @@ export default function SystemFactoryView() {
                         );
                       })}
                       {infiniteRunning && (
-                        <div className="flex items-center gap-2 text-violet-400 mt-2">
+                        <div className="flex items-center gap-2 text-amber-400 mt-2">
                           <Loader2 size={11} className="animate-spin" />
                           <span className="animate-pulse">
                             {infiniteLogs[infiniteLogs.length - 1]?.includes('ERROR') 
@@ -1864,58 +1875,15 @@ export default function SystemFactoryView() {
                   </div>
                 </motion.div>
               )}
-
            </AnimatePresence>
         </div>
       </div>
 
-      {/* ── НИЖНЯ ПАНЕЛЬ: AI COMMAND CENTER (Чат-Координатор) ── */}
-      <footer className="w-full mt-12 bg-slate-950/60 border-t border-cyan-500/10 backdrop-blur-xl relative z-20">
-        <div className="max-w-[1800px] mx-auto px-4 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
-          
-          {/* Main Action Banner */}
-          <div className="lg:w-1/3 flex flex-col justify-center">
-             <motion.div 
-               whileHover={{ scale: 1.01 }}
-               whileTap={{ scale: 0.99 }}
-               className="relative group cursor-pointer"
-               onClick={startEveryFunction}
-             >
-                <div className="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative px-7 py-6 bg-slate-950 ring-1 ring-violet-500/40 rounded-2xl leading-none flex items-center justify-center gap-4 text-white shadow-2xl">
-                   <div className="w-12 h-12 rounded-full bg-violet-600/20 flex items-center justify-center text-violet-400">
-                      <Power size={24} />
-                   </div>
-                   <div className="flex flex-col gap-1">
-                      <span className="text-sm font-black tracking-[0.2em] uppercase text-violet-100">Головний Запуск</span>
-                      <span className="text-[10px] font-mono text-violet-400 group-hover:text-violet-300 transition-colors uppercase">Ініціювати повний OODA цикл</span>
-                   </div>
-                   <div className="ml-auto flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-violet-500/50 uppercase">Ready</span>
-                      <ChevronRight size={16} className="text-violet-500" />
-                   </div>
-                </div>
-             </motion.div>
-             
-             <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/50 flex flex-col gap-1">
-                   <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Latency</span>
-                   <span className="text-xs font-mono text-cyan-400">142ms</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/50 flex flex-col gap-1">
-                   <span className="text-[9px] uppercase tracking-wider text-slate-500 font-bold">Sync</span>
-                   <span className={cn("text-xs font-mono", isBackendOffline ? "text-red-500" : "text-emerald-400")}>
-                      {isBackendOffline ? "Offline" : "Live"}
-                   </span>
-                </div>
-             </div>
-          </div>
-
           {/* AI Coordinator Terminal */}
           <div className="lg:w-2/3">
-             <section className="page-section section-cyan h-[500px] flex flex-col p-0 border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.05)]">
+             <section className="page-section section-amber h-[500px] flex flex-col p-0 border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.05)]">
                <div className="section-header px-6 pt-6 mb-2">
-                 <div className="section-dot-cyan" />
+                 <div className="section-dot-amber" />
                  <div>
                    <h2 className="section-title">Інтерфейс AI-Координатора</h2>
                    <p className="section-subtitle">Прямий канал управління OODA-ядро</p>
@@ -1939,15 +1907,15 @@ export default function SystemFactoryView() {
                            <div className={cn(
                              "max-w-[85%] p-4 rounded-2xl text-[13px] relative shadow-lg",
                              msg.sender === 'user' 
-                               ? "bg-gradient-to-br from-indigo-600 to-indigo-700 text-indigo-50 rounded-tr-none border border-indigo-400/30" 
-                               : "bg-slate-900/90 border border-emerald-500/20 text-emerald-50 rounded-tl-none ring-1 ring-emerald-500/5"
+                               ? "bg-gradient-to-br from-amber-600 to-amber-700 text-amber-50 rounded-tr-none border border-amber-400/30" 
+                               : "bg-slate-900/90 border border-amber-500/20 text-amber-50 rounded-tl-none ring-1 ring-amber-500/5"
                            )}>
                               {msg.sender === 'system' && (
-                                <Bot size={14} className="absolute -left-7 top-1 text-emerald-500 opacity-50" />
+                                <Bot size={14} className="absolute -left-7 top-1 text-amber-500 opacity-50" />
                               )}
                               <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                               {msg.sender === 'user' && (
-                                <div className="absolute -right-7 top-1 text-indigo-500/50">
+                                <div className="absolute -right-7 top-1 text-yellow-500/50">
                                    <div className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[8px] font-bold">U</div>
                                 </div>
                               )}
@@ -1972,7 +1940,7 @@ export default function SystemFactoryView() {
                   </div>
 
                   {/* Input Interface */}
-                  <div className="p-4 bg-slate-900/40 border-t border-cyan-500/10 backdrop-blur-md">
+                  <div className="p-4 bg-slate-900/40 border-t border-amber-500/10 backdrop-blur-md">
                      <form 
                        onSubmit={(e) => { 
                          e.preventDefault(); 
@@ -1988,7 +1956,7 @@ export default function SystemFactoryView() {
                          value={inputText}
                          onChange={(e) => setInputText(e.target.value)}
                          placeholder="Введіть команду (напр. 'статус k8s', 'оптимізуй затримку' або 'виправ критичні баги')..."
-                         className="w-full bg-black/60 border border-slate-700/50 focus:border-cyan-500/50 rounded-xl py-4.5 pl-5 pr-14 text-sm text-cyan-50 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-mono shadow-inner"
+                         className="w-full bg-black/60 border border-slate-700/50 focus:border-amber-500/50 rounded-xl py-4.5 pl-5 pr-14 text-sm text-amber-50 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-amber-500/20 transition-all font-mono shadow-inner"
                          spellCheck="false"
                          autoFocus
                        />
@@ -1998,7 +1966,7 @@ export default function SystemFactoryView() {
                          className={cn(
                            "absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center transition-all shadow-xl",
                            inputText.trim() && !isProcessing 
-                            ? "bg-cyan-500 hover:bg-cyan-400 text-black scale-100" 
+                            ? "bg-amber-500 hover:bg-amber-400 text-black scale-100" 
                             : "bg-slate-800 text-slate-600 scale-95 opacity-50"
                          )}
                        >
@@ -2007,20 +1975,16 @@ export default function SystemFactoryView() {
                      </form>
                      <div className="mt-3 flex items-center gap-4 px-1">
                         <div className="flex items-center gap-1.5">
-                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                           <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Live Engine</span>
+                           <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                           <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Ядро Системи</span>
                         </div>
                         <div className="h-3 w-px bg-slate-800"></div>
-                        <span className="text-[9px] text-slate-600 uppercase tracking-wider italic">Enter to submit commander request</span>
+                         <span className="text-[9px] text-slate-600 uppercase tracking-wider italic">Натисніть Enter для відправки запиту</span>
                      </div>
                   </div>
                </div>
              </section>
           </div>
-        </div>
-      </footer>
-
-
     </div>
   </PageTransition>
   );

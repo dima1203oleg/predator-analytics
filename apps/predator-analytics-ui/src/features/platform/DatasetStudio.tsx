@@ -1,5 +1,5 @@
 /**
- * 📊 Dataset Studio v56 — OSINT Command Center Integration
+ * 📊 Dataset Studio v57 — OSINT Command Center Integration
  *
  * Інтеграція Data Forge, OSINT Command Center, CERS та управління LLM-моделями.
  * Тепер включає потужну візуалізацію 250+ реєстрів та 12 OSINT-інструментів.
@@ -98,7 +98,7 @@ const DatasetStudio: React.FC = () => {
         { id: 'osint-graph', label: 'OSINT ГРАФ', icon: <Network size={16} className="text-cyan-400" /> },
         { id: 'datasets', label: 'ДАТАСЕТИ & МОДЕЛІ', icon: <Database size={16} /> },
         { id: 'ml-studio', label: 'ML STUDIO', icon: <BrainCircuit size={16} className="text-purple-400" /> },
-        { id: 'graph', label: 'CERS ПРОФІЛЬ', icon: <Activity size={16} className="text-indigo-400" /> },
+        { id: 'graph', label: 'CERS ПРОФІЛЬ', icon: <Activity size={16} className="text-yellow-400" /> },
     ];
 
     return (
@@ -185,7 +185,7 @@ const DatasetStudio: React.FC = () => {
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                            <Activity size={16} className="text-indigo-400" /> {premiumLocales.datasetStudio.panels.pipeline.title}
+                                            <Activity size={16} className="text-yellow-400" /> {premiumLocales.datasetStudio.panels.pipeline.title}
                                         </h3>
                                     </div>
                                     <DatabasePipelineMonitor />
@@ -200,10 +200,10 @@ const DatasetStudio: React.FC = () => {
                                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.datasetStudio.panels.generation.prototype.label}</label>
                                             <div className={cn(
                                                 "p-4 rounded-2xl border transition-all flex items-center justify-between",
-                                                activePrototypeId ? "bg-indigo-500/10 border-indigo-500/30" : "bg-slate-900 border-white/5"
+                                                activePrototypeId ? "bg-yellow-500/10 border-yellow-500/30" : "bg-slate-900 border-white/5"
                                             )}>
                                                 <div className="flex items-center gap-3">
-                                                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", activePrototypeId ? "bg-indigo-500 text-white" : "bg-slate-800 text-slate-500")}>
+                                                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", activePrototypeId ? "bg-yellow-500 text-white" : "bg-slate-800 text-slate-500")}>
                                                         <Target size={20} />
                                                     </div>
                                                     <div>
@@ -218,7 +218,7 @@ const DatasetStudio: React.FC = () => {
                                         <div className="space-y-4">
                                             <div className="flex justify-between items-end">
                                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">РІВЕНЬ АУГМЕНТАЦІЇ</label>
-                                                <span className="text-xs font-mono font-bold text-indigo-400">{augmentationLevel}%</span>
+                                                <span className="text-xs font-mono font-bold text-yellow-400">{augmentationLevel}%</span>
                                             </div>
                                             <input
                                                 type="range"
@@ -226,7 +226,7 @@ const DatasetStudio: React.FC = () => {
                                                 max="100"
                                                 value={augmentationLevel}
                                                 onChange={(e) => setAugmentationLevel(parseInt(e.target.value))}
-                                                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                                                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-yellow-500"
                                             />
                                             <div className="flex justify-between text-[10px] text-slate-600 font-mono">
                                                 <span>Швидко</span>
@@ -263,7 +263,7 @@ const DatasetStudio: React.FC = () => {
                                             className={cn(
                                                 "w-full py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-3",
                                                 activePrototypeId
-                                                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:scale-[1.02] shadow-xl shadow-indigo-600/30"
+                                                    ? "bg-gradient-to-r from-yellow-600 to-purple-600 text-white hover:scale-[1.02] shadow-xl shadow-yellow-600/30"
                                                     : "bg-slate-800 text-slate-600 cursor-not-allowed"
                                             )}
                                         >
@@ -339,18 +339,18 @@ const DatasetStudio: React.FC = () => {
                                             <div className="space-y-3">
                                                 <div className="flex items-center justify-between p-2 rounded bg-slate-950/50 border border-slate-800/50">
                                                     <div className="flex items-center gap-2">
-                                                        <Cpu className="w-3 h-3 text-indigo-400" />
+                                                        <Cpu className="w-3 h-3 text-yellow-400" />
                                                         <span className="text-[10px] font-bold text-slate-300">{mlStatus?.ollama?.embedding_engine || 'nomic-embed-text'}</span>
                                                     </div>
-                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-black border border-indigo-500/30">БАЗОВИЙ</span>
+                                                    <span className="text-[8px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 font-black border border-yellow-500/30">БАЗОВИЙ</span>
                                                 </div>
 
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <button 
                                                         onClick={() => mlStudioApi.updateEmbeddingsConfig('nomic-embed-text')}
-                                                        className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-indigo-500/50 transition-all group"
+                                                        className="flex flex-col items-center justify-center p-2 rounded bg-slate-950/40 border border-slate-800/50 hover:border-yellow-500/50 transition-all group"
                                                     >
-                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-indigo-400 mb-1 uppercase tracking-tighter">ПОТУЖНІСТЬ</span>
+                                                        <span className="text-[8px] font-black text-slate-500 group-hover:text-yellow-400 mb-1 uppercase tracking-tighter">ПОТУЖНІСТЬ</span>
                                                         <span className="text-[10px] font-bold text-slate-300">Векторний Пошук</span>
                                                     </button>
                                                     <button 
@@ -370,7 +370,7 @@ const DatasetStudio: React.FC = () => {
                                                 <motion.div 
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${mlStatus?.gpu_cluster?.utilization || 0}%` }}
-                                                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-500"
+                                                    className="h-full bg-gradient-to-r from-purple-500 to-yellow-500"
                                                 />
                                             </div>
                                             <div className="flex justify-between text-[10px] font-mono text-slate-400">
@@ -382,13 +382,13 @@ const DatasetStudio: React.FC = () => {
                                         <div className="pt-4 border-t border-white/5 space-y-2">
                                             <div className="text-[10px] text-slate-500 font-bold uppercase">Активні задачі:</div>
                                             {mlStatus?.active_training?.map((job: any) => (
-                                                <div key={job.job_id} className="p-3 rounded-xl bg-slate-950/50 border border-indigo-500/20">
+                                                <div key={job.job_id} className="p-3 rounded-xl bg-slate-950/50 border border-yellow-500/20">
                                                     <div className="flex justify-between items-center mb-2">
                                                         <span className="text-[10px] font-bold text-white">{job.model}</span>
-                                                        <span className="text-[9px] font-mono text-indigo-400">{job.progress}%</span>
+                                                        <span className="text-[9px] font-mono text-yellow-400">{job.progress}%</span>
                                                     </div>
                                                     <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
-                                                        <div className="h-full bg-indigo-500" style={{ width: `${job.progress}%` }} />
+                                                        <div className="h-full bg-yellow-500" style={{ width: `${job.progress}%` }} />
                                                     </div>
                                                 </div>
                                             ))}
@@ -433,7 +433,7 @@ const DatasetStudio: React.FC = () => {
                                                 <button
                                                     onClick={handleLoraTrain}
                                                     disabled={isLoraTraining}
-                                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-3"
+                                                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 to-yellow-600 text-white font-black text-[10px] tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-purple-600/20 flex items-center justify-center gap-3"
                                                 >
                                                     {isLoraTraining ? <RefreshCw className="animate-spin" size={14} /> : <Zap size={14} />}
                                                     ЗАПУСТИТИ LoRA АДАПТАЦІЮ
@@ -466,7 +466,7 @@ const DatasetStudio: React.FC = () => {
                                                                     </div>
                                                                 </td>
                                                                 <td className="px-4 py-3 text-right">
-                                                                    <div className="text-[10px] font-mono text-indigo-400">acc: {(run.metrics.accuracy * 100).toFixed(1)}%</div>
+                                                                    <div className="text-[10px] font-mono text-yellow-400">acc: {(run.metrics.accuracy * 100).toFixed(1)}%</div>
                                                                     <div className="text-[9px] font-mono text-slate-500">f1: {run.metrics.f1.toFixed(3)}</div>
                                                                 </td>
                                                             </tr>
@@ -479,10 +479,10 @@ const DatasetStudio: React.FC = () => {
                                 </div>
 
                                 {/* Active Learning Feedback Loop */}
-                                <div className="p-8 rounded-[2rem] bg-gradient-to-br from-indigo-950/30 to-slate-950 border border-indigo-500/10 flex items-center justify-between group overflow-hidden relative">
+                                <div className="p-8 rounded-[2rem] bg-gradient-to-br from-yellow-950/30 to-slate-950 border border-yellow-500/10 flex items-center justify-between group overflow-hidden relative">
                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
                                     <div className="relative z-10 flex items-center gap-6">
-                                        <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-500 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                                        <div className="w-16 h-16 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 group-hover:scale-110 group-hover:bg-yellow-500/20 transition-all duration-500 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
                                             <RefreshCw size={32} />
                                         </div>
                                         <div>
@@ -493,7 +493,7 @@ const DatasetStudio: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="relative z-10 text-right">
-                                        <div className="text-2xl font-mono font-bold text-indigo-400 mb-1">428</div>
+                                        <div className="text-2xl font-mono font-bold text-yellow-400 mb-1">428</div>
                                         <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Зразків у Черзі</div>
                                     </div>
                                 </div>
@@ -513,7 +513,7 @@ const DatasetStudio: React.FC = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                        <Activity size={16} className="text-indigo-400" /> CERS Профіль Сутності
+                                        <Activity size={16} className="text-yellow-400" /> CERS Профіль Сутності
                                     </h3>
                                 </div>
                                 <div className="h-[500px]">
@@ -522,8 +522,8 @@ const DatasetStudio: React.FC = () => {
                             </div>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-sm font-black text-rose-400 uppercase tracking-widest flex items-center gap-2">
-                                        <Network size={16} className="text-rose-400" /> Граф зв'язків (Neo4j)
+                                    <h3 className="text-sm font-black text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                                        <Network size={16} className="text-amber-400" /> Граф зв'язків (Neo4j)
                                     </h3>
                                 </div>
                                 <InvestigationCanvasWidget edrpou="39485746" />

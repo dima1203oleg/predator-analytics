@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Trophy, Activity, Cpu, Zap, Plus } from 'lucide-react';
+import { Trophy, Activity, Cpu, Zap, Plus, Server } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { NasTournament, ModelCandidate } from '@/types';
 import { useToast } from '@/context/ToastContext';
-import { useSuperIntelligence } from '@/context/SuperIntelligenceContext';
+import { useSuperIntelligence } from '@/hooks/useSuperIntelligence';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { api } from '@/services/api';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // Extracted Sub-views
 import { NasArenaView } from '@/components/nas/NasArenaView';
@@ -16,8 +16,33 @@ import { NasLeaderboardView } from '@/components/nas/NasLeaderboardView';
 import { NasCreateTournamentModal } from '@/components/nas/NasCreateTournamentModal';
 
 const NasView: React.FC = () => {
+    const { isOffline, nodeSource } = useBackendStatus();
     const toast = useToast();
     const { isActive: isGodMode, stage: godStage, currentScenario } = useSuperIntelligence();
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'NAS_Orchestrator',
+                    message: 'ГЕНЕТИЧНИЙ АЛГОРИТМ ПЕРЕКЛЮЧЕНО НА ЛОКАЛЬНИЙ ЕМУЛЯТОР (NAS_OFFLINE). Траєкторії еволюції можуть бути неточними.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'NAS_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'NAS_Orchestrator',
+                    message: 'СИНХРОНІЗАЦІЯ З ЕВОЛЮЦІЙНИМ ГРІДОМ УСПІШНА (NAS_SUCCESS). Моделі SOTA доступні.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'NAS_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline]);
 
     const [activeTab, setActiveTab] = useState<'ARENA' | 'LEADERBOARD' | 'PROVIDERS'>('ARENA');
     const [tournaments, setTournaments] = useState<NasTournament[]>([]);
@@ -143,9 +168,9 @@ const NasView: React.FC = () => {
                 icon={<Trophy size={20} className="icon-3d-amber" />}
                 breadcrumbs={['ІНТЕЛЕКТ', 'NAS ТУРНІР']}
                 stats={[
-                    { label: 'Активна Арена', value: String(tournaments.filter(t => t.status === 'RUNNING').length), icon: <Activity size={14} />, color: 'success', animate: true },
-                    { label: 'Години GPU', value: '1,420h', icon: <Cpu size={14} />, color: 'primary' },
-                    { label: 'AI Важіль', value: '88%', icon: <Zap size={14} />, color: 'success' },
+                    { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+                    { label: 'АКТИВНА АРЕНА', value: String(tournaments.filter(t => t.status === 'RUNNING').length), icon: <Activity size={14} />, color: 'success', animate: true },
+                    { label: 'AI ВАЖІЛЬ', value: '88%', icon: <Zap size={14} />, color: 'success' },
                 ]}
                 actions={
                     <button

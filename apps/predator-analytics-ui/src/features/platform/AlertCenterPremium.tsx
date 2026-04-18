@@ -9,6 +9,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { api } from '@/services/api';
 import { premiumLocales } from '@/locales/uk/premium';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RiskLevelValue } from '@/types/intelligence';
 import {
   Bell,
   BellOff,
@@ -47,7 +48,7 @@ import {
 // Types
 // ========================
 
-type AlertPriority = 'critical' | 'high' | 'medium' | 'low';
+type AlertPriority = RiskLevelValue;
 type AlertStatus = 'active' | 'acknowledged' | 'resolved' | 'snoozed';
 type AlertCategory = 'price' | 'competitor' | 'risk' | 'market' | 'system';
 
@@ -86,17 +87,21 @@ interface AlertRule {
 // Components
 // ========================
 
-const priorityConfig = {
-  critical: { color: 'rose', icon: AlertTriangle, label: premiumLocales.alertCenter.priority.critical, bg: 'bg-rose-500/20' },
+const priorityConfig: Record<AlertPriority, { color: string; icon: any; label: string; bg: string }> = {
+  critical: { color: 'amber', icon: AlertTriangle, label: premiumLocales.alertCenter.priority.critical, bg: 'bg-amber-500/20' },
   high: { color: 'amber', icon: AlertCircle, label: premiumLocales.alertCenter.priority.high, bg: 'bg-amber-500/20' },
-  medium: { color: 'cyan', icon: Info, label: premiumLocales.alertCenter.priority.medium, bg: 'bg-cyan-500/20' },
-  low: { color: 'slate', icon: Info, label: premiumLocales.alertCenter.priority.low, bg: 'bg-slate-500/20' }
+  medium: { color: 'amber', icon: Info, label: premiumLocales.alertCenter.priority.medium, bg: 'bg-amber-500/20' },
+  low: { color: 'slate', icon: Info, label: premiumLocales.alertCenter.priority.low, bg: 'bg-slate-500/20' },
+  minimal: { color: 'slate', icon: Info, label: 'Мінімальний', bg: 'bg-slate-500/10' },
+  stable: { color: 'emerald', icon: Info, label: 'Стабільний', bg: 'bg-emerald-500/10' },
+  watchlist: { color: 'purple', icon: Info, label: 'Нагляд', bg: 'bg-purple-500/10' },
+  elevated: { color: 'amber', icon: Info, label: 'Підвищений', bg: 'bg-amber-500/10' },
 };
 
 const categoryConfig = {
   price: { icon: DollarSign, label: premiumLocales.alertCenter.category.price, color: 'emerald' },
   competitor: { icon: Building2, label: premiumLocales.alertCenter.category.competitor, color: 'blue' },
-  risk: { icon: Shield, label: premiumLocales.alertCenter.category.risk, color: 'rose' },
+  risk: { icon: Shield, label: premiumLocales.alertCenter.category.risk, color: 'amber' },
   market: { icon: TrendingUp, label: premiumLocales.alertCenter.category.market, color: 'purple' },
   system: { icon: Settings, label: premiumLocales.alertCenter.category.system, color: 'slate' }
 };
@@ -274,7 +279,7 @@ const AlertCenterPremium: React.FC = () => {
           id: a.id,
           title: a.title,
           description: a.description,
-          priority: (a.severity === 'critical' || a.severity === 'high' || a.severity === 'medium' || a.severity === 'low') ? a.severity : 'medium',
+          priority: (a.severity === 'critical' || a.severity === 'high' || a.severity === 'medium' || a.severity === 'low') ? a.severity as AlertPriority : 'medium' as AlertPriority,
           status: a.status || 'active',
           category: a.category || 'risk',
           createdAt: a.timestamp || new Date().toISOString(),
@@ -339,7 +344,7 @@ const AlertCenterPremium: React.FC = () => {
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/3 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/3 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto">
@@ -366,7 +371,7 @@ const AlertCenterPremium: React.FC = () => {
                 <div className="text-[10px] text-slate-500 uppercase tracking-widest">{premiumLocales.alertCenter.stats.active}</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-black text-rose-500">{stats.critical}</div>
+                <div className="text-2xl font-black text-amber-500">{stats.critical}</div>
                 <div className="text-[10px] text-slate-500 uppercase tracking-widest">{premiumLocales.alertCenter.stats.critical}</div>
               </div>
             </div>
@@ -395,10 +400,10 @@ const AlertCenterPremium: React.FC = () => {
             <p className="text-xs text-slate-500">Активних</p>
           </div>
 
-          <div className="bg-slate-900/60 border border-rose-500/20 rounded-xl p-4">
+          <div className="bg-slate-900/60 border border-amber-500/20 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
-              <AlertTriangle className="text-rose-400" size={18} />
-              <span className="text-2xl font-black text-rose-400">{stats.critical}</span>
+              <AlertTriangle className="text-amber-400" size={18} />
+              <span className="text-2xl font-black text-amber-400">{stats.critical}</span>
             </div>
             <p className="text-xs text-slate-500">Критичних</p>
           </div>
@@ -459,7 +464,7 @@ const AlertCenterPremium: React.FC = () => {
                     onClick={() => setFilter(f)}
                     className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${filter === f
                       ? f === 'all' ? 'bg-white/10 text-white' :
-                        f === 'critical' ? 'bg-rose-500/20 text-rose-400' :
+                        f === 'critical' ? 'bg-amber-500/20 text-amber-400' :
                           f === 'high' ? 'bg-amber-500/20 text-amber-400' :
                             f === 'medium' ? 'bg-cyan-500/20 text-cyan-400' :
                               'bg-slate-700 text-slate-300'

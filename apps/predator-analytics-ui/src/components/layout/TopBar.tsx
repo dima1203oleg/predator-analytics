@@ -120,7 +120,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             <div className="font-black text-[16px] text-white leading-none tracking-[0.1em] flex items-center gap-2">
               PREDATOR <span className="text-amber-400 font-bold opacity-80">NEXUS</span>
               <div className="h-4 w-px bg-slate-800 mx-1" />
-              <div className="text-[10px] text-slate-500 font-black tracking-widest bg-slate-900/50 px-2 py-0.5 rounded border border-white/5">v56.5-ELITE</div>
+              <div className="text-[10px] text-slate-500 font-black tracking-widest bg-slate-900/50 px-2 py-0.5 rounded border border-white/5">v57.2-WRAITH</div>
             </div>
             <div className="flex items-center gap-2 mt-1">
                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] animate-pulse" />

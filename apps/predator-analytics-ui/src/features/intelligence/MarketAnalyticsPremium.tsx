@@ -1,5 +1,5 @@
 /**
- * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v56.5-ELITE
+ * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v57.2-WRAITH
  * PREDATOR Analytics — Advanced Market Intelligence & Strategic Forecasting
  * 
  * Глобальний моніторинг ринків, аналіз трендів та виявлення прихованих можливостей.
@@ -47,6 +47,8 @@ const formatCurrency = (value: number): string => {
   return `$${value}`;
 };
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export default function MarketAnalyticsPremium() {
   const { persona } = useAppStore();
   const [marketOverview, setMarketOverview] = useState<MarketOverviewResponse | null>(null);
@@ -54,6 +56,7 @@ export default function MarketAnalyticsPremium() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'year'>('month');
+  const { isOffline } = useBackendStatus();
 
   const personaLabel = useMemo(() => {
     const labels: Record<string, string> = {
@@ -94,7 +97,17 @@ export default function MarketAnalyticsPremium() {
 
   useEffect(() => {
     fetchData();
-  }, [timeRange]);
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'MarketSignals',
+          action: 'DecodeSignal',
+          message: 'Автономний режим: аналіз ринкових сигналів проводиться через локалізований масив.',
+          severity: 'info'
+        }
+      }));
+    }
+  }, [timeRange, isOffline]);
 
   const stats = useMemo(() => ({
     volume: marketOverview?.total_value_usd || 0,
@@ -113,7 +126,7 @@ export default function MarketAnalyticsPremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* ELITE HEADER HUD */}
+          {/* WRAITH HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -126,10 +139,10 @@ export default function MarketAnalyticsPremium() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-[#D4AF37] px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      MARKET_INTEL_ELITE // QUORUM_SCAN
+                      MARKET_INTEL_WRAITH // QUORUM_SCAN
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РИНКОВА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">АНАЛІТИКА</span>
@@ -162,7 +175,7 @@ export default function MarketAnalyticsPremium() {
             </button>
           </div>
 
-          {/* METRICS GRID ELITE */}
+          {/* METRICS GRID WRAITH */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { label: 'ОБСЯГ_РИНКУ', value: formatCurrency(stats.volume), icon: Boxes, color: '#D4AF37' },
@@ -224,7 +237,7 @@ export default function MarketAnalyticsPremium() {
                                </div>
                                <div className="text-right space-y-1">
                                   <p className="text-4xl font-black text-white italic font-mono tracking-tighter leading-none mb-1 group-hover:scale-105 transition-transform duration-700">{formatCurrency(product.value_usd)}</p>
-                                  <div className={cn("flex items-center justify-end gap-2 text-[10px] font-black uppercase tracking-widest italic", product.change_percent >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                  <div className={cn("flex items-center justify-end gap-2 text-[10px] font-black uppercase tracking-widest italic", product.change_percent >= 0 ? "text-emerald-500" : "text-amber-500")}>
                                      {product.change_percent >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                                      {product.change_percent}% GROWTH
                                   </div>
@@ -263,7 +276,7 @@ export default function MarketAnalyticsPremium() {
                         </p>
                         <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">
                            <span className="text-[9px] font-black text-yellow-800 uppercase tracking-widest">Confidence: 94.2%</span>
-                           <span className="text-[9px] font-bold text-slate-700 italic">Predator Intel v56.5</span>
+                           <span className="text-[9px] font-bold text-slate-700 italic">Predator Intel v57.2</span>
                         </div>
                      </div>
 
@@ -272,7 +285,7 @@ export default function MarketAnalyticsPremium() {
                         {opportunities.map((opp) => (
                            <div key={opp.id} className="p-8 rounded-[2.5rem] bg-black/40 border-2 border-white/[0.03] hover:border-yellow-500/30 transition-all group/opp cursor-pointer">
                               <div className="flex items-center justify-between mb-4">
-                                 <span className={cn("text-[9px] px-3 py-1 rounded-lg uppercase tracking-widest", opp.urgency === 'high' ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20")}>{opp.type}</span>
+                                 <span className={cn("text-[9px] px-3 py-1 rounded-lg uppercase tracking-widest", opp.urgency === 'high' ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20")}>{opp.type}</span>
                                  <span className="text-slate-800 font-mono text-[9px]">CONF: {opp.confidence}%</span>
                               </div>
                               <h5 className="text-lg text-white mb-2 leading-none uppercase">{opp.title}</h5>
@@ -292,7 +305,7 @@ export default function MarketAnalyticsPremium() {
                   </button>
                </div>
 
-               {/* QUICK ACTIONS ELITE */}
+               {/* QUICK ACTIONS WRAITH */}
                <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                   <h3 className="text-[14px] font-black text-slate-700 italic uppercase tracking-[0.6em] border-b border-white/[0.03] pb-8 relative z-10 flex items-center justify-between">
                      ТАКТИЧНІ_МАНЕВРИ <Crosshair size={18} />
@@ -302,7 +315,7 @@ export default function MarketAnalyticsPremium() {
                        { i: LayoutDashboard, l: 'МАПРИЦЯ_ТРЕНДІВ', c: 'text-[#D4AF37]', sub: 'TREND_MATRIX_PRO' },
                        { i: Target, l: 'ВЕРТИКАЛЬНИЙ_АНАЛІЗ', c: 'text-blue-500', sub: 'VERTICAL_DEEP_DIVE' },
                        { i: Globe, l: 'ГЛОБАЛЬНІ_ПОТОКИ', c: 'text-emerald-500', sub: 'FLOW_SYNC_MASTER' },
-                       { i: Fingerprint, l: 'ІНСАЙТИ_КОНКУРЕНТІВ', c: 'text-rose-500', sub: 'SIGNAL_HUNTER' },
+                       { i: Fingerprint, l: 'ІНСАЙТИ_КОНКУРЕНТІВ', c: 'text-amber-500', sub: 'SIGNAL_HUNTER' },
                      ].map((a, i) => (
                        <button key={i} className="w-full flex items-center justify-between p-8 rounded-[3rem] bg-white/[0.01] border-2 border-white/[0.03] hover:bg-white/[0.04] hover:border-yellow-500/20 transition-all duration-500 group/act shadow-xl italic uppercase">
                           <div className="flex items-center gap-8">
@@ -324,7 +337,7 @@ export default function MarketAnalyticsPremium() {
           </div>
         </div>
 
-        {/* ELITE CUSTOM STYLES */}
+        {/* WRAITH CUSTOM STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
             .animate-spin-slow { animation: spin 20s linear infinite; }

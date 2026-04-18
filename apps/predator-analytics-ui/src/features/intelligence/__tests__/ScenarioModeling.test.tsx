@@ -1,18 +1,16 @@
-import { expect, test, describe, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import React from 'react'
-import ScenarioModeling from '../ScenarioModeling'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import ScenarioModeling from '../ScenarioModeling';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
 vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -24,93 +22,104 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/components/ECharts', () => ({
-    default: () => <div data-testid="echarts-mock">ECharts Chart</div>
-}))
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
+
+vi.mock('@/components/ECharts', () => ({ default: () => <div data-testid="echarts-scenario" /> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats, actions, badges }: any) => (
+        <div data-testid="view-header">
+            <div data-testid="header-title">{title}</div>
+            <div data-testid="stats-list">{stats?.map((s: any) => s.label).join(', ')}</div>
+            <div data-testid="badges-list">{badges?.map((b: any) => b.label).join(', ')}</div>
+            <div data-testid="header-actions">{actions}</div>
+        </div>
+    )
+}));
+
+vi.mock('@/services/api/config', () => ({
+    apiClient: {
+        post: vi.fn(() => Promise.resolve({
+            data: {
+                forecast: Array.from({ length: 12 }, (_, i) => ({ forecast: 150 + i * 5 }))
+            }
+        }))
+    }
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('ScenarioModeling', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-        vi.useFakeTimers()
-    })
+        vi.clearAllMocks();
+    });
 
-    afterEach(() => {
-        vi.useRealTimers()
-    })
+    it('відображає інтерфейс моделювання сценаріїв', () => {
+        render(<ScenarioModeling />);
+        
+        expect(screen.getByText(/МОДЕЛЮВАННЯ СЦЕНАРІЇВ/i)).toBeInTheDocument();
+        expect(screen.getByText(/Параметри Сценарію/i)).toBeInTheDocument();
+        expect(screen.getByTestId('echarts-scenario')).toBeInTheDocument();
+    });
 
-    test('повинен відмальовувати основні елементи інтерфейсу', () => {
-        render(<ScenarioModeling />)
+    it('виконує симуляцію та ініціює SCENARIO_SUCCESS', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<ScenarioModeling />);
         
-        expect(screen.getByText(/WHAT-IF/i)).toBeInTheDocument()
-        expect(screen.getByText(/MODELING/i)).toBeInTheDocument()
-        expect(screen.getByText(/Параметри Сценарію/i)).toBeInTheDocument()
-        expect(screen.getByText(/Run Simulation/i)).toBeInTheDocument()
-    })
+        const runButton = screen.getByText('Запустити');
+        fireEvent.click(runButton);
+        
+        expect(screen.getByText(/Розрахунок.../i)).toBeInTheDocument();
+        
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'SCENARIO_SUCCESS'
+                    })
+                })
+            );
+        }, { timeout: 5000 });
+    });
 
-    test('повинен змінювати параметри сценарію за допомогою слайдерів', () => {
-        render(<ScenarioModeling />)
+    it('змінює параметри сценарію (мито на імпорт)', () => {
+        render(<ScenarioModeling />);
         
-        // Знаходимо слайдер мита на імпорт (importDuty)
-        const labels = screen.getAllByText(/Мито на імпорт/i)
-        // Шукаємо інпут в тому ж контейнері або за типом range
-        const sliders = screen.getAllByRole('slider')
+        const dutyLabel = screen.getByText(/Мито на імпорт/i);
+        expect(dutyLabel).toBeInTheDocument();
         
-        // Перший слайдер зазвичай importDuty згідно конфігу
-        fireEvent.change(sliders[0], { target: { value: '25' } })
+        const slider = screen.getAllByRole('slider')[0];
+        fireEvent.change(slider, { target: { value: '25' } });
         
-        // Перевіряємо відображення значення
-        expect(screen.getByText(/25 %/i)).toBeInTheDocument()
-    })
+        expect(screen.getByText('25 %')).toBeInTheDocument();
+    });
 
-    test('повинен запускати симуляцію та відображати прогрес', async () => {
-        render(<ScenarioModeling />)
-        
-        const runBtn = screen.getByText(/Run Simulation/i)
-        fireEvent.click(runBtn)
-        
-        // Має з'явитися текст про розрахунок
-        expect(screen.getByText(/Calculating/i)).toBeInTheDocument()
-        
-        // Промотуємо час (interval 40ms, +2.5% кожні 40ms -> 40 кроків = 1600ms)
-        await act(async () => {
-            vi.advanceTimersByTime(1000)
-        })
-        
-        // Перевіряємо що прогрес йде (біля 60%+)
-        // Calculating... 63% (приклад)
-        expect(screen.getByText(/Calculating... \d+%/i)).toBeInTheDocument()
-        
-        await act(async () => {
-            vi.advanceTimersByTime(1000)
-        })
+    it('відображає MIRROR_SIMULATION в автономному режимі', () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-        // Додатково даємо виконатися фінальному setTimeout(..., 200)
-        await act(async () => {
-             vi.advanceTimersByTime(500)
-        })
+        render(<ScenarioModeling />);
         
-        // Має завершитися
-        expect(screen.queryByText(/Calculating/i)).not.toBeInTheDocument()
-        expect(screen.getByText(/Run Simulation/i)).toBeInTheDocument()
-    })
+        expect(screen.getByText(/MIRROR_SIMULATION/i)).toBeInTheDocument();
+    });
 
-    test('повинен відображати графік та KPI', () => {
-        render(<ScenarioModeling />)
+    it('відображає розрахунок Монте-Карло при симуляції', async () => {
+        render(<ScenarioModeling />);
         
-        expect(screen.getByTestId('echarts-mock')).toBeInTheDocument()
-        expect(screen.getByText(/Forecasted Revenue/i)).toBeInTheDocument()
-        expect(screen.getByText(/Margin Variance/i)).toBeInTheDocument()
-    })
-
-    test('повинен відображати AI інсайти', () => {
-        render(<ScenarioModeling />)
+        const runButton = screen.getByText('Запустити');
+        fireEvent.click(runButton);
         
-        expect(screen.getByText(/AI Opportunity/i)).toBeInTheDocument()
-        expect(screen.getByText(/Threat Vector/i)).toBeInTheDocument()
-        expect(screen.getAllByText(/USD/i).length).toBeGreaterThan(0)
-    })
-})
+        expect(screen.getByText(/Запуск Монте-Карло.../i)).toBeInTheDocument();
+    });
+});

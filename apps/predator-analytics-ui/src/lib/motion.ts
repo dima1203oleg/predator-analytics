@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.5-ELITE — Канонічні пресети анімацій (Framer Motion)
+ * PREDATOR v57.2-WRAITH — Канонічні пресети анімацій (Framer Motion)
  * Єдине джерело для всіх motion-конфігурацій.
  */
 

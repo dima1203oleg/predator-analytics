@@ -1,5 +1,5 @@
 /**
- * ✅ DUE DILIGENCE WORKFLOW | v56.5-ELITE
+ * ✅ DUE DILIGENCE WORKFLOW | v57.2-WRAITH
  * PREDATOR Analytics — Tactical Compliance Auditing
  * 
  * Багатоетапний процес перевірки контрагентів із застосуванням
@@ -44,9 +44,9 @@ const DEFAULT_CHECKLIST: ChecklistItem[] = [
 ];
 
 const categoryNames = {
-  legal: { label: 'ЮРИДИЧНИЙ АУДИТ', color: 'text-indigo-400', border: 'border-indigo-500/30', bg: 'bg-indigo-600/10' },
+  legal: { label: 'ЮРИДИЧНИЙ АУДИТ', color: 'text-yellow-400', border: 'border-yellow-500/30', bg: 'bg-yellow-600/10' },
   financial: { label: 'ФІНАНСОВИЙ АУДИТ', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
-  compliance: { label: 'COMPLIANCE / AML', color: 'text-rose-400', border: 'border-rose-500/30', bg: 'bg-rose-600/10' },
+  compliance: { label: 'COMPLIANCE / AML', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
   operational: { label: 'ОПЕРАЦІЙНИЙ КОНТРОЛЬ', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-600/10' },
 };
 
@@ -94,7 +94,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                        DUE_DILIGENCE // COMPLIANCE_SHIELD
                      </span>
                      <div className="h-px w-10 bg-sky-600/20" />
-                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                     ВЕРИФІКАЦІЯ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8">КОНТРАГЕНТА</span>

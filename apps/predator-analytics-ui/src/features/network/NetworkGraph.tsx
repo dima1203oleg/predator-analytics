@@ -221,7 +221,7 @@ export const NetworkGraph: React.FC = () => {
         </div>
         <button
           onClick={() => setIsFullscreen(!isFullscreen)}
-          className="p-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white"
+          className="p-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white"
         >
           {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
         </button>

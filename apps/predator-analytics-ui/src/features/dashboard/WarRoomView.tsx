@@ -1,5 +1,5 @@
 /**
- * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v56.5-ELITE
+ * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v57.2-WRAITH
  * PREDATOR Analytics — Tactical Multi-Screen Command Center
  * 
  * Єдиний віртуальний простір для CEO з агрегацією всіх критичних потоків.
@@ -29,6 +29,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { TacticalCard } from '@/components/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
 const MOCK_LINE_DATA = Array.from({ length: 20 }, (_, i) => ({
@@ -46,12 +47,27 @@ const RISK_PIE_DATA = [
 export default function WarRoomView() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [ticker, setTicker] = useState(0);
-  const { isOffline, sourceLabel, activeFailover, healingProgress } = useBackendStatus();
 
   useEffect(() => {
     const itv = setInterval(() => setTicker(t => t + 1), 5000);
     return () => clearInterval(itv);
   }, []);
+
+  const { isOffline, nodeSource, healingProgress, activeFailover } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'WarRoom',
+          message: 'АКТИВОВАНО РЕЖИМ СИТУАЦІЙНОГО ВІДКЛЮЧЕННЯ (WAR_ROOM_ALPHA). Дані агрегуються з MIRROR-вузлів.',
+          severity: 'error',
+          timestamp: new Date().toISOString(),
+          code: 'WAR_ROOM_ALPHA'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   return (
     <PageTransition>
@@ -74,7 +90,7 @@ export default function WarRoomView() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v56.5-ELITE
+                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v57.2-WRAITH
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -83,10 +99,26 @@ export default function WarRoomView() {
                  </div>
               </div>
             }
+            badges={[
+              { label: 'CLASSIFIED_WRAITH', color: 'amber', icon: <Lock size={10} /> },
+              { label: 'WAR_ROOM_ALPHA', color: 'primary', icon: <Target size={10} /> },
+              { 
+                label: nodeSource, 
+                color: isOffline ? 'warning' : 'danger', 
+                icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              },
+            ]}
             stats={[
               { label: 'ГЛОБАЛЬНИЙ РИЗИК', value: '84.2%', icon: <AlertTriangle size={14} />, color: 'danger' },
-              { label: 'ДЖЕРЕЛО_ВУЗЛА', value: activeFailover ? 'NVIDIA_ZROK' : isOffline ? 'АВТОНОМНО' : 'NVIDIA_МАЙСТЕР', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
-              { label: 'РЕЗЕРВ', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' }
+              { 
+                label: isOffline ? 'SYNC_HEAL' : 'ДЖЕРЕЛО_ВУЗЛА', 
+                value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_МАЙСТЕР'), 
+                icon: isOffline ? <Activity /> : <Cpu />, 
+                color: isOffline ? 'warning' : 'success',
+                animate: isOffline
+              },
+              { label: 'РЕЗЕРВ', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
+              { label: 'PROTOCOL', value: isOffline ? 'EMERGENCY' : 'WRAITH', icon: <Shield />, color: isOffline ? 'warning' : 'success' }
             ]}
             actions={
               <div className="flex items-center gap-6">
@@ -103,7 +135,7 @@ export default function WarRoomView() {
             }
           />
 
-          {/* ── QUADRANTS GRID ELITE ── */}
+          {/* ── QUADRANTS GRID WRAITH ── */}
           <div className="flex-1 grid grid-cols-12 grid-rows-2 gap-8 overflow-hidden pb-10">
              
              {/* Q1: GLOBAL INTEL (Radar/Globe) */}
@@ -220,7 +252,7 @@ export default function WarRoomView() {
                             <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">ЖИВІ_ПОТОКИ_ЯДРА</span>
                          </div>
                          <div className="space-y-3 opacity-80 italic font-bold">
-                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v56.5</p>
+                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v57.2</p>
                             <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ТРИВОГА:</span> Порушення порогу ризику POS-001</p>
                             <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
                             <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>
@@ -329,7 +361,7 @@ export default function WarRoomView() {
                             ))}
                          </div>
                          <button className="w-full py-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-yellow-400/20">
-                            ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
+                            ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_WRAITH
                          </button>
                       </div>
                       <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
@@ -371,6 +403,10 @@ export default function WarRoomView() {
              </div>
 
           </div>
+        </div>
+
+        <div className="max-w-[1950px] mx-auto px-10 pb-24 mt-4">
+            <DiagnosticsTerminal />
         </div>
 
         <style dangerouslySetInnerHTML={{ __html: `

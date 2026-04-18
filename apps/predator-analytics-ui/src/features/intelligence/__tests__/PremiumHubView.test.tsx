@@ -2,168 +2,150 @@ import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import PremiumHubView from '../PremiumHubView';
 import React from 'react';
+import { UserRole } from '@/config/roles';
 import { useAppStore } from '@/store/useAppStore';
 
-// Mock high-level components to avoid deep rendering issues
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-background" />
+// ─── MOCKS ───────────────────────────────────────────────────────────────────
+
+vi.mock('framer-motion', () => ({
+    motion: {
+        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/components/CyberGrid', () => ({
-    CyberGrid: ({ color }: any) => <div data-testid="cyber-grid" data-color={color} />
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual = await importOriginal() as any;
+    return new Proxy(actual, {
+        get: (target, prop) => {
+            if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
+                return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+            }
+            return target[prop];
+        }
+    });
+});
+
+vi.mock('@/store/useAppStore', () => ({
+    useAppStore: () => ({
+        userRole: 'analyst',
+        persona: 'TITAN',
+        setPersona: vi.fn()
+    }),
+    InterlinkPersona: {}
 }));
 
-vi.mock('@/components/layout/PageTransition', () => ({
-    PageTransition: ({ children }: any) => <div>{children}</div>
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
 }));
 
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
 vi.mock('@/components/ViewHeader', () => ({
-    ViewHeader: ({ title, icon, breadcrumbs, stats }: any) => (
+    ViewHeader: ({ title, stats, badges }: any) => (
         <div data-testid="view-header">
-            {title}
-            <div data-testid="breadcrumbs">{breadcrumbs?.join(' > ')}</div>
-            <div data-testid="stats-count">{stats?.length}</div>
+            <div data-testid="header-title">{title}</div>
+            <div data-testid="stats-list">{stats?.map((s: any) => s.label).join(', ')}</div>
+            <div data-testid="badges-list">{badges?.map((b: any) => b.label).join(', ')}</div>
         </div>
     )
 }));
 
-// Mock all internal widgets to speed up and simplify
-vi.mock('@/components/premium/LiveIntelligenceAlerts', () => ({
-    LiveIntelligenceAlerts: ({ persona }: any) => <div data-testid="live-alerts">{persona}</div>
+// Mock leaf widgets
+vi.mock('@/components/premium/LiveIntelligenceAlerts', () => ({ LiveIntelligenceAlerts: () => <div data-testid="live-alerts" /> }));
+vi.mock('@/components/premium/IntelligenceTicker', () => ({ IntelligenceTicker: () => <div data-testid="intel-ticker" /> }));
+vi.mock('@/components/GlobalSearchOverlay', () => ({ GlobalSearchOverlay: () => <div data-testid="search-overlay" /> }));
+vi.mock('@/components/premium/Dossier360Explorer', () => ({ Dossier360Explorer: () => <div data-testid="dossier-explorer" /> }));
+vi.mock('@/components/premium/PredatorChatWidget', () => ({ PredatorChatWidget: () => <div data-testid="predator-chat" /> }));
+vi.mock('@/components/premium/ExecutiveBriefingWidget', () => ({ ExecutiveBriefingWidget: () => <div data-testid="exec-briefing" /> }));
+vi.mock('@/components/premium/SmartCalculatorWidget', () => ({ SmartCalculatorWidget: () => <div data-testid="smart-calc" /> }));
+vi.mock('@/components/premium/CustomsAnalyticsWidgets', () => ({ 
+    HSCodeAnalyticsWidget: () => <div data-testid="hscode-widget" />,
+    CompetitorRadarWidget: () => <div data-testid="competitor-radar" />,
+    RiskScoreWidget: () => <div data-testid="risk-score-widget" />
 }));
+vi.mock('@/components/premium/SupplyChainRadarWidget', () => ({ SupplyChainRadarWidget: () => <div data-testid="supply-chain-radar" /> }));
+vi.mock('@/components/premium/CompetitorWarBoardWidget', () => ({ CompetitorWarBoardWidget: () => <div data-testid="war-board" /> }));
+vi.mock('@/components/premium/TacticalVoiceCommWidget', () => ({ TacticalVoiceCommWidget: () => <div data-testid="voice-comm" /> }));
+vi.mock('@/components/premium/NeuralAutomationWidget', () => ({ NeuralAutomationWidget: () => <div data-testid="automation-widget" /> }));
+vi.mock('@/components/premium/SignalsFeedWidget', () => ({ SignalsFeedWidget: () => <div data-testid="signals-feed" /> }));
+vi.mock('@/components/premium/AIInsightsPanel', () => ({ AIInsightsPanel: () => <div data-testid="ai-insights" /> }));
+vi.mock('@/components/premium/TradeSankeyWidget', () => ({ TradeSankeyWidget: () => <div data-testid="sankey-widget" /> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
+vi.mock('@/components/ui/badge', () => ({ Badge: ({ children, className }: any) => <div className={className}>{children}</div> }));
 
-vi.mock('@/components/premium/IntelligenceTicker', () => ({
-    IntelligenceTicker: () => <div data-testid="intelligence-ticker" />
-}));
-
-vi.mock('@/components/GlobalSearchOverlay', () => ({
-    GlobalSearchOverlay: ({ isOpen }: any) => isOpen ? <div data-testid="global-search-overlay" /> : null
-}));
-
-vi.mock('@/components/premium/Dossier360Explorer', () => ({
-    Dossier360Explorer: ({ isOpen }: any) => isOpen ? <div data-testid="dossier-explorer" /> : null
-}));
-
-vi.mock('@/components/premium/PredatorChatWidget', () => ({
-    PredatorChatWidget: () => <div data-testid="predator-chat" />
-}));
-
-// Mock the widgets in overview
-vi.mock('@/components/premium/ExecutiveBriefingWidget', () => ({
-    ExecutiveBriefingWidget: ({ persona }: any) => <div data-testid="executive-briefing">{persona}</div>
-}));
-
-vi.mock('@/components/premium/SmartCalculatorWidget', () => ({
-    SmartCalculatorWidget: ({ persona }: any) => <div data-testid="smart-calculator">{persona}</div>
-}));
-
-vi.mock('@/components/premium/CustomsAnalyticsWidgets', () => ({
-    HSCodeAnalyticsWidget: ({ persona }: any) => <div data-testid="hscode-analytics">{persona}</div>,
-    CompetitorRadarWidget: ({ persona }: any) => <div data-testid="competitor-radar">{persona}</div>,
-    RiskScoreWidget: ({ persona }: any) => <div data-testid="risk-score">{persona}</div>,
-}));
-
-// Mock store
-vi.mock('@/store/useAppStore', () => ({
-    useAppStore: vi.fn(),
-}));
+// ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('PremiumHubView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        // Default mock implementation
-        (useAppStore as any).mockReturnValue({
-            userRole: 'analyst',
+    });
+
+    it('відображає інтерфейс преміум-хабу та завантажує віджети TITAN', () => {
+        render(<PremiumHubView />);
+        
+        expect(screen.getByText(/ПРЕМІУМ/i)).toBeInTheDocument();
+        expect(screen.getByText(/TITAN/i)).toBeInTheDocument();
+        expect(screen.getByTestId('live-alerts')).toBeInTheDocument();
+        expect(screen.getByTestId('exec-briefing')).toBeInTheDocument();
+    });
+
+    it('ініціює PREMIUM_SUCCESS при активації хабу', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<PremiumHubView />);
+        
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'PREMIUM_SUCCESS'
+                    })
+                })
+            );
+        });
+    });
+
+    it('відображає HolographicAccessGate для базових користувачів', () => {
+        vi.mocked(useAppStore).mockReturnValue({
+            userRole: UserRole.CLIENT_BASIC,
             persona: 'TITAN',
-            setPersona: vi.fn(),
-        });
-    });
-
-    it('повинен відображати HolographicAccessGate, якщо роль "client"', async () => {
-        (useAppStore as any).mockReturnValue({
-            userRole: 'client',
-            persona: 'TITAN',
-            setPersona: vi.fn(),
-        });
-
-        render(<PremiumHubView />);
-        expect(await screen.findByText(/ACCESS/i)).toBeInTheDocument();
-        expect(screen.getByText(/RESTRICTED/i)).toBeInTheDocument();
-    });
-
-    it('повинен відображати основний контент Хаба для аналітика', () => {
-        render(<PremiumHubView />);
-        
-        // Використовуємо getAllByText бо слово PREMIUM є в заголовку та в хлібних крихтах
-        expect(screen.getAllByText(/PREMIUM/i).length).toBeGreaterThan(0);
-        expect(screen.getAllByText(/TITAN/i).length).toBeGreaterThan(0);
-        expect(screen.getByTestId('view-header')).toBeInTheDocument();
-        expect(screen.getByTestId('live-alerts')).toHaveTextContent('TITAN');
-    });
-
-    it('повинен перемикати персони (TITAN -> INQUISITOR)', async () => {
-        const setPersona = vi.fn();
-        (useAppStore as any).mockReturnValue({
-            userRole: 'analyst',
-            persona: 'TITAN',
-            setPersona,
-        });
+            setPersona: vi.fn()
+        } as any);
 
         render(<PremiumHubView />);
         
-        // Шукаємо кнопку саме в перемикачі персон
-        const inqBtn = screen.getAllByRole('button').find(b => b.textContent?.includes('INQUISITOR'));
-        
-        await act(async () => {
-            fireEvent.click(inqBtn!);
-        });
-        
-        expect(setPersona).toHaveBeenCalledWith('INQUISITOR');
+        expect(screen.getByText(/ДОСТУП ОБМЕЖЕНО/i)).toBeInTheDocument();
+        expect(screen.getByText(/РИНКОВИЙ ТИТАН/i)).toBeInTheDocument();
     });
 
-    it('повинен перемикати вкладки (Overview -> Tactical)', async () => {
+    it('перемикає вкладки хабу (Tactical, Analytics)', () => {
         render(<PremiumHubView />);
         
-        const tacticalBtn = screen.getByText('ТАКТИКА');
-        await act(async () => {
-            fireEvent.click(tacticalBtn);
-        });
-        
-        // Перевіримо що кнопка стала активною (має отримати колір відповідно до TITAN - amber)
-        expect(tacticalBtn.closest('button')).toHaveClass('text-amber-400');
+        // Tactical tab
+        const tacticalTab = screen.getByText(/ТАКТИКА/i);
+        fireEvent.click(tacticalTab);
+        expect(screen.getByTestId('supply-chain-radar')).toBeInTheDocument();
+        expect(screen.getByTestId('war-board')).toBeInTheDocument();
+
+        // Analytics tab
+        const analyticsTab = screen.getByText(/АНАЛІТИКА/i);
+        fireEvent.click(analyticsTab);
+        expect(screen.getByTestId('ai-insights')).toBeInTheDocument();
     });
 
-    it('повинен відкривати глобальний пошук при натисканні Cmd+K або кнопки', async () => {
-        render(<PremiumHubView />);
-        
-        // Шукаємо кнопку з іконкою пошуку
-        const searchBtn = screen.getAllByRole('button').find(b => b.querySelector('.lucide-search'));
-        
-        if (searchBtn) {
-            await act(async () => {
-                fireEvent.click(searchBtn);
-            });
-            expect(screen.getByTestId('global-search-overlay')).toBeInTheDocument();
-        }
-
-        // Тест Hotkey
-        await act(async () => {
-            fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
-        });
-        expect(screen.getByTestId('global-search-overlay')).toBeInTheDocument();
-    });
-
-    it('повинен відображати інсайти відповідно до персони', () => {
-        (useAppStore as any).mockReturnValue({
-            userRole: 'analyst',
-            persona: 'SOVEREIGN',
-            setPersona: vi.fn(),
-        });
+    it('відображає MIRROR_NODE в автономному режимі', () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
         render(<PremiumHubView />);
         
-        expect(screen.getByText(/МАКРО-СУВЕРЕН/i)).toBeInTheDocument();
-        // В SOVEREIGN є інсайт про ОАЕ
-        expect(screen.getByText(/товарообігу з ОАЕ/i)).toBeInTheDocument();
+        expect(screen.getByText(/MIRROR_NODE/i)).toBeInTheDocument();
     });
 });

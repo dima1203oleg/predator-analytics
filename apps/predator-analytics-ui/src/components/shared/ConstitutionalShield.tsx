@@ -10,7 +10,7 @@ const Badge: React.FC<{ children: React.ReactNode, className?: string }> = ({ ch
 );
 
 /**
- * PREDATOR OSINT-Контур v56.5-ELITE | Constitutional Shield
+ * PREDATOR OSINT-Контур v57.2-WRAITH | Constitutional Shield
  * Sovereign integrity monitoring & automated constitutional protection.
  */
 export const ConstitutionalShield: React.FC = () => {
@@ -21,7 +21,7 @@ export const ConstitutionalShield: React.FC = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                // AZR статус — суверенний щит v56.5-ELITE
+                // AZR статус — суверенний щит v57.2-WRAITH
                 const response = await fetch('/api/v1/azr/status');
                 if (response.ok) {
                     const text = await response.text();
@@ -32,7 +32,7 @@ export const ConstitutionalShield: React.FC = () => {
                 }
                 setLastUpdated(new Date());
             } catch (error) {
-                console.warn("Constitutional Shield v56.5-ELITE (FALLBACK_MODE):", error);
+                console.warn("Constitutional Shield v57.2-WRAITH (FALLBACK_MODE):", error);
                 // Fallback for demo if API fails
                 setStatus({
                     is_running: true,
@@ -46,7 +46,7 @@ export const ConstitutionalShield: React.FC = () => {
         };
 
         fetchStatus();
-        const interval = setInterval(fetchStatus, 15000); // More frequent in v56.5-ELITE
+        const interval = setInterval(fetchStatus, 15000); // More frequent in v57.2-WRAITH
         return () => clearInterval(interval);
     }, []);
 
@@ -103,7 +103,7 @@ export const ConstitutionalShield: React.FC = () => {
                 {/* Side Tag (Apex Style) */}
                 <div className="absolute -right-2 top-0 translate-x-full opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                     <div className="bg-slate-900/90 border border-blue-500/30 px-3 py-1 rounded-r-lg backdrop-blur-md">
-                        <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">CONSTITUTIONAL_GUARD_v56.5-ELITE</span>
+                        <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">CONSTITUTIONAL_GUARD_v57.2-WRAITH</span>
                     </div>
                 </div>
 
@@ -123,7 +123,7 @@ export const ConstitutionalShield: React.FC = () => {
                                             <Shield size={18} className="text-blue-400" />
                                         </div>
                                         <div>
-                                            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v56.5-ELITE</h4>
+                                            <h4 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">OSINT-Контур v57.2-WRAITH</h4>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                                 <span className="text-[8px] font-mono text-emerald-400 uppercase">СИСТЕМА ТИХА</span>
@@ -161,7 +161,7 @@ export const ConstitutionalShield: React.FC = () => {
                             <div className="px-6 py-4 bg-black/40 flex items-center justify-between border-t border-white/5">
                                 <div className="flex items-center gap-3">
                                     <Activity size={12} className="text-slate-600" />
-                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v56.5-ELITE.0-СТАБІЛЬНО</span>
+                                    <span className="text-[8px] font-mono text-slate-500 uppercase">Sentinel v57.2-WRAITH.0-СТАБІЛЬНО</span>
                                 </div>
                                 <div className="flex gap-1">
                                     {[1, 2, 3, 4, 5].map(i => (

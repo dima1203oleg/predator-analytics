@@ -27,7 +27,7 @@ export const PremiumRegistryMonitor: React.FC = () => {
   };
 
   return (
-    <div className="glass-elite p-6 rounded-2xl w-full max-w-4xl mx-auto">
+    <div className="glass-wraith p-6 rounded-2xl w-full max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2 text-cyan-400">

@@ -3,7 +3,7 @@ import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/s
 
 type UnknownRecord = Record<string, unknown>;
 
-export type AIControlTone = 'emerald' | 'amber' | 'rose' | 'sky' | 'slate' | 'gold';
+export type AIControlTone = 'emerald' | 'amber' | 'sky' | 'slate' | 'gold';
 
 export interface AIControlMetricCard {
   id: string;
@@ -130,7 +130,7 @@ const normalizeLevel = (value: string | null): { label: string; tone: AIControlT
     case 'error':
     case 'failed':
     case 'critical':
-      return { label: 'ПОМИЛКА', tone: 'rose' };
+      return { label: 'ПОМИЛКА', tone: 'amber' };
     case 'warn':
     case 'warning':
       return { label: 'УВАГА', tone: 'amber' };
@@ -156,7 +156,7 @@ const normalizeEngineStatus = (value: string | null): { label: string; tone: AIC
     case 'offline':
     case 'failed':
     case 'error':
-      return { label: 'Недоступний', tone: 'rose', bucket: 'offline' };
+      return { label: 'Недоступний', tone: 'amber', bucket: 'offline' };
     default:
       return { label: 'Н/д', tone: 'slate', bucket: 'offline' };
   }

@@ -44,22 +44,48 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
   });
 
   useEffect(() => {
+    if (!isLoading && !isError && metrics && metrics.length > 0) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'FinancialAnalytics',
+          message: `СИНХРОНІЗАЦІЮ FINANCIAL_DATA ЗАВЕРШЕНО [${sourceLabel}]: Оброблено звіти за ${metrics.length} років. Фінансове ядро стабілізоване.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'FINANCIAL_SUCCESS'
+        }
+      }));
+    }
+  }, [isLoading, isError, metrics, sourceLabel]);
+
+  useEffect(() => {
+    if (isOffline) {
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'FinancialAnalytics',
+                message: `ФІНАНСОВИЙ_ДАШБОРД [${sourceLabel}]: Нексус NVIDIA недоступний. Використовується автономний шар MIRROR_VAULT.`,
+                severity: 'warning',
+                timestamp: new Date().toISOString(),
+                code: 'FINANCIAL_OFFLINE'
+            }
+        }));
+    }
     if (isError) {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'FinancialAnalytics',
-          action: 'FetchCERSMetrics',
-          message: 'Не вдалося отримати фінансові показники CERS для суб\'єкта',
-          severity: 'critical'
+          message: `ПОМИЛКА_CERS [${sourceLabel}]: Не вдалося отримати фінансові показники для суб'єкта ${ueid}.`,
+          severity: 'critical',
+          timestamp: new Date().toISOString(),
+          code: 'FINANCIAL_ERROR'
         }
       }));
     }
-  }, [isError]);
+  }, [isError, isOffline, sourceLabel, ueid]);
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] text-white">
-        <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
+        <Loader2 size={48} className="text-amber-500 animate-spin mb-4" />
         <p className="text-lg font-bold uppercase tracking-[0.2em] animate-pulse">Завантаження фінансових даних...</p>
       </div>
     );
@@ -68,7 +94,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] text-white p-8">
-        <AlertCircle size={64} className="text-red-500 mb-6" />
+        <AlertCircle size={64} className="text-amber-600 mb-6" />
         <h2 className="text-2xl font-black uppercase tracking-tighter mb-2">Помилка завантаження</h2>
         <p className="text-slate-400">Не вдалося отримати фінансові показники для даного суб'єкта.</p>
       </div>
@@ -109,14 +135,14 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
         <div className="flex justify-between items-end border-b border-white/5 pb-8">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Badge variant="outline" className={cn("border-blue-500/30 text-blue-400 font-black", isOffline && "border-amber-500/30 text-amber-500")}>
-                {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v56'}
+              <Badge variant="outline" className={cn("border-amber-500/30 text-amber-500 font-black")}>
+                {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v57.2-WRAITH'}
               </Badge>
               <span className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">NODE: {sourceLabel} // ID: {ueid}</span>
               {activeFailover && <Badge className="bg-amber-600 text-black text-[8px] animate-pulse">FAILOVER_MIRROR</Badge>}
             </div>
             <h1 className="text-4xl lg:text-5xl font-black text-white uppercase tracking-tighter">
-              💰 Фінансові <span className={cn(isOffline ? "text-amber-500" : "text-blue-500")}>Метрики</span>
+              💰 Фінансові <span className="text-amber-500">{isOffline ? 'MIRROR_VAULT' : 'Метрики'}</span>
             </h1>
           </div>
           <div className="hidden lg:block text-right">
@@ -129,11 +155,11 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <TacticalCard variant="holographic" className="p-6">
             <div className="flex justify-between items-start">
-              <div className="p-2 bg-blue-500/10 rounded-lg"><DollarSign size={20} className="text-blue-400" /></div>
+              <div className="p-2 bg-amber-500/10 rounded-lg"><DollarSign size={20} className="text-amber-500" /></div>
               {previous && (
                 <div className={cn(
                   "flex items-center text-[10px] font-black px-2 py-0.5 rounded-full border",
-                  latest.revenue >= previous.revenue ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40" : "bg-rose-500/10 text-rose-400 border-rose-500/40"
+                  latest.revenue >= previous.revenue ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/40" : "bg-amber-500/10 text-amber-400 border-amber-500/40"
                 )}>
                   {calculateTrend(latest.revenue, previous.revenue).toFixed(1)}%
                 </div>
@@ -167,7 +193,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
 
           <TacticalCard variant="holographic" className="p-6">
             <div className="flex justify-between items-start">
-              <div className="p-2 bg-indigo-500/10 rounded-lg"><PieChart size={20} className="text-indigo-400" /></div>
+              <div className="p-2 bg-yellow-500/10 rounded-lg"><PieChart size={20} className="text-yellow-400" /></div>
             </div>
             <div className="mt-4">
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Рентабельність</div>
@@ -197,7 +223,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
                     <td className="p-4 text-right text-slate-300 font-mono">{formatCurrency(row.expenses)}</td>
                     <td className="p-4 text-right text-emerald-400 font-black">{formatCurrency(row.profit)}</td>
                     <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2 text-indigo-300 font-bold">
+                      <div className="flex items-center justify-end gap-2 text-yellow-300 font-bold">
                         {row.profitMargin.toFixed(1)}%
                       </div>
                     </td>

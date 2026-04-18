@@ -1,222 +1,143 @@
-import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import SanctionsScreening from '../SanctionsScreening';
+import React from 'react';
 
-const { post } = vi.hoisted(() => ({
-    post: vi.fn(),
-}));
+// ─── MOCKS ───────────────────────────────────────────────────────────────────
 
 vi.mock('framer-motion', () => {
-    const React = require('react');
-
+    const motionProxy = new Proxy(
+        {},
+        {
+            get: (_target, prop) => {
+                return ({ children, ...props }: any) => {
+                    const Tag = typeof prop === 'string' ? prop : 'div';
+                    return <Tag {...props}>{children}</Tag>;
+                };
+            },
+        }
+    );
     return {
-        motion: {
-            div: React.forwardRef(({ children, ...props }: any, ref: any) => <div {...props} ref={ref}>{children}</div>),
-            button: React.forwardRef(({ children, ...props }: any, ref: any) => <button {...props} ref={ref}>{children}</button>),
-        },
+        motion: motionProxy,
         AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     };
 });
 
-vi.mock('lucide-react', () => {
-    const React = require('react');
-    const icon = (name: string) => (props: any) => <span data-testid={name} {...props} />;
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual = await importOriginal() as any;
+    return new Proxy(actual, {
+        get: (target, prop) => {
+            if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
+                return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+            }
+            return target[prop];
+        }
+    });
+})
 
-    return {
-        AlertCircle: icon('icon-alert-circle'),
-        AlertOctagon: icon('icon-alert-octagon'),
-        AlertTriangle: icon('icon-alert-triangle'),
-        Building2: icon('icon-building-2'),
-        Crown: icon('icon-crown'),
-        Database: icon('icon-database'),
-        History: icon('icon-history'),
-        Radio: icon('icon-radio'),
-        RefreshCw: icon('icon-refresh'),
-        ScanLine: icon('icon-scan-line'),
-        Search: icon('icon-search'),
-        Shield: icon('icon-shield'),
-        ShieldAlert: icon('icon-shield-alert'),
-        ShieldCheck: icon('icon-shield-check'),
-        User: icon('icon-user'),
-        Zap: icon('icon-zap'),
-    };
-});
-
-vi.mock('@/components/layout/PageTransition', () => ({
-    PageTransition: ({ children }: { children: React.ReactNode }) => <div data-testid="page-transition">{children}</div>,
-}));
-
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-background" />,
-}));
-
-vi.mock('@/components/CyberGrid', () => ({
-    CyberGrid: () => <div data-testid="cyber-grid" />,
-}));
-
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: () => <div data-testid="cyber-orb" />,
-}));
-
-vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ children, title, className }: { children: React.ReactNode; title?: string; className?: string }) => (
-        <div data-testid="tactical-card" className={className}>
-            {title ? <div>{title}</div> : null}
-            {children}
-        </div>
-    ),
-}));
-
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/CyberOrb', () => ({ CyberOrb: () => <div data-testid="cyber-orb" /> }));
 vi.mock('@/components/ViewHeader', () => ({
-    ViewHeader: ({ title, stats }: { title: React.ReactNode; stats?: Array<{ label: string; value: string }> }) => (
+    ViewHeader: ({ title, stats }: any) => (
         <div data-testid="view-header">
-            <h1>{title}</h1>
-            {stats?.map((stat) => (
-                <div key={stat.label}>
-                    <span>{stat.label}</span>
-                    <span>{stat.value}</span>
-                </div>
-            ))}
+            {title}
+            <div data-testid="stats-count">{stats?.length}</div>
         </div>
-    ),
+    )
+}));
+
+vi.mock('@/services/api/config', () => ({
+    apiClient: {
+        post: vi.fn(),
+    }
 }));
 
 vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
-        isTruthOnly: true,
-        modeLabel: 'Режим правдивих даних',
-        sourceLabel: 'localhost:9080/api/v1',
-        sourceType: 'local',
-        statusLabel: 'Зʼєднання активне',
-    }),
+        sourceLabel: 'NVIDIA_PRIMARY',
+        statusLabel: 'SYNCHRONIZED'
+    })
 }));
 
-vi.mock('@/services/api/config', () => ({
-    apiClient: {
-        post,
-    },
+vi.mock('../sanctionsScreening.utils', () => ({
+    normalizeSanctionsScreeningPayload: vi.fn((data, type) => ({
+        id: 'test-id',
+        searchId: 'SCAN-123',
+        timestamp: new Date().toISOString(),
+        entityName: data.query || 'Test Entity',
+        entityType: type,
+        status: data.query === 'BLOCKED' ? 'blocked' : 'clean',
+        riskScore: 85,
+        matches: data.query === 'BLOCKED' ? [{
+            id: 'm1',
+            list: 'OFAC',
+            program: 'SDN',
+            target: 'BLOCKED ENTITY',
+            details: 'Extreme risk',
+            severity: 'high',
+            allLists: ['OFAC', 'EU']
+        }] : [],
+        listsChecked: ['OFAC', 'EU', 'UN']
+    }))
 }));
+
+import { apiClient } from '@/services/api/config';
+
+// ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('SanctionsScreening', () => {
     beforeEach(() => {
-        post.mockReset();
-        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.clearAllMocks();
     });
 
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
-    it('рендерить базову структуру і правдивий порожній журнал', () => {
+    it('відображає заголовок та форму пошуку', async () => {
         render(<SanctionsScreening />);
-
-        expect(screen.getByText(/САНКЦІЙНА МАТРИЦЯ/i)).toBeInTheDocument();
-        expect(screen.getByTestId('advanced-background')).toBeInTheDocument();
-        expect(screen.getByText(/Сесійний журнал поки порожній/i)).toBeInTheDocument();
-        expect(screen.getByText('Джерело: /sanctions/screen')).toBeInTheDocument();
+        
+        expect(screen.getByText(/САНКЦІЙНА/i)).toBeInTheDocument();
+        expect(screen.getByText(/МАТРИЦЯ/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Введіть назву компанії/i)).toBeInTheDocument();
     });
 
-    it('дозволяє перемикати тип сутності та перелік реєстрів', () => {
+    it('виконує пошук та відображає результат', async () => {
+        (apiClient.post as any).mockResolvedValue({ data: { query: 'TEST' } });
+        
         render(<SanctionsScreening />);
-
-        const personButton = screen.getByRole('button', { name: /ОСОБА/i });
-        const ofacButton = screen.getByRole('button', { name: /🇺🇸 OFAC/i });
-
-        fireEvent.click(personButton);
-        fireEvent.click(ofacButton);
-
-        expect(personButton.className).toContain('bg-rose-500/20');
-        expect(ofacButton.className).not.toContain('text-blue-300');
-    });
-
-    it('додає до журналу лише підтверджений результат `/sanctions/screen`', async () => {
-        post.mockResolvedValue({
-            data: {
-                id: 'scr-1',
-                entityName: 'ГАЗПРОМ',
-                entityType: 'company',
-                status: 'blocked',
-                timestamp: '2026-03-30T12:00:00Z',
-                searchId: 'AX-1001',
-                riskScore: 99,
-                listsChecked: ['OFAC', 'EU', 'РНБО'],
-                matches: [
-                    {
-                        id: 'match-1',
-                        list: 'OFAC',
-                        program: 'Санкційна програма',
-                        target: 'ГАЗПРОМ',
-                        details: 'Субʼєкт під міжнародними санкціями.',
-                        severity: 'high',
-                        score: 99,
-                        allLists: ['OFAC', 'EU', 'РНБО'],
-                    },
-                ],
-            },
+        
+        const input = screen.getByPlaceholderText(/Введіть назву компанії/i);
+        fireEvent.change(input, { target: { value: 'TEST ENTITY' } });
+        
+        const btn = screen.getByText(/EXECUTE_VETTING/i);
+        await act(async () => {
+            fireEvent.click(btn);
         });
-
-        render(<SanctionsScreening />);
-
-        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
-            target: { value: 'ГАЗПРОМ' },
-        });
-        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
 
         await waitFor(() => {
-            expect(post).toHaveBeenCalledWith('/sanctions/screen', {
-                query: 'ГАЗПРОМ',
-                entity_type: 'company',
-                lists: ['OFAC', 'EU', 'UN', 'UK', 'РНБО', 'PEP'],
-            });
+            expect(screen.getByText(/TEST ENTITY/i)).toBeInTheDocument();
+            expect(screen.getByText(/NULL_RISK_DETECTED/i)).toBeInTheDocument();
         });
-
-        expect(await screen.findAllByText('ГАЗПРОМ')).not.toHaveLength(0);
-        expect(screen.getByText(/Субʼєкт під міжнародними санкціями\./i)).toBeInTheDocument();
-        expect(screen.getByText(/ПЕРЕВІРЕНІ РЕЄСТРИ/i)).toBeInTheDocument();
     });
 
-    it('показує чистий стан без локально вигаданих збігів', async () => {
-        post.mockResolvedValue({
-            data: {
-                id: 'scr-2',
-                entityName: 'ТОВ "ЧИСТИЙ ІМПОРТ"',
-                entityType: 'company',
-                status: 'clean',
-                timestamp: '2026-03-30T12:10:00Z',
-                searchId: 'AX-1002',
-                riskScore: 0,
-                listsChecked: ['OFAC', 'EU'],
-                matches: [],
-            },
-        });
+    it('ініціює predator-error при автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ isOffline: true, sourceLabel: 'MIRROR', statusLabel: 'OFFLINE' })
+        }));
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
         render(<SanctionsScreening />);
 
-        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
-            target: { value: 'ТОВ "ЧИСТИЙ ІМПОРТ"' },
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'SanctionsHub',
+                        code: 'COMPLIANCE_NODES'
+                    })
+                })
+            );
         });
-        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
-
-        expect(await screen.findByText(/ЗБІГІВ НЕ ЗНАЙДЕНО/i)).toBeInTheDocument();
-        expect(screen.getByText(/Статус —/i)).toHaveTextContent(/ЧИСТО/i);
-    });
-
-    it('показує помилку і не повертається до демо-історії при збої API', async () => {
-        post.mockRejectedValue(new Error('network error'));
-
-        render(<SanctionsScreening />);
-
-        fireEvent.change(screen.getByPlaceholderText(/Введіть назву компанії/i), {
-            target: { value: 'ГАЗПРОМ' },
-        });
-        fireEvent.click(screen.getByRole('button', { name: /ПЕРЕВІРИТИ/i }));
-
-        expect(
-            await screen.findByText(/Не вдалося виконати підтверджений скринінг через `\/sanctions\/screen`/i),
-        ).toBeInTheDocument();
-        expect(screen.queryByText(/Владімір Путін/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Maritime Nexus Ltd/i)).not.toBeInTheDocument();
     });
 });

@@ -20,7 +20,7 @@ const events: IntelEvent[] = [
 
 export const IntelligenceFeed: React.FC = () => {
   return (
-    <div className="glass-elite p-8 rounded-3xl h-full border-white/5 relative group overflow-hidden bg-slate-950/40">
+    <div className="glass-wraith p-8 rounded-3xl h-full border-white/5 relative group overflow-hidden bg-slate-950/40">
        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
              <div className="p-3 bg-red-500/10 rounded-2xl border border-red-500/20 text-red-400 animate-pulse">

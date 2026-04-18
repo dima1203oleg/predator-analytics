@@ -1,5 +1,5 @@
 /**
- * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v56.5-ELITE (AGENTIC)
+ * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v57.2-WRAITH (AGENTIC)
  * Підтримка гібридного вузла та суверенного дизайну.
  */
 import React, { useEffect, useState } from 'react';
@@ -70,25 +70,37 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {[1,2,3,4,5,6].map(i => <div key={i} className="op-stream" />)}
       </div>
 
-      {isMobile ? (
-        <AnimatePresence>
-          {isMobileDrawerOpen && (
-            <motion.div className="fixed inset-0 z-50">
-              <motion.button
-                type="button"
-                aria-label="Закрити навігацію"
-                onClick={() => setIsMobileDrawerOpen(false)}
-                className="absolute inset-0 bg-slate-950/80 backdrop-blur-lg"
-              />
-              <motion.div className="absolute left-0 top-0 h-full" initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}>
-                <Sidebar />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      ) : (
-        <Sidebar />
+      {isMobileDrawerOpen && isMobile && (
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-label="Закрити навігацію"
+            onClick={() => setIsMobileDrawerOpen(false)}
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-lg"
+          />
+          <motion.div
+            className="absolute left-0 top-0 h-full"
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+          >
+            <Sidebar />
+          </motion.div>
+        </div>
       )}
+
+      {isMobile && !isMobileDrawerOpen && (
+        <button
+          type="button"
+          aria-label="Відкрити меню"
+          onClick={() => setIsMobileDrawerOpen(true)}
+          className="fixed left-4 top-3 z-[100] flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-slate-950/50 text-white backdrop-blur-md transition hover:bg-slate-900"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      )}
+
+      {!isMobile && <Sidebar />}
 
       <InfrastructureFailoverBanner />
 
@@ -99,15 +111,19 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(2,6,23,0.4))]" />
 
           <div className="relative mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 py-5 xl:px-10 pb-16">
-            <div className={`grid gap-6 ${shellV2Enabled && !isMobile && isContextRailOpen ? 'grid-cols-1 xl:grid-cols-[1fr_340px]' : 'grid-cols-1'}`}>
-              <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-1' : 'col-span-12'}>
+            <div className={`grid grid-cols-12 gap-6`}>
+              <div className={shellV2Enabled && !isMobile && isContextRailOpen ? 'col-span-12 xl:col-span-9' : 'col-span-12'}>
                 <AnimatePresence mode="wait">
                   <motion.div key={location.pathname} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
                     {children}
                   </motion.div>
                 </AnimatePresence>
               </div>
-              {shellV2Enabled && !isMobile && isContextRailOpen && <ContextRail />}
+              {shellV2Enabled && !isMobile && isContextRailOpen && (
+                <div className="col-span-12 xl:col-span-3">
+                  <ContextRail />
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -117,7 +133,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
 
-      {/* ── STATUS BAR (v56.5) ── */}
+      {/* ── STATUS BAR (v57.2) ── */}
       <motion.div
         initial={{ y: 100 }} animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 z-[60] h-9 border-t border-white/[0.07] flex items-center px-4 justify-between overflow-hidden"
@@ -172,7 +188,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           <div className="h-3.5 w-px bg-white/10" />
           <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/20">
-            PREDATOR <span className="text-yellow-500/70">ELITE</span> v56.5
+            PREDATOR <span className="text-yellow-500/70">WRAITH</span> v57.2
           </div>
         </div>
       </motion.div>

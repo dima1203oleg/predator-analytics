@@ -1,5 +1,5 @@
 /**
- * ⚙️ КОНФІГУРАЦІЯ API | PREDATOR Analytics v56.5-ELITE
+ * ⚙️ КОНФІГУРАЦІЯ API | PREDATOR Analytics v57.2-WRAITH
  * Гібридний протокол відмовостійкості (Failover Protocol)
  *
  * Каскад пріоритетів:
@@ -220,7 +220,7 @@ export const apiClient = axios.create({
     timeout: 10_000,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '56.5.0-ELITE',
+        'X-Client-Version': '56.5.0-WRAITH',
     },
 });
 
@@ -229,7 +229,7 @@ export const v45Client = axios.create({
     timeout: 10_000,
     headers: {
         'Content-Type': 'application/json',
-        'X-Client-Version': '56.5.0-ELITE',
+        'X-Client-Version': '56.5.0-WRAITH',
     },
 });
 

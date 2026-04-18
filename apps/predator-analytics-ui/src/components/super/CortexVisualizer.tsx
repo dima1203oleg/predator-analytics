@@ -55,8 +55,8 @@ export const CortexVisualizer: React.FC = () => {
                         { id: "1", name: "API Gateway", type: "service", compliant: true, version: "3.12", notes: [], dependencies: ["PostgreSQL", "Redis"] },
                         { id: "2", name: "Constitutional Guard", type: "service", compliant: true, version: "3.12", notes: [], dependencies: ["Truth Ledger"] },
                         { id: "3", name: "SOM (Sovereign Observer)", type: "service", compliant: false, version: "unknown", notes: ["No runtime definition found"], dependencies: ["API Gateway"] },
-                        { id: "4", name: "Predator v56.5-ELITE | Sovereign HUD", type: "frontend", compliant: true, version: "v56.5-ELITE", notes: [], dependencies: ["API Gateway"] },
-                        { id: "5", name: "GLM-5.1 Agentic Pool", type: "agent", compliant: true, version: "v56.5-ELITE", notes: ["SWE-Bench Pro Verified"], dependencies: ["NVIDIA_ZROK"] },
+                        { id: "4", name: "Predator v57.2-WRAITH | Sovereign HUD", type: "frontend", compliant: true, version: "v57.2-WRAITH", notes: [], dependencies: ["API Gateway"] },
+                        { id: "5", name: "GLM-5.1 Agentic Pool", type: "agent", compliant: true, version: "v57.2-WRAITH", notes: ["SWE-Bench Pro Verified"], dependencies: ["NVIDIA_ZROK"] },
                         { id: "6", name: "NVIDIA_ZROK Tunnel", type: "service", compliant: true, version: "zrok-v0.4", notes: ["Firewall Bypass Active"], dependencies: ["DirectLink", "MockFallback"] },
                         { id: "7", name: "PostgreSQL", type: "database", compliant: true, version: "15", notes: [], dependencies: [] },
                     ]

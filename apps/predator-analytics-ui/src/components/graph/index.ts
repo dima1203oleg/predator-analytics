@@ -7,5 +7,4 @@ export type {
   GraphEdge,
   NodeType,
   EdgeType,
-  RiskLevel,
 } from './GraphViewer';

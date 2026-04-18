@@ -1,5 +1,5 @@
 /**
- * 🧪 E2E Verification Citadel | v56.5-ELITE Testing & Integrity
+ * 🧪 E2E Verification Citadel | v57.2-WRAITH Testing & Integrity
  * System Verification Suite - Контрольний стенд перевірки цілісності даних.
  * 
  * Відповідає вимогам "Control Case":
@@ -7,11 +7,12 @@
  * 2. Перевірка кластерів MinIO, PG, Graph, Qdrant
  * 3. Виконання контрольних аналітичних запитів (HS-Code)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import {
   FileText, Database, Server, Activity, Search,
   CheckCircle, AlertCircle, Play, Layers,
@@ -88,7 +89,7 @@ const StageIndicator: React.FC<{ stage: StageStatus, index: number }> = ({ stage
         "flex items-center justify-between p-4 rounded-2xl border mb-3 transition-all panel-3d",
         stage.status === 'completed' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' :
           stage.status === 'running' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]' :
-            stage.status === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' :
+            stage.status === 'error' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
               'bg-slate-900/40 border-white/5 text-slate-500'
       )}
     >
@@ -161,6 +162,31 @@ const SystemVerificationSuite: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [jobId, setJobId] = useState<string | null>(null);
+  const { isOffline, nodeSource, sourceLabel, activeFailover, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+       window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'VerificationCitadel',
+            message: `КРИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
+            severity: 'critical',
+            timestamp: new Date().toISOString(),
+            code: 'NODE_OFFLINE'
+          }
+       }));
+    } else {
+       window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'VerificationCitadel',
+            message: `ЦИТАДЕЛЬ_ВЕРИФІКАЦІЇ [${nodeSource}]: Зв'язок з ядром встановлено. Системи цілісності в нормі.`,
+            severity: 'info',
+            timestamp: new Date().toISOString(),
+            code: 'VERIFICATION_SUCCESS'
+          }
+       }));
+    }
+  }, [isOffline, nodeSource]);
 
   const [storageChecks, setStorageChecks] = useState<StorageCheck[]>([
     { id: 'minio', name: 'S3 MinIO Cluster', type: 'minio', status: 'checking', count: 0, details: 'Raw Object Store', color: '#f43f5e' },
@@ -183,8 +209,26 @@ const SystemVerificationSuite: React.FC = () => {
       for (const file of files) {
         try {
           await api.ingestion.uploadFile(file);
+          window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+              service: 'IngestionCore',
+              message: `Файл ${file.name} завантажено успішно.`,
+              severity: 'info',
+              timestamp: new Date().toISOString(),
+              code: 'FILE_UPLOAD_OK'
+            }
+          }));
         } catch (e) {
           console.error(`Failed to upload ${file.name}`, e);
+          window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+              service: 'IngestionCore',
+              message: `ПОМИЛКА ЗАВАНТАЖЕННЯ: ${file.name}`,
+              severity: 'critical',
+              timestamp: new Date().toISOString(),
+              code: 'FILE_UPLOAD_ERR'
+            }
+          }));
         }
       }
     }
@@ -193,11 +237,21 @@ const SystemVerificationSuite: React.FC = () => {
   const startPipeline = async () => {
     setIsProcessing(true);
     setActiveStep(2);
+    
+    window.dispatchEvent(new CustomEvent('predator-error', {
+      detail: {
+        service: 'ETL_Pipeline',
+        message: 'Ініціалізація повного циклу верифікації (v57.2-WRAITH).',
+        severity: 'info',
+        timestamp: new Date().toISOString(),
+        code: 'PIPELINE_START'
+      }
+    }));
 
     try {
       const job = await api.ingestion.startJob({
         source_type: 'file',
-        config: { note: 'Control Case March Data v56.5-ELITE' }
+        config: { note: 'Control Case March Data v57.2-WRAITH' }
       });
       if (job && job.job_id) {
         setJobId(job.job_id);
@@ -219,6 +273,15 @@ const SystemVerificationSuite: React.FC = () => {
           setIsProcessing(false);
           setActiveStep(3);
           verifyStorage();
+          window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+              service: 'ETL_Pipeline',
+              message: 'Пайплайн завершено. Дані успішно верифіковано в ядро.',
+              severity: 'info',
+              timestamp: new Date().toISOString(),
+              code: 'PIPELINE_SUCCESS'
+            }
+          }));
         }
       } catch (e) {
         console.error("Polling failed", e);
@@ -267,6 +330,15 @@ const SystemVerificationSuite: React.FC = () => {
         { id: 'redis', name: 'Shared Cache', type: 'redis', status: 'verified', count: 128, details: 'Hot Data Ready', color: '#ef4444' },
       ]);
       setActiveStep(4);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'VerificationCitadel',
+          message: 'Цілісність кластерів зберігання підтверджено.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'STORAGE_VERIFIED'
+        }
+      }));
     } catch (e) {
       console.warn("Storage check failed, using safe defaults", e);
       setActiveStep(4);
@@ -300,9 +372,28 @@ const SystemVerificationSuite: React.FC = () => {
         sources: ["Clusters: PG, OS, Graph"],
         result: displayResult
       });
+      setControlQueryResult(displayResult);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'SearchEngine',
+          message: 'Контрольний запит HS-Code 8542310000 виконано успішно.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'QUERY_SUCCESS'
+        }
+      }));
       setActiveStep(5);
     } catch (e) {
-      console.error("Query failed", e);
+      console.error("Control query failed", e);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'SearchEngine',
+          message: 'КРИТИЧНО: Відмова контрольного запиту HS-Code.',
+          severity: 'critical',
+          timestamp: new Date().toISOString(),
+          code: 'QUERY_FAILED'
+        }
+      }));
     }
   };
 
@@ -312,7 +403,7 @@ const SystemVerificationSuite: React.FC = () => {
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02]" />
-        <div className="absolute top-0 left-0 w-full h-1/3 bg-rose-600/5 blur-[120px] rounded-full" />
+        <div className="absolute top-0 left-0 w-full h-1/3 bg-amber-600/5 blur-[120px] rounded-full" />
       </div>
 
       {/* Header Section */}
@@ -320,17 +411,17 @@ const SystemVerificationSuite: React.FC = () => {
         title={
           <div className="flex items-center gap-6">
             <div className="relative group">
-              <div className="absolute inset-0 bg-rose-500/20 blur-[50px] rounded-full scale-125 transition-all group-hover:scale-150" />
+              <div className="absolute inset-0 bg-amber-500/20 blur-[50px] rounded-full scale-125 transition-all group-hover:scale-150" />
               <div className="relative w-14 h-14 bg-slate-900 border border-white/5 rounded-[22px] flex items-center justify-center panel-3d shadow-2xl">
-                <Microscope size={32} className="text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
+                <Microscope size={32} className="text-amber-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
               </div>
             </div>
             <div>
               <h1 className="text-4xl font-black text-white uppercase tracking-tighter leading-none font-display">
-                Verification <span className="text-rose-400">Citadel</span>
+                Verification <span className="text-amber-400">Citadel</span>
               </h1>
               <div className="flex items-center gap-3 mt-3">
-                <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/20 text-[9px] font-black tracking-widest px-3 py-1 uppercase">
+                <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[9px] font-black tracking-widest px-3 py-1 uppercase">
                   CONTROL_CASE_MARCH_2026
                 </Badge>
                 <div className="flex items-center gap-2">
@@ -345,7 +436,13 @@ const SystemVerificationSuite: React.FC = () => {
         breadcrumbs={['System', 'Verification', 'Control Case']}
         stats={[
           { label: 'СТАН ПАЙПЛАЙНУ', value: isProcessing ? 'ЗАПУЩЕНО' : 'ОЧІКУВАННЯ', icon: <Activity size={14} />, color: isProcessing ? 'primary' : 'default' },
-          { label: 'ВЕРСІЯ ДАНИХ', value: 'v56.5-ELITE-MAR-MAR', icon: <Database size={14} />, color: 'primary' },
+          { 
+            label: isOffline ? 'SYNC_RECOVERY' : 'ВУЗОЛ_SOURCE', 
+            value: isOffline ? `${Math.floor(healingProgress)}%` : activeFailover ? 'ZROK_TUNNEL' : 'NVIDIA_MASTER', 
+            icon: isOffline ? <Activity /> : <Server size={14} />, 
+            color: isOffline ? 'warning' : 'primary',
+            animate: isOffline
+          },
           { label: 'ІНДЕКС БЕЗПЕКИ', value: '100.0/100', icon: <Shield size={14} />, color: 'success' },
         ]}
       />
@@ -426,12 +523,12 @@ const SystemVerificationSuite: React.FC = () => {
             <div className="flex items-center justify-between mb-8 relative z-10">
               <div>
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">03. Контрольний Запит (E2E Test)</h3>
-                <div className="bg-black/60 p-5 rounded-2xl border border-rose-500/20 font-mono text-[11px] text-rose-300 mt-4 leading-relaxed tracking-tight group-hover:border-rose-500/40 transition-all">
-                  <div className="text-rose-500/50 mb-2">// PREDATOR_QUERY_LANGUAGE</div>
-                  <span className="text-rose-400">FIND</span> declarations <br />
-                  <span className="text-rose-400">WHERE</span> date <span className="text-white">BETWEEN</span> [2026-03-01 <span className="text-white">TO</span> 2026-03-31] <br />
-                  <span className="text-rose-400">AND</span> hs_code <span className="text-white">MATCH</span> <span className="text-rose-400">'8542310000'</span> <br />
-                  <span className="text-rose-400">AND</span> company_id <span className="text-white">UNIQUE</span>
+                <div className="bg-black/60 p-5 rounded-2xl border border-amber-500/20 font-mono text-[11px] text-amber-300 mt-4 leading-relaxed tracking-tight group-hover:border-amber-500/40 transition-all">
+                  <div className="text-amber-500/50 mb-2">// PREDATOR_QUERY_LANGUAGE</div>
+                  <span className="text-amber-400">FIND</span> declarations <br />
+                  <span className="text-amber-400">WHERE</span> date <span className="text-white">BETWEEN</span> [2026-03-01 <span className="text-white">TO</span> 2026-03-31] <br />
+                  <span className="text-amber-400">AND</span> hs_code <span className="text-white">MATCH</span> <span className="text-amber-400">'8542310000'</span> <br />
+                  <span className="text-amber-400">AND</span> company_id <span className="text-white">UNIQUE</span>
                 </div>
               </div>
               {activeStep >= 4 && !controlQueryResult && (
@@ -439,7 +536,7 @@ const SystemVerificationSuite: React.FC = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={runControlQuery}
-                  className="px-8 py-3 bg-rose-500 text-white rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
+                  className="px-8 py-3 bg-amber-500 text-white rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
                 >
                   <Search size={16} /> Виконати Тест
                 </motion.button>
@@ -450,7 +547,7 @@ const SystemVerificationSuite: React.FC = () => {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between p-4 bg-slate-900 rounded-2xl border border-white/5">
                   <div className="flex gap-4">
-                    <span className="text-[10px] font-black text-slate-500 uppercase">ЧАС: <span className="text-rose-400 font-mono">{controlQueryResult.executionTime}</span></span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase">ЧАС: <span className="text-amber-400 font-mono">{controlQueryResult.executionTime}</span></span>
                     <span className="text-[10px] font-black text-slate-500 uppercase">ДЖЕРЕЛА: <span className="text-white">{controlQueryResult.sources.join(', ')}</span></span>
                   </div>
                   <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest">УСПІШНО</Badge>
@@ -463,7 +560,7 @@ const SystemVerificationSuite: React.FC = () => {
                         <h4 className="text-2xl font-black text-white tracking-tighter uppercase font-display">{item.company}</h4>
                         <div className="flex items-center gap-3 mt-2">
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">HS-CODE:</span>
-                          <span className="text-[10px] font-mono font-black text-rose-400">{item.hsCode}</span>
+                          <span className="text-[10px] font-mono font-black text-amber-400">{item.hsCode}</span>
                         </div>
                         <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wide italic">{item.goods}</p>
                       </div>
@@ -488,8 +585,8 @@ const SystemVerificationSuite: React.FC = () => {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
-                      <AlertTriangle size={14} className="text-rose-400" />
-                      <span className="text-[10px] font-black text-rose-300 uppercase tracking-widest">{item.alert}</span>
+                      <AlertTriangle size={14} className="text-amber-400" />
+                      <span className="text-[10px] font-black text-amber-300 uppercase tracking-widest">{item.alert}</span>
                     </div>
                   </div>
                 ))}
@@ -506,7 +603,7 @@ const SystemVerificationSuite: React.FC = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-black text-white uppercase tracking-tighter">Сховища / Кластери</h3>
               <div className="flex gap-1">
-                {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />)}
+                {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />)}
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
@@ -539,10 +636,10 @@ const SystemVerificationSuite: React.FC = () => {
             </div>
 
             {/* Verification Token */}
-            <div className="mt-10 p-6 bg-rose-500/5 border border-dashed border-rose-500/30 rounded-[32px] flex flex-col items-center text-center">
-              <Fingerprint size={48} className="text-rose-500/30 mb-4" />
+            <div className="mt-10 p-6 bg-amber-500/5 border border-dashed border-amber-500/30 rounded-[32px] flex flex-col items-center text-center">
+              <Fingerprint size={48} className="text-amber-500/30 mb-4" />
               <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Токен Сесії Верифікації</span>
-              <span className="text-[10px] font-mono font-black text-rose-400 select-all tracking-tighter">PRDTR-2026-MAR-E2E-CITADEL-V55-BETA</span>
+              <span className="text-[10px] font-mono font-black text-amber-400 select-all tracking-tighter">PRDTR-2026-MAR-E2E-CITADEL-V55-BETA</span>
             </div>
           </TacticalCard>
         </div>

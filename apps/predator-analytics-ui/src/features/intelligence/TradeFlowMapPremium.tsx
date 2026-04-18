@@ -1,5 +1,5 @@
 /**
- * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v56.5-ELITE
+ * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v57.2-WRAITH
  * PREDATOR Analytics — Global Trade & Logistics Intelligence
  * 
  * Візуалізація імпорту/експорту в реальному часі.
@@ -65,6 +65,8 @@ const MOCK_FLOWS: TradeFlow[] = [
   { id: 'f4', from: 'us', to: 'ua', value: 25000000, product: 'IT-ПОСЛУГИ', color: '#D4AF37' },
 ];
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export default function TradeFlowMapPremium() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
   const [selectedFlow, setSelectedFlow] = useState<TradeFlow | null>(null);
@@ -72,6 +74,7 @@ export default function TradeFlowMapPremium() {
   const [animationProgress, setAnimationProgress] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline, nodeSource } = useBackendStatus();
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -81,10 +84,36 @@ export default function TradeFlowMapPremium() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'GeoIntel',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОПРОСТОРОВОЇ РОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'GEOSPATIAL_NODES'
+        }
+      }));
+    }
+  }, [isOffline]);
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await new Promise(r => setTimeout(r, 1500));
     setRefreshing(false);
+    
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'GeoIntel',
+          message: 'Геопросторова синхронізація через MIRROR_CHANNEL завершена успішно (GEOSPATIAL_NODES).',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'GEOSPATIAL_NODES'
+        }
+      }));
+    }
   };
 
   const formatValue = (v: number) => `$${(v / 1000000).toFixed(1)}M`;
@@ -112,7 +141,7 @@ export default function TradeFlowMapPremium() {
                            TRADE_MATRIX // FLOW_GEOSPATIAL
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         КАРТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ПОТОКІВ</span>
@@ -122,7 +151,7 @@ export default function TradeFlowMapPremium() {
               }
               breadcrumbs={['INTEL', 'TRADE', 'GLOBAL_FLOW_v5']}
               badges={[
-                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Crown size={10} /> },
                 { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },
               ]}
               stats={[
@@ -136,7 +165,7 @@ export default function TradeFlowMapPremium() {
                    <button onClick={() => setZoom(z => Math.min(z + 0.2, 2))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomIn size={24} /></button>
                    <button onClick={() => setZoom(z => Math.max(z - 0.2, 0.5))} className="p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl"><ZoomOut size={24} /></button>
                    <button onClick={handleRefresh} className={cn("p-5 bg-black border-2 border-white/[0.04] rounded-2xl text-slate-400 hover:text-[#D4AF37] transition-all shadow-xl", refreshing && "animate-spin")}><RefreshCw size={24} /></button>
-                   <button onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-rose-900/10 border-2 border-rose-500/20 text-rose-500" : "bg-emerald-900/10 border-2 border-emerald-500/20 text-emerald-500")}>
+                   <button onClick={() => setIsPlaying(!isPlaying)} className={cn("px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic shadow-2xl transition-all flex items-center gap-4", isPlaying ? "bg-amber-900/10 border-2 border-amber-500/20 text-amber-500" : "bg-emerald-900/10 border-2 border-emerald-500/20 text-emerald-500")}>
                       {isPlaying ? <Pause size={20} /> : <Play size={20} />} {isPlaying ? 'ПАУЗА_АНІМАЦІЇ' : 'ЗАПУСТИТИ'}
                    </button>
                 </div>
@@ -239,7 +268,7 @@ export default function TradeFlowMapPremium() {
                          </TacticalCard>
 
                          <div className="p-8 rounded-[3rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-8">
-                            <h4 className="text-[10px] font-black text-rose-500 italic uppercase tracking-[0.4em] border-b border-white/[0.04] pb-6 flex items-center gap-4">
+                            <h4 className="text-[10px] font-black text-amber-500 italic uppercase tracking-[0.4em] border-b border-white/[0.04] pb-6 flex items-center gap-4">
                                <ShieldCheck size={16} /> RISK_COMPLIANCE_UA
                             </h4>
                             <div className="space-y-4">
@@ -248,7 +277,7 @@ export default function TradeFlowMapPremium() {
                                   <p className="text-xs font-black text-white italic">WHITE_LIST // LOW_RISK</p>
                                </div>
                                <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/[0.04] space-y-2">
-                                  <p className="text-[9px] font-black text-rose-500 uppercase italic">SANCTIONS_CHECK</p>
+                                  <p className="text-[9px] font-black text-amber-500 uppercase italic">SANCTIONS_CHECK</p>
                                   <p className="text-xs font-black text-white italic">0 MATCHES (CLEAN)</p>
                                </div>
                             </div>

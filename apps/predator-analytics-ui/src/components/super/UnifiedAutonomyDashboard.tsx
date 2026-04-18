@@ -283,7 +283,7 @@ export const UnifiedAutonomyDashboard: React.FC = () => {
       setMetrics({
         timestamp: new Date().toISOString(),
         code_evolution: {
-          name: 'AZR Hyper-Autonomy v56.5-ELITE',
+          name: 'AZR Hyper-Autonomy v57.2-WRAITH',
           status: 'running',
           uptime_hours: 6.5,
           last_cycle: new Date().toISOString(),

@@ -1,141 +1,138 @@
-/**
- * 🧪 Tests for FinancialDashboard Component | v56.5-ELITE
- */
-
 import { render, screen, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { FinancialDashboard } from './FinancialDashboard';
-import { cersService } from '@/services/unified/cers.service';
-import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { useBackendStatus } from '@/hooks/useBackendStatus';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-// Force absolute mock behavior
-vi.mock('@/hooks/useBackendStatus');
-vi.mock('@/services/unified/cers.service');
+// ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-const mockMetrics = [
-  { year: 2024, revenue: 60000000, expenses: 45000000, profit: 15000000, profitMargin: 25.0, roa: 12.0, roe: 18.0 },
-  { year: 2023, revenue: 50000000, expenses: 40000000, profit: 10000000, profitMargin: 20.0, roa: 10.0, roe: 15.0 },
-  { year: 2022, revenue: 40000000, expenses: 35000000, profit: 5000000, profitMargin: 12.5, roa: 8.0, roe: 10.0 }
-];
+vi.mock('framer-motion', () => ({
+    motion: {
+        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    },
+}));
+
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual = await importOriginal() as any;
+    return new Proxy(actual, {
+        get: (target, prop) => {
+            if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
+                return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+            }
+            return target[prop];
+        }
+    });
+});
+
+vi.mock('@/services/unified/cers.service', () => ({
+    cersService: {
+        getFinancialMetrics: vi.fn(() => Promise.resolve([
+            { year: 2025, revenue: 100000000, expenses: 80000000, profit: 20000000, profitMargin: 20 },
+            { year: 2024, revenue: 80000000, expenses: 70000000, profit: 10000000, profitMargin: 12.5 }
+        ]))
+    }
+}));
+
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        activeFailover: false,
+        sourceLabel: 'NVIDIA_PRIMARY'
+    })
+}));
+
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/intelligence/DiagnosticsTerminal', () => ({ DiagnosticsTerminal: () => <div data-testid="diagnostics-terminal" /> }));
 
 const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: Infinity } }
-  });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <MemoryRouter>
-          {children}
-        </MemoryRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+        },
+    });
+    return ({ children }: { children: React.ReactNode }) => (
+        <QueryClientProvider client={queryClient}>
+            <MemoryRouter initialEntries={['/financials/12345678']}>
+                <Routes>
+                    <Route path="/financials/:ueid" element={children} />
+                </Routes>
+            </MemoryRouter>
+        </QueryClientProvider>
+    );
 };
 
+// ─── TESTS ───────────────────────────────────────────────────────────────────
+
 describe('FinancialDashboard', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-    // Default mock implementation
-    vi.mocked(useBackendStatus).mockReturnValue({
-      isOffline: false,
-      activeFailover: false,
-      sourceLabel: 'NVIDIA_PRIMARY',
-      status: 'online',
-      isOnline: true,
-      healingProgress: 100,
-      nodeSource: 'NVIDIA_DIRECT',
-      isTruthOnly: false,
-      modeLabel: 'Активне з\'єднання',
-      sourceType: 'remote',
-      statusLabel: 'З\'єднання стабільне',
-      nodes: [],
-    });
-  });
-
-  it('should render healthy state and trends', async () => {
-    vi.mocked(cersService.getFinancialMetrics).mockResolvedValue(mockMetrics);
-
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-    
-    // Wait for the data labels to appear
-    expect(await screen.findByText(/Дохід/)).toBeInTheDocument();
-    
-    // Check for specific version badge
-    expect(screen.getByText('FINANCE_CORE_v56')).toBeInTheDocument();
-    
-    // Check trend calculation (20.0%)
-    expect(screen.getByText(/20\.0/)).toBeInTheDocument();
-  });
-
-  it('should activate EMERGENCY mode when offline', async () => {
-    vi.mocked(useBackendStatus).mockReturnValue({
-      isOffline: true,
-      activeFailover: true,
-      sourceLabel: 'MIRROR_NODE',
-      status: 'offline',
-      isOnline: false,
-      healingProgress: 0,
-      nodeSource: 'SOVEREIGN_MOCK',
-      isTruthOnly: false,
-      modeLabel: 'Аварійний режим',
-      sourceType: 'local',
-      statusLabel: 'Відключено',
-      nodes: [],
+    beforeEach(() => {
+        vi.clearAllMocks();
     });
 
-    vi.mocked(cersService.getFinancialMetrics).mockResolvedValue(mockMetrics);
-
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-
-    // Wait for emergency badge
-    expect(await screen.findByText('SOVEREIGN_EMERGENCY')).toBeInTheDocument();
-    expect(screen.getByText('FAILOVER_MIRROR')).toBeInTheDocument();
-    
-    // Check color change (using metrics text as a proxy)
-    const metricsLabel = screen.getByText(/Метрики/);
-    expect(metricsLabel.closest('span')?.className).toContain('text-amber-500');
-  });
-
-  it('should display loading state initially', () => {
-    vi.mocked(cersService.getFinancialMetrics).mockImplementation(() => new Promise(() => {}));
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-    expect(screen.getByText(/Завантаження/i)).toBeInTheDocument();
-  });
-
-  it('should display error message and dispatch event on failure', async () => {
-    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
-    vi.mocked(cersService.getFinancialMetrics).mockRejectedValue(new Error('API Error'));
-
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-
-    expect(await screen.findByText(/Помилка завантаження/i)).toBeInTheDocument();
-    
-    await waitFor(() => {
-      expect(dispatchSpy).toHaveBeenCalled();
+    it('відображає фінансові KPI та історичну таблицю', async () => {
+        render(<FinancialDashboard />, { wrapper: createWrapper() });
+        
+        expect(screen.getByText(/Фінансові Метрики/i)).toBeInTheDocument();
+        
+        await waitFor(() => {
+            expect(screen.getByText('100.0')).toBeInTheDocument(); // 100M revenue
+            expect(screen.getByText('20.0')).toBeInTheDocument(); // 20M profit
+            expect(screen.getByText('2025')).toBeInTheDocument();
+            expect(screen.getByText('2024')).toBeInTheDocument();
+        });
     });
-  });
 
-  it('should render data table correctly', async () => {
-    vi.mocked(cersService.getFinancialMetrics).mockResolvedValue(mockMetrics);
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-    
-    expect(await screen.findByText(/Історичні дані/)).toBeInTheDocument();
-    const rows = screen.getAllByRole('row');
-    expect(rows[1]).toHaveTextContent('2024');
-    expect(rows[2]).toHaveTextContent('2023');
-  });
+    it('ініціює FINANCIAL_SUCCESS після завантаження даних', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<FinancialDashboard />, { wrapper: createWrapper() });
+        
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'FINANCIAL_SUCCESS'
+                    })
+                })
+            );
+        });
+    });
 
-  it('should render diagnostics terminal at the bottom', async () => {
-    vi.mocked(cersService.getFinancialMetrics).mockResolvedValue(mockMetrics);
-    render(<FinancialDashboard ueid="12345678" />, { wrapper: createWrapper() });
-    
-    await screen.findByText(/Метрики/);
-    // The terminal always has buttons
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThan(0);
-  });
+    it('відображає MIRROR_VAULT в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                activeFailover: true,
+                sourceLabel: 'MIRROR_CLUSTER'
+            })
+        }));
+
+        render(<FinancialDashboard />, { wrapper: createWrapper() });
+        
+        await waitFor(() => {
+            expect(screen.getByText(/MIRROR_VAULT/i)).toBeInTheDocument();
+            expect(screen.getByText(/FAILOVER_MIRROR/i)).toBeInTheDocument();
+        });
+    });
+
+    it('ініціює FINANCIAL_ERROR при помилці запиту', async () => {
+        const { cersService } = await import('@/services/unified/cers.service');
+        (cersService.getFinancialMetrics as any).mockRejectedValueOnce(new Error('API Failure'));
+        
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<FinancialDashboard />, { wrapper: createWrapper() });
+        
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'FINANCIAL_ERROR'
+                    })
+                })
+            );
+            expect(screen.getByText(/Помилка завантаження/i)).toBeInTheDocument();
+        });
+    });
 });

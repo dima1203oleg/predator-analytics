@@ -1,0 +1,1296 @@
+
+ RUN  v1.6.1 /Users/Shared/Predator_60/apps/predator-analytics-ui
+
+ ❯ src/features/intelligence/__tests__/SanctionsScreening.test.tsx  (5 tests | 2 failed) 2549ms
+   ❯ src/features/intelligence/__tests__/SanctionsScreening.test.tsx > SanctionsScreening > показує чистий стан без локально вигаданих збігів
+     → Unable to find an element with the text: /ЗБІГІВ НЕ ЗНАЙДЕНО/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m1[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0%[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39m
+ ...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m1[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0%[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39m
+ ...
+   ❯ src/features/intelligence/__tests__/SanctionsScreening.test.tsx > SanctionsScreening > показує помилку і не повертається до демо-історії при збої API
+     → Unable to find an element with the text: /Не вдалося виконати підтверджений скринінг через `\/sanctions\/screen`/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mALPHA[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mALPHA[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39...
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/intelligence/__tests__/SanctionsScreening.test.tsx > SanctionsScreening > показує чистий стан без локально вигаданих збігів
+TestingLibraryElementError: Unable to find an element with the text: /ЗБІГІВ НЕ ЗНАЙДЕНО/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m1[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0%[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39m
+ ...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m1[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0%[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39m
+ ...
+ ❯ waitForWrapper node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/features/intelligence/__tests__/SanctionsScreening.test.tsx:200:29
+    198|         fireEvent.click(screen.getByRole('button', { name: /EXECUTE_VE…
+    199| 
+    200|         expect(await screen.findByText(/ЗБІГІВ НЕ ЗНАЙДЕНО/i)).toBeInT…
+       |                             ^
+    201|         expect(screen.getByText(/STATUS/i)).toBeInTheDocument();
+    202|         expect(screen.getByText(/CLEAN/i)).toBeInTheDocument();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/intelligence/__tests__/SanctionsScreening.test.tsx > SanctionsScreening > показує помилку і не повертається до демо-історії при збої API
+TestingLibraryElementError: Unable to find an element with the text: /Не вдалося виконати підтверджений скринінг через `\/sanctions\/screen`/i. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mALPHA[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mdata-testid[39m=[32m"page-transition"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"advanced-background"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mdata-testid[39m=[32m"cyber-grid"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"relative mb-16"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mdata-testid[39m=[32m"view-header"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-title"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-10"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"relative group"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-500 shadow-[0_0_20px_#e11d48]"[39m
+                      [33mdata-testid[39m=[32m"icon-shieldalert"[39m
+                      [33msize[39m=[32m"42"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"space-y-4"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-4"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg"[39m
+                    [36m>[39m
+                      [0mSANCTIONS_HUB // MATRIX_ARRAY[0m
+                    [36m</span>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"h-px w-12 bg-rose-500/20"[39m
+                    [36m/>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm"[39m
+                    [36m>[39m
+                      [0mv56.5-ELITE[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<h1[39m
+                    [33mclass[39m=[32m"text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif"[39m
+                  [36m>[39m
+                    [0mСАНКЦІЙНА [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"[39m
+                    [36m>[39m
+                      [0mМАТРИЦЯ[0m
+                    [36m</span>[39m
+                  [36m</h1>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mdata-testid[39m=[32m"header-stats"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mПІДТВЕРДЖЕНІ_ПЕРЕВІРКИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m0[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mАКТИВНІ_РЕЄСТРИ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0m6[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<span>[39m
+                  [0mРИЗИК_ОСТАННЬОЇ_СЕСІЇ[0m
+                [36m</span>[39m
+                [36m<span>[39m
+                  [0mALPHA[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mDATA_SOURCE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-yellow-600"[39m
+              [36m>[39m
+                [0m/sanctions/screen[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mBACKEND_NODE[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-white"[39m
+              [36m>[39m
+                [0mLOCALHOST:9080/API/V1[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase"[39m
+              [36m>[39m
+                [0mSTATUS[0m
+                [0m:[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-[10px] font-mono font-black shadow-sm text-emerald-500"[39m
+              [36m>[39m
+                [0mЗʼЄДНАННЯ АКТИВНЕ[0m
+              [36m</span>[39...
+ ❯ waitForWrapper node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/react/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/features/intelligence/__tests__/SanctionsScreening.test.tsx:216:26
+    214| 
+    215|         expect(
+    216|             await screen.findByText(/Не вдалося виконати підтверджений…
+       |                          ^
+    217|         ).toBeInTheDocument();
+    218|         expect(screen.queryByText(/Владімір Путін/i)).not.toBeInTheDoc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  20:48:35
+   Duration  6.56s (transform 485ms, setup 645ms, collect 742ms, tests 2.55s, environment 1.94s, prepare 256ms)
+

@@ -1,5 +1,5 @@
 /**
- * 🛰️ ENTITY RADAR // РАДАР СУБ'ЄКТІВ | v56.5-ELITE
+ * 🛰️ ENTITY RADAR // РАДАР СУБ'ЄКТІВ | v57.2-WRAITH
  * PREDATOR Analytics — Sovereign Intelligence & Network Analysis
  * 
  * Модуль глобального моніторингу та радарного виявлення аномальних
@@ -11,6 +11,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
@@ -78,7 +79,7 @@ interface EntityRadarItem {
 const SovereignBadge = ({ level, score }: { level: string; score: number }) => {
   const getColors = () => {
     switch (level.toUpperCase()) {
-      case 'CRITICAL': return 'bg-rose-600/10 text-rose-500 border-rose-600/30 shadow-[0_0_20px_rgba(225,29,72,0.3)]';
+      case 'CRITICAL': return 'bg-amber-600/10 text-amber-500 border-amber-600/30 shadow-[0_0_20px_rgba(225,29,72,0.3)]';
       case 'HIGH': return 'bg-orange-600/10 text-orange-500 border-orange-600/30 shadow-[0_0_15px_rgba(234,88,12,0.2)]';
       case 'ELEVATED': return 'bg-yellow-600/10 text-yellow-500 border-yellow-600/30 shadow-[0_0_15px_rgba(212,175,55,0.2)]';
       default: return 'bg-emerald-600/10 text-emerald-500 border-emerald-600/30';
@@ -97,7 +98,7 @@ const SovereignBadge = ({ level, score }: { level: string; score: number }) => {
 
 const SectorIcon = ({ sector }: { sector: string }) => {
   if (sector.includes('Логістика')) return <Globe size={14} className="text-yellow-500" />;
-  if (sector.includes('палив')) return <Zap size={14} className="text-rose-500" />;
+  if (sector.includes('палив')) return <Zap size={14} className="text-amber-500" />;
   return <Layers size={14} className="text-yellow-400" />;
 };
 
@@ -176,9 +177,35 @@ const EntityRadarView: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  const { isOffline, nodeSource } = useBackendStatus();
+
   useEffect(() => {
     loadRadar();
-  }, []);
+  }, [isOffline]);
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'EntityRadar',
+          message: 'РАДАР СУБ\'ЄКТІВ: Активовано автономний режим (ENTITY_RADAR_NODES). Використовується локальна база радарних виявлень.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'RADAR_OFFLINE'
+        }
+      }));
+    }
+
+    window.dispatchEvent(new CustomEvent('predator-error', {
+      detail: {
+        service: 'EntityRadar',
+        message: `РАДАР_МАТРИЦЯ [${nodeSource}]: Радар суб'єктів активовано. Готовність до сканування контуру GDS.`,
+        severity: 'info',
+        timestamp: new Date().toISOString(),
+        code: 'RADAR_SUCCESS'
+      }
+    }));
+  }, [isOffline, nodeSource]);
 
   const loadRadar = async () => {
     setLoading(true);
@@ -187,9 +214,28 @@ const EntityRadarView: React.FC = () => {
       const res = api.premium?.getCompetitorRadar ? await api.premium.getCompetitorRadar() : { data: [] };
       const data = Array.isArray(res) ? res : (res?.data || []);
       setEntities(data);
+      
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'EntityRadar',
+          message: `СЕРВЕР_РАДАРА [${nodeSource}]: Топологію ризику для ${data.length} об'єктів успішно синхронізовано.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'RADAR_SUCCESS'
+        }
+      }));
     } catch (e) {
       console.error("Radar load error", e);
       setEntities([]);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'EntityRadar',
+          message: `КРИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
+          severity: 'critical',
+          timestamp: new Date().toISOString(),
+          code: 'ENTITY_RADAR_NODES'
+        }
+      }));
     } finally {
       setLoading(false);
     }
@@ -224,7 +270,7 @@ const EntityRadarView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-          {/* HEADER ELITE HUD */}
+          {/* HEADER WRAITH HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -237,10 +283,10 @@ const EntityRadarView: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      PREDATOR_RADAR // NEURAL_ENTITY_SCANNER
+                      PREDATOR_RADAR // {isOffline ? 'MIRROR_SCAN' : 'NEURAL_ENTITY_SCANNER'}
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РАДАР <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СУБ'ЄКТІВ</span>
@@ -316,7 +362,7 @@ const EntityRadarView: React.FC = () => {
             </div>
           </div>
 
-          {/* LIST ELITE HUB */}
+          {/* LIST WRAITH HUB */}
           <div className="space-y-12">
             {loading ? (
               <div className="py-40 flex flex-col items-center justify-center gap-10">
@@ -344,7 +390,7 @@ const EntityRadarView: React.FC = () => {
                 >
                   {/* Danger Line for critical entities */}
                   {entity.cers_score > 80 && (
-                    <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-rose-600 to-transparent opacity-40 animate-pulse" />
+                    <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-amber-600 to-transparent opacity-40 animate-pulse" />
                   )}
 
                   <div
@@ -355,7 +401,7 @@ const EntityRadarView: React.FC = () => {
                     <div className="relative w-24 h-24 shrink-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
                       <div className={cn(
                         "absolute inset-0 rounded-[2rem] border-4 rotate-45 group-hover:rotate-[225deg] transition-transform duration-1000",
-                        entity.cers_score > 70 ? "bg-rose-600/5 border-rose-600/30 shadow-[0_0_30px_rgba(225,29,72,0.1)]" : "bg-yellow-500/5 border-yellow-500/30 shadow-[0_0_30px_rgba(212,175,55,0.1)]"
+                        entity.cers_score > 70 ? "bg-amber-600/5 border-amber-600/30 shadow-[0_0_30px_rgba(225,29,72,0.1)]" : "bg-yellow-500/5 border-yellow-500/30 shadow-[0_0_30px_rgba(212,175,55,0.1)]"
                       )} />
                       <div className="relative z-10 font-black font-mono text-3xl italic text-white shadow-sm">
                         {entity.name.split('"')[1]?.charAt(0) || entity.name.charAt(0)}
@@ -370,7 +416,7 @@ const EntityRadarView: React.FC = () => {
                         </h3>
                         <div className="flex gap-4">
                           {entity.trend === 'increasing' && (
-                            <div className="px-4 py-1.5 bg-rose-600/10 text-rose-500 border-2 border-rose-600/20 rounded-xl text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
+                            <div className="px-4 py-1.5 bg-amber-600/10 text-amber-500 border-2 border-amber-600/20 rounded-xl text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
                               <ArrowUpRight size={14} /> РИЗИК_ЗРОСТАЄ
                             </div>
                           )}
@@ -401,7 +447,7 @@ const EntityRadarView: React.FC = () => {
                       <div className="space-y-3">
                         <p className="text-[9px] text-slate-800 font-black uppercase tracking-[0.4em] italic leading-none">ЗВ'ЯЗКИ</p>
                         <div className="w-24 h-2 bg-slate-900 rounded-full overflow-hidden p-0.5">
-                          <div className="h-full bg-rose-600 rounded-full shadow-[0_0_10px_#e11d48]" style={{ width: `${entity.radar_metrics?.connections || 50}%` }} />
+                          <div className="h-full bg-amber-600 rounded-full shadow-[0_0_10px_#e11d48]" style={{ width: `${entity.radar_metrics?.connections || 50}%` }} />
                         </div>
                       </div>
                     </div>
@@ -462,20 +508,20 @@ const EntityRadarView: React.FC = () => {
                              <div className="space-y-10">
                                 <header className="flex items-center justify-between border-b-2 border-white/[0.03] pb-8">
                                    <div className="space-y-2">
-                                      <h4 className="text-[14px] font-black text-rose-600 uppercase tracking-[0.6em] italic flex items-center gap-4">
+                                      <h4 className="text-[14px] font-black text-amber-600 uppercase tracking-[0.6em] italic flex items-center gap-4">
                                         <Siren size={20} className="animate-pulse" /> АКТИВНІ_ПОГРОЗИ // ACTIVE_SIG
                                       </h4>
                                       <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕРМІНАЛІ РИЗИКУ</p>
                                    </div>
-                                   <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-600 animate-pulse shadow-rose-900/40">
+                                   <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-600 animate-pulse shadow-amber-900/40">
                                       <Shield size={24} />
                                    </div>
                                 </header>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                    {(entity.risk_factors.length > 0 ? entity.risk_factors : ['ВІДСУТНІ ПРЯМІ СИГНАЛИ (LOW_THREAT)']).map((f, i) => (
-                                      <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.04] hover:border-rose-600/30 transition-all group/it flex items-center gap-6 shadow-2xl">
-                                         <div className="w-4 h-4 rounded-full bg-rose-600 shadow-lg shadow-rose-950/50 group-hover/it:scale-125 transition-transform" />
+                                      <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.04] hover:border-amber-600/30 transition-all group/it flex items-center gap-6 shadow-2xl">
+                                         <div className="w-4 h-4 rounded-full bg-amber-600 shadow-lg shadow-amber-950/50 group-hover/it:scale-125 transition-transform" />
                                          <div className="space-y-1">
                                             <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">SIGNAL_ID: 0x{Math.floor(Math.random()*999)}</p>
                                             <span className="text-xl font-black text-white italic tracking-tighter uppercase leading-none">{f}</span>
@@ -512,7 +558,7 @@ const EntityRadarView: React.FC = () => {
                                       <Eye size={24} />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ВІЗУАЛІЗУВАТИ_ЗВ'ЯЗКИ</span>
                                    </button>
-                                   <button className="flex flex-col items-center justify-center gap-6 p-8 bg-rose-600/10 border-2 border-rose-600/20 text-rose-500 hover:bg-rose-600/20 rounded-[2.5rem] transition-all group/btn shadow-2xl">
+                                   <button className="flex flex-col items-center justify-center gap-6 p-8 bg-amber-600/10 border-2 border-amber-600/20 text-amber-500 hover:bg-amber-600/20 rounded-[2.5rem] transition-all group/btn shadow-2xl">
                                       <Zap size={24} className="animate-pulse" />
                                       <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">ІЗОЛЮВАТИ_ВУЗОЛ</span>
                                    </button>
@@ -540,7 +586,7 @@ const EntityRadarView: React.FC = () => {
           </div>
         </div>
 
-        {/* CUSTOM ELITE STYLES */}
+        {/* CUSTOM WRAITH STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
             .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), inset 0 0 100px rgba(212,175,55,0.01); }

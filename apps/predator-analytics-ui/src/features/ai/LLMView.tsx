@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { ViewHeader } from '@/components/ViewHeader';
-import { BrainCircuit, Cpu, Activity, Sparkles, Volume2, MessageSquare, Layers, Settings } from 'lucide-react';
+import { BrainCircuit, Cpu, Activity, Sparkles, Volume2, MessageSquare, Layers, Settings, Server } from 'lucide-react';
 import { useSystemMetrics } from '@/hooks/useSystemMetrics';
 import { useVoiceControl, InteractionStatus } from '@/hooks/useVoiceControl';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { api } from '@/services/api';
 import { useToast } from '@/context/ToastContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,8 +24,33 @@ import { DSPyOptimization } from '@/types';
 const DSPY_CHART_DATA: { iter: number; score: number }[] = [];
 
 const LLMView: React.FC = () => {
+    const { isOffline, nodeSource } = useBackendStatus();
     const metrics = useSystemMetrics();
     const toast = useToast();
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'LLM_Nexus',
+                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З ЦЕНТРАЛЬНИМ ШІ (LLM_OFFLINE). Активовано локальний висновок.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'LLM_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'LLM_Nexus',
+                    message: 'ШІ-ЯДРО СИНХРОНІЗОВАНО (LLM_SUCCESS). Доступний повний контекст NVIDIA.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'LLM_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline]);
     const [activeTab, setActiveTab] = useState<LLMTab>('INFERENCE');
     const [activeModel, setActiveModel] = useState('llama3-70b-v45');
 
@@ -132,6 +158,7 @@ const LLMView: React.FC = () => {
                 breadcrumbs={premiumLocales.llm.breadcrumbs}
                 stats={[
                     { label: premiumLocales.llm.stats.model, value: activeModel, icon: <Cpu size={14} />, color: 'primary' },
+                    { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                     { label: premiumLocales.llm.stats.vram, value: `${metrics.gpu.vram.toFixed(1)} ГБ`, icon: <Activity size={14} />, color: 'primary' },
                     { label: premiumLocales.llm.stats.optimizer, value: dspyOptimizing ? premiumLocales.llm.stats.active : premiumLocales.llm.stats.ready, icon: <Sparkles size={14} />, color: 'success' },
                 ]}

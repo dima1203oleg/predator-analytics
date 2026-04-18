@@ -79,7 +79,7 @@ const templates: ReportTemplate[] = [
   { id: '1', name: 'Імпортна аналітика', description: 'Детальний звіт про імпортні операції', category: 'Імпорт', icon: Package, color: 'cyan', isPremium: false },
   { id: '2', name: 'Аналіз конкурентів', description: 'Порівняльний аналіз конкурентів', category: 'Конкуренти', icon: Building2, color: 'purple', isPremium: false },
   { id: '3', name: 'Фінансовий звіт', description: 'Обсяги та вартість імпорту/експорту', category: 'Фінанси', icon: DollarSign, color: 'emerald', isPremium: false },
-  { id: '4', name: 'Ризик-аудит', description: 'Аудит ризиків та підозрілих операцій', category: 'Ризики', icon: Shield, color: 'rose', isPremium: true },
+  { id: '4', name: 'Ризик-аудит', description: 'Аудит ризиків та підозрілих операцій', category: 'Ризики', icon: Shield, color: 'amber', isPremium: true },
   { id: '5', name: 'Географічний звіт', description: 'Аналіз по країнах та регіонах', category: 'Географія', icon: Globe, color: 'blue', isPremium: false },
   { id: '6', name: 'Тренди ринку', description: 'Прогнози та тренди ринку', category: 'Аналітика', icon: TrendingUp, color: 'amber', isPremium: true },
 ];
@@ -96,7 +96,7 @@ const reports: GeneratedReport[] = [
 // ========================
 
 const typeConfig = {
-  pdf: { icon: FileText, color: 'rose', label: 'PDF' },
+  pdf: { icon: FileText, color: 'amber', label: 'PDF' },
   excel: { icon: FileSpreadsheet, color: 'emerald', label: 'Excel' },
   csv: { icon: File, color: 'amber', label: 'CSV' }
 };
@@ -105,7 +105,7 @@ const statusConfig = {
   ready: { icon: CheckCircle, color: 'emerald', label: 'Готовий' },
   generating: { icon: Loader, color: 'cyan', label: 'Генерується...', animate: true },
   scheduled: { icon: Calendar, color: 'purple', label: 'Заплановано' },
-  error: { icon: XCircle, color: 'rose', label: 'Помилка' }
+  error: { icon: XCircle, color: 'amber', label: 'Помилка' }
 };
 
 const TemplateCard: React.FC<{ template: ReportTemplate; onSelect: () => void }> = ({ template, onSelect }) => {
@@ -192,7 +192,7 @@ const ReportRow: React.FC<{ report: GeneratedReport }> = ({ report }) => {
           <Eye size={16} />
         </button>
         {report.status === 'scheduled' && (
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Скасувати">
+          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 transition-colors" title="Скасувати">
             <Pause size={16} />
           </button>
         )}
@@ -228,7 +228,7 @@ const ReportGenerator: React.FC = () => {
     <div className="min-h-screen bg-slate-950 p-6">
       {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-rose-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px]" />
       </div>
 
@@ -237,7 +237,7 @@ const ReportGenerator: React.FC = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-3">
-              <FileText className="text-rose-400" />
+              <FileText className="text-amber-400" />
               Report Generator
               <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
                 <Crown size={14} />
@@ -250,7 +250,7 @@ const ReportGenerator: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-bold text-sm">
+            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold text-sm">
               <Plus size={16} />
               Новий звіт
             </button>
@@ -286,7 +286,7 @@ const ReportGenerator: React.FC = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-                activeTab === tab.id ? 'bg-rose-500/20 text-rose-400' : 'text-slate-500 hover:text-white'
+                activeTab === tab.id ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-white'
               }`}
             >
               <tab.icon size={16} />

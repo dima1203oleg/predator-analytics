@@ -166,7 +166,7 @@ const ConnectionStatus: React.FC<{ isConnected: boolean; onToggle: () => void }>
     onClick={onToggle}
     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${isConnected
       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-      : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+      : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
       }`}
   >
     {isConnected ? <Wifi size={14} /> : <WifiOff size={14} />}
@@ -203,7 +203,7 @@ const LiveMetricCard: React.FC<{ metric: LiveMetric }> = ({ metric }) => {
           <Icon className={`text-${metric.color}-400`} size={18} />
         </div>
         <div className={`flex items-center gap-1 text-xs ${metric.trend === 'up' ? 'text-emerald-400' :
-          metric.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
+          metric.trend === 'down' ? 'text-amber-400' : 'text-slate-400'
           }`}>
           {metric.trend === 'up' ? <ArrowUp size={12} /> :
             metric.trend === 'down' ? <ArrowDown size={12} /> : null}
@@ -372,16 +372,16 @@ const RealTimeDashboard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-center gap-3"
+            className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-3"
           >
-            <WifiOff className="text-rose-400" size={20} />
+            <WifiOff className="text-amber-400" size={20} />
             <div className="flex-1">
-              <p className="font-bold text-rose-400">З'єднання втрачено</p>
-              <p className="text-sm text-rose-400/70">Дані не оновлюються в реальному часі</p>
+              <p className="font-bold text-amber-400">З'єднання втрачено</p>
+              <p className="text-sm text-amber-400/70">Дані не оновлюються в реальному часі</p>
             </div>
             <button
               onClick={() => setIsLive(true)}
-              className="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg font-bold text-sm"
+              className="px-4 py-2 bg-amber-500/20 text-amber-400 rounded-lg font-bold text-sm"
             >
               Перепідключити
             </button>

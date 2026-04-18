@@ -136,7 +136,7 @@ export const AutonomousLearningStack: React.FC = () => {
                                 <div className="flex gap-3 font-mono items-center">
                                     <span className="text-emerald-400 font-black">+{job.metrics?.accuracy ? (job.metrics.accuracy * 100).toFixed(1) : "0.0"}%</span>
                                     <div className="w-[1px] h-3 bg-slate-800" />
-                                    <span className="text-rose-500/60 font-black tracking-tighter uppercase text-[9px]">{job.status === 'succeeded' ? 'ELITE' : 'SYNC'}</span>
+                                    <span className="text-rose-500/60 font-black tracking-tighter uppercase text-[9px]">{job.status === 'succeeded' ? 'WRAITH' : 'SYNC'}</span>
                                 </div>
                             </div>
                         ))}

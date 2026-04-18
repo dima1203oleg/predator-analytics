@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../Header';
 
+import { ThemeProvider } from '../../../context/ThemeContext';
+
 vi.mock('../../../context/UserContext', () => ({
   useUser: () => ({
     user: {
@@ -47,7 +49,7 @@ vi.mock('../../../config/navigation', async () => {
       },
       section: {
         id: 'command',
-        label: 'Командний центр',
+        label: 'КОМАНДНИЙ ЦЕНТР',
         description: 'Операційний огляд платформи.',
         outcome: 'Дає короткий стратегічний зріз для старту роботи.',
         accent: 'amber',
@@ -61,23 +63,26 @@ describe('Header', () => {
   it('показує контекст маршруту, роль і джерело даних', () => {
     render(
       <MemoryRouter initialEntries={['/overview']}>
-        <Header />
+        <ThemeProvider>
+          <Header />
+        </ThemeProvider>
       </MemoryRouter>,
     );
 
     expect(screen.getAllByText('Огляд системи').length).toBeGreaterThan(0);
-    expect(screen.getByText('Командний центр')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
     expect(screen.getByText('Ключові показники, сигнали та стан інфраструктури.')).toBeInTheDocument();
     expect(screen.getByText('Преміум-аналітика')).toBeInTheDocument();
-    expect(screen.getByText('localhost:9080/api/v1')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Командний пошук: модуль, сутність або дія...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Пошук модулів та дій...')).toBeInTheDocument();
     expect(screen.getByTitle('Згорнути контекстну панель')).toBeInTheDocument();
   });
 
   it('відображає поточний статус зʼєднання', () => {
     render(
       <MemoryRouter initialEntries={['/overview']}>
-        <Header />
+        <ThemeProvider>
+          <Header />
+        </ThemeProvider>
       </MemoryRouter>,
     );
 

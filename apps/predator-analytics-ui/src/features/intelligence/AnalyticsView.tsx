@@ -1,5 +1,5 @@
 /**
- * 🛰️ Semantic Radar Matrix | v56.5-ELITE Sovereign Matrix
+ * 🛰️ Semantic Radar Matrix | v57.2-WRAITH Sovereign Matrix
  * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
  *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
@@ -11,7 +11,7 @@
  *
  * Sovereign Power Design · Classified · Tier-1
  * 
- * © 2026 PREDATOR Analytics — Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics — Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -26,6 +26,7 @@ import {
     Fingerprint, Lock, ZapOff
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
@@ -35,8 +36,9 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { VisualAnalytics } from '@/components/premium/VisualAnalytics';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
-// === ТИПИ ТА КОНФІГУРАЦІЯ ELITE ===
+// === ТИПИ ТА КОНФІГУРАЦІЯ WRAITH ===
 interface GraphNode {
     id: string;
     name: string;
@@ -61,21 +63,21 @@ interface GraphLink {
 const CATEGORY_MAP: Record<string, { color: string; icon: any; label: string }> = {
     PERSON: { color: '#fbbf24', icon: <Info size={14} />, label: premiumLocales.semanticRadar.categories.person },
     ORGANIZATION: { color: '#D4AF37', icon: <Building2 size={14} />, label: premiumLocales.semanticRadar.categories.organization },
-    LOCATION: { color: '#E11D48', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
-    PROJECT: { color: '#9f1239', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
-    EVENT: { color: '#be123c', icon: <Activity size={14} />, label: premiumLocales.semanticRadar.categories.event },
+    LOCATION: { color: '#F59E0B', icon: <Globe size={14} />, label: premiumLocales.semanticRadar.categories.location },
+    PROJECT: { color: '#B45309', icon: <Target size={14} />, label: premiumLocales.semanticRadar.categories.project },
+    EVENT: { color: '#D97706', icon: <Activity size={14} />, label: premiumLocales.semanticRadar.categories.event },
     CONCEPT: { color: '#64748b', icon: <BrainCircuit size={14} />, label: premiumLocales.semanticRadar.categories.concept },
     DEFAULT: { color: '#D4AF37', icon: <Network size={14} />, label: premiumLocales.semanticRadar.categories.default }
 };
 
-// === ДОПОМІЖНІ КОМПОНЕНТИ ELITE ===
+// === ДОПОМІЖНІ КОМПОНЕНТИ WRAITH ===
 
 const RadarOverlay: React.FC = () => (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[48px]">
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.05]" />
         <div className="absolute inset-0 bg-cyber-scanline opacity-[0.03]" />
 
-        {/* Spinning Radar Beam ELITE */}
+        {/* Spinning Radar Beam WRAITH */}
         <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
@@ -83,7 +85,7 @@ const RadarOverlay: React.FC = () => (
             style={{ clipPath: 'polygon(50% 50%, 100% 50%, 100% 55%)' }}
         />
 
-        {/* Concentric Circles ELITE */}
+        {/* Concentric Circles WRAITH */}
         <div className="absolute inset-0 flex items-center justify-center">
             {[1, 2, 3, 4, 5].map((i) => (
                 <div
@@ -94,9 +96,9 @@ const RadarOverlay: React.FC = () => (
             ))}
         </div>
 
-        {/* Tactical Indicators ELITE */}
+        {/* Tactical Indicators WRAITH */}
         <div className="absolute top-12 left-12 text-[10px] font-black text-yellow-600/40 uppercase tracking-[0.5em] font-serif italic">
-            RADAR_STATUS: ACTIVE // COGNITIVE_DEPTH: ELITE
+            RADAR_STATUS: ACTIVE // COGNITIVE_DEPTH: WRAITH
         </div>
         <div className="absolute bottom-12 right-12 text-[10px] font-black text-yellow-600/40 uppercase tracking-[0.5em] font-serif italic">
             SIGNAL_LOCK: 50.4501° N, 30.5234° E
@@ -161,7 +163,7 @@ const AnalysisGraph: React.FC<{
             const nodes = nodesRef.current;
             const links = linksRef.current;
 
-            // PHYSICS ELITE
+            // PHYSICS WRAITH
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
                     const n1 = nodes[i];
@@ -207,11 +209,11 @@ const AnalysisGraph: React.FC<{
                 }
             });
 
-            // RENDER ELITE
+            // RENDER WRAITH
             ctx.save();
             ctx.translate(cx, cy);
 
-            // Links ELITE
+            // Links WRAITH
             links.forEach(link => {
                 const s = nodes.find(n => n.id === link.source);
                 const t = nodes.find(n => n.id === link.target);
@@ -234,11 +236,11 @@ const AnalysisGraph: React.FC<{
                 }
             });
 
-            // Nodes ELITE
+            // Nodes WRAITH
             nodes.forEach(node => {
                 const pulse = Math.sin(Date.now() / 800) * 0.05 + 1;
 
-                // Glow ELITE
+                // Glow WRAITH
                 const gradient = ctx.createRadialGradient(node.x!, node.y!, 0, node.x!, node.y!, node.radius! * pulse * 2.5);
                 gradient.addColorStop(0, `${node.color}22`);
                 gradient.addColorStop(1, 'transparent');
@@ -247,7 +249,7 @@ const AnalysisGraph: React.FC<{
                 ctx.arc(node.x!, node.y!+(Math.sin(Date.now()/1000)*5), node.radius! * pulse * 2.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Core ELITE
+                // Core WRAITH
                 ctx.beginPath();
                 ctx.arc(node.x!, node.y!, node.radius!, 0, Math.PI * 2);
                 ctx.fillStyle = '#0a0a0a';
@@ -256,14 +258,14 @@ const AnalysisGraph: React.FC<{
                 ctx.lineWidth = 4;
                 ctx.stroke();
 
-                // Inner Ring ELITE
+                // Inner Ring WRAITH
                 ctx.beginPath();
                 ctx.arc(node.x!, node.y!, node.radius! - 8, 0, Math.PI * 2);
                 ctx.strokeStyle = `${node.color}44`;
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
-                // Name ELITE
+                // Name WRAITH
                 ctx.font = 'black 14px "Outfit", sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.textAlign = 'center';
@@ -272,7 +274,7 @@ const AnalysisGraph: React.FC<{
                 ctx.fillText(node.name.toUpperCase(), node.x!, node.y! + node.radius! + 24);
                 ctx.shadowBlur = 0;
 
-                // Type ELITE
+                // Type WRAITH
                 ctx.font = '900 9px monospace';
                 ctx.fillStyle = 'rgba(212,175,55,0.4)';
                 ctx.fillText((CATEGORY_MAP[node.label] || CATEGORY_MAP.DEFAULT).label.toUpperCase(), node.x!, node.y! + node.radius! + 38);
@@ -330,7 +332,7 @@ const AnalysisGraph: React.FC<{
     );
 };
 
-// === ГОЛОВНИЙ КОМПОНЕНТ ELITE ===
+// === ГОЛОВНИЙ КОМПОНЕНТ WRAITH ===
 const AnalyticsView: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isScanning, setIsScanning] = useState(false);
@@ -340,10 +342,36 @@ const AnalyticsView: React.FC = () => {
     const [summary, setSummary] = useState<any>(null);
     const [activeTab, setActiveTab] = useState<'radar' | 'visual'>('radar');
 
+    const { isOffline, nodeSource } = useBackendStatus();
+
     useEffect(() => {
         loadSummary();
         handleSearch("Енерго");
-    }, []);
+    }, [isOffline]);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SemanticRadar',
+                    message: 'СЕМАНТИЧНИЙ РАДАР: Активовано автономний режим (SEMANTIC_NODES). Використовується локальний дзеркальний контур.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'SEMANTIC_OFFLINE'
+                }
+            }));
+        }
+
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'SemanticRadar',
+                message: `РАДАР_МАТРИЦЯ [${nodeSource}]: Семантичний контур активовано. Готовність до когнітивного сканування.`,
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'SEMANTIC_SUCCESS'
+            }
+        }));
+    }, [isOffline, nodeSource]);
 
     const loadSummary = async () => {
         try {
@@ -361,13 +389,33 @@ const AnalyticsView: React.FC = () => {
         setIsScanning(true);
         try {
             const result = await api.graph.search(query, 2);
-            if (result && Array.isArray(result.nodes)) {
-                setNodes(result.nodes);
-                setLinks(result.edges || []);
-                if (result.nodes.length > 0) setSelectedEntity(result.nodes[0]);
-            }
+                if (result && Array.isArray(result.nodes)) {
+                    setNodes(result.nodes);
+                    setLinks(result.edges || []);
+                    if (result.nodes.length > 0) setSelectedEntity(result.nodes[0]);
+                    
+                    window.dispatchEvent(new CustomEvent('predator-error', {
+                        detail: {
+                            service: 'SemanticRadar',
+                            message: `СЕРВЕР_РАДАРА [${nodeSource}]: Нейронна дешифрація '${query}' завершена. Оброблено ${result.nodes.length} вузлів.`,
+                            severity: 'info',
+                            timestamp: new Date().toISOString(),
+                            code: 'SEMANTIC_SUCCESS'
+                        }
+                    }));
+                }
         } catch (e) {
             console.error("Graph search failed", e);
+            
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SemanticRadar',
+                    message: `КРИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА SEMANTIC_NODES. Перевірте з'єднання з ${nodeSource}.`,
+                    severity: 'critical',
+                    timestamp: new Date().toISOString(),
+                    code: 'SEMANTIC_NODES'
+                }
+            }));
         } finally {
             setIsScanning(false);
         }
@@ -378,7 +426,7 @@ const AnalyticsView: React.FC = () => {
             <AdvancedBackground />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
 
-            {/* ViewHeader v56.5-ELITE */}
+            {/* ViewHeader v57.2-WRAITH */}
             <ViewHeader
                 title={
                     <div className="flex items-center gap-10">
@@ -391,10 +439,10 @@ const AnalyticsView: React.FC = () => {
                         <div className="space-y-2">
                              <div className="flex items-center gap-4">
                                 <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                    SEMANTIC_CORE // RADAR_ARRAY
+                                    SEMANTIC_CORE // {isOffline ? 'MIRROR_SCAN' : 'RADAR_ARRAY'}
                                 </span>
                                 <div className="h-px w-12 bg-yellow-500/20" />
-                                <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                 СЕМАНТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РАДАР</span>
@@ -402,9 +450,9 @@ const AnalyticsView: React.FC = () => {
                         </div>
                     </div>
                 }
-                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_COGNITION_v56.5']}
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_COGNITION_v57.2']}
                 badges={[
-                    { label: 'SOVEREIGN_ELITE_FORCE', color: 'primary', icon: <Zap size={10} /> },
+                    { label: 'SOVEREIGN_WRAITH_FORCE', color: 'primary', icon: <Zap size={10} /> },
                     { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                 ]}
                 stats={[
@@ -414,7 +462,7 @@ const AnalyticsView: React.FC = () => {
                 ]}
             />
 
-            {/* Tactical Search & View Toggle ELITE */}
+            {/* Tactical Search & View Toggle WRAITH */}
             <div className="flex flex-col xl:flex-row gap-8 items-center z-20">
                 <div className="relative flex-1 group w-full">
                     <input
@@ -460,7 +508,7 @@ const AnalyticsView: React.FC = () => {
                 </div>
             </div>
 
-            {/* Main Workspace Area ELITE */}
+            {/* Main Workspace Area WRAITH */}
             <div className="flex-1 min-h-[700px] relative">
                 <AnimatePresence mode="wait">
                     {activeTab === 'radar' ? (
@@ -471,7 +519,7 @@ const AnalyticsView: React.FC = () => {
                             exit={{ opacity: 0, scale: 1.05 }}
                             className="grid grid-cols-12 gap-12 h-full"
                         >
-                            {/* Visual Graph Area ELITE */}
+                            {/* Visual Graph Area WRAITH */}
                             <div className="col-span-12 xl:col-span-8 relative group">
                                 {isScanning && (
                                     <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 rounded-[4rem] backdrop-blur-2xl border-4 border-yellow-500/10">
@@ -493,7 +541,7 @@ const AnalyticsView: React.FC = () => {
                                 />
                             </div>
 
-                            {/* Entity Intelligence HUD ELITE */}
+                            {/* Entity Intelligence HUD WRAITH */}
                             <div className="col-span-12 xl:col-span-4 flex flex-col gap-10">
                                 <AnimatePresence mode="wait">
                                     {selectedEntity ? (
@@ -504,7 +552,7 @@ const AnalyticsView: React.FC = () => {
                                             exit={{ opacity: 0, x: -30 }}
                                             className="flex flex-col gap-10 h-full"
                                         >
-                                            {/* Primary Entity Card ELITE */}
+                                            {/* Primary Entity Card WRAITH */}
                                             <TacticalCard variant="holographic" className="p-12 bg-black shadow-4xl rounded-[4rem] border-yellow-500/10 relative overflow-hidden group/entity">
                                                 <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover/entity:opacity-20 transition-all duration-[5s] rotate-45 group-hover/entity:rotate-0 scale-150">
                                                     {CATEGORY_MAP[selectedEntity.label]?.icon || <Network size={200} />}
@@ -533,7 +581,7 @@ const AnalyticsView: React.FC = () => {
                                                 </div>
                                             </TacticalCard>
 
-                                            {/* Parameters Breakdown ELITE */}
+                                            {/* Parameters Breakdown WRAITH */}
                                             <div className="p-10 bg-black/60 border-2 border-white/5 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/params">
                                                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
                                                 <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 flex items-center gap-5 italic font-serif">
@@ -555,18 +603,18 @@ const AnalyticsView: React.FC = () => {
                                                 </div>
                                             </div>
 
-                                            {/* AI Neural Insight ELITE */}
-                                            <div className="p-10 bg-rose-950/20 border-2 border-rose-500/20 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/insight">
+                                            {/* AI Neural Insight WRAITH */}
+                                            <div className="p-10 bg-amber-950/20 border-2 border-amber-500/20 rounded-[4rem] shadow-4xl backdrop-blur-3xl relative overflow-hidden group/insight">
                                                 <div className="absolute top-0 right-0 p-10 opacity-[0.05] group-hover/insight:opacity-20 transition-all duration-[5s] rotate-12">
-                                                    <Brain size={120} className="text-rose-500" />
+                                                    <Brain size={120} className="text-amber-500" />
                                                 </div>
                                                 <div className="flex items-center gap-6 mb-8">
-                                                    <div className="p-5 bg-black border-2 border-rose-600/30 rounded-[2rem] text-rose-500 shadow-2xl">
+                                                    <div className="p-5 bg-black border-2 border-amber-600/30 rounded-[2rem] text-amber-500 shadow-2xl">
                                                         <Sparkles size={24} className="animate-pulse" />
                                                     </div>
-                                                    <span className="text-[12px] font-black text-white uppercase tracking-[0.5em] italic font-serif leading-none underline decoration-rose-600/30 decoration-4 underline-offset-4">COGNITIVE_INSIGHT_X</span>
+                                                    <span className="text-[12px] font-black text-white uppercase tracking-[0.5em] italic font-serif leading-none underline decoration-amber-600/30 decoration-4 underline-offset-4">COGNITIVE_INSIGHT_X</span>
                                                 </div>
-                                                <p className="text-xl text-rose-100/80 leading-relaxed font-serif italic mb-10 relative z-10 transition-all group-hover/insight:text-white uppercase tracking-tight">
+                                                <p className="text-xl text-amber-100/80 leading-relaxed font-serif italic mb-10 relative z-10 transition-all group-hover/insight:text-white uppercase tracking-tight">
                                                     "{premiumLocales.semanticRadar.entityHud.aiInsightText.replace('{name}', selectedEntity.name).replace('{type}', selectedEntity.label)}"
                                                 </p>
                                                 <div className="flex flex-wrap gap-6 relative z-10">
@@ -574,9 +622,9 @@ const AnalyticsView: React.FC = () => {
                                                         <ShieldCheck size={20} className="text-emerald-500" />
                                                         <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">VERIFIED_SAFE</span>
                                                     </div>
-                                                    <div className="px-8 py-4 bg-rose-500/10 border-2 border-rose-500/20 rounded-[1.5rem] flex items-center gap-5 italic opacity-40 grayscale group-hover/insight:grayscale-0 group-hover/insight:opacity-100 transition-all">
-                                                        <AlertTriangle size={20} className="text-rose-500" />
-                                                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em]">RISK_VECTOR</span>
+                                                    <div className="px-8 py-4 bg-amber-500/10 border-2 border-amber-500/20 rounded-[1.5rem] flex items-center gap-5 italic opacity-40 grayscale group-hover/insight:grayscale-0 group-hover/insight:opacity-100 transition-all">
+                                                        <AlertTriangle size={20} className="text-amber-500" />
+                                                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em]">RISK_VECTOR</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -606,7 +654,7 @@ const AnalyticsView: React.FC = () => {
                 </AnimatePresence>
             </div>
 
-            {/* Стрічка Глобального Інтелекту ELITE */}
+            {/* Стрічка Глобального Інтелекту WRAITH */}
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -647,6 +695,11 @@ const AnalyticsView: React.FC = () => {
                     </button>
                 </div>
             </motion.div>
+
+            <div className="mt-12">
+                <DiagnosticsTerminal />
+            </div>
+
             <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.2)}` }} />
         </div>
     );

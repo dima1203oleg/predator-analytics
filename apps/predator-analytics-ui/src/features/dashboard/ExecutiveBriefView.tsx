@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v56.5-ELITE — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
+ * 🦅 PREDATOR v57.2-WRAITH — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
  * Розділ I.3 — ШІ-керований звіт для вищого керівництва.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -127,7 +127,7 @@ export default function ExecutiveBriefView() {
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 relative z-10">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-               <div className="badge-v2 badge-v2-rose px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase">
+               <div className="badge-v2 badge-v2-amber px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase">
                   ЦІЛКОМ ТАЄМНО // КОНТУР-S
                </div>
                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
@@ -136,7 +136,7 @@ export default function ExecutiveBriefView() {
               СУВЕРЕННЕ <span className="text-red-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v56.5-ELITE (АГЕНТСЬКИЙ_ПУЛ)
+              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v57.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
             </p>
           </div>
           
@@ -294,7 +294,7 @@ export default function ExecutiveBriefView() {
           <section className={cn(cardGlass, "p-6 flex flex-col flex-1")}>
             <div className="flex items-center justify-between mb-6 border-b border-white/5 pb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <div className="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                   <Terminal size={18} />
                 </div>
                 <h2 className="text-lg font-black text-white italic uppercase tracking-tight">ЯДРО ТЕРМІНАЛУ</h2>
@@ -360,9 +360,9 @@ export default function ExecutiveBriefView() {
           <Sparkles size={18} className="text-emerald-500/40 group-hover:text-emerald-500 transition-colors" />
         </button>
 
-        <button className={cn(cardGlass, "p-5 flex items-center justify-between group hover:border-indigo-500/30 transition-all")}>
+        <button className={cn(cardGlass, "p-5 flex items-center justify-between group hover:border-yellow-500/30 transition-all")}>
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="p-3 rounded-2xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
               <ShieldCheck size={20} />
             </div>
             <div className="text-left">
@@ -370,7 +370,7 @@ export default function ExecutiveBriefView() {
               <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">КВАНТОВЕ ПІДТВЕРДЖЕННЯ РЕЄСТРІВ</div>
             </div>
           </div>
-          <Zap size={18} className="text-indigo-400/40 group-hover:text-indigo-400 transition-colors" />
+          <Zap size={18} className="text-yellow-400/40 group-hover:text-yellow-400 transition-colors" />
         </button>
 
         <button className={cn(cardGlass, "p-5 flex items-center justify-between group hover:border-red-500/30 transition-all")}>

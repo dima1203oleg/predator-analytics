@@ -42,23 +42,23 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
           <div key={key} className="bg-white/5 border border-white/10 rounded-lg p-4 flex flex-col justify-between hover:bg-white/10 transition-colors group">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400 group-hover:bg-indigo-500/20 transition-all">
+                <div className="p-2 bg-amber-500/10 rounded-lg text-amber-500 border border-amber-500/20 group-hover:bg-amber-500/20 group-hover:border-amber-500/40 transition-all shadow-[0_0_15px_rgba(245,158,11,0.1)]">
                   {getIcon(key)}
                 </div>
                 <div>
                   <h4 className="font-bold text-white capitalize leading-none tracking-tight">{key}</h4>
                   <div className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-tighter">
-                    {comp.status === 'UP' ? 'Connected' : 'Disconnected'} • v{comp.version || 'unknown'}
+                    {comp.status === 'UP' ? 'ПІДКЛЮЧЕНО' : 'ВТРАЧЕНО'} • v{comp.version || 'unknown'}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1">
                 {comp.status === 'UP' ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shadow-sm" />
                 ) : comp.status === 'DEGRADED' ? (
-                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                  <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse" />
                 ) : (
-                  <AlertCircle className="w-4 h-4 text-red-400" />
+                  <AlertCircle className="w-4 h-4 text-amber-500" />
                 )}
                 <span className={cn(
                     "text-[9px] font-black font-mono",
@@ -84,8 +84,8 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
                             initial={{ width: 0 }}
                             animate={{ width: `${usagePercent}%` }}
                             className={cn(
-                                "h-full rounded-full transition-all duration-1000",
-                                usagePercent > 90 ? "bg-rose-500" : usagePercent > 70 ? "bg-amber-500" : "bg-indigo-500"
+                                "h-full rounded-full transition-all duration-1000 shadow-sm",
+                                usagePercent > 90 ? "bg-amber-500 shadow-[0_0_10px_rgba(225,29,72,0.5)]" : usagePercent > 70 ? "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" : "bg-emerald-500"
                             )}
                         />
                     </div>

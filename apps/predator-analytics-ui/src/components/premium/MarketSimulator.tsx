@@ -15,7 +15,7 @@ const MarketSimulator: React.FC = () => {
 
     const runSimulation = async () => {
         setIsSimulating(true);
-        // Імітація виклику до v56.5-ELITE-SM ML backend
+        // Імітація виклику до v57.2-WRAITH-SM ML backend
         setTimeout(() => {
             const simulatedMargin = 25.4 - (currency - 40) * 0.5 - (logistics - 10) * 0.8;
             setResult({
@@ -37,10 +37,10 @@ const MarketSimulator: React.FC = () => {
                             {t('market.simulator_title')}
                         </CardTitle>
                         <CardDescription className="text-slate-400 font-medium">
-                            Предиктивне моделювання маржинальності (ML Engine v56.5-ELITE)
+                            Предиктивне моделювання маржинальності (ML Engine v57.2-WRAITH)
                         </CardDescription>
                     </div>
-                    <Badge variant="outline" className="border-cyan-500/30 text-cyan-400 bg-cyan-500/5">v56.5-ELITE-SM</Badge>
+                    <Badge variant="outline" className="border-cyan-500/30 text-cyan-400 bg-cyan-500/5">v57.2-WRAITH-SM</Badge>
                 </div>
             </CardHeader>
             <CardContent className="space-y-6">

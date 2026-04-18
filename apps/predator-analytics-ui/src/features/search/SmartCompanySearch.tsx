@@ -281,7 +281,7 @@ export const SmartCompanySearch: React.FC = () => {
         {results && results.length > 0 && (
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-400">
-              Знайдено <span className="font-bold text-indigo-400">{results.length}</span> компаній
+              Знайдено <span className="font-bold text-yellow-400">{results.length}</span> компаній
             </p>
             <button
               onClick={handleExport}

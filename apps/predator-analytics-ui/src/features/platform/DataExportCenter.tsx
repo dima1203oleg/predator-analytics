@@ -97,7 +97,7 @@ const formatConfig = {
   xlsx: { icon: FileSpreadsheet, color: 'cyan', label: 'Excel' },
   json: { icon: Database, color: 'purple', label: 'JSON' },
   xml: { icon: FileText, color: 'amber', label: 'XML' },
-  pdf: { icon: FileText, color: 'rose', label: 'PDF' }
+  pdf: { icon: FileText, color: 'amber', label: 'PDF' }
 };
 
 interface StatusConfigEntry {
@@ -111,7 +111,7 @@ const statusConfig: Record<ExportStatus, StatusConfigEntry> = {
   ready: { color: 'emerald', icon: Check, label: 'Готовий' },
   processing: { color: 'cyan', icon: Loader, label: 'Обробка...', animate: true },
   scheduled: { color: 'purple', icon: Calendar, label: 'Заплановано' },
-  failed: { color: 'rose', icon: AlertCircle, label: 'Помилка' }
+  failed: { color: 'amber', icon: AlertCircle, label: 'Помилка' }
 };
 
 const DataSourceCard: React.FC<{ source: DataSource; onExport: () => void }> = ({ source, onExport }) => {
@@ -173,7 +173,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
   return (
     <div className={`
       flex items-center gap-4 p-4 rounded-xl border transition-colors
-      ${job.status === 'failed' ? 'bg-rose-500/5 border-rose-500/20' :
+      ${job.status === 'failed' ? 'bg-amber-500/5 border-amber-500/20' :
         job.status === 'ready' ? 'bg-slate-900/60 border-white/5' :
           'bg-slate-900/60 border-white/5'}
     `}>
@@ -219,7 +219,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
           <p>Щодня о 09:00</p>
         )}
         {job.status === 'failed' && (
-          <p className="text-rose-400">Retry</p>
+          <p className="text-amber-400">Retry</p>
         )}
       </div>
 
@@ -234,7 +234,7 @@ const ExportJobRow: React.FC<{ job: ExportJob }> = ({ job }) => {
             <Settings size={16} />
           </button>
         )}
-        <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 transition-colors" title="Видалити">
+        <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 transition-colors" title="Видалити">
           <Trash2 size={16} />
         </button>
       </div>

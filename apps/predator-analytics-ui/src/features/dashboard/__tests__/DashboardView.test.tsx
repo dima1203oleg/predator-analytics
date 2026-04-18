@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import DashboardView from '../DashboardView';
 import { useRole } from '@/store/useRoleStore';
 import { SubscriptionTier, useUserStore } from '@/store/useUserStore';
@@ -30,19 +31,23 @@ vi.mock('echarts', () => ({
   },
 }));
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => <div {...props}>{children}</div>,
-    span: ({
-      children,
-      ...props
-    }: React.HTMLAttributes<HTMLSpanElement> & { children?: React.ReactNode }) => <span {...props}>{children}</span>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock('framer-motion', () => {
+  const motionProxy = new Proxy(
+    {},
+    {
+      get: (_target, prop) => {
+        return ({ children, ...props }: any) => {
+          const Tag = typeof prop === 'string' ? prop : 'div';
+          return <Tag {...props}>{children}</Tag>;
+        };
+      },
+    }
+  );
+  return {
+    motion: motionProxy,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 vi.mock('lucide-react', async (importOriginal) => {
   const actual = await importOriginal() as Record<string, unknown>;
@@ -182,26 +187,34 @@ describe('DashboardView', () => {
   test('відмальовує актуальний заголовок і ключові віджети після завантаження', async () => {
     getOverviewMock.mockResolvedValue(overviewFixture);
 
-    render(<DashboardView />);
+    render(
+      <MemoryRouter>
+        <DashboardView />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
-      expect(screen.getByText(/АНАЛІТИЧНА/i)).toBeInTheDocument();
+      expect(screen.getByText(/ГОЛОВНИЙ/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByText('ОНОВИТИ ЯДРО')).toBeInTheDocument();
-    expect(screen.getByText('АНАЛІТИЧНІ ДВИГУНИ')).toBeInTheDocument();
-    expect(screen.getByText('ТОП-5 РИЗИКОВИХ КОМПАНІЙ')).toBeInTheDocument();
-    expect(screen.getByText('Різкий стрибок митної вартості')).toBeInTheDocument();
+    expect(screen.getByText(/СИНХРОНІЗАЦІЯ_ЯДРА/i)).toBeInTheDocument();
+    expect(screen.getByText(/ДВИГУНИ_АНАЛІЗУ/i)).toBeInTheDocument();
+    expect(screen.getByText(/ВЕРТИКАЛЬ_РИЗИКІВ/i)).toBeInTheDocument();
+    expect(screen.getByText(/Різкий стрибок митної вартості/i)).toBeInTheDocument();
     expect(screen.getAllByTestId('mock-echart').length).toBeGreaterThan(0);
   });
 
   test('показує повідомлення про помилку, якщо бекенд недоступний', async () => {
     getOverviewMock.mockRejectedValue(new Error('offline'));
 
-    render(<DashboardView />);
+    render(
+      <MemoryRouter>
+        <DashboardView />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
-      expect(screen.getByText(/Не вдалося отримати дані/)).toBeInTheDocument();
+      expect(screen.getByText(/Зв'язок з API розірвано/i)).toBeInTheDocument();
     });
   });
 });

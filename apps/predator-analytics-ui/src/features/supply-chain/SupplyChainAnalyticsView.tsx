@@ -1,5 +1,5 @@
 /**
- * 🔗 SUPPLY CHAIN MATRIX // ЦИФРОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v56.5-ELITE
+ * 🔗 SUPPLY CHAIN MATRIX // ЦИФРОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v57.2-WRAITH
  * PREDATOR Analytics — Supply Chain Risk & Logistics Intelligence
  * 
  * Моніторинг логістичних ланцюгів, AIS-трекінг суден та аналіз маршрутів.
@@ -66,7 +66,7 @@ const formatPercent = (value?: number | null): string =>
 
 const getRiskMeta = (value?: number | null) => {
     if (value == null || !Number.isFinite(value)) return { label: 'Н/д', tone: 'text-slate-500', border: 'border-white/10' };
-    if (value >= 80) return { label: 'КРИТИЧНО', tone: 'text-rose-500', border: 'border-rose-500/30' };
+    if (value >= 80) return { label: 'КРИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
     if (value >= 60) return { label: 'ВИСОКИЙ', tone: 'text-amber-500', border: 'border-amber-500/30' };
     return { label: 'НОРМА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
 };
@@ -96,6 +96,22 @@ export default function SupplyChainAnalyticsView() {
             setRefreshing(false);
         }
     }, []);
+
+    const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+
+    useEffect(() => {
+        if (isOffline) {
+           window.dispatchEvent(new CustomEvent('predator-error', {
+              detail: {
+                service: 'SupplyChainMatrix',
+                message: 'РЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'LOGISTICS_OFFLINE'
+              }
+           }));
+        }
+    }, [isOffline]);
 
     useEffect(() => {
         void loadData();
@@ -136,7 +152,7 @@ export default function SupplyChainAnalyticsView() {
                                   SUPPLY_CHAIN_MATRIX // DIGITAL_TWINS
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase">РАДАР</span>
@@ -149,8 +165,14 @@ export default function SupplyChainAnalyticsView() {
                      }
                      stats={[
                        { label: 'АКТИВНИХ_ВАНТАЖІВ', value: statsData.items[0]?.value ?? '42', icon: <Box size={14} />, color: 'primary' },
-                       { label: 'РИЗИКОВІ_ЗАТРИМКИ', value: '7', icon: <Siren size={14} />, color: 'danger', animate: true },
-                       { label: 'SYNC_STATUS', value: 'LIVE', icon: <RefreshCcw size={14} />, color: 'success' }
+                       { 
+                         label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИКОВІ_ЗАТРИМКИ', 
+                         value: isOffline ? `${Math.floor(healingProgress)}%` : '7', 
+                         icon: isOffline ? <Activity /> : <Siren size={14} />, 
+                         color: isOffline ? 'warning' : 'danger', 
+                         animate: isOffline 
+                       },
+                       { label: 'NODE_SOURCE', value: isOffline ? 'OFFLINE' : 'NVIDIA_MASTER', icon: <Database size={14} />, color: isOffline ? 'warning' : 'gold' }
                      ]}
                      actions={
                        <div className="flex gap-4">
@@ -305,7 +327,7 @@ export default function SupplyChainAnalyticsView() {
                             <div className="space-y-4">
                                {[
                                  { i: Search, l: 'ШУКАТИ_КОНТЕЙНЕР', c: 'text-cyan-500' },
-                                 { i: Globe, l: 'КАРТА_СУДЕН_AIS', c: 'text-indigo-500' },
+                                 { i: Globe, l: 'КАРТА_СУДЕН_AIS', c: 'text-yellow-500' },
                                  { i: BarChart3, l: 'ЕКСПОРТ_МАРШРУТІВ', c: 'text-emerald-500' },
                                ].map((a, i) => (
                                  <button key={i} className="w-full flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-cyan-600/[0.03] hover:border-cyan-500/30 transition-all group">

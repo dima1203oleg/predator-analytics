@@ -104,11 +104,11 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'INTELLIGENCE',
     icon: ShieldAlert,
     accent: {
-      border: 'border-rose-500/20',
-      panel: 'bg-rose-500/10',
-      text: 'text-rose-200',
-      badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
-      glow: 'from-rose-500/24 via-rose-500/8 to-transparent',
+      border: 'border-amber-500/20',
+      panel: 'bg-amber-500/10',
+      text: 'text-amber-200',
+      badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
+      glow: 'from-amber-500/24 via-amber-500/8 to-transparent',
     },
   },
   {
@@ -150,10 +150,6 @@ const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
     badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
     text: 'text-amber-200',
   },
-  rose: {
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
-    text: 'text-rose-200',
-  },
   sky: {
     badge: 'border-sky-500/20 bg-sky-500/10 text-sky-100',
     text: 'text-sky-200',
@@ -174,11 +170,6 @@ const summaryToneClasses: Record<ClientsHubTone, { border: string; panel: string
     border: 'border-amber-500/20',
     panel: 'bg-amber-500/10',
     value: 'text-amber-200',
-  },
-  rose: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
-    value: 'text-rose-200',
   },
   sky: {
     border: 'border-sky-500/20',
@@ -303,7 +294,7 @@ export default function ClientsHubView() {
         agentPath: '/agents',
       }),
       insights: snapshot.summary.slice(0, 3).map((card) =>
-        createMetric(card.id, card.label, card.value, card.hint, card.tone === 'rose' ? 'danger' : 'info'),
+        createMetric(card.id, card.label, card.value, card.hint, card.tone === 'amber' ? 'danger' : 'info'),
       ),
       relations: SEGMENTS.slice(0, 3).map((segment) =>
         createMetric(
@@ -407,7 +398,7 @@ export default function ClientsHubView() {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.sky.badge)}>
               {backendStatus.statusLabel}
             </Badge>
             <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -422,7 +413,7 @@ export default function ClientsHubView() {
           </div>
 
           {feedback && (
-            <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+            <div className="rounded-[24px] border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-sm leading-6 text-amber-100">
               {feedback}
             </div>
           )}

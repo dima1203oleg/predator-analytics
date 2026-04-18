@@ -1,24 +1,28 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import React from 'react'
-import CustomsIntelligenceView from '../CustomsIntelligenceView'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import CustomsIntelligenceView from '../CustomsIntelligenceView';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-// Mock Framer Motion
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, whileHover, ...props }: any) => <div {...props}>{children}</div>,
-        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
-        h2: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
-        h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-        p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
-    },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock('framer-motion', () => {
+    const motionProxy = new Proxy(
+        {},
+        {
+            get: (_target, prop) => {
+                return ({ children, ...props }: any) => {
+                    const Tag = typeof prop === 'string' ? prop : 'div';
+                    return <Tag {...props}>{children}</Tag>;
+                };
+            },
+        }
+    );
+    return {
+        motion: motionProxy,
+        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    };
+});
 
-// Mock Lucide icons
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
     return new Proxy(actual, {
@@ -29,108 +33,130 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-// Mock components
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-bg" />
-}))
+// Mock Recharts to avoid issues with SVG sizing in tests
+vi.mock('recharts', () => ({
+    ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
+    AreaChart: ({ children }: any) => <div data-testid="area-chart">{children}</div>,
+    Area: () => <div />,
+    XAxis: () => <div />,
+    YAxis: () => <div />,
+    CartesianGrid: () => <div />,
+    Tooltip: () => <div />,
+    PieChart: ({ children }: any) => <div data-testid="pie-chart">{children}</div>,
+    Pie: ({ children }: any) => <div data-testid="pie-slice">{children}</div>,
+    Cell: () => <div />,
+    BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
+    Bar: () => <div />
+}));
 
-vi.mock('@/components/CyberGrid', () => ({
-    CyberGrid: () => <div data-testid="cyber-grid" />
-}))
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats }: any) => (
+        <div data-testid="view-header">
+            {title}
+            <div data-testid="stats-count">{stats?.length}</div>
+        </div>
+    )
+}));
 
-vi.mock('@/components/pipeline/PipelineMonitor', () => ({
-    PipelineMonitor: () => <div data-testid="pipeline-monitor">Pipeline Monitor Mock</div>
-}))
-
-// Mock API
-vi.mock('@/services/api', () => ({
-    api: {
-        getConnectors: vi.fn().mockResolvedValue([]),
-        deleteConnector: vi.fn().mockResolvedValue({ success: true }),
-        ingestion: {
-            startJob: vi.fn().mockResolvedValue({ job_id: 'new-job-123' })
-        }
-    }
-}))
-
-// Mock Stores
-vi.mock('@/store/useIngestionStore', () => ({
-    useIngestionStore: () => ({
-        addJob: vi.fn(),
-        updateJob: vi.fn(),
-        activeJobs: {}
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY',
+        healingProgress: 100
     })
-}))
-
-import * as apiModule from '@/services/api'
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('CustomsIntelligenceView', () => {
-    let getConnectorsSpy: any;
-    let startJobSpy: any;
-
     beforeEach(() => {
-        vi.clearAllMocks()
-        getConnectorsSpy = vi.spyOn(apiModule.api, 'getConnectors').mockResolvedValue([])
-        startJobSpy = vi.spyOn(apiModule.api.ingestion, 'startJob').mockResolvedValue({ job_id: 'new-job-123' })
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати заголовок та основні елементи', async () => {
-        await act(async () => {
-            render(<CustomsIntelligenceView />)
-        })
+    it('відображає заголовок модуля та початкові дані', async () => {
+        render(<CustomsIntelligenceView />);
+        
+        expect(screen.getByText(/МИТНА/i)).toBeInTheDocument();
+        expect(screen.getByText(/АНАЛІТИКА/i)).toBeInTheDocument();
+        expect(screen.getByTestId('area-chart')).toBeInTheDocument();
+    });
 
-        expect(screen.getByText(/CEREBRO/i)).toBeInTheDocument()
-        expect(screen.getByText(/INTELLIGENCE/i)).toBeInTheDocument()
-    })
+    it('перемикає вкладки аналітики', async () => {
+        render(<CustomsIntelligenceView />);
+        
+        const importersTab = screen.getByText(/ТОП_ІМПОРТЕРІВ/i);
+        fireEvent.click(importersTab);
 
-    test('повинен відображати список каналів після завантаження', async () => {
-        const mockChannels = [
-            { id: '1', name: 'UA_CUSTOMS_LIVE', url: 't.me/ua_customs', type: 'telegram', status: 'active' }
-        ];
-        getConnectorsSpy.mockResolvedValue(mockChannels)
+        expect(screen.getByText(/DOMINANCE_LEADERBOARD/i)).toBeInTheDocument();
+        expect(screen.getByText(/ТОВ "МЕТАЛ-ТРЕЙД ОПТ"/i)).toBeInTheDocument();
+    });
 
-        await act(async () => {
-            render(<CustomsIntelligenceView />)
-        })
+    it('відображає попередження про митні ризики', async () => {
+        render(<CustomsIntelligenceView />);
+        
+        const risksTab = screen.getByText(/МИТНІ_РИЗИКИ/i);
+        fireEvent.click(risksTab);
 
-        // Use findAllByText which handles retries internally better than just waitFor around getByText
-        const elements = await screen.findAllByText(/UA_CUSTOMS_LIVE/i)
-        expect(elements.length).toBeGreaterThan(0)
-        expect(screen.getByText(/t.me\/ua_customs/i)).toBeInTheDocument()
-    })
+        expect(screen.getByText(/CUSTOMS_RISK_ALERTS/i)).toBeInTheDocument();
+        expect(screen.getByText(/ЗАНИЖЕННЯ_МИТНОЇ_ВАРТОСТІ/i)).toBeInTheDocument();
+    });
 
-    test('повинен ініціювати додавання нового каналу', async () => {
-        await act(async () => {
-            render(<CustomsIntelligenceView />)
-        })
+    it('ініціює predator-error при автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER',
+                healingProgress: 60
+            })
+        }));
 
-        const input = screen.getByPlaceholderText(/URL \/ @CHANNEL_ID/i)
-        const submitBtn = screen.getByText(/ВІДКРИТИ ПОРТ/i)
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-        await act(async () => {
-            fireEvent.change(input, { target: { value: 'https://t.me/new_channel' } })
-        })
+        render(<CustomsIntelligenceView />);
+
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'CustomsIntel',
+                        code: 'CUSTOMS_NODES'
+                    })
+                })
+            );
+        });
+    });
+
+    it('ініціює predator-error при успішному оновленні в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER',
+                healingProgress: 60
+            })
+        }));
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+        render(<CustomsIntelligenceView />);
+
+        const refreshBtn = screen.getByTestId('icon-refreshcw').parentElement!;
         
         await act(async () => {
-            fireEvent.click(submitBtn)
-        })
+            fireEvent.click(refreshBtn);
+        });
 
-        expect(startJobSpy).toHaveBeenCalledWith(expect.objectContaining({
-            url: 'https://t.me/new_channel'
-        }))
-    })
-
-    test('повинен відображати стан порожнього списку', async () => {
-        getConnectorsSpy.mockResolvedValue([])
-
-        await act(async () => {
-            render(<CustomsIntelligenceView />)
-        })
-
-        expect(screen.getByText(/АКТИВНИХ ЦІЛЕЙ НЕ ВИЯВЛЕНО/i)).toBeInTheDocument()
-    })
-})
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        message: expect.stringContaining('Синхронізація митних вузлів через MIRROR_CHANNEL завершена успішно')
+                    })
+                })
+            );
+        }, { timeout: 2000 });
+    });
+});

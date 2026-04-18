@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v56.5 — EXECUTIVE BOARD (ELITE CORE)
+ * 🦅 PREDATOR v57.2 — EXECUTIVE BOARD (WRAITH CORE)
  * Головна панель CEO: Ризики, Гроші, Стратегія — за 3 секунди.
  * 
  * Розділ I.1 — Командний Центр
@@ -190,7 +190,7 @@ const PredatorV24 = () => {
         <div className="relative z-10 flex flex-wrap items-center gap-2.5 mb-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
-            PREDATOR v56.5-ELITE
+            PREDATOR v57.2-WRAITH
           </div>
           <div className={cn(
             "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase",

@@ -1,5 +1,5 @@
 /**
- * 🔍 SUPPLIER DISCOVERY // ПОШУК ПОСТАЧАЛЬНИКІВ | v56.5-ELITE
+ * 🔍 SUPPLIER DISCOVERY // ПОШУК ПОСТАЧАЛЬНИКІВ | v57.2-WRAITH
  * PREDATOR Analytics — Strategic Sourcing & Global Supply Chain Recon
  * 
  * Знаходження нових постачальняків на основі аналізу митних даних.
@@ -59,13 +59,15 @@ const SovereignReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "flex items-center gap-3 px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic border shadow-inner",
       isEmerald ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" :
       isAmber ? "bg-yellow-600/10 border-yellow-600/30 text-yellow-500" :
-      "bg-rose-600/10 border-rose-600/30 text-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]"
+      "bg-amber-600/10 border-amber-600/30 text-amber-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]"
     )}>
       {isEmerald ? <CheckCircle size={14} /> : isAmber ? <AlertCircle size={14} /> : <Siren size={14} className="animate-pulse" />}
       {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'КРИТИЧНИЙ_РИЗИК'}
     </div>
   );
 };
+
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 export default function SupplierDiscoveryPremium() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,6 +76,7 @@ export default function SupplierDiscoveryPremium() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline } = useBackendStatus();
 
   const loadSuppliers = async () => {
     setLoading(true);
@@ -91,7 +94,17 @@ export default function SupplierDiscoveryPremium() {
 
   useEffect(() => {
     loadSuppliers();
-  }, []);
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'SupplierIntel',
+          action: 'ScanNodes',
+          message: 'Автономний режим: сканування глобальних вузлів проводиться через PROCUREMENT_NODES.',
+          severity: 'info'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -133,7 +146,7 @@ export default function SupplierDiscoveryPremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-          {/* HEADER ELITE HUD */}
+          {/* HEADER WRAITH HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -149,7 +162,7 @@ export default function SupplierDiscoveryPremium() {
                       GLOBAL_SOURCING // PREM_INTEL_RADAR
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     ПОШУК <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ПОСТАЧАЛЬНИКІВ</span>
@@ -303,7 +316,7 @@ export default function SupplierDiscoveryPremium() {
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
             .no-scrollbar::-webkit-scrollbar { display: none; }
-            .text-shadow-elite { text-shadow: 0 0 30px rgba(212,175,55,0.3); }
+            .text-shadow-wraith { text-shadow: 0 0 30px rgba(212,175,55,0.3); }
         `}} />
       </div>
     </PageTransition>

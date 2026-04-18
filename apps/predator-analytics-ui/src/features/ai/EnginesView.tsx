@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.5-ELITE | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
+ * PREDATOR v57.2-WRAITH | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
  * 
  * Потужний хаб моніторингу та керування 6 нейронними двигунами:
  * Behavioral, Institutional, Influence, Structural, Predictive, CERS.
@@ -11,6 +11,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { RiskLevelValue } from '@/types/intelligence';
 import ReactECharts from '@/components/ECharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -18,11 +19,12 @@ import {
     Activity, TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
     ArrowUpRight, ArrowDownRight, Cpu, Zap, Eye, RefreshCw,
     BarChart3, PieChart, Radio, Target, Clock, ChevronRight, Info,
-    Database, Crosshair, Flame, Box, Boxes, ShieldAlert, ZapOff, Search
+    Database, Crosshair, Flame, Box, Boxes, ShieldAlert, ZapOff, Search, Server
 } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -145,11 +147,15 @@ const ENGINES = [
     },
 ];
 
-type SeverityType = 'high' | 'medium' | 'low';
-const SEVERITY_CONFIG: Record<SeverityType, { color: string; bg: string; border: string; label: string }> = {
-    high: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: 'CRITICAL' },
-    medium: { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: 'WARNING' },
-    low: { color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', label: 'STABLE' },
+const SEVERITY_CONFIG: Record<RiskLevelValue, { color: string; bg: string; border: string; label: string }> = {
+    critical:  { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: 'КРИТИЧНА' },
+    high:      { color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.3)', label: 'ВИСОКА' },
+    medium:    { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: 'ПОПЕРЕДЖ.' },
+    low:       { color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', label: 'СТАБІЛЬНА' },
+    minimal:   { color: '#64748b', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.3)', label: 'МІНІМАЛЬНА' },
+    stable:    { color: '#059669', bg: 'rgba(5,150,105,0.1)', border: 'rgba(5,150,105,0.3)', label: 'СТАБІЛЬНА' },
+    watchlist: { color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.3)', label: 'НАГЛЯД' },
+    elevated:  { color: '#f97316', bg: 'rgba(249,115,22,0.1)', border: 'rgba(249,115,22,0.3)', label: 'ПІДВИЩЕНА' },
 };
 
 // ========================
@@ -183,7 +189,7 @@ const EngineCardHeader: React.FC<{ engine: typeof ENGINES[0] }> = ({ engine }) =
                         { label: 'ОБРОБЛЕНО', value: engine.metrics.processed.toLocaleString(), unit: 'OBJ', icon: Database, color: 'slate' },
                         { label: 'ТОЧНІСТЬ', value: `${engine.metrics.accuracy}%`, unit: 'ACC', icon: Target, color: 'emerald' },
                         { label: 'СИГНАЛИ', value: engine.metrics.signals, unit: 'RAD', icon: Radio, color: 'sky' },
-                        { label: 'АНОМАЛІЇ', value: engine.metrics.anomalies, unit: 'ERR', icon: AlertTriangle, color: 'rose' },
+                        { label: 'АНОМАЛІЇ', value: engine.metrics.anomalies, unit: 'ERR', icon: AlertTriangle, color: 'amber' },
                     ].map((m, i) => (
                         <div key={i} className="flex flex-col gap-1 p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
                             <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
@@ -246,7 +252,33 @@ const EngineListItem: React.FC<{ engine: typeof ENGINES[0]; isActive: boolean; o
 // ========================
 
 const EnginesView: React.FC = () => {
+    const { isOffline, nodeSource } = useBackendStatus();
     const [selectedId, setSelectedId] = useState(ENGINES[0].id);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EnginesMatrix',
+                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З КЛАСТЕРОМ GPU (ENGINES_OFFLINE). Перехід на локальні когнітивні копії.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'ENGINES_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EnginesMatrix',
+                    message: 'ВСІ АНАЛІТИЧНІ ДВИГУНИ СИНХРОНІЗОВАНІ (ENGINES_SUCCESS). Дані NVIDIA-кластера актуальні.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'ENGINES_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline]);
+
     const selectedEngine = useMemo(() => ENGINES.find(e => e.id === selectedId) || ENGINES[0], [selectedId]);
     const [animKey, setAnimKey] = useState(0);
 
@@ -341,7 +373,7 @@ const EnginesView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full">
                 
-                {/* View Header v56.5-ELITE */}
+                {/* View Header v57.2-WRAITH */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">
@@ -364,6 +396,7 @@ const EnginesView: React.FC = () => {
                     breadcrumbs={['СИСТЕМА', 'ДВИГУНИ', selectedEngine.shortName]}
                     stats={[
                         { label: 'АКТИВНО', value: '6/6', icon: <Activity size={14} />, color: 'success' },
+                        { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                         { label: 'АНОМАЛІЇ', value: ENGINES.reduce((s, e) => s + e.metrics.anomalies, 0).toString(), icon: <AlertTriangle size={14} />, color: 'danger', animate: true },
                         { label: 'ТОЧНІСТЬ', value: '94.8%', icon: <Target size={14} />, color: 'purple' },
                     ]}
@@ -431,8 +464,8 @@ const EnginesView: React.FC = () => {
                                             <ReactECharts option={gaugeOption} style={{ height: '220px', width: '100%' }} />
                                         </div>
                                         <div className="flex items-center gap-3 mt-4">
-                                            {selectedEngine.trend > 0 ? <ArrowUpRight className="text-emerald-400" size={18} /> : <ArrowDownRight className="text-rose-400" size={18} />}
-                                            <span className={cn("text-sm font-black italic", selectedEngine.trend > 0 ? "text-emerald-400" : "text-rose-400")}>
+                                            {selectedEngine.trend > 0 ? <ArrowUpRight className="text-emerald-400" size={18} /> : <ArrowDownRight className="text-amber-400" size={18} />}
+                                            <span className={cn("text-sm font-black italic", selectedEngine.trend > 0 ? "text-emerald-400" : "text-amber-400")}>
                                                 {selectedEngine.trend > 0 ? '+' : ''}{selectedEngine.trend}% (24г)
                                             </span>
                                         </div>
@@ -484,7 +517,7 @@ const EnginesView: React.FC = () => {
                                     <TacticalCard variant="holographic" title="АКТИВНИЙ ПОТІК СИГНАЛІВ" className="p-10 rounded-[60px] bg-slate-950/40 border-white/5">
                                         <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-4">
                                             {selectedEngine.recentSignals.map((sig, i) => {
-                                                const cfg = SEVERITY_CONFIG[sig.severity as SeverityType] || SEVERITY_CONFIG.low;
+                                                const cfg = SEVERITY_CONFIG[sig.severity as RiskLevelValue] || SEVERITY_CONFIG.low;
                                                 return (
                                                     <motion.div 
                                                         key={i} 
@@ -533,7 +566,7 @@ const EnginesView: React.FC = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                             {[
                                 { label: 'SYNAPSE_LOAD', value: '42.8%', color: 'purple' },
-                                { label: 'GPU_TEMP', value: '64°C', color: 'rose' },
+                                { label: 'GPU_TEMP', value: '64°C', color: 'amber' },
                                 { label: 'VRAM_USED', value: '18.2GB', color: 'sky' },
                                 { label: 'IO_SPEED', value: '4.2GB/s', color: 'emerald' },
                             ].map((s, i) => (

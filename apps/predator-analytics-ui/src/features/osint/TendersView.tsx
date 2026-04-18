@@ -1,5 +1,5 @@
 /**
- * 🏛️ PROZORRO INTELLIGENCE // КОНТУР ЗАКУПІВЕЛЬ | v56.5-ELITE
+ * 🏛️ PROZORRO INTELLIGENCE // КОНТУР ЗАКУПІВЕЛЬ | v57.2-WRAITH
  * PREDATOR Analytics — Anti-Corruption OSINT Matrix
  * 
  * Антикорупційний моніторинг публічних закупівель Prozorro у реальному часі.
@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { RiskLevelValue } from '@/types/intelligence';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Landmark, Search, RefreshCw, ExternalLink, Filter,
@@ -35,16 +36,24 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ─── HELPER COMPONENTS ───────────────────────────────────────────────
 
+const RISK_CONFIG: Record<RiskLevelValue, { cls: string; label: string }> = {
+    critical:  { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'КРИТИЧНО' },
+    high:      { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'ВИСОКИЙ_РИЗИК' },
+    medium:    { cls: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30', label: 'СЕРЕДНІЙ' },
+    low:       { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'БЕЗПЕЧНО' },
+    minimal:   { cls: 'bg-slate-500/10 text-slate-500 border-slate-500/30', label: 'МІНІМАЛЬНИЙ' },
+    stable:    { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'СТАБІЛЬНО' },
+    watchlist: { cls: 'bg-violet-500/10 text-violet-500 border-violet-500/30', label: 'НАГЛЯД' },
+    elevated:  { cls: 'bg-orange-500/10 text-orange-500 border-orange-500/30', label: 'ПІДВИЩЕНИЙ' },
+};
+
 const RiskBadge: React.FC<{ score: number }> = ({ score }) => {
-    const config = score >= 80 
-        ? { cls: 'bg-rose-500/10 text-rose-500 border-rose-500/30', label: 'КРИТИЧНО' }
-        : score >= 60 
-        ? { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'РИЗИК' }
-        : { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'БЕЗПЕЧНО' };
+    const level: RiskLevelValue = score >= 80 ? 'critical' : score >= 60 ? 'high' : 'low';
+    const config = RISK_CONFIG[level];
 
     return (
         <div className={cn("px-4 py-1.5 rounded-xl border text-[10px] font-black italic tracking-widest flex items-center gap-2", config.cls)}>
-            <div className={cn("w-2 h-2 rounded-full animate-pulse", score >= 80 ? "bg-rose-500 shadow-[0_0_10px_#f43f5e]" : "bg-emerald-500")} />
+            <div className={cn("w-2 h-2 rounded-full animate-pulse", score >= 80 ? "bg-amber-500 shadow-[0_0_10px_#f43f5e]" : "bg-emerald-500")} />
             {config.label} {score}%
         </div>
     );
@@ -65,13 +74,13 @@ const TenderCard: React.FC<{ tender: any; idx: number }> = ({ tender, idx }) => 
                 variant="cyber"
                 className={cn(
                     "p-8 border-2 transition-all duration-500 h-full flex flex-col relative overflow-hidden rounded-[3rem]",
-                    isCritical ? "bg-rose-950/20 border-rose-500/20 hover:border-rose-500/50" : "bg-black border-white/[0.04] hover:border-emerald-500/30"
+                    isCritical ? "bg-amber-950/20 border-amber-500/20 hover:border-amber-500/50" : "bg-black border-white/[0.04] hover:border-emerald-500/30"
                 )}
             >
-                {isCritical && <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-[60px] pointer-events-none" />}
+                {isCritical && <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-[60px] pointer-events-none" />}
                 
                 <div className="flex items-start justify-between mb-8">
-                   <div className={cn("p-4 rounded-[1.5rem] border shadow-2xl transition-transform group-hover:scale-110", isCritical ? "bg-rose-600/10 border-rose-500/30 text-rose-500" : "bg-emerald-600/10 border-emerald-500/30 text-emerald-500")}>
+                   <div className={cn("p-4 rounded-[1.5rem] border shadow-2xl transition-transform group-hover:scale-110", isCritical ? "bg-amber-600/10 border-amber-500/30 text-amber-500" : "bg-emerald-600/10 border-emerald-500/30 text-emerald-500")}>
                       <Building2 size={24} />
                    </div>
                    <div className="flex flex-col items-end gap-2">
@@ -129,7 +138,7 @@ export default function TendersView() {
     const [analytics, setAnalytics] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [filterRisk, setFilterRisk] = useState<'all' | 'high' | 'critical'>('all');
+    const [filterRisk, setFilterRisk] = useState<RiskLevelValue | 'all'>('all');
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -188,7 +197,7 @@ export default function TendersView() {
                                   ANTICORRUPTION_CORE // PROZORRO_OSINT
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                РЕЄСТР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЗАКУПІВЕЛЬ</span>

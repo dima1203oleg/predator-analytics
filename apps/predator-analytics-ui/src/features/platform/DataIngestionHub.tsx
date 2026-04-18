@@ -1,9 +1,9 @@
 /**
- * 🌀 Omni-Data Ingestion Nexus | v56.5-ELITE Premium Matrix
+ * 🌀 Omni-Data Ingestion Nexus | v57.2-WRAITH Premium Matrix
  * PREDATOR Цитадель Захоплення та Обробки Даних
  * 
  * Керування потоками інформації, підключення джерел та моніторинг ETL.
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -49,8 +49,8 @@ const SOURCE_TYPES = [
   { id: 'tax', tier: 1, label: 'ПОДАТКОВІ_ДАНІ', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
   { id: 'logistics', tier: 1, label: 'ЛОГІСТИКА_CARGO', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   { id: 'energy', tier: 1, label: 'ЕНЕРГОПОТОКИ', icon: CloudLightning, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-  { id: 'edr', tier: 2, label: 'РЕЄСТРИ_ЄДР', icon: Database, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
-  { id: 'court', tier: 2, label: 'СУДОВІ_РЕШЕННЯ', icon: ShieldAlert, color: 'text-rose-400', bg: 'bg-rose-500/10' },
+  { id: 'edr', tier: 2, label: 'РЕЄСТРИ_ЄДР', icon: Database, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+  { id: 'court', tier: 2, label: 'СУДОВІ_РЕШЕННЯ', icon: ShieldAlert, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   { id: 'tender', tier: 2, label: 'PROZORRO_ДЕРЖ', icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'media', tier: 3, label: 'OSINT_TELEGRAM', icon: MessageSquare, color: 'text-purple-400', bg: 'bg-purple-500/10' },
 ];
@@ -117,7 +117,7 @@ const FileItem = ({ file, onRemove }: any) => (
         <Badge className="bg-emerald-500/10 text-emerald-400 text-[8px] uppercase font-black px-2 py-0.5 border-emerald-500/20">READY_FOR_FUSION</Badge>
       </div>
     </div>
-    <button onClick={onRemove} className="p-2 text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 transition-all rounded-lg relative z-10">
+    <button onClick={onRemove} className="p-2 text-slate-300 hover:text-amber-400 hover:bg-amber-500/10 transition-all rounded-lg relative z-10">
       <Trash2 size={16} />
     </button>
   </motion.div>
@@ -300,7 +300,7 @@ const DataIngestionHub: React.FC = () => {
                     </div>
                     <div className="bg-black/80 rounded-[2rem] p-8 font-mono text-[11px] border border-white/5 relative min-h-[300px] shadow-inner group">
                          <div className="absolute top-4 right-6 flex gap-2">
-                             <div className="w-2 h-2 rounded-full bg-rose-500/40" />
+                             <div className="w-2 h-2 rounded-full bg-amber-500/40" />
                              <div className="w-2 h-2 rounded-full bg-amber-500/40" />
                              <div className="w-2 h-2 rounded-full bg-emerald-500/40" />
                          </div>
@@ -308,7 +308,7 @@ const DataIngestionHub: React.FC = () => {
                              <div className="text-blue-400"># predator_init --nexus-mode full</div>
                              <div>AUTHENTICATING... <span className="text-emerald-500">[SUCCESS]</span></div>
                              <div>ATTACHING_TO_KAFKA_STREAM... <span className="text-emerald-500">[OK]</span></div>
-                             <div>SCANNING_ORACLE_VDS... <span className="text-indigo-400">[WAIT]</span></div>
+                             <div>SCANNING_ORACLE_VDS... <span className="text-yellow-400">[WAIT]</span></div>
                              <div>MAPPING_SEMANTIC_NODES: 2,492,102...</div>
                              <div className="pt-4 flex items-center gap-2">
                                 <span className="w-1 h-3 bg-emerald-500 animate-pulse" />
@@ -339,7 +339,7 @@ const DataIngestionHub: React.FC = () => {
                         </div>
                         <div className="p-4 bg-black/40 rounded-xl border border-white/5 flex flex-col items-center gap-2">
                             <span className="text-[9px] font-black text-slate-300 uppercase">THREAT_LEVEL</span>
-                            <span className="text-xl font-black text-rose-400 font-mono italic">MID</span>
+                            <span className="text-xl font-black text-amber-400 font-mono italic">MID</span>
                         </div>
                     </div>
                 </HoloContainer>
@@ -444,7 +444,7 @@ const DataIngestionHub: React.FC = () => {
                                     <div className="col-span-12 space-y-4">
                                         <div className="flex items-center justify-between mb-4">
                                             <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕРЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
-                                            <button onClick={() => setFiles([])} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:text-rose-400 transition-colors">ОЧИСТИТИ ВСЕ</button>
+                                            <button onClick={() => setFiles([])} className="text-[10px] font-black text-amber-500 uppercase tracking-widest hover:text-amber-400 transition-colors">ОЧИСТИТИ ВСЕ</button>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                             {files.map((f, i) => (
@@ -458,7 +458,7 @@ const DataIngestionHub: React.FC = () => {
 
                         <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v56.5-ELITE
+                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v57.2-WRAITH
                             </div>
                             <div className="flex gap-6">
                                 <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">

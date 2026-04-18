@@ -315,9 +315,12 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             const gy = globeR * Math.cos(phi);
             const gz = globeR * Math.sin(phi) * Math.sin(theta - rot);
             if (gz > 0) {
-              const bright = Math.pow(gz / globeR, 0.5);
-              ctx.fillStyle = `rgba(220,38,38,${0.15 + bright * 0.3})`;
-              ctx.fillRect(gx, gy, 1.5, 1.5);
+            const bright = Math.pow(gz / globeR, 0.5);
+            // Sovereign Mix: Red/Gold
+            ctx.fillStyle = i % 5 === 0 
+              ? `rgba(212, 175, 55, ${0.2 + bright * 0.4})` 
+              : `rgba(225, 29, 72, ${0.15 + bright * 0.3})`;
+            ctx.fillRect(gx, gy, 1.5, 1.5);
             }
           }
         }
@@ -346,11 +349,10 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             const nx = centerX + Math.cos(angle) * dist;
             const ny = centerY + Math.sin(angle) * dist;
 
-            // Connecting to center
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(nx, ny);
-            ctx.strokeStyle = `rgba(220, 38, 38, ${Math.min(0.5, age / 1000)})`;
+            ctx.strokeStyle = i % 3 === 0 ? `rgba(212, 175, 55, ${Math.min(0.4, age / 1000)})` : `rgba(225, 29, 72, ${Math.min(0.5, age / 1000)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
 
@@ -497,7 +499,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
             <h1 className="text-white text-5xl md:text-8xl font-black tracking-[0.2em] shadow-[0_0_50px_rgba(220,38,38,0.5)]">
-              PREDATOR CORE ONLINE
+              ЯДРО PREDATOR: ОНЛАЙН
             </h1>
           </motion.div>
         )}
@@ -529,7 +531,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4"
           >
             <h2 className="text-white text-4xl md:text-7xl font-bold bg-red-600 px-6 py-2 mb-4 tracking-tighter italic">
-              СХОДСТВО ЗАФІКСОВАНО // TARGET FULLY COMPROMISED
+                ЗБІГ ЗАФІКСОВАНО // ЦІЛЬ ПОВНІСТЮ КОМПРОМЕТОВАНА
             </h2>
             <p className="text-red-500 font-mono text-lg md:text-xl uppercase tracking-widest bg-black px-4 py-1">
               Корупційна мережа підтверджена. Активи заблоковано.
@@ -546,9 +548,9 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             animate={{ opacity: 1, y: 0 }}
             className="absolute bottom-20 left-10 pointer-events-none"
           >
-            <div className="text-white/40 text-xs font-mono mb-2">PREDATOR OS v8.0 — ACTIVE</div>
-            <div className="text-white/60 text-xs font-mono mb-2">ALL SYSTEMS ARMED</div>
-            <div className="text-white text-sm font-bold tracking-[0.5em] uppercase">Ready for Deployment</div>
+            <div className="text-white/40 text-xs font-mono mb-2">PREDATOR OS v8.0 — АКТИВНО</div>
+            <div className="text-white/60 text-xs font-mono mb-2">ВСІ СИСТЕМИ ПРИВЕДЕНІ В БОЙОВУ ГОТОВНІСТЬ</div>
+            <div className="text-white text-sm font-bold tracking-[0.5em] uppercase italic">ГОТОВО ДО РОЗГОРТАННЯ</div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,7 +1,7 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, act, waitFor } from '@testing-library/react'
-import React from 'react'
-import ComplianceView from '../ComplianceView'
+import { render, screen, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { ComplianceView } from '../ComplianceView';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
@@ -9,8 +9,8 @@ vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -22,100 +22,116 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-bg" />
-}))
-
-vi.mock('@/components/ViewHeader', () => ({
-    ViewHeader: ({ title }: any) => <div data-testid="view-header">{title}</div>
-}))
-
-vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ children, title, ...props }: any) => (
-        <div data-testid="tactical-card" {...props}>
-            {title && <h3>{title}</h3>}
-            {children}
-        </div>
-    )
-}))
-
-vi.mock('@/components/shared/EmptyState', () => ({
-    EmptyState: ({ title }: any) => <div data-testid="empty-state">{title}</div>
-}))
-
-vi.mock('@/components/shared/DataSkeleton', () => ({
-    DataSkeleton: () => <div data-testid="skeleton" />,
-    SkeletonGroup: () => <div data-testid="skeleton-group" />
-}))
-
-// Mock Service
 vi.mock('@/services/dataService', () => ({
     security: {
-        getAuditLogs: vi.fn(),
+        getAuditLogs: vi.fn(() => Promise.resolve([
+            {
+                id: 1,
+                operator_id: 'analyst_01',
+                event_type: 'VIEW_ENTITY',
+                target: 'COMPANY_X',
+                ip_address: '1.2.3.4',
+                status: 'SUCCESS',
+                timestamp: '2026-04-12T10:00:00Z'
+            }
+        ]))
     }
-}))
+}));
 
-import { security } from '@/services/dataService'
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats }: any) => (
+        <div data-testid="view-header">
+            {title}
+            <div data-testid="stats-count">{stats?.length}</div>
+        </div>
+    )
+}));
+
+vi.mock('@/components/TacticalCard', () => ({ 
+    TacticalCard: ({ children, title }: any) => <div data-testid="tactical-card">{title}{children}</div> 
+}));
+
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('ComplianceView', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати основні компоненти', async () => {
-        vi.mocked(security.getAuditLogs).mockResolvedValue([])
+    it('відображає заголовок та журнал аудиту', async () => {
+        render(<ComplianceView />);
+        
+        await waitFor(() => {
+            expect(screen.getByText(/ЦЕНТР КОМПЛАЄНСУ/i)).toBeInTheDocument();
+            expect(screen.getByText(/analyst_01/i)).toBeInTheDocument();
+            expect(screen.getByText(/VIEW_ENTITY/i)).toBeInTheDocument();
+        });
+    });
 
-        await act(async () => {
-            render(<ComplianceView />)
-        })
+    it('відображає статус системи цілісності', async () => {
+        render(<ComplianceView />);
+        
+        expect(screen.getByText(/СИСТЕМА ЗАХИЩЕНА/i)).toBeInTheDocument();
+        expect(screen.getByText(/Immutable Logs/i)).toBeInTheDocument();
+    });
 
-        expect(screen.getByText(/ЦЕНТР КОМПЛАЄНСУ ТА АУДИТУ/i)).toBeInTheDocument()
-        expect(screen.getByText(/ЦІЛІСНІСТЬ СИСТЕМИ/i)).toBeInTheDocument()
-        expect(screen.getByText(/ЗВІТНІСТЬ ТА ЕКСПОРТ/i)).toBeInTheDocument()
-    })
+    it('ініціює predator-error в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-    test('повинен завантажувати та відображати логи аудиту', async () => {
-        const mockLogs = [
-            { id: '1', user: 'admin', action: 'ACCESS_GRANTED', resource: 'DATABASE_CORE', ip_address: '1.2.3.4', status: 'SUCCESS', timestamp: new Date().toISOString() }
-        ];
-        vi.mocked(security.getAuditLogs).mockResolvedValue(mockLogs)
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-        await act(async () => {
-            render(<ComplianceView />)
-        })
+        render(<ComplianceView />);
 
         await waitFor(() => {
-            expect(screen.getByText(/admin/i)).toBeInTheDocument()
-            expect(screen.getByText(/ACCESS_GRANTED/i)).toBeInTheDocument()
-            expect(screen.getByText(/DATABASE_CORE/i)).toBeInTheDocument()
-        })
-    })
+            expect(screen.getByText(/OFFLINE_COMPLIANCE/i)).toBeInTheDocument();
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'ComplianceIntel',
+                        code: 'COMPLIANCE_NODES'
+                    })
+                })
+            );
+        });
+    });
 
-    test('повинен відображати список звітів', async () => {
-        vi.mocked(security.getAuditLogs).mockResolvedValue([])
+    it('ініціює predator-error при успішній синхронізації в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-        await act(async () => {
-            render(<ComplianceView />)
-        })
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-        expect(screen.getByText(/Звіт фінансового моніторингу/i)).toBeInTheDocument()
-        expect(screen.getByText(/SOC2 Type II/i)).toBeInTheDocument()
-    })
-
-    test('повинен показувати EmptyState якщо логів немає', async () => {
-        vi.mocked(security.getAuditLogs).mockResolvedValue([])
-
-        await act(async () => {
-            render(<ComplianceView />)
-        })
+        render(<ComplianceView />);
 
         await waitFor(() => {
-            expect(screen.getByTestId('empty-state')).toBeInTheDocument()
-            expect(screen.getByText(/Немає записів аудиту/i)).toBeInTheDocument()
-        })
-    })
-})
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        message: expect.stringContaining('Журнал аудиту синхронізовано з локальним дзеркалом')
+                    })
+                })
+            );
+        });
+    });
+});

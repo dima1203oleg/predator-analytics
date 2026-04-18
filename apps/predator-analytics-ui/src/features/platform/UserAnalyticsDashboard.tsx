@@ -116,7 +116,7 @@ const MetricCard: React.FC<{ metric: UserMetric }> = ({ metric }) => {
           <Icon className={`text-${metric.color}-400`} size={18} />
         </div>
         <div className={`flex items-center gap-1 text-xs ${
-          metric.change >= 0 ? 'text-emerald-400' : 'text-rose-400'
+          metric.change >= 0 ? 'text-emerald-400' : 'text-amber-400'
         }`}>
           {metric.change >= 0 ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
           {Math.abs(metric.change)}%

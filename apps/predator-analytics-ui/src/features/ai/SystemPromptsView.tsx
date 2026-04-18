@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Zap, Save, RefreshCw, Layers, Copy, Search,
-  Terminal, Shield, Play, Lock, FileCode
+  Terminal, Shield, Play, Lock, FileCode, Server
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -10,9 +10,35 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 const SystemPromptsView = () => {
+  const { isOffline, nodeSource } = useBackendStatus();
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Prompt_Engine',
+          message: 'ЯДРО ПРОМПТІВ ПЕРЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії v2.4.1.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'PROMPT_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Prompt_Engine',
+          message: 'БАЗА ПРОМПТІВ СИНХРОНІЗОВАНА (PROMPT_SUCCESS). Доступ до SOTA-інструкцій NVIDIA GRID.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'PROMPT_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const promptCategories = [
     { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Active', count: 12 },
@@ -38,8 +64,9 @@ const SystemPromptsView = () => {
         icon={<Terminal size={24} className="text-amber-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ПРОМПТИ']}
         stats={[
-          { label: 'Prompt Engine', value: 'V5 LIVE', icon: <Zap size={14} />, color: 'primary' },
-          { label: 'Latency', value: '250ms AVG', icon: <RefreshCw size={14} />, color: 'success' }
+          { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'ENGINE', value: 'V5 LIVE', icon: <Zap size={14} />, color: 'primary' },
+          { label: 'STATUS', value: isOffline ? 'AUTONOMOUS' : 'SYNCED', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
         ]}
       />
 
@@ -78,7 +105,7 @@ const SystemPromptsView = () => {
         {/* Middle Column: Prompts List */}
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v56.5-ELITE</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v57.2-WRAITH</h3>
               <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-amber-400">
                  <RefreshCw size={14} />
               </Button>
@@ -121,7 +148,7 @@ const SystemPromptsView = () => {
               <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-b border-white/5">
                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-3">
-                       <div className="w-2.5 h-2.5 rounded-full bg-rose-500/50" />
+                       <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
                     </div>
@@ -146,7 +173,7 @@ const SystemPromptsView = () => {
                        <p><span className="text-amber-500">MISSION:</span> Identify high-risk entities and corruption-related anomalies in real-time streams.</p>
                        <p><span className="text-amber-500">CONSTRAINTS:</span> 1. Neutral analytical tone. 2. Legal compliance strict checking. 3. Zero hallucination policy.</p>
                        <div className="w-full h-px bg-white/10 my-4" />
-                       <p><span className="text-indigo-400">INSTRUCTION_SET:</span> Analyze 'HS_CODE' against historical seasonal deviations of +/- 15%. If 'IMPORT_VALUE' exceeds median for 'COUNTRY_OF_ORIGIN' by 300%, flag as 'CRITICAL_RISK'.</p>
+                       <p><span className="text-yellow-400">INSTRUCTION_SET:</span> Analyze 'HS_CODE' against historical seasonal deviations of +/- 15%. If 'IMPORT_VALUE' exceeds median for 'COUNTRY_OF_ORIGIN' by 300%, flag as 'CRITICAL_RISK'.</p>
                        <p className="animate-pulse opacity-40">|</p>
                     </div>
                  ) : (
@@ -159,7 +186,7 @@ const SystemPromptsView = () => {
               
               <div className="p-6 bg-white/5 border-t border-white/5 flex items-center justify-between">
                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic group hover:text-indigo-300 cursor-help">
+                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic group hover:text-yellow-300 cursor-help">
                        <RefreshCw size={12} className="group-hover:rotate-180 transition-transform duration-700" /> SYMBOLS: 1024
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">

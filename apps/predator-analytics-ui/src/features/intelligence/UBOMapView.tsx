@@ -1,5 +1,5 @@
 /**
- * 🗺️ БЕНЕФІЦІАРНА КАРТА (UBO MAP) | v56.5-ELITE
+ * 🗺️ БЕНЕФІЦІАРНА КАРТА (UBO MAP) | v57.2-WRAITH
  * PREDATOR Analytics — Ultimate Beneficial Owner Intelligence
  *
  * Граф кінцевих бенефіціарів, ланцюги власності,
@@ -13,11 +13,15 @@ import {
   Network, Users, Eye, Search, RefreshCw, Globe,
   Building2, User, ChevronRight, AlertTriangle, Shield,
   DollarSign, ArrowRight, Download, Filter, Fingerprint,
-  Crosshair, Zap, Lock, Star, Target, Radar, Cpu
+  Crosshair, Zap, Lock, Star, Target, Radar, Cpu, Activity
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { intelligence } from '@/services/dataService';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useEffect } from 'react';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { CyberOrb } from '@/components/CyberOrb';
 
 // ─── TYPES ──────────────────────────────────────────────────────────
 
@@ -123,7 +127,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
   const typeColor = {
     person:  '#34d399',
     company: '#D4AF37',
-    offshore:'#E11D48',
+    offshore:'#D97706',
     state:   '#94a3b8',
   }[node.type];
 
@@ -153,9 +157,9 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
           "relative p-6 border-2 cursor-pointer group transition-all rounded-3xl shadow-2xl overflow-hidden",
           "bg-black/60 backdrop-blur-xl",
           node.type === 'offshore'
-            ? "border-rose-500/30 hover:border-rose-500/50 shadow-rose-500/5"
+            ? "border-amber-500/30 hover:border-amber-500/50 shadow-amber-500/5"
             : node.sanctioned
-              ? "border-rose-600/60 bg-rose-950/20"
+              ? "border-amber-600/60 bg-amber-950/20"
               : "border-white/5 hover:border-yellow-500/30 shadow-yellow-500/5"
         )}
         onClick={() => hasChildren && setExpanded(e => !e)}
@@ -164,8 +168,8 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
         <div
           className="absolute left-0 inset-y-0 w-1.5 rounded-r transition-all"
           style={{
-            backgroundColor: node.risk > 80 ? '#E11D48' : node.risk > 60 ? '#f59e0b' : '#10b981',
-            boxShadow: node.risk > 80 ? '0 0 15px rgba(225,29,72,0.4)' : 'none'
+            backgroundColor: node.risk > 80 ? '#D97706' : node.risk > 60 ? '#f59e0b' : '#10b981',
+            boxShadow: node.risk > 80 ? '0 0 15px rgba(217,119,6,0.4)' : 'none'
           }}
         />
 
@@ -190,7 +194,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
                 </span>
               )}
               {node.type === 'offshore' && (
-                <span className="text-[8px] font-black bg-rose-600 text-white px-3 py-1 uppercase tracking-widest rounded-lg shadow-lg shadow-rose-900/40">
+                <span className="text-[8px] font-black bg-amber-600 text-white px-3 py-1 uppercase tracking-widest rounded-lg shadow-lg shadow-amber-900/40">
                   OFFSHORE_NODE
                 </span>
               )}
@@ -202,7 +206,7 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
                 </span>
               )}
               <span className="text-[10px] font-black text-slate-500 font-mono tracking-widest uppercase">
-                RISK_SCORE: <span style={{ color: node.risk > 80 ? '#E11D48' : node.risk > 60 ? '#f59e0b' : '#10b981' }} className="italic font-black">
+                RISK_SCORE: <span style={{ color: node.risk > 80 ? '#D97706' : node.risk > 60 ? '#f59e0b' : '#10b981' }} className="italic font-black">
                   {node.risk}%
                 </span>
               </span>
@@ -249,6 +253,31 @@ const UBOMapView: React.FC = () => {
   const [activeView, setActiveView] = useState<ActiveView>('ubo-tree');
   const [searchQuery, setSearchQuery] = useState('');
   const [company, setCompany] = useState('ТОВ "АГРО-ЛІДЕР ГРУП"');
+  const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'UBONexus',
+          message: `РЕЖИМ АВТОНОМНОЇ РОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'UBO_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'UBONexus',
+          message: `UBO_CORE_READY [${nodeSource}]: Граф власності синхронізовано з Neo4j TITAN.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'UBO_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline, nodeSource]);
 
   const fetchUboData = useCallback(async () => {
     setIsLoading(true);
@@ -264,6 +293,14 @@ const UBOMapView: React.FC = () => {
     } catch (err) {
       console.error('UBO Fetch Error:', err);
       setError('Помилка з\'єднання з сервером розвідки');
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'UBONexus',
+          action: 'FetchUBO',
+          message: 'Критична помилка отримання даних бенефіціарів. Перевірте статус Neo4j.',
+          severity: 'critical'
+        }
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -325,7 +362,7 @@ const UBOMapView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК ELITE ── */}
+        {/* ── ЗАГОЛОВОК WRAITH ── */}
         <ViewHeader
           title={
             <div className="flex items-center gap-10">
@@ -340,7 +377,7 @@ const UBOMapView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
                   <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
-                    UBO · SOVEREIGN BENEFICIAL INTEL · v56.5-ELITE
+                    UBO · SOVEREIGN BENEFICIAL INTEL · v57.2-WRAITH
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
@@ -352,13 +389,24 @@ const UBOMapView: React.FC = () => {
           breadcrumbs={['INTEL', 'GOVERNANCE', 'UBO_NEXUS']}
           badges={[
             { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
-            { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Star size={10} /> },
+            { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Star size={10} /> },
+            { 
+              label: nodeSource, 
+              color: isOffline ? 'warning' : 'success', 
+              icon: <Zap size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+            },
           ]}
           stats={[
             { label: 'РІВНІВ СТРУКТУРИ', value: '4_TIERS', icon: <Network />, color: 'gold' },
             { label: 'PEP_DETECTION', value: '02_LEADS', icon: <Fingerprint />, color: 'warning' },
             { label: 'OFFSHORE_NODES', value: '03_UNITS', icon: <Globe />, color: 'danger' },
-            { label: 'RISK_SCORE', value: '94.8%', icon: <Target />, color: 'danger' },
+            { 
+              label: isOffline ? 'FAILOVER_SYNC' : 'RISK_SCORE', 
+              value: isOffline ? `${Math.floor(healingProgress)}%` : '94.8%', 
+              icon: isOffline ? <Activity /> : <Target />, 
+              color: isOffline ? 'warning' : 'danger',
+              animate: isOffline
+            },
           ]}
         />
 
@@ -378,13 +426,13 @@ const UBOMapView: React.FC = () => {
           </button>
         </div>
 
-        {/* ── МЕТРИКИ ELITE ── */}
+        {/* ── МЕТРИКИ WRAITH ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { label: 'РІВНІВ СТРУКТУРИ', value: '4_TIERS',   icon: Network,      color: '#D4AF37' },
             { label: 'PEP_DETECTION',   value: '02_LEADS',   icon: Fingerprint,  color: '#f59e0b' },
-            { label: 'OFFSHORE_NODES',    value: '03_UNITS',    icon: Globe,        color: '#E11D48' },
-            { label: 'RISK_VULNERABILITY', value: '94.8%',     icon: Target,       color: '#E11D48' },
+            { label: 'OFFSHORE_NODES',    value: '03_UNITS',    icon: Globe,        color: '#D4AF37' },
+            { label: 'RISK_VULNERABILITY', value: '94.8%',     icon: Target,       color: '#D97706' },
           ].map((m, i) => (
             <motion.div
               key={m.label}
@@ -401,7 +449,7 @@ const UBOMapView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ВИБІР МОДУЛЮ ELITE ── */}
+        {/* ── ВИБІР МОДУЛЮ WRAITH ── */}
         <div className="flex gap-3 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
           {views.map(v => (
             <button
@@ -423,7 +471,7 @@ const UBOMapView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── КОНТЕНТ МОДУЛЮ ELITE ── */}
+        {/* ── КОНТЕНТ МОДУЛЮ WRAITH ── */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeView}
@@ -462,7 +510,7 @@ const UBOMapView: React.FC = () => {
                       {[
                         { name: 'Ткаченко В.М.', share: '60%', risk: 91, pep: true,  controlled: 'BVI_STRUCT_INDIRECT' },
                         { name: 'Ковальчук І.С.', share: '15%', risk: 45, pep: false, controlled: 'DIRECT_EQUITY_L1' },
-                        { name: 'Петренко М.О.', share: '15%', risk: 88, pep: true,  controlled: 'SHADOW_PROXY_ELITE' },
+                        { name: 'Петренко М.О.', share: '15%', risk: 88, pep: true,  controlled: 'SHADOW_PROXY_WRAITH' },
                         { name: 'State Share',        share: '10%', risk: 20, pep: false, controlled: 'GOV_RETAINED' },
                       ].map((ubo, i) => (
                         <div key={i} className="flex items-center justify-between p-6 border-2 border-white/5 hover:border-yellow-500/20 transition-all bg-white/[0.01] rounded-3xl group cursor-default">
@@ -480,7 +528,7 @@ const UBOMapView: React.FC = () => {
                           </div>
                           <div className="text-right">
                             <p className="text-xl font-black text-white font-mono italic tracking-tighter">{ubo.share}</p>
-                            <p className="text-[9px] font-black font-mono mt-1" style={{ color: ubo.risk > 80 ? '#E11D48' : ubo.risk > 60 ? '#f59e0b' : '#10b981' }}>
+                            <p className="text-[9px] font-black font-mono mt-1" style={{ color: ubo.risk > 80 ? '#D97706' : ubo.risk > 60 ? '#f59e0b' : '#10b981' }}>
                               RISK_{ubo.risk}%
                             </p>
                           </div>
@@ -507,7 +555,7 @@ const UBOMapView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* PEP статус ELITE */}
+                  {/* PEP статус WRAITH */}
                   <div className="bg-[#0f0a02] border-2 border-yellow-500/10 p-10 rounded-[3.5rem] shadow-4xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-6 opacity-10">
                        <Zap size={40} className="text-yellow-600 animate-pulse" />
@@ -524,9 +572,9 @@ const UBOMapView: React.FC = () => {
                            <p className="text-[10px] text-slate-500 font-bold uppercase italic tracking-tight">INDIRECT_CONTROL_60_BVI</p>
                         </div>
                       </div>
-                      <div className="p-6 border-2 border-rose-500/20 bg-rose-500/5 rounded-2xl group hover:border-rose-500/40 transition-all cursor-crosshair">
-                        <p className="text-[14px] font-black text-rose-500 italic">Петренко М.О.</p>
-                        <p className="text-[9px] text-rose-700/80 font-black mt-2 tracking-widest uppercase italic font-bold">⚠ SHADOW_OPERATIVE · EX-DEP_MIN</p>
+                      <div className="p-6 border-2 border-amber-500/20 bg-amber-500/5 rounded-2xl group hover:border-amber-500/40 transition-all cursor-crosshair">
+                        <p className="text-[14px] font-black text-amber-500 italic">Петренко М.О.</p>
+                        <p className="text-[9px] text-amber-700/80 font-black mt-2 tracking-widest uppercase italic font-bold">⚠ SHADOW_OPERATIVE · EX-DEP_MIN</p>
                         <p className="text-[10px] text-slate-400 mt-4 leading-relaxed font-black uppercase tracking-tighter">Стрімка ротація номіналів через 18 місяців. Бенефіціарний патерн підтверджено.</p>
                       </div>
                     </div>
@@ -535,7 +583,7 @@ const UBOMapView: React.FC = () => {
               </div>
             )}
 
-            {/* PEP ТРЕКЕР ELITE */}
+            {/* PEP ТРЕКЕР WRAITH */}
             {activeView === 'pep-tracker' && (
               <div className="bg-black/80 backdrop-blur-3xl border-2 border-white/5 rounded-[4rem] shadow-4xl overflow-hidden relative">
                 <div className="p-10 border-b border-white/5 flex items-center justify-between relative z-10">
@@ -577,7 +625,7 @@ const UBOMapView: React.FC = () => {
                           <td className="px-10 py-8">
                             <div className="flex items-center gap-5">
                               <div className="h-2 w-32 bg-black rounded-full overflow-hidden border border-white/10">
-                                <div className="h-full bg-gradient-to-r from-yellow-700 via-yellow-500 to-rose-600 shadow-[0_0_10px_#d4af37]" style={{ width: `${pep.risk}%` }} />
+                                <div className="h-full bg-gradient-to-r from-yellow-700 via-yellow-500 to-amber-600 shadow-[0_0_10px_#d4af37]" style={{ width: `${pep.risk}%` }} />
                               </div>
                               <span className="text-xl font-black font-mono text-yellow-500/80 italic">{pep.risk}%</span>
                             </div>
@@ -606,7 +654,7 @@ const UBOMapView: React.FC = () => {
               </div>
             )}
 
-            {/* SHADOW DIRECTOR ELITE */}
+            {/* SHADOW DIRECTOR WRAITH */}
             {activeView === 'shadow-director' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {[
@@ -630,16 +678,16 @@ const UBOMapView: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.1 }}
-                    className="p-12 border-2 border-rose-500/10 hover:border-rose-500/40 transition-all bg-black/60 backdrop-blur-3xl rounded-[4rem] shadow-4xl group relative overflow-hidden"
+                    className="p-12 border-2 border-amber-500/10 hover:border-amber-500/40 transition-all bg-black/60 backdrop-blur-3xl rounded-[4rem] shadow-4xl group relative overflow-hidden"
                   >
-                    <div className="absolute top-0 left-0 w-2 h-full bg-rose-600 opacity-20" />
+                    <div className="absolute top-0 left-0 w-2 h-full bg-amber-600 opacity-20" />
                     <div className="flex items-start justify-between mb-10">
                       <div>
-                        <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none group-hover:text-rose-500 transition-colors font-serif">{s.name}</h3>
+                        <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none group-hover:text-amber-500 transition-colors font-serif">{s.name}</h3>
                         <p className="text-[12px] text-slate-700 font-black mt-3 tracking-widest uppercase italic">{s.company}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-5xl font-black text-rose-500 font-mono tracking-tighter italic leading-none">{s.confidence}%</p>
+                        <p className="text-5xl font-black text-amber-500 font-mono tracking-tighter italic leading-none">{s.confidence}%</p>
                         <p className="text-[10px] text-slate-800 uppercase font-bold tracking-widest mt-2">{s.method}</p>
                       </div>
                     </div>
@@ -647,12 +695,12 @@ const UBOMapView: React.FC = () => {
                       <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic mb-6">CRITICAL_EVIDENCE_STREAMS:</p>
                       {s.evidence.map((e, j) => (
                         <div key={j} className="flex items-center gap-5 p-4 border border-white/5 bg-white/[0.01] rounded-2xl">
-                          <AlertTriangle size={18} className="text-rose-700 shrink-0 animate-pulse" />
+                          <AlertTriangle size={18} className="text-amber-700 shrink-0 animate-pulse" />
                           <span className="text-[12px] text-slate-400 font-black italic tracking-tight uppercase">{e}</span>
                         </div>
                       ))}
                     </div>
-                    <button className="w-full py-6 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-rose-500 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
+                    <button className="w-full py-6 bg-amber-600 text-white text-[12px] font-black uppercase tracking-[0.4em] hover:bg-amber-500 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
                       <Target size={22} className="group-hover:scale-125 transition-transform" />
                       ESCALATE_TO_SOVEREIGN_JUDICIARY
                     </button>
@@ -665,7 +713,12 @@ const UBOMapView: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}` }} />
+        <div className="max-w-[1800px] mx-auto px-12 mt-12 pb-24">
+            <DiagnosticsTerminal />
+        </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}` }} />
     </div>
   );
 };

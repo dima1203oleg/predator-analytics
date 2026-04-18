@@ -1,5 +1,5 @@
 /**
- * 🏭 Sovereign Auto-Factory | v56.5-ELITE
+ * 🏭 Sovereign Auto-Factory | v57.2-WRAITH
  * PREDATOR — Робочий Центр Автономного Вдосконалення
  * 
  * Контроль OODA-циклу, патч-менеджмент та еволюція нейронних архітектур.
@@ -81,11 +81,11 @@ const toneClasses: Record<AutoFactoryTone, { border: string; panel: string; text
     dot: 'bg-emerald-400',
   },
   amber: {
-    border: 'border-[#D4AF37]/20',
-    panel: 'bg-[#D4AF37]/10',
-    text: 'text-[#D4AF37]',
-    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
-    dot: 'bg-[#D4AF37]',
+    border: 'border-amber-500/20',
+    panel: 'bg-amber-500/10',
+    text: 'text-amber-400',
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
+    dot: 'bg-amber-400',
   },
   rose: {
     border: 'border-rose-500/20',
@@ -95,11 +95,11 @@ const toneClasses: Record<AutoFactoryTone, { border: string; panel: string; text
     dot: 'bg-rose-400',
   },
   sky: {
-    border: 'border-[#D4AF37]/20',
-    panel: 'bg-[#D4AF37]/10',
-    text: 'text-[#D4AF37]',
-    badge: 'border-[#D4AF37]/20 bg-[#D4AF37]/10 text-[#D4AF37]',
-    dot: 'bg-[#D4AF37]',
+    border: 'border-sky-500/20',
+    panel: 'bg-sky-500/10',
+    text: 'text-sky-400',
+    badge: 'border-sky-500/20 bg-sky-500/10 text-sky-400',
+    dot: 'bg-sky-400',
   },
   gold: {
     border: 'border-[#D4AF37]/20',
@@ -240,7 +240,7 @@ export default function AutoFactoryView() {
   const [systemStatus, setSystemStatus] = useState<SystemStatusResponse | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<{ tone: 'emerald' | 'rose'; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ tone: 'emerald' | 'amber'; message: string } | null>(null);
   const logsEndRef = useRef<HTMLDivElement | null>(null);
 
   const loadData = useCallback(async (silent: boolean = false) => {
@@ -279,16 +279,29 @@ export default function AutoFactoryView() {
 
       if (failures === 7) {
         setFeedback({
-          tone: 'rose',
+          tone: 'amber',
           message: 'Автозавод не отримав підтверджених даних від Factory API та System API.',
         });
       } else if (!silent) {
         setFeedback(null);
+        
+        // ЕЛІТ-діагностика: успішна синхронізація Автозаводу
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AI_AutoFactory',
+            message: backendStatus.isOffline 
+              ? 'Автозавод синхронізовано через автономний MIRROR-вузол.' 
+              : 'Автозавод успішно підключено до центральних виробничих ліній.',
+            severity: 'info',
+            timestamp: new Date().toISOString(),
+            code: backendStatus.isOffline ? 'FACTORY_OFFLINE' : 'FACTORY_SUCCESS'
+          }
+        }));
       }
     } catch (error) {
       console.error('[AutoFactoryView] Не вдалося завантажити дані:', error);
       setFeedback({
-        tone: 'rose',
+        tone: 'amber',
         message: 'Автозавод не зміг синхронізувати реальні дані з бекендом.',
       });
     } finally {
@@ -346,7 +359,7 @@ export default function AutoFactoryView() {
     } catch (error) {
       console.error('[AutoFactoryView] Не вдалося змінити стан OODA:', error);
       setFeedback({
-        tone: 'rose',
+        tone: 'amber',
         message: 'Бекенд не підтвердив зміну стану OODA-циклу.',
       });
     } finally {
@@ -354,8 +367,8 @@ export default function AutoFactoryView() {
     }
   }, [loadData, snapshot.isRunning]);
 
-  const feedbackTone = feedback?.tone === 'rose'
-    ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+  const feedbackTone = feedback?.tone === 'amber'
+    ? 'border-amber-500/20 bg-amber-500/10 text-amber-100'
     : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100';
 
   return (
@@ -380,7 +393,7 @@ export default function AutoFactoryView() {
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
                     <Sparkles size={12} className="animate-pulse" />
-                    v56.5-ELITE · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
+                    v57.2-WRAITH · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>
               </div>
@@ -411,7 +424,7 @@ export default function AutoFactoryView() {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.sky.badge)}>
               {backendStatus.statusLabel}
             </Badge>
             <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -599,7 +612,7 @@ export default function AutoFactoryView() {
                       className={cn(
                         'inline-flex items-center justify-center gap-3 rounded-[24px] px-5 py-4 text-[11px] font-black uppercase tracking-[0.24em] transition',
                         snapshot.isRunning
-                          ? 'border border-rose-500/20 bg-rose-500/10 text-rose-100 hover:bg-rose-500/15'
+                          ? 'border border-amber-500/20 bg-amber-500/10 text-amber-100 hover:bg-amber-500/15'
                           : 'border border-emerald-500/20 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/15',
                         busy && 'cursor-not-allowed opacity-60',
                       )}

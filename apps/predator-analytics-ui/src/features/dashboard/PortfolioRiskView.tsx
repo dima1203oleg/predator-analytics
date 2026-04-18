@@ -1,5 +1,5 @@
 /**
- * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v56.5-ELITE
+ * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v57.2-WRAITH
  * PREDATOR Analytics — Portfolio Risk Management
  *
  * Скільки $ у зоні ризику прямо зараз:
@@ -30,6 +30,8 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { TacticalCard } from '@/components/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { RiskLevelValue } from '@/types/intelligence';
 
 // ─── ДАНІ ────────────────────────────────────────────────────────────
 
@@ -56,7 +58,7 @@ interface RiskPosition {
   exposure: string;
   atRisk: string;
   riskPct: number;
-  riskLevel: 'critical' | 'high' | 'medium' | 'low';
+  riskLevel: RiskLevelValue;
   trigger: string;
   daysToMaturity: number;
   country: string;
@@ -125,14 +127,14 @@ const RISK_POSITIONS: RiskPosition[] = [
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
 
-const RISK_COLOR = {
+const RISK_COLOR: Partial<Record<RiskLevelValue, string>> = {
   critical: '#E11D48',
   high:     '#fbbf24',
   medium:   '#d97706',
   low:      '#34d399',
 };
 
-const RISK_LABEL = {
+const RISK_LABEL: Partial<Record<RiskLevelValue, string>> = {
   critical: 'КРИТИЧНИЙ',
   high:     'ВИСОКИЙ',
   medium:   'СЕРЕДНІЙ',
@@ -142,9 +144,33 @@ const RISK_LABEL = {
 const PortfolioRiskView: React.FC = () => {
   const [selectedPos, setSelectedPos] = useState<RiskPosition | null>(RISK_POSITIONS[0]);
   const [liveRisk, setLiveRisk] = useState(127.4);
-  const [filter, setFilter] = useState<'all' | 'critical' | 'high' | 'medium'>('all');
+  const [filter, setFilter] = useState<RiskLevelValue | 'all'>('all');
   const [refreshing, setRefreshing] = useState(false);
-  const { isOnline } = useBackendStatus();
+  const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'PortfolioRisk',
+          message: `РЕЖИМ АВТОНОМНОЇ РИЗИК-ФОРЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'RISK_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'PortfolioRisk',
+          message: `RISK_CORE_READY [${nodeSource}]: Моніторинг ризиків синхронізовано з NVIDIA Master.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'RISK_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline, nodeSource]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -186,7 +212,7 @@ const PortfolioRiskView: React.FC = () => {
                   <div className="flex items-center gap-4 mb-3">
                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#e11d48]" />
                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.6em]">
-                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v56.5-ELITE
+                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v57.2-WRAITH
                     </span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
@@ -198,10 +224,26 @@ const PortfolioRiskView: React.FC = () => {
                 </div>
               </div>
             }
+            badges={[
+              { label: 'CLASSIFIED_T1', color: 'amber', icon: <Lock size={10} /> },
+              { label: 'SOVEREIGN_READY', color: 'primary', icon: <Shield size={10} /> },
+              { 
+                label: nodeSource, 
+                color: isOffline ? 'warning' : 'danger', 
+                icon: <Activity size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              },
+            ]}
             stats={[
               { label: 'У ЗОНІ РИЗИКУ', value: `$${liveRisk}M`, icon: <TrendingUp size={14} />, color: 'danger' },
-              { label: 'КРИТИЧНИЙ_NET', value: '$41.8M', icon: <AlertTriangle size={14} />, color: 'danger' },
-              { label: 'СИСТЕМНИЙ ПОРТФЕЛЬ', value: '$847M', icon: <Activity size={14} />, color: 'primary' }
+              { 
+                label: isOffline ? 'FAILOVER_SYNC' : 'КРИТИЧНИЙ_NET', 
+                value: isOffline ? `${Math.floor(healingProgress)}%` : '$41.8M', 
+                icon: isOffline ? <Activity /> : <AlertTriangle />, 
+                color: isOffline ? 'warning' : 'danger',
+                animate: isOffline
+              },
+              { label: 'СИСТЕМНИЙ ПОРТФЕЛЬ', value: '$847M', icon: <Activity size={14} />, color: 'primary' },
+              { label: 'NODE_SOURCE', value: isOffline ? 'MIRROR' : 'PRIMARY', icon: <Cpu />, color: isOffline ? 'warning' : 'success' },
             ]}
             actions={
               <div className="flex items-center gap-6">
@@ -219,7 +261,7 @@ const PortfolioRiskView: React.FC = () => {
             }
           />
 
-          {/* ── KPI GRID ELITE ── */}
+          {/* ── KPI GRID WRAITH ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { l: 'КРИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
@@ -406,7 +448,7 @@ const PortfolioRiskView: React.FC = () => {
                        </div>
                     </TacticalCard>
 
-                    {/* ── ТАЙМЛАЙН ELITE ── */}
+                    {/* ── ТАЙМЛАЙН WRAITH ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
                           <Activity size={18} className="text-red-600 animate-pulse" />
@@ -435,7 +477,7 @@ const PortfolioRiskView: React.FC = () => {
                        </div>
                     </TacticalCard>
 
-                    {/* ── СЕКТОРНИЙ РОЗПОДІЛ ELITE ── */}
+                    {/* ── СЕКТОРНИЙ РОЗПОДІЛ WRAITH ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
                        <div className="absolute top-0 right-0 p-8 opacity-5">
                           <Radar size={100} className="text-red-500" />
@@ -467,7 +509,12 @@ const PortfolioRiskView: React.FC = () => {
           </div>
         </div>
 
-        <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,.3)}` }} />
+        <div className="max-w-[1850px] mx-auto px-12 mt-12 pb-24">
+            <DiagnosticsTerminal />
+        </div>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,.3)}` }} />
       </div>
     </PageTransition>
   );

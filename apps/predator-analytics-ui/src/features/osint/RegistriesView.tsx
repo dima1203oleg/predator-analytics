@@ -1,5 +1,5 @@
 /**
- * 📂 REGISTRIES // СКАНЕР РЕЄСТРІВ | v56.5-ELITE
+ * 📂 REGISTRIES // СКАНЕР РЕЄСТРІВ | v57.2-WRAITH
  * PREDATOR Analytics — Business Intelligence & Registry Forensic
  *
  * Глибоке сканування юридичних осіб: ЄДРПОУ, Бенефіціари, Ризики.
@@ -171,7 +171,7 @@ export default function RegistriesView() {
                                   REGISTRY_FORENSIC // OSINT_CORE
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                СКАНЕР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">РЕЄСТРІВ</span>
@@ -258,7 +258,7 @@ export default function RegistriesView() {
                    {/* LOADING STATE FOR DETAILS */}
                    {loading && (
                      <div className="py-32 flex flex-col items-center justify-center space-y-12">
-                        <CyberOrb size={220} status="processing" color="#10b981" />
+                        <CyberOrb size={80} color="#D4AF37" />
                         <div className="space-y-4 text-center">
                            <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТРИЦІ...</p>
                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">EDRPOU: {query.toUpperCase()}</p>
@@ -305,7 +305,7 @@ export default function RegistriesView() {
                                           />
                                        </svg>
                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                          <span className={cn("text-5xl font-black italic font-mono tracking-tighter", selectedCompany.cers_score > 70 ? 'text-rose-500' : 'text-emerald-500')}>{selectedCompany.cers_score}</span>
+                                          <span className={cn("text-5xl font-black italic font-mono tracking-tighter", selectedCompany.cers_score > 70 ? 'text-amber-500' : 'text-emerald-500')}>{selectedCompany.cers_score}</span>
                                           <span className="text-[10px] text-slate-700 font-black uppercase">/ 100</span>
                                        </div>
                                     </div>
@@ -323,7 +323,7 @@ export default function RegistriesView() {
                                     <button className="flex-1 py-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] italic hover:text-white hover:bg-white/[0.05] transition-all flex items-center justify-center gap-3">
                                        <FileText size={16} /> PDF_DOSSIER
                                     </button>
-                                    <button onClick={() => setSelectedCompany(null)} className="p-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-slate-600 hover:text-rose-500 transition-all">
+                                    <button onClick={() => setSelectedCompany(null)} className="p-5 bg-white/[0.02] border border-white/[0.04] rounded-2xl text-slate-600 hover:text-amber-500 transition-all">
                                        <RefreshCcw size={20} />
                                     </button>
                                  </div>
@@ -363,19 +363,19 @@ export default function RegistriesView() {
                                  </div>
                               </TacticalCard>
 
-                              <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] bg-rose-600/[0.01] border-rose-500/20 space-y-8">
-                                 <h3 className="text-[12px] font-black text-rose-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-rose-500/10 pb-6">
+                              <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] bg-amber-600/[0.01] border-amber-500/20 space-y-8">
+                                 <h3 className="text-[12px] font-black text-amber-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-amber-500/10 pb-6">
                                     <ShieldAlert size={20} /> ФАКТОРИ_РИЗИКУ_DETECTED
                                  </h3>
                                  <div className="space-y-4">
                                     {selectedCompany.risk_factors.map((risk, i) => (
-                                       <div key={i} className="flex items-start gap-5 p-6 bg-black/40 border border-rose-500/10 rounded-[2rem] hover:bg-rose-500/[0.05] transition-all">
-                                          <AlertCircle size={22} className="text-rose-500 shrink-0 mt-0.5 animate-pulse" />
-                                          <p className="text-[13px] font-black text-rose-100 italic uppercase leading-relaxed">{risk}</p>
+                                       <div key={i} className="flex items-start gap-5 p-6 bg-black/40 border border-amber-500/10 rounded-[2rem] hover:bg-amber-500/[0.05] transition-all">
+                                          <AlertCircle size={22} className="text-amber-500 shrink-0 mt-0.5 animate-pulse" />
+                                          <p className="text-[13px] font-black text-amber-100 italic uppercase leading-relaxed">{risk}</p>
                                        </div>
                                     ))}
                                  </div>
-                                 <button className="w-full py-6 mt-4 bg-rose-700 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-rose-600 shadow-3xl transition-all flex items-center justify-center gap-4">
+                                 <button className="w-full py-6 mt-4 bg-amber-700 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-amber-600 shadow-3xl transition-all flex items-center justify-center gap-4">
                                     <Zap size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_AML_АНАЛІЗ
                                  </button>
                               </TacticalCard>
@@ -436,7 +436,7 @@ export default function RegistriesView() {
                                            <div className="p-4 bg-slate-900/60 rounded-2xl border border-white/[0.04] group-hover/reg:border-emerald-500/40 transition-all text-slate-600 group-hover/reg:text-emerald-500">
                                               <Database size={24} />
                                            </div>
-                                           <Badge className={cn("px-3 py-1 text-[8px] font-black border-none uppercase italic", reg.status === 'online' ? 'bg-emerald-600/10 text-emerald-500' : 'bg-rose-600/10 text-rose-500')}>{reg.status.toUpperCase()}</Badge>
+                                           <Badge className={cn("px-3 py-1 text-[8px] font-black border-none uppercase italic", reg.status === 'online' ? 'bg-emerald-600/10 text-emerald-500' : 'bg-amber-600/10 text-amber-500')}>{reg.status.toUpperCase()}</Badge>
                                         </div>
                                         <h4 className="text-lg font-black text-white italic uppercase truncate mb-6">{reg.name}</h4>
                                         <div className="flex items-center justify-between pt-6 border-t border-white/[0.04]">

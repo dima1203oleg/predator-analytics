@@ -9,7 +9,7 @@ import {
     Terminal, Bug, Radio, Command, Dna, ShieldCheck, MonitorPlay, Code,
     Maximize2, Minimize2, Cpu, Lock, EyeOff, ChevronRight, Sparkles
 } from 'lucide-react';
-import { useSuperIntelligence } from '@/context/SuperIntelligenceContext';
+import { useSuperIntelligence } from '@/hooks/useSuperIntelligence';
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, Tooltip, AreaChart, Area } from 'recharts';
 import { Brain3D } from '@/components/super/Brain3D';
 import { TypewriterBlock } from '@/components/super/TypewriterBlock';
@@ -19,12 +19,38 @@ import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TruthLedgerTerminal } from '@/components/super/TruthLedgerTerminal';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 const SuperIntelligenceView: React.FC = () => {
+    const { isOffline, nodeSource, healingProgress } = useBackendStatus();
     const {
         isActive, toggleLoop, vetoCycle, injectScenario, stage, logs, brainNodes, activeAgents,
         agentGenomes, nasDiff, cycleCount, availableScenarios, arbitrationScores, ragArtifacts
     } = useSuperIntelligence();
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SuperIntelligence',
+                    message: 'АВТОНОМНИЙ РЕЖИМ ЯДРА (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'CORE_DECOUPLING'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SuperIntelligence',
+                    message: 'ПОТОКОВА СИНХРОНІЗАЦІЯ ЯДРА УСПІШНА (CORE_SYNC_WRAITH). Повний доступ до GPU-ферми.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'CORE_SYNC_WRAITH'
+                }
+            }));
+        }
+    }, [isOffline]);
 
     const [rightTab, setRightTab] = useState<'STREAM' | 'MATRIX' | 'EVIDENCE' | 'GENOME'>('STREAM');
     const [isFocusMode, setIsFocusMode] = useState(false);
@@ -55,11 +81,11 @@ const SuperIntelligenceView: React.FC = () => {
                         { label: 'Статус', value: isActive ? 'АКТИВНИЙ' : 'ГОТОВИЙ', icon: <Activity size={14} />, color: isActive ? 'success' : 'warning', animate: isActive },
                         {
                             label: 'Джерело Node',
-                            value: 'NVIDIA_ZROK',
+                            value: nodeSource,
                             icon: <Server size={14} />,
-                            color: 'primary'
+                            color: isOffline ? 'warning' : 'gold'
                         },
-                        { label: 'Версія ELITE', value: 'v56.5', icon: <Cpu size={14} />, color: 'primary' },
+                        { label: 'Версія WRAITH', value: 'v57.2', icon: <Cpu size={14} />, color: 'primary' },
                     ]}
                     actions={
                         <div className="flex flex-wrap gap-4 w-full sm:w-auto">
@@ -78,7 +104,7 @@ const SuperIntelligenceView: React.FC = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                 onClick={toggleLoop}
-                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
+                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-amber-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
                                 {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТРИЦІ'}
@@ -120,13 +146,13 @@ const SuperIntelligenceView: React.FC = () => {
                         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8 bg-gradient-to-t from-slate-950/90 to-transparent pointer-events-none">
                             <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 scrollbar-hide justify-start sm:justify-center pointer-events-auto px-4">
                                 {activeAgents.map(agent => (
-                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={agent.id} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border backdrop-blur-2xl transition-all ${agent.status !== 'IDLE' ? 'bg-indigo-600/10 border-indigo-500 shadow-indigo-500/20 -translate-y-4' : 'bg-slate-900/40 border-white/5 opacity-40'}`}>
+                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={agent.id} className={`flex flex-col items-center gap-3 p-4 rounded-2xl border backdrop-blur-2xl transition-all ${agent.status !== 'IDLE' ? 'bg-yellow-600/10 border-yellow-500 shadow-yellow-500/20 -translate-y-4' : 'bg-slate-900/40 border-white/5 opacity-40'}`}>
                                         <div className={`p-3 rounded-xl ${agent.role === 'SCANNER' ? 'bg-blue-500/20 text-blue-500' : agent.role === 'EXECUTOR' ? 'bg-purple-500/20 text-purple-500' : 'bg-emerald-500/20 text-emerald-500'}`}>
                                             {agent.role === 'SCANNER' ? <Search size={18} /> : agent.role === 'EXECUTOR' ? <Terminal size={18} /> : <Bug size={18} />}
                                         </div>
                                         <div className="text-[10px] font-black text-white uppercase tracking-tighter">{agent.name}</div>
                                         {agent.status !== 'IDLE' && (
-                                            <div className="text-[8px] bg-indigo-500 text-white px-2 py-0.5 rounded-lg font-black animate-pulse uppercase tracking-widest">
+                                            <div className="text-[8px] bg-yellow-500 text-white px-2 py-0.5 rounded-lg font-black animate-pulse uppercase tracking-widest">
                                                 {agent.status === 'SCANNING' ? 'СКАНУВАННЯ' :
                                                     agent.status === 'TRANSMITTING' ? 'ПЕРЕДАЧА' :
                                                         agent.status === 'CODING' ? 'КОДУВАННЯ' :
@@ -176,7 +202,7 @@ const SuperIntelligenceView: React.FC = () => {
                                                 <TruthLedgerTerminal />
                                             </div>
                                             <div className="mt-4 h-[25%] border border-white/5 bg-slate-900/30 p-4 rounded-[20px] overflow-hidden">
-                                                <div className="text-[9px] text-indigo-400 font-black mb-2 flex items-center gap-3"><Terminal size={12} /> КОМПІЛЯТОР ЯДРА NAS</div>
+                                                <div className="text-[9px] text-yellow-400 font-black mb-2 flex items-center gap-3"><Terminal size={12} /> КОМПІЛЯТОР ЯДРА NAS</div>
                                                 <div className="text-[10px] font-mono whitespace-pre opacity-80">
                                                      <TypewriterBlock text={nasDiff || "--- ОЧІКУВАННЯ НЕЙРОННОГО СИНТЕЗУ ---"} isActive={stage === 'NAS_IMPLEMENTATION' || nasDiff === ''} />
                                                 </div>
@@ -188,15 +214,15 @@ const SuperIntelligenceView: React.FC = () => {
                                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} key="evidence" className="absolute inset-0 p-6 space-y-4 overflow-y-auto">
                                             <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mb-4">Доказова База (RAG)</div>
                                             {ragArtifacts.map((art: any, i: number) => (
-                                                <div key={i} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-indigo-500/30 transition-all group">
+                                                <div key={i} className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:border-yellow-500/30 transition-all group">
                                                     <div className="flex items-center gap-3 mb-2">
-                                                        <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg"><FileText size={14} /></div>
+                                                        <div className="p-2 bg-yellow-500/10 text-yellow-400 rounded-lg"><FileText size={14} /></div>
                                                         <div className="text-[11px] font-black text-white uppercase tracking-tighter truncate">{art.source}</div>
                                                     </div>
                                                     <p className="text-[10px] text-slate-400 leading-relaxed italic group-hover:text-slate-200">"{art.content.substring(0, 150)}..."</p>
                                                     <div className="mt-3 flex justify-between items-center text-[8px] font-black text-slate-600 uppercase tracking-widest">
                                                         <span>Релевантність: {(art.relevance * 100).toFixed(1)}%</span>
-                                                        <span className="text-indigo-500">Vector ID: {art.id}</span>
+                                                        <span className="text-yellow-500">Vector ID: {art.id}</span>
                                                     </div>
                                                 </div>
                                             ))}
@@ -209,13 +235,13 @@ const SuperIntelligenceView: React.FC = () => {
                                             <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mb-4">Генетичний Код Агентів</div>
                                             {agentGenomes.map((gen: any, i: number) => (
                                                 <div key={i} className="p-5 bg-gradient-to-br from-white/5 to-transparent border border-white/5 rounded-3xl relative overflow-hidden group">
-                                                    <motion.div animate={{ x: ['-100%', '200%'] }} transition={{ duration: 5, repeat: Infinity, ease: 'linear' }} className="absolute top-0 left-0 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-30" />
+                                                    <motion.div animate={{ x: ['-100%', '200%'] }} transition={{ duration: 5, repeat: Infinity, ease: 'linear' }} className="absolute top-0 left-0 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-30" />
                                                     <div className="flex justify-between items-start mb-4">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20"><Dna size={20} /></div>
+                                                            <div className="w-10 h-10 bg-yellow-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20"><Dna size={20} /></div>
                                                             <div>
                                                                 <div className="text-xs font-black text-white uppercase tracking-tighter">{gen.agentName}</div>
-                                                                <div className="text-[8px] text-indigo-400 font-mono tracking-[0.2em] uppercase">Архітектура: {gen.baseModel}</div>
+                                                                <div className="text-[8px] text-yellow-400 font-mono tracking-[0.2em] uppercase">Архітектура: {gen.baseModel}</div>
                                                             </div>
                                                         </div>
                                                         <div className="text-right">
@@ -225,7 +251,7 @@ const SuperIntelligenceView: React.FC = () => {
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-2">
                                                         {Object.entries(gen.traits).map(([trait, val]: any) => (
-                                                            <div key={trait} className="bg-black/40 p-2 rounded-xl border border-white/5 flex justify-between items-center group-hover:border-indigo-500/20 transition-colors">
+                                                            <div key={trait} className="bg-black/40 p-2 rounded-xl border border-white/5 flex justify-between items-center group-hover:border-yellow-500/20 transition-colors">
                                                                 <span className="text-[7px] text-slate-500 uppercase font-black">{trait}</span>
                                                                 <span className="text-[8px] font-mono text-white">{(val * 100).toFixed(0)}</span>
                                                             </div>

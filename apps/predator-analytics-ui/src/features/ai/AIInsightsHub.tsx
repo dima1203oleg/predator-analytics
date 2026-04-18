@@ -1,5 +1,5 @@
 /**
- * 🎯 AI Sovereign Intelligence Nexus | v56.5-ELITE
+ * 🎯 AI Sovereign Intelligence Nexus | v57.2-WRAITH
  * PREDATOR — Модуль ШІ-Аналізу Вищого Рівня Секретності
  *
  * Автономна генерація аналітичних висновків, виявлення аномалій та прогнозування.
@@ -8,6 +8,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RiskLevelValue } from '@/types/intelligence';
 import {
   Brain, Sparkles, AlertTriangle, Target, Lightbulb, Zap,
   Clock, DollarSign, Shield, ArrowRight, TrendingUp, TrendingDown,
@@ -22,13 +23,14 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ========================
 // Types & Configuration
 // ========================
 
 type InsightType = 'prediction' | 'anomaly' | 'opportunity' | 'risk' | 'recommendation';
-type InsightPriority = 'critical' | 'high' | 'medium' | 'low';
+type InsightPriority = RiskLevelValue;
 
 interface AIInsight {
   id: string;
@@ -46,20 +48,24 @@ interface AIInsight {
   feedback?: 'positive' | 'negative';
 }
 
-// v56.5-ELITE Sovereign Palette: Gold (#D4AF37) & Rose (#E11D48)
+// ПАЛІТРА v57.2-WRAITH Sovereign: Gold (#D4AF37) та Amber (#B45309)
 const TYPE_CONFIG = {
   prediction:     { icon: Brain,       color: '#D4AF37', label: 'Прогноз' },
-  anomaly:        { icon: Activity,    color: '#E11D48', label: 'Аномалія' },
+  anomaly:        { icon: Activity,    color: '#B45309', label: 'Аномалія' },
   opportunity:    { icon: Lightbulb,   color: '#F59E0B', label: 'Можливість' },
-  risk:           { icon: Shield,      color: '#E11D48', label: 'Ризик' },
+  risk:           { icon: Shield,      color: '#B45309', label: 'Ризик' },
   recommendation: { icon: Target,      color: '#D4AF37', label: 'Рекомендація' }
 };
 
-const PRIORITY_CONFIG = {
-  critical: { color: '#E11D48', label: 'КРИТИЧНО' },
+const PRIORITY_CONFIG: Record<InsightPriority, { color: string; label: string }> = {
+  critical: { color: '#B45309', label: 'КРИТИЧНО' },
   high:     { color: '#F59E0B', label: 'ВИСОКИЙ' },
   medium:   { color: '#D4AF37', label: 'СЕРЕДНІЙ' },
-  low:      { color: '#475569', label: 'НИЗЬКИЙ' }
+  low:      { color: '#475569', label: 'НИЗЬКИЙ' },
+  minimal:  { color: '#64748b', label: 'МІНІМАЛЬНИЙ' },
+  stable:   { color: '#10b981', label: 'СТАБІЛЬНИЙ' },
+  watchlist: { color: '#8b5cf6', label: 'НАГЛЯД' },
+  elevated: { color: '#f59e0b', label: 'ПІДВИЩЕНИЙ' },
 };
 
 interface AIInsightsHubProps {
@@ -72,12 +78,55 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
   const [filter, setFilter] = useState<InsightType | 'all'>('all');
   const [refreshing, setRefreshing] = useState(false);
 
+  const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
+
+  const handleBackendSync = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+  };
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await api.get('/intelligence/insights');
       setInsights(Array.isArray(res.data) ? res.data : []);
+      
+      // ЕЛІТ-діагностика: успішна синхронізація
+      if (isOffline) {
+          window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+              service: 'AI_Insights',
+              message: `АВТОНОМНИЙ_ОРАКУЛ [${nodeSource}]: Інсайти завантажено через дзеркальний вузол MIRROR_ORACLE.`,
+              severity: 'warning',
+              timestamp: new Date().toISOString(),
+              code: 'INSIGHTS_OFFLINE'
+            }
+          }));
+      } else {
+          window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+              service: 'AI_Insights',
+              message: `ІНСАЙТ_ХАБ [${nodeSource}]: Аналітику успішно синхронізовано з центральним ядром NVIDIA.`,
+              severity: 'info',
+              timestamp: new Date().toISOString(),
+              code: 'INSIGHTS_SUCCESS'
+            }
+          }));
+      }
     } catch {
+      // КРИТИЧНА ПОМИЛКА: повідомляємо про збій синхронізації
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'AI_Insights',
+          message: 'КРИТИЧНА ПОМИЛКА СИНХРОНІЗАЦІЇ ІНСАЙТІВ. Активовано режим симуляції.',
+          severity: 'critical',
+          timestamp: new Date().toISOString(),
+          code: 'INSIGHTS_FAILED'
+        }
+      }));
+
       // Fallback mocks
       setInsights([
         {
@@ -154,7 +203,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
     return insights.filter(i => i.type === filter);
   }, [insights, filter]);
 
-  // ── Widget Mode ──────────────────────────────────────────────────────────────
+  // ── РЕЖИМ ВІДЖЕТА ──────────────────────────────────────────────────────────────
   if (isWidgetMode) {
     return (
       <div className="flex flex-col h-full backdrop-blur-[40px] border border-yellow-500/20 overflow-hidden rounded-3xl transition-all shadow-3xl"
@@ -165,7 +214,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             <div className="p-2.5 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-lg shadow-inner">
               <Brain size={16} />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-yellow-500/80">ШІ_АНАЛІЗ · ELITE</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-yellow-500/80">ШІ_АНАЛІЗ · WRAITH</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-yellow-500 rounded-full animate-ping shadow-[0_0_10px_#d4af37]" />
@@ -209,14 +258,14 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
     );
   }
 
-  // ── Full Page Mode ────────────────────────────────────────────────────────────
+  // ── ПОВНОСТОРІНКОВИЙ РЕЖИМ ────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen text-slate-200 relative overflow-hidden font-sans bg-[#020202]">
       <AdvancedBackground mode="sovereign" />
 
       <div className="relative z-10 max-w-[1700px] mx-auto p-6 sm:p-12 space-y-12 pb-32">
 
-        {/* ── ЗАГОЛОВОК ELITE ── */}
+        {/* ── ЗАГОЛОВОК WRAITH ── */}
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
           <div className="flex items-center gap-8">
             <div className="relative group cursor-pointer">
@@ -230,7 +279,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
                 <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.8em]">
-                  SOVEREIGN INTEL NEXUS · CLASSIFIED · v56.5-ELITE
+                  SOVEREIGN INTEL NEXUS · CLASSIFIED · v57.2-WRAITH
                 </span>
               </div>
               <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none italic">
@@ -263,10 +312,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           </div>
         </div>
 
-        {/* ── СТАТИСТИКА ELITE ── */}
+        {/* ── СТАТИСТИКА WRAITH ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { label: 'СТРАТЕГІЧНИЙ ВПЛИВ',    value: '$2.4B',    sub: 'Очікуваний ефект v56.5',   icon: DollarSign, color: '#D4AF37' },
+            { label: 'СТРАТЕГІЧНИЙ ВПЛИВ',    value: '$2.4B',    sub: 'Очікуваний ефект v57.2',   icon: DollarSign, color: '#D4AF37' },
             { label: 'СИНЕРГІЯ МОДЕЛЕЙ',     value: '99.9%',    sub: 'Titan-Alpha Integration', icon: Target,     color: '#E11D48' },
             { label: 'СУВЕРЕННИЙ ГРАФ',     value: '1.4M Вузлів', sub: 'Глобальне охоплення',   icon: Network,    color: '#D4AF37' },
             { label: 'АВТОНОМНІСТЬ ЯДРА',    value: 'TIER-1',     sub: 'Zero Human Intervention', icon: ShieldCheck, color: '#F59E0B' },
@@ -287,7 +336,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           ))}
         </div>
 
-        {/* ── ФІЛЬТРИ ELITE ── */}
+        {/* ── ФІЛЬТРИ WRAITH ── */}
         <div className="flex flex-wrap items-center gap-4 p-3 backdrop-blur-3xl border-2 border-white/5 w-fit rounded-[2rem] bg-black/40 shadow-2xl">
           <button
             onClick={() => setFilter('all')}
@@ -318,7 +367,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           ))}
         </div>
 
-        {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
+        {/* ── ОСНОВНИЙ КОНТЕНТ WRAITH ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
           {/* Картки інсайтів */}
@@ -329,14 +378,14 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                   <div className="relative scale-150">
                     <div className="absolute inset-0 bg-yellow-500/10 blur-[100px] animate-pulse rounded-full" />
                     <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}>
-                      <Radar size={120} className="text-yellow-700 opacity-20" />
+                      <CyberOrb size={100} color="#10b981" />
                     </motion.div>
                   </div>
                   <div className="flex flex-col gap-4">
                     <p className="text-yellow-500/60 font-black tracking-[1em] uppercase text-[11px] animate-pulse">
                       СИНТЕЗ_ДЕРЖАВНОГО_ВИСНОВКУ...
                     </p>
-                    <p className="text-[10px] font-mono text-slate-800 font-bold tracking-[0.5em]">ОБРОБКА СУВЕРЕННИХ ШЛЯХІВ v56.5</p>
+                    <p className="text-[10px] font-mono text-slate-800 font-bold tracking-[0.5em]">ОБРОБКА СУВЕРЕННИХ ШЛЯХІВ v57.2</p>
                   </div>
                 </div>
               ) : filtered.length > 0 ? (
@@ -397,6 +446,14 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                                 {new Date(insight.createdAt).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
+                            {isOffline && (
+                              <button 
+                                onClick={() => handleBackendSync()}
+                                className="px-6 py-2 bg-amber-600/20 border border-amber-500/30 rounded-xl text-[10px] font-black text-amber-500 uppercase italic animate-pulse"
+                              >
+                                ВИКОНАТИ_СИНХРОНІЗАЦІЮ
+                              </button>
+                            )}
                           </div>
 
                           <div className="space-y-4">
@@ -415,7 +472,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                                 {insight.impact}
                               </div>
                               <div className="flex items-center gap-3 text-[12px] font-black text-slate-500 uppercase tracking-tight">
-                                <Layers size={18} className="text-rose-500" />
+                                <Layers size={18} className="text-amber-500" />
                                 {insight.category}
                               </div>
                             </div>
@@ -459,7 +516,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                             </motion.button>
                             <motion.button
                               whileHover={{ scale: 1.1, y: 2 }} whileTap={{ scale: 0.9 }}
-                              className="p-4 border-2 bg-white/5 border-white/5 text-slate-700 hover:text-rose-500 hover:border-rose-500/30 rounded-2xl transition-all"
+                              className="p-4 border-2 bg-white/5 border-white/5 text-slate-700 hover:text-amber-500 hover:border-amber-500/30 rounded-2xl transition-all"
                             >
                               <ThumbsDown size={18} />
                             </motion.button>
@@ -480,16 +537,16 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             </AnimatePresence>
           </div>
 
-          {/* ── ПРАВА ПАНЕЛЬ ELITE ── */}
+          {/* ── ПРАВА ПАНЕЛЬ WRAITH ── */}
           <div className="lg:col-span-4 space-y-10">
 
-            {/* CyberOrb — sovereign gold/rose */}
+            {/* CyberOrb — sovereign gold/amber */}
             <HoloContainer className="flex items-center justify-center p-6 min-h-[450px] relative overflow-hidden border-yellow-500/20 bg-black/80 rounded-[4rem] shadow-4xl">
               <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/5 to-transparent" />
-              <CyberOrb size={320} color="#D4AF37" className="opacity-80" />
+              <CyberOrb size={80} color="#D4AF37" className="opacity-80" />
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
                 <div className="text-[10px] font-black text-yellow-600/40 uppercase tracking-[1em] mb-4">PREDATOR_CORE</div>
-                <div className="text-4xl font-black text-white tracking-tighter italic uppercase">СИНТЕЗ_ELITE</div>
+                <div className="text-4xl font-black text-white tracking-tighter italic uppercase">СИНТЕЗ_WRAITH</div>
                 <div className="mt-8 flex items-center gap-3 px-5 py-2 bg-white/5 rounded-full border border-white/5">
                   <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_10px_#d4af37]" />
                   <span className="text-[9px] font-black font-mono text-yellow-500 uppercase tracking-widest">A-STATUS: ACTIVE</span>
@@ -501,13 +558,13 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             <TacticalCard variant="cyber" className="p-10 bg-black/60 border-white/5 rounded-[4rem] shadow-3xl">
               <h3 className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic font-bold">
                 <Activity size={18} className="text-yellow-500" />
-                STATUS_MONITOR_v56.5
+                STATUS_MONITOR_v57.2
               </h3>
               <div className="space-y-6">
                 {[
                   { label: 'SOVEREIGN_SCAN_v56',    status: 'OPTIMIZED',  val: '99.9%',  color: '#D4AF37' },
                   { label: 'NEURAL_DECODER',     status: 'INTENSE',     val: '1.4B/s', color: '#F59E0B' },
-                  { label: 'HYPOTHESIS_GEN',     status: 'CLASSIFIED',  val: 'X-ELITE', color: '#E11D48' },
+                  { label: 'HYPOTHESIS_GEN',     status: 'CLASSIFIED',  val: 'X-WRAITH', color: '#E11D48' },
                   { label: 'STRATEGIC_ALIGN',    status: 'READY',       val: '100%',   color: '#34d399' }
                 ].map((item) => (
                   <div key={item.label}
@@ -544,7 +601,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                 </div>
               </div>
               <div className="mt-8 text-center relative z-10">
-                <p className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.8em] mb-2 italic">SCAN_RADAR_ELITE</p>
+                <p className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.8em] mb-2 italic">SCAN_RADAR_WRAITH</p>
                 <div className="flex items-center gap-3 justify-center">
                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-ping" />
                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">TARGET_ACQUISITION_MODE</p>

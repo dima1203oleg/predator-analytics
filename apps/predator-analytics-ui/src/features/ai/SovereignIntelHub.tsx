@@ -1,5 +1,5 @@
 /**
- * 🎯 Sovereign Intelligence Hub | v56.5-ELITE
+ * 🎯 Sovereign Intelligence Hub | v57.2-WRAITH
  * PREDATOR — Центральний Вузол Когнітивної Розвідки
  * 
  * Інтерактивний інтерфейс для взаємодії з Оракулом та аналізу нейронних потоків.
@@ -13,7 +13,7 @@ import {
   Terminal, Globe, Search, Database, 
   Activity, Cpu, Eye, Zap, MessageSquare,
   Lock, ArrowRight, Bot, Command, RefreshCw, Bookmark,
-  Fingerprint, Target, Layers
+  Fingerprint, Target, Layers, AlertTriangle
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -27,10 +27,11 @@ import { aiApi, ChatMessage, AIThought } from '@/services/api/ai';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
 import { HoloContainer } from '@/components/HoloContainer';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// --- MOCK DATA FOR ELITE ---
+// --- MOCK DATA FOR WRAITH ---
 const MOCK_THOUGHTS: AIThought[] = [
     { id: '1', stage: 'observation', content: '[GLM-5.1] Виявлено критичне відхилення у ланцюгу постачання пального. Джерело: NVIDIA-CLUSTER.', confidence: 0.99, timestamp: new Date().toISOString() },
     { id: '2', stage: 'analysis', content: 'Активація SWE-Bench Pro для аудиту аномальних транзакцій. Кореляція з ZROK-трафіком позитивна.', confidence: 0.97, timestamp: new Date().toISOString() },
@@ -38,10 +39,35 @@ const MOCK_THOUGHTS: AIThought[] = [
 ];
 
 export default function SovereignIntelHub() {
-    const { status, nodeSource } = useBackendStatus();
+    const { isOffline, nodeSource, healingProgress } = useBackendStatus();
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { role: 'system', content: 'СУВЕРЕННИЙ ІНТЕЛЕКТ ПРЕДАТОР GLM-5.1 АКТИВОВАНО. Зв\'язок через ZROK тунель: ВСТАНОВЛЕНО.' }
+        { role: 'system', content: `СУВЕРЕННИЙ ІНТЕЛЕКТ ПРЕДАТОР GLM-5.1 АКТИВОВАНО. Зв'язок через ${isOffline ? 'ЛОКАЛЬНИЙ ЕМУЛЯТОР' : 'ZROK тунель'}: ВСТАНОВЛЕНО.` }
     ]);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SovereignHub',
+                    message: 'AI Хаб перейшов у режим обмеженої когнітивної функціональності (LOCAL_CORE). ZROK-зв’язок втрачено.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'LOCAL_CORE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'SovereignHub',
+                    message: 'СИНХРОНІЗАЦІЯ З ОРАКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'SOVEREIGN_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline]);
+
     const [input, setInput] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -93,7 +119,7 @@ export default function SovereignIntelHub() {
                                 <div className="flex items-center gap-4 mb-2">
                                     <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
                                     <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.8em]">
-                                        GLM-5.1 SOVEREIGN AGENT · v56.5-ELITE
+                                        GLM-5.1 SOVEREIGN AGENT · v57.2-WRAITH
                                     </span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none italic">
@@ -103,7 +129,6 @@ export default function SovereignIntelHub() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <div className="px-6 py-3 bg-black/40 border border-yellow-500/20 rounded-2xl flex items-center gap-4 shadow-xl">
                                 <div className="flex -space-x-2">
                                     {[1, 2, 3].map(i => (
                                         <div key={i} className="w-6 h-6 rounded-full border border-black bg-yellow-600 flex items-center justify-center text-[8px] font-black">
@@ -111,14 +136,19 @@ export default function SovereignIntelHub() {
                                         </div>
                                     ))}
                                 </div>
-                                <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">
-                                    {nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL ACTIVE' : 'LOCAL_MOCK_MODE'}
+                                <span className={cn("text-[9px] font-black uppercase tracking-widest", isOffline ? "text-amber-500" : "text-yellow-500")}>
+                                    {isOffline ? 'OFFLINE_RECOVERY_MODE' : (nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL ACTIVE' : 'MIRROR_ORACLE_ACTIVE')}
                                 </span>
                             </div>
+                            {isOffline && (
+                                <div className="px-6 py-3 bg-red-950/20 border border-red-500/30 rounded-2xl flex items-center gap-4 animate-pulse">
+                                    <AlertTriangle size={14} className="text-red-500" />
+                                    <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">FAILOVER SYNC: {Math.floor(healingProgress)}%</span>
+                                </div>
+                            )}
                             <Button variant="ghost" className="text-yellow-500/60 hover:text-yellow-500 uppercase text-[9px] font-black tracking-widest gap-2">
                                 <Command size={14} /> ТЕРМІНАЛ
                             </Button>
-                        </div>
                     </div>
 
                     <div className="flex-1 grid grid-cols-12 gap-8 overflow-hidden">
@@ -173,11 +203,11 @@ export default function SovereignIntelHub() {
                                 </div>
                             </TacticalCard>
 
-                            <HoloContainer className="p-8 h-[220px] bg-gradient-to-br from-rose-900/10 to-transparent border-rose-500/10 rounded-[3rem] backdrop-blur-3xl relative overflow-hidden group">
+                            <HoloContainer className="p-8 h-[220px] bg-gradient-to-br from-amber-900/10 to-transparent border-amber-500/10 rounded-[3rem] backdrop-blur-3xl relative overflow-hidden group">
                                 <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                                    <Shield size={180} className="text-rose-500" />
+                                    <Shield size={180} className="text-amber-500" />
                                 </div>
-                                <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
+                                <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
                                     <Shield size={16} /> СУВЕРЕННИЙ_БРАНДМАУЕР
                                 </h3>
                                 <div className="space-y-4">
@@ -272,7 +302,7 @@ export default function SovereignIntelHub() {
                             {/* Chat Input */}
                             <div className="p-8 bg-black/40 border-t border-yellow-500/10 relative z-10 backdrop-blur-3xl">
                                 <div className="relative group">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600/20 to-rose-600/20 blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600/20 to-amber-600/20 blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
                                     <Input 
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
@@ -298,7 +328,7 @@ export default function SovereignIntelHub() {
                                             <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">GLM-5.1:SOVEREIGN</span>
                                         </div>
                                         <div className="flex items-center gap-2 group cursor-help">
-                                            <Globe size={14} className="text-rose-500/60 group-hover:text-rose-500" />
+                                            <Globe size={14} className="text-amber-500/60 group-hover:text-amber-500" />
                                             <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">NODE: {nodeSource}</span>
                                         </div>
                                     </div>
@@ -311,6 +341,10 @@ export default function SovereignIntelHub() {
                         </div>
                     </div>
                 </motion.div>
+
+                <div className="relative z-10 max-w-[1800px] mx-auto px-6 lg:px-12 pb-24">
+                    <DiagnosticsTerminal />
+                </div>
 
                 <style dangerouslySetInnerHTML={{
                     __html: `

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import GraphViewer, { GraphNode, GraphEdge, RiskLevel } from '@/components/graph/GraphViewer';
+import GraphViewer, { GraphNode, GraphEdge } from '@/components/graph/GraphViewer';
+import type { RiskLevelValue as RiskLevel } from '@/types/intelligence';
 import { KnowledgePattern, ComponentType } from '../types';
 
 interface KnowledgeMapGraphProps {

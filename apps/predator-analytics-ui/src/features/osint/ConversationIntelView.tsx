@@ -1,5 +1,5 @@
 /**
- * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕР | v56.5-ELITE
+ * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕР | v57.2-WRAITH
  * PREDATOR Analytics — Neural Signal Decoding & OSINT
  * 
  * Моніторинг Telegram каналів, ЗМІ, соцмереж та даркнет-форумів.
@@ -31,6 +31,7 @@ import { intelligence } from '@/services/dataService';
 import { useQuery } from '@tanstack/react-query';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
+import { RiskLevelValue } from '@/types/intelligence';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -46,7 +47,7 @@ interface Message {
   views: string;
   sentiment: Sentiment;
   entities: string[];
-  riskLevel: 'critical' | 'high' | 'medium' | 'low';
+  riskLevel: RiskLevelValue;
   risk_score?: number;
   isDisinfo: boolean;
   original_text?: string;
@@ -58,7 +59,8 @@ interface Message {
 export default function ConversationIntelView() {
     const [activeTab, setActiveTab] = useState<'feed' | 'analytics' | 'risk'>('feed');
     const [liveCount, setLiveCount] = useState(8234);
-    const { isOffline, activeFailover } = useBackendStatus();
+    const backendStatus = useBackendStatus();
+    const { isOffline, activeFailover } = backendStatus;
 
     const { data: messages = [], isLoading, refetch, error } = useQuery({
         queryKey: ['telegram-feed'],
@@ -66,18 +68,42 @@ export default function ConversationIntelView() {
         refetchInterval: 15000 
     });
 
-    // Trace: v56.5-ELITE Error Protocol Integration
+    // Trace: v57.2-WRAITH Error Protocol Integration
     useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', { 
+                detail: { 
+                    service: 'ConversationIntel', 
+                    message: `СИГНАЛЬНИЙ ДЕКОДЕР [${backendStatus.nodeSource}]: Робота в автономному режимі MIRROR. Синхронізація OSINT обмежена.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'OSINT_OFFLINE'
+                } 
+            }));
+        } else if (!isLoading && !error) {
+            window.dispatchEvent(new CustomEvent('predator-error', { 
+                detail: { 
+                    service: 'ConversationIntel', 
+                    message: `DECODER_READY [${backendStatus.nodeSource}]: Канали перехоплення (Telegram/News) стабільні. Сигнали надходять.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'OSINT_SUCCESS'
+                } 
+            }));
+        }
+
         if (error) {
             window.dispatchEvent(new CustomEvent('predator-error', { 
                 detail: { 
                     service: 'ConversationIntel', 
-                    operation: 'Signal Acquisition', 
-                    message: error instanceof Error ? error.message : 'Unknown communication failure' 
+                    message: error instanceof Error ? `ПОМИЛКА_SIGINT: ${error.message}` : 'Втрачено контакт з OSINT-процесором.',
+                    severity: 'critical',
+                    timestamp: new Date().toISOString(),
+                    code: 'OSINT_FAIL'
                 } 
             }));
         }
-    }, [error]);
+    }, [error, isOffline, isLoading, backendStatus.nodeSource]);
 
     useEffect(() => {
         const id = setInterval(() => setLiveCount(c => c + Math.floor(Math.random() * 5)), 3000);
@@ -286,7 +312,7 @@ export default function ConversationIntelView() {
                                    <div className="p-8 bg-black/60 border-2 border-white/5 rounded-[3rem] space-y-4 shadow-inner group/stat hover:border-emerald-500/30 transition-all">
                                       <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-widest leading-none">DETECTION_SPD</p>
                                       <p className="text-4xl font-black text-emerald-500 italic font-mono tracking-tighter leading-none">0.38s</p>
-                                      <p className="text-[9px] text-emerald-700 uppercase font-black tracking-widest italic opacity-60">ELITE_LATENCY</p>
+                                      <p className="text-[9px] text-emerald-700 uppercase font-black tracking-widest italic opacity-60">WRAITH_LATENCY</p>
                                    </div>
                                 </div>
                              </div>

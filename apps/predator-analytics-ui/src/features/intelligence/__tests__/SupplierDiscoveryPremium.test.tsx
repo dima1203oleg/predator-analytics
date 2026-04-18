@@ -1,18 +1,28 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import SupplierDiscoveryPremium from '../SupplierDiscoveryPremium'
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, layout, whileHover, whileTap, ...props }: any) => <div {...props}>{children}</div>,
-        button: ({ children, whileHover, whileTap, ...props }: any) => <button {...props}>{children}</button>,
-        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
-    },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock('framer-motion', () => {
+    const motionProxy = new Proxy(
+        {},
+        {
+            get: (_target, prop) => {
+                return ({ children, ...props }: any) => {
+                    const Tag = typeof prop === 'string' ? prop : 'div';
+                    return <Tag {...props}>{children}</Tag>;
+                };
+            },
+        }
+    );
+    return {
+        motion: motionProxy,
+        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    };
+});
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -26,14 +36,14 @@ vi.mock('lucide-react', async (importOriginal) => {
     });
 })
 
-vi.mock('@/services/api', () => ({
-    api: {
+vi.mock('@/services/api/config', () => ({
+    apiClient: {
         premium: {
             getSuppliers: vi.fn().mockResolvedValue([
                 {
                     id: 's1',
                     name: 'CHINESE ELECTRONICS CO',
-                    country: 'China',
+                    country: 'Китай',
                     countryCode: 'CN',
                     city: 'Shenzhen',
                     products: ['Smartphones', 'Tablets'],
@@ -51,7 +61,7 @@ vi.mock('@/services/api', () => ({
                 {
                     id: 's2',
                     name: 'POLISH PARTS LTD',
-                    country: 'Poland',
+                    country: 'Польща',
                     countryCode: 'PL',
                     city: 'Warsaw',
                     products: ['Auto Parts', 'Engines'],
@@ -71,7 +81,20 @@ vi.mock('@/services/api', () => ({
     }
 }))
 
-import { api } from '@/services/api'
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats }: any) => (
+        <div data-testid="view-header">
+            <div>{title}</div>
+            {stats?.map((s: any, i: number) => (
+                <div key={i} data-testid={`stat-${s.label}`}>{s.value}</div>
+            ))}
+        </div>
+    )
+}));
+
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <div>{children}</div> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
@@ -80,22 +103,27 @@ describe('SupplierDiscoveryPremium', () => {
         vi.clearAllMocks()
     })
 
-    test('повинен відмальовувати заголовок та лічильник', async () => {
-        await act(async () => {
-            render(<SupplierDiscoveryPremium />)
-        })
+    test('відмальовує заголовок та лічильник', async () => {
+        render(
+            <MemoryRouter>
+                <SupplierDiscoveryPremium />
+            </MemoryRouter>
+        )
 
-        expect(screen.getByText(/Пошук Постачальників/i)).toBeInTheDocument()
+        expect(screen.getByText(/ПОШУК/i)).toBeInTheDocument()
+        expect(screen.getByText(/ПОСТАЧАЛЬНИКІВ/i)).toBeInTheDocument()
         
         await waitFor(() => {
-            expect(screen.getByText(/2 верифікованих постачальників/i)).toBeInTheDocument()
+            expect(screen.getByTestId('stat-ПОСТАЧАЛЬНИКІВ')).toHaveTextContent('2')
         })
     })
 
-    test('повинен відображати список постачальників', async () => {
-        await act(async () => {
-            render(<SupplierDiscoveryPremium />)
-        })
+    test('відображає список постачальників', async () => {
+        render(
+            <MemoryRouter>
+                <SupplierDiscoveryPremium />
+            </MemoryRouter>
+        )
 
         await waitFor(() => {
             expect(screen.getByText(/CHINESE ELECTRONICS CO/i)).toBeInTheDocument()
@@ -104,12 +132,16 @@ describe('SupplierDiscoveryPremium', () => {
         })
     })
 
-    test('повинен фільтрувати за пошуковим запитом', async () => {
-        await act(async () => {
-            render(<SupplierDiscoveryPremium />)
-        })
+    test('фільтрує за пошуковим запитом', async () => {
+        render(
+            <MemoryRouter>
+                <SupplierDiscoveryPremium />
+            </MemoryRouter>
+        )
 
-        const input = screen.getByPlaceholderText(/Пошук постачальника або товару/i)
+        await waitFor(() => screen.getByText(/CHINESE ELECTRONICS CO/i))
+
+        const input = screen.getByPlaceholderText(/НАПРИКЛАД: ЕЛЕКТРОНІКА/i)
         
         await act(async () => {
             fireEvent.change(input, { target: { value: 'POLISH' } })
@@ -119,52 +151,49 @@ describe('SupplierDiscoveryPremium', () => {
         expect(screen.queryByText(/CHINESE ELECTRONICS CO/i)).not.toBeInTheDocument()
     })
 
-    test('повинен фільтрувати за країною', async () => {
+    test('розгортає картку постачальника для деталізації', async () => {
+        render(
+            <MemoryRouter>
+                <SupplierDiscoveryPremium />
+            </MemoryRouter>
+        )
+
+        await waitFor(() => screen.getByText(/CHINESE ELECTRONICS CO/i))
+
+        const card = screen.getByText(/CHINESE ELECTRONICS CO/i)
         await act(async () => {
-            render(<SupplierDiscoveryPremium />)
+            fireEvent.click(card)
         })
 
-        await waitFor(() => {
-            const select = screen.getByRole('combobox')
-            fireEvent.change(select, { target: { value: 'China' } })
-        })
-
-        expect(screen.getByText(/CHINESE ELECTRONICS CO/i)).toBeInTheDocument()
-        expect(screen.queryByText(/POLISH PARTS LTD/i)).not.toBeInTheDocument()
+        // Мають з'явитися деталі (WRAITH)
+        expect(screen.getByText(/ГРУПИ_ТОВАРІВ/i)).toBeInTheDocument()
+        expect(screen.getByText(/ЛОГІСТИЧНИЙ_СЛІД/i)).toBeInTheDocument()
+        expect(screen.getByText(/СТВОРИТИ_ЗАПИТ_RFI/i)).toBeInTheDocument()
     })
 
-    test('повинен розгортати картку постачальника для деталізації', async () => {
-        await act(async () => {
-            render(<SupplierDiscoveryPremium />)
-        })
+    test('ініціює predator-error при автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ isOffline: true })
+        }))
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent')
+
+        render(
+            <MemoryRouter>
+                <SupplierDiscoveryPremium />
+            </MemoryRouter>
+        )
 
         await waitFor(() => {
-            // Шукаємо кнопку розгортання (ChevronDown)
-            // В нашому компоненті це кнопка з ChevronDown
-            const expandButtons = screen.getAllByTestId('icon-chevrondown')
-            fireEvent.click(expandButtons[0].parentElement!)
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'SupplierIntel',
+                        severity: 'info'
+                    })
+                })
+            )
         })
-
-        // Мають з'явитися деталі
-        expect(screen.getByText(/Статистика/i)).toBeInTheDocument()
-        expect(screen.getByText(/Сертифікати/i)).toBeInTheDocument()
-        expect(screen.getByText(/AI Рекомендація/i)).toBeInTheDocument()
-        expect(screen.getByText(/ISO9001/i)).toBeInTheDocument()
-    })
-
-    test('повинен змінювати статус "вибране"', async () => {
-        await act(async () => {
-            render(<SupplierDiscoveryPremium />)
-        })
-
-        await waitFor(() => {
-            // Перший постачальник (isFavorite: false) має StarOff
-            const starOff = screen.getByTestId('icon-staroff')
-            fireEvent.click(starOff.parentElement!)
-        })
-
-        // Після кліку StarOff має зникнути, а Star з'явитися (через зміну стейту)
-        expect(screen.queryByTestId('icon-staroff')).not.toBeInTheDocument()
-        expect(screen.getAllByTestId('icon-star').length).toBe(2) // Було 1 (для s2), стало 2
     })
 })

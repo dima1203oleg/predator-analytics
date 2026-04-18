@@ -20,7 +20,7 @@ import { ToastProvider } from './context/ToastContext';
 
 // Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
-import BootSequenceV8 from './components/BootSequenceV8';
+import BootSequenceWRAITH from './components/BootSequenceWRAITH';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginScreen from './components/LoginScreen';
 import { Predator } from './components/premium/AICopilot';
@@ -60,11 +60,20 @@ function App() {
   useEffect(() => {
     const onError = (event: ErrorEvent) => {
       try {
-        // event.error may be undefined in some browsers
         const msg = event.message || (event.error && event.error.message) || String(event.error || 'Unknown error');
         const stack = event.error && event.error.stack ? event.error.stack : undefined;
         console.error('Global error captured', msg, event.error);
         setGlobalError({ message: msg, stack });
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AppKernel',
+            message: `КРИТИЧНА ПОМИЛКА ЯДРА: ${msg}`,
+            severity: 'critical',
+            timestamp: new Date().toISOString(),
+            code: 'KERNEL_RUNTIME_ERROR'
+          }
+        }));
       } catch (e) {
         // swallow
       }
@@ -78,6 +87,16 @@ function App() {
         const stack = reason && reason.stack ? reason.stack : undefined;
         console.error('Unhandled promise rejection captured', reason);
         setGlobalError({ message: msg, stack });
+
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AppKernel',
+            message: `НЕОБРОБЛЕНЕ ВІДХИЛЕННЯ: ${msg}`,
+            severity: 'critical',
+            timestamp: new Date().toISOString(),
+            code: 'KERNEL_PROMISE_REJECTION'
+          }
+        }));
       } catch (e) {
         // swallow
       }
@@ -119,7 +138,7 @@ function App() {
                             <AdvancedBackground />
                             <NeuralPulse />
                             {appState === 'BOOTING' && (
-                              <BootSequenceV8 onComplete={handleBootComplete} />
+                              <BootSequenceWRAITH onComplete={handleBootComplete} />
                             )}
 
                             {appState === 'LOGIN' && (

@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v56.5 — ЯДРО МОНІТОРИНГУ (ELITE CORE)
+ * 🦅 PREDATOR v57.2 — ЯДРО МОНІТОРИНГУ (WRAITH CORE)
  * Розділ I.6 — Операційний моніторинг платформи.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -83,9 +83,9 @@ const toneClasses: Record<StatusTone, { badge: string; icon: string; border: str
         glow: 'shadow-[0_0_15px_rgba(245,158,11,0.3)]',
     },
     rose: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-300',
-        icon: 'border-rose-500/20 bg-rose-500/10 text-rose-300',
-        border: 'border-rose-500/15',
+        badge: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
+        icon: 'border-amber-500/20 bg-amber-500/10 text-amber-300',
+        border: 'border-amber-500/15',
         glow: 'shadow-[0_0_15px_rgba(244,63,94,0.3)]',
     },
     sky: {
@@ -284,6 +284,31 @@ const MonitoringView: React.FC = () => {
         return () => window.clearInterval(interval);
     }, [loadSnapshot, loadLogs]);
 
+    // Diagnostic reporting via predator-error protocol
+    useEffect(() => {
+        if (backendStatus.isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'MonitoringCore',
+                    message: `АВТОНОМНИЙ МОНІТОРИНГ [${backendStatus.nodeSource}]: Зв'язок з NVIDIA Master втрачено. Використовується резервний вузол MIRROR.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'MONITORING_OFFLINE'
+                }
+            }));
+        } else if (!loading) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'MonitoringCore',
+                    message: `ЯДРО МОНІТОРИНГУ [${backendStatus.nodeSource}]: Синхронізація з кластером активна. Телеметрія стабільна.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'MONITORING_SUCCESS'
+                }
+            }));
+        }
+    }, [backendStatus.isOffline, backendStatus.nodeSource, loading]);
+
     useEffect(() => {
         if (pauseStream) return undefined;
         const interval = window.setInterval(() => void loadLogs(), 4000);
@@ -304,7 +329,7 @@ const MonitoringView: React.FC = () => {
         total: services.length,
         healthy: services.filter(s => getStatusMeta(s.status).tone === 'emerald').length,
         degraded: services.filter(s => getStatusMeta(s.status).tone === 'amber').length,
-        failed: services.filter(s => getStatusMeta(s.status).tone === 'rose').length,
+        failed: services.filter(s => getStatusMeta(s.status).tone === 'amber').length,
     };
 
     const filteredLogs = useMemo(() => {
@@ -338,7 +363,7 @@ const MonitoringView: React.FC = () => {
                                      ЯДРО_СИСТЕМИ // ОПЕРАЦІЙНЕ_КОМАНДУВАННЯ
                                    </span>
                                    <div className="h-px w-12 bg-sky-600/20" />
-                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                   ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>
@@ -353,7 +378,7 @@ const MonitoringView: React.FC = () => {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 bg-black/40 p-5 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
                                <div className="text-center px-4">
                                   <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СТАН</p>
-                                  <p className={cn("text-lg font-black italic", overallStatusMeta.tone === 'emerald' ? 'text-emerald-500' : 'text-rose-500')}>{overallStatusMeta.label}</p>
+                                  <p className={cn("text-lg font-black italic", overallStatusMeta.tone === 'emerald' ? 'text-emerald-500' : 'text-amber-500')}>{overallStatusMeta.label}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
                                   <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">СЕРВІСИ</p>
@@ -462,13 +487,13 @@ const MonitoringView: React.FC = () => {
                                                     label="ДИСКОВИЙ ПРОСТІР"
                                                     value={systemStats?.disk_percent ?? null}
                                                     detail={`${formatBytes(systemStats?.disk_used)} / ${formatBytes(systemStats?.disk_total)}`}
-                                                    tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'rose' : 'emerald'}
+                                                    tone={systemStats?.disk_percent != null && systemStats.disk_percent >= 85 ? 'amber' : 'emerald'}
                                                 />
                                             </section>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                                             <MetricTile label="ЗАТРИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕРЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'rose' : 'sky'} />
+                                             <MetricTile label="ЗАТРИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕРЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'amber' : 'sky'} />
                                              <MetricTile label="МЕРЕЖЕВІ СЕСІЇ" value={formatCount(systemStats?.active_connections)} hint="АКТИВНІ З'ЄДНАННЯ TCP/IP" icon={<Network size={20} />} tone="sky" />
                                              <MetricTile label="ОБ'ЄМ_БД" value={formatCount(systemStats?.documents_total)} hint="ПІДТВЕРДЖЕНО В ШАРІ ЗБЕРЕЖЕННЯ" icon={<Database size={20} />} tone="emerald" />
                                             <MetricTile label="ІНДЕКС_MAP" value={formatCount(systemStats?.total_indices)} hint="КІЛЬКІСТЬ ПОШУКОВИХ ШАРІВ" icon={<Layers3 size={20} />} tone="amber" />
@@ -518,7 +543,7 @@ const MonitoringView: React.FC = () => {
                                                             const meta = getStatusMeta(log.level);
                                                             return (
                                                                 <div key={log.id} className="group p-6 rounded-3xl border border-white/[0.03] bg-white/[0.01] hover:border-white/[0.08] hover:bg-white/[0.02] transition-all relative overflow-hidden">
-                                                                    <div className={cn("absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity", meta.tone === 'rose' ? 'bg-red-600' : 'bg-sky-600')} />
+                                                                    <div className={cn("absolute left-0 top-0 bottom-0 w-1 opacity-40 group-hover:opacity-100 transition-opacity", meta.tone === 'amber' ? 'bg-red-600' : 'bg-sky-600')} />
                                                                     <div className="flex items-center gap-6 mb-4">
                                                                        <span className={cn("text-[9px] font-black px-4 py-1 rounded-lg uppercase tracking-widest border", toneClasses[meta.tone].badge)}>
                                                                           {log.level}
@@ -550,12 +575,12 @@ const MonitoringView: React.FC = () => {
                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <MetricTile label="АКТИВНІ_ЗАВДАННЯ" value={formatCount(pipelineJobs.filter(j => j.isActive).length)} hint="ЖИВІ ПРОЦЕСИ ІНГЕСТІЇ" icon={<Activity size={20} />} tone="sky" />
                                             <MetricTile label="УСПІШНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'emerald').length)} hint="ЗАВЕРШЕНІ СЬОГОДНІ" icon={<CheckCircle2 size={20} />} tone="emerald" />
-                                            <MetricTile label="КРИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'rose').length)} hint="ПОТРЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="rose" />
+                                            <MetricTile label="КРИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'amber').length)} hint="ПОТРЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="amber" />
                                          </div>
 
                                          <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl">
                                              <div className="flex items-center gap-6 mb-10 pb-8 border-b border-white/[0.04]">
-                                                 <div className="p-4 rounded-2xl bg-indigo-600/10 text-indigo-500 border border-indigo-600/20">
+                                                 <div className="p-4 rounded-2xl bg-yellow-600/10 text-yellow-500 border border-yellow-600/20">
                                                     <Layers3 size={24} />
                                                  </div>
                                                  <div>

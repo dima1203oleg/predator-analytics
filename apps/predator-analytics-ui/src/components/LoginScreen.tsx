@@ -1,5 +1,5 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v56.5-ELITE
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v57.2-WRAITH
  * Екран авторизації глобальної розвідувальної платформи.
  * Атмосфера: суверенітет, абсолютний контроль, елітарність.
  */
@@ -379,7 +379,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-yellow-600 to-transparent opacity-60" />
                             </div>
                             <p className="text-[10px] text-red-600 font-black tracking-[0.55em] uppercase italic group-hover:text-red-400 transition-colors">
-                                ELITE GLOBAL CONTROL TERMINAL v56.5 · TIER-1 CLASSIFIED
+                                WRAITH GLOBAL CONTROL TERMINAL v57.2 · TIER-1 CLASSIFIED
                             </p>
                         </div>
 
@@ -505,7 +505,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="text-[10px] text-yellow-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-yellow-600/30">
                                 <Shield size={14} className="text-yellow-600" />
-                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v56.5-ELITE]
+                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v57.2-WRAITH]
                                 <Shield size={14} className="text-yellow-600" />
                             </div>
                             <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">
@@ -521,7 +521,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     label: 'КОМАНДНИК СУВЕРЕНІТЕТУ',
                                     desc: 'Абсолютний контроль екосистеми. Тір-1 доступ до всіх стратегічних вузлів та AI Oracle.',
                                     icon: ShieldAlert,
-                                    level: 'TOP-SECRET ELITE',
+                                    level: 'TOP-SECRET WRAITH',
                                     clearance: 'SOVEREIGN',
                                     borderColor: 'border-yellow-500/40 hover:border-yellow-400 shadow-[0_0_50px_rgba(212,175,55,0.05)]',
                                     glowColor: 'hover:shadow-[0_0_60px_rgba(212,175,55,0.2)]',
@@ -535,7 +535,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     desc: 'Глибока OSINT-розвідка, закриті фінансові потоки UA_SWIFT, AI-прогнозування.',
                                     icon: Activity,
                                     level: 'CLASSIFIED PLUS',
-                                    clearance: 'ELITE-IV',
+                                    clearance: 'WRAITH-IV',
                                     borderColor: 'border-rose-500/30 hover:border-rose-400/60 shadow-[0_0_50px_rgba(225,29,72,0.03)]',
                                     glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.15)]',
                                     accentColor: 'text-rose-400',
@@ -548,7 +548,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     desc: 'Моніторинг митних коридорів, базовий аудит та оперативна підтримка інгестії.',
                                     icon: Terminal,
                                     level: 'SECRET',
-                                    clearance: 'ELITE-III',
+                                    clearance: 'WRAITH-III',
                                     borderColor: 'border-slate-700/40 hover:border-slate-500/60',
                                     glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.15)]',
                                     accentColor: 'text-slate-200',
@@ -660,7 +660,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </motion.div>
                     </div>
                     <div className="px-6 text-[10px] font-black text-yellow-600 tracking-[0.4em] italic underline decoration-yellow-600/40">
-                        PREDATOR v56.5-ELITE
+                        PREDATOR v57.2-WRAITH
                     </div>
                 </div>
                 <div className="h-[3px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.8)]" />

@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkles
 } from 'lucide-react';
+import { RiskLevelValue } from '@/types/intelligence';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -28,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ResourceDynamicsChart } from '../infrastructure/components/ResourceDynamicsChart';
 import { ClusterTopology } from '../infrastructure/components/ClusterTopology';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { systemApi } from '@/services/api/system';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
@@ -40,11 +42,15 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
 const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
   <TacticalCard variant="premium" className="group">
     <div className="flex justify-between items-start mb-4">
-      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center">
-        <Brain className="w-5 h-5 text-rose-400" />
+      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+        <Brain className="w-5 h-5 text-amber-500" />
       </div>
-      <Badge className={cn(scenario.impact === 'High' ? "bg-rose-500/20 text-rose-400" : "bg-amber-500/20 text-amber-400")}>
-        IMPACT: {scenario.impact}
+      <Badge className={cn(
+        scenario.impact === 'critical' || scenario.impact === 'high' 
+          ? "bg-amber-900/40 text-amber-500 border border-amber-500/30" 
+          : "bg-yellow-900/40 text-yellow-500 border border-yellow-500/30"
+      )}>
+        {scenario.impact === 'critical' || scenario.impact === 'high' ? 'КРИТИЧНО' : 'ПОМІРНО'}
       </Badge>
     </div>
     <h4 className="text-md font-bold text-white mb-2">{scenario.name}</h4>
@@ -60,15 +66,39 @@ interface Scenario {
   id: string;
   name: string;
   probability: number;
-  impact: 'High' | 'Medium' | 'Low';
+  impact: RiskLevelValue;
   description: string;
   eta: string;
 }
 
 export default function PredictiveNexusView() {
+    const { isOffline, nodeSource, activeFailover } = useBackendStatus();
     const [isScanning, setIsScanning] = useState(false);
-    const backendStatus = useBackendStatus();
     
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'PredictiveNexus',
+                    message: `АВТОНОМНИЙ_НЕКСУС [${nodeSource}]: Перехід на дзеркальні прогностичні моделі MIRROR_VAULT.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'NEXUS_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'PredictiveNexus',
+                    message: `НЕКСУС_АКТИВОВАНО [${nodeSource}]: Повний доступ до квантової аналітики NVIDIA. Операційна стабільність 100%.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'NEXUS_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline, nodeSource]);
+
     const { data: stats } = useQuery({
         queryKey: ['system', 'stats'],
         queryFn: systemApi.getStats,
@@ -106,18 +136,18 @@ export default function PredictiveNexusView() {
                     className="relative z-10 h-full w-full flex flex-col p-6"
                 >
                     <ViewHeader 
-                        title="Predictive Nexus v56.5-ELITE"
-                        subtitle="Квантовий Контур Стратегічного Прогнозування [GLM-5.1 Sovereign]"
+                        title="PREDICTIVE NEXUS v57.2-WRAITH"
+                        subtitle="Квантовий Контур Стратегічного Прогнозування (NVIDIA GLM-5.1 Sovereign)"
                         icon={Brain}
                         badges={[
-                            { label: `CORE: GLM-5.1`, color: 'rose', icon: <Cpu size={10} /> },
-                            { label: `NODE: ${backendStatus.nodeSource}`, color: backendStatus.activeFailover ? 'warning' : 'success', icon: <Activity size={10} /> },
+                            { label: `CORE: GLM-5.1`, color: 'warning', icon: <Cpu size={10} /> },
+                            { label: `NODE: ${nodeSource}`, color: activeFailover ? 'danger' : 'success', icon: <Activity size={10} /> },
                             { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
-                            <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-white gap-2">
+                            <Button onClick={startScan} disabled={isScanning} className="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black gap-2 border border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                                 <Zap size={16} className={isScanning ? "animate-pulse" : ""} />
-                                {isScanning ? "ЙДЕ АНАЛІЗ..." : "СВІЖИЙ ПРОГНОЗ"}
+                                {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ ПРЕКОГНІЦІЮ"}
                             </Button>
                         }
                     />
@@ -125,16 +155,16 @@ export default function PredictiveNexusView() {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6 overflow-hidden">
                         {/* Ліву колонку: OODA Loop */}
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <div className="bg-black/40 border border-indigo-500/20 rounded-xl p-6 backdrop-blur-md">
-                                <h3 className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <div className="bg-black/40 border border-amber-900/30 rounded-xl p-6 backdrop-blur-md shadow-[0_0_30px_rgba(245,158,11,0.02)]">
+                                <h3 className="text-sm font-black text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Bot size={16} /> ЦИКЛ OODA
                                 </h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     {['OBSERVE', 'ORIENT', 'DECIDE', 'ACT'].map((step, idx) => (
-                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-emerald-500/30 text-emerald-400" : "border-white/10 text-slate-600")}>
+                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-amber-500/30 text-amber-500" : "border-white/10 text-slate-600")}>
                                             <div className="text-[8px] font-black">{step}</div>
                                             <div className="h-1 w-full bg-white/5 mt-1 rounded-full overflow-hidden">
-                                                {idx === 0 && <motion.div className="h-full bg-emerald-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
+                                                {idx === 0 && <motion.div className="h-full bg-amber-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
                                             </div>
                                         </div>
                                     ))}
@@ -158,7 +188,7 @@ export default function PredictiveNexusView() {
                                             <ShieldCheck size={14} />
                                             <span className="text-[10px] font-black uppercase">Цілісність</span>
                                         </div>
-                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ ZROK Tunnel: <span className={cn(backendStatus.activeFailover ? "text-amber-300" : "text-emerald-300")}>{backendStatus.activeFailover ? 'ACTIVE_FAILOVER' : 'SYNCHRONIZED'}</span></p>
+                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ ZROK Tunnel: <span className={cn(activeFailover ? "text-amber-300" : "text-emerald-300")}>{activeFailover ? 'ACTIVE_FAILOVER' : 'SYNCHRONIZED'}</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -192,6 +222,9 @@ export default function PredictiveNexusView() {
                                 ВСІ СЦЕНАРІЇ (24)
                             </Button>
                         </div>
+                    </div>
+                    <div className="mt-auto pt-6">
+                        <DiagnosticsTerminal />
                     </div>
                 </motion.div>
             </div>

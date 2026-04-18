@@ -1,6 +1,6 @@
 
 /**
- * 🎯 Competitor Intelligence View v56.5-ELITE
+ * 🎯 Competitor Intelligence View v57.2-WRAITH
  * "Strategic Competitor Nexus Matrix"
  * Sovereign Power Design · Tactical Market Domination · Tier-1
  *
@@ -30,11 +30,12 @@ import { HoloContainer } from '@/components/HoloContainer';
 import { PageTransition } from '@/components/layout/PageTransition';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import { Badge } from '@/components/ui/badge';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // --- LOCALIZATION ---
 const localLocales = {
   title: 'СТРАТЕГІЧНИЙ НЕКСУС КОНКУРЕНТІВ',
-  breadcrumbs: ['РОЗВІДКА', 'МАТРИЦЯ РИНКУ', 'v56.5.ELITE'],
+  breadcrumbs: ['РОЗВІДКА', 'МАТРИЦЯ РИНКУ', 'v57.2.WRAITH'],
   stats: {
     database: 'БАЗА ДАНИХ',
     monitoring: 'МОНІТОРИНГ',
@@ -90,7 +91,7 @@ interface Competitor {
 
 // --- COMPONENTS ---
 
-const CompetitorCardELITE: React.FC<{
+const CompetitorCardWRAITH: React.FC<{
   competitor: Competitor;
   isExpanded: boolean;
   onToggle: () => void;
@@ -143,7 +144,7 @@ const CompetitorCardELITE: React.FC<{
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] font-black text-slate-500 uppercase tracking-widest italic">
                 <span className="bg-white/[0.01] px-2 py-0.5 rounded border border-white/5 text-[#D4AF37]/80 font-mono tracking-normal">{competitor.edrpou}</span>
                 <span className="flex items-center gap-2"><Globe size={13} className="text-[#D4AF37]" /> {(competitor.countries || []).slice(0, 3).join(', ')}</span>
-                <span className="flex items-center gap-2"><Package size={13} className="text-rose-500" /> {(competitor.products || []).slice(0, 2).join(', ')}</span>
+                <span className="flex items-center gap-2"><Package size={13} className="text-amber-500" /> {(competitor.products || []).slice(0, 2).join(', ')}</span>
               </div>
             </div>
           </div>
@@ -241,7 +242,7 @@ const CompetitorCardELITE: React.FC<{
 
               <div className="space-y-6">
                 <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] flex items-center gap-3 italic">
-                  <div className="w-2 h-2 bg-rose-600 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
+                  <div className="w-2 h-2 bg-amber-600 rounded-full animate-pulse shadow-[0_0_8px_#f43f5e]" />
                   {localLocales.card.actions.analytics}
                 </h4>
                 <div className="flex flex-col gap-4">
@@ -254,7 +255,7 @@ const CompetitorCardELITE: React.FC<{
                   </button>
 
                   <button className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
-                    <FileText size={20} className="text-rose-500" /> {localLocales.card.actions.report}
+                    <FileText size={20} className="text-amber-500" /> {localLocales.card.actions.report}
                   </button>
 
                   <button className="flex items-center gap-4 px-5 py-5 bg-black border border-white/5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic text-slate-500 hover:text-white hover:border-white/20 transition-all shadow-xl">
@@ -279,6 +280,8 @@ const CompetitorIntelligenceView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'import' | 'share' | 'trend'>('import');
 
+  const { isOffline, nodeSource } = useBackendStatus();
+
   // Load Real Data
   useEffect(() => {
     const fetchData = async () => {
@@ -287,18 +290,54 @@ const CompetitorIntelligenceView: React.FC = () => {
         const data = await intelligenceApi.getCompetitors();
         if (data && Array.isArray(data)) {
           setCompetitors(data);
+          
+          if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+              detail: {
+                service: 'CompetitorIntel',
+                message: 'МАТРИЦЯ КОНКУРЕНТІВ: Дані успішно синхронізовано через MIRROR_CHANNEL (COMPETITOR_NODES).',
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'COMPETITOR_NODES'
+              }
+            }));
+          }
         } else {
           setCompetitors([]);
         }
       } catch (e) {
         console.error("Competitor load error", e);
         setCompetitors([]);
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'CompetitorIntel',
+            message: 'КРИТИЧНА ПОМИЛКА ДОСТУПУ ДО ВУЗЛА COMPETITOR_NODES. Перевірте з\'єднання.',
+            severity: 'critical',
+            timestamp: new Date().toISOString(),
+            code: 'COMPETITOR_NODES'
+          }
+        }));
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, []);
+  }, [isOffline]);
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'CompetitorIntel',
+          message: 'АКТИВОВАНО АВТОНОМНУ МАТРИЦЮ КОНКУРЕНТІВ (COMPETITOR_NODES). Перехід на локальні OSINT-дзеркала.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'COMPETITOR_NODES'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const filteredCompetitors = useMemo(() => {
     let result = [...competitors];
@@ -329,7 +368,7 @@ const CompetitorIntelligenceView: React.FC = () => {
         {/* Background Depth */}
         <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden"><HoloContainer>{null}</HoloContainer></div>
         <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
-        <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-rose-600/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-amber-600/5 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative z-20">
           <ViewHeader
@@ -344,10 +383,10 @@ const CompetitorIntelligenceView: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-4">
                     <span className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-[#D4AF37] px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                      COMPETITOR_SIGINT // HUB_MATRIX
+                      COMPETITOR_SIGINT // {isOffline ? 'OFFLINE_MIRROR' : 'HUB_MATRIX'}
                     </span>
                     <div className="h-px w-12 bg-[#D4AF37]/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     {localLocales.title}
@@ -431,7 +470,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                       >
-                        <CompetitorCardELITE
+                        <CompetitorCardWRAITH
                           competitor={competitor}
                           isExpanded={expandedId === competitor.id}
                           onToggle={() => setExpandedId(expandedId === competitor.id ? null : competitor.id)}
@@ -497,7 +536,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                   <div className="space-y-3 mt-8 font-mono text-[10px] text-slate-700 font-bold uppercase tracking-widest">
                     <p className="flex justify-between border-b border-white/[0.02] pb-2"><span>NODE // ALFA:</span> <span className="text-[#D4AF37] glow-text">CONNECTED</span></p>
                     <p className="flex justify-between border-b border-white/[0.02] pb-2"><span>LINK // SIGMA:</span> <span className="text-[#D4AF37] glow-text">STABLE</span></p>
-                    <p className="flex justify-between"><span>V56.5_KERNEL:</span> <span className="text-rose-600 glow-text italic">PREMIUM_ACTIVE</span></p>
+                    <p className="flex justify-between"><span>V56.5_KERNEL:</span> <span className="text-amber-600 glow-text italic">PREMIUM_ACTIVE</span></p>
                   </div>
                   
                   <div className="pt-6 flex justify-center">

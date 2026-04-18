@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -12,15 +11,17 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { security } from '@/services/dataService';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { DataSkeleton, SkeletonGroup } from '@/components/shared/DataSkeleton';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 const REPORTS = [
-    { id: 1, name: 'Звіт фінансового моніторингу (NBU #417)', standard: 'FATF/NBU', date: 'Сьогодні, 09:00', status: 'ready', icon: Landmark, color: 'text-indigo-400' },
+    { id: 1, name: 'Звіт фінансового моніторингу (NBU #417)', standard: 'FATF/NBU', date: 'Сьогодні, 09:00', status: 'ready', icon: Landmark, color: 'text-yellow-400' },
     { id: 2, name: 'Аудит доступу до персональних даних', standard: 'GDPR / 2297-VI', date: 'Вчора, 18:30', status: 'ready', icon: Lock, color: 'text-emerald-400' },
     { id: 3, name: 'Перевірка цілісності транзакцій', standard: 'SOC2 Type II', date: 'Вчора, 12:00', status: 'review', icon: Scale, color: 'text-amber-400' },
-    { id: 4, name: 'Реєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-rose-400' },
+    { id: 4, name: 'Реєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-amber-400' },
 ];
 
 export const ComplianceView = () => {
+    const { isOffline, nodeSource } = useBackendStatus();
     const [auditLogs, setAuditLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [lastVerify, setLastVerify] = useState(new Date());
@@ -31,7 +32,6 @@ export const ComplianceView = () => {
                 setLoading(true);
                 const logs = await security.getAuditLogs(50);
 
-                // Transform logs to expected format
                 const formattedLogs = logs.map((log: any, idx: number) => ({
                     id: log.id || idx,
                     user: log.user || log.operator_id || 'system',
@@ -43,19 +43,55 @@ export const ComplianceView = () => {
                 }));
 
                 setAuditLogs(formattedLogs);
+                setLastVerify(new Date());
+                
+                if (isOffline) {
+                    window.dispatchEvent(new CustomEvent('predator-error', {
+                        detail: {
+                            service: 'ComplianceIntel',
+                            message: 'ЦЕНТР КОМПЛАЄНСУ: Журнал аудиту синхронізовано з локальним дзеркалом (COMPLIANCE_NODES).',
+                            severity: 'info',
+                            timestamp: new Date().toISOString(),
+                            code: 'COMPLIANCE_NODES'
+                        }
+                    }));
+                }
             } catch (error) {
                 console.error('[ComplianceView] Failed to load audit logs:', error);
                 setAuditLogs([]);
+                
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                    detail: {
+                        service: 'ComplianceIntel',
+                        message: 'ПОМИЛКА ДОСТУПУ ДО ВУЗЛА COMPLIANCE_NODES. Журнал аудиту недоступний.',
+                        severity: 'critical',
+                        timestamp: new Date().toISOString(),
+                        code: 'COMPLIANCE_NODES'
+                    }
+                }));
             } finally {
                 setLoading(false);
             }
         };
         loadLogs();
 
-        // Refresh every 30 seconds
         const interval = setInterval(loadLogs, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isOffline]);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'ComplianceIntel',
+                    message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'COMPLIANCE_NODES'
+                }
+            }));
+        }
+    }, [isOffline]);
 
     return (
         <div className="min-h-screen w-full relative overflow-hidden bg-black pb-20">
@@ -77,10 +113,10 @@ export const ComplianceView = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-6">
                                     <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        COMPLIANCE_WATCH // AUDIT_TRIAL_v56
+                                        COMPLIANCE_WATCH // {isOffline ? 'OFFLINE_COMPLIANCE' : 'AUDIT_TRIAL_v56'}
                                     </span>
                                     <div className="h-px w-12 bg-emerald-500/20" />
-                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     ЦЕНТР <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>
@@ -88,16 +124,16 @@ export const ComplianceView = () => {
                             </div>
                         </div>
                     }
-                    breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_ELITE']}
+                    breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_WRAITH']}
                     badges={[
                         { label: 'IMMUTABLE_LOGS', color: 'success', icon: <Lock size={10} /> },
                         { label: 'SOVEREIGN_SYSTEM', color: 'primary', icon: <CheckCircle size={10} /> },
                     ]}
                     stats={[
-                        { label: 'РІВЕНЬ_ДОВІРИ', value: '100.0%', icon: <CheckCircle />, color: 'success' },
-                        { label: 'ОСТАННІЙ_АУДИТ', value: '2хв тому', icon: <Activity />, color: 'primary' },
-                        { label: 'INTEGRITY_INDEX', value: '1.000', icon: <Activity />, color: 'success' },
-                        { label: 'STATUS_CORE', value: 'NOMINAL', icon: <Activity />, color: 'primary' },
+                        { label: 'РІВЕНЬ_ДОВІРИ', value: '100.0%', icon: <CheckCircle size={16} />, color: 'success' },
+                        { label: 'ОСТАННІЙ_АУДИТ', value: '2хв тому', icon: <Activity size={16} />, color: 'primary' },
+                        { label: 'INTEGRITY_INDEX', value: '1.000', icon: <Activity size={16} />, color: 'success' },
+                        { label: 'STATUS_CORE', value: 'NOMINAL', icon: <Activity size={16} />, color: 'primary' },
                     ]}
                 />
 
@@ -136,7 +172,7 @@ export const ComplianceView = () => {
                     </TacticalCard>
 
                     {/* Reports Gen Section */}
-                    <TacicalReportsSection />
+                    <TacticalReportsSection />
                 </div>
 
                 {/* Audit Log Table */}
@@ -172,7 +208,7 @@ export const ComplianceView = () => {
                                             <td className="p-4 font-bold text-white">{log.user}</td>
                                             <td className="p-4">
                                                 <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider ${
-                                                    log.action.includes('BLOCK') ? 'bg-rose-500/10 text-rose-400' :
+                                                    log.action.includes('BLOCK') ? 'bg-amber-500/10 text-amber-400' :
                                                     log.action.includes('VIEW') ? 'bg-amber-500/10 text-amber-400' :
                                                     'bg-blue-500/10 text-blue-400'
                                                 }`}>
@@ -198,17 +234,17 @@ export const ComplianceView = () => {
 };
 
 // Sub-component for clarity
-const TacicalReportsSection = () => (
+const TacticalReportsSection = () => (
     <TacticalCard variant="holographic" title="ЗВІТНІСТЬ ТА ЕКСПОРТ" className="lg:col-span-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {REPORTS.map(report => (
-                <div key={report.id} className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex items-start gap-4 hover:border-indigo-500/30 transition-all group cursor-pointer">
-                    <div className={`p-3 rounded-xl bg-slate-900 ${report.color} group-hover:bg-indigo-500/20 transition-colors`}>
+                <div key={report.id} className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex items-start gap-4 hover:border-yellow-500/30 transition-all group cursor-pointer">
+                    <div className={`p-3 rounded-xl bg-slate-900 ${report.color} group-hover:bg-yellow-500/20 transition-colors`}>
                         <report.icon size={20} />
                     </div>
                     <div className="flex-1">
                         <div className="flex justify-between items-start">
-                            <h4 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">{report.name}</h4>
+                            <h4 className="text-sm font-bold text-white group-hover:text-yellow-300 transition-colors">{report.name}</h4>
                             <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
                                 report.status === 'ready' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
                             }`}>
@@ -218,7 +254,7 @@ const TacicalReportsSection = () => (
                         <p className="text-[10px] text-slate-300 font-mono mt-1 mb-3">{report.standard} • {report.date}</p>
 
                         <div className="flex items-center gap-2">
-                           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-indigo-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
+                           <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-yellow-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
                                 <Download size={12} /> PDF
                            </button>
                            <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-blue-600 rounded-lg text-[10px] font-bold text-slate-300 hover:text-white transition-all uppercase tracking-wider">
@@ -230,7 +266,7 @@ const TacicalReportsSection = () => (
             ))}
         </div>
         <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
-            <button className="text-xs text-indigo-400 hover:text-indigo-300 font-bold uppercase tracking-widest flex items-center gap-2">
+            <button className="text-xs text-yellow-400 hover:text-yellow-300 font-bold uppercase tracking-widest flex items-center gap-2">
                 Архів Звітів <Download size={14} />
             </button>
         </div>

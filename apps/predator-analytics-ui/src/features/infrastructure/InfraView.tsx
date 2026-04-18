@@ -163,7 +163,7 @@ export default function InfraView() {
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                  <RefreshCw className="w-8 h-8 text-indigo-400" />
+                  <RefreshCw className="w-8 h-8 text-yellow-400" />
                 </motion.div>
               </div>
             ) : error ? (
@@ -182,7 +182,7 @@ export default function InfraView() {
                   {[
                     { icon: Activity, label: 'Статус Сервісів', value: 'Online', color: 'emerald' },
                     { icon: Cpu, label: 'GPU Утилізація', value: '72%', color: 'amber' },
-                    { icon: DatabaseIcon, label: 'Диски: Використано', value: '2.4 TB', color: 'indigo' },
+                    { icon: DatabaseIcon, label: 'Диски: Використано', value: '2.4 TB', color: 'yellow' },
                     { icon: ShieldCheck, label: 'Uptime', value: '30 дн.', color: 'violet' },
                   ].map((stat, idx) => (
                     <motion.div
@@ -218,7 +218,7 @@ export default function InfraView() {
 
                     <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <DatabaseIcon className="w-5 h-5 text-indigo-400" /> БД та Сховища
+                        <DatabaseIcon className="w-5 h-5 text-yellow-400" /> БД та Сховища
                       </h3>
                       {infrastructure?.components ? (
                         <ServiceStatusGrid data={infrastructure.components} />
@@ -229,7 +229,7 @@ export default function InfraView() {
 
                     <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <DatabaseIcon className="w-5 h-5 text-indigo-400" /> Розподіл Сховища
+                        <DatabaseIcon className="w-5 h-5 text-yellow-400" /> Розподіл Сховища
                       </h3>
                       <StorageChart />
                     </div>

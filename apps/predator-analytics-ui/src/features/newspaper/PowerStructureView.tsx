@@ -1,5 +1,5 @@
 /**
- * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v56.5-ELITE
+ * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v57.2-WRAITH
  * PREDATOR Analytics — Tactical Influence Mapping
  * 
  * Хто під ким стоїть? Карта реального впливу, бенефіціарів та "акціонерів" українського ринку.
@@ -24,6 +24,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 interface PowerNode {
   id: string;
@@ -75,7 +76,7 @@ const PowerNodeCard = ({ node, color }: { node: PowerNode; color?: string }) => 
             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{node.role}</p>
             <div className="flex items-center gap-4 text-[9px] text-slate-700 font-black uppercase italic">
                 <span>ЄДРПОУ: {node.edrpou}</span>
-                <span>РИЗИК: <span className={cn(node.riskScore > 70 ? 'text-rose-500' : 'text-emerald-500')}>{node.riskScore}%</span></span>
+                <span>РИЗИК: <span className={cn(node.riskScore > 70 ? 'text-amber-500' : 'text-emerald-500')}>{node.riskScore}%</span></span>
             </div>
             
             <div className="mt-4 flex items-center gap-4">
@@ -139,6 +140,22 @@ export default function PowerStructureView() {
         }
     }, []);
 
+    const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
+
+    useEffect(() => {
+        if (isOffline) {
+           window.dispatchEvent(new CustomEvent('predator-error', {
+              detail: {
+                service: 'PowerNexus',
+                message: 'РЕЖИМ АВТОНОМНОГО КАРТОГРАФУВАННЯ (POWER_OFFLINE). Тіньові зв\'язки базуються на локальних кеш-вузлах.',
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'POWER_OFFLINE'
+              }
+           }));
+        }
+    }, [isOffline]);
+
     useEffect(() => {
         fetchData();
         const interval = setInterval(fetchData, 60000);
@@ -168,7 +185,7 @@ export default function PowerStructureView() {
                                   POWER_NEXUS // INFLUENCE_MAPPING
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МАПА <span className="text-cyan-500 underline decoration-cyan-600/20 decoration-8 italic uppercase">ВПЛИВУ</span>
@@ -181,8 +198,14 @@ export default function PowerStructureView() {
                      }
                      stats={[
                        { label: 'АКТИВНІ_ВУЗЛИ', value: String(data?.summary.totalNodes || 0), icon: <Network size={14} />, color: 'primary' },
-                       { label: 'КРИТИЧНІ_ЗВ\'ЯЗКИ', value: String(data?.summary.highRiskCount || 0), icon: <Siren size={14} />, color: 'danger', animate: true },
-                       { label: 'КАПІТАЛ_ПІД_НАГЛЯДОМ', value: `$${((data?.summary.totalValue || 0) / 1000000).toFixed(0)}M`, icon: <Zap size={14} />, color: 'warning' }
+                       { 
+                         label: isOffline ? 'SYNC_RECOVERY' : 'ВУЗОЛ_SOURCE', 
+                         value: isOffline ? `${Math.floor(healingProgress)}%` : activeFailover ? 'ZROK_TUNNEL' : 'NVIDIA_MASTER', 
+                         icon: isOffline ? <Activity /> : <Database size={14} />, 
+                         color: isOffline ? 'warning' : 'gold', 
+                         animate: isOffline 
+                       },
+                       { label: 'СТАН_КАНАЛУ', value: isOffline ? 'FAILOVER' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
                      ]}
                      actions={
                        <div className="flex gap-4">
@@ -266,25 +289,25 @@ export default function PowerStructureView() {
 
                       {/* INTELLIGENCE SIDEBAR */}
                       <div className="col-span-12 xl:col-span-4 space-y-10">
-                         <section className="p-10 rounded-[3.5rem] bg-black border-2 border-indigo-900/10 shadow-3xl space-y-10 relative overflow-hidden group">
+                         <section className="p-10 rounded-[3.5rem] bg-black border-2 border-yellow-900/10 shadow-3xl space-y-10 relative overflow-hidden group">
                              <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform">
-                                <Scan size={280} className="text-indigo-500" />
+                                <Scan size={280} className="text-yellow-500" />
                              </div>
-                             <h3 className="text-[12px] font-black text-indigo-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                             <h3 className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
                                 <Target size={18} /> КРИТИЧНІ_ІНСАЙТИ
                              </h3>
                              <div className="space-y-6 relative z-10">
                                 {data?.insights.map((insight, i) => (
-                                  <div key={i} className={cn("p-6 rounded-[2rem] border transition-all", insight.type === 'critical' ? 'bg-rose-900/5 border-rose-900/20' : 'bg-indigo-900/5 border-indigo-900/20')}>
-                                     <div className="flex items-center gap-3 text-[10px] font-black text-indigo-400 uppercase italic mb-2 tracking-widest">
-                                        {insight.type === 'critical' ? <AlertTriangle size={14} className="text-rose-500" /> : <Info size={14} className="text-indigo-500" />}
+                                  <div key={i} className={cn("p-6 rounded-[2rem] border transition-all", insight.type === 'critical' ? 'bg-amber-900/5 border-amber-900/20' : 'bg-yellow-900/5 border-yellow-900/20')}>
+                                     <div className="flex items-center gap-3 text-[10px] font-black text-yellow-400 uppercase italic mb-2 tracking-widest">
+                                        {insight.type === 'critical' ? <AlertTriangle size={14} className="text-amber-500" /> : <Info size={14} className="text-yellow-500" />}
                                         {insight.question}
                                      </div>
                                      <p className="text-lg font-black text-white italic leading-tight">{insight.answer}</p>
                                   </div>
                                 ))}
                              </div>
-                             <button className="w-full py-6 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-3xl transition-all">
+                             <button className="w-full py-6 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-3xl transition-all">
                                 ПЕРЕГЛЯНУТИ_ГРАФ_ВПЛИВУ
                              </button>
                          </section>

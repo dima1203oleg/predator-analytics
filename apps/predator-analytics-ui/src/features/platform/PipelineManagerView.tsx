@@ -121,7 +121,7 @@ const PipelineManagerView: React.FC = () => {
                             </motion.div>
                         )}
                         {runPipeline.isError && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-sm">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-sm">
                                 <AlertTriangle className="w-4 h-4 inline mr-2" />
                                 {runPipeline.error.message}
                             </motion.div>
@@ -172,7 +172,7 @@ const PipelineManagerView: React.FC = () => {
                                 <div className="flex items-baseline gap-2 mb-4">
                                     <span className="text-4xl font-black text-white">{rescoreEntity.data.cers.score.toFixed(1)}</span>
                                     <Badge className={
-                                        rescoreEntity.data.cers.level === 'critical' ? 'bg-rose-500' :
+                                        rescoreEntity.data.cers.level === 'critical' ? 'bg-amber-500' :
                                             rescoreEntity.data.cers.level === 'high' ? 'bg-orange-500' :
                                                 rescoreEntity.data.cers.level === 'medium' ? 'bg-amber-500' : 'bg-emerald-500'
                                     }>
@@ -187,7 +187,7 @@ const PipelineManagerView: React.FC = () => {
                             </motion.div>
                         )}
                         {rescoreEntity.isError && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg text-sm">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg text-sm">
                                 <AlertTriangle className="w-4 h-4 inline mr-2" />
                                 Одночасно сутність не знайдена в БД. Спробуйте запустити загальний пайплайн спочатку.
                             </motion.div>

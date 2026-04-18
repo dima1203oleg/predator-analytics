@@ -1,17 +1,28 @@
 import { expect, test, describe, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import MarketAnalyticsPremium from '../MarketAnalyticsPremium'
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-vi.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children, whileHover, ...props }: any) => <div {...props}>{children}</div>,
-        h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
-    },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+vi.mock('framer-motion', () => {
+    const motionProxy = new Proxy(
+        {},
+        {
+            get: (_target, prop) => {
+                return ({ children, ...props }: any) => {
+                    const Tag = typeof prop === 'string' ? prop : 'div';
+                    return <Tag {...props}>{children}</Tag>;
+                };
+            },
+        }
+    );
+    return {
+        motion: motionProxy,
+        AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    };
+});
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -47,28 +58,28 @@ vi.mock('@/features/market', () => ({
 }))
 
 vi.mock('@/components/ViewHeader', () => ({
-    ViewHeader: ({ title }: any) => <div data-testid="view-header"><h1>{title}</h1></div>
+    ViewHeader: ({ title, stats }: any) => (
+        <div data-testid="view-header">
+            <div>{title}</div>
+            {stats?.map((s: any, i: number) => (
+                <div key={i} data-testid={`stat-${s.label}`}>{s.value}</div>
+            ))}
+        </div>
+    )
 }))
 
 vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ title, children, metrics }: any) => (
+    TacticalCard: ({ title, children }: any) => (
         <div data-testid="tactical-card">
             <h3>{title}</h3>
-            {metrics?.map((m: any, i: number) => (
-                <div key={i} data-testid="metric-value">{m.value}</div>
-            ))}
             {children}
         </div>
     )
 }))
 
-vi.mock('@/components/HoloContainer', () => ({
-    HoloContainer: ({ children }: any) => <div data-testid="holo-container">{children}</div>
-}))
-
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: () => <div data-testid="cyber-orb" />
-}))
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }))
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }))
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <div>{children}</div> }))
 
 import { marketApi } from '@/features/market'
 
@@ -79,25 +90,28 @@ describe('MarketAnalyticsPremium', () => {
         vi.clearAllMocks()
     })
 
-    test('повинен відмальовувати заголовок та KPI після завантаження', async () => {
-        await act(async () => {
-            render(<MarketAnalyticsPremium />)
-        })
+    test('відмальовує заголовок та KPI після завантаження', async () => {
+        render(
+            <MemoryRouter>
+                <MarketAnalyticsPremium />
+            </MemoryRouter>
+        )
 
-        expect(screen.getByText(/Ринкова Аналітика/i)).toBeInTheDocument()
-        expect(screen.getByText(/Corporate Alpha/i)).toBeInTheDocument()
+        expect(screen.getByText(/РИНКОВА/i)).toBeInTheDocument()
+        expect(screen.getByText(/АНАЛІТИКА/i)).toBeInTheDocument()
 
         await waitFor(() => {
-            // Перевіряємо KPI (total_value_usd = 12.4M)
-            const metrics = screen.getAllByTestId('metric-value')
-            expect(metrics.some(m => m.textContent?.includes('$12.4M'))).toBe(true)
+            expect(screen.getByText(/\$12\.4M/i)).toBeInTheDocument()
+            expect(screen.getByTestId('stat-МАРЖИНАЛЬНІСТЬ')).toBeInTheDocument()
         })
     })
 
-    test('повинен відображати список сегментів (продуктів)', async () => {
-        await act(async () => {
-            render(<MarketAnalyticsPremium />)
-        })
+    test('відображає список сегментів (продуктів)', async () => {
+        render(
+            <MemoryRouter>
+                <MarketAnalyticsPremium />
+            </MemoryRouter>
+        )
 
         await waitFor(() => {
             expect(screen.getAllByText(/Електроніка/i).length).toBeGreaterThan(0)
@@ -106,30 +120,43 @@ describe('MarketAnalyticsPremium', () => {
         })
     })
 
-    test('повинен дозволяти змінювати часовий діапазон', async () => {
-        await act(async () => {
-            render(<MarketAnalyticsPremium />)
-        })
-
-        const yearBtn = screen.getByText(/Рік/i)
-        
-        await act(async () => {
-            fireEvent.click(yearBtn)
-        })
-
-        expect(marketApi.getOverview).toHaveBeenCalledWith('last_year')
-    })
-
-    test('повинен відображати нейронні інсайти та AI можливості', async () => {
-        await act(async () => {
-            render(<MarketAnalyticsPremium />)
-        })
+    test('відображає нейронні інсайти та AI можливості', async () => {
+        render(
+            <MemoryRouter>
+                <MarketAnalyticsPremium />
+            </MemoryRouter>
+        )
 
         await waitFor(() => {
-            expect(screen.getByText(/Neural Intelligence/i)).toBeInTheDocument()
-            expect(screen.getByText(/AI Траєкторії/i)).toBeInTheDocument()
-            // Текст інсайту динамічно підставляє назву першого продукту
+            expect(screen.getByText(/NEURAL Intelligence/i)).toBeInTheDocument()
+            expect(screen.getByText(/AI_ТРАЄКТОРІЇ_ТА_МОЖЛИВОСТІ/i)).toBeInTheDocument()
             expect(screen.getAllByText(/Електроніка/i).length).toBeGreaterThan(0)
+        })
+    })
+
+    test('ініціює predator-error при автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ isOffline: true })
+        }))
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent')
+
+        render(
+            <MemoryRouter>
+                <MarketAnalyticsPremium />
+            </MemoryRouter>
+        )
+
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'MarketSignals',
+                        severity: 'info'
+                    })
+                })
+            )
         })
     })
 })

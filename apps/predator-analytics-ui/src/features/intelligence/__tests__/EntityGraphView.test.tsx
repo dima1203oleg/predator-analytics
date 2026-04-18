@@ -1,29 +1,30 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import React from 'react'
-import EntityGraphView from '../EntityGraphView'
+import { render, screen, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import EntityGraphView from '../EntityGraphView';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
-// Mocking @react-three/fiber and @react-three/drei
+// Mock Three.js and React Three Fiber
 vi.mock('@react-three/fiber', () => ({
-    Canvas: ({ children }: any) => <div data-testid="canvas-mock">{children}</div>,
+    Canvas: ({ children }: any) => <div data-testid="three-canvas">{children}</div>,
     useFrame: vi.fn(),
-}))
+    useThree: () => ({ size: { width: 1000, height: 800 } })
+}));
 
 vi.mock('@react-three/drei', () => ({
-    OrbitControls: () => <div data-testid="orbit-controls-mock" />,
-    Html: ({ children }: any) => <div data-testid="html-mock">{children}</div>,
-    Stars: () => <div data-testid="stars-mock" />,
-    PerspectiveCamera: () => <div data-testid="camera-mock" />,
-}))
+    OrbitControls: () => <div data-testid="orbit-controls" />,
+    Html: ({ children }: any) => <div data-testid="html-overlay">{children}</div>,
+    Stars: () => null,
+    PerspectiveCamera: () => null
+}));
 
 vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -35,91 +36,109 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-background" />
-}))
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
 
-// Mock API Call
-const mockNodes = [
-    { id: 'node-1', label: 'Alpha Corp', type: 'company', riskScore: 20, connections: 3, cluster: 1 },
-    { id: 'node-2', label: 'Beta Ltd', type: 'company', riskScore: 90, connections: 5, cluster: 1 },
-    { id: 'predator_core', label: 'PREDATOR CORE', type: 'system', riskScore: 0, connections: 10, cluster: 0 }
-]
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
 
-const mockLinks = [
-    { source: 'predator_core', target: 'node-1', value: 1, type: 'standard' },
-    { source: 'node-1', target: 'node-2', value: 1, type: 'risk' }
-]
+// Mock fetch for graph data
+const mockGraphData = {
+    nodes: [
+        { id: 'predator_core', label: 'PREDATOR_CORE', type: 'system', riskScore: 0, connections: 10 },
+        { id: 'node_1', label: 'TARGET_ENTITY', type: 'company', riskScore: 95, connections: 5 }
+    ],
+    links: [
+        { source: 'predator_core', target: 'node_1', value: 1, type: 'risk' }
+    ]
+};
 
-global.fetch = vi.fn().mockImplementation(() =>
+global.fetch = vi.fn(() =>
     Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({ nodes: mockNodes, links: mockLinks }),
+        json: () => Promise.resolve(mockGraphData),
     })
-)
+) as any;
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('EntityGraphView', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відображати стан завантаження спочатку', async () => {
-        render(<EntityGraphView />)
-        expect(screen.getByText(/Синтез Топології/i)).toBeInTheDocument()
-    })
-
-    test('повинен відмальовувати основний заголовок та канвас після завантаження', async () => {
-        await act(async () => {
-            render(<EntityGraphView />)
-        })
-
-        await waitFor(() => {
-            expect(screen.queryByText(/Синтез Топології/i)).not.toBeInTheDocument()
-        })
-
-        expect(screen.getByText(/Топологія/i)).toBeInTheDocument()
-        expect(screen.getByText(/Мережі/i)).toBeInTheDocument()
-        expect(screen.getByTestId('canvas-mock')).toBeInTheDocument()
-    })
-
-    test('повинен відображати статистику в нижньому HUD', async () => {
-        await act(async () => {
-            render(<EntityGraphView />)
-        })
-
-        await waitFor(() => {
-            expect(screen.getByText(/Вузлів/i)).toBeInTheDocument()
-        })
-
-        // Кількість вузлів (3)
-        expect(screen.getByText('3')).toBeInTheDocument()
-        // Кількість зв'язків (2)
-        expect(screen.getByText('2')).toBeInTheDocument()
-        // Критично (1 - node-2 з ризиком 90)
-        expect(screen.getByText('1')).toBeInTheDocument()
-    })
-
-    test('повинен перемикати фільтри', async () => {
-        await act(async () => {
-            render(<EntityGraphView />)
-        })
-
-        await waitFor(() => {
-            expect(screen.getByText(/Всі Вузли/i)).toBeInTheDocument()
-        })
-
-        const riskFilter = screen.getByText(/Лише Загрози/i)
+    it('відображає інтерфейс графу після завантаження', async () => {
+        render(<EntityGraphView />);
         
-        await act(async () => {
-            fireEvent.click(riskFilter)
-        })
+        await waitFor(() => {
+            expect(screen.queryByText(/ЗАВАНТАЖЕННЯ/i)).not.toBeInTheDocument();
+            expect(screen.getByTestId('three-canvas')).toBeInTheDocument();
+            expect(screen.getByText(/ГРАФ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ОБ'ЄКТІВ/i)).toBeInTheDocument();
+        });
+    });
+
+    it('відображає HUD із кількістю вузлів та зв\'язків', async () => {
+        render(<EntityGraphView />);
         
-        // Після фільтру 'risk', кількість вузлів може змінитись (хоча логіка в компоненті складна)
-        // Тут ми хоча б перевіряємо, що фільтр став активним (можна за стилями або зміною стейту)
-        expect(riskFilter).toHaveClass('bg-rose-500')
-    })
-})
+        await waitFor(() => {
+            expect(screen.getByText('2')).toBeInTheDocument(); // Nodes count
+            expect(screen.getByText('1')).toBeInTheDocument(); // Links count (1 real link)
+        });
+    });
+
+    it('ініціює predator-error та відображає OFFLINE_MODE в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+        render(<EntityGraphView />);
+
+        await waitFor(() => {
+            expect(screen.getByText(/OFFLINE_GRAPH_MODE/i)).toBeInTheDocument();
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'GraphIntel',
+                        code: 'GRAPH_NODES'
+                    })
+                })
+            );
+        });
+    });
+
+    it('ініціює predator-error при помилці API', async () => {
+        (global.fetch as any).mockImplementationOnce(() =>
+            Promise.resolve({
+                ok: false,
+                status: 500
+            })
+        );
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+        render(<EntityGraphView />);
+
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        severity: 'critical',
+                        message: expect.stringContaining('ПОМИЛКА ДОСТУПУ ДО ВУЗЛА ГРАФУ')
+                    })
+                })
+            );
+        });
+    });
+});

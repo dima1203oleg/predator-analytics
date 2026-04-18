@@ -1,5 +1,5 @@
 /**
- * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v56.5-ELITE
+ * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v57.2-WRAITH
  * Live feed від Kafka + WebSocket streaming
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -116,7 +116,7 @@ export const RealTimeMonitor: React.FC = () => {
     switch (type) {
       case 'created': return <Sparkles className="text-emerald-500" />;
       case 'updated': return <RefreshCw className="text-cyan-500" />;
-      case 'deleted': return <ShieldAlert className="text-rose-500" />;
+      case 'deleted': return <ShieldAlert className="text-amber-500" />;
       case 'status_changed': return <AlertCircle className="text-amber-500" />;
       default: return <Activity className="text-slate-500" />;
     }
@@ -156,7 +156,7 @@ export const RealTimeMonitor: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span className="badge-v2 bg-red-600/10 border border-red-600/20 text-red-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                      LIVE_MONITORING // TITAN_v56.5
+                      LIVE_MONITORING // TITAN_v57.2
                     </span>
                     <div className="h-px w-10 bg-red-600/20" />
                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">REALTIME_SCAN</span>
@@ -177,7 +177,7 @@ export const RealTimeMonitor: React.FC = () => {
                   onClick={() => setIsPaused(!isPaused)}
                   className={cn(
                     "px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-4 shadow-2xl",
-                    isPaused ? "bg-emerald-700 hover:bg-emerald-600 text-white" : "bg-rose-700 hover:bg-rose-600 text-white"
+                    isPaused ? "bg-emerald-700 hover:bg-emerald-600 text-white" : "bg-amber-700 hover:bg-amber-600 text-white"
                   )}
                 >
                   {isPaused ? <><Play size={20} /> ВІДНОВИТИ</> : <><Pause size={20} /> ПРИЗУПИНИТИ</>}
@@ -230,7 +230,7 @@ export const RealTimeMonitor: React.FC = () => {
 
                <div className="p-8 rounded-[2.5rem] bg-red-600/[0.02] border border-red-600/10 space-y-6">
                   <div className="flex items-center gap-4">
-                     <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
+                     <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
                         {isConnected ? 'NODE_CONNECTION_ACTIVE' : 'NODE_LINK_LOST'}
                      </p>
@@ -269,7 +269,7 @@ export const RealTimeMonitor: React.FC = () => {
                           exit={{ opacity: 0, scale: 0.95 }}
                           className={cn(
                             "p-8 bg-black border-2 rounded-[3.5rem] transition-all relative overflow-hidden group",
-                            event.severity === 'critical' ? "border-rose-900/30 hover:border-rose-600/40" : 
+                            event.severity === 'critical' ? "border-amber-900/30 hover:border-amber-600/40" : 
                             event.severity === 'warning' ? "border-amber-900/30 hover:border-amber-600/40" : 
                             "border-white/[0.04] hover:border-white/10"
                           )}
@@ -282,7 +282,7 @@ export const RealTimeMonitor: React.FC = () => {
                               <div className="flex items-center gap-6">
                                  <div className={cn(
                                    "w-16 h-16 rounded-[1.5rem] border flex items-center justify-center text-2xl shadow-2xl",
-                                   event.severity === 'critical' ? "bg-rose-600/10 border-rose-600/20" : 
+                                   event.severity === 'critical' ? "bg-amber-600/10 border-amber-600/20" : 
                                    event.severity === 'warning' ? "bg-amber-600/10 border-amber-600/20" : 
                                    "bg-white/[0.02] border-white/[0.05]"
                                  )}>
@@ -304,7 +304,7 @@ export const RealTimeMonitor: React.FC = () => {
                               <div className="flex flex-col items-end gap-2 text-right">
                                  <div className={cn(
                                    "px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic border",
-                                   event.severity === 'critical' ? "bg-rose-600/10 border-rose-600/20 text-rose-500" : 
+                                   event.severity === 'critical' ? "bg-amber-600/10 border-amber-600/20 text-amber-500" : 
                                    event.severity === 'warning' ? "bg-amber-600/10 border-amber-600/20 text-amber-500" : 
                                    "bg-emerald-600/10 border-emerald-600/20 text-emerald-500"
                                  )}>

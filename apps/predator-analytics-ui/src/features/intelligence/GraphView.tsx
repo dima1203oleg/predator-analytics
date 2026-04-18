@@ -302,11 +302,11 @@ export const GraphView = () => {
                   className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                 >
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-indigo-500/20 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_50px_rgba(6,182,212,0.3)]">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-500/20 to-yellow-500/20 border border-cyan-400/40 flex items-center justify-center backdrop-blur-md shadow-[0_0_50px_rgba(6,182,212,0.3)]">
                       <Zap className="w-10 h-10 text-cyan-300 drop-shadow-[0_0_15px_#22d3ee]" />
                     </div>
                     <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" style={{ animationDuration: '3s' }} />
-                    <div className="absolute -inset-8 rounded-full border border-indigo-400/20 animate-spin" style={{ animationDuration: '15s' }} />
+                    <div className="absolute -inset-8 rounded-full border border-yellow-400/20 animate-spin" style={{ animationDuration: '15s' }} />
                     <div className="absolute -inset-16 rounded-full border border-violet-400/10 animate-spin-reverse" style={{ animationDuration: '25s' }} />
                   </div>
                 </motion.div>

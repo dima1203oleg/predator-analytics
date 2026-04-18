@@ -1,5 +1,5 @@
 /**
- * 🎯 M&A TARGET SCANNER | v56.5-ELITE
+ * 🎯 M&A TARGET SCANNER | v57.2-WRAITH
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -16,7 +16,7 @@ import {
   Users, BarChart3, Globe, Clock, ChevronRight,
   Crosshair, Star, Zap, ShieldAlert, ArrowUpRight,
   Lock, CheckCircle, RefreshCw, Activity, Siren,
-  Fingerprint, Sparkles, ShieldCheck
+  Fingerprint, Sparkles, ShieldCheck, Share2, Boxes, Cpu
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -27,7 +27,11 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { TacticalCard } from '@/components/TacticalCard';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useEffect } from 'react';
+import { CyberOrb } from '@/components/CyberOrb';
 
 // ─── ТИПИ і ДАНІ ──────────────────────────────────────────
 
@@ -120,7 +124,7 @@ const SECTOR_DATA = [
 ];
 
 const STATUS_CFG = {
-  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-rose-900/20',     border: 'border-rose-500/40',    icon: AlertTriangle },
+  distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
   restructuring:  { label: 'РЕСТРУКТУРИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
   opportunity:    { label: 'МОЖЛИВІСТЬ',          color: '#D4AF37', bg: 'bg-yellow-900/15', border: 'border-yellow-500/30', icon: Star },
   watch:          { label: 'СПОСТЕРЕЖЕННЯ',       color: '#64748b', bg: 'bg-slate-900/15',  border: 'border-slate-800/30', icon: Eye },
@@ -140,6 +144,21 @@ const MATargetScannerView: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<CompanyStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'opportunity' | 'distress'>('opportunity');
+  const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'TargetScanner',
+          message: 'Активовано автономний режим M&A розвідки (MERGER_NODES). Доступні лише локальні кешовані цілі.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'MERGER_NODES'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const filtered = MA_TARGETS
     .filter(t => filterStatus === 'all' || t.status === filterStatus)
@@ -163,7 +182,7 @@ const MATargetScannerView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12 pt-12">
 
-          {/* ── ЗАГОЛОВОК ELITE ── */}
+          {/* ── ЗАГОЛОВОК WRAITH ── */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -179,7 +198,7 @@ const MATargetScannerView: React.FC = () => {
                       M&A_INTELLIGENCE // DEAL_SOURCING
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     TARGET <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCANNER</span>
@@ -191,12 +210,23 @@ const MATargetScannerView: React.FC = () => {
             badges={[
               { label: 'CLASSIFIED_T1', color: 'gold', icon: <Fingerprint size={10} /> },
               { label: 'Sovereign_Alpha', color: 'primary', icon: <ShieldCheck size={10} /> },
+              { 
+                label: nodeSource, 
+                color: isOffline ? 'warning' : 'gold', 
+                icon: <Zap size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+              },
             ]}
             stats={[
               { label: 'ЦІЛЕЙ_ЗНАЙДЕНО', value: '127', icon: <Target />, color: 'gold' },
               { label: 'CRITICAL_STRESS', value: '43', icon: <AlertTriangle />, color: 'danger', animate: true },
-              { label: 'OPPORTUNITIES', value: '18', icon: <Star />, color: 'success' },
-              { label: 'ALPHA_TRUST', value: '98.5%', icon: <Lock />, color: 'primary' },
+              { 
+                label: isOffline ? 'SYNC_HEAL' : 'OPPORTUNITIES', 
+                value: isOffline ? `${Math.floor(healingProgress)}%` : '18', 
+                icon: isOffline ? <Activity /> : <Star />, 
+                color: isOffline ? 'warning' : 'success',
+                animate: isOffline
+              },
+              { label: 'ALPHA_TRUST', value: isOffline ? 'REDUCED' : '98.5%', icon: <Lock />, color: isOffline ? 'warning' : 'primary' },
             ]}
             actions={
               <div className="flex items-center gap-6">
@@ -208,13 +238,13 @@ const MATargetScannerView: React.FC = () => {
                 </div>
                 <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
                   <Download size={22} />
-                  ACQUISITION_PACK_ELITE
+                  ACQUISITION_PACK_WRAITH
                 </button>
               </div>
             }
           />
 
-          {/* ── МЕТРИКИ ELITE ── */}
+          {/* ── МЕТРИКИ WRAITH ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
@@ -238,12 +268,12 @@ const MATargetScannerView: React.FC = () => {
             ))}
           </div>
 
-          {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
+          {/* ── ОСНОВНИЙ КОНТЕНТ WRAITH ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
             {/* Список цілей */}
             <div className="lg:col-span-7 space-y-8">
-              {/* Фільтри ELITE */}
+              {/* Фільтри WRAITH */}
               <div className="flex flex-wrap gap-4 items-center p-3 bg-black/40 backdrop-blur-2xl border-2 border-white/5 rounded-[2.5rem] w-fit shadow-2xl">
                 <div className="flex items-center gap-4 bg-black border-2 border-white/5 px-8 py-3 rounded-2xl group focus-within:border-yellow-500/40 transition-all">
                   <Search size={18} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />
@@ -299,7 +329,7 @@ const MATargetScannerView: React.FC = () => {
                           <p className="text-xl font-black text-white italic font-mono leading-none">{t.revenue}</p>
                         </div>
                         <div className="text-center w-16">
-                           <div className={cn("text-2xl font-black font-mono italic leading-none", t.distressScore > 75 ? 'text-rose-600' : 'text-slate-400')}>{t.distressScore}%</div>
+                           <div className={cn("text-2xl font-black font-mono italic leading-none", t.distressScore > 75 ? 'text-amber-600' : 'text-slate-400')}>{t.distressScore}%</div>
                            <p className="text-[8px] font-black text-slate-900 uppercase tracking-widest mt-1">STRESS</p>
                         </div>
                         <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl text-yellow-500 group-hover:scale-110 transition-transform">
@@ -360,7 +390,7 @@ const MATargetScannerView: React.FC = () => {
                        </div>
                        <div className="p-6 bg-white/[0.02] border border-white/[0.04] rounded-3xl space-y-2">
                           <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic">TOTAL_DEBT</p>
-                          <p className="text-xl font-black text-rose-500 italic font-mono">{selectedTarget.debt}</p>
+                          <p className="text-xl font-black text-amber-500 italic font-mono">{selectedTarget.debt}</p>
                        </div>
                        <div className="p-6 bg-white/[0.02] border border-white/[0.04] rounded-3xl space-y-2">
                           <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic">STAFF_COUNT</p>
@@ -373,7 +403,7 @@ const MATargetScannerView: React.FC = () => {
                        <div className="space-y-3">
                           {selectedTarget.reason.map((r, i) => (
                             <div key={i} className="flex items-center gap-4 text-xs text-slate-400 uppercase font-black italic">
-                               <div className="w-1.5 h-1.5 bg-rose-600 rounded-full" />
+                               <div className="w-1.5 h-1.5 bg-amber-600 rounded-full" />
                                {r}
                             </div>
                           ))}
@@ -402,6 +432,10 @@ const MATargetScannerView: React.FC = () => {
           </div>
         </div>
 
+        <div className="max-w-[1850px] mx-auto px-12 mt-12 pb-24">
+            <DiagnosticsTerminal />
+        </div>
+
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
             .shadow-4xl { box-shadow: 0 40px 80px -20px rgba(212,175,55,0.3); }
@@ -411,7 +445,5 @@ const MATargetScannerView: React.FC = () => {
   );
 };
 
-// Mock components to fix missing imports if any
-const Share2 = ({ size, className }: { size?: number, className?: string }) => <Activity size={size} className={className} />;
 
 export default MATargetScannerView;

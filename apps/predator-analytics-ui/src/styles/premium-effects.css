@@ -1,5 +1,5 @@
 /* ============================================================================
-   PREDATOR v56.5-ELITE.1 — PREMIUM VISUAL EFFECTS
+   PREDATOR v57.2-WRAITH.1 — PREMIUM VISUAL EFFECTS
    Консолідація всіх inline <style> блоків з 21+ компонентів.
    Імпортується один раз у index.css.
    ============================================================================ */
@@ -215,7 +215,7 @@
 }
 
 /* ============================================================================
-   PREDATOR v56 NEXUS — NEW CORE EFFECTS
+   PREDATOR v57 NEXUS — NEW CORE EFFECTS
    ============================================================================ */
 
 /* ── NEXUS HUD CORNERS ── */
@@ -240,7 +240,7 @@
 .hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan); }
 .hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--neon-cyan); border-right: 2px solid var(--neon-cyan); }
 
-/* ── SCANLINE v56 ── */
+/* ── SCANLINE v57 ── */
 @keyframes nexus-scan {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(200%); }
@@ -287,7 +287,7 @@
 }
 
 /* ============================================================================
-   PREDATOR v56 — ADVANCED PREMIUM UTILITIES
+   PREDATOR v57 — ADVANCED PREMIUM UTILITIES
    ============================================================================ */
 
 /* ── SHIMMER LOADING SKELETON ── */
@@ -557,7 +557,7 @@
 }
 
 /* ============================================================================
-   PREDATOR v56.5-ELITE — SOVEREIGN POWER DESIGN SYSTEM
+   PREDATOR v57.2-WRAITH — SOVEREIGN POWER DESIGN SYSTEM
    Потужні ефекти для основного інтерфейсу
    ============================================================================ */
 

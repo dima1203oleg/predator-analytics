@@ -20,8 +20,8 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
 
     if (status === 'offline') {
       return {
-        dot: 'bg-rose-500 animate-pulse',
-        text: 'text-rose-500',
+        dot: 'bg-amber-500 animate-pulse',
+        text: 'text-amber-500',
         label: 'Помилка',
       };
     }
@@ -77,9 +77,9 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       id: 'qd', 
       name: 'Qdrant Vector', 
       icon: Cpu, 
-      color: 'text-indigo-400', 
-      bg: 'bg-indigo-500/10',
-      border: 'border-indigo-500/20',
+      color: 'text-yellow-400', 
+      bg: 'bg-yellow-500/10',
+      border: 'border-yellow-500/20',
       metrics: [
         { label: 'Векторів', value: stats.qdrant.points },
         { label: 'Колекцій', value: stats.qdrant.collections }
@@ -90,9 +90,9 @@ export function RegistryStats({ stats }: RegistryStatsProps) {
       id: 'rd', 
       name: 'Redis Cache', 
       icon: Activity, 
-      color: 'text-rose-400', 
-      bg: 'bg-rose-500/10',
-      border: 'border-rose-500/20',
+      color: 'text-amber-400', 
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/20',
       metrics: [
         { label: 'Ключів', value: stats.redis.keys },
         { label: 'Пам\'ять', value: stats.redis.memory }

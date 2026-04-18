@@ -21,7 +21,7 @@ export function OODALoopPanel({
 }: OODALoopPanelProps) {
   const steps = [
     { id: 'OBSERVING', label: 'OBSERVE', icon: <Eye className="w-4 h-4" />, color: 'blue' },
-    { id: 'ORIENTING', label: 'ORIENT', icon: <Compass className="w-4 h-4" />, color: 'indigo' },
+    { id: 'ORIENTING', label: 'ORIENT', icon: <Compass className="w-4 h-4" />, color: 'yellow' },
     { id: 'DECIDING', label: 'DECIDE', icon: <Lightbulb className="w-4 h-4" />, color: 'amber' },
     { id: 'ACTING', label: 'ACT', icon: <Zap className="w-4 h-4" />, color: 'emerald' },
   ];
@@ -29,7 +29,7 @@ export function OODALoopPanel({
   const getStatusColor = (status: OODAStatus) => {
     switch (status) {
       case 'OBSERVING': return 'text-blue-400 border-blue-500/30 bg-blue-500/10';
-      case 'ORIENTING': return 'text-indigo-400 border-indigo-500/30 bg-indigo-500/10';
+      case 'ORIENTING': return 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10';
       case 'DECIDING': return 'text-amber-400 border-amber-500/30 bg-amber-500/10';
       case 'ACTING': return 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
       default: return 'text-slate-500 border-slate-500/30 bg-slate-500/10';
@@ -40,7 +40,7 @@ export function OODALoopPanel({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-indigo-400" />
+            <Activity className="w-4 h-4 text-yellow-400" />
             <h4 className="text-[10px] font-black text-white uppercase tracking-widest">OODA LOOP ENGINE</h4>
           </div>
           <div className={cn(
@@ -128,8 +128,8 @@ export function OODALoopPanel({
                   {incident.assigned_agent && (
                     <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-                          <Bot className="w-3 h-3 text-indigo-400" />
+                        <div className="w-5 h-5 rounded bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center">
+                          <Bot className="w-3 h-3 text-yellow-400" />
                         </div>
                         <div className="text-[8px] font-bold text-slate-200">
                           {incident.assigned_agent.name}

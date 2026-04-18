@@ -24,7 +24,7 @@ export function PipelineTable({ data }: { data: KnowledgePattern[] }) {
     columnHelper.accessor('pattern_type', {
       header: 'Тип',
       cell: info => (
-        <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded">
+        <span className="text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded">
           {info.getValue() || 'other'}
         </span>
       )
@@ -35,7 +35,7 @@ export function PipelineTable({ data }: { data: KnowledgePattern[] }) {
     }),
     columnHelper.accessor('score', {
       header: 'Оцінка',
-      cell: info => <span className="text-indigo-400 font-bold">{info.getValue() ?? 0}</span>
+      cell: info => <span className="text-yellow-400 font-bold">{info.getValue() ?? 0}</span>
     }),
     columnHelper.accessor('gold', {
       header: 'Gold',
@@ -75,8 +75,8 @@ export function PipelineTable({ data }: { data: KnowledgePattern[] }) {
                     <div className="flex items-center gap-2">
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {{
-                        asc: <ChevronUp className="w-4 h-4 text-indigo-400" />,
-                        desc: <ChevronDown className="w-4 h-4 text-indigo-400" />
+                        asc: <ChevronUp className="w-4 h-4 text-yellow-400" />,
+                        desc: <ChevronDown className="w-4 h-4 text-yellow-400" />
                       }[header.column.getIsSorted() as string] ?? null}
                     </div>
                   </th>

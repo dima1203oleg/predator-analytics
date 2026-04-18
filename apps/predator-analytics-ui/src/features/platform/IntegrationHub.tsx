@@ -100,7 +100,7 @@ const webhooks: WebhookConfig[] = [
 const statusConfig = {
   connected: { color: 'emerald', icon: CheckCircle, label: 'Підключено' },
   disconnected: { color: 'slate', icon: Unlink, label: 'Відключено' },
-  error: { color: 'rose', icon: AlertCircle, label: 'Помилка' },
+  error: { color: 'amber', icon: AlertCircle, label: 'Помилка' },
   pending: { color: 'amber', icon: Loader, label: 'Очікування' }
 };
 
@@ -123,7 +123,7 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
       className={`
         p-4 rounded-xl border transition-all
         ${integration.status === 'connected' ? 'border-emerald-500/30 bg-emerald-500/5' :
-          integration.status === 'error' ? 'border-rose-500/30 bg-rose-500/5' :
+          integration.status === 'error' ? 'border-amber-500/30 bg-amber-500/5' :
             'border-white/5 bg-slate-900/60'}
         ${integration.isPremium && integration.status === 'disconnected' ? 'opacity-60' : ''}
       `}
@@ -223,7 +223,7 @@ const WebhookRow: React.FC<{ webhook: WebhookConfig }> = ({ webhook }) => {
           <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white" title="Налаштування">
             <Settings size={16} />
           </button>
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400" title="Видалити">
+          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400" title="Видалити">
             <Trash2 size={16} />
           </button>
         </div>

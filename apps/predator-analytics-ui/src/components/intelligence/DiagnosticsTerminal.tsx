@@ -1,5 +1,5 @@
 /**
- * 📟 DIAGNOSTICS TERMINAL | v56.5-ELITE
+ * 📟 DIAGNOSTICS TERMINAL | v57.2-WRAITH
  * Centralized error tracking and system logging for the Intelligence Nexus.
  * Listens for 'predator-error' events and displays them in a cinematic UX.
  * 
@@ -15,9 +15,9 @@ interface ErrorEvent {
   id: string;
   timestamp: string;
   service: string;
-  action: string;
+  code?: string;
   message: string;
-  severity: 'info' | 'warning' | 'critical';
+  severity: 'info' | 'warning' | 'critical' | 'error';
 }
 
 export const DiagnosticsTerminal: React.FC = () => {
@@ -30,9 +30,9 @@ export const DiagnosticsTerminal: React.FC = () => {
       const detail = e.detail;
       const newLog: ErrorEvent = {
         id: Math.random().toString(36).substr(2, 9),
-        timestamp: new Date().toISOString(),
+        timestamp: detail.timestamp || new Date().toISOString(),
         service: detail.service || 'System',
-        action: detail.action || 'Unknown',
+        code: detail.code || detail.action || 'Unknown',
         message: detail.error?.message || detail.message || 'Unknown system error',
         severity: detail.severity || 'warning'
       };
@@ -93,7 +93,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">SYSLOG_DIAGNOSTICS</h3>
-                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v56.5-ELITE // ERR_TRACKER</p>
+                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v57.2-WRAITH // ERR_TRACKER</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -147,7 +147,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                       <span className="text-[9px] font-mono text-slate-700 font-bold">{new Date(log.timestamp).toLocaleTimeString('uk-UA')}</span>
                     </div>
                     <div>
-                      <h4 className="text-[10px] font-black text-white italic tracking-widest uppercase mb-1">{log.action}</h4>
+                      <h4 className="text-[10px] font-black text-white italic tracking-widest uppercase mb-1">{log.code}</h4>
                       <p className={cn(
                         "text-[11px] font-medium leading-relaxed italic",
                         log.severity === 'critical' ? "text-rose-400 font-black" : "text-slate-500"
@@ -168,7 +168,7 @@ export const DiagnosticsTerminal: React.FC = () => {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <Cpu size={12} className="text-[#D4AF37]" />
-                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v56.5-PRO</span>
+                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v57.2-PRO</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database size={12} className="text-[#D4AF37]" />

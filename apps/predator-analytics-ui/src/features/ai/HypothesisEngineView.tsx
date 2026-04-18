@@ -1,5 +1,5 @@
 /**
- * 🧠 AI HYPOTHESIS ENGINE | v56.5-ELITE
+ * 🧠 AI HYPOTHESIS ENGINE | v57.2-WRAITH
  * PREDATOR Analytics — Autonomous Intelligence Hypothesis Generation
  *
  * Автоматична генерація слідчих гіпотез на базі аномалій, патернів
@@ -16,6 +16,9 @@ import {
   Activity, Lock, FileText, Send, Loader2, Star, Fingerprint, Cpu, Search, Radar
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { ViewHeader } from '@/components/ViewHeader';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
 // ─── ТИПИ ────────────────────────────────────────────────────────────
 
@@ -104,7 +107,7 @@ const STATUS_CFG = {
   confirmed: { label: 'ПІДТВЕРДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
   probable:  { label: 'ЙМОВІРНО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
   possible:  { label: 'МОЖЛИВО',     color: '#475569', bg: 'bg-slate-900/15',   border: 'border-slate-800/30',  icon: Eye },
-  refuted:   { label: 'СПРОСТОВАНО', color: '#E11D48', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
+  refuted:   { label: 'СПРОСТОВАНО', color: '#F59E0B', bg: 'bg-amber-900/15',    border: 'border-amber-800/30',   icon: Lock },
 };
 
 const CATEGORY_CFG = {
@@ -126,11 +129,33 @@ const HypothesisEngineView: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<HypothesisStatus | 'all'>('all');
   const terminalRef = useRef<HTMLDivElement>(null);
   const [terminalLines, setTerminalLines] = useState<string[]>([
-    '> PREDATOR Hypothesis Engine v56.5-ELITE завантажено',
-    '> Моделі: SIGINT-7B · GRAPH-4B · SANCTIONS-3B · PATTERN-2B',
-    '> Датасети: ЄДР · ProZorro · Митниця · SWIFT · YouControl · OFAC',
     '> Статус: ГОТОВИЙ · Гіпотез у черзі: 0',
   ]);
+  const { isOffline, nodeSource, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'HypothesisEngine',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕНЕРАЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'COGNITIVE_NODES'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'HypothesisEngine',
+          message: 'СИНХРОНІЗАЦІЯ ГЕНЕРАТОРА ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'HYPOTHESIS_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const handleGenerate = async () => {
     if (!promptText.trim()) return;
@@ -173,55 +198,80 @@ const HypothesisEngineView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК ELITE ── */}
-        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10">
-          <div className="flex items-center gap-8">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
-              <div className="relative p-7 bg-black border border-yellow-500/40 rounded-[2.5rem] shadow-4xl">
-                <Brain size={48} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
-                <motion.span
-                  animate={{ scale: [1, 1.5, 1], opacity: [1, 0.3, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border-4 border-black"
-                />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-4 mb-3">
-                <Sparkles size={12} className="text-yellow-600 animate-pulse" />
-                <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
-                  SOVEREIGN HYPOTHESIS ENGINE · v56.5-ELITE
-                </span>
-              </div>
-              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic">
-                HYPOTHESIS{' '}
-                <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)]">ENGINE</span>
-              </h1>
-              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
-                <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="px-8 py-5 bg-black/60 backdrop-blur-xl border-2 border-yellow-500/20 rounded-2xl flex items-center gap-5 shadow-2xl">
-              <div className="p-3 bg-yellow-500/10 rounded-xl">
-                 <Cpu size={24} className="text-yellow-500" />
+        {/* ── ЗАГОЛОВОК WRAITH ── */}
+        <ViewHeader
+          title={
+            <div className="flex items-center gap-8">
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-500/15 blur-3xl rounded-full" />
+                <div className="relative p-7 bg-black border border-yellow-500/40 rounded-[2.5rem] shadow-4xl">
+                  <Brain size={48} className="text-yellow-500 drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]" />
+                  <motion.span
+                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full border-4 border-black"
+                  />
+                </div>
               </div>
               <div>
-                <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Активних моделей</p>
-                <p className="text-xl font-black text-yellow-500 font-mono">ENCORE v56.5</p>
+                <div className="flex items-center gap-4 mb-3">
+                  <Sparkles size={12} className="text-yellow-600 animate-pulse" />
+                  <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
+                    SOVEREIGN HYPOTHESIS ENGINE · v57.2-WRAITH
+                  </span>
+                </div>
+                <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
+                  HYPOTHESIS{' '}
+                  <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] italic uppercase">ENGINE</span>
+                </h1>
+                <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
+                  <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
+                </p>
               </div>
             </div>
-            <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4">
-              <Download size={20} />
-              STRATEGIC_REPORT_ELITE
-            </button>
-          </div>
-        </div>
+          }
+          breadcrumbs={['INTEL', 'AI', 'HYPOTHESIS_ENGINE']}
+          badges={[
+            { label: 'CLASSIFIED_T1', color: 'gold', icon: <Lock size={10} /> },
+            { label: 'SOVEREIGN_CORE', color: 'primary', icon: <Cpu size={10} /> },
+            { 
+              label: nodeSource, 
+              color: isOffline ? 'warning' : 'gold', 
+              icon: <Activity size={10} className={isOffline ? 'animate-pulse' : ''} /> 
+            },
+          ]}
+          stats={[
+            { label: 'ГІПОТЕЗ', value: '47', icon: <Target />, color: 'gold' },
+            { 
+              label: isOffline ? 'SYNC_HEAL' : 'CONFIRMATION', 
+              value: isOffline ? `${Math.floor(healingProgress)}%` : '94.2%', 
+              icon: isOffline ? <Activity /> : <CheckCircle />, 
+              color: isOffline ? 'warning' : 'success',
+              animate: isOffline
+            },
+            { label: 'EXPOSURE', value: '$184M', icon: <DollarSign />, color: 'danger' },
+            { label: 'COMPUTE', value: isOffline ? 'LOCAL' : 'CLOUD', icon: <Cpu />, color: isOffline ? 'warning' : 'primary' },
+          ]}
+          actions={
+            <div className="flex items-center gap-6">
+              <div className="px-8 py-5 bg-black/60 backdrop-blur-xl border-2 border-yellow-500/20 rounded-2xl flex items-center gap-5 shadow-2xl">
+                <div className="p-3 bg-yellow-500/10 rounded-xl">
+                   <Cpu size={24} className="text-yellow-500" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Compute node</p>
+                  <p className="text-xl font-black text-yellow-500 font-mono italic">{isOffline ? 'WRAITH_LOCAL' : 'PREDATOR_SIGINT'}</p>
+                </div>
+              </div>
+              <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4 italic font-bold">
+                <Download size={20} />
+                STRATEGIC_REPORT_WRAITH
+              </button>
+            </div>
+          }
+        />
 
-        {/* ── МЕТРИКИ ELITE ── */}
+        {/* ── МЕТРИКИ WRAITH ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '47',    sub: 'Active Vector Scan',       c: '#D4AF37' },
@@ -242,7 +292,7 @@ const HypothesisEngineView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ГЕНЕРАТОР ЗАПИТІВ ELITE ── */}
+        {/* ── ГЕНЕРАТОР ЗАПИТІВ WRAITH ── */}
         <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden backdrop-blur-3xl">
           <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
              <Brain size={400} className="text-yellow-500" />
@@ -278,7 +328,7 @@ const HypothesisEngineView: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* Термінал ELITE */}
+          {/* Термінал WRAITH */}
           <div
             ref={terminalRef}
             className="h-[180px] overflow-y-auto bg-black/80 border-2 border-white/5 p-8 font-mono space-y-2 custom-scrollbar rounded-3xl shadow-inner relative z-10"
@@ -306,13 +356,13 @@ const HypothesisEngineView: React.FC = () => {
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{ duration: 0.7, repeat: Infinity }}
                   className="text-yellow-500 font-black"
-                >_PENDING_ELITE_COMMAND</motion.span>
+                >_PENDING_WRAITH_COMMAND</motion.span>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ ELITE ── */}
+        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ WRAITH ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Список гіпотез */}
@@ -409,7 +459,7 @@ const HypothesisEngineView: React.FC = () => {
             </div>
           </div>
 
-          {/* Деталі гіпотези ELITE */}
+          {/* Деталі гіпотези WRAITH */}
           <div className="lg:col-span-12 xl:col-span-7">
             <AnimatePresence mode="wait">
               {selected ? (
@@ -474,16 +524,16 @@ const HypothesisEngineView: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-rose-500/10 rounded-2xl"><Target size={20} className="text-rose-500" /></div>
+                        <div className="p-3 bg-amber-500/10 rounded-2xl"><Target size={20} className="text-amber-500" /></div>
                         <div>
-                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Strategic Impact</p>
-                           <p className="text-[13px] font-black text-rose-500 font-mono italic uppercase">{selected.impactValue}</p>
+                           <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase italic font-bold">ОПЕРАТИВНИЙ ВПЛИВ</p>
+                           <p className="text-[13px] font-black text-amber-500 font-mono italic uppercase">{selected.impactValue}</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Докази ELITE */}
+                  {/* Докази WRAITH */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic">
                       <FileText size={20} className="text-yellow-500" />
@@ -526,11 +576,11 @@ const HypothesisEngineView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* РЕКОМЕНДОВАНИ ДІЇ ELITE */}
+                  {/* РЕКОМЕНДОВАНИ ДІЇ WRAITH */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
-                    <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                      <Target size={20} className="text-rose-500 animate-pulse" />
-                      STRATEGIC_ACTION_VECTORS
+                    <h3 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
+                      <Target size={20} className="text-amber-500 animate-pulse" />
+                      Цілі Операції
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       {selected.nextActions.map((action, i) => (
@@ -570,6 +620,10 @@ const HypothesisEngineView: React.FC = () => {
               )}
             </AnimatePresence>
           </div>
+        </div>
+
+        <div className="max-w-[1800px] mx-auto px-12 mt-12 pb-24">
+            <DiagnosticsTerminal />
         </div>
       </div>
 

@@ -2,10 +2,13 @@
 
 import { motion } from "framer-motion";
 import { Brain, Zap } from "lucide-react";
+import { cn } from "@/utils/cn";
 import { useEffect, useState } from "react";
 import NumberTicker from "./number-ticker";
+import { useBackendStatus } from "@/hooks/useBackendStatus";
 
 export const AZRStatusHUD = () => {
+    const { isOffline, nodeSource, healingProgress, activeFailover } = useBackendStatus();
     const [status, setStatus] = useState({
         cycles: 124,
         health: 99.8,
@@ -17,12 +20,12 @@ export const AZRStatusHUD = () => {
             setStatus(prev => ({
                 ...prev,
                 cycles: prev.cycles + 1,
-                health: 99 + Math.random()
+                health: isOffline ? (healingProgress || 45) : (99 + Math.random())
             }));
-        }, 10000); // Simulate cycle updates
+        }, 8000); 
 
         return () => clearInterval(interval);
-    }, []);
+    }, [isOffline, healingProgress]);
 
     return (
         <div className="flex items-center gap-4 group cursor-default">
@@ -33,10 +36,12 @@ export const AZRStatusHUD = () => {
                 </div>
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">AZR_EVO_CORE</span>
+                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest">{nodeSource || 'ЯДРО_AZR'}</span>
                         <div className="flex items-center gap-0.5">
-                            <Zap size={8} className="text-amber-400 fill-amber-400 animate-pulse" />
-                            <span className="text-[8px] text-amber-400/80 font-mono">АКТИВНО</span>
+                            <Zap size={8} className={cn("fill-current animate-pulse", isOffline ? "text-orange-500" : (activeFailover ? "text-emerald-400" : "text-amber-400"))} />
+                            <span className={cn("text-[8px] font-mono", isOffline ? "text-orange-500" : (activeFailover ? "text-emerald-400" : "text-amber-400"))}>
+                                {isOffline ? 'ВІДНОВЛЕННЯ' : (activeFailover ? 'ZROK_ТУНЕЛЬ' : 'ОСНОВНИЙ')}
+                            </span>
                         </div>
                     </div>
                     <div className="flex items-center gap-3 mt-0.5">

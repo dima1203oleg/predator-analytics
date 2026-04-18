@@ -1,4 +1,6 @@
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
+import { RiskLevelValue } from '@/types/intelligence';
+
+// export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 export type CompanyStatus = 'active' | 'bankrupt' | 'process' | 'unknown';
 export type SearchMode = 'neural' | 'exact' | 'deep';
 
@@ -9,7 +11,7 @@ export interface Company {
     name: string;
     status: CompanyStatus;
     statusLabel: string;
-    risk: RiskLevel;
+    risk: RiskLevelValue;
     riskLabel: string;
     riskScore: number;
     director?: string;
@@ -125,7 +127,7 @@ const normalizeStatus = (value?: string): { value: CompanyStatus; label: string 
     }
 };
 
-const normalizeRisk = (value?: string, score?: number | null): { level: RiskLevel; label: string; score: number } => {
+const normalizeRisk = (value?: string, score?: number | null): { level: RiskLevelValue; label: string; score: number } => {
     const raw = value?.toLowerCase();
 
     if (raw === 'critical') {
@@ -262,7 +264,7 @@ export const normalizeCompany = (raw: unknown, index: number): Company => {
     };
 };
 
-export const getRiskPriority = (level: RiskLevel): 'critical' | 'high' | 'medium' => {
+export const getRiskPriority = (level: RiskLevelValue): 'critical' | 'high' | 'medium' => {
     if (level === 'critical') {
         return 'critical';
     }

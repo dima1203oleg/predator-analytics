@@ -1,5 +1,5 @@
 /**
- * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v56.5-ELITE
+ * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v57.2-WRAITH
  * PREDATOR Analytics — Tactical OSINT Media Parser
  * 
  * Автоматичний дайджест: Компромат, Тренди, Митниця та ШІ-алерти.
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { newspaperApi } from '@/services/api/newspaper';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import type {
   NewspaperData, ComprommatItem, TrendItem, CustomsItem, AlertItem,
 } from '@/services/api/newspaper';
@@ -35,6 +36,7 @@ export default function NewspaperView() {
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [issueTime, setIssueTime] = useState('');
+  const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
 
   const fetchData = useCallback(async () => {
     try {
@@ -93,6 +95,20 @@ export default function NewspaperView() {
   }, [fetchData]);
 
   useEffect(() => {
+    if (isOffline) {
+       window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'NewspaperNexus',
+            message: 'Активовано автономний режим медіа-розвідки (MEDIA_NODES). Прямий доступ до NVIDIA-вузлів обмежено.',
+            severity: 'info',
+            timestamp: new Date().toISOString(),
+            code: 'MEDIA_NODES'
+          }
+       }));
+    }
+  }, [isOffline]);
+
+  useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       setIssueTime(now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }));
@@ -106,7 +122,7 @@ export default function NewspaperView() {
     return (
       <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center space-y-8 italic">
         <CyberOrb size={180} status="processing" />
-        <p className="text-xl font-black text-indigo-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІР МЕДІА-РОЗВІДКИ...</p>
+        <p className="text-xl font-black text-yellow-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІР МЕДІА-РОЗВІДКИ...</p>
       </div>
     );
   }
@@ -125,24 +141,24 @@ export default function NewspaperView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-indigo-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border border-indigo-900/40 rounded-[2.5rem] shadow-2xl">
-                        <Newspaper size={42} className="text-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                     <div className="absolute inset-0 bg-yellow-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border border-yellow-900/40 rounded-[2.5rem] shadow-2xl">
+                        <Newspaper size={42} className="text-yellow-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
                      </div>
                   </div>
                   <div className="space-y-2">
                      <div className="flex items-center gap-3">
-                        <span className="badge-v2 bg-indigo-600/10 border border-indigo-600/20 text-indigo-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
+                        <span className="badge-v2 bg-yellow-600/10 border border-yellow-600/20 text-yellow-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
                           TACTICAL_OSINT // MEDIA_PARSER
                         </span>
-                        <div className="h-px w-10 bg-indigo-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                        <div className="h-px w-10 bg-yellow-600/20" />
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                       ГАЗЕТА <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">PREDATOR</span>
+                       ГАЗЕТА <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">PREDATOR</span>
                      </h1>
                      <div className="flex items-center gap-4 text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        <Clock size={14} className="text-indigo-600" /> 
+                        <Clock size={14} className="text-yellow-600" /> 
                         <span>{issueTime}</span>
                         <span className="text-slate-800">|</span>
                         <span className="text-emerald-500 animate-pulse flex items-center gap-2">
@@ -154,15 +170,21 @@ export default function NewspaperView() {
              }
              stats={[
                { label: 'ДЕКЛАРАЦІЇ_Σ', value: data.metrics.totalDeclarations.toLocaleString(), icon: <Box size={14} />, color: 'primary' },
-               { label: 'РИЗИК_АЛЕРТИ', value: String(data.metrics.riskAlerts), icon: <Siren size={14} />, color: 'danger', animate: true },
-               { label: 'ТРЕНДИ', value: String(data.metrics.trends), icon: <TrendingUp size={14} />, color: 'success' }
+               { 
+                 label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИК_АЛЕРТИ', 
+                 value: isOffline ? `${Math.floor(healingProgress)}%` : String(data.metrics.riskAlerts), 
+                 icon: isOffline ? <Activity /> : <Siren size={14} />, 
+                 color: isOffline ? 'warning' : 'danger', 
+                 animate: isOffline || data.metrics.riskAlerts > 0 
+               },
+               { label: 'ВУЗОЛ_SOURCE', value: isOffline ? 'OFFLINE' : activeFailover ? 'ZROK_TUNNEL' : 'NVIDIA_MASTER', icon: <Database size={14} />, color: isOffline ? 'warning' : 'gold' }
              ]}
              actions={
                <div className="flex gap-4">
                   <button onClick={fetchData} className={cn("p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl", isRefreshing && "animate-spin")}>
                      <RefreshCcw size={24} />
                   </button>
-                  <button className="px-8 py-5 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-2xl transition-all flex items-center gap-4 text-center">
+                  <button className="px-8 py-5 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-2xl transition-all flex items-center gap-4 text-center">
                      <Bell size={20} /> ПЕРЕДПЛАТИТИ_АЛЕРТИ
                   </button>
                </div>
@@ -170,31 +192,31 @@ export default function NewspaperView() {
            />
 
            {/* HEADLINE BOX */}
-           <section className="relative overflow-hidden rounded-[3.5rem] bg-black border-2 border-rose-900/10 p-12 shadow-3xl group">
+           <section className="relative overflow-hidden rounded-[3.5rem] bg-black border-2 border-amber-900/10 p-12 shadow-3xl group">
               <div className="absolute top-0 right-0 p-16 opacity-[0.02] pointer-events-none group-hover:scale-110 group-hover:rotate-12 transition-transform duration-1000">
-                 <ShieldAlert size={400} className="text-rose-500" />
+                 <ShieldAlert size={400} className="text-amber-500" />
               </div>
               <div className="relative z-10 space-y-8">
                  <div className="flex items-center gap-4">
-                    <span className="bg-rose-600/10 border border-rose-600/30 text-rose-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase italic flex items-center gap-2 animate-pulse">
+                    <span className="bg-amber-600/10 border border-amber-600/30 text-amber-500 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase italic flex items-center gap-2 animate-pulse">
                        <Flame size={14} /> {data.headline.tag}
                     </span>
-                    <div className="h-px w-20 bg-rose-600/20" />
-                    <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v56.5</span>
+                    <div className="h-px w-20 bg-amber-600/20" />
+                    <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v57.2</span>
                  </div>
-                 <h2 className="text-7xl font-black text-white italic tracking-tighter uppercase leading-[0.9] max-w-5xl group-hover:text-rose-500 transition-colors">
+                 <h2 className="text-7xl font-black text-white italic tracking-tighter uppercase leading-[0.9] max-w-5xl group-hover:text-amber-500 transition-colors">
                     {data.headline.title}
                  </h2>
                  <p className="text-2xl font-black text-slate-400 italic tracking-tight leading-snug max-w-4xl font-mono">
                     {data.headline.subtitle}
                  </p>
                  <div className="flex flex-wrap items-center gap-6">
-                    <div className="px-6 py-3 bg-rose-600/20 border border-rose-600/40 rounded-2xl flex items-center gap-4">
-                       <AlertTriangle size={24} className="text-rose-500 animate-bounce" />
-                       <span className="text-lg font-black text-rose-200 uppercase italic tracking-tighter">{data.headline.hook}</span>
+                    <div className="px-6 py-3 bg-amber-600/20 border border-amber-600/40 rounded-2xl flex items-center gap-4">
+                       <AlertTriangle size={24} className="text-amber-500 animate-bounce" />
+                       <span className="text-lg font-black text-amber-200 uppercase italic tracking-tighter">{data.headline.hook}</span>
                     </div>
                     <div className="flex items-center gap-4">
-                       <button className="px-10 py-5 bg-rose-700 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-rose-600 shadow-2xl flex items-center gap-4">
+                       <button className="px-10 py-5 bg-amber-700 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
                           <FileText size={20} /> ПОВНЕ_ДОСЬЄ
                        </button>
                        <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-white/10 transition-all flex items-center gap-4">
@@ -210,22 +232,22 @@ export default function NewspaperView() {
               
               {/* COMPROMAT */}
               <div className="space-y-8">
-                 <div className="flex items-center gap-4 pb-6 border-b border-rose-600/20">
-                    <div className="w-2 h-8 bg-rose-600 shadow-[0_0_15px_#f43f5e]" />
+                 <div className="flex items-center gap-4 pb-6 border-b border-amber-600/20">
+                    <div className="w-2 h-8 bg-amber-600 shadow-[0_0_15px_#f43f5e]" />
                     <h3 className="text-xl font-black text-white italic uppercase tracking-[0.3em]">КОМПРОМАТ_ДНЯ</h3>
                  </div>
                  <div className="space-y-6">
                     {data.compromat.map((item, i) => (
-                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-rose-600/40 transition-all group space-y-4">
+                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-amber-600/40 transition-all group space-y-4">
                          <div className="flex items-start gap-4">
-                            <UserX size={20} className="text-rose-600 mt-1 shrink-0" />
+                            <UserX size={20} className="text-amber-600 mt-1 shrink-0" />
                             <div>
-                               <p className="text-lg font-black text-white group-hover:text-rose-500 transition-colors uppercase italic leading-none truncate max-w-[200px]">{item.title}</p>
+                               <p className="text-lg font-black text-white group-hover:text-amber-500 transition-colors uppercase italic leading-none truncate max-w-[200px]">{item.title}</p>
                                <p className="text-[10px] font-black text-slate-700 uppercase italic mt-1">{item.subtitle}</p>
                             </div>
                          </div>
                          <div className="flex items-center justify-between pt-4 border-t border-white/[0.03]">
-                            <span className="text-rose-500 text-[10px] font-black italic">РИЗИК {item.risk}</span>
+                            <span className="text-amber-500 text-[10px] font-black italic">РИЗИК {item.risk}</span>
                             <span className="text-[10px] font-black text-slate-800 uppercase italic">{item.source}</span>
                          </div>
                       </div>
@@ -235,24 +257,24 @@ export default function NewspaperView() {
 
               {/* TRENDS */}
               <div className="space-y-8">
-                 <div className="flex items-center gap-4 pb-6 border-b border-indigo-600/20">
-                    <div className="w-2 h-8 bg-indigo-600 shadow-[0_0_15px_#6366f1]" />
+                 <div className="flex items-center gap-4 pb-6 border-b border-yellow-600/20">
+                    <div className="w-2 h-8 bg-yellow-600 shadow-[0_0_15px_#6366f1]" />
                     <h3 className="text-xl font-black text-white italic uppercase tracking-[0.3em]">ТРЕНДИ_S_POWER</h3>
                  </div>
                  <div className="space-y-6">
                     {data.trends.map((item, i) => (
-                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-indigo-600/40 transition-all group space-y-6">
+                      <div key={item.id} className="p-8 rounded-[3rem] bg-black border border-white/[0.04] hover:border-yellow-600/40 transition-all group space-y-6">
                          <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                               {item.direction === 'up' ? <TrendingUp size={20} className="text-indigo-500" /> : <TrendingDown size={20} className="text-amber-500" />}
+                               {item.direction === 'up' ? <TrendingUp size={20} className="text-yellow-500" /> : <TrendingDown size={20} className="text-amber-500" />}
                                <p className="text-lg font-black text-white uppercase italic leading-none">{item.title}</p>
                             </div>
-                            <span className={cn("text-2xl font-black italic font-mono", item.direction === 'up' ? "text-indigo-500" : "text-amber-500")}>
+                            <span className={cn("text-2xl font-black italic font-mono", item.direction === 'up' ? "text-yellow-500" : "text-amber-500")}>
                                {item.direction === 'up' ? '+' : '-'}{item.percent}%
                             </span>
                          </div>
                          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                            <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(item.percent, 100)}%` }} className={cn("h-full", item.direction === 'up' ? "bg-indigo-600 shadow-[0_0_10px_#6366f1]" : "bg-amber-600")} />
+                            <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(item.percent, 100)}%` }} className={cn("h-full", item.direction === 'up' ? "bg-yellow-600 shadow-[0_0_10px_#6366f1]" : "bg-amber-600")} />
                          </div>
                          <div className="flex items-center justify-between text-[10px] font-black text-slate-700 uppercase italic">
                             <span>УКТЗЕД: {item.hsCode}</span>
@@ -273,9 +295,9 @@ export default function NewspaperView() {
                     {data.alerts.map((alert, i) => (
                       <div key={alert.id} className={cn(
                         "p-6 rounded-3xl border border-white/[0.04] bg-black flex items-start gap-4 transition-all hover:border-amber-500/30",
-                        alert.urgency === 'high' ? "border-rose-900/40 bg-rose-900/5 shadow-2xl" : ""
+                        alert.urgency === 'high' ? "border-amber-900/40 bg-amber-900/5 shadow-2xl" : ""
                       )}>
-                         <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-rose-500 animate-pulse" : "text-amber-500")} />
+                         <Siren size={20} className={cn("mt-1", alert.urgency === 'high' ? "text-amber-500 animate-pulse" : "text-amber-500")} />
                          <div>
                             <p className="text-sm font-black text-slate-300 italic leading-snug">{alert.text}</p>
                             <p className="text-[9px] font-black text-slate-700 font-mono italic mt-2">{alert.time} // SIGNAL_DETECTED</p>

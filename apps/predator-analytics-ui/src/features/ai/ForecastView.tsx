@@ -31,13 +31,41 @@ import { ForecastResponse, ForecastPoint } from '@/features/forecast/types';
 import { TacticalCard } from '@/components/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
+import { ViewHeader } from '@/components/ViewHeader';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
+import { Activity, Server } from 'lucide-react';
 
 const ForecastView: React.FC = () => {
+    const { isOffline, nodeSource } = useBackendStatus();
     const [productCode, setProductCode] = useState('8517130000');
     const [forecast, setForecast] = useState<ForecastResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [monthsAhead, setMonthsAhead] = useState(6);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'Forecast_Engine',
+                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З ПРЕДИКТИВНИМ ЯДРОМ (FORECAST_OFFLINE). Використовуються локальні моделі прогнозування.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'FORECAST_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'Forecast_Engine',
+                    message: 'ПРЕДИКТИВНЕ ЯДРО СИНХРОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'FORECAST_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline]);
 
     const fetchForecast = async () => {
         try {
@@ -74,47 +102,43 @@ const ForecastView: React.FC = () => {
             {/* Background FX */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px] animate-pulse" />
             </div>
 
             <div className="relative z-10 max-w-[1600px] mx-auto">
                 {/* Header */}
-                <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-12 p-8 bg-slate-900/40 border border-white/5 rounded-[32px] backdrop-blur-3xl">
-                    <div className="flex items-center gap-6">
-                        <div className="p-5 bg-slate-900 border border-white/5 rounded-2xl shadow-2xl">
-                            <Brain className="text-purple-400" size={32} />
+                <ViewHeader
+                    title="ML Прогнозування Попиту"
+                    icon={<Brain className="text-purple-400" size={20} />}
+                    breadcrumbs={['ШІ', 'ПРОГНОЗУВАННЯ', productCode]}
+                    stats={[
+                        { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+                        { label: 'МОДЕЛЬ', value: forecast?.model_used || 'prophet_v4', icon: <Cpu size={14} />, color: 'primary' },
+                        { label: 'ТОЧНІСТЬ', value: `${(forecast?.confidence_score || 0 * 100).toFixed(1)}%`, icon: <Target size={14} />, color: 'success' },
+                    ]}
+                    actions={[
+                        <div key="search" className="flex items-center gap-4">
+                            <div className="relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors" size={18} />
+                                <input
+                                    type="text"
+                                    value={productCode}
+                                    onChange={(e) => setProductCode(e.target.value)}
+                                    className="bg-slate-950/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 w-64 transition-all"
+                                    placeholder="Код УКТЗЕД..."
+                                />
+                            </div>
+                            <button
+                                onClick={fetchForecast}
+                                disabled={loading}
+                                className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 disabled:opacity-50 shadow-2xl"
+                            >
+                                {loading ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
+                                АНАЛІЗ
+                            </button>
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-black text-white tracking-tighter uppercase font-display">
-                                ML Прогнозування Попиту
-                            </h1>
-                            <p className="text-xs text-slate-500 font-mono uppercase tracking-widest mt-1">
-                                Система інтелектуального передбачення ринкових потоків
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-400 transition-colors" size={18} />
-                            <input
-                                type="text"
-                                value={productCode}
-                                onChange={(e) => setProductCode(e.target.value)}
-                                className="bg-slate-950/60 border border-white/10 rounded-2xl pl-12 pr-6 py-4 text-white text-sm focus:outline-none focus:border-purple-500/50 w-64 transition-all"
-                                placeholder="Код УКТЗЕД..."
-                            />
-                        </div>
-                        <button
-                            onClick={fetchForecast}
-                            disabled={loading}
-                            className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-3 disabled:opacity-50"
-                        >
-                            {loading ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
-                            Запустити Аналіз
-                        </button>
-                    </div>
-                </div>
+                    ]}
+                />
 
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
                     {/* Main Chart Section */}
@@ -186,7 +210,7 @@ const ForecastView: React.FC = () => {
                             <TacticalCard
                                 variant="cyber"
                                 title="Дані для навчання"
-                                icon={<Cpu size={18} className="text-indigo-400" />}
+                                icon={<Cpu size={18} className="text-yellow-400" />}
                                 metrics={[{ label: 'Точок', value: forecast?.data_points_used || 0 }]}
                             />
                             <TacticalCard

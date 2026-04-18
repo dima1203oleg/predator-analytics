@@ -1,5 +1,5 @@
 /**
- * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v56.5-ELITE
+ * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v57.2-WRAITH
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
  * Повний збір даних про суб'єкта: Реєстри, Митниця, Податки,
@@ -8,7 +8,8 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle, Building2, Clock, DollarSign, FileText, Globe,
@@ -31,6 +32,21 @@ export default function FirmDossierView() {
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+       window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'CorporateIntel',
+            message: 'РЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
+            severity: 'warning',
+            timestamp: new Date().toISOString(),
+            code: 'CORPORATE_OFFLINE'
+          }
+       }));
+    }
+  }, [isOffline]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +58,15 @@ export default function FirmDossierView() {
         ? await apiClient.get(`/company/dossier/${query.trim()}`)
         : await apiClient.post('/company/dossier', { query: query.trim() });
       setResult(res.data);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'CorporateIntel',
+          message: `Сканування фірми ${query.toUpperCase()} завершено.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'CORP_SCAN_OK'
+        }
+      }));
     } catch (err) {
       // Mock data for demo
       setResult({
@@ -86,7 +111,7 @@ export default function FirmDossierView() {
                           CORPORATE_INTEL // DOSSIER_360
                         </span>
                         <div className="h-px w-10 bg-sky-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІРМИ</span>
@@ -97,11 +122,17 @@ export default function FirmDossierView() {
                   </div>
                </div>
              }
-             stats={[
-               { label: 'ЄДРПОУ_ID', value: result?.edrpou || '??????', icon: <Database size={14} />, color: 'primary' },
-               { label: 'РІВЕНЬ_РИЗИКУ', value: result ? `${result.riskScore}%` : '???', icon: <Siren size={14} />, color: 'danger', animate: !!result },
-               { label: 'СТАТУС_ОБ\'ЄКТА', value: result?.status || 'IDLE', icon: <ShieldCheck size={14} />, color: 'success' }
-             ]}
+              stats={[
+                { label: 'АКТИВНИХ_КОМПАНІЙ', value: '1.4M+', icon: <Building2 size={14} />, color: 'primary' },
+                { 
+                  label: isOffline ? 'SYNC_RECOVERY' : 'ВУЗОЛ_SOURCE', 
+                  value: isOffline ? `${Math.floor(healingProgress)}%` : activeFailover ? 'ZROK_TUNNEL' : 'NVIDIA_MASTER', 
+                  icon: isOffline ? <Activity size={14} /> : <Database size={14} />, 
+                  color: isOffline ? 'warning' : 'gold', 
+                  animate: isOffline 
+                },
+                { label: 'СТАН_РЕЄСТРУ', value: isOffline ? 'OFFLINE' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
+              ]}
              actions={
                <div className="flex gap-4">
                   <button onClick={() => {setResult(null); setQuery('');}} className="p-5 bg-black border border-white/[0.04] rounded-2xl text-slate-400 hover:text-white transition-all shadow-xl">
@@ -149,7 +180,7 @@ export default function FirmDossierView() {
            {/* LOADING STATE */}
            {isSearching && (
              <div className="py-32 flex flex-col items-center justify-center space-y-12">
-                <CyberOrb size={220} status="processing" color="#0ea5e9" />
+                        <CyberOrb size={130} color="#D4AF37" />
                 <div className="space-y-4 text-center">
                    <p className="text-2xl font-black text-sky-500 uppercase italic tracking-[0.8em] animate-pulse">ЗБІР КОРПОРАТИВНИХ ДАНИХ...</p>
                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">TARGET: {query.toUpperCase()}</p>
@@ -163,10 +194,10 @@ export default function FirmDossierView() {
                 <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} className="col-span-12 xl:col-span-8 space-y-10">
                    
                    {/* MAIN DOSSIER */}
-                   <section className="rounded-[4rem] bg-black border-2 border-rose-900/10 p-12 shadow-3xl relative overflow-hidden group">
+                   <section className="rounded-[4rem] bg-black border-2 border-amber-900/10 p-12 shadow-3xl relative overflow-hidden group">
                       <div className="absolute top-0 right-0 p-16 flex flex-col items-end">
-                         <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em] mb-2 italic">RISK_RATING</p>
-                         <p className="text-7xl font-black text-rose-500 italic font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(244,63,94,0.4)] leading-none">{result.riskScore}%</p>
+                         <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em] mb-2 italic">RISK_RATING</p>
+                         <p className="text-7xl font-black text-amber-500 italic font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(244,63,94,0.4)] leading-none">{result.riskScore}%</p>
                       </div>
 
                       <div className="flex items-center gap-10 mb-12 pb-10 border-b border-white/[0.04] relative z-10">
@@ -189,19 +220,19 @@ export default function FirmDossierView() {
                       </div>
 
                       <div className="space-y-6 mb-12 relative z-10">
-                         <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
+                         <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
                             <ShieldAlert size={18} /> КРИТИЧНІ_ЗАГРОЗИ_ТА_АНОМАЛІЇ
                          </h4>
                          {result.threats.map((t: string, i: number) => (
-                           <div key={i} className="p-8 rounded-[2rem] bg-rose-600/5 border border-rose-600/20 text-[15px] font-bold text-rose-200 italic flex items-start gap-5 transition-all hover:bg-rose-600/10">
-                              <AlertTriangle size={22} className="text-rose-500 shrink-0 mt-0.5" />
+                           <div key={i} className="p-8 rounded-[2rem] bg-amber-600/5 border border-amber-600/20 text-[15px] font-bold text-amber-200 italic flex items-start gap-5 transition-all hover:bg-amber-600/10">
+                              <AlertTriangle size={22} className="text-amber-500 shrink-0 mt-0.5" />
                               <span>{t}</span>
                            </div>
                          ))}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-6 pt-10 border-t border-white/[0.04] relative z-10">
-                         <button className="px-10 py-5 bg-rose-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-rose-600 shadow-2xl flex items-center gap-4">
+                         <button className="px-10 py-5 bg-amber-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
                             <Lock size={20} /> БЛОКУВАТИ_В_МИТНОМУ_КОНТУРІ
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
@@ -257,10 +288,10 @@ export default function FirmDossierView() {
                          <div className="space-y-4">
                             <div className="flex justify-between items-center text-[12px] font-black text-white italic uppercase tracking-tight">
                                <span>ВІДХИЛЕННЯ_ЦІНИ</span>
-                               <span className="text-rose-500">-32% (Anomaly)</span>
+                               <span className="text-amber-500">-32% (Anomaly)</span>
                             </div>
                             <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
-                               <div className="h-full w-[35%] bg-rose-600 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                               <div className="h-full w-[35%] bg-amber-600 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
                             </div>
                          </div>
                          <div className="space-y-4">

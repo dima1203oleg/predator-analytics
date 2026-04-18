@@ -1,9 +1,9 @@
 /**
- * 🕹️ AI Sovereign Control Plane | v56.5-ELITE
+ * 🕹️ AI Sovereign Control Plane | v57.2-WRAITH
  * PREDATOR — Контур Суверенного Керування Інтелектом
  * 
  * Моніторинг та налаштування нейронних рушіїв, телеметрія та управління політиками.
- * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * Sovereign Power Design System · Gold/Amber Palette · Tier-1 Access
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -57,12 +57,6 @@ const toneClasses: Record<AIControlTone, { border: string; panel: string; text: 
     panel: 'bg-amber-500/10',
     text: 'text-amber-400',
     badge: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
-  },
-  rose: {
-    border: 'border-rose-500/20',
-    panel: 'bg-rose-500/10',
-    text: 'text-rose-400',
-    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
   },
   sky: {
     border: 'border-amber-500/20', // Migrated to Gold accent
@@ -248,8 +242,33 @@ export default function AIControlPlane() {
 
       if (failures === 4) {
         setFeedback('Контур керування ШІ не отримав підтверджених даних від системних маршрутів.');
-      } else if (!silent) {
+      } else {
         setFeedback(null);
+        
+        if (!silent) {
+            // ЕЛІТ-діагностика: успішна синхронізація контуру
+            if (backendStatus.isOffline) {
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                  detail: {
+                    service: 'AI_ControlPlane',
+                    message: `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'CONTROL_PLANE_OFFLINE'
+                  }
+                }));
+            } else {
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                  detail: {
+                    service: 'AI_ControlPlane',
+                    message: `КОНТУР_КЕРУВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'CONTROL_PLANE_SUCCESS'
+                  }
+                }));
+            }
+        }
       }
     } catch (error) {
       console.error('[AIControlPlane] Не вдалося завантажити дані:', error);
@@ -293,7 +312,7 @@ export default function AIControlPlane() {
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="animate-pulse" />
-                    v56.5-ELITE · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
+                    v57.2-WRAITH · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
                   </div>
                 </div>
               </div>
@@ -340,7 +359,7 @@ export default function AIControlPlane() {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.gold.badge)}>
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.gold.badge)}>
               {backendStatus.statusLabel}
             </Badge>
             <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -358,7 +377,7 @@ export default function AIControlPlane() {
           </div>
 
           {feedback && (
-            <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 px-5 py-4 text-sm leading-6 text-rose-100">
+            <div className="rounded-[24px] border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-sm leading-6 text-amber-100">
               {feedback}
             </div>
           )}
@@ -415,7 +434,7 @@ export default function AIControlPlane() {
                     {[
                       { label: 'Оптимальні', value: String(snapshot.activeCount), tone: 'emerald' as const },
                       { label: 'Калібрування', value: String(snapshot.degradedCount), tone: 'amber' as const },
-                      { label: 'Недоступні', value: String(snapshot.offlineCount), tone: 'rose' as const },
+                      { label: 'Недоступні', value: String(snapshot.offlineCount), tone: 'amber' as const },
                     ].map((item) => (
                       <div key={item.label} className="rounded-[24px] border border-white/10 bg-black/20 px-4 py-4">
                         <div className="flex items-center justify-between gap-4">

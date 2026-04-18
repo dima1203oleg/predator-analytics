@@ -37,7 +37,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                 registrationDate: companyProfile.registration_date || '',
                 address: (companyProfile as any).address || 'Дані про адресу відсутні',
                 director: companyProfile.directors?.[0]?.label || 'Дані про керівника відсутні',
-                beneficiaries: companyProfile.ultimate_beneficiaries?.map(b => b.label) || [],
+                beneficiaries: companyProfile.ultimate_beneficiaries?.map(b => b.label).filter((l): l is string => l !== undefined) || [],
                 riskScore: companyProfile.risk_score || 0,
                 tags: (companyProfile as any).tags || [],
                 flags: (companyProfile as any).flags || []

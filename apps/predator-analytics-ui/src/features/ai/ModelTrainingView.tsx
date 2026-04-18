@@ -50,11 +50,6 @@ const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: 
         panel: 'border-amber-500/20 bg-amber-500/10',
         accent: 'text-amber-300',
     },
-    rose: {
-        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-100',
-        panel: 'border-rose-500/20 bg-rose-500/10',
-        accent: 'text-rose-300',
-    },
     slate: {
         badge: 'border-slate-500/30 bg-slate-500/10 text-slate-100',
         panel: 'border-slate-500/20 bg-slate-500/10',
@@ -120,7 +115,7 @@ export default function ModelTrainingView() {
     const [refreshing, setRefreshing] = useState(false);
     const [starting, setStarting] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-    const [feedbackTone, setFeedbackTone] = useState<'rose' | 'emerald'>('emerald');
+    const [feedbackTone, setFeedbackTone] = useState<'amber' | 'emerald'>('emerald');
     const logsEndRef = useRef<HTMLDivElement | null>(null);
 
     const loadData = useCallback(async (silent: boolean = false) => {
@@ -147,14 +142,27 @@ export default function ModelTrainingView() {
                 jobsResult.status === 'rejected' &&
                 systemResult.status === 'rejected'
             ) {
-                setFeedbackTone('rose');
+                setFeedbackTone('amber');
                 setFeedbackMessage('Центр навчання тимчасово не отримав підтверджених даних від бекенду.');
             } else if (!silent) {
                 setFeedbackMessage(null);
+                
+                // ЕЛІТ-діагностика: успішна синхронізація Центру навчання
+                window.dispatchEvent(new CustomEvent('predator-error', {
+                    detail: {
+                        service: 'AI_ModelTraining',
+                        message: backendStatus.isOffline 
+                            ? 'Центр навчання синхронізовано з автономним вузлом MIRROR.' 
+                            : 'Центр навчання успішно підключено до NVIDIA MASTER.',
+                        severity: 'info',
+                        timestamp: new Date().toISOString(),
+                        code: backendStatus.isOffline ? 'TRAINING_OFFLINE' : 'TRAINING_SUCCESS'
+                    }
+                }));
             }
         } catch (error) {
             console.error('[ModelTrainingView] Не вдалося оновити дані:', error);
-            setFeedbackTone('rose');
+            setFeedbackTone('amber');
             setFeedbackMessage('Центр навчання тимчасово не отримав підтверджених даних від бекенду.');
         } finally {
             setRefreshing(false);
@@ -191,7 +199,7 @@ export default function ModelTrainingView() {
             await loadData(true);
         } catch (error) {
             console.error('[ModelTrainingView] Не вдалося запустити навчання:', error);
-            setFeedbackTone('rose');
+            setFeedbackTone('amber');
             setFeedbackMessage('Бекенд не підтвердив запуск навчання. Інтерфейс не симулює сесію локально.');
         } finally {
             setStarting(false);
@@ -253,7 +261,7 @@ export default function ModelTrainingView() {
                     />
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
+                        <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.sky.badge)}>
                             {backendStatus.statusLabel}
                         </Badge>
                         <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -270,8 +278,8 @@ export default function ModelTrainingView() {
                     {feedbackMessage && (
                         <div className={cn(
                             'rounded-[24px] border px-5 py-4 text-sm leading-6',
-                            feedbackTone === 'rose'
-                                ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+                            feedbackTone === 'amber'
+                                ? 'border-amber-500/20 bg-amber-500/10 text-amber-100'
                                 : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
                         )}>
                             {feedbackMessage}
@@ -311,7 +319,7 @@ export default function ModelTrainingView() {
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         {[
                                             { label: 'Епохи', value: snapshot.session.epochLabel, icon: <Timer size={16} className="text-sky-300" /> },
-                                            { label: 'Loss', value: snapshot.session.lossLabel, icon: <BarChart3 size={16} className="text-rose-300" /> },
+                                            { label: 'Loss', value: snapshot.session.lossLabel, icon: <BarChart3 size={16} className="text-amber-300" /> },
                                             { label: 'Черга', value: snapshot.session.queueLabel, icon: <ScrollText size={16} className="text-amber-300" /> },
                                             { label: 'Старт', value: snapshot.session.startedAtLabel, icon: <Activity size={16} className="text-emerald-300" /> },
                                         ].map((item) => (
@@ -333,7 +341,7 @@ export default function ModelTrainingView() {
                                 <div className="grid gap-4 sm:grid-cols-2">
                                     {[
                                         { label: 'ЦП', value: snapshot.resources.cpuLabel, icon: <Cpu size={16} className="text-sky-300" /> },
-                                        { label: 'Памʼять', value: snapshot.resources.memoryLabel, icon: <HardDrive size={16} className="text-indigo-300" /> },
+                                        { label: 'Памʼять', value: snapshot.resources.memoryLabel, icon: <HardDrive size={16} className="text-yellow-300" /> },
                                         { label: 'Активні задачі', value: snapshot.resources.taskLabel, icon: <Activity size={16} className="text-emerald-300" /> },
                                         { label: 'Затримка API', value: snapshot.resources.latencyLabel, icon: <Gauge size={16} className="text-amber-300" /> },
                                     ].map((item) => (

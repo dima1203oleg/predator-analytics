@@ -1,5 +1,5 @@
 /**
- * 🎯 PREDATOR AI Copilot - v56.5-ELITE
+ * 🎯 PREDATOR AI Copilot - v57.2-WRAITH
  * -------------------------------------------------------------
  * Sovereign AI Assistant with Neuro-Voice Integration.
  * Focused on Strategic Customs Analytics and Threat Intelligence.
@@ -79,7 +79,7 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
-            title: 'АНАЛІТИКА GLM-5.1 ELITE',
+            title: 'АНАЛІТИКА GLM-5.1 WRAITH',
             description: `СУВЕРЕННЕ ЯДРО: ${stats.total_patterns} паттернів. ZROK Tunnel: ${backendStatus.nodeSource}.`,
             confidence: 0.99,
             impact: 'high'
@@ -110,8 +110,27 @@ export const Predator: React.FC = () => {
         }
 
         setSuggestions(dynamicSuggestions);
-      } catch (error) {
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AICopilot',
+            message: `СИНХРОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕРНІВ.`,
+            severity: 'info',
+            timestamp: new Date().toISOString(),
+            code: 'AI_SYNC_WRAITH'
+          }
+        }));
+      } catch (error: any) {
          if (mounted) {
+           window.dispatchEvent(new CustomEvent('predator-error', {
+             detail: {
+               service: 'AICopilot',
+               message: `КРИТИЧНА ПОМИЛКА КОГНІТИВНОГО ПОРТУ: ${error?.message || 'TIMEOUT'}. ВУЗОЛ: ${backendStatus.nodeSource}`,
+               severity: 'error',
+               timestamp: new Date().toISOString(),
+               code: 'AI_PORT_FAILURE'
+             }
+           }));
            setSuggestions([{
               id: `error-${Date.now()}`,
               type: 'warning',
@@ -170,10 +189,29 @@ export const Predator: React.FC = () => {
         setAiResponse(answer);
         setActiveAgent(res.agent || 'PREDATOR_CORE');
         speak(answer);
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'AICopilot',
+            message: `ЗАПИТ ВИКОНАНО [${res.agent || 'CORE'}]: ${query.substring(0, 30)}... [GLM-5.1]`,
+            severity: 'success',
+            timestamp: new Date().toISOString(),
+            code: 'AI_QUERY_SUCCESS'
+          }
+        }));
       } else {
         setAiResponse(`✨ КОМАНДУ ВИКОНАНО. СТРАТЕГІЧНІ ДАНІ ОНОВЛЕНО.`);
       }
     } catch (e: any) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'AICopilot',
+          message: `ПОМИЛКА ВИКОНАННЯ ЗАПИТУ: ${e?.message}. ВУЗОЛ: ${backendStatus.nodeSource}`,
+          severity: 'error',
+          timestamp: new Date().toISOString(),
+          code: 'AI_QUERY_FAILURE'
+        }
+      }));
       setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕРА: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
     }
   };
@@ -250,7 +288,7 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping shadow-[0_0_10px_#d4af37]" />
-                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v56.5_GLM-5.1</p>
+                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_WRAITH_v57.2_GLM-5.1</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-orange-500/40 text-orange-500 bg-orange-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-amber-500/40 text-amber-500 bg-amber-500/5"))}>
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}
@@ -277,7 +315,7 @@ export const Predator: React.FC = () => {
 
                <div className="space-y-6 relative z-10">
                   <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.5em] italic flex items-center gap-4">
-                    <Layers size={16} className="text-yellow-500" /> СТРАТЕГІЧНИЙ_ФІД_ELITE
+                    <Layers size={16} className="text-yellow-500" /> СТРАТЕГІЧНИЙ_ФІД_WRAITH
                   </h4>
                   {suggestions.map((s) => (
                     <motion.div 

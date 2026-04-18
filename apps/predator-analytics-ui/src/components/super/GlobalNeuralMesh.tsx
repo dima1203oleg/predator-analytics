@@ -65,7 +65,7 @@ const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
             </div>
             <div>
               <h2 className="text-xl font-black text-white tracking-widest uppercase italic uppercase">ГЛОБАЛЬНА НЕЙРОННА МЕРЕЖА</h2>
-              <p className="text-[10px] text-yellow-600/60 font-black font-mono uppercase tracking-[0.3em]">Distributed Intelligence v56.5-ELITE</p>
+              <p className="text-[10px] text-yellow-600/60 font-black font-mono uppercase tracking-[0.3em]">Distributed Intelligence v57.2-WRAITH</p>
             </div>
           </div>
           <div className="flex gap-4 items-center">
@@ -160,7 +160,7 @@ const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
 
         <button className="w-full mt-8 py-5 bg-yellow-500/5 hover:bg-yellow-500/10 rounded-3xl border border-yellow-500/20 text-[11px] font-black text-yellow-500 uppercase tracking-[0.4em] flex items-center justify-center gap-3 transition-all group hover:tracking-[0.5em]">
           <LinkIcon size={16} className="group-hover:rotate-45 transition-transform" /> 
-          ЗАКРІПИТИ НОВИЙ ВУЗОЛ ELITE
+          ЗАКРІПИТИ НОВИЙ ВУЗОЛ WRAITH
         </button>
       </div>
     </div>

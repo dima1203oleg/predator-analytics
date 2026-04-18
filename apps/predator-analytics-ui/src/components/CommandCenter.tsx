@@ -19,7 +19,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
       id: 'init',
       command: 'nexus --version',
       output: <span className="text-cyan-500 font-black tracking-widest uppercase">
-        PREDATOR v56.5-ELITE NEXUS | ЯДРО СТРАТЕГІЧНОЇ АНАЛІТИКИ<br />
+        PREDATOR v57.2-WRAITH NEXUS | ЯДРО СТРАТЕГІЧНОЇ АНАЛІТИКИ<br />
         <span className="text-white/40 text-[10px]">КЕРНЕЛЬ: NEXUS-OS 1.0.4-PREDATOR (x86_64)</span><br />
         <span className="text-white/40 text-[10px]">ВУЗОЛ: NEXUS-PRIME-01 [ACTIVE]</span><br />
         <span className="text-white/40 text-[10px]">МОВА: uk_UA.UTF-8</span><br />

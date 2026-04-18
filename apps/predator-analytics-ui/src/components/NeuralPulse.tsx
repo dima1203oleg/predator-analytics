@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 /**
- * PREDATOR v56.5-ELITE NEXUS | NeuralPulse Overlay
+ * PREDATOR v57.2-WRAITH NEXUS | NeuralPulse Overlay
  * Цифровий "пульс" системи. Створює ефект сканування нейронних мереж
  * та візуальну динаміку у фоні за допомогою Canvas API.
  */

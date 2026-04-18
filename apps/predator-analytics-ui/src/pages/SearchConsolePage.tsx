@@ -1,9 +1,9 @@
 /**
- * PREDATOR v56.5-ELITE | Sovereign Power Edition | Synaptic Discovery Matrix
+ * PREDATOR v57.2-WRAITH | Sovereign Power Edition | Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
  * - Величезний пошуковий рядок з градієнтним бордером та внутрішнім світінням
- * - Нейронний Listening Visualizer (Хвильова форма) у стилі ELITE
+ * - Нейронний Listening Visualizer (Хвильова форма) у стилі WRAITH
  * - XAI пояснення (GNN Interpretability) з інтеграцією Gold/Rose палітри
  * - Truth-Only Filter Mode (Індекс Істини) — тактичний Rose режим
  * - Динамічні частинки семантичного поля Gold
@@ -60,7 +60,7 @@ interface XAIExplanation {
 // ========================
 
 /**
- * Neural Waveform Visualizer for Voice (ELITE Gold/Rose Style)
+ * Neural Waveform Visualizer for Voice (WRAITH Gold/Rose Style)
  */
 const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
     <div className="flex items-center gap-1.5 h-10 px-6">
@@ -85,7 +85,7 @@ const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 /**
- * Animated Particle Background for Search results (ELITE Gold)
+ * Animated Particle Background for Search results (WRAITH Gold)
  */
 const SemanticFieldParticles: React.FC = () => {
     return (
@@ -194,7 +194,7 @@ export const SearchConsolePage: React.FC = () => {
                 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                     
-                    {/* View Header v56.5-ELITE */}
+                    {/* View Header v57.2-WRAITH */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-8">
@@ -210,7 +210,7 @@ export const SearchConsolePage: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-[#D4AF37]/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Atom size={12} className="animate-spin-slow" /> 
-                                        НЕЙРО_ПОШУК_v56.5-ELITE
+                                        НЕЙРО_ПОШУК_v57.2-WRAITH
                                     </p>
                                 </div>
                             </div>
@@ -224,7 +224,7 @@ export const SearchConsolePage: React.FC = () => {
                         ]}
                     />
 
-                    {/* Massive Search Console Input (v56.5-ELITE UX) */}
+                    {/* Massive Search Console Input (v57.2-WRAITH UX) */}
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -302,7 +302,7 @@ export const SearchConsolePage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Search Modes (v56.5-ELITE Visuals) */}
+                        {/* Search Modes (v57.2-WRAITH Visuals) */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#D4AF37' },
@@ -347,7 +347,7 @@ export const SearchConsolePage: React.FC = () => {
                                 </div>
                                 <div className="text-center space-y-4">
                                     <h3 className="text-xl font-black text-white uppercase tracking-[0.5em] animate-pulse">КВАНТОВИЙ АНАЛІЗ</h3>
-                                    <p className="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v56.5...</p>
+                                    <p className="text-[10px] font-mono text-[#D4AF37] uppercase tracking-widest">ЗВЕРНЕННЯ_ДО_СЕМАНТИЧНОГО_ЯДРА_v57.2...</p>
                                 </div>
                             </div>
                         ) : results.length > 0 ? (

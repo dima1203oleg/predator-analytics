@@ -26,7 +26,7 @@ interface OSINTSignal {
 }
 
 /**
- * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v56.5-ELITE
+ * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v57.2-WRAITH
  * -------------------------------------------------------------
  * Central Intelligence Nexus — Вершина OSINT-архітектури України.
  * Керує автономним навчанням, загоєнням та стратегічним висновком.
@@ -87,9 +87,9 @@ const SovereignAZRBrain: React.FC = () => {
     };
 
     const base = [
-      { id: 'v56-log-1', time: timeStr(2), type: 'INFO', msg: `ПОТОЧНИЙ ВУЗОЛ_ID: ${sourceLabel.toUpperCase()}` },
-      { id: 'v56-log-2', time: timeStr(1), type: isOffline ? 'THREAT' : 'HEAL', msg: isOffline ? 'ЗВ\'ЄДОК З NVIDIA_SERVER: ПЕРЕРВАНО [!] EMERGENCY_AUTONOMY' : 'ЗВ\'ЄДОК З NVIDIA_SERVER: ВСТАНОВЛЕНО [OK]' },
-      { id: 'v56-log-3', time: timeStr(0), type: 'INFO', msg: activeFailover ? 'FAILOVER_STRATEGY: GOOGLE COLAB MIRROR ACTIVE' : 'FAILOVER_STRATEGY: STANDBY_MODE' },
+      { id: 'v57-log-1', time: timeStr(2), type: 'INFO', msg: `ПОТОЧНИЙ ВУЗОЛ_ID: ${sourceLabel.toUpperCase()}` },
+      { id: 'v57-log-2', time: timeStr(1), type: isOffline ? 'THREAT' : 'HEAL', msg: isOffline ? 'ЗВ\'ЄДОК З NVIDIA_SERVER: ПЕРЕРВАНО [!] EMERGENCY_AUTONOMY' : 'ЗВ\'ЄДОК З NVIDIA_SERVER: ВСТАНОВЛЕНО [OK]' },
+      { id: 'v57-log-3', time: timeStr(0), type: 'INFO', msg: activeFailover ? 'FAILOVER_STRATEGY: GOOGLE COLAB MIRROR ACTIVE' : 'FAILOVER_STRATEGY: STANDBY_MODE' },
     ];
 
     const logs = [...base];
@@ -133,7 +133,7 @@ const SovereignAZRBrain: React.FC = () => {
     <div className="min-h-screen bg-black text-slate-200 p-8 font-sans selection:bg-yellow-500/30">
       <div className="max-w-[1800px] mx-auto space-y-12">
         
-        {/* --- ELITE TOP HEADER --- */}
+        {/* --- WRAITH TOP HEADER --- */}
         <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-16 border-b border-yellow-500/10 pb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/5 blur-[120px] pointer-events-none" />
           
@@ -149,7 +149,7 @@ const SovereignAZRBrain: React.FC = () => {
               <div>
                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic flex items-center gap-4">
                   SOVEREIGN <span className="text-yellow-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">AZR BRAIN</span>
-                  <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v56.5-ELITE</span>
+                  <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v57.2-WRAITH</span>
                 </h1>
                 <p className="text-sm text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-3 mt-2">
                   <TrendingUp size={14} className="text-emerald-400" />
@@ -286,13 +286,13 @@ const SovereignAZRBrain: React.FC = () => {
               </div>
             </div>
 
-            {/* Sovereign Auto-Heal (v56.5) */}
+            {/* Sovereign Auto-Heal (v57.2) */}
             <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
                <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="text-rose-500" size={24} />
-                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУРНАЛ СУВЕРЕННОГО ПОТОКУ [ELITE]</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУРНАЛ СУВЕРЕННОГО ПОТОКУ [WRAITH]</h3>
                   </div>
                   <div className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
@@ -340,7 +340,7 @@ const SovereignAZRBrain: React.FC = () => {
                   <div className="flex items-center gap-3 px-6 py-3 bg-black/60 border border-yellow-500/20 rounded-2xl backdrop-blur-xl">
                     <Globe className="text-yellow-500 animate-spin-slow" size={20} />
                     <div>
-                      <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_ELITE 2026</span>
+                      <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_WRAITH 2026</span>
                       <div className="text-[9px] text-yellow-600/80 font-black uppercase">Active Nodes: 12,472 UA_SECURE</div>
                     </div>
                   </div>
@@ -406,7 +406,7 @@ const SovereignAZRBrain: React.FC = () => {
                <Fingerprint className="absolute -bottom-4 -right-4 text-yellow-500 opacity-10" size={100} />
                <h4 className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase mb-4">СЕРТИФІКАТ СУВЕРЕНІТЕТУ</h4>
                <p className="text-[11px] text-slate-300 font-bold italic leading-relaxed opacity-70">
-                 Платформа PREDATOR Analytics v56.5-ELITE є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
+                 Платформа PREDATOR Analytics v57.2-WRAITH є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
                </p>
                <div className="mt-6 flex justify-between items-center text-[10px] font-black font-mono">
                   <span className="text-yellow-600">ID: SOV-99-AX</span>

@@ -1,5 +1,5 @@
 /**
- * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v56.5-ELITE
+ * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v57.2-WRAITH
  * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ (INTEL NEXUS)
  * 
  * Центральна точка розвідувального циклу:
@@ -10,7 +10,7 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Activity, Brain, Radio, Shield, Sparkles, Zap, Network, Target,
     ShieldCheck, Cpu, Database, Binary, Search, Globe, RadioTower, Eye, Crosshair,
@@ -36,11 +36,57 @@ const IntelligenceView: React.FC = () => {
     const [selectedUeid, setSelectedUeid] = useState<string | null>('12345678');
     const [isThinking, setIsThinking] = useState(false);
     const [activeLayer, setActiveLayer] = useState<'graph' | 'radar'>('graph');
-    const { isOffline, activeFailover } = useBackendStatus();
+    const { isOffline, activeFailover, nodeSource, healingProgress } = useBackendStatus();
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'IntelligenceNexus',
+                    message: `АВАРІЙНА СИНХРОНІЗАЦІЯ [${nodeSource}]: Робота через MIRROR_VAULT. Деякі когнітивні шари можуть бути обмежені.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'INTEL_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'IntelligenceNexus',
+                    message: `ІНТЕЛ_ХАБ [${nodeSource}]: Матрицю NEXUS активовано. Стратегічний ОСІНТ-цикл стабільний.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'INTEL_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline, nodeSource]);
 
     const triggerCognitiveRefresh = () => {
         setIsThinking(true);
-        setTimeout(() => setIsThinking(false), 2000);
+        
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'NeuralCore',
+                message: 'Ініціалізовано запит на когнітивну оптимізацію шарів.',
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'COG_RECOVERY'
+            }
+        }));
+
+        setTimeout(() => {
+            setIsThinking(false);
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'NeuralCore',
+                    message: 'Когнітивна матриця синхронізована.',
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'COG_STABLE'
+                }
+            }));
+        }, 2000);
     };
 
     return (
@@ -72,10 +118,10 @@ const IntelligenceView: React.FC = () => {
                                          "badge-v2 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic border",
                                          isOffline ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-[#D4AF37]/10 border-[#D4AF37]/20 text-[#D4AF37]"
                                        )}>
-                                         {isOffline ? 'SOVEREIGN_EMERGENCY' : 'INTEL_NEXUS'} // GLOBAL_RECON
+                                         {isOffline ? 'MIRROR_NEXUS' : 'INTEL_NEXUS'} // GLOBAL_RECON
                                        </span>
                                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v56.5-ELITE</span>
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v57.2-WRAITH</span>
                                     </div>
                                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                                         ЦЕНТР <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8">РОЗВІДКИ</span>
@@ -86,10 +132,21 @@ const IntelligenceView: React.FC = () => {
                                 </div>
                             </div>
                         }
+                        badges={[
+                            { label: 'CLASSIFIED_T1', color: 'amber', icon: <Lock size={10} /> },
+                            { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Globe size={10} /> },
+                            { label: 'SOVEREIGN_FORCE', color: 'danger', icon: <Shield size={10} /> }
+                        ]}
                         stats={[
                             { label: 'COGNITIVE_LOAD', value: '72%', color: 'primary', icon: <Activity size={14} />, animate: true },
-                            { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', color: isOffline ? 'warning' : 'primary', icon: <Cpu size={14} /> },
-                            { label: 'FAILOVER', value: activeFailover ? 'COLAB_ACTIVE' : isOffline ? 'MOCK_PROXY' : 'STANDBY', color: isOffline ? 'warning' : 'success', icon: <Radio size={14} /> }
+                            { 
+                                label: isOffline ? 'MIRROR_RECOVERY' : 'NODE_SOURCE', 
+                                value: isOffline ? `${Math.floor(healingProgress)}%` : nodeSource, 
+                                color: isOffline ? 'warning' : 'primary', 
+                                icon: isOffline ? <Activity size={14} /> : <Cpu size={14} />,
+                                animate: isOffline
+                            },
+                            { label: 'OODA LOOP', value: '8ms', color: 'success', icon: <Zap size={14} /> }
                         ]}
                         breadcrumbs={['STRATEGY', 'NEXUS', 'RECON_HUB']}
                         actions={
@@ -123,20 +180,20 @@ const IntelligenceView: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                                 <section 
                                     onClick={() => window.location.href = '/cargo-manifest'}
-                                    className="p-10 rounded-[3rem] bg-[#0a0a0a] border-2 border-[#E11D48]/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-[#E11D48]/30 transition-all"
+                                    className="p-10 rounded-[3rem] bg-[#0a0a0a] border-2 border-[#D97706]/10 shadow-2xl relative overflow-hidden group cursor-pointer hover:border-[#D97706]/30 transition-all"
                                 >
-                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Fingerprint size={120} className="text-[#E11D48]" /></div>
+                                     <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:scale-110 transition-transform"><Fingerprint size={120} className="text-[#D97706]" /></div>
                                      <div className="flex items-center justify-between mb-8 border-b border-white/[0.04] pb-6">
                                         <div className="flex items-center gap-5">
-                                           <div className="p-3 bg-[#E11D48]/10 border border-[#E11D48]/20 rounded-xl text-[#E11D48]">
+                                           <div className="p-3 bg-[#D97706]/10 border border-[#D97706]/20 rounded-xl text-[#D97706]">
                                               <Box size={20} />
                                            </div>
                                            <h4 className="text-[14px] font-black text-white italic uppercase tracking-widest">МИТНА ФОРЕНЗИКА</h4>
                                         </div>
-                                        <Badge variant="outline" className="border-[#E11D48]/30 text-[#E11D48]">PREMIUM</Badge>
+                                        <Badge variant="outline" className="border-[#D97706]/30 text-[#D97706]">PREMIUM</Badge>
                                      </div>
                                      <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Детекція схем підміни кодів УКТЗЕД та заниження митної вартості на основі маніфестів.</p>
-                                     <div className="flex items-center gap-3 text-[#E11D48] font-black text-[10px] uppercase tracking-widest italic">
+                                     <div className="flex items-center gap-3 text-[#D97706] font-black text-[10px] uppercase tracking-widest italic">
                                         ПЕРЕЙТИ_ДО_АНАЛІЗУ <ChevronRight size={14} />
                                      </div>
                                 </section>
@@ -171,7 +228,7 @@ const IntelligenceView: React.FC = () => {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТРИЦЯ</h3>
-                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v56.5</p>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v57.2</p>
                                         </div>
                                     </div>
                                     <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 backdrop-blur-3xl">
@@ -194,7 +251,7 @@ const IntelligenceView: React.FC = () => {
                                     {[
                                         { label: 'SYNAPSE_DELAY', value: '4.2ms', sub: 'OPTIMIZED', c: 'text-[#D4AF37]' },
                                         { label: 'ENTROPY_IDX', value: '0.084', sub: 'STABLE', c: 'text-[#D4AF37]' },
-                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'ELITE-01', c: 'text-[#D4AF37]' },
+                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'WRAITH-01', c: 'text-[#D4AF37]' },
                                         { label: 'ACTIVE_AGENTS', value: '14/14', sub: 'DEPLOYED', c: 'text-[#D4AF37]' },
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
@@ -272,7 +329,7 @@ const IntelligenceView: React.FC = () => {
                                 <div className="space-y-4 relative z-10">
                                    {[
                                       { l: 'ШАНСИ РИНКУ', v: '12 АКТИВНИХ', c: 'text-[#D4AF37]', icon: BarChart3 },
-                                      { l: 'ПРИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-[#E11D48]', icon: AlertCircle },
+                                      { l: 'ПРИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-[#D97706]', icon: AlertCircle },
                                       { l: 'ПРІОРИТЕТИ_CEO', v: '03 КРИТИЧНІ', c: 'text-white', icon: Star },
                                    ].map((m, i) => (
                                       <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-[#D4AF37]/20 transition-all cursor-pointer group">

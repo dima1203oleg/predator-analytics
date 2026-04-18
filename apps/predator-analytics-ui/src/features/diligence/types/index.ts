@@ -2,61 +2,49 @@
  * Типи даних для перевірки контрагентів (Due Diligence) — PREDATOR Analytics v4.1.
  */
 
-export type RiskLevelValue =
-    | 'stable'
-    | 'watchlist'
-    | 'elevated'
-    | 'high'
-    | 'critical'
-    | 'low'
-    | 'medium';
+import { RiskEntity, RiskLevelValue } from '@/types/intelligence';
+
+export type { RiskEntity, RiskLevelValue };
 
 export interface PersonInfo {
-    id: string;
-    type: string;
-    label: string;
-    properties: Record<string, unknown>;
-}
-
-export interface SanctionRecord {
-    list_name: string;
-    date_added: string;
-    reason: string;
-    is_active: boolean;
-}
-
-export interface AnomalyRecord {
-    type: string;
-    score: number;
-    description: string;
-    date_detected: string;
-}
-
-export interface RiskComponentDetail {
-    value: number;
-    weight: number;
+    id?: string;
+    name: string;
+    role?: string;
+    position?: string;
+    is_pep?: boolean;
+    is_sanctioned?: boolean;
+    risk_level?: RiskLevelValue;
+    label?: string;
+    properties?: Record<string, any>;
 }
 
 export interface RiskDetails {
-    behavioral: RiskComponentDetail;
-    institutional: RiskComponentDetail;
-    influence: RiskComponentDetail;
-    structural: RiskComponentDetail;
-    predictive: RiskComponentDetail;
+    factors?: string[];
+    description?: string;
+    aml_score?: number;
+    kyc_score?: number;
+    institutional?: { value: number };
+    structural?: { value: number };
+    behavioral?: { value: number };
+    influence?: { value: number };
+    predictive?: { value: number };
 }
 
-export interface RiskEntity {
-    ueid?: string;
-    edrpou: string;
-    name: string;
-    risk_score: number;
-    risk_level: RiskLevelValue;
-    last_updated?: string;
-    created_at?: string;
-    updated_at?: string;
-    status?: string;
-    sector?: string | null;
-    cers_confidence?: number;
+export interface SanctionRecord {
+    id?: string;
+    list_name: string;
+    date?: string;
+    date_added?: string;
+    reason?: string;
+}
+
+export interface AnomalyRecord {
+    id?: string;
+    type: string;
+    description: string;
+    detected_at: string;
+    date_detected?: string;
+    score?: number;
 }
 
 export interface CompanyProfileResponse {

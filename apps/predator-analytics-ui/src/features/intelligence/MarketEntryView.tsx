@@ -1,5 +1,5 @@
 /**
- * 🌍 MARKET ENTRY SCORE | v56.5-ELITE
+ * 🌍 MARKET ENTRY SCORE | v57.2-WRAITH
  * PREDATOR Analytics — Оцінка ринкового входу
  *
  * Скоринг привабливості ринків для входу:
@@ -8,13 +8,13 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe, BarChart3, TrendingUp, TrendingDown, Shield,
-  DollarSign, Users, Building2, Target, Download,
+  DollarSign, Users, Building2, Download,
   AlertTriangle, CheckCircle, Star, Zap, ChevronRight,
-  Activity, Search, Filter, ArrowUpRight, Layers, Fingerprint, Radar, Cpu, Lock, Network, type LucideIcon
+  Activity, Search, Filter, ArrowUpRight, Layers, Fingerprint, Radar, Cpu, Lock, Info as InfoIcon, Layout, RefreshCcw, Satellite, Target, Network, ShieldCheck
 } from 'lucide-react';
 import {
   RadarChart, Radar as RechartRadar, PolarGrid, PolarAngleAxis,
@@ -107,11 +107,11 @@ const MARKETS: MarketEntry[] = [
   },
 ];
 
-const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: LucideIcon }> = {
-  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#f43f5e', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: 'shadow-[0_0_20px_rgba(244,63,94,0.3)]', icon: Star },
+const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: any }> = {
+  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#F59E0B', bg: 'bg-amber-950/20', border: 'border-amber-500/40', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.3)]', icon: Star },
   'buy':        { label: 'РЕКОМЕНДОВАНО', color: '#D4AF37', bg: 'bg-yellow-900/20', border: 'border-yellow-500/30', shadow: 'shadow-none', icon: CheckCircle },
   'hold':       { label: 'СПОСТЕРЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
-  'avoid':      { label: 'УНИКАТИ',      color: '#ef4444', bg: 'bg-red-950/20',     border: 'border-red-900/30',  shadow: 'shadow-none', icon: AlertTriangle },
+  'avoid':      { label: 'УНИКАТИ',      color: '#D97706', bg: 'bg-amber-950/40',     border: 'border-amber-900/40',  shadow: 'shadow-none', icon: AlertTriangle },
 };
 
 // ─── КОМПОНЕНТ ────────────────────────────────────────────────────────
@@ -120,38 +120,69 @@ const MarketEntryView: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'score' | 'growth' | 'size'>('score');
   const [filterRec, setFilterRec] = useState<'all' | 'strong-buy' | 'buy' | 'hold'>('all');
-  const { isOffline, activeFailover } = useBackendStatus();
+  const [markets, setMarkets] = useState<MarketEntry[]>(MARKETS);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const backendStatus = useBackendStatus();
+  const { isOffline, activeFailover, nodeSource } = backendStatus;
 
-  const { data: markets = MARKETS, isLoading, error } = useQuery<MarketEntry[]>({
-    queryKey: ['market-entry-scores'],
-    queryFn: async (): Promise<MarketEntry[]> => {
-      try {
-        await intelligence.getMarketEntryAnalysis('UA_RECON');
-      } catch {
-        // ігноруємо помилку — повертаємо статичні ринки
+  const fetchOpportunities = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await intelligence.getMarketOpportunities('UA_MARKET_SIGINT');
+      if (result && Array.isArray(result)) {
+        setMarkets(result);
       }
-      return MARKETS;
+    } catch (err) {
+      console.error('[MarketEntry] Error fetching opportunities', err);
+      setError('Критична десинхронізація OPPORTUNITY_NODES.');
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'MarketEntry',
+          message: 'Помилка синхронізації з OSINT-вузлом (UA_MARKET_SIGINT)',
+          severity: 'error',
+          timestamp: new Date().toISOString(),
+          code: 'OPPORTUNITY_FAIL'
+        }
+      }));
+    } finally {
+      setIsLoading(false);
     }
-  });
+  };
 
-  // Trace: v56.5-ELITE Error Protocol Integration
-  React.useEffect(() => {
-    if (error) {
-      window.dispatchEvent(new CustomEvent('predator-error', { 
-        detail: { 
-          service: 'MarketEntry', 
-          operation: 'Scoring Analysis', 
-          message: error instanceof Error ? error.message : 'Market data nexus unavailable' 
-        } 
+  useEffect(() => {
+    fetchOpportunities();
+
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'MarketEntry',
+          message: `РЕЖИМ АВТОНОМНОЇ РОЗВІДКИ [${nodeSource}]: Дані про ринки завантажено з локального кешу Mirror Vault.`,
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'OPPORTUNITY_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'MarketEntry',
+          message: `OPPORTUNITY_CORE [${nodeSource}]: Геополітичні вектори синхронізовано. Аналіз доступний.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'OPPORTUNITY_SUCCESS'
+        }
       }));
     }
-  }, [error]);
+  }, [isOffline, nodeSource]);
 
   const sorted = [...markets]
     .filter(m => filterRec === 'all' || m.recommendation === filterRec)
     .sort((a, b) => {
       if (sortBy === 'score')  return b.entryScore - a.entryScore;
-      if (sortBy === 'growth') return parseFloat(b.growthRate) - parseFloat(a.growthRate);
+      if (sortBy === 'growth') return (parseFloat(b.growthRate.replace('+', '')) || 0) - (parseFloat(a.growthRate.replace('+', '')) || 0);
       return 0;
     });
 
@@ -175,7 +206,7 @@ const MarketEntryView: React.FC = () => {
   ];
 
   const scoreColor = (s: number) =>
-    s >= 80 ? '#D4AF37' : s >= 65 ? '#fbbf24' : '#E11D48';
+    s >= 80 ? '#D4AF37' : s >= 65 ? '#fbbf24' : '#D97706';
 
   return (
     <PageTransition>
@@ -205,7 +236,7 @@ const MarketEntryView: React.FC = () => {
                     {isOffline ? 'SOVEREIGN_EMERGENCY' : 'MARKET_ENTRY_SIGINT'} // ACTIVE_CORE
                   </span>
                   <div className="h-px w-12 bg-yellow-500/20" />
-                  <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                  <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                   MARKET ENTRY <span className={cn("underline decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-yellow-500 decoration-yellow-600/30")}>SCORE</span>
@@ -213,31 +244,37 @@ const MarketEntryView: React.FC = () => {
               </div>
             </div>
           }
-          breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v56.5']}
+          breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v57.2']}
           badges={[
-            { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Lock size={10} /> },
+            { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Lock size={10} /> },
             { label: 'PREDICTIVE_CORE_v5', color: 'primary', icon: <Cpu size={10} /> },
           ]}
           stats={[
-            { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', icon: <Cpu />, color: isOffline ? 'warning' : 'gold' },
+            { 
+              label: isOffline ? 'MIRROR_RECOVERY' : 'ВУЗОЛ_SOURCE', 
+              value: isOffline ? `${Math.floor(backendStatus.healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
+              icon: <Cpu />, 
+              color: isOffline ? 'warning' : 'gold',
+              animate: isOffline
+            },
+            { label: 'STABILITY', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
             { label: 'FAILOVER', value: activeFailover ? 'COLAB_SHARED' : isOffline ? 'PROXIFIED' : 'STANDBY', icon: <Network />, color: isOffline ? 'warning' : 'primary' },
-            { label: 'RELIABILITY', value: '96.4%', icon: <Fingerprint />, color: 'success' },
           ]}
           actions={
             <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
               <Download size={24} />
-              MARKET_STRATEGY_ELITE
+              MARKET_STRATEGY_WRAITH
             </button>
           }
         />
 
-        {/* ── МЕТРИКИ ELITE ── */}
+        {/* ── МЕТРИКИ WRAITH ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter((m: any) => m.recommendation === 'strong-buy').length}`, sub: 'High Opportunity Hubs', c: '#D4AF37' },
-            { l: 'РЕКОМЕНДОВАНО',    v: `${markets.filter((m: any) => m.recommendation === 'buy').length}`,         sub: 'Viable Growth Vectors', c: '#D4AF37' },
+            { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter(m => m.recommendation === 'strong-buy').length}`, sub: 'High Opportunity Hubs', c: '#D4AF37' },
+            { l: 'РЕКОМЕНДОВАНО',    v: `${markets.filter(m => m.recommendation === 'buy').length}`,         sub: 'Viable Growth Vectors', c: '#D4AF37' },
             { l: 'ALPHA_TARGET',     v: sorted[0]?.country ?? '—',  sub: `Fidelity Score ${sorted[0]?.entryScore ?? 0}`, c: '#D4AF37' },
-            { l: 'FASTEST_TO_REV',    v: sorted.find((m:any)=>m.id==='mkt-004')?.country || 'Румунія',                   sub: '3-6 Mo Velocity',                    c: '#D4AF37' },
+            { l: 'FASTEST_TO_REV',    v: sorted.find(m => m.id === 'mkt-004')?.country || 'Румунія',                   sub: '3-6 Mo Velocity',                    c: '#D4AF37' },
           ].map((m, i) => (
             <motion.div
               key={m.l}
@@ -252,12 +289,12 @@ const MarketEntryView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
+        {/* ── ОСНОВНИЙ КОНТЕНТ WRAITH ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-          {/* Список ринків ELITE */}
+          {/* Список ринків WRAITH */}
           <div className="lg:col-span-5 space-y-8">
-            {/* Фільтри ELITE */}
+            {/* Фільтри WRAITH */}
             <div className="flex flex-wrap gap-4 items-center p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                 {(['all', 'strong-buy', 'buy', 'hold'] as const).map(r => (
@@ -267,7 +304,7 @@ const MarketEntryView: React.FC = () => {
                         ? "bg-yellow-500 text-black shadow-4xl scale-105 font-bold"
                         : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-yellow-500/10 hover:bg-white/5"
                     )}>
-                    {r === 'all' ? 'УСІ_МОДЕЛІ' : (RECOMMENDATION_CFG[r as keyof typeof RECOMMENDATION_CFG]?.label.replace(' ', '_') || r)}
+                    {r === 'all' ? 'УСІ_МОДЕЛІ' : (RECOMMENDATION_CFG[r as keyof typeof RECOMMENDATION_CFG]?.label?.replace(' ', '_') || r)}
                   </button>
                 ))}
               </div>
@@ -344,7 +381,7 @@ const MarketEntryView: React.FC = () => {
             </div>
           </div>
 
-          {/* Деталі ринку ELITE */}
+          {/* Деталі ринку WRAITH */}
           <div className="lg:col-span-7">
             <AnimatePresence mode="wait">
               <motion.div
@@ -352,7 +389,7 @@ const MarketEntryView: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                 className="space-y-8"
               >
-                {/* Заголовок ELITE */}
+                {/* Заголовок WRAITH */}
                 <div className="bg-black/80 backdrop-blur-3xl border-2 border-yellow-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-32 opacity-[0.03] pointer-events-none">
                      <Globe size={400} className="text-yellow-500" />
@@ -396,11 +433,11 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Радар + Можливості + Ризики ELITE */}
+                {/* Радар + Можливості + Ризики WRAITH */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                   <div className="bg-black/60 backdrop-blur-3xl border-2 border-white/5 p-10 rounded-[4rem] shadow-3xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-12 opacity-5">
-                       <Radar size={150} className="text-yellow-500" />
+                       <CyberOrb size={130} color="#D4AF37" />
                     </div>
                     <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] mb-10 italic">STRATEGIC_RADAR_SCAN</h3>
                     <div className="h-[320px] relative z-10">
@@ -424,7 +461,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
 
                   <div className="space-y-8">
-                    {/* Можливості ELITE */}
+                    {/* Можливості WRAITH */}
                     <div className="bg-black/60 border-2 border-yellow-500/10 p-10 rounded-[3.5rem] group hover:border-yellow-500/30 transition-all shadow-3xl relative overflow-hidden">
                        <div className="absolute top-0 left-0 w-1.5 h-full bg-yellow-500 opacity-20" />
                       <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
@@ -441,17 +478,17 @@ const MarketEntryView: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Ризики ELITE */}
-                    <div className="bg-black/60 border-2 border-rose-500/10 p-10 rounded-[3.5rem] group hover:border-rose-500/30 transition-all shadow-3xl relative overflow-hidden">
-                       <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-500 opacity-20" />
-                      <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
-                        <AlertTriangle size={20} className="text-rose-500" />
+                    {/* Ризики WRAITH */}
+                    <div className="bg-black/60 border-2 border-amber-500/10 p-10 rounded-[3.5rem] group hover:border-amber-500/30 transition-all shadow-3xl relative overflow-hidden">
+                       <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-500 opacity-20" />
+                      <h3 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
+                        <AlertTriangle size={20} className="text-amber-500" />
                         THREAT_EXPOSURE_VECTOR
                       </h3>
                       <div className="space-y-4">
                         {selected.risks.map((r: string, i: number) => (
-                          <div key={i} className="flex gap-4 p-5 bg-rose-500/[0.02] border border-white/5 rounded-2xl">
-                            <AlertTriangle size={18} className="text-rose-800 mt-1 shrink-0" />
+                          <div key={i} className="flex gap-4 p-5 bg-amber-500/[0.02] border border-white/5 rounded-2xl">
+                            <Target size={18} className="text-amber-800 mt-1 shrink-0" />
                             <span className="text-[13px] font-black text-slate-500 uppercase tracking-tight italic leading-relaxed font-bold">{r}</span>
                           </div>
                         ))}
@@ -460,7 +497,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Партнери + Режим входу ELITE */}
+                {/* Партнери + Режим входу WRAITH */}
                 <div className="bg-black/60 border-2 border-white/5 p-12 rounded-[4rem] shadow-4xl grid grid-cols-1 xl:grid-cols-2 gap-12 backdrop-blur-3xl">
                   <div>
                     <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
@@ -479,7 +516,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
-                      <Layers size={20} className="text-yellow-600/40" />
+                      <CyberOrb size={80} color="#D4AF37" />
                       ENTRY_DEPLOYMENT_MODE
                     </h3>
                     <div className="space-y-4">
@@ -493,32 +530,32 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 🤖 Sovereign AI Verdict ELITE */}
-                <div className="relative group overflow-hidden rounded-[5rem] border-2 border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-[#020202] p-12 shadow-4xl backdrop-blur-3xl">
+                {/* 🤖 Sovereign AI Verdict WRAITH */}
+                <div className="relative group overflow-hidden rounded-[5rem] border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-black/40 to-[#020202] p-12 shadow-4xl backdrop-blur-3xl">
                     <div className="absolute top-0 right-0 p-16 opacity-10 pointer-events-none group-hover:scale-125 transition-transform duration-[10s]">
-                        <Zap size={300} className="text-rose-500" />
+                        <Zap size={300} className="text-amber-500" />
                     </div>
                     <div className="relative z-10 space-y-10">
                         <div className="flex items-center gap-8">
-                            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-rose-600 text-white shadow-[0_0_40px_rgba(225,29,72,0.5)]">
+                            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[2rem] bg-amber-600 text-black shadow-[0_0_40px_rgba(245,158,11,0.5)]">
                                 <Target size={40} />
                             </div>
                             <div>
                                 <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic font-serif">PREDATIVE_ENTRY_VERDICT</h3>
                                 <div className="flex items-center gap-3 mt-2">
-                                    <Cpu size={14} className="text-rose-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v56.5-ELITE</span>
+                                    <Cpu size={14} className="text-amber-500 animate-pulse" />
+                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v57.2-WRAITH</span>
                                 </div>
                             </div>
                         </div>
-                        <p className="text-lg leading-[2.2] text-slate-300 italic border-l-8 border-rose-600/50 pl-12 bg-white/[0.02] py-10 rounded-r-[4rem] font-medium shadow-inner">
+                        <p className="text-lg leading-[2.2] text-slate-300 italic border-l-8 border-amber-600/50 pl-12 bg-white/[0.02] py-10 rounded-r-[4rem] font-medium shadow-inner">
                             На основі глибокого аналізу макроекономічних сигналів та регуляторної динаміки, ринок {selected.country} пропонує оптимальну точку входу в секторі {selected.sector}. Впевненість нейронної моделі PREDATOR становить 94.8%. Будь-яке зволікання зменшує вікно переваги.
                         </p>
                     </div>
                 </div>
 
                 <div className="pt-8">
-                  <button className="w-full py-10 bg-gradient-to-r from-rose-700 via-rose-600 to-rose-700 text-white text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[3rem] group flex items-center justify-center gap-8 border-4 border-rose-500/20">
+                  <button className="w-full py-10 bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 text-black text-[14px] font-black uppercase tracking-[0.6em] italic hover:brightness-110 transition-all shadow-4xl rounded-[3rem] group flex items-center justify-center gap-8 border-4 border-amber-500/20">
                     <Target size={32} className="group-hover:scale-150 transition-transform duration-500" />
                     EXECUTE_ENTRY_PROTOCOL — {selected.country.toUpperCase()}
                   </button>

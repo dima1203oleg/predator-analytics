@@ -1,5 +1,5 @@
 /**
- * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v56.5-ELITE
+ * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v57.2-WRAITH
  * PREDATOR Analytics — Global Maritime Traffic & Risk Intelligence
  * 
  * Моніторинг морського трафіку, AIS-трекінг суден та аналіз портів.
@@ -60,7 +60,7 @@ const RiskMeter: React.FC<{ score: number; size?: 'sm' | 'md' }> = ({ score, siz
 };
 
 const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () => void }> = ({ vessel, isSelected, onClick }) => {
-    const riskColor = vessel.risk_score > 80 ? 'rose' : vessel.risk_score > 60 ? 'amber' : 'emerald';
+    const riskColor = vessel.risk_score > 80 ? 'amber' : vessel.risk_score > 60 ? 'amber' : 'emerald';
     
     return (
         <motion.div
@@ -75,7 +75,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
         >
             <div className="flex items-start justify-between">
                <div className="flex items-center gap-5">
-                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center border shadow-2xl", vessel.risk_score > 80 ? "bg-rose-500/10 border-rose-500/30 text-rose-500" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-500")}>
+                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center border shadow-2xl", vessel.risk_score > 80 ? "bg-amber-500/10 border-amber-500/30 text-amber-500" : "bg-cyan-500/10 border-cyan-500/30 text-cyan-500")}>
                      <Ship size={24} />
                   </div>
                   <div>
@@ -84,7 +84,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                   </div>
                </div>
                <div className="text-right">
-                  <span className={cn("text-2xl font-black italic font-mono tracking-tighter", vessel.risk_score > 80 ? "text-rose-500" : "text-emerald-500")}>{vessel.risk_score}</span>
+                  <span className={cn("text-2xl font-black italic font-mono tracking-tighter", vessel.risk_score > 80 ? "text-amber-500" : "text-emerald-500")}>{vessel.risk_score}</span>
                   <p className="text-[8px] font-black text-slate-800 uppercase italic leading-none">CERS</p>
                </div>
             </div>
@@ -95,7 +95,7 @@ const VesselCard: React.FC<{ vessel: Vessel; isSelected: boolean; onClick: () =>
                </div>
                <div className="flex items-center gap-3">
                   <span className="text-[9px] font-black font-mono text-cyan-600">{vessel.speed || '0.0'} KN</span>
-                  <div className={cn("w-2 h-2 rounded-full", vessel.risk_score > 80 ? "bg-rose-500 animate-pulse" : "bg-emerald-500")} />
+                  <div className={cn("w-2 h-2 rounded-full", vessel.risk_score > 80 ? "bg-amber-500 animate-pulse" : "bg-emerald-500")} />
                </div>
             </div>
         </motion.div>
@@ -191,7 +191,7 @@ export default function MaritimeView() {
                                   MARITIME_SOVEREIGN // GLOBAL_AIS_NET
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МОРСЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕРЕН</span>
@@ -258,7 +258,7 @@ export default function MaritimeView() {
                                        <h3 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none truncate max-w-[400px]">{selectedVessel.name}</h3>
                                        <p className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">OWNER_PROFILE // SANCTIONS_CHECK_READY</p>
                                     </div>
-                                    <button onClick={() => setSelectedVessel(null)} className="p-4 bg-white/5 rounded-xl hover:bg-rose-500 hover:text-white transition-all"><X size={24} /></button>
+                                    <button onClick={() => setSelectedVessel(null)} className="p-4 bg-white/5 rounded-xl hover:bg-amber-500 hover:text-white transition-all"><X size={24} /></button>
                                  </div>
                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
                                     {[

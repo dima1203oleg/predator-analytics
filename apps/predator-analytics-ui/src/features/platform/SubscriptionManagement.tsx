@@ -261,7 +261,7 @@ const UsageBar: React.FC<{ metric: UsageMetric }> = ({ metric }) => {
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           className={`h-full rounded-full ${
-            isNearLimit ? 'bg-gradient-to-r from-amber-500 to-rose-500' : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+            isNearLimit ? 'bg-gradient-to-r from-amber-500 to-amber-500' : 'bg-gradient-to-r from-cyan-500 to-blue-500'
           }`}
         />
       </div>

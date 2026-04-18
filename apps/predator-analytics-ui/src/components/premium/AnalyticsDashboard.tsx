@@ -1,10 +1,10 @@
 /**
- * Аналітичний Дашборд Predator v56.5-ELITE | Neural Analytics Matrix
+ * Аналітичний Дашборд Predator v57.2-WRAITH | Neural Analytics Matrix
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
  * Прямий моніторинг когнітивної матриці та інфраструктурного шару.
  *
- * © 2026 PREDATOR Analytics - Повна українізація v56.5-ELITE
+ * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -58,7 +58,7 @@ interface TimeSeriesPoint {
   label?: string;
 }
 
-// Покращений компонент швидкої статистики v56.5-ELITE
+// Покращений компонент швидкої статистики v57.2-WRAITH
 const QuickStatCard: React.FC<{
   icon: React.ElementType;
   label: string;
@@ -141,7 +141,7 @@ const QuickStatCard: React.FC<{
   );
 };
 
-// Прогресивний графік v56.5-ELITE
+// Прогресивний графік v57.2-WRAITH
 const NeuralChart: React.FC<{
   title: string;
   subtitle: string;
@@ -236,7 +236,7 @@ const NeuralChart: React.FC<{
   );
 };
 
-// Головний компонент дашборду v56.5-ELITE
+// Головний компонент дашборду v57.2-WRAITH
 export const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -536,7 +536,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-[11px] font-black text-white uppercase tracking-widest mb-1">Architecture_Integrity</div>
-            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v56.5-ELITE.1</div>
+            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v57.2-WRAITH.1</div>
           </div>
         </div>
 

@@ -2,7 +2,7 @@ import type { DashboardAlert, DashboardOverview } from '@/services/api/dashboard
 import type { FactoryStats } from '@/features/factory/types';
 import type { SystemStatsResponse } from '@/services/api/system';
 
-export type FactorTone = 'indigo' | 'amber' | 'rose' | 'emerald' | 'cyan' | 'slate';
+export type FactorTone = 'yellow' | 'amber' | 'emerald' | 'cyan' | 'slate';
 
 export interface FactorStatCard {
     label: string;
@@ -77,7 +77,7 @@ const formatDateTime = (value?: string | null): string | null => {
 
 const getAlertTone = (severity?: DashboardAlert['severity']): FactorTone => {
     if (severity === 'critical') {
-        return 'rose';
+        return 'amber';
     }
 
     if (severity === 'warning') {
@@ -156,7 +156,7 @@ export const normalizeFactorsSnapshot = (
                 label: 'Вузли графа',
                 value: formatCount(summary?.graph_nodes ?? null),
                 hint: 'Підтверджені сутності з агрегованого огляду.',
-                tone: 'indigo',
+                tone: 'yellow',
             },
             {
                 label: 'Пошукові документи',
@@ -183,7 +183,7 @@ export const normalizeFactorsSnapshot = (
                 label: 'Фабрика факторів',
                 path: '/system-factory',
                 description: 'Оркестрація патернів, запусків і якості факторних моделей без локально намальованих показників.',
-                tone: 'indigo',
+                tone: 'yellow',
                 metrics: [
                     { label: 'Патернів', value: formatCount(factoryStats?.total_patterns ?? null) },
                     { label: 'Золотих', value: formatCount(factoryStats?.gold_patterns ?? null) },
@@ -207,7 +207,7 @@ export const normalizeFactorsSnapshot = (
                 label: 'AML та сигнали',
                 path: '/aml',
                 description: 'Живий контур критичних і попереджувальних алертів, які потребують перевірки у модулі AML.',
-                tone: 'rose',
+                tone: 'amber',
                 metrics: [
                     { label: 'Критичних', value: formatCount(criticalAlertCount) },
                     { label: 'Попереджень', value: formatCount(warningAlertCount) },

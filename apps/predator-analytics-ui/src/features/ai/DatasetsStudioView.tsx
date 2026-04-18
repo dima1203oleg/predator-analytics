@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Database, Server, RefreshCw, CheckCircle2, AlertTriangle, 
@@ -10,9 +10,35 @@ import { TacticalCard } from '@/components/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 const DatasetsStudioView = () => {
+  const { isOffline, nodeSource } = useBackendStatus();
   const [activeTab, setActiveTab] = useState<'sources' | 'cleaning' | 'annotation' | 'quality'>('sources');
+
+  useEffect(() => {
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Datasets_Studio',
+          message: 'ДАТАСЕТ-ЦЕНТР ПЕРЕЙШОВ У РЕЖИМ ЛОКАЛЬНОГО КЕШУ (DATA_OFFLINE). Синхронізація з хмарою призупинена.',
+          severity: 'warning',
+          timestamp: new Date().toISOString(),
+          code: 'DATA_OFFLINE'
+        }
+      }));
+    } else {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'Datasets_Studio',
+          message: 'СИНХРОНІЗАЦІЯ ДАТАСЕТІВ УСПІШНА (DATA_SUCCESS). Доступ до NVIDIA-GRID відновлено.',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'DATA_SUCCESS'
+        }
+      }));
+    }
+  }, [isOffline]);
 
   const stats = [
     { label: 'Загальний об’єм', value: '4.2 TB', icon: <Database />, color: 'primary' },
@@ -32,13 +58,13 @@ const DatasetsStudioView = () => {
       <AdvancedBackground />
       
       <ViewHeader 
-        title="СТУДІЯ ДАТАСЕТІВ v56.5-ELITE"
+        title="СТУДІЯ ДАТАСЕТІВ v57.2-WRAITH"
         subtitle="Керування даними для навчання ШІ-моделей та OSINT-аналітики"
         icon={<Database size={24} className="text-cyan-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ДАТАСЕТИ']}
         stats={[
-          { label: 'Джерела', value: '14 ACTIVE', icon: <Server size={14} />, color: 'success' },
-          { label: 'Sync Status', value: 'OPTIMAL', icon: <RefreshCw size={14} />, color: 'primary' }
+          { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'SYNC', value: isOffline ? 'CACHED' : 'LIVE', icon: <RefreshCw size={14} />, color: isOffline ? 'warning' : 'success' }
         ]}
       />
 
@@ -170,7 +196,7 @@ const DatasetsStudioView = () => {
                                       <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg text-slate-500 hover:text-emerald-400">
                                          <Download size={12} />
                                       </Button>
-                                      <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg text-slate-500 hover:text-rose-400">
+                                      <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg text-slate-500 hover:text-amber-400">
                                          <Trash2 size={12} />
                                       </Button>
                                    </div>
@@ -183,7 +209,7 @@ const DatasetsStudioView = () => {
               </TacticalCard>
 
               {/* Training Connection */}
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-900/20 to-indigo-900/20 border border-cyan-500/20 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-cyan-900/20 to-yellow-900/20 border border-cyan-500/20 flex flex-col md:flex-row items-center justify-between gap-6">
                  <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400">
                       <RefreshCw className="animate-spin-slow h-5 w-5" />

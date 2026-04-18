@@ -1,5 +1,5 @@
 /**
- * 📊 ADVANCED CHARTS ELITE // РОЗШИРЕНА АНАЛІТИКА | v56.5-ELITE
+ * 📊 ADVANCED CHARTS WRAITH // РОЗШИРЕНА АНАЛІТИКА | v57.2-WRAITH
  * PREDATOR Analytics — High-Fidelity Data Visualization
  * 
  * Потужні графіки для аналітики товарних потоків, ринків та ризиків.
@@ -38,7 +38,7 @@ interface ChartData {
 }
 
 // ========================
-// Chart Components (ELITE)
+// Chart Components (WRAITH)
 // ========================
 
 interface BarChartProps {
@@ -68,11 +68,11 @@ const AnimatedBarChart: React.FC<BarChartProps> = ({ data, height, showLabels = 
                 >
                   <div className="absolute inset-0 bg-yellow-500/5 blur-xl group-hover/bar:bg-yellow-500/20 transition-all" />
                   
-                  {/* Hover tooltip ELITE */}
+                  {/* Hover tooltip WRAITH */}
                   <div className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover/bar:flex flex-col items-center bg-black border border-yellow-500/40 px-3 py-1.5 rounded-xl z-20 shadow-4xl min-w-[80px]">
                     <span className="text-[10px] font-black text-white font-mono">${item.value}M</span>
                     {item.trend && (
-                      <span className={cn("text-[8px] font-black", item.trend >= 0 ? 'text-emerald-400' : 'text-rose-400')}>
+                      <span className={cn("text-[8px] font-black", item.trend >= 0 ? 'text-emerald-400' : 'text-amber-400')}>
                         {item.trend >= 0 ? '▲' : '▼'} {Math.abs(item.trend)}%
                       </span>
                     )}
@@ -220,7 +220,7 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
           </filter>
         </defs>
 
-        {/* Grid lines ELITE */}
+        {/* Grid lines WRAITH */}
         {[0, 25, 50, 75, 100].map((y) => (
           <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="rgba(255, 255, 255, 0.03)" strokeWidth="0.5" />
         ))}
@@ -263,7 +263,7 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
           style={{ filter: `drop-shadow(0 0 8px ${glowColor})` }}
         />
 
-        {/* Points ELITE */}
+        {/* Points WRAITH */}
         {points.map((p, i) => (
           <motion.g key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.5 + i * 0.05 }}>
             <circle cx={p.x} cy={p.y} r="2.5" fill="black" stroke={color} strokeWidth="1" />
@@ -275,8 +275,10 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
   );
 };
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 // ========================
-// Main Component (ELITE)
+// Main Component (WRAITH)
 // ========================
 
 const AdvancedChartsPremium: React.FC = () => {
@@ -285,6 +287,7 @@ const AdvancedChartsPremium: React.FC = () => {
   const [categories, setCategories] = useState<ChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline } = useBackendStatus();
 
   const fetchData = async () => {
     try {
@@ -309,7 +312,17 @@ const AdvancedChartsPremium: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [timeRange]);
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'QuantumVisual',
+          action: 'RenderArray',
+          message: 'Автономний режим: візуалізація базується на локальному квантовому масиві даних.',
+          severity: 'info'
+        }
+      }));
+    }
+  }, [timeRange, isOffline]);
 
   return (
     <PageTransition>
@@ -323,7 +336,7 @@ const AdvancedChartsPremium: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* ELITE HEADER HUD */}
+          {/* WRAITH HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -336,10 +349,10 @@ const AdvancedChartsPremium: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-[#D4AF37] px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      ANALYTICS_ELITE // QUANTUM_VIEW
+                      ANALYTICS_WRAITH // QUANTUM_VIEW
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     АНАЛІТИЧНІ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ГРАФІКИ</span>
@@ -349,7 +362,7 @@ const AdvancedChartsPremium: React.FC = () => {
             }
             breadcrumbs={['INTEL_POOL', 'QUANT_LAB', 'VISUAL_ARRAY']}
             badges={[
-              { label: 'SOVEREIGN_ELITE_v56.5', color: 'gold', icon: <Crown size={10} /> },
+              { label: 'SOVEREIGN_WRAITH_v57.2', color: 'gold', icon: <Crown size={10} /> },
               { label: 'LIVE_TELEMETRY', color: 'primary', icon: <Activity size={10} /> },
             ]}
             stats={[
@@ -360,7 +373,7 @@ const AdvancedChartsPremium: React.FC = () => {
             ]}
           />
 
-          {/* CONTROL HUD ELITE */}
+          {/* CONTROL HUD WRAITH */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 z-20">
              <div className="flex gap-4 p-3 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl backdrop-blur-3xl">
                 {(['week', 'month', 'quarter', 'year'] as const).map((r) => (
@@ -392,7 +405,7 @@ const AdvancedChartsPremium: React.FC = () => {
              </div>
           </div>
 
-          {/* MAIN CHARTS GRID ELITE */}
+          {/* MAIN CHARTS GRID WRAITH */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {loading ? (
               Array(6).fill(0).map((_, i) => (
@@ -416,7 +429,7 @@ const AdvancedChartsPremium: React.FC = () => {
                 <TacticalCard variant="holographic" className="p-12 rounded-[4rem] space-y-10 group/card">
                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-5">
-                         <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-500 shadow-2xl group-hover/card:scale-110 transition-transform">
+                         <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 shadow-2xl group-hover/card:scale-110 transition-transform">
                             <PieChart size={24} />
                          </div>
                          <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">РОЗПОДІЛ КАТЕГОРІЙ</h3>
@@ -484,7 +497,7 @@ const AdvancedChartsPremium: React.FC = () => {
             )}
           </div>
 
-          {/* AI NEURAL INSIGHTS HUD ELITE */}
+          {/* AI NEURAL INSIGHTS HUD WRAITH */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}

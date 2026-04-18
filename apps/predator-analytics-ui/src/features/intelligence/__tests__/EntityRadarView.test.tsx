@@ -1,7 +1,7 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
-import React from 'react'
-import EntityRadarView from '../EntityRadarView'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import EntityRadarView from '../EntityRadarView';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
@@ -9,8 +9,8 @@ vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -22,139 +22,122 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/components/ECharts', () => ({
-    default: () => <div data-testid="echarts-mock">ECharts Radar</div>
-}))
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
 
-vi.mock('@/components/AdvancedBackground', () => ({
-    AdvancedBackground: () => <div data-testid="advanced-bg" />
-}))
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
+vi.mock('@/components/ViewHeader', () => ({
+    ViewHeader: ({ title, stats, badges, actions }: any) => (
+        <div data-testid="view-header">
+            <div data-testid="header-title">{title}</div>
+            <div data-testid="stats-list">{stats?.map((s: any) => s.label).join(', ')}</div>
+            <div data-testid="badges-list">{badges?.map((b: any) => b.label).join(', ')}</div>
+            <div data-testid="header-actions">{actions}</div>
+        </div>
+    )
+}));
 
-vi.mock('@/services/api', () => ({
-    api: {
+vi.mock('@/components/ECharts', () => ({ default: () => <div data-testid="echarts-radar" /> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
+
+vi.mock('@/services/api/config', () => ({
+    apiClient: {
         premium: {
-            getCompetitorRadar: vi.fn()
+            getCompetitorRadar: vi.fn(() => Promise.resolve([
+                {
+                    ueid: '123',
+                    name: 'РАДАР_ТЕСТ_1',
+                    edrpou: '11111111',
+                    sector: 'Логістика',
+                    cers_score: 85,
+                    cers_level: 'CRITICAL',
+                    trend: 'increasing',
+                    confidence: 0.98,
+                    last_updated: new Date().toISOString(),
+                    risk_factors: ['АНТИТЕРСТ_СИГНАЛ']
+                }
+            ]))
         }
     }
-}))
-
-import { api } from '@/services/api'
-
-const mockEntities = [
-    {
-        ueid: '1',
-        name: 'ТОП-ЕНЕРДЖІ "ГРУП"',
-        edrpou: '12345678',
-        sector: 'Паливна галузь',
-        cers_score: 92.5,
-        cers_level: 'CRITICAL',
-        cers_level_ua: 'Критичний',
-        trend: 'increasing',
-        confidence: 0.98,
-        last_updated: '2024-03-20T10:00:00Z',
-        risk_factors: ['SDN List Match', 'Offshore Links'],
-        radar_metrics: { reputation: 20, financials: 40, connections: 10, regulatory: 30, adverse_media: 15 }
-    },
-    {
-        ueid: '2',
-        name: 'ЛОГІСТИК ТРАНС',
-        edrpou: '87654321',
-        sector: 'Логістика',
-        cers_score: 45.0,
-        cers_level: 'MODERATE',
-        cers_level_ua: 'Помірний',
-        trend: 'stable',
-        confidence: 0.95,
-        last_updated: '2024-03-19T10:00:00Z',
-        risk_factors: [],
-        radar_metrics: { reputation: 80, financials: 70, connections: 60, regulatory: 90, adverse_media: 85 }
-    }
-]
+}));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('EntityRadarView', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-        vi.mocked(api.premium.getCompetitorRadar).mockResolvedValue(mockEntities)
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати заголовок та лічильники', async () => {
-        await act(async () => {
-            render(<EntityRadarView />)
-        })
-
-        expect(screen.getByText(/РАДАР/i)).toBeInTheDocument()
-        expect(screen.getAllByText(/СУБ'ЄКТІВ/i).length).toBeGreaterThan(0)
+    it('відображає інтерфейс радару суб\'єктів та завантажує дані', async () => {
+        render(<EntityRadarView />);
+        
+        expect(screen.getByText(/РАДАР/i)).toBeInTheDocument();
+        expect(screen.getByText(/СУБ'ЄКТІВ/i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.getByText('1')).toBeInTheDocument() // КРИТИЧНІ count
-            expect(screen.getByText('2')).toBeInTheDocument() // МОНІТОРИНГ count
-        })
-    })
+            expect(screen.getByText('РАДАР_ТЕСТ_1')).toBeInTheDocument();
+        });
+    });
 
-    test('повинен відображати список суб\'єктів', async () => {
-        await act(async () => {
-            render(<EntityRadarView />)
-        })
-
+    it('ініціює RADAR_SUCCESS при старті сканування', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<EntityRadarView />);
+        
         await waitFor(() => {
-            expect(screen.getByText('ТОП-ЕНЕРДЖІ "ГРУП"')).toBeInTheDocument()
-            expect(screen.getByText('ЛОГІСТИК ТРАНС')).toBeInTheDocument()
-        })
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'RADAR_SUCCESS'
+                    })
+                })
+            );
+        });
+    });
 
-        expect(screen.getByText('12345678')).toBeInTheDocument()
-        expect(screen.getByText('87654321')).toBeInTheDocument()
-    })
-
-    test('повинен фільтрувати суб\'єктів за пошуком', async () => {
-        await act(async () => {
-            render(<EntityRadarView />)
-        })
-
+    it('розгортає тактичну панель суб\'єкта при кліку', async () => {
+        render(<EntityRadarView />);
+        
         await waitFor(() => {
-            expect(screen.getByText('ТОП-ЕНЕРДЖІ "ГРУП"')).toBeInTheDocument()
-        })
+            const entityRow = screen.getByText('РАДАР_ТЕСТ_1');
+            fireEvent.click(entityRow);
+        });
+        
+        expect(screen.getByText(/АКТИВНІ_ПОГРОЗИ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ВЕРДИКТ_PREDATOR_AI/i)).toBeInTheDocument();
+        expect(screen.getByTestId('echarts-radar')).toBeInTheDocument();
+    });
 
-        const input = screen.getByPlaceholderText(/Пошук у глобальному реєстрі/i)
-        fireEvent.change(input, { target: { value: 'ЛОГІСТИК' } })
-
-        expect(screen.queryByText('ТОП-ЕНЕРДЖІ "ГРУП"')).not.toBeInTheDocument()
-        expect(screen.getByText('ЛОГІСТИК ТРАНС')).toBeInTheDocument()
-    })
-
-    test('повинен розгортати панель деталей при натисканні', async () => {
-        await act(async () => {
-            render(<EntityRadarView />)
-        })
-
+    it('виконує пошук за назвою або ЄДРПОУ', async () => {
+        render(<EntityRadarView />);
+        
         await waitFor(() => {
-            expect(screen.getByText('ТОП-ЕНЕРДЖІ "ГРУП"')).toBeInTheDocument()
-        })
+            expect(screen.getByText('РАДАР_ТЕСТ_1')).toBeInTheDocument();
+        });
 
-        const entityRow = screen.getByText('ТОП-ЕНЕРДЖІ "ГРУП"')
-        fireEvent.click(entityRow)
+        const searchInput = screen.getByPlaceholderText(/ПОШУК СЕРЕД КРИТИЧНИХ/i);
+        fireEvent.change(searchInput, { target: { value: '99999999' } });
+        
+        expect(screen.queryByText('РАДАР_ТЕСТ_1')).not.toBeInTheDocument();
+        expect(screen.getByText(/ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО/i)).toBeInTheDocument();
+    });
 
-        await waitFor(() => {
-            expect(screen.getByText(/Risk Topology Radar/i)).toBeInTheDocument()
-            expect(screen.getByTestId('echarts-mock')).toBeInTheDocument()
-            expect(screen.getByText(/Активні Сигнали Загрози/i)).toBeInTheDocument()
-            expect(screen.getByText('SDN List Match')).toBeInTheDocument()
-            expect(screen.getByText(/Генерувати Досьє/i)).toBeInTheDocument()
-        })
-    })
+    it('відображає MIRROR_SCAN в автономному режимі', () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
 
-    test('повинен відображати стан "Об\'єктів не виявлено"', async () => {
-        vi.mocked(api.premium.getCompetitorRadar).mockResolvedValue([])
-
-        await act(async () => {
-            render(<EntityRadarView />)
-        })
-
-        await waitFor(() => {
-            expect(screen.getByText(/Об'єктів не виявлено/i)).toBeInTheDocument()
-        })
-    })
-})
+        render(<EntityRadarView />);
+        
+        expect(screen.getByText(/MIRROR_SCAN/i)).toBeInTheDocument();
+    });
+});

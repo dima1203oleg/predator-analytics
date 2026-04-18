@@ -1,5 +1,5 @@
 /**
- * 👤 PERSON DOSSIER // КОМПРОМАТ НА ОСОБУ | v56.5-ELITE
+ * 👤 PERSON DOSSIER // КОМПРОМАТ НА ОСОБУ | v57.2-WRAITH
  * PREDATOR Analytics — 360° Personal Intelligence
  * 
  * Глибинний аналіз персони: Суди, Борги, Кримінал, Санкції,
@@ -8,7 +8,8 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertTriangle, Building2, CheckCircle, Fingerprint, Globe,
@@ -46,6 +47,21 @@ export default function ComprompatPersonView() {
   const [form, setForm] = useState({ pib: '', dob: '', region: '' });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DossierResult | null>(null);
+  const { isOffline, nodeSource, activeFailover, healingProgress } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+       window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'PersonalIntel',
+            message: 'АКТИВОВАНО РЕЖИМ ЛОКАЛЬНОГО ТРАСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
+            severity: 'warning',
+            timestamp: new Date().toISOString(),
+            code: 'PERSON_OFFLINE'
+          }
+       }));
+    }
+  }, [isOffline]);
 
   const regions = [
     'Київська', 'Харківська', 'Одеська', 'Львівська', 'Дніпропетровська',
@@ -59,6 +75,15 @@ export default function ComprompatPersonView() {
     try {
       const res = await apiClient.post('/person/dossier', { pib: form.pib, region: form.region, dob: form.dob });
       setResult(res.data);
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'PersonalIntel',
+          message: `Сканування об'єкта ${form.pib.toUpperCase()} завершено.`,
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'SCAN_COMPLETE'
+        }
+      }));
     } catch (err: unknown) {
       // Mock for demo
       setResult({
@@ -114,7 +139,7 @@ export default function ComprompatPersonView() {
                           PERSON_INTEL // DOSSIER_DETECTION
                         </span>
                         <div className="h-px w-10 bg-orange-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v56.5-ELITE</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-orange-500 underline decoration-orange-600/20 decoration-8 italic uppercase">ОСОБИ</span>
@@ -127,8 +152,14 @@ export default function ComprompatPersonView() {
              }
              stats={[
                { label: 'ПЕРЕВІРЕНО_ДЖЕРЕЛ', value: String(result?.sources_checked || 42), icon: <Share2 size={14} />, color: 'primary' },
-               { label: 'РИЗИК_ОБ\'ЄКТА', value: result ? `${result.riskScore}%` : '???', icon: <Siren size={14} />, color: 'danger', animate: !!result },
-               { label: 'АКТИВНІ_ЗВ\'ЯЗКИ', value: String(result?.connections.length || 0), icon: <Network size={14} />, color: 'warning' }
+               { 
+                 label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИК_ОБ\'ЄКТА', 
+                 value: isOffline ? `${Math.floor(healingProgress)}%` : result ? `${result.riskScore}%` : '???', 
+                 icon: isOffline ? <Activity size={14} /> : <Siren size={14} />, 
+                 color: isOffline ? 'warning' : 'danger', 
+                 animate: isOffline || !!result 
+               },
+               { label: 'ВУЗОЛ_SOURCE', value: isOffline ? 'OFFLINE' : activeFailover ? 'ZROK_TUNNEL' : 'NVIDIA_MASTER', icon: <Database size={14} />, color: isOffline ? 'warning' : 'gold' }
              ]}
              actions={
                <div className="flex gap-4">
@@ -217,7 +248,7 @@ export default function ComprompatPersonView() {
                          <div className="space-y-2">
                             <div className="flex items-center gap-4">
                                <h2 className="text-5xl font-black text-white uppercase italic tracking-tighter leading-none">{result.pib}</h2>
-                               <Badge className="bg-rose-600/20 text-rose-500 border-rose-500/30 uppercase italic font-black px-4 py-1 text-[10px]">{result.status}</Badge>
+                               <Badge className="bg-amber-600/20 text-amber-500 border-amber-500/30 uppercase italic font-black px-4 py-1 text-[10px]">{result.status}</Badge>
                             </div>
                             <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.3em] italic">
                                РЕГІОН: {result.region.toUpperCase()} • {result.sources_checked} ДЖЕРЕЛ ПЕРЕВІРЕНО
@@ -227,9 +258,9 @@ export default function ComprompatPersonView() {
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 relative z-10">
                          {[
-                            { l: 'СУДОВІ СПРАВИ', v: result.court_cases, i: Scale, color: 'rose' },
+                            { l: 'СУДОВІ СПРАВИ', v: result.court_cases, i: Scale, color: 'amber' },
                             { l: 'БОРГИ ДПС', v: result.tax_debts, i: AlertTriangle, color: 'amber' },
-                            { l: 'САНКЦІЇ', v: result.sanctions_hits, i: ShieldAlert, color: 'rose' },
+                            { l: 'САНКЦІЇ', v: result.sanctions_hits, i: ShieldAlert, color: 'amber' },
                             { l: 'КРИМІНАЛ', v: result.criminal_records, i: Lock, color: 'red' }
                          ].map((s, i) => (
                             <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/[0.04] hover:border-white/10 transition-all text-center group/metric">
@@ -261,7 +292,7 @@ export default function ComprompatPersonView() {
                                     <p className="text-[14px] font-black text-white uppercase italic truncate max-w-[200px]">{c.name}</p>
                                     <p className="text-[9px] font-black text-slate-700 uppercase italic mt-1">{c.role} // {c.edrpou}</p>
                                  </div>
-                                 <span className={cn("text-xl font-black italic font-mono", c.riskScore > 70 ? 'text-rose-500' : 'text-emerald-500')}>{c.riskScore}%</span>
+                                 <span className={cn("text-xl font-black italic font-mono", c.riskScore > 70 ? 'text-amber-500' : 'text-emerald-500')}>{c.riskScore}%</span>
                               </div>
                             ))}
                          </div>
@@ -290,17 +321,17 @@ export default function ComprompatPersonView() {
 
                 {/* SIDEBAR NEXUS */}
                 <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} className="col-span-12 xl:col-span-4 space-y-10">
-                   <section className="rounded-[3.5rem] bg-black border-2 border-indigo-900/10 p-10 shadow-3xl space-y-10 relative overflow-hidden group">
+                   <section className="rounded-[3.5rem] bg-black border-2 border-yellow-900/10 p-10 shadow-3xl space-y-10 relative overflow-hidden group">
                       <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform">
-                         <Network size={280} className="text-indigo-500" />
+                         <Network size={280} className="text-yellow-500" />
                       </div>
-                      <h3 className="text-[12px] font-black text-indigo-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
+                      <h3 className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
                          <Share2 size={18} /> КАРТА_ЗВ'ЯЗКІВ
                       </h3>
                       <div className="space-y-6 relative z-10">
                          {result.connections.map((c, i) => (
-                           <div key={i} className="flex items-center gap-5 p-6 bg-white/[0.01] border border-white/[0.04] rounded-[2rem] hover:bg-indigo-600/5 transition-all group/item">
-                              <div className="p-4 bg-indigo-600/10 text-indigo-500 rounded-2xl group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all">
+                           <div key={i} className="flex items-center gap-5 p-6 bg-white/[0.01] border border-white/[0.04] rounded-[2rem] hover:bg-yellow-600/5 transition-all group/item">
+                              <div className="p-4 bg-yellow-600/10 text-yellow-500 rounded-2xl group-hover/item:bg-yellow-500 group-hover/item:text-white transition-all">
                                  <UserX size={20} />
                               </div>
                               <div className="space-y-1">
@@ -310,7 +341,7 @@ export default function ComprompatPersonView() {
                            </div>
                          ))}
                       </div>
-                      <button className="w-full py-6 bg-indigo-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-indigo-600 shadow-3xl transition-all">
+                      <button className="w-full py-6 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-3xl transition-all">
                          ВІЗУАЛІЗУВАТИ_НЕЙРОМЕРЕЖУ
                       </button>
                    </section>
@@ -319,12 +350,12 @@ export default function ComprompatPersonView() {
                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
                           <Activity size={18} /> ОПЕРАТИВНИЙ_СТАН
                        </h3>
-                       <div className="p-8 rounded-[2.5rem] bg-rose-600/5 border border-rose-600/20 space-y-6">
-                          <p className="text-[14px] font-bold text-rose-300 italic leading-snug">ВИЯВЛЕНО НЕПОВ'ЯЗАНІ АКТИВИ В КІПРСЬКИХ РЕЄСТРАХ ЧЕРЕЗ АНОМАЛЬНЕ СПІВПАДІННЯ ДАРТ-СПЕКТРІВ.</p>
+                       <div className="p-8 rounded-[2.5rem] bg-amber-600/5 border border-amber-600/20 space-y-6">
+                          <p className="text-[14px] font-bold text-amber-300 italic leading-snug">ВИЯВЛЕНО НЕПОВ'ЯЗАНІ АКТИВИ В КІПРСЬКИХ РЕЄСТРАХ ЧЕРЕЗ АНОМАЛЬНЕ СПІВПАДІННЯ ДАРТ-СПЕКТРІВ.</p>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-3">
-                                <ShieldAlert size={16} className="text-rose-500" />
-                                <span className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em]">КРИТИЧНА_АНОМАЛІЯ_detected</span>
+                                <ShieldAlert size={16} className="text-amber-500" />
+                                <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">КРИТИЧНА_АНОМАЛІЯ_detected</span>
                              </div>
                              <span className="text-[9px] font-black text-slate-600 font-mono italic">0.0024s // PREDATOR_BRAIN</span>
                           </div>

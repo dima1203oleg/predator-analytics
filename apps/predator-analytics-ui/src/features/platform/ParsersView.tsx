@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.5-ELITE | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
+ * PREDATOR v57.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
@@ -70,7 +70,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
             whileHover={{ y: -5 }}
             className={cn(
                 "bg-slate-950/40 border rounded-[32px] p-8 relative overflow-hidden group transition-all panel-3d",
-                connector.status === 'error' ? 'border-rose-500/30 shadow-[0_20px_40px_-10px_rgba(244,63,94,0.1)]' :
+                connector.status === 'error' ? 'border-amber-500/30 shadow-[0_20px_40px_-10px_rgba(244,63,94,0.1)]' :
                 connector.status === 'active' ? 'border-emerald-500/20 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.1)]' :
                 'border-white/5 hover:border-white/20'
             )}
@@ -122,7 +122,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
                     "font-black text-[9px] px-3 py-1 italic tracking-widest uppercase",
                     connector.status === 'active' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/10" :
                     connector.status === 'syncing' ? "bg-blue-500/20 text-blue-400 border border-blue-500/10 animate-pulse" :
-                    connector.status === 'error' ? "bg-rose-500/20 text-rose-400 border border-rose-500/10" :
+                    connector.status === 'error' ? "bg-amber-500/20 text-amber-400 border border-amber-500/10" :
                     "bg-slate-800 text-slate-500 border border-white/5"
                 )}>
                     {connector.status === 'active' ? '● ACTIVE' : connector.status === 'syncing' ? '● SYNCING' : connector.status.toUpperCase()}
@@ -163,7 +163,7 @@ const ParsersView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full pb-20">
                 
-                {/* View Header v56.5-ELITE */}
+                {/* View Header v57.2-WRAITH */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">

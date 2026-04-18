@@ -183,7 +183,7 @@ const AgentHexCard: React.FC<{
             <div className={`
                 relative p-5 rounded-[24px] border overflow-hidden transition-all duration-300
                 ${isSelected
-                    ? 'border-blue-500/60 bg-gradient-to-br from-blue-950/60 to-indigo-950/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]'
+                    ? 'border-blue-500/60 bg-gradient-to-br from-blue-950/60 to-yellow-950/40 shadow-[0_0_30px_rgba(59,130,246,0.15)]'
                     : 'border-white/[0.06] bg-slate-900/50 hover:border-white/20 hover:bg-slate-900/70'
                 }
             `}>
@@ -516,7 +516,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'NEXUS v56.5-ELITE', 'МЕНЕДЖЕР ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v57.2-WRAITH', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },
@@ -526,7 +526,7 @@ const AgentsView: React.FC = () => {
             />
 
             <div className="flex flex-wrap items-center gap-3">
-                <Badge className={`border px-4 py-2 text-[11px] font-bold ${backendStatus.isOffline ? 'border-rose-500/30 bg-rose-500/10 text-rose-200' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200'}`}>
+                <Badge className={`border px-4 py-2 text-[11px] font-bold ${backendStatus.isOffline ? 'border-amber-500/30 bg-amber-500/10 text-amber-200' : 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200'}`}>
                     {backendStatus.statusLabel}
                 </Badge>
                 <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -670,7 +670,7 @@ const AgentsView: React.FC = () => {
                                 className="space-y-4"
                             >
                                 {/* OSINT Header */}
-                                <div className="p-5 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/40 to-indigo-950/30">
+                                <div className="p-5 rounded-3xl border border-purple-500/20 bg-gradient-to-br from-purple-950/40 to-yellow-950/30">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
@@ -686,8 +686,8 @@ const AgentsView: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-2 h-2 rounded-full ${osintUnavailable ? 'bg-rose-500' : osintSummary.totalTools > 0 ? 'bg-green-500 animate-pulse' : 'bg-slate-500'}`} />
-                                            <span className={`text-[9px] font-bold uppercase tracking-widest ${osintUnavailable ? 'text-rose-300' : osintSummary.totalTools > 0 ? 'text-green-400' : 'text-slate-400'}`}>
+                                            <div className={`w-2 h-2 rounded-full ${osintUnavailable ? 'bg-amber-500' : osintSummary.totalTools > 0 ? 'bg-green-500 animate-pulse' : 'bg-slate-500'}`} />
+                                            <span className={`text-[9px] font-bold uppercase tracking-widest ${osintUnavailable ? 'text-amber-300' : osintSummary.totalTools > 0 ? 'text-green-400' : 'text-slate-400'}`}>
                                                 {osintStatusLabel}
                                             </span>
                                         </div>
@@ -733,7 +733,7 @@ const AgentsView: React.FC = () => {
                                     ) : (
                                         <div className={`rounded-3xl border px-5 py-6 text-sm ${
                                             osintUnavailable
-                                                ? 'border-rose-500/20 bg-rose-500/10 text-rose-100'
+                                                ? 'border-amber-500/20 bg-amber-500/10 text-amber-100'
                                                 : 'border-white/10 bg-slate-950/40 text-slate-300'
                                         }`}>
                                             {osintUnavailable
@@ -789,7 +789,7 @@ const AgentsView: React.FC = () => {
                                             {/* Центральний текст */}
                                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                                 <div className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">НЕЙРОНН. МЕРЕЖА</div>
-                                                <div className="text-sm font-black text-indigo-400 font-mono">{agents.length} вузлів</div>
+                                                <div className="text-sm font-black text-yellow-400 font-mono">{agents.length} вузлів</div>
                                             </div>
                                         </div>
                                     </div>
@@ -895,7 +895,7 @@ const AgentsView: React.FC = () => {
                             ) : alertsUnavailable ? (
                                 <motion.div
                                     whileHover={{ x: 4 }}
-                                    className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-rose-100"
+                                    className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-amber-100"
                                 >
                                     <AlertCircle size={16} className="shrink-0" />
                                     <span className="leading-relaxed">Бекенд тимчасово не повернув сповіщення флоту. Екран не підміняє це повідомлення фразою про штатний стан.</span>
@@ -915,7 +915,7 @@ const AgentsView: React.FC = () => {
                     {/* ── АВТОРИТЕТ АГЕНТІВ (Authority Level) ── */}
                     <div className="p-4 rounded-3xl border border-white/[0.06] bg-slate-900/40 space-y-3">
                         <div className="flex items-center gap-2 mb-1">
-                            <Shield size={14} className="text-indigo-400" />
+                            <Shield size={14} className="text-yellow-400" />
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">РІВНІ АВТОРИТЕТУ</span>
                         </div>
                         {[

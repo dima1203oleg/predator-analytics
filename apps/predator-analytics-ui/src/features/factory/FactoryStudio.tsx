@@ -160,7 +160,7 @@ export default function FactoryStudio() {
                   className={cn(
                     'px-4 py-2 rounded-lg font-bold text-sm transition-all whitespace-nowrap',
                     activeTab === tab
-                      ? 'bg-indigo-600 text-white shadow-lg'
+                      ? 'bg-yellow-600 text-white shadow-lg'
                       : 'bg-white/5 text-slate-300 hover:bg-white/10'
                   )}
                 >
@@ -183,7 +183,7 @@ export default function FactoryStudio() {
             {loading && activeTab === 'overview' ? (
               <div className="flex items-center justify-center h-full">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                  <RefreshCw className="w-8 h-8 text-indigo-400" />
+                  <RefreshCw className="w-8 h-8 text-yellow-400" />
                 </motion.div>
               </div>
             ) : error ? (
@@ -201,7 +201,7 @@ export default function FactoryStudio() {
                     icon: Database,
                     label: 'Всього Патернів',
                     value: stats.total_patterns,
-                    color: 'indigo',
+                    color: 'yellow',
                   },
                   {
                     icon: Star,
@@ -253,7 +253,7 @@ export default function FactoryStudio() {
                  <div className="flex items-center justify-between bg-black/40 border border-white/10 rounded-lg p-6">
                     <div>
                       <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                         <BrainCircuit className="text-indigo-400" /> Нейронне Тренування Фабрики
+                         <BrainCircuit className="text-yellow-400" /> Нейронне Тренування Фабрики
                       </h3>
                       <p className="text-slate-400 text-sm mt-1">Тренування моделі розпізнавання патернів на кодовій базі</p>
                     </div>
@@ -270,7 +270,7 @@ export default function FactoryStudio() {
                           <button 
                             onClick={() => startTraining.mutate()}
                             disabled={startTraining.isPending}
-                            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
+                            className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"
                           >
                              <PlayCircle className="w-5 h-5" /> Почати Тренування
                           </button>
@@ -284,7 +284,7 @@ export default function FactoryStudio() {
                        <div className="text-xs text-slate-400 uppercase font-bold">Статус</div>
                        <div className="text-lg font-bold text-white mt-1">
                           {trainingStatus?.status === 'TRAINING' ? (
-                             <span className="text-indigo-400 flex items-center gap-2">
+                             <span className="text-yellow-400 flex items-center gap-2">
                                 <RefreshCw className="w-4 h-4 animate-spin" /> В процесі...
                              </span>
                           ) : trainingStatus?.status === 'COMPLETED' ? (
@@ -302,7 +302,7 @@ export default function FactoryStudio() {
                     </div>
                     <div className="bg-white/5 border border-white/10 rounded-lg p-4">
                        <div className="text-xs text-slate-400 uppercase font-bold">Прогрес</div>
-                       <div className="text-lg font-bold text-indigo-400 mt-1">{trainingStatus?.progress || 0}%</div>
+                       <div className="text-lg font-bold text-yellow-400 mt-1">{trainingStatus?.progress || 0}%</div>
                     </div>
                  </div>
 
@@ -368,7 +368,7 @@ export default function FactoryStudio() {
                             <label className="text-xs text-slate-400 uppercase font-bold">
                               {metric.replace(/_/g, ' ')}
                             </label>
-                            <span className="text-sm text-indigo-400 font-bold">
+                            <span className="text-sm text-yellow-400 font-bold">
                               {(testForm as any)[metric]}%
                             </span>
                           </div>
@@ -383,7 +383,7 @@ export default function FactoryStudio() {
                                 [metric]: parseInt(e.target.value),
                               })
                             }
-                            className="w-full mt-2 accent-indigo-500"
+                            className="w-full mt-2 accent-yellow-500"
                           />
                         </div>
                       )
@@ -397,7 +397,7 @@ export default function FactoryStudio() {
                         'w-full mt-6 py-3 rounded-lg font-bold text-white transition-all flex items-center justify-center gap-2',
                         testIngestMutation.isPending
                           ? 'bg-slate-700'
-                          : 'bg-indigo-600 hover:bg-indigo-500'
+                          : 'bg-yellow-600 hover:bg-yellow-500'
                       )}
                     >
                       <Send size={16} />

@@ -1,5 +1,5 @@
 /**
- * PREDATOR v56.5-ELITE | Nexus Sovereign Matrix — Панель Автономної Еволюції
+ * PREDATOR v57.2-WRAITH | Nexus Sovereign Matrix — Панель Автономної Еволюції
  * 
  * Центр стратегічного самовдосконалення та конституційного контролю AZR.
  * - Нейронний моніторинг еволюції ядра
@@ -77,7 +77,7 @@ const NeuralDnaStrand: React.FC = () => {
                         opacity: [0.2, 0.5, 0.2]
                     }}
                     transition={{ duration: 4, repeat: Infinity, delay: i * 0.1 }}
-                    className="w-1.5 h-1.5 rounded-full bg-indigo-500"
+                    className="w-1.5 h-1.5 rounded-full bg-yellow-500"
                 />
             ))}
         </div>
@@ -92,7 +92,7 @@ export const AutonomyDashboard: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'overview' | 'hypotheses' | 'council' | 'constitution' | 'progress'>('overview');
     const [isLoading, setIsLoading] = useState(false);
     
-    // Neural Metrics (v56.5-ELITE Core)
+    // Neural Metrics (v57.2-WRAITH Core)
     const metrics = {
         latency: 184,
         errorRate: 0.002,
@@ -117,19 +117,19 @@ export const AutonomyDashboard: React.FC = () => {
                 <CyberGrid color="rgba(99, 102, 241, 0.05)" />
                 
                 {/* Visual Highlights */}
-                <div className="absolute top-0 right-0 w-[1000px] h-[600px] bg-indigo-500/5 blur-[150px] rounded-full" />
+                <div className="absolute top-0 right-0 w-[1000px] h-[600px] bg-yellow-500/5 blur-[150px] rounded-full" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-600/5 blur-[150px] rounded-full" />
 
                 <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                     
-                    {/* View Header v56.5-ELITE */}
+                    {/* View Header v57.2-WRAITH */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-[50px] rounded-full scale-150 animate-pulse" />
                                     <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                        <Brain size={32} className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
+                                        <Brain size={32} className="text-yellow-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
                                     </div>
                                 </div>
                                 <div>
@@ -138,13 +138,13 @@ export const AutonomyDashboard: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-cyan-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Dna size={12} className="animate-pulse" /> 
-                                        SELF_MODIFICATION_CORE_v56.5-ELITE
+                                        SELF_MODIFICATION_CORE_v57.2-WRAITH
                                     </p>
                                 </div>
                             </div>
                         }
                         icon={<Cpu size={22} className="text-cyan-400" />}
-                        breadcrumbs={['СИНАПСИС', 'NEXUS v56.5-ELITE', 'СУВЕРЕННА МАТРИЦЯ']}
+                        breadcrumbs={['СИНАПСИС', 'NEXUS v57.2-WRAITH', 'СУВЕРЕННА МАТРИЦЯ']}
                         stats={[
                             { label: 'ПОКОЛІННЯ', value: `G${status.generation}`, color: 'primary', icon: <GitBranch size={14} />, animate: true },
                             { label: 'КОНСТИТУЦІЙНІСТЬ', value: `${status.compliance}%`, color: 'success', icon: <Shield size={14} /> },
@@ -152,7 +152,7 @@ export const AutonomyDashboard: React.FC = () => {
                         ]}
                     />
 
-                    {/* Evolutionary Navigation (v56.5-ELITE) */}
+                    {/* Evolutionary Navigation (v57.2-WRAITH) */}
                     <div className="flex flex-wrap items-center justify-center gap-6 p-2 bg-[#0b0f1a]/60 backdrop-blur-3xl rounded-[40px] border border-white/5 w-fit mx-auto shadow-2xl">
                         {[
                             { id: 'overview', label: uk.tabs.overview, icon: Activity },
@@ -194,7 +194,7 @@ export const AutonomyDashboard: React.FC = () => {
                                     
                                     {/* Left Pane - Core Metrics & Orb */}
                                     <div className="lg:col-span-4 space-y-10">
-                                        <div className="relative group p-1.5 rounded-[60px] bg-gradient-to-br from-indigo-500/20 via-transparent to-purple-500/20">
+                                        <div className="relative group p-1.5 rounded-[60px] bg-gradient-to-br from-yellow-500/20 via-transparent to-purple-500/20">
                                             <div className="bg-[#0b0f1a]/95 backdrop-blur-3xl rounded-[56px] p-12 flex flex-col items-center justify-center min-h-[500px] border border-white/5 panel-3d shadow-2xl relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(34,211,238,0.1),_transparent_70%)] pointer-events-none" />
                                                 <CyberOrb size={320} color="#22d3ee" intensity={0.8} pulse />
@@ -202,7 +202,7 @@ export const AutonomyDashboard: React.FC = () => {
                                                     <Brain size={64} className="text-white opacity-40 animate-pulse" />
                                                     <div className="space-y-1">
                                                         <p className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.6em]">NEXUS_CORE</p>
-                                                        <h3 className="text-4xl font-black text-white tracking-widest">v56.5-ELITE ALPHA</h3>
+                                                        <h3 className="text-4xl font-black text-white tracking-widest">v57.2-WRAITH ALPHA</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -226,7 +226,7 @@ export const AutonomyDashboard: React.FC = () => {
                                     <div className="lg:col-span-8 space-y-10">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             {[
-                                                { label: 'ЛАТЕНТНІСТЬ P99', value: `${metrics.latency}мс`, icon: Activity, progress: 85, color: 'indigo' },
+                                                { label: 'ЛАТЕНТНІСТЬ P99', value: `${metrics.latency}мс`, icon: Activity, progress: 85, color: 'yellow' },
                                                 { label: 'ПОМИЛКИ (24h)', value: `${metrics.errorRate}%`, icon: AlertTriangle, progress: 99, color: 'emerald' },
                                                 { label: 'ТОЧНІСТЬ МОДЕЛІ', value: `${metrics.accuracy}%`, icon: Target, progress: 98, color: 'purple' }
                                             ].map((m, i) => (
@@ -256,21 +256,21 @@ export const AutonomyDashboard: React.FC = () => {
                                             ))}
                                         </div>
 
-                                        {/* Evolutionary Phases (v56.5-ELITE Visuals) */}
+                                        {/* Evolutionary Phases (v57.2-WRAITH Visuals) */}
                                         <div className="p-12 bg-slate-900/40 border border-white/5 rounded-[60px] space-y-10">
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-4">
-                                                    <Compass size={16} className="text-indigo-500" />
+                                                    <Compass size={16} className="text-yellow-500" />
                                                     ФАЗИ ЕВОЛЮЦІЙНОГО РОЗВИТКУ
                                                 </h3>
-                                                <Badge className="bg-indigo-500 text-white text-[9px] font-black px-4 py-1.5">v56.5-ELITE_LOCKED</Badge>
+                                                <Badge className="bg-yellow-500 text-white text-[9px] font-black px-4 py-1.5">v57.2-WRAITH_LOCKED</Badge>
                                             </div>
                                             <div className="flex items-center justify-between gap-10 relative">
                                                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/5 -translate-y-1/2" />
                                                 {[
                                                     { id: 1, label: 'МОНІТОРИНГ', status: 'COMPLETED', icon: Eye, color: 'emerald' },
                                                     { id: 2, label: 'РЕКОМЕНДАЦІЇ', status: 'COMPLETED', icon: Compass, color: 'emerald' },
-                                                    { id: 3, label: 'ОБМЕЖЕНА АВТОНОМІЯ', status: 'ACTIVE', icon: Zap, color: 'indigo' },
+                                                    { id: 3, label: 'ОБМЕЖЕНА АВТОНОМІЯ', status: 'ACTIVE', icon: Zap, color: 'yellow' },
                                                     { id: 4, label: 'ПОВНА СУВЕРЕННІСТЬ', status: 'LOCKED', icon: Crown, color: 'slate' }
                                                 ].map((phase, i) => (
                                                     <div key={i} className="flex flex-col items-center gap-6 relative z-10">
@@ -280,14 +280,14 @@ export const AutonomyDashboard: React.FC = () => {
                                                             className={cn(
                                                                 "w-24 h-24 rounded-[32px] flex items-center justify-center border-2 transition-all",
                                                                 phase.status === 'COMPLETED' ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400" :
-                                                                phase.status === 'ACTIVE' ? "bg-indigo-600/20 border-indigo-500 text-indigo-400" :
+                                                                phase.status === 'ACTIVE' ? "bg-yellow-600/20 border-yellow-500 text-yellow-400" :
                                                                 "bg-slate-900 border-white/5 text-slate-700 opacity-50"
                                                             )}
                                                         >
                                                             <phase.icon size={32} />
                                                         </motion.div>
                                                         <div className="text-center space-y-1">
-                                                            <div className={cn("text-[9px] font-black uppercase tracking-widest", phase.status === 'ACTIVE' ? "text-indigo-400" : "text-slate-500")}>{phase.label}</div>
+                                                            <div className={cn("text-[9px] font-black uppercase tracking-widest", phase.status === 'ACTIVE' ? "text-yellow-400" : "text-slate-500")}>{phase.label}</div>
                                                             <div className="text-[7px] font-mono text-slate-700">{phase.status}</div>
                                                         </div>
                                                     </div>
@@ -313,7 +313,7 @@ export const AutonomyDashboard: React.FC = () => {
                                                 <h3 className="text-5xl font-black text-white tracking-widest uppercase italic skew-x-[-6deg]">
                                                     КОНСТИТУЦІЯ <span className="text-amber-500">NEXUS</span>
                                                 </h3>
-                                                <p className="text-xs font-black text-amber-500/70 uppercase tracking-[0.4em]">ФУНДАМЕНТАЛЬНІ_ПРИНЦИПИ_AZR_v56.5-ELITE</p>
+                                                <p className="text-xs font-black text-amber-500/70 uppercase tracking-[0.4em]">ФУНДАМЕНТАЛЬНІ_ПРИНЦИПИ_AZR_v57.2-WRAITH</p>
                                             </div>
                                         </div>
 
@@ -361,8 +361,8 @@ export const AutonomyDashboard: React.FC = () => {
                             {['hypotheses', 'council', 'progress'].includes(activeTab) && (
                                 <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-white/5 rounded-[80px]">
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-indigo-500/20 blur-[100px] rounded-full" />
-                                        <Cpu size={80} className="text-indigo-400 animate-pulse" />
+                                        <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full" />
+                                        <Cpu size={80} className="text-yellow-400 animate-pulse" />
                                     </div>
                                     <div className="text-center space-y-4">
                                         <h3 className="text-3xl font-black text-white uppercase tracking-[0.5em]">СЕКТОР_В_ОБРОБЦІ</h3>

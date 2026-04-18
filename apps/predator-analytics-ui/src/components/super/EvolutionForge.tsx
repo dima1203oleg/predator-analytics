@@ -46,7 +46,7 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
     <div className="p-8 bg-slate-950/80 backdrop-blur-3xl border border-yellow-500/10 rounded-[40px] shadow-2xl overflow-hidden relative group">
       {/* Decorative Glow */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/10 blur-[100px] pointer-events-none group-hover:bg-yellow-500/15 transition-colors duration-700" />
-      <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-rose-500/5 blur-[80px] pointer-events-none" />
+      <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-amber-500/5 blur-[80px] pointer-events-none" />
 
       <div className="flex items-center justify-between mb-8 relative z-10">
         <div className="flex items-center gap-4">
@@ -78,7 +78,7 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center border border-white/10 group-hover/item:border-yellow-500/40 transition-colors">
-                    {task.type === 'aesthetic' ? <Sparkles className="text-rose-400" size={20} /> :
+                    {task.type === 'aesthetic' ? <Sparkles className="text-amber-500" size={20} /> :
                      task.type === 'performance' ? <Zap className="text-yellow-400" size={20} /> :
                      <Box className="text-blue-400" size={20} />}
                   </div>

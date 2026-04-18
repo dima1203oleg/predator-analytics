@@ -9,31 +9,31 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-    /* Predator Elite Tokens v56.5 */
+    /* Predator Elite Tokens v57.2 */
     --background: 230 25% 2%;
     --foreground: 210 40% 98%;
     --card: 230 25% 4%;
     --primary: 199 89% 48%;
     --primary-glow: rgba(0, 243, 255, 0.4);
     
-    --elite-glass: rgba(8, 15, 28, 0.7);
-    --elite-border: rgba(255, 255, 255, 0.1);
-    --elite-accent: #06b6d4; /* Cyan */
+    --wraith-glass: rgba(8, 15, 28, 0.7);
+    --wraith-border: rgba(255, 255, 255, 0.1);
+    --wraith-accent: #06b6d4; /* Cyan */
     
     --aura-blue: hsla(217, 91%, 60%, 0.15);
     --aura-purple: hsla(270, 91%, 60%, 0.1);
 }
 
-.glass-elite {
-    background: var(--elite-glass);
+.glass-wraith {
+    background: var(--wraith-glass);
     backdrop-filter: blur(25px) saturate(160%);
-    border: 1px solid var(--elite-border);
+    border: 1px solid var(--wraith-border);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.glass-elite:hover {
-    border-color: var(--elite-accent);
+.glass-wraith:hover {
+    border-color: var(--wraith-accent);
     box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
 }
 
@@ -975,7 +975,7 @@ kbd {
 }
 
 /* ============================================================================
-   PREDATOR v56.5-ELITE — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
+   PREDATOR v57.2-WRAITH — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
    Контраст, читабельність, динамічні ефекти, мікро-анімації
    ============================================================================ */
 
@@ -1344,7 +1344,7 @@ tbody tr:hover {
 
 
 /* ════════════════════════════════════════════════════════════════
-   PREDATOR v56.5 — SECTION-CARD DESIGN SYSTEM
+   PREDATOR v57.2 — SECTION-CARD DESIGN SYSTEM
    ════════════════════════════════════════════════════════════════ */
 
 .page-section {

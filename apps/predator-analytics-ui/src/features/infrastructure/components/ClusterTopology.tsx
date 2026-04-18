@@ -24,14 +24,14 @@ const TopologyNode: React.FC<NodeProps> = ({ label, type, status, description, s
             className={cn(
                 "relative p-4 rounded-xl border backdrop-blur-md transition-all duration-500",
                 isActive ? "bg-emerald-500/10 border-emerald-500/50 shadow-[0_0_20px_rgba(16,185,129,0.2)]" : 
-                isOnline ? "bg-white/5 border-white/10" : "bg-rose-500/5 border-rose-500/30 opacity-60"
+                isOnline ? "bg-white/5 border-white/10" : "bg-amber-500/5 border-amber-500/30 opacity-60"
             )}
         >
             <div className="flex items-start gap-3">
                 <div className={cn(
                     "p-2 rounded-lg",
                     isActive ? "bg-emerald-500/20 text-emerald-400" : 
-                    isOnline ? "bg-sky-500/10 text-sky-400" : "bg-rose-500/20 text-rose-400"
+                    isOnline ? "bg-sky-500/10 text-sky-400" : "bg-amber-500/20 text-amber-400"
                 )}>
                     {type === 'master' && <Server size={18} />}
                     {type === 'mirror' && <Cloud size={18} />}
@@ -49,7 +49,7 @@ const TopologyNode: React.FC<NodeProps> = ({ label, type, status, description, s
                 <div className={cn(
                     "w-1.5 h-1.5 rounded-full",
                     isActive ? "bg-emerald-500 animate-pulse" : 
-                    isOnline ? "bg-emerald-500" : "bg-rose-500"
+                    isOnline ? "bg-emerald-500" : "bg-amber-500"
                 )} />
                 <span className="text-[7px] font-black uppercase text-slate-600">
                     {status === 'active' ? 'CONNECTED' : status.toUpperCase()}
@@ -84,7 +84,7 @@ export const ClusterTopology: React.FC = () => {
     return (
         <div className="flex flex-col gap-6 p-4">
             <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <LinkIcon size={16} className="text-indigo-400" /> ТОПОЛОГІЯ КЛАСТЕРА v56.5
+                <LinkIcon size={16} className="text-yellow-400" /> ТОПОЛОГІЯ КЛАСТЕРА v57.2
             </h3>
 
             <div className="flex items-center justify-between gap-2">
@@ -102,7 +102,7 @@ export const ClusterTopology: React.FC = () => {
 
                 {/* Secure Gateway */}
                 <div className="flex flex-col items-center gap-1">
-                    <div className="p-3 rounded-full bg-slate-900 border border-white/20 text-indigo-400 shadow-[0_0_15px_rgba(129,140,248,0.2)]">
+                    <div className="p-3 rounded-full bg-slate-900 border border-white/20 text-yellow-400 shadow-[0_0_15px_rgba(129,140,248,0.2)]">
                         <Shield size={20} />
                     </div>
                 </div>

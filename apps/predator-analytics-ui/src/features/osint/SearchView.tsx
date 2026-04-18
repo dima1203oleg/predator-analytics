@@ -39,7 +39,6 @@ import { ExplainabilityPanel } from '@/components/explain/ExplainabilityPanel';
 import AIInsightsHub from '@/features/ai/AIInsightsHub';
 import {
     type Company,
-    type RiskLevel,
     type SearchMode,
     formatDateTime,
     normalizeCompany,
@@ -49,6 +48,7 @@ import {
 } from '@/features/osint/searchView.utils';
 import { useAppStore } from '@/store/useAppStore';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { RiskLevelValue as RiskLevel } from '@/types/intelligence';
 
 const SEARCH_MODES: Array<{
     id: SearchMode;
@@ -76,7 +76,7 @@ const SEARCH_MODES: Array<{
         label: 'Поглиблений відбір',
         description: 'Гібридний пошук з додатковим переранжуванням.',
         icon: Scan,
-        color: 'text-rose-400',
+        color: 'text-amber-400',
     },
 ];
 
@@ -114,10 +114,34 @@ const RiskBadge = ({ level, label }: { level: RiskLevel; label: string }) => {
             icon: AlertTriangle,
         },
         critical: {
-            color: 'text-rose-300',
-            bg: 'bg-rose-500/15',
-            border: 'border-rose-500/30',
+            color: 'text-amber-300',
+            bg: 'bg-amber-500/15',
+            border: 'border-amber-500/30',
             icon: ShieldAlert,
+        },
+        stable: {
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/10',
+            border: 'border-emerald-500/20',
+            icon: CheckCircle,
+        },
+        minimal: {
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/10',
+            border: 'border-emerald-500/20',
+            icon: CheckCircle,
+        },
+        watchlist: {
+            color: 'text-amber-300',
+            bg: 'bg-amber-500/10',
+            border: 'border-amber-500/20',
+            icon: AlertTriangle,
+        },
+        elevated: {
+            color: 'text-amber-300',
+            bg: 'bg-amber-500/10',
+            border: 'border-amber-500/20',
+            icon: AlertTriangle,
         },
     };
     const config = configs[level];
@@ -143,7 +167,7 @@ const RedactedField = () => (
         <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
             Доступно для розширених ролей
         </span>
-        <div className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 rounded-xl border border-rose-500/30 bg-rose-950 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-rose-300 opacity-0 transition-all group-hover:opacity-100">
+        <div className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 rounded-xl border border-amber-500/30 bg-amber-950 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-amber-300 opacity-0 transition-all group-hover:opacity-100">
             Бекенд не розкриває поле для поточної ролі
         </div>
     </div>
@@ -240,7 +264,7 @@ const CompanyCard = ({
                         className={cn(
                             'flex h-14 w-14 items-center justify-center rounded-2xl border transition-all duration-500 group-hover:scale-110',
                             company.risk === 'critical'
-                                ? 'border-rose-500/30 bg-rose-500/10 text-rose-300'
+                                ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                                 : company.type === 'person'
                                     ? 'border-amber-500/30 bg-amber-500/10 text-amber-400'
                                     : 'border-cyan-500/20 bg-cyan-500/10 text-cyan-300',
@@ -352,7 +376,7 @@ const CompanyCard = ({
 
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2 px-1 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
-                                        <Layers size={10} className="text-indigo-400" />
+                                        <Layers size={10} className="text-yellow-400" />
                                         Мітки та контекст
                                     </div>
                                     {company.tags.length > 0 ? (
@@ -360,7 +384,7 @@ const CompanyCard = ({
                                             {company.tags.map((tag) => (
                                                 <span
                                                     key={tag}
-                                                    className="rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-300"
+                                                    className="rounded-xl border border-yellow-500/20 bg-yellow-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-yellow-300"
                                                 >
                                                     {tag}
                                                 </span>
@@ -432,7 +456,7 @@ const CompanyCard = ({
 
                                     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                                         <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-500">
-                                            <ShieldAlert className="h-4 w-4 text-rose-300" />
+                                            <ShieldAlert className="h-4 w-4 text-amber-300" />
                                             Ризик
                                         </div>
                                         <div className="text-3xl font-black tracking-tight text-white">
@@ -607,7 +631,7 @@ export const SearchView = () => {
             name: 'Бекенд',
             value: backendStatus.statusLabel,
             icon: Database,
-            color: backendStatus.isOffline ? 'text-rose-400' : 'text-emerald-400',
+            color: backendStatus.isOffline ? 'text-amber-400' : 'text-emerald-400',
         },
         {
             name: 'Джерело',
@@ -619,7 +643,7 @@ export const SearchView = () => {
             name: 'Режим даних',
             value: backendStatus.modeLabel,
             icon: Radio,
-            color: 'text-indigo-300',
+            color: 'text-yellow-300',
         },
         {
             name: 'Аналітика v45',
@@ -847,7 +871,7 @@ export const SearchView = () => {
                             </div>
 
                             {!isPremium && (
-                                <div className="flex items-center gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.25em] text-rose-300">
+                                <div className="flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.25em] text-amber-300">
                                     <Lock className="h-4 w-4" />
                                     Доступ до бенефіціарів обмежено
                                 </div>
@@ -875,7 +899,7 @@ export const SearchView = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         className="relative rounded-[3rem] border-2 border-dashed border-white/5 bg-slate-900/20 py-28 text-center"
                     >
-                        <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/5 blur-[100px]" />
+                        <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/5 blur-[100px]" />
                         <div className="relative">
                             <SearchIcon className="mx-auto mb-6 h-20 w-20 text-slate-700" />
                             <h3 className="mb-4 text-3xl font-black uppercase tracking-tight text-slate-300">

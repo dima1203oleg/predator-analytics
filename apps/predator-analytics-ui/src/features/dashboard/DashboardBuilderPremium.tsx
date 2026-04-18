@@ -123,7 +123,7 @@ const widgetTemplates: Omit<Widget, 'id'>[] = [
     title: 'Ризик-скор',
     icon: Target,
     size: 'small',
-    color: 'rose',
+    color: 'amber',
     config: { metric: 'risk_score' },
     premium: true
   },
@@ -217,7 +217,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onRemove, onSettings, i
           {isEditing && (
             <button
               onClick={() => onRemove(widget.id)}
-              className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-500 hover:text-rose-400 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-amber-500/10 text-slate-500 hover:text-amber-400 transition-colors"
               title="Видалити"
             >
               <Trash2 size={14} />

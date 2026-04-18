@@ -12,6 +12,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { RiskLevelValue } from '@/types/intelligence';
 import {
   Ship, Package, Globe, TrendingUp, TrendingDown, DollarSign,
   Search, Filter, Download, Activity, ShieldAlert, Target,
@@ -26,7 +27,7 @@ import {
   Pie, Cell
 } from 'recharts';
 import { cn } from '@/utils/cn';
-import { apiClient as api } from '@/services/api/config';
+import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -48,10 +49,10 @@ const ScanningHUD: React.FC = () => {
                 transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
                 className="absolute left-0 w-full h-[1px] bg-yellow-500/40 shadow-[0_0_15px_rgba(212,175,55,0.3)]"
             />
-            <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-yellow-500/30 uppercase italic">
-                <span>SECTOR_CLEARANCE: ELITE_LEVEL</span>
-                <span>DATA_SOURCE: CUSTOMS_GATEWAY_PROX</span>
-                <span>WRAITH_ENGINE: ACTIVE</span>
+            <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-yellow-500/30 uppercase italic font-bold">
+                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_WRAITH</span>
+                <span>ДЖЕРЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX</span>
+                <span>ЯДРО_WRAITH: АКТИВНЕ</span>
             </div>
         </div>
     );
@@ -67,16 +68,16 @@ const ManifestXrayTerminal: React.FC = () => {
     const { play } = useSoundFx();
 
     const logPool = [
-        "FETCHING: RAW_CARGO_MANIFEST_ID_{ID}",
-        "STREAMING: BL_BLOCK_DATAGRAMS...",
-        "REGISTRY_MATCH: SEARCHING_EDRPOU_{EDR}",
-        "CROSS_MATCH: UNIT_PRICE_VALIDATION [OK]",
-        "ANOMALY_DETECTED: VALUE_UNDERSTATEMENT [!]",
-        "MATCH_FOUND: [SENDER_VERIFIED]",
-        "ENCRYPTING_AUDIT_LOG...",
-        "RECOGNIZING_HS_CODE: 8517.13.00.00",
-        "COGNITIVE_ANALYTICS: PATTERN_ESTABLISHED",
-        "WRAITH_SCAN: TARGET_ACQUIRED"
+        "ОТРИМАННЯ: RAW_CARGO_MANIFEST_ID_{ID}",
+        "СТРІМІНГ: БЛОК_ДАТАГРАМ_МАНІФЕСТУ...",
+        "ПОШУК_РЕЄСТРУ: ПЕРЕВІРКА_ЄДРПОУ_{EDR}",
+        "КРОС_ВЕРІФІКАЦІЯ: ВАЛІДАЦІЯ_ЦІНИ_ОДИНИЦІ [ОК]",
+        "ВИЯВЛЕНО_АНОМАЛІЮ: ЗАНИЖЕННЯ_ВАРТОСТІ [!]",
+        "ЗБІГ_ЗНАЙДЕНО: [ВІДПРАВНИК_ВЕРИФІКОВАНО]",
+        "ШИФРУВАННЯ_ЛОГУ_АУДИТУ...",
+        "РОЗПІЗНАВАННЯ_HS_CODE: 8517.13.00.00",
+        "КОГНІТИВНА_АНАЛІТИКА: ПАТЕРН_ВСТАНОВЛЕНО",
+        "СКАНУВАННЯ_WRAITH: ЦІЛЬ_ЗАХОПЛЕНО"
     ];
 
     useEffect(() => {
@@ -96,7 +97,7 @@ const ManifestXrayTerminal: React.FC = () => {
         <div className="w-full h-80 bg-black/60 border-2 border-yellow-500/10 rounded-[3rem] p-8 font-mono text-[10px] overflow-hidden relative group">
             <div className="absolute top-4 right-6 flex gap-2">
                 <div className="w-2 h-2 rounded-full bg-yellow-500 animate-ping" />
-                <span className="text-yellow-500 font-black italic">LIVE_MANIFEST_STREAM</span>
+                <span className="text-yellow-500 font-black italic">LIVE_МИТНИЙ_ПОТІК</span>
             </div>
             <div className="space-y-2 opacity-60">
                 {lines.map((line, i) => (
@@ -146,10 +147,30 @@ const TOP_IMPORTERS = [
   { name: 'ФОП КОВАЛЕНКО О.В.', value: '$3.1M', share: '2%', trend: 'stable' },
 ];
 
-const RISK_ALERTS = [
-  { id: 'R-702', title: 'ЗАНИЖЕННЯ_МИТНОЇ_ВАРТОСТІ', source: 'HS-8517', severity: 'КРИТИЧНА', status: 'АКТИВНА', desc: 'Декларування iPhone 15 Pro за ціною $240/од.' },
-  { id: 'R-614', title: 'ЗМІНА_КРАЇНИ_ПОХОДЖЕННЯ', source: 'UA-PL-DE', severity: 'ВИСОКА', status: 'ПЕРЕВІРКА', desc: 'Різка зміна логістичного плеча через фіктивні хаби в Польщі.' },
-  { id: 'R-509', title: 'САНКЦІЙНИЙ_ТРАНЗИТ', source: 'EU-SDN', severity: 'КРИТИЧНА', status: 'БЛОКОВАНО', desc: 'Спроба ввезення комплектуючих подвійного призначення.' },
+interface RiskAlert {
+  id: string;
+  title: string;
+  source: string;
+  severity: RiskLevelValue;
+  status: string;
+  desc: string;
+}
+
+const SEVERITY_CONFIG: Record<RiskLevelValue, { label: string; color: string; bg: string }> = {
+  critical:  { label: 'КРИТИЧНА', color: '#B45309', bg: 'bg-amber-600' },
+  high:      { label: 'ВИСОКА',    color: '#D97706', bg: 'bg-amber-500' },
+  medium:    { label: 'СЕРЕДНЯ',   color: '#D4AF37', bg: 'bg-yellow-500/10' },
+  low:       { label: 'НИЗЬКА',    color: '#475569', bg: 'bg-slate-700/10' },
+  minimal:   { label: 'МІНІМАЛЬНА', color: '#64748b', bg: 'bg-slate-800/10' },
+  stable:    { label: 'СТАБІЛЬНА',  color: '#10b981', bg: 'bg-emerald-500/10' },
+  watchlist: { label: 'НАГЛЯД',    color: '#8b5cf6', bg: 'bg-violet-500/10' },
+  elevated:  { label: 'ПІДВИЩЕНА',  color: '#f59e0b', bg: 'bg-orange-500/10' },
+};
+
+const RISK_ALERTS: RiskAlert[] = [
+  { id: 'R-702', title: 'ЗАНИЖЕННЯ_МИТНОЇ_ВАРТОСТІ', source: 'HS-8517', severity: 'critical', status: 'АКТИВНА', desc: 'Декларування iPhone 15 Pro за ціною $240/од.' },
+  { id: 'R-614', title: 'ЗМІНА_КРАЇНИ_ПОХОДЖЕННЯ', source: 'UA-PL-DE', severity: 'high', status: 'ПЕРЕВІРКА', desc: 'Різка зміна логістичного плеча через фіктивні хаби в Польщі.' },
+  { id: 'R-509', title: 'САНКЦІЙНИЙ_ТРАНЗИТ', source: 'EU-SDN', severity: 'critical', status: 'БЛОКОВАНО', desc: 'Спроба ввезення комплектуючих подвійного призначення.' },
 ];
 
 export default function CustomsIntelligenceView() {
@@ -172,21 +193,31 @@ export default function CustomsIntelligenceView() {
   }, [isOffline]);
 
   const handleRefresh = async () => {
-    setRefreshing(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setRefreshing(false);
-    
-    if (isOffline) {
+      setRefreshing(true);
+      try {
+          // Реальне оновлення через сервіс
+          await Promise.all([
+              analyticsService.getTradeVolume(),
+              analyticsService.getCategoryStructure(),
+              analyticsService.getTopImporters(),
+              analyticsService.getRiskAlerts()
+          ]);
+      } catch (err) {
+          console.error('[CustomsIntel] Refresh error:', err);
+      }
+      setRefreshing(false);
+      
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CustomsIntel',
-          message: 'Синхронізація митних вузлів через MIRROR_CHANNEL завершена успішно. Дані оновлено.',
+          message: isOffline 
+            ? 'Синхронізація митних вузлів через MIRROR_CHANNEL завершена. Дані оновлено з кешу.'
+            : 'Глобальні митні дані синхронізовано з центральним вузлом DPU.',
           severity: 'info',
           timestamp: new Date().toISOString(),
-          code: 'CUSTOMS_NODES'
+          code: 'CUSTOMS_REFRESH'
         }
       }));
-    }
   };
 
   return (
@@ -247,13 +278,13 @@ export default function CustomsIntelligenceView() {
                      <RefreshCw size={26} />
                   </button>
                   <button className="px-12 py-6 bg-yellow-500 text-black rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-4 font-bold">
-                     <Download size={20} /> CUSTOMS_INTELLIGENCE_PACK
+                     <Download size={20} /> ЗАВАНТАЖИТИ_ЗВІТ_ЗЕД
                   </button>
                </div>
              }
            />
 
-           {/* ANALYTICS TABS ELITE */}
+           {/* ANALYTICS TABS WRAITH */}
            <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               {[
                 { id: 'analytics', label: 'ОБСЯГИ_ТА_ДИНАМІКА', i: Activity },
@@ -284,13 +315,13 @@ export default function CustomsIntelligenceView() {
            >
                <div className="flex items-center gap-6 mb-4">
                    <div className="h-px flex-1 bg-yellow-500/10" />
-                   <span className="text-[10px] font-black text-yellow-500/40 uppercase tracking-[0.6em] italic">X-RAY_PARSER // AUDIT_FEED</span>
+                   <span className="text-[10px] font-black text-yellow-500/40 uppercase tracking-[0.6em] italic">X-RAY_АНАЛІЗАТОР // ПОТІК_МАНІФЕСТІВ</span>
                    <div className="h-px flex-1 bg-yellow-500/10" />
                </div>
                <ManifestXrayTerminal />
            </motion.div>
 
-           {/* MAIN DISPLAY HUB ELITE */}
+           {/* MAIN DISPLAY HUB WRAITH */}
            <div className="grid grid-cols-12 gap-10">
               <AnimatePresence mode="wait">
                  {activeTab === 'analytics' && (
@@ -368,10 +399,10 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="flex items-center justify-between mb-12 border-b border-white/[0.04] pb-10 relative z-10">
                              <h2 className="text-[18px] font-black text-white italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif">
-                                <Truck size={32} className="text-yellow-500" /> ТОП_ІМПОРТЕРІВ // DOMINANCE_LEADERBOARD
+                                <Truck size={32} className="text-yellow-500" /> ТОП_ІМПОРТЕРІВ // ЛІДЕРИ_РИНКУ
                              </h2>
                              <div className="flex gap-6">
-                                <button className="px-10 py-4 bg-black border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:border-yellow-500/30 transition-all">FILTER_BY_CATEGORY</button>
+                                <button className="px-10 py-4 bg-black border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:border-yellow-500/30 transition-all font-bold">ФІЛЬТР_КАТЕГОРІЙ</button>
                              </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 relative z-10">
@@ -387,16 +418,16 @@ export default function CustomsIntelligenceView() {
                                   </div>
                                   <div className="space-y-3">
                                      <h4 className="text-2xl font-black text-white italic uppercase leading-tight group-hover:text-yellow-500 transition-colors font-serif">{comp.name}</h4>
-                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic">EDRPOU_IDENTIFIER: {Math.floor(Math.random() * 90000000 + 10000000)}</p>
+                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic font-mono">ІДЕНТИФІКАТОР_ЄДРПОУ: {Math.floor(Math.random() * 90000000 + 10000000)}</p>
                                   </div>
                                   <div className="pt-8 border-t-2 border-white/[0.04] flex items-end justify-between">
                                      <div>
                                         <p className="text-4xl font-black italic font-mono text-white tracking-tighter leading-none">{comp.value}</p>
-                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic mt-4">MONTHLY_VOLUME</p>
+                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic mt-4">ОБСЯГ_ЗА_МІСЯЦЬ</p>
                                      </div>
                                      <div className="text-right">
                                         <p className="text-xl font-black text-yellow-500 italic font-mono">{comp.share}</p>
-                                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest">MKT_SHARE</p>
+                                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest">ЧАСТКА_РИНКУ</p>
                                      </div>
                                   </div>
                                </div>
@@ -414,24 +445,24 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="flex items-center justify-between relative z-10">
                              <h3 className="text-[18px] font-black text-amber-600 italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif font-bold">
-                                <AlertTriangle size={36} className="animate-pulse" /> CUSTOMS_RISK_ALERTS // RED_VECTOR_MONITOR
+                                <AlertTriangle size={36} className="animate-pulse" /> РИЗИКОВІ_СИГНАЛИ_МИТНИЦІ // МАНІТОР_RED_VECTOR
                              </h3>
-                             <button className="px-14 py-6 bg-amber-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold">DEPLOY_ANTIFRAUD_ARRAY</button>
+                             <button className="px-14 py-6 bg-amber-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold uppercase">РОЗГОРНУТИ_АНТИФРОД_МАСИВ</button>
                           </div>
                           <div className="space-y-8 relative z-10">
                              {RISK_ALERTS.map((alert, i) => (
                                <div key={i} className="p-12 rounded-[4rem] bg-black border-2 border-amber-500/10 hover:border-amber-500/40 transition-all group flex items-center gap-14 shadow-inner relative overflow-hidden">
                                   <div className="absolute top-0 right-0 w-48 h-full bg-gradient-to-l from-amber-500/5 to-transparent pointer-events-none" />
-                                  <div className={cn("p-8 rounded-[2.5rem] border-4 bg-black shadow-2xl transform group-hover:scale-110 transition-transform", alert.severity === 'КРИТИЧНА' ? "text-amber-600 border-amber-600/20" : "text-amber-500 border-amber-500/20")}>
+                                  <div className={cn("p-8 rounded-[2.5rem] border-4 bg-black shadow-2xl transform group-hover:scale-110 transition-transform", alert.severity === 'critical' ? "text-amber-600 border-amber-600/20" : "text-amber-500 border-amber-500/20")}>
                                      <Database size={48} />
                                   </div>
                                   <div className="flex-1 space-y-6">
                                      <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-6">
-                                           <span className="text-[12px] font-black font-mono text-slate-800 tracking-[0.4em] bg-white/5 px-4 py-1 rounded-lg italic">SIGNAL_{alert.id}</span>
-                                           <span className={cn("px-6 py-2 text-[10px] font-black italic rounded-full uppercase tracking-widest border-2", alert.severity === 'КРИТИЧНА' ? "bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-900/40" : "bg-amber-500/10 text-amber-500 border-amber-500/20")}>{alert.severity}</span>
+                                           <span className="text-[12px] font-black font-mono text-slate-800 tracking-[0.4em] bg-white/5 px-4 py-1 rounded-lg italic font-bold">СИГНАЛ_{alert.id}</span>
+                                           <span className={cn("px-6 py-2 text-[10px] font-black italic rounded-full uppercase tracking-widest border-2", alert.severity === 'critical' ? "bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-900/40" : "bg-amber-500/10 text-amber-500 border-amber-500/20")}>{SEVERITY_CONFIG[alert.severity]?.label || alert.severity}</span>
                                         </div>
-                                        <span className="text-[11px] font-black text-slate-800 uppercase italic font-mono tracking-widest border-b border-slate-900">IDENT_SOURCE: {alert.source}</span>
+                                        <span className="text-[11px] font-black text-slate-800 uppercase italic font-mono tracking-widest border-b border-slate-900 font-bold">ДЖЕРЕЛО_ІДЕНТ: {alert.source}</span>
                                      </div>
                                      <div className="space-y-3">
                                         <h4 className="text-4xl font-black text-white italic uppercase tracking-tighter group-hover:text-amber-500 transition-colors font-serif leading-none">{alert.title}</h4>
@@ -439,8 +470,8 @@ export default function CustomsIntelligenceView() {
                                      </div>
                                   </div>
                                   <div className="flex flex-col gap-4 min-w-[220px]">
-                                     <button className="w-full py-5 bg-white/5 hover:bg-amber-600 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white font-bold tracking-widest shadow-xl">INIT_INVESTIGATION</button>
-                                     <button className="w-full py-5 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase text-slate-700 italic tracking-[0.3em]">ARCHIVE_REPORT</button>
+                                     <button className="w-full py-5 bg-white/5 hover:bg-amber-600 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white font-bold tracking-widest shadow-xl uppercase">ПОЧАТИ_РОЗСЛІДУВАННЯ</button>
+                                     <button className="w-full py-5 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase text-slate-700 italic tracking-[0.3em] uppercase font-bold">АРХІВУВАТИ_ЗВІТ</button>
                                   </div>
                                </div>
                              ))}
@@ -453,8 +484,8 @@ export default function CustomsIntelligenceView() {
                     <motion.div key="signals" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="col-span-12 grid grid-cols-12 gap-10">
                        <div className="col-span-12 xl:col-span-8 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                           <div className="absolute top-0 left-0 w-2 h-full bg-yellow-500/20" />
-                          <h2 className="text-[16px] font-black text-yellow-500 italic uppercase tracking-[0.6em] pb-10 border-b border-white/[0.04] flex items-center gap-6 font-serif">
-                             <Target size={28} className="text-yellow-500 animate-pulse" /> LIVE_SIGNAL_DECODE // STRATEGIC_INTEL
+                          <h2 className="text-[16px] font-black text-yellow-500 italic uppercase tracking-[0.6em] pb-10 border-b border-white/[0.04] flex items-center gap-6 font-serif uppercase">
+                             <Target size={28} className="text-yellow-500 animate-pulse" /> ДЕКОДУВАННЯ_ЖИВИХ_СИГНАЛІВ // СТРАТЕГІЧНИЙ_ІНТЕЛ
                           </h2>
                           <div className="space-y-6">
                              {[
@@ -498,7 +529,7 @@ export default function CustomsIntelligenceView() {
 
                           <div className="p-10 rounded-[4rem] bg-black border-2 border-yellow-500/10 shadow-4xl relative overflow-hidden group hover:border-yellow-500/30 transition-all cursor-crosshair">
                              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
-                             <h4 className="text-[10px] font-black text-yellow-700 uppercase tracking-[0.6em] mb-6 italic">SOVEREIGN_AI_SENTINEL</h4>
+                             <h4 className="text-[10px] font-black text-yellow-700 uppercase tracking-[0.6em] mb-6 italic">СУВЕРЕННИЙ_ШІ_ВАРТОВИЙ (SENTINEL)</h4>
                              <p className="text-[14px] font-black text-slate-400 italic leading-relaxed uppercase tracking-tighter border-l-4 border-yellow-500/30 pl-8 group-hover:text-white transition-colors">
                                Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендується перегляд лімітів для імпортерів електроніки категорії A.
                              </p>

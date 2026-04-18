@@ -1,5 +1,5 @@
 /**
- * 🕸️ PREDATOR Cognitive Graph Analytics | v56.5-ELITE
+ * 🕸️ PREDATOR Cognitive Graph Analytics | v57.2-WRAITH
  * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
@@ -30,6 +30,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { NeuralPulse } from '@/components/ui/NeuralPulse';
 import { CyberOrb } from '@/components/CyberOrb';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ========================
 // Types
@@ -155,9 +156,34 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
 
 const GraphAnalyticsPage: React.FC = () => {
     const { userRole } = useAppStore();
+    const { isOffline, nodeSource } = useBackendStatus();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
     const [activeAlgorithm, setActiveAlgorithm] = useState<'Pagerank' | 'Louvain' | 'Pathfinding'>('Pagerank');
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'GraphGNN',
+                    message: `АВТОНОМНИЙ ГРАФ [${nodeSource}]: Виявлення зв'язків через локальний Mirror Vault. Аналіз GNN обмежений.`,
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'GRAPH_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'GraphGNN',
+                    message: `ГРАФОВИЙ_ВУЗОЛ [${nodeSource}]: Нейронну топологію синхронізовано. Готовність до обчислень L5.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'GRAPH_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline, nodeSource]);
 
     const toggleLoading = () => {
         setIsLoading(true);
@@ -189,7 +215,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-[#D4AF37]/50" />
                                         <span className="text-[10px] font-mono font-black text-[#D4AF37]/80 uppercase tracking-[0.5em] animate-pulse">
-                                            NEURAL_TOPOLOGY_ANALYZER // v56.5-ELITE
+                                            NEURAL_TOPOLOGY_ANALYZER // v57.2-WRAITH
                                         </span>
                                     </div>
                                 </div>
@@ -198,6 +224,7 @@ const GraphAnalyticsPage: React.FC = () => {
                         stats={[
                             { label: 'ВУЗЛІВ ОПРАЦЬОВАНО', value: '1.2M+', color: 'primary', icon: <Database size={14} />, animate: true },
                             { label: 'ІНДЕКС КЛАСТЕРИЗАЦІЇ', value: '0.884', color: 'success', icon: <Share2 size={14} /> },
+                            { label: 'NODE_SOURCE', value: nodeSource, color: isOffline ? 'warning' : 'success', icon: <Cpu size={14} /> },
                             { label: 'OODA LOOP', value: '12ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
                         breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТРИЦЯ', 'АНАЛІЗ_ТОПОЛОГІЇ']}
@@ -393,7 +420,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
-                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v56.5-ELITE</p>
+                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v57.2-WRAITH</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКОР = 0.9984</p>
                                          <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
@@ -480,7 +507,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="p-6 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] flex items-center justify-between">
                                           <div className="flex items-center gap-4">
                                                <Cpu size={18} className="text-indigo-400" />
-                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v56.5-ELITE</span>
+                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v57.2-WRAITH</span>
                                           </div>
                                           <span className="text-xl font-mono font-black text-white italic tracking-tighter">X256</span>
                                      </div>

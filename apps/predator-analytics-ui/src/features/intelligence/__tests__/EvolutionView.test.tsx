@@ -1,17 +1,16 @@
-import { expect, test, describe, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, act } from '@testing-library/react'
-import React from 'react'
-import EvolutionView from '../EvolutionView'
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import EvolutionView from '../EvolutionView';
+import React from 'react';
 
 // ─── MOCKS ───────────────────────────────────────────────────────────────────
 
 vi.mock('framer-motion', () => ({
     motion: {
         div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-        button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     },
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-}))
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
 
 vi.mock('lucide-react', async (importOriginal) => {
     const actual = await importOriginal() as any;
@@ -23,116 +22,115 @@ vi.mock('lucide-react', async (importOriginal) => {
             return target[prop];
         }
     });
-})
+});
 
-vi.mock('@/components/super/EvolutionDashboard', () => ({
-    default: () => <div data-testid="evolution-dashboard">Evolution Dashboard Mock</div>
-}))
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
+}));
 
-vi.mock('@/components/super/TruthLedgerTerminal', () => ({
-    default: () => <div data-testid="truth-ledger-terminal">Truth Ledger Terminal Mock</div>
-}))
-
-vi.mock('@/components/super/GlobalNeuralMesh', () => ({
-    default: () => <div data-testid="global-neural-mesh">Global Neural Mesh Mock</div>
-}))
-
-vi.mock('@/components/super/EvolutionForge', () => ({
-    default: () => <div data-testid="evolution-forge">Evolution Forge Mock</div>
-}))
-
-vi.mock('@/components/super/AZRImprovementTrace', () => ({
-    AZRImprovementTrace: () => <div data-testid="azr-improvement-trace">Improvement Trace Mock</div>
-}))
-
-vi.mock('@/components/super/AZRDeploymentCenter', () => ({
-    AZRDeploymentCenter: () => <div data-testid="azr-deployment-center">Deployment Center Mock</div>
-}))
-
+vi.mock('@/components/AdvancedBackground', () => ({ AdvancedBackground: () => <div data-testid="advanced-bg" /> }));
+vi.mock('@/components/CyberGrid', () => ({ CyberGrid: () => <div data-testid="cyber-grid" /> }));
 vi.mock('@/components/ViewHeader', () => ({
-    ViewHeader: ({ title, stats, actions }: any) => (
+    ViewHeader: ({ title, stats, badges }: any) => (
         <div data-testid="view-header">
-            <h3>{title}</h3>
-            {stats?.map((s: any) => <div key={s.label}>{s.label}: {s.value}</div>)}
-            <div>{actions}</div>
+            <div data-testid="header-title">{title}</div>
+            <div data-testid="stats-list">{stats?.map((s: any) => s.label).join(', ')}</div>
+            <div data-testid="badges-list">{badges?.map((b: any) => b.label).join(', ')}</div>
         </div>
     )
-}))
+}));
 
-vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ children, title, ...props }: any) => (
-        <div data-testid="tactical-card" {...props}>
-            {title && <h4>{title}</h4>}
-            {children}
-        </div>
-    )
-}))
+vi.mock('@/components/CyberOrb', () => ({ CyberOrb: () => <div data-testid="cyber-orb" /> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <>{children}</> }));
 
-vi.mock('@/components/HoloContainer', () => ({
-    HoloContainer: ({ children }: any) => <div data-testid="holo-container">{children}</div>
-}))
-
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: () => <div data-testid="cyber-orb" />
-}))
+// Mock leaf components
+vi.mock('@/components/super/EvolutionDashboard', () => ({ default: () => <div data-testid="evolution-dashboard" /> }));
+vi.mock('@/components/super/TruthLedgerTerminal', () => ({ default: () => <div data-testid="truth-ledger" /> }));
+vi.mock('@/components/super/EvolutionForge', () => ({ default: () => <div data-testid="evolution-forge" /> }));
+vi.mock('@/components/super/AZRImprovementTrace', () => ({ AZRImprovementTrace: () => <div data-testid="azr-trace" /> }));
+vi.mock('@/components/super/AZRDeploymentCenter', () => ({ AZRDeploymentCenter: () => <div data-testid="azr-deployment" /> }));
 
 // ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('EvolutionView', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
-        // Reset URL
-        window.history.replaceState({}, '', '/')
-    })
+        vi.clearAllMocks();
+    });
 
-    test('повинен відмальовувати основні компоненти та вкладки', () => {
-        render(<EvolutionView />)
+    it('відображає інтерфейс двигуна еволюції та огляд мутацій', () => {
+        render(<EvolutionView />);
         
-        expect(screen.getByText(/EVOLUTIONARY TRUTH LEDGER/i)).toBeInTheDocument()
-        expect(screen.getByText(/Цикли AZR: 2,847/i)).toBeInTheDocument()
+        expect(screen.getByText(/ДВИГУН/i)).toBeInTheDocument();
+        expect(screen.getByText(/ЕВОЛЮЦІЇ/i)).toBeInTheDocument();
+        expect(screen.getByTestId('evolution-dashboard')).toBeInTheDocument();
+    });
+
+    it('ініціює EVOLUTION_SUCCESS при запуску двигуна', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<EvolutionView />);
         
-        // Перевірка вкладок
-        expect(screen.getByText(/Огляд Еволюції/i)).toBeInTheDocument()
-        expect(screen.getByText(/Слід Міркувань/i)).toBeInTheDocument()
-    })
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'EVOLUTION_SUCCESS'
+                    })
+                })
+            );
+        });
+    });
 
-    test('повинен відображати дашборд на головній вкладці', () => {
-        render(<EvolutionView />)
-        expect(screen.getByTestId('evolution-dashboard')).toBeInTheDocument()
-        expect(screen.getByTestId('evolution-forge')).toBeInTheDocument()
-        expect(screen.getByTestId('cyber-orb')).toBeInTheDocument()
-    })
-
-    test('повинен перемикати вкладки та відображати відповідний контент', () => {
-        render(<EvolutionView />)
-
-        // Перемикання на 'trace'
-        const traceTab = screen.getByRole('button', { name: /Слід Міркувань/i })
-        fireEvent.click(traceTab)
-        expect(screen.getByTestId('azr-improvement-trace')).toBeInTheDocument()
-
-        // Перемикання на 'deployment'
-        const deployTab = screen.getByRole('button', { name: /Пульс Розгортання/i })
-        fireEvent.click(deployTab)
-        expect(screen.getByTestId('azr-deployment-center')).toBeInTheDocument()
-
-        // Перемикання на 'ledger'
-        const ledgerTab = screen.getByRole('button', { name: /Truth Ledger/i })
-        fireEvent.click(ledgerTab)
-        expect(screen.getByTestId('truth-ledger-terminal')).toBeInTheDocument()
-    })
-
-    test('повинен завантажувати вкладку з параметрів URL', () => {
-        window.history.replaceState({}, '', '/?tab=trace')
-        render(<EvolutionView />)
+    it('ініціює EVOLUTION_SUCCESS після ручного оновлення (синтезу)', async () => {
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+        render(<EvolutionView />);
         
-        expect(screen.getByTestId('azr-improvement-trace')).toBeInTheDocument()
-    })
+        const refreshBtn = screen.getByTestId('icon-refreshcw').parentElement;
+        fireEvent.click(refreshBtn!);
+        
+        await waitFor(() => {
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    detail: expect.objectContaining({
+                        code: 'EVOLUTION_SUCCESS',
+                        message: expect.stringContaining('Глобальний синтез AZR успішно завершено')
+                    })
+                })
+            );
+        }, { timeout: 2000 });
+    });
 
-    test('повинен відображати статусний бар знизу', () => {
-        render(<EvolutionView />)
-        expect(screen.getByText(/СТАТУС:/i)).toBeInTheDocument()
-        expect(screen.getByText(/ЯДРО СУВЕРЕННОГО СИНТЕЗУ/i)).toBeInTheDocument()
-        expect(screen.getByText(/СИНТЕТИЧНИЙ КОНЦЕНСУС ДОСЯГНУТО/i)).toBeInTheDocument()
-    })
-})
+    it('перемикає вкладки матриці (Trace, Deployment, Ledger)', () => {
+        render(<EvolutionView />);
+        
+        // Ledger tab
+        const ledgerTab = screen.getByText(/РЕЄСТР/i);
+        fireEvent.click(ledgerTab);
+        expect(screen.getByTestId('truth-ledger')).toBeInTheDocument();
+
+        // Trace tab
+        const traceTab = screen.getByText(/ШЛЯХ/i);
+        fireEvent.click(traceTab);
+        expect(screen.getByTestId('azr-trace')).toBeInTheDocument();
+
+        // Deployment tab
+        const deployTab = screen.getByText(/ДЕПЛОЙ/i);
+        fireEvent.click(deployTab);
+        expect(screen.getByTestId('azr-deployment')).toBeInTheDocument();
+    });
+
+    it('відображає MIRROR_MUTATION в автономному режимі', () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
+
+        render(<EvolutionView />);
+        
+        expect(screen.getByText(/MIRROR_MUTATION/i)).toBeInTheDocument();
+    });
+});

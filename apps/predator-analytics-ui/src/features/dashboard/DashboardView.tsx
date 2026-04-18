@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR STRATEGIC NEXUS | v56.5.0-TITAN
+ * 🦅 PREDATOR STRATEGIC NEXUS | v57.2.0-TITAN
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митних ризиків та торговельних потоків.
@@ -29,6 +29,7 @@ import { cn } from '@/utils/cn';
 import { dashboardApi } from '@/services/api/dashboard';
 import { SearchWidget } from '@/components/search/SearchWidget';
 import { AudioSanctuary } from '@/components/shared/AudioSanctuary';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import type { DashboardOverview, EngineInfo, DashboardAlert, RadarItem, RiskCompany } from '@/services/api/dashboard';
 
 // ========================
@@ -179,7 +180,7 @@ const GlobalSituationProjection: React.FC<{ countries: Record<string, { count: n
         const c = params.name;
         const stat = countries[c];
         if (!stat) return c;
-        return `<div class="p-2"><b class="text-indigo-400 uppercase tracking-widest text-[10px]">${c}</b><br/><div class="mt-2 text-white font-black">Декларацій: ${stat.count}</div><div class="text-slate-400 text-[10px]">Вартість: ${formatCurrency(stat.value)}</div></div>`;
+        return `<div class="p-2"><b class="text-yellow-400 uppercase tracking-widest text-[10px]">${c}</b><br/><div class="mt-2 text-white font-black">Декларацій: ${stat.count}</div><div class="text-slate-400 text-[10px]">Вартість: ${formatCurrency(stat.value)}</div></div>`;
       }
     },
     series: [
@@ -215,6 +216,7 @@ const DashboardView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline, activeFailover, nodeSource, healingProgress } = useBackendStatus();
 
   const fetchData = useCallback(async () => {
     try {
@@ -237,14 +239,39 @@ const DashboardView: React.FC = () => {
     return () => clearInterval(interval);
   }, [fetchData]);
 
+  const hasData = overview && overview.summary.total_declarations > 0;
+
+  // Monitoring autonomous mode via predator-error protocol
+  useEffect(() => {
+    if (isOffline) {
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'DashboardNexus',
+                message: `АВТОНОМНИЙ РЕЖИМ [${nodeSource}]: Платформа перейшла на MIRROR_CLUSTER. Аналітика оновлюється з резервного сховища NVME.`,
+                severity: 'warning',
+                timestamp: new Date().toISOString(),
+                code: 'DASHBOARD_OFFLINE'
+            }
+        }));
+    } else if (hasData) {
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'DashboardNexus',
+                message: `КОМАНДНИЙ ЦЕНТР [${nodeSource}]: Зв'язок з ядром стабільний. Аналітичні потоки активні.`,
+                severity: 'info',
+                timestamp: new Date().toISOString(),
+                code: 'DASHBOARD_SUCCESS'
+            }
+        }));
+    }
+  }, [isOffline, nodeSource, hasData]);
+
   const stats = useMemo(() => {
     if (!overview) return null;
     const totalOPS = Object.values(overview.engines).reduce((a, b) => a + (b.throughput || 0), 0);
     const topRisk = overview.top_risk_companies?.length ? overview.top_risk_companies[0].maxRisk : 0;
     return { totalOPS, topRisk, totalDecls: overview.summary.total_declarations };
   }, [overview]);
-
-  const hasData = overview && overview.summary.total_declarations > 0;
 
   if (loading) {
     return (
@@ -273,6 +300,20 @@ const DashboardView: React.FC = () => {
         
         <div className="relative z-10 max-w-[1900px] mx-auto w-full space-y-16">
           
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-8 bg-red-500/10 border-2 border-red-500/50 rounded-3xl flex items-center gap-6 text-red-500 shadow-[0_0_50px_rgba(239,68,68,0.2)]"
+            >
+              <AlertTriangle size={32} className="animate-pulse" />
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">КРИТИЧНА_ПОМИЛКА_ЯДРА</p>
+                <p className="text-xl font-bold italic uppercase">{error}</p>
+              </div>
+            </motion.div>
+          )}
+
           <SearchWidget className="mb-16 scale-105" />
 
           <ViewHeader
@@ -288,7 +329,7 @@ const DashboardView: React.FC = () => {
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
                     <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v56.5.0-TITAN
+                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v57.2.0-TITAN
                     </span>
                   </div>
                 </div>
@@ -296,6 +337,13 @@ const DashboardView: React.FC = () => {
             }
             breadcrumbs={['ЕСКАДРА', 'КОМАНДУВАННЯ', 'ТАКТИЧНИЙ_ХАБ']}
             stats={[
+              { 
+                label: isOffline ? 'MIRROR_RECOVERY' : 'NODE_SOURCE', 
+                value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
+                color: isOffline ? 'warning' : 'success', 
+                icon: isOffline ? <Activity /> : <Cpu />,
+                animate: isOffline
+              },
               { label: 'ЯДРО', value: stats?.totalOPS! > 0 ? `${formatNumber(stats?.totalOPS!)} оп/с` : 'Н/Д', color: 'success', icon: <Activity size={14} />, animate: true },
               { label: 'КРИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
               { label: 'ОБ\'ЄМ', value: formatNumber(stats?.totalDecls!), color: 'primary', icon: <Boxes size={14} /> }
@@ -319,7 +367,7 @@ const DashboardView: React.FC = () => {
           {!hasData ? (
              <div className="py-60 flex flex-col items-center justify-center gap-12 text-center">
                  <div className="relative group">
-                    <div className="absolute inset-0 bg-indigo-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
+                    <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full scale-150 animate-pulse" />
                     <Database size={120} className="text-slate-800 relative z-10 group-hover:text-slate-700 transition-colors" />
                  </div>
                  <div className="space-y-6">
@@ -335,7 +383,7 @@ const DashboardView: React.FC = () => {
                   { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'red', sub: 'Загальна вартість' },
                   { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
-                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'rose', sub: 'Високий ризик' },
+                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
                   { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
                   { label: 'НЕЙРО_МАТРИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'amber', sub: 'Векторні індекси' },
                 ].map((m, i) => (
@@ -344,12 +392,12 @@ const DashboardView: React.FC = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="p-8 bg-slate-950/60 border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-indigo-500/30 transition-all shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]"
+                    className="p-8 bg-slate-950/60 border border-white/5 rounded-[2.5rem] relative overflow-hidden group hover:border-yellow-500/30 transition-all shadow-[0_30px_60px_-12px_rgba(0,0,0,0.5)]"
                   >
                     <div className={cn(
-                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors",
+                      "absolute top-6 right-6 p-4 rounded-[1.5rem] bg-yellow-500/5 group-hover:bg-yellow-500/10 transition-colors",
                     )}>
-                      <div className={`text-indigo-400 group-hover:scale-110 transition-transform`}>{m.icon}</div>
+                      <div className={`text-yellow-400 group-hover:scale-110 transition-transform`}>{m.icon}</div>
                     </div>
                     <div className="space-y-4">
                       <div className="space-y-1">
@@ -415,7 +463,7 @@ const DashboardView: React.FC = () => {
                               animate={{ width: `${data.load}%` }}
                               className={cn(
                                 "h-full rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(16,185,129,0.5)]",
-                                data.load > 85 ? "bg-rose-500 shadow-rose-500/50" : "bg-gradient-to-r from-emerald-600 to-cyan-400"
+                                data.load > 85 ? "bg-amber-500 shadow-amber-500/50" : "bg-gradient-to-r from-emerald-600 to-cyan-400"
                               )}
                             />
                           </div>
@@ -463,10 +511,10 @@ const DashboardView: React.FC = () => {
 
                 {/* ЦЕНТРАЛЬНА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-5 space-y-12">
-                   <section className="page-section section-indigo shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0">
+                   <section className="page-section section-yellow shadow-[0_60px_150px_-30px_rgba(0,0,0,0.8)] min-h-[720px] !p-0">
                      <div className="p-6 pb-0 max-w-xl">
                        <div className="section-header">
-                         <div className="section-dot-indigo" />
+                         <div className="section-dot-yellow" />
                          <div>
                            <h2 className="section-title">ОПЕРАТИВНА_ПРОЕКЦІЯ</h2>
                            <p className="section-subtitle">Глобальний транзит</p>
@@ -475,13 +523,13 @@ const DashboardView: React.FC = () => {
                      </div>
                      <div className="absolute top-24 left-12 z-20">
                        <div className="flex items-center gap-8 bg-slate-950/80 backdrop-blur-3xl border border-white/10 p-8 rounded-[3rem] shadow-3xl">
-                         <div className="p-5 bg-indigo-500/10 rounded-2xl relative">
-                           <div className="absolute inset-0 bg-indigo-500/20 blur-xl animate-pulse rounded-full" />
-                           <Orbit size={28} className="text-indigo-400 relative z-10 animate-spin-slow" />
+                         <div className="p-5 bg-yellow-500/10 rounded-2xl relative">
+                           <div className="absolute inset-0 bg-yellow-500/20 blur-xl animate-pulse rounded-full" />
+                           <Orbit size={28} className="text-yellow-400 relative z-10 animate-spin-slow" />
                          </div>
                          <div>
                            <h4 className="text-lg font-black text-white uppercase tracking-[0.4em] italic mb-1">ГЛОБАЛЬНИЙ_ТРАНЗИТ</h4>
-                           <p className="text-[10px] font-mono text-indigo-400 font-black uppercase tracking-widest italic">
+                           <p className="text-[10px] font-mono text-yellow-400 font-black uppercase tracking-widest italic">
                              {Object.keys(overview!.countries).length} АКТИВНІ_ЛОКАЦІЇ
                            </p>
                          </div>
@@ -494,16 +542,16 @@ const DashboardView: React.FC = () => {
 
                      <div className="absolute bottom-12 right-12 z-20 flex bg-black/60 backdrop-blur-3xl p-3 border border-white/10 rounded-[2.5rem] gap-4 shadow-3xl">
                         {[Search, Layers, Target, RadioTower].map((Icon, idx) => (
-                           <button key={idx} className="p-6 bg-white/5 hover:bg-indigo-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
-                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && "animate-pulse text-indigo-400")} />
+                           <button key={idx} className="p-6 bg-white/5 hover:bg-yellow-600 hover:text-white rounded-3xl text-slate-400 transition-all group">
+                              <Icon size={24} className={cn("group-hover:scale-110 group-hover:rotate-6 transition-transform", idx === 3 && "animate-pulse text-yellow-400")} />
                            </button>
                         ))}
                      </div>
                    </section>
 
-                   <section className="page-section section-rose shadow-3xl">
+                   <section className="page-section section-amber shadow-3xl">
                       <div className="section-header">
-                        <div className="section-dot-rose" />
+                        <div className="section-dot-amber" />
                         <div>
                           <h2 className="section-title">ТАКТИЧНІ_АЛЕРТИ</h2>
                           <p className="section-subtitle">Критичні інциденти та сповіщення</p>
@@ -519,14 +567,14 @@ const DashboardView: React.FC = () => {
                                transition={{ delay: idx * 0.08 }}
                                className={cn(
                                  "p-8 rounded-[2.5rem] border-2 relative group overflow-hidden transition-all hover:bg-white/5 shadow-2xl",
-                                 alert.severity === 'critical' ? "bg-rose-500/[0.03] border-rose-500/20" : "bg-black/40 border-white/5"
+                                 alert.severity === 'critical' ? "bg-amber-500/[0.03] border-amber-500/20" : "bg-black/40 border-white/5"
                                )}
                             >
                                <div className="flex justify-between items-start mb-6 relative z-10">
                                   <div className="flex items-center gap-6">
                                      <div className={cn(
                                        "w-14 h-14 rounded-2xl flex items-center justify-center shadow-xl",
-                                       alert.severity === 'critical' ? "bg-rose-500/20 text-rose-500 shadow-rose-500/20" : "bg-indigo-500/10 text-indigo-400"
+                                       alert.severity === 'critical' ? "bg-amber-500/20 text-amber-500 shadow-amber-500/20" : "bg-yellow-500/10 text-yellow-400"
                                      )}>
                                         {alert.severity === 'critical' ? <ShieldAlert size={28} className="animate-pulse" /> : <Eye size={28} />}
                                      </div>
@@ -557,7 +605,7 @@ const DashboardView: React.FC = () => {
                                      РОЗСЛІДУВАТИ <ArrowUpRight size={18} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                   </button>
                                </div>
-                               {alert.severity === 'critical' && <div className="absolute top-0 right-0 w-2 h-full bg-rose-500 shadow-[0_0_30px_#f43f5e]" />}
+                               {alert.severity === 'critical' && <div className="absolute top-0 right-0 w-2 h-full bg-amber-500 shadow-[0_0_30px_#f43f5e]" />}
                             </motion.div>
                           ))}
                         </AnimatePresence>
@@ -594,7 +642,7 @@ const DashboardView: React.FC = () => {
                                 </div>
                                 <div className={cn(
                                    "w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center font-black italic border-2",
-                                   company.maxRisk > 90 ? "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-rose-500/20" : 
+                                   company.maxRisk > 90 ? "bg-amber-500/10 text-amber-500 border-amber-500/30 shadow-amber-500/20" : 
                                    "bg-amber-500/10 text-amber-500 border-amber-500/30 shadow-amber-500/20"
                                 )}>
                                    <span className="text-[9px] opacity-60 leading-none">РИЗИК</span>
@@ -603,7 +651,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="grid grid-cols-2 gap-4 relative z-10">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v56.5-ELITE</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v57.2-WRAITH</span>
                                    <span className="text-sm font-black text-white italic">{company.count} ДЕКЛ.</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -617,7 +665,7 @@ const DashboardView: React.FC = () => {
                                    animate={{ width: `${company.maxRisk}%` }}
                                    className={cn(
                                      "h-full rounded-full shadow-[0_0_15px]",
-                                     company.maxRisk > 90 ? "bg-rose-500 shadow-rose-500/40" : "bg-amber-500 shadow-amber-500/40"
+                                     company.maxRisk > 90 ? "bg-amber-500 shadow-amber-500/40" : "bg-amber-500 shadow-amber-500/40"
                                    )}
                                 />
                              </div>
@@ -639,14 +687,14 @@ const DashboardView: React.FC = () => {
                           { key: 'POSTGRESQL', label: 'Relational_Core', status: 'UP', count: (overview!.infrastructure as any)?.postgresql?.records ?? 0, icon: Database, color: 'emerald' },
                           { key: 'OPENSEARCH', label: 'Neural_Search', status: 'UP', count: (overview!.infrastructure as any)?.opensearch?.documents ?? 0, icon: Search, color: 'blue' },
                           { key: 'QDRANT', label: 'Vector_Space', status: 'UP', count: (overview!.infrastructure as any)?.qdrant?.vectors ?? 0, icon: Brain, color: 'purple' },
-                          { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: (overview!.infrastructure as any)?.neo4j?.nodes ?? 0, icon: Network, color: 'indigo' },
+                          { key: 'NEO4J', label: 'Graph_Topology', status: 'UP', count: (overview!.infrastructure as any)?.neo4j?.nodes ?? 0, icon: Network, color: 'yellow' },
                           { key: 'MINIO', label: 'Object_Nexus', status: 'UP', count: (overview!.infrastructure as any)?.minio?.files ?? 0, icon: HardDrive, color: 'cyan' },
                         ].map((item) => (
                           <div key={item.key} className="p-6 bg-black/40 border border-white/5 rounded-[2rem] hover:border-slate-500/30 transition-all flex items-center justify-between group shadow-xl">
                              <div className="flex items-center gap-6">
                                 <div className={cn(
                                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all bg-slate-900 border border-white/5 group-hover:scale-110",
-                                   item.status === 'UP' ? "text-emerald-400" : "text-rose-400"
+                                   item.status === 'UP' ? "text-emerald-400" : "text-amber-400"
                                 )}>
                                    <item.icon size={22} className={cn(item.status === 'UP' && "animate-pulse")} />
                                 </div>
@@ -684,7 +732,7 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v56.5.0 ELITE NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
+                `СИСТЕМА: v57.2.0 WRAITH NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,

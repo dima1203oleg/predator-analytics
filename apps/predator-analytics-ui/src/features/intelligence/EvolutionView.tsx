@@ -1,5 +1,5 @@
 /**
- * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v56.5-ELITE
+ * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v57.2-WRAITH
  * PREDATOR Analytics — Sovereign Mutation & AZR Synthesis
  * 
  * Центр фіксації та впровадження системних мутацій AZR.
@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Dna,
@@ -34,6 +35,7 @@ import {
     Lock,
     ArrowUpRight
 } from 'lucide-react';
+import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import EvolutionDashboard from '@/components/super/EvolutionDashboard';
 import TruthLedgerTerminal from '@/components/super/TruthLedgerTerminal';
 import EvolutionForge from '@/components/super/EvolutionForge';
@@ -65,18 +67,66 @@ const EvolutionView: React.FC = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [refreshing, setRefreshing] = useState(false);
 
+    const { isOffline, nodeSource } = useBackendStatus();
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const tab = params.get('tab');
         if (tab && tabs.some(t => t.id === tab)) {
             setActiveTab(tab);
         }
-    }, []);
+    }, [tabs]);
+
+    useEffect(() => {
+        if (isOffline) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EvolutionEngine',
+                    message: 'ДВИГУН ЕВОЛЮЦІЇ: Активовано автономний режим AZR-синтезу (EVOLUTION_NODES). Використовується локальний реєстр мутацій.',
+                    severity: 'warning',
+                    timestamp: new Date().toISOString(),
+                    code: 'EVOLUTION_OFFLINE'
+                }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EvolutionEngine',
+                    message: `РЕЄСТР_AZR [${nodeSource}]: Двигун еволюції активовано. Готовність до синтезу мутацій.`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'EVOLUTION_SUCCESS'
+                }
+            }));
+        }
+    }, [isOffline, nodeSource]);
 
     const handleRefresh = async () => {
         setRefreshing(true);
-        await new Promise(r => setTimeout(r, 1500));
-        setRefreshing(false);
+        try {
+            await new Promise(r => setTimeout(r, 1500));
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EvolutionEngine',
+                    message: `РЕЄСТР_AZR [${nodeSource}]: ${isOffline ? 'Синхронізація мутацій завершена. Завантажено автономні контури.' : 'Глобальний синтез AZR успішно завершено.'}`,
+                    severity: 'info',
+                    timestamp: new Date().toISOString(),
+                    code: 'EVOLUTION_SUCCESS'
+                }
+            }));
+        } catch (e) {
+            window.dispatchEvent(new CustomEvent('predator-error', {
+                detail: {
+                    service: 'EvolutionEngine',
+                    message: `ПОМИЛКА СИНХРОНІЗАЦІЇ ВУЗЛА EVOLUTION_NODES. Перевірте з'єднання з ${nodeSource}.`,
+                    severity: 'critical',
+                    timestamp: new Date().toISOString(),
+                    code: 'EVOLUTION_NODES'
+                }
+            }));
+        } finally {
+            setRefreshing(false);
+        }
     };
 
     return (
@@ -88,7 +138,7 @@ const EvolutionView: React.FC = () => {
 
                 <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
                     
-                    {/* HEADER ELITE HUD */}
+                    {/* HEADER WRAITH HUD */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-12">
@@ -101,10 +151,10 @@ const EvolutionView: React.FC = () => {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-6">
                                         <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                                            EVOLUTIONARY_LEDGER // NEURAL_MUTATION_CORE
+                                            EVOLUTIONARY_LEDGER // {isOffline ? 'MIRROR_MUTATION' : 'NEURAL_MUTATION_CORE'}
                                         </span>
                                         <div className="h-px w-16 bg-yellow-500/20" />
-                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                                     </div>
                                     <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                                         ДВИГУН <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕВОЛЮЦІЇ</span>
@@ -149,7 +199,7 @@ const EvolutionView: React.FC = () => {
                         {[
                             { label: 'ЦИКЛИ СИНТЕЗУ', value: '2,847', sub: 'Активні AZR ітерації', icon: RefreshCw, color: '#D4AF37' },
                             { label: 'ТОПОЛОГІЯ МЕЖІ', value: '98.7%', sub: 'Здоров\'я ядра AZR', icon: ShieldCheck, color: '#D4AF37' },
-                            { label: 'МУТАЦІЙНІ РИЗИКИ', value: '0.0001', sub: 'Рівень системної ентропії', icon: Activity, color: '#E11D48' },
+                            { label: 'МУТАЦІЙНІ РИЗИКИ', value: '0.0001', sub: 'Рівень системної ентропії', icon: Activity, color: '#F59E0B' },
                         ].map((m, i) => (
                             <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
                                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
@@ -218,15 +268,15 @@ const EvolutionView: React.FC = () => {
                                                     </h4>
                                                     <EvolutionForge />
                                                 </div>
-                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-rose-950/20 shadow-4xl space-y-10 relative overflow-hidden">
-                                                    <h4 className="text-[12px] font-black text-rose-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-rose-500/10 pb-8">
+                                                <div className="p-12 rounded-[4rem] bg-black border-2 border-amber-950/20 shadow-4xl space-y-10 relative overflow-hidden">
+                                                    <h4 className="text-[12px] font-black text-amber-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-amber-500/10 pb-8">
                                                         <Gauge size={20} /> МЕТРИКИ ДОМІНУВАННЯ
                                                     </h4>
                                                     <div className="space-y-6 pt-4 italic">
                                                         {[
                                                             { label: 'ALGORITHMIC SPEED', val: '+24%', color: '#D4AF37', icon: Zap },
                                                             { label: 'NEURAL PRECISION', val: '99.92%', color: '#D4AF37', icon: Target },
-                                                            { label: 'SECURITY ENTROPY', val: '0.0001', color: '#E11D48', icon: ShieldCheck },
+                                                            { label: 'SECURITY ENTROPY', val: '0.0001', color: '#F59E0B', icon: ShieldCheck },
                                                             { label: 'RESOURCE SYNERGY', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
                                                         ].map(m => (
                                                             <div key={m.label} className="flex items-center justify-between p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] group/metric hover:border-white/10 transition-all shadow-inset">
@@ -250,7 +300,7 @@ const EvolutionView: React.FC = () => {
                                                 <CyberOrb size={320} color="#D4AF37" intensity={0.8} pulse={true} className="drop-shadow-[0_0_80px_rgba(212,175,55,0.3)]" />
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 space-y-4">
                                                     <div className="text-[12px] font-black text-yellow-500/60 uppercase tracking-[0.8em] italic">EVOLUTION_ACTIVE</div>
-                                                    <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v56.5.GEN</div>
+                                                    <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v57.2.GEN</div>
                                                     <div className="p-4 bg-yellow-500/10 rounded-full border border-yellow-500/20 blur-sm animate-pulse w-32 h-32 absolute -z-10" />
                                                 </div>
                                             </div>
@@ -261,17 +311,17 @@ const EvolutionView: React.FC = () => {
                                                 </h4>
                                                 <div className="space-y-6 pt-4 max-h-[500px] overflow-y-auto no-scrollbar custom-scrollbar italic pr-4">
                                                     {[
-                                                        { version: 'v56.5-ELITE.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
-                                                        { version: 'v56.4.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
-                                                        { version: 'v56.5.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
-                                                        { version: 'v56.5-ELITE.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
-                                                        { version: 'v56.5-ELITE.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
+                                                        { version: 'v57.2-WRAITH.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
+                                                        { version: 'v57.2.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
+                                                        { version: 'v57.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
+                                                        { version: 'v57.2-WRAITH.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
+                                                        { version: 'v57.2-WRAITH.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
                                                     ].map((v, i) => (
                                                         <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
                                                             <div className="flex items-center gap-5">
                                                                 <div className={cn(
                                                                     "w-3 h-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,1)]",
-                                                                    v.type === 'critical' ? 'bg-rose-600 animate-pulse shadow-rose-600/20' :
+                                                                    v.type === 'critical' ? 'bg-amber-600 animate-pulse shadow-amber-600/20' :
                                                                         v.type === 'major' ? 'bg-yellow-500 shadow-yellow-500/20' : 'bg-slate-500 shadow-slate-500/20'
                                                                 )} />
                                                                 <div className="space-y-1">
@@ -290,7 +340,7 @@ const EvolutionView: React.FC = () => {
                                     </div>
 
                                     <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl relative overflow-hidden">
-                                        <div className="absolute top-6 left-12 flex items-center gap-4 text-rose-500 opacity-60">
+                                        <div className="absolute top-6 left-12 flex items-center gap-4 text-amber-500 opacity-60">
                                             <Binary size={18} />
                                             <span className="text-[11px] font-black uppercase tracking-[0.5em] italic">TRUTH_LEDGER_STREAM // LIVE</span>
                                         </div>
@@ -356,7 +406,7 @@ const EvolutionView: React.FC = () => {
                                     className="col-span-12 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl min-h-[800px] relative overflow-hidden"
                                 >
                                     <div className="absolute top-8 left-12 flex items-center gap-6">
-                                        <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-500">
+                                        <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-500">
                                             <Rocket size={32} />
                                         </div>
                                         <div className="space-y-1">
@@ -400,6 +450,10 @@ const EvolutionView: React.FC = () => {
                              <span className="text-[11px] font-black uppercase tracking-[0.5em] text-emerald-500 italic">СИНТЕТИЧНИЙ_КОНЦЕНСУС_OK</span>
                          </div>
                     </motion.div>
+
+                    <div className="mt-12">
+                        <DiagnosticsTerminal />
+                    </div>
                 </div>
 
                 <style dangerouslySetInnerHTML={{ __html: `

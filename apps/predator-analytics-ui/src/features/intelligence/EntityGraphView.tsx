@@ -8,8 +8,9 @@ import {
   Filter, Shield, Cpu, ChevronRight, Activity, Search, ShieldAlert, Zap, Box, Lock, Eye
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { premiumLocales } from '@/locales/uk/premium';
 import { cn } from '@/utils/cn';
+import { premiumLocales } from '@/locales/uk/premium';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // === TYPES ===
 interface Node {
@@ -30,12 +31,13 @@ interface Link {
 }
 
 // === Завантаження графу з реального API ===
-const fetchGraphData = async (): Promise<{ nodes: Node[], links: Link[] }> => {
+const fetchGraphData = async (isOffline: boolean = false): Promise<{ nodes: Node[], links: Link[] }> => {
   try {
     const response = await fetch('/api/v1/graph/summary');
     if (!response.ok) throw new Error('API unavailable');
     const data = await response.json();
     
+    // ... rest of processing ...
     const nodes: Node[] = (data.nodes || []).map((n: any) => ({
       id: n.id || n.ueid,
       label: n.label || n.name,
@@ -56,6 +58,17 @@ const fetchGraphData = async (): Promise<{ nodes: Node[], links: Link[] }> => {
     return { nodes, links };
   } catch (err) {
     console.warn('[EntityGraphView] API недоступний:', err);
+    
+    window.dispatchEvent(new CustomEvent('predator-error', {
+      detail: {
+        service: 'GraphIntel',
+        message: isOffline ? 'ВУЗОЛ ГРАФУ ПРАЦЮЄ В АВТОНОМНОМУ РЕЖИМІ (GRAPH_NODES). API недоступний.' : 'ПОМИЛКА ДОСТУПУ ДО ВУЗЛА ГРАФУ. Перевірте з\'єднання (GRAPH_NODES).',
+        severity: isOffline ? 'warning' : 'critical',
+        timestamp: new Date().toISOString(),
+        code: 'GRAPH_NODES'
+      }
+    }));
+
     return { nodes: [], links: [] };
   }
 };
@@ -135,11 +148,11 @@ const GraphNode = ({ node, onClick, isSelected }: { node: Node; onClick: (node: 
         <Html distanceFactor={15} zIndexRange={[100, 0]}>
           <div className={cn(
             "relative px-3 py-1.5 backdrop-blur-md border rounded-md whitespace-nowrap overflow-hidden group pointer-events-none -translate-x-1/2 -translate-y-[150%]",
-            node.riskScore > 85 ? "bg-rose-500/10 border-rose-500/50" : node.id === 'predator_core' ? "bg-emerald-500/10 border-emerald-500/50" : "bg-cyan-500/10 border-cyan-500/30"
+            node.riskScore > 85 ? "bg-amber-500/10 border-amber-500/50" : node.id === 'predator_core' ? "bg-emerald-500/10 border-emerald-500/50" : "bg-cyan-500/10 border-cyan-500/30"
           )}>
-            <div className={cn("absolute inset-y-0 left-0 w-1", node.riskScore > 85 ? "bg-rose-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
+            <div className={cn("absolute inset-y-0 left-0 w-1", node.riskScore > 85 ? "bg-amber-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
             <div className="flex flex-col pl-2">
-              <span className={cn("text-[9px] font-black uppercase tracking-widest", node.riskScore > 85 ? "text-rose-400" : node.id === 'predator_core' ? "text-emerald-400" : "text-cyan-400")}>
+              <span className={cn("text-[9px] font-black uppercase tracking-widest", node.riskScore > 85 ? "text-amber-400" : node.id === 'predator_core' ? "text-emerald-400" : "text-cyan-400")}>
                 {premiumLocales.graph.nodeTypes[node.type] || node.type} {node.riskScore > 85 && '⚠'}
               </span>
               <span className="text-xs font-bold text-white drop-shadow-md tracking-tight">{node.label}</span>
@@ -270,12 +283,12 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
     >
       {/* Header */}
       <div className="p-6 border-b border-white/5 relative overflow-hidden shrink-0">
-        <div className={cn("absolute inset-0 opacity-20 pointer-events-none", node.riskScore > 85 ? "bg-rose-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
+        <div className={cn("absolute inset-0 opacity-20 pointer-events-none", node.riskScore > 85 ? "bg-amber-500" : node.id === 'predator_core' ? "bg-emerald-500" : "bg-cyan-500")} />
         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-50" style={{ color: node.riskScore > 85 ? '#f43f5e' : node.id === 'predator_core' ? '#10b981' : '#06b6d4' }} />
 
         <div className="flex justify-between items-start relative z-10">
           <div>
-            <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border mb-3", node.riskScore > 85 ? "bg-rose-500/10 text-rose-400 border-rose-500/30" : node.id === 'predator_core' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30")}>
+            <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border mb-3", node.riskScore > 85 ? "bg-amber-500/10 text-amber-400 border-amber-500/30" : node.id === 'predator_core' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" : "bg-cyan-500/10 text-cyan-400 border-cyan-500/30")}>
               {node.riskScore > 85 ? <ShieldAlert size={12} /> : node.id === 'predator_core' ? <Cpu size={12} /> : <Box size={12} />}
               {premiumLocales.graph.nodeTypes[node.type] || node.type}
             </div>
@@ -289,19 +302,19 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8 custom-scrollbar">
         {/* Risk Score */}
         <div className="relative p-5 rounded-2xl bg-black/40 border border-white/5 overflow-hidden group">
-          <div className={cn("absolute right-0 top-0 w-32 h-32 rounded-bl-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40", node.riskScore > 85 ? "bg-radial-rose" : "bg-radial-emerald")} style={{ background: `radial-gradient(circle at top right, ${node.riskScore > 85 ? 'rgba(244,63,94,1)' : 'rgba(16,185,129,1)'}, transparent 70%)` }} />
+          <div className={cn("absolute right-0 top-0 w-32 h-32 rounded-bl-full pointer-events-none opacity-20 transition-opacity group-hover:opacity-40", node.riskScore > 85 ? "bg-radial-amber" : "bg-radial-emerald")} style={{ background: `radial-gradient(circle at top right, ${node.riskScore > 85 ? 'rgba(244,63,94,1)' : 'rgba(16,185,129,1)'}, transparent 70%)` }} />
 
           <div className="flex justify-between items-end mb-3 relative z-10">
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{premiumLocales.graph.nodeDetails.trustScore}</span>
-            <span className={cn("text-3xl font-black font-mono tracking-tighter", node.riskScore > 85 ? "text-rose-400" : "text-emerald-400")}>{node.riskScore}</span>
+            <span className={cn("text-3xl font-black font-mono tracking-tighter", node.riskScore > 85 ? "text-amber-400" : "text-emerald-400")}>{node.riskScore}</span>
           </div>
 
           <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5 relative z-10">
-            <motion.div initial={{ width: 0 }} animate={{ width: `${node.riskScore}%` }} transition={{ duration: 1, ease: 'easeOut' }} className={cn("h-full rounded-full shadow-[0_0_10px_currentColor]", node.riskScore > 85 ? "bg-rose-500" : "bg-emerald-500")} />
+            <motion.div initial={{ width: 0 }} animate={{ width: `${node.riskScore}%` }} transition={{ duration: 1, ease: 'easeOut' }} className={cn("h-full rounded-full shadow-[0_0_10px_currentColor]", node.riskScore > 85 ? "bg-amber-500" : "bg-emerald-500")} />
           </div>
 
           <div className="mt-3 flex items-center gap-2 text-[9px] font-mono uppercase tracking-wider text-slate-500 relative z-10">
-            <Activity size={12} className={node.riskScore > 85 ? "text-rose-500" : "text-emerald-500"} />
+            <Activity size={12} className={node.riskScore > 85 ? "text-amber-500" : "text-emerald-500"} />
             {premiumLocales.graph.nodeDetails.confidence}: {Math.floor(85 + Math.random() * 14)}%
           </div>
         </div>
@@ -338,7 +351,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
                 <div className="flex-1">
                   <div className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">Detected Node {Math.floor(Math.random() * 999)}</div>
                   <div className="text-[10px] font-mono text-slate-500 mt-0.5 flex items-center gap-1">
-                    <span className={cn("w-1.5 h-1.5 rounded-full", Math.random() > 0.5 ? "bg-rose-500" : "bg-emerald-500")} /> Transaction Flow
+                    <span className={cn("w-1.5 h-1.5 rounded-full", Math.random() > 0.5 ? "bg-amber-500" : "bg-emerald-500")} /> Transaction Flow
                   </div>
                 </div>
                 <ChevronRight size={16} className="text-slate-600 group-hover:text-cyan-400 transition-colors" />
@@ -349,7 +362,7 @@ const NodeDetailsPanel = ({ node, onClose }: { node: Node; onClose: () => void }
       </div>
 
       <div className="p-6 border-t border-white/5 bg-slate-900/50 shrink-0">
-        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]" : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(8,145,178,0.3)]")}>
+        <button className={cn("w-full py-4 rounded-xl font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02]", node.riskScore > 85 ? "bg-amber-600 hover:bg-amber-500 text-white shadow-[0_0_20px_rgba(225,29,72,0.3)]" : "bg-cyan-600 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(8,145,178,0.3)]")}>
           <Search size={16} /> {premiumLocales.graph.nodeDetails.fullAnalysis}
         </button>
       </div>
@@ -368,14 +381,28 @@ const EntityGraphView = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
+  const { isOffline, nodeSource } = useBackendStatus();
+
   useEffect(() => {
     const loadGraph = async () => {
-      const graphData = await fetchGraphData();
+      const graphData = await fetchGraphData(isOffline);
       setData(graphData);
       setLoading(false);
+      
+      if (isOffline) {
+        window.dispatchEvent(new CustomEvent('predator-error', {
+          detail: {
+            service: 'GraphIntel',
+            message: "ГРАФ ОБ'ЄКТІВ: Використовується локальна топологія (GRAPH_NODES).",
+            severity: 'warning',
+            timestamp: new Date().toISOString(),
+            code: 'GRAPH_NODES'
+          }
+        }));
+      }
     };
     loadGraph();
-  }, []);
+  }, [isOffline]);
 
   const filteredData = useMemo(() => {
     if (!data) return { nodes: [], links: [] };
@@ -427,9 +454,15 @@ const EntityGraphView = () => {
         </div>
 
         <div className="pointer-events-auto flex gap-3">
+          {isOffline && (
+            <div className="px-5 py-2.5 bg-amber-600/10 border border-amber-500/20 rounded-2xl flex items-center gap-3 backdrop-blur-xl animate-pulse">
+               <ShieldAlert size={16} className="text-amber-500" />
+               <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">OFFLINE_GRAPH_MODE</span>
+            </div>
+          )}
           <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex shadow-2xl">
             <button onClick={() => setFilter('all')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'all' ? "bg-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.all}</button>
-            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-rose-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
+            <button onClick={() => setFilter('risk')} className={cn("px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all", filter === 'risk' ? "bg-amber-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.4)]" : "text-slate-400 hover:text-white hover:bg-white/5")}>{premiumLocales.graph.filters.risk}</button>
           </div>
           <button className="p-3 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all hover:bg-white/10 hover:border-white/20 shadow-2xl">
             <Filter size={20} />
@@ -452,7 +485,7 @@ const EntityGraphView = () => {
           {[
             { icon: Database, lbl: premiumLocales.graph.stats.nodes, val: graphData.nodes.length, c: 'text-cyan-400' },
             { icon: Share2, lbl: premiumLocales.graph.stats.links, val: graphData.links.length, c: 'text-purple-400' },
-            { icon: ShieldAlert, lbl: premiumLocales.graph.stats.critical, val: graphData.nodes.filter(n => n.riskScore > 85).length, c: 'text-rose-400' }
+            { icon: ShieldAlert, lbl: premiumLocales.graph.stats.critical, val: graphData.nodes.filter(n => n.riskScore > 85).length, c: 'text-amber-400' }
           ].map((st, i) => (
             <div key={i} className={cn("flex items-center gap-3 py-3 px-5", i !== 0 && "border-l border-white/10")}>
               <st.icon className={cn("w-5 h-5", st.c)} />

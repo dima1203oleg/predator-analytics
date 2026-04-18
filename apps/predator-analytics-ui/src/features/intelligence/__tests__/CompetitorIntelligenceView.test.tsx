@@ -1,193 +1,141 @@
-import { render, screen, fireEvent, act, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import CompetitorIntelligenceView from '../CompetitorIntelligenceView';
 import React from 'react';
-import { api } from '@/services/api';
 
-// Мокаємо залежності
-vi.mock('@/services/api', () => ({
-    api: {
-        premium: {
-            getCompetitors: vi.fn(),
-        },
+// ─── MOCKS ───────────────────────────────────────────────────────────────────
+
+vi.mock('framer-motion', () => ({
+    motion: {
+        div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock('lucide-react', async (importOriginal) => {
+    const actual = await importOriginal() as any;
+    return new Proxy(actual, {
+        get: (target, prop) => {
+            if (typeof prop === 'string' && /^[A-Z]/.test(prop)) {
+                return (props: any) => <span data-testid={`icon-${prop.toLowerCase()}`} {...props} />;
+            }
+            return target[prop];
+        }
+    });
+});
+
+vi.mock('@/services/api', () => ({
+    intelligenceApi: {
+        getCompetitors: vi.fn(() => Promise.resolve([
+            {
+                id: 'comp_1',
+                name: 'ГОЛОВНИЙ КОНКУРЕНТ',
+                edrpou: '12345678',
+                totalImport: 10000000,
+                totalExport: 5000000,
+                countries: ['Польща', 'Німеччина'],
+                products: ['Обладнання'],
+                topSuppliers: ['Supplier Alpha'],
+                marketShare: 15,
+                trend: 'up',
+                trendPercent: 12,
+                riskScore: 65,
+                lastActivity: '2026-04-10',
+                isTracked: true
+            }
+        ]))
+    }
 }));
 
 vi.mock('@/components/ViewHeader', () => ({
     ViewHeader: ({ title, stats }: any) => (
         <div data-testid="view-header">
-            <h1>{title}</h1>
-            <div data-testid="header-stats">{stats?.length || 0} stats</div>
+            {title}
+            <div data-testid="stats-count">{stats?.length}</div>
         </div>
-    ),
+    )
 }));
 
-vi.mock('@/components/TacticalCard', () => ({
-    TacticalCard: ({ children, variant, title, className, onClick }: any) => (
-        <div data-testid={`tactical-card-${variant || 'default'}`} className={className} onClick={onClick}>
-            {title && <div>{title}</div>}
-            {children}
-        </div>
-    ),
+vi.mock('@/features/ai/AIInsightsHub', () => ({ default: () => <div data-testid="ai-hub" /> }));
+vi.mock('@/components/TacticalCard', () => ({ 
+    TacticalCard: ({ children, title }: any) => <div data-testid="tactical-card">{title}{children}</div> 
+}));
+vi.mock('@/components/CyberOrb', () => ({ CyberOrb: () => <div data-testid="cyber-orb" /> }));
+vi.mock('@/components/HoloContainer', () => ({ HoloContainer: ({ children }: any) => <div data-testid="holo-container">{children}</div> }));
+vi.mock('@/components/layout/PageTransition', () => ({ PageTransition: ({ children }: any) => <div data-testid="page-transition">{children}</div> }));
+
+vi.mock('@/hooks/useBackendStatus', () => ({
+    useBackendStatus: () => ({
+        isOffline: false,
+        nodeSource: 'NVIDIA_PRIMARY'
+    })
 }));
 
-vi.mock('@/components/CyberOrb', () => ({
-    CyberOrb: () => <div data-testid="cyber-orb" />,
-}));
-
-vi.mock('@/components/HoloContainer', () => ({
-    HoloContainer: ({ children }: any) => <div data-testid="holo-container">{children}</div>,
-}));
-
-vi.mock('@/components/layout/PageTransition', () => ({
-    PageTransition: ({ children }: any) => <div data-testid="page-transition">{children}</div>,
-}));
-
-vi.mock('@/features/ai/AIInsightsHub', () => ({
-    default: () => <div data-testid="ai-insights-hub" />,
-}));
-
-vi.mock('@/components/shared/DataSkeleton', () => ({
-    DataSkeleton: () => <div data-testid="data-skeleton" />,
-}));
-
-// Дані для мокання API
-const mockCompetitors = [
-    {
-        id: '1',
-        name: 'GLOBAL TRADE CORP',
-        edrpou: '11223344',
-        totalImport: 50000000,
-        totalExport: 10000000,
-        countries: ['China', 'USA'],
-        products: ['Electronics', 'Chemicals'],
-        topSuppliers: ['Supplier A', 'Supplier B'],
-        marketShare: 15,
-        trend: 'up',
-        trendPercent: 12,
-        riskScore: 25,
-        lastActivity: '2026-03-01',
-        isTracked: false,
-    },
-    {
-        id: '2',
-        name: 'MODERN LOGISTICS',
-        edrpou: '55667788',
-        totalImport: 2000000,
-        totalExport: 500000,
-        countries: ['Poland', 'Germany'],
-        products: ['Food', 'Beverages'],
-        topSuppliers: ['Supplier C'],
-        marketShare: 5,
-        trend: 'down',
-        trendPercent: 5,
-        riskScore: 65,
-        lastActivity: '2026-02-20',
-        isTracked: true,
-    }
-];
+// ─── TESTS ───────────────────────────────────────────────────────────────────
 
 describe('CompetitorIntelligenceView', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        (api.premium.getCompetitors as any).mockResolvedValue(mockCompetitors);
     });
 
-    it('повинен успішно завантажувати та відображати список конкурентів', async () => {
-        render(<CompetitorIntelligenceView />);
-        
-        expect(screen.getByTestId('view-header')).toBeInTheDocument();
-        
-        // Чекаємо поки зникнуть скелетони і з'являться дані
-        await waitFor(() => {
-            expect(screen.getByText('GLOBAL TRADE CORP')).toBeInTheDocument();
-            expect(screen.getByText('MODERN LOGISTICS')).toBeInTheDocument();
-        });
-
-        expect(screen.getByText('11223344')).toBeInTheDocument();
-        expect(screen.getByText('$50.0M')).toBeInTheDocument();
-    });
-
-    it('повинен фільтрувати конкурентів за назвою', async () => {
+    it('відображає заголовок та список конкурентів', async () => {
         render(<CompetitorIntelligenceView />);
         
         await waitFor(() => {
-            expect(screen.getByText('GLOBAL TRADE CORP')).toBeInTheDocument();
+            expect(screen.getByText(/СТРАТЕГІЧНИЙ НЕКСУС КОНКУРЕНТІВ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ГОЛОВНИЙ КОНКУРЕНТ/i)).toBeInTheDocument();
+            expect(screen.getByText('12345678')).toBeInTheDocument();
         });
+    });
 
+    it('фільтрує список за запитом', async () => {
+        render(<CompetitorIntelligenceView />);
+        
+        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУРЕНТ/i));
+        
         const searchInput = screen.getByPlaceholderText(/Пошук сутностей/i);
-        fireEvent.change(searchInput, { target: { value: 'MODERN' } });
-
-        expect(screen.queryByText('GLOBAL TRADE CORP')).not.toBeInTheDocument();
-        expect(screen.getByText('MODERN LOGISTICS')).toBeInTheDocument();
+        fireEvent.change(searchInput, { target: { value: 'НЕМАЄ_ТАККОГО' } });
+        
+        expect(screen.queryByText(/ГОЛОВНИЙ КОНКУРЕНТ/i)).not.toBeInTheDocument();
+        expect(screen.getByText(/СИГНАЛІВ НЕ ВИЯВЛЕНО/i)).toBeInTheDocument();
     });
 
-    it('повинен розгортати картку конкурента для детальної інформації', async () => {
+    it('ініціює predator-error в автономному режимі', async () => {
+        vi.mock('@/hooks/useBackendStatus', () => ({
+            useBackendStatus: () => ({ 
+                isOffline: true, 
+                nodeSource: 'MIRROR_CLUSTER'
+            })
+        }));
+
+        const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
         render(<CompetitorIntelligenceView />);
-        
+
         await waitFor(() => {
-            expect(screen.getByText('GLOBAL TRADE CORP')).toBeInTheDocument();
-        });
-
-        const card = screen.getByText('GLOBAL TRADE CORP').closest('.cursor-pointer');
-        
-        await act(async () => {
-            fireEvent.click(card!);
-        });
-
-        // Після кліку мають з'явитися деталі (наприклад, ГЕОГРАФІЯ ЕКСПАНСІЇ)
-        // Використовуємо findByText через анімацію розгортки
-        expect(await screen.findByText(/ГЕОГРАФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
-        expect(screen.getByText('China')).toBeInTheDocument();
-        expect(screen.getByText('Supplier A')).toBeInTheDocument();
-    });
-
-    it('повинен змінювати статус відстеження (Track/Untrack)', async () => {
-        render(<CompetitorIntelligenceView />);
-        
-        await waitFor(() => {
-            expect(screen.getByText('GLOBAL TRADE CORP')).toBeInTheDocument();
-        });
-
-        // Шукаємо картку саме GLOBAL TRADE CORP
-        const globalCorpCard = screen.getByText('GLOBAL TRADE CORP').closest('[data-testid^="tactical-card"]');
-        const trackBtn = within(globalCorpCard as HTMLElement).getByRole('button').querySelector('svg.lucide-star')?.parentElement;
-        
-        // GLOBAL TRADE CORP спочатку не відстежується
-        expect(within(globalCorpCard as HTMLElement).queryByText(/ПЕРЕБУВАЄ ПІД НАГЛЯДОМ/i)).not.toBeInTheDocument();
-
-        await act(async () => {
-            fireEvent.click(trackBtn!);
-        });
-
-        // Після кліку має з'явитися бейдж
-        expect(within(globalCorpCard as HTMLElement).getByText(/ПЕРЕБУВАЄ ПІД НАГЛЯДОМ/i)).toBeInTheDocument();
-        
-        // MODERN LOGISTICS все ще має свій бейдж (він був там спочатку)
-        const modernCard = screen.getByText('MODERN LOGISTICS').closest('[data-testid^="tactical-card"]');
-        expect(within(modernCard as HTMLElement).getByText(/ПЕРЕБУВАЄ ПІД НАГЛЯДОМ/i)).toBeInTheDocument();
-    });
-
-    it('повинен відображати високий ризик синергії для відповідних конкурентів', async () => {
-        render(<CompetitorIntelligenceView />);
-        
-        await waitFor(() => {
-            // MODERN LOGISTICS має riskScore: 65 (> 50)
-            expect(screen.getByText(/ВИСОКИЙ РИЗИК СИНЕРГІЇ/i)).toBeInTheDocument();
-            expect(screen.getByText(/65%/i)).toBeInTheDocument();
+            expect(screen.getByText(/OFFLINE_MIRROR/i)).toBeInTheDocument();
+            expect(dispatchSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'predator-error',
+                    detail: expect.objectContaining({
+                        service: 'CompetitorIntel',
+                        code: 'COMPETITOR_NODES'
+                    })
+                })
+            );
         });
     });
 
-    it('повинен відображати стан "СИГНАЛІВ НЕ ВИЯВЛЕНО", якщо нічого не знайдено', async () => {
+    it('відображає деталі при розгортанні картки', async () => {
         render(<CompetitorIntelligenceView />);
         
-        await waitFor(() => {
-            expect(screen.getByText('GLOBAL TRADE CORP')).toBeInTheDocument();
-        });
-
-        const searchInput = screen.getByPlaceholderText(/Пошук сутностей/i);
-        fireEvent.change(searchInput, { target: { value: 'NONEXISTENT' } });
-
-        expect(screen.getByText('СИГНАЛІВ НЕ ВИЯВЛЕНО')).toBeInTheDocument();
+        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУРЕНТ/i));
+        
+        const card = screen.getByText(/ГОЛОВНИЙ КОНКУРЕНТ/i);
+        fireEvent.click(card);
+        
+        expect(screen.getByText(/ГЕОГРАФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ВУЗЛИ ПОСТАЧАННЯ/i)).toBeInTheDocument();
+        expect(screen.getByText(/Supplier Alpha/i)).toBeInTheDocument();
     });
 });

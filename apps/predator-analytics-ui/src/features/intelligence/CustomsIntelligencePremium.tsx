@@ -1,5 +1,5 @@
 /**
- * 💎 CUSTOMS PREMIUM // МИТНИЙ ПРО | v56.5-ELITE
+ * 💎 CUSTOMS PREMIUM // МИТНИЙ ПРО | v57.2-WRAITH
  * PREDATOR Analytics — Commercial Intelligence & Deep Market Analysis
  * 
  * Глибока аналітика для бізнесу: Аналіз конкурентів, ринкові ніші,
@@ -26,6 +26,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 interface CompetitorData {
   name: string;
@@ -45,9 +46,37 @@ const TOP_IMPORTERS: CompetitorData[] = [
 
 export default function CustomsIntelligencePremium() {
   const [refreshing, setRefreshing] = useState(false);
+  const { isOffline, activeFailover } = useBackendStatus();
+
+  useEffect(() => {
+    if (isOffline) {
+        window.dispatchEvent(new CustomEvent('predator-error', {
+            detail: {
+                service: 'CustomsPremium',
+                message: `МИТНИЙ ПРО: Вузол NVIDIA недоступний. Працюємо через автономне дзеркало (COMMERCIAL_NODES).`,
+                severity: 'warning',
+                timestamp: new Date().toISOString(),
+                code: 'COMMERCIAL_NODES'
+            }
+        }));
+    }
+  }, [isOffline]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    
+    if (isOffline) {
+      window.dispatchEvent(new CustomEvent('predator-error', {
+        detail: {
+          service: 'CustomsPremium',
+          message: 'Примусове оновлення преміум-даних через MIRROR_CHANNEL завершено (COMMERCIAL_NODES).',
+          severity: 'info',
+          timestamp: new Date().toISOString(),
+          code: 'COMMERCIAL_NODES'
+        }
+      }));
+    }
+
     await new Promise(r => setTimeout(r, 1000));
     setRefreshing(false);
   };
@@ -61,7 +90,7 @@ export default function CustomsIntelligencePremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-          {/* HEADER ELITE HUD */}
+          {/* HEADER WRAITH HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -73,28 +102,31 @@ export default function CustomsIntelligencePremium() {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
-                    <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      PREMIUM_MARKET_INTEL // SOVEREIGN_QUOTA
+                    <span className={cn(
+                      "px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl border",
+                      isOffline ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
+                    )}>
+                      {isOffline ? 'SOVEREIGN_EMERGENCY' : 'PREMIUM_MARKET_INTEL'} // SOVEREIGN_QUOTA
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v56.5-ELITE</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                    МИТНИЙ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">PROJECT</span>
+                    МИТНИЙ <span className={cn("underline decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-yellow-500 decoration-yellow-600/30")}>PROJECT</span>
                   </h1>
                 </div>
               </div>
             }
-            breadcrumbs={['INTEL', 'COMMERCIAL', 'PROJECT_ELITE']}
+            breadcrumbs={['INTEL', 'COMMERCIAL', 'PROJECT_WRAITH']}
             badges={[
               { label: 'SOVEREIGN_ACCESS', color: 'gold', icon: <Crown size={10} /> },
               { label: 'CLASSIFIED_T1', color: 'primary', icon: <Fingerprint size={10} /> },
             ]}
             stats={[
-              { label: 'РИНКОВА_ЧАСТКА', value: '42.8%', icon: <Target />, color: 'gold' },
-              { label: 'PREDICTIVE_POINTS', value: '2,841', icon: <Sparkles />, color: 'primary' },
+              { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', icon: <Cpu />, color: isOffline ? 'warning' : 'gold' },
+              { label: 'FAILOVER', value: activeFailover ? 'COLAB_SHARED' : isOffline ? 'PROXIFIED' : 'STANDBY', icon: <Orbit />, color: isOffline ? 'warning' : 'primary' },
               { label: 'ALPHA_TRUST', value: 'MAX', icon: <ShieldCheck />, color: 'success' },
-              { label: 'CORE_STATUS', value: 'NOMINAL', icon: <Activity />, color: 'primary' },
+              { label: 'CORE_STATUS', value: isOffline ? 'EMERGENCY' : 'NOMINAL', icon: <Activity />, color: isOffline ? 'warning' : 'primary' },
             ]}
             actions={
               <div className="flex gap-6">
@@ -158,7 +190,7 @@ export default function CustomsIntelligencePremium() {
                           <div className={cn("p-5 rounded-2xl bg-black border-2 border-white/5", k.cl)}>
                              <k.i size={24} />
                           </div>
-                          <span className={cn("text-[10px] font-black italic", k.c.startsWith('+') ? 'text-emerald-500' : 'text-rose-500')}>{k.c}</span>
+                          <span className={cn("text-[10px] font-black italic", k.c.startsWith('+') ? 'text-emerald-500' : 'text-amber-500')}>{k.c}</span>
                        </div>
                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-2">{k.l}</p>
                        <h4 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none font-mono">{k.v}</h4>
@@ -196,7 +228,7 @@ export default function CustomsIntelligencePremium() {
                                 <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic leading-none mb-1">ОБСЯГ_ІМПОРТУ</p>
                                 <p className="text-2xl font-black text-white italic font-mono tracking-tighter leading-none">${(comp.imports / 1000000).toFixed(1)}M</p>
                              </div>
-                             <div className={cn("p-4 rounded-xl border-2 italic", comp.trend === 'up' ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5' : 'border-rose-500/20 text-rose-500 bg-rose-500/5')}>
+                             <div className={cn("p-4 rounded-xl border-2 italic", comp.trend === 'up' ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5' : 'border-amber-500/20 text-amber-500 bg-amber-500/5')}>
                                 {comp.trend === 'up' ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
                              </div>
                           </div>
@@ -221,7 +253,7 @@ export default function CustomsIntelligencePremium() {
                        <div key={i} className="p-6 rounded-3xl bg-white/[0.01] border-2 border-white/[0.04] space-y-3">
                           <div className="flex items-center justify-between">
                              <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">{insight.t}</span>
-                             <span className={cn("w-2 h-2 rounded-full", insight.r === 'high' ? 'bg-rose-500 shadow-[0_0_8px_#e11d48]' : insight.r === 'medium' ? 'bg-amber-500' : 'bg-emerald-500')} />
+                             <span className={cn("w-2 h-2 rounded-full", insight.r === 'high' ? 'bg-amber-500 shadow-[0_0_8px_#e11d48]' : insight.r === 'medium' ? 'bg-amber-500' : 'bg-emerald-500')} />
                           </div>
                           <p className="text-[11px] text-slate-400 italic font-medium leading-relaxed uppercase">{insight.d}</p>
                        </div>

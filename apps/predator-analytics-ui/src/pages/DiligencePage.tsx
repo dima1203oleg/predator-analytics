@@ -44,7 +44,7 @@ type RadarPoint = {
     value: number;
 };
 
-const riskLevelLabel: Record<RiskLevelValue, string> = {
+const riskLevelLabel: Record<string, string> = {
     stable: 'Стабільний',
     watchlist: 'Під наглядом',
     elevated: 'Підвищений',
@@ -54,7 +54,7 @@ const riskLevelLabel: Record<RiskLevelValue, string> = {
     medium: 'Середній',
 };
 
-const riskLevelTone: Record<RiskLevelValue, string> = {
+const riskLevelTone: Record<string, string> = {
     stable: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
     low: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25',
     watchlist: 'bg-sky-500/15 text-sky-200 border-sky-500/25',
@@ -93,16 +93,20 @@ const normalizeRiskLevel = (value?: string | null): RiskLevelValue => {
 };
 
 const normalizeRiskEntity = (entity: Record<string, unknown>): RiskEntity => ({
+    id: String(entity.ueid ?? entity.id ?? entity.edrpou ?? ''),
     ueid: typeof entity.ueid === 'string' ? entity.ueid : undefined,
     edrpou: String(entity.edrpou ?? entity.ueid ?? entity.id ?? 'Н/Д'),
     name: String(entity.name ?? 'Невідома компанія'),
-    risk_score: Number(entity.risk_score ?? 0),
-    risk_level: normalizeRiskLevel(typeof entity.risk_level === 'string' ? entity.risk_level : null),
+    riskScore: Number(entity.riskScore ?? entity.risk_score ?? 0),
+    risk_score: Number(entity.risk_score ?? entity.riskScore ?? 0),
+    riskLevel: normalizeRiskLevel(typeof entity.riskLevel === 'string' ? entity.riskLevel : typeof entity.risk_level === 'string' ? entity.risk_level : null),
+    risk_level: normalizeRiskLevel(typeof entity.risk_level === 'string' ? entity.risk_level : typeof entity.riskLevel === 'string' ? entity.riskLevel : null),
     last_updated: typeof entity.last_updated === 'string' ? entity.last_updated : undefined,
     created_at: typeof entity.created_at === 'string' ? entity.created_at : undefined,
     updated_at: typeof entity.updated_at === 'string' ? entity.updated_at : undefined,
     status: typeof entity.status === 'string' ? entity.status : undefined,
     sector: typeof entity.sector === 'string' ? entity.sector : null,
+    flags: Array.isArray(entity.flags) ? entity.flags.map(String) : [],
     cers_confidence:
         typeof entity.cers_confidence === 'number' ? entity.cers_confidence : undefined,
 });
@@ -172,11 +176,11 @@ const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarP
 
     if (companyProfile.risk_details) {
         return [
-            { label: 'Інституційний', value: clampScore(companyProfile.risk_details.institutional.value) },
-            { label: 'Структурний', value: clampScore(companyProfile.risk_details.structural.value) },
-            { label: 'Поведінковий', value: clampScore(companyProfile.risk_details.behavioral.value) },
-            { label: 'Впливовий', value: clampScore(companyProfile.risk_details.influence.value) },
-            { label: 'Предиктивний', value: clampScore(companyProfile.risk_details.predictive.value) },
+            { label: 'Інституційний', value: clampScore(companyProfile.risk_details.institutional?.value ?? 0) },
+            { label: 'Структурний', value: clampScore(companyProfile.risk_details.structural?.value ?? 0) },
+            { label: 'Поведінковий', value: clampScore(companyProfile.risk_details.behavioral?.value ?? 0) },
+            { label: 'Впливовий', value: clampScore(companyProfile.risk_details.influence?.value ?? 0) },
+            { label: 'Предиктивний', value: clampScore(companyProfile.risk_details.predictive?.value ?? 0) },
         ];
     }
 
@@ -195,13 +199,13 @@ const buildRadarPoints = (companyProfile: CompanyProfileResponse | null): RadarP
     ];
 };
 
-// --- MOCK DATA FALLBACK (v56.5-ELITE-ELITE) ---
+// --- MOCK DATA FALLBACK (v57.2-WRAITH-WRAITH) ---
 const MOCK_ENTITIES: RiskEntity[] = [
-  { ueid: '1', edrpou: '38210342', name: 'ТОВ "ЕНЕРДЖИ-ГРУП"', risk_score: 92, risk_level: 'critical', status: 'active' },
-  { ueid: '2', edrpou: '41092384', name: 'ПРАТ "ТЕХНО-ВЕСТ"', risk_score: 75, risk_level: 'high', status: 'active' },
-  { ueid: '3', edrpou: '29384712', name: 'ПП "ЛОГІСТИК-ЦЕНТР ПЛЮС"', risk_score: 45, risk_level: 'medium', status: 'active' },
-  { ueid: '4', edrpou: '31049582', name: 'ТОВ "МЕТАЛ-ПРОМ"', risk_score: 22, risk_level: 'stable', status: 'active' },
-  { ueid: '5', edrpou: '42938104', name: 'ДЕРЖАВНЕ ПІДПРИЄМСТВО "СИСТЕМА"', risk_score: 68, risk_level: 'elevated', status: 'active' },
+  { id: '1', ueid: '1', edrpou: '38210342', name: 'ТОВ "ЕНЕРДЖИ-ГРУП"', riskScore: 92, risk_score: 92, riskLevel: 'critical', risk_level: 'critical', status: 'active', flags: [] },
+  { id: '2', ueid: '2', edrpou: '41092384', name: 'ПРАТ "ТЕХНО-ВЕСТ"', riskScore: 75, risk_score: 75, riskLevel: 'high', risk_level: 'high', status: 'active', flags: [] },
+  { id: '3', ueid: '3', edrpou: '29384712', name: 'ПП "ЛОГІСТИК-ЦЕНТР ПЛЮС"', riskScore: 45, risk_score: 45, riskLevel: 'medium', risk_level: 'medium', status: 'active', flags: [] },
+  { id: '4', ueid: '4', edrpou: '31049582', name: 'ТОВ "МЕТАЛ-ПРОМ"', riskScore: 22, risk_score: 22, riskLevel: 'stable', risk_level: 'stable', status: 'active', flags: [] },
+  { id: '5', ueid: '5', edrpou: '42938104', name: 'ДЕРЖАВНЕ ПІДПРИЄМСТВО "СИСТЕМА"', riskScore: 68, risk_score: 68, riskLevel: 'elevated', risk_level: 'elevated', status: 'active', flags: [] },
 ];
 
 export default function DiligencePage() {
@@ -220,7 +224,7 @@ export default function DiligencePage() {
                 setLoadingSidebar(true);
                 const payload = await diligenceApi.getRiskEntities();
                 const entities = normalizeRiskEntities(payload).sort(
-                    (left, right) => right.risk_score - left.risk_score,
+                    (left, right) => (right.risk_score ?? right.riskScore ?? 0) - (left.risk_score ?? left.riskScore ?? 0),
                 );
 
                 setRiskEntities(entities);
@@ -385,7 +389,7 @@ export default function DiligencePage() {
                     <div className="max-w-3xl">
                         <div className="mb-3 flex flex-wrap gap-2">
                             <span className="rounded-full border border-rose-400/20 bg-rose-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-rose-200">
-                                СУВЕРЕННИЙ ЦЕНТР v56.5-ELITE | Контрагентна розвідка
+                                СУВЕРЕННИЙ ЦЕНТР v57.2-WRAITH | Контрагентна розвідка
                             </span>
                             <span
                                 className={cn(
@@ -441,7 +445,7 @@ export default function DiligencePage() {
                         <MetricTile label="У фільтрі" value={filteredEntities.length.toString()} />
                         <MetricTile 
                             label="СТАТУС СИСТЕМИ" 
-                            value="v56.5-ELITE READY" 
+                            value="v57.2-WRAITH READY" 
                             compact 
                         />
                     </div>
@@ -527,7 +531,7 @@ export default function DiligencePage() {
 
                                         <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
                                             <span>{formatStatusLabel(entity.status)}</span>
-                                            <span className="font-mono text-slate-300">БАЛ: {Math.round(entity.risk_score)}</span>
+                                            <span className="font-mono text-slate-300">БАЛ: {Math.round(entity.risk_score ?? entity.riskScore ?? 0)}</span>
                                         </div>
                                     </button>
                                 ))}
@@ -735,7 +739,7 @@ export default function DiligencePage() {
                                             </div>
                                             <p className="mt-4 text-sm leading-8 text-slate-300 italic border-l-2 border-rose-500/40 pl-6 bg-white/5 py-4 rounded-r-2xl">
                                                 {companyProfile.interpretation ??
-                                                    `Аналіз моделі Mistral-ELITE вказує на ${profileRiskLevel === 'critical' ? 'КРИТИЧНІ' : 'СИСТЕМНІ'} ризики у структурі власності. Виявлено кореляцію між офшорними потоками та транзакціями у 4-му кварталі. Рекомендується блокування операцій до з'ясування обставин.`}
+                                                    `Аналіз моделі Mistral-WRAITH вказує на ${profileRiskLevel === 'critical' ? 'КРИТИЧНІ' : 'СИСТЕМНІ'} ризики у структурі власності. Виявлено кореляцію між офшорними потоками та транзакціями у 4-му кварталі. Рекомендується блокування операцій до з'ясування обставин.`}
                                             </p>
                                             <div className="mt-6 flex items-center gap-6">
                                                 <div className="flex flex-col">
@@ -883,16 +887,17 @@ export default function DiligencePage() {
     );
 }
 
-function RiskBadge({ level, large = false }: { level: RiskLevelValue; large?: boolean }) {
+function RiskBadge({ level, large = false }: { level?: RiskLevelValue; large?: boolean }) {
+    if (!level) return null;
     return (
         <span
             className={cn(
                 'inline-flex rounded-full border font-black uppercase tracking-[0.18em]',
                 large ? 'px-3 py-1.5 text-[11px]' : 'px-2.5 py-1 text-[9px]',
-                riskLevelTone[level],
+                riskLevelTone[level] || 'bg-slate-500/15 text-slate-300 border-slate-500/25',
             )}
         >
-            {riskLevelLabel[level]}
+            {riskLevelLabel[level] || 'НЕВІДОМО'}
         </span>
     );
 }

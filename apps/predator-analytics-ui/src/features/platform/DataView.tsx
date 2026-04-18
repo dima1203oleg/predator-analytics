@@ -187,7 +187,7 @@ const DataView: React.FC = () => {
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className={`min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 p-6 md:p-8 space-y-8 transition-all ${isDragging ? 'ring-4 ring-indigo-500/50 bg-indigo-500/5' : ''
+      className={`min-h-screen pb-24 md:pb-8 animate-in fade-in duration-500 p-6 md:p-8 space-y-8 transition-all ${isDragging ? 'ring-4 ring-yellow-500/50 bg-yellow-500/5' : ''
         }`}
     >
       <AnimatePresence>
@@ -206,12 +206,12 @@ const DataView: React.FC = () => {
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
-                className="p-8 rounded-3xl bg-indigo-500/20 border-2 border-dashed border-indigo-400 mb-6 inline-block"
+                className="p-8 rounded-3xl bg-yellow-500/20 border-2 border-dashed border-yellow-400 mb-6 inline-block"
               >
-                <Upload className="text-indigo-400" size={64} />
+                <Upload className="text-yellow-400" size={64} />
               </motion.div>
               <h2 className="text-3xl font-black text-white mb-2">ВІДПУСТІТЬ ФАЙЛ</h2>
-              <p className="text-indigo-400 font-mono uppercase tracking-widest">Excel • CSV • PDF</p>
+              <p className="text-yellow-400 font-mono uppercase tracking-widest">Excel • CSV • PDF</p>
             </motion.div>
           </motion.div>
         )}
@@ -258,7 +258,7 @@ const DataView: React.FC = () => {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={wizardStep !== 'idle'}
-            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-50 group"
+            className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-purple-600 hover:from-yellow-500 hover:to-purple-500 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-yellow-500/30 disabled:opacity-50 group"
           >
             <Upload size={20} className="group-hover:animate-bounce" />
             <span>ЗАВАНТАЖИТИ</span>
