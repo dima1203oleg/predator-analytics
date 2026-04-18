@@ -204,6 +204,27 @@ class ApexAudioEngine {
     osc.start();
     osc.stop(now + 4);
   }
+
+  /** Голосовий супровід (Intimidating Sovereign Voice) */
+  speak(text: string) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    
+    // Зупиняємо попередній голос
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'uk-UA';
+    utterance.pitch = 0.4; // Максимально низький тембр
+    utterance.rate = 0.8;  // Повільний, загрозливий темп
+    utterance.volume = 1.0;
+
+    // Спроба знайти найкращий український голос
+    const voices = window.speechSynthesis.getVoices();
+    const targetVoice = voices.find(v => v.lang.includes('uk') || v.lang.includes('UA'));
+    if (targetVoice) utterance.voice = targetVoice;
+
+    window.speechSynthesis.speak(utterance);
+  }
 }
 
 const sfx = new ApexAudioEngine();
@@ -390,12 +411,38 @@ const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }
       ctx.fillRect(0, 0, W, H);
 
       // Phases control (Sovereign Pacing)
-      if (elapsed < 8000 && localPhase !== 0) { localPhase = 0; setPhase(0); sfx.playQuantumHum(); }
-      else if (elapsed >= 8000 && elapsed < 20000 && localPhase !== 1) { localPhase = 1; setPhase(1); }
-      else if (elapsed >= 20000 && elapsed < 45000 && localPhase !== 1.5) { localPhase = 1.5; setPhase(1.5); }
-      else if (elapsed >= 45000 && elapsed < 75000 && localPhase !== 2) { localPhase = 2; setPhase(2); }
-      else if (elapsed >= 75000 && elapsed < 100000 && localPhase !== 2.5) { localPhase = 2.5; setPhase(2.5); sfx.playApexMatchFlash(); }
-      else if (elapsed >= 100000 && localPhase < 3) { localPhase = 3; setPhase(3); sfx.playApexMatchFlash(); }
+      if (elapsed < 8000 && localPhase !== 0) { 
+        localPhase = 0; 
+        setPhase(0); 
+        sfx.playQuantumHum(); 
+        sfx.speak("Система завантаження активована. Ідентифікація суверенного суб'єкта.");
+      }
+      else if (elapsed >= 8000 && elapsed < 20000 && localPhase !== 1) { 
+        localPhase = 1; 
+        setPhase(1); 
+      }
+      else if (elapsed >= 20000 && elapsed < 45000 && localPhase !== 1.5) { 
+        localPhase = 1.5; 
+        setPhase(1.5); 
+        sfx.speak("Глобальне таргетування активне. Сканування векторів загрози.");
+      }
+      else if (elapsed >= 45000 && elapsed < 75000 && localPhase !== 2) { 
+        localPhase = 2; 
+        setPhase(2); 
+        sfx.speak("Аналіз завершено. Виявлено критичні співпадіння в тіньових реєстрах.");
+      }
+      else if (elapsed >= 75000 && elapsed < 100000 && localPhase !== 2.5) { 
+        localPhase = 2.5; 
+        setPhase(2.5); 
+        sfx.playApexMatchFlash(); 
+        sfx.speak("Оберіть оперативний вектор втручання.");
+      }
+      else if (elapsed >= 100000 && localPhase < 3) { 
+        localPhase = 3; 
+        setPhase(3); 
+        sfx.playApexMatchFlash(); 
+        sfx.speak("Доступ надано. Ласкаво просимо до Предатор Аналітікс.");
+      }
       
       if (elapsed >= 130000 && localPhase < 4) { onComplete(); }
 
