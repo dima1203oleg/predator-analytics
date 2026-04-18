@@ -41,7 +41,7 @@ frontend:
   enabled: true
   image:
     repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: "v55.1.372"
+    tag: "v55.1.374"
     pullPolicy: Always
   replicas: 1
   resources:
