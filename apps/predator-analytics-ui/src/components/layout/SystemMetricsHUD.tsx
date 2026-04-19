@@ -37,8 +37,8 @@ export const SystemMetricsHUD: React.FC = () => {
             icon: isColab ? AlertCircle : Server,
             value: isColab ? 'GOOGLE_COLAB' : 'NVIDIA_PROD',
             sub: isColab ? 'FAILOVER_MODE' : 'PRIMARY_LINK_OK',
-            color: isColab ? 'text-amber-500 animate-pulse' : 'text-emerald-400',
-            bg: isColab ? 'bg-amber-500/10' : 'bg-emerald-500/5'
+            color: isColab ? 'text-rose-500 animate-pulse' : 'text-emerald-400',
+            bg: isColab ? 'bg-rose-500/10' : 'bg-emerald-500/5'
         },
         { 
             label: 'CPU_ЗАВАНТАЖЕННЯ', 
@@ -61,7 +61,7 @@ export const SystemMetricsHUD: React.FC = () => {
             sub: stats.gpu_available 
                 ? `ВІЛЬНО: ${(((stats.gpu_mem_total || 0) - (stats.gpu_mem_used || 0)) / (1024**2)).toFixed(0)}МБ` 
                 : 'GPU_ВІДСУТНІЙ',
-            color: (stats.gpu_temp || 0) > 80 ? 'text-rose-500' : 'text-amber-400'
+            color: (stats.gpu_temp || 0) > 80 ? 'text-rose-500' : 'text-rose-400'
         },
         { 
             label: 'НАКОПИЧУВАЧ', 

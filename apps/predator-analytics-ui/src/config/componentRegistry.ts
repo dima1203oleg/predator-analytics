@@ -46,9 +46,9 @@ export const CATEGORIES: Record<string, ComponentCategory> = {
     'ai_ml': { id: 'ai_ml', name: 'AI/ML & Cognitive Layer', icon: Brain, color: 'purple', gradient: 'from-purple-500 to-fuchsia-600', description: 'LLMs, Vectors, and Inference' },
     'databases': { id: 'databases', name: 'Databases & Storage', icon: Database, color: 'rose', gradient: 'from-rose-500 to-rose-700', description: 'Persistence and State' },
     'etl': { id: 'etl', name: 'ETL & Data Pipelines', icon: Layers, color: 'cyan', gradient: 'from-cyan-500 to-sky-600', description: 'Data movement and transformation' },
-    'observability': { id: 'observability', name: 'Observability & Monitoring', icon: Activity, color: 'amber', gradient: 'from-amber-500 to-orange-600', description: 'Metrics, Logs, Traces' },
-    'security': { id: 'security', name: 'Security & Integrity', icon: Shield, color: 'rose', gradient: 'from-rose-500 to-red-600', description: 'Identity, Policy, Secrets' },
-    'cicd': { id: 'cicd', name: 'CI/CD & Delivery', icon: GitBranch, color: 'orange', gradient: 'from-orange-500 to-amber-600', description: 'Software delivery lifecycle' },
+    'observability': { id: 'observability', name: 'Observability & Monitoring', icon: Activity, color: 'rose', gradient: 'from-rose-500 to-rose-700', description: 'Metrics, Logs, Traces' },
+    'security': { id: 'security', name: 'Security & Integrity', icon: Shield, color: 'rose', gradient: 'from-rose-500 to-rose-600', description: 'Identity, Policy, Secrets' },
+    'cicd': { id: 'cicd', name: 'CI/CD & Delivery', icon: GitBranch, color: 'slate', gradient: 'from-slate-500 to-slate-700', description: 'Software delivery lifecycle' },
     'frontend': { id: 'frontend', name: 'Frontend Ecosystem', icon: Globe, color: 'indigo', gradient: 'from-indigo-500 to-violet-600', description: 'User interfaces and experience' },
     'cli': { id: 'cli', name: 'Terminal Tools', icon: Terminal, color: 'slate', gradient: 'from-slate-500 to-gray-600', description: 'Command line utilities' },
     'autonomy': { id: 'autonomy', name: 'Autonomy Core', icon: Zap, color: 'pink', gradient: 'from-pink-500 to-rose-600', description: 'Self-improvement engine' }

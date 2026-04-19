@@ -29,12 +29,13 @@ const SearchHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="SearchHub"
+      title="СИНАПТИЧНИЙ ПОШУК"
       subtitle="Синаптичний пошук та робота з реєстрами"
       icon={<Search size={24} />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
+      accent="warn"
     >
       <div className="h-full">
         {activeTab === 'global' && <GlobalSearchTab />}

@@ -119,9 +119,9 @@ const tones = {
 } as const;
 
 /* ══════════════════════════════════════════════════════════════
-   EXECUTIVE BOARD — Головний Командний Дашборд CEO
+   EXECUTIVE BOARD VIEW — Головний Командний Дашборд CEO
    ══════════════════════════════════════════════════════════════ */
-const PredatorV24 = () => {
+export default function ExecutiveBoardView() {
   const { user } = useUser();
   const backendStatus = useBackendStatus();
   const currentRole = user?.role ?? 'viewer';
@@ -253,8 +253,8 @@ const PredatorV24 = () => {
         <motion.div variants={fadeUp} className="space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-black text-white">Оперативний контур</h2>
-              <p className="text-xs text-slate-500 mt-0.5">6 стратегічних Titan-модулів</p>
+              <h2 className="text-lg font-black text-white italic tracking-tight">ОПЕРАТИВНИЙ КОНТУР</h2>
+              <p className="text-xs text-slate-500 mt-0.5">6 стратегічних Titan-модулів управління</p>
             </div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/15 bg-rose-500/8 px-2.5 py-1 text-[10px] font-bold text-rose-400">
               <Layers3 className="h-3 w-3" />
@@ -282,7 +282,7 @@ const PredatorV24 = () => {
                       <SectionIcon className={cn('h-4 w-4', accent.icon)} />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-sm font-black text-white truncate">{section.label}</h3>
+                      <h3 className="text-sm font-black text-white truncate uppercase italic">{section.label}</h3>
                       <div className={cn('text-[10px] font-bold uppercase tracking-wider truncate', accent.softText)}>
                         {items.length} модулів
                       </div>
@@ -304,7 +304,7 @@ const PredatorV24 = () => {
                   </div>
 
                   {items.length > 3 && (
-                    <div className="mt-2 text-[10px] text-slate-600 pl-3">
+                    <div className="mt-2 text-[10px] text-slate-600 pl-3 italic">
                       Ще {items.length - 3} модулів →
                     </div>
                   )}
@@ -320,7 +320,7 @@ const PredatorV24 = () => {
           {/* Критичні сигнали */}
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-black text-white flex items-center gap-2">
+              <h2 className="text-sm font-black text-white flex items-center gap-2 uppercase italic tracking-tight">
                 <Flame className="h-4 w-4 text-rose-500" />
                 Критичні сигнали
               </h2>
@@ -337,7 +337,7 @@ const PredatorV24 = () => {
                 </div>
               )}
               {!loading && alerts.length === 0 && (
-                <div className="rounded-xl bg-black/20 px-3 py-4 text-xs text-slate-500">
+                <div className="rounded-xl bg-black/20 px-3 py-4 text-xs text-slate-500 italic">
                   Критичних алертів немає ✓
                 </div>
               )}
@@ -365,10 +365,10 @@ const PredatorV24 = () => {
                         : 'Інфо'}
                     </span>
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[10px] text-slate-600">
+                  <div className="mt-2 flex items-center justify-between text-[10px] text-slate-600 font-mono">
                     <span>{timeAgo(alert.timestamp)}</span>
                     {(alert.value ?? 0) > 0 && (
-                      <span className="font-semibold text-slate-400">{formatCurrency(alert.value!)}</span>
+                      <span className="font-semibold text-slate-400 tabular-nums">{formatCurrency(alert.value!)}</span>
                     )}
                   </div>
                 </motion.div>
@@ -379,12 +379,12 @@ const PredatorV24 = () => {
           {/* Покриття даних */}
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-black text-white flex items-center gap-2">
+              <h2 className="text-sm font-black text-white flex items-center gap-2 uppercase italic tracking-tight">
                 <Database className="h-4 w-4 text-rose-500" />
                 Покриття даних
               </h2>
               <div className="inline-flex items-center gap-1 rounded-full border border-rose-500/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-500">
-                Онлайн
+                ОНЛАЙН
               </div>
             </div>
 
@@ -404,7 +404,7 @@ const PredatorV24 = () => {
                       <item.icon className={cn('h-3.5 w-3.5', item.tone.icon)} />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate">{item.label}</div>
+                      <div className="text-xs font-semibold text-white truncate uppercase italic">{item.label}</div>
                       <div className="text-[10px] text-slate-600">{item.hint}</div>
                     </div>
                   </div>
@@ -416,7 +416,7 @@ const PredatorV24 = () => {
 
           {/* Швидкі дії */}
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
-            <h2 className="text-sm font-black text-white mb-3 flex items-center gap-2">
+            <h2 className="text-sm font-black text-white mb-3 flex items-center gap-2 uppercase italic tracking-tight">
               <Sparkles className="h-4 w-4 text-violet-400" />
               Швидкі дії
             </h2>
@@ -439,7 +439,7 @@ const PredatorV24 = () => {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-[10px] text-slate-600 px-1">
+            <div className="mt-3 flex items-center justify-between text-[10px] text-slate-600 px-1 italic">
               <span>Командний пошук</span>
               <kbd className="rounded border border-white/[0.06] bg-white/[0.03] px-1.5 py-0.5 text-[9px] font-semibold text-slate-500">⌘K</kbd>
             </div>
@@ -448,6 +448,4 @@ const PredatorV24 = () => {
       </motion.section>
     </motion.div>
   );
-};
-
-export default PredatorV24;
+}

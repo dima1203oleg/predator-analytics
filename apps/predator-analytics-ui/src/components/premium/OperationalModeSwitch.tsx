@@ -19,21 +19,21 @@ const MODE_ICONS: Record<OperationalMode, any> = {
 
 const MODE_COLORS: Record<OperationalMode, string> = {
   sovereign: 'from-indigo-500 to-cyan-500',
-  vigilance: 'from-amber-500 to-orange-500',
+  vigilance: 'from-rose-500 to-rose-700',
   threat: 'from-red-500 to-rose-600',
   stealth: 'from-emerald-500 to-green-600',
 };
 
 const MODE_BORDER: Record<OperationalMode, string> = {
   sovereign: 'border-indigo-500/30 hover:border-indigo-400/60',
-  vigilance: 'border-amber-500/30 hover:border-amber-400/60',
+  vigilance: 'border-rose-500/30 hover:border-rose-400/60',
   threat: 'border-red-500/30 hover:border-red-400/60',
   stealth: 'border-emerald-500/30 hover:border-emerald-400/60',
 };
 
 const MODE_GLOW: Record<OperationalMode, string> = {
   sovereign: 'hover:shadow-[0_0_20px_rgba(99,102,241,0.15)]',
-  vigilance: 'hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]',
+  vigilance: 'hover:shadow-[0_0_20px_rgba(225,29,72,0.15)]',
   threat: 'hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]',
   stealth: 'hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]',
 };

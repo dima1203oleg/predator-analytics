@@ -49,25 +49,25 @@
   --accent-indigo: #6366f1;
   --accent-cyan: #06b6d4;
   --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
+  --accent-amber: #f43f5e; /* Migrated to Rose */
   --accent-rose: #f43f5e;
   --accent-violet: #8b5cf6;
-  --accent-blue: #3b82f6;
-  --accent-orange: #f97316;
+  --accent-blue: #ef4444; /* Migrated to Crimson-Red */
+  --accent-orange: #fb7185; /* Migrated to Soft Rose */
 
   /* ── NEON PALETTE ── */
-  --neon-cyan: #00f3ff;
-  --neon-magenta: #ff00ff;
-  --neon-green: #39ff14;
-  --neon-orange: #ff6600;
-  --neon-yellow: #fff300;
+  --neon-cyan: #fb7185;
+  --neon-magenta: #f43f5e;
+  --neon-green: #10b981;
+  --neon-orange: #e11d48;
+  --neon-yellow: #fb7185;
 
   /* ── GLOW SHADOWS ── */
   --glow-indigo: 0 0 20px rgba(99, 102, 241, 0.3);
   --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
   --glow-emerald: 0 0 20px rgba(16, 185, 129, 0.3);
   --glow-rose: 0 0 20px rgba(244, 63, 94, 0.3);
-  --glow-amber: 0 0 20px rgba(245, 158, 11, 0.3);
+  --glow-amber: 0 0 20px rgba(244, 63, 94, 0.3);
   --glow-violet: 0 0 20px rgba(139, 92, 246, 0.3);
 
   /* ── ELEVATION SHADOWS ── */
@@ -124,7 +124,7 @@
   --ambient-emerald: radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.12), transparent 50%);
   --ambient-cyan: radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.12), transparent 50%);
   --ambient-indigo: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12), transparent 60%);
-  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(245, 158, 11, 0.12), transparent 50%);
+  --ambient-amber: radial-gradient(circle at 10% 30%, rgba(244, 63, 94, 0.12), transparent 50%);
   --ambient-rose: radial-gradient(circle at 90% 70%, rgba(244, 63, 94, 0.1), transparent 50%);
   --ambient-violet: radial-gradient(circle at 60% 10%, rgba(139, 92, 246, 0.12), transparent 50%);
 
@@ -145,17 +145,17 @@
 
   /* ── GRADIENT MESH ── */
   --mesh-primary: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(6, 182, 212, 0.03) 50%, rgba(16, 185, 129, 0.04) 100%);
-  --mesh-warm: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(249, 115, 22, 0.04) 100%);
-  --mesh-cool: linear-gradient(135deg, rgba(6, 182, 212, 0.06) 0%, rgba(99, 102, 241, 0.04) 100%);
-  --mesh-threat: linear-gradient(135deg, rgba(244, 63, 94, 0.06) 0%, rgba(249, 115, 22, 0.03) 100%);
+  --mesh-warm: linear-gradient(135deg, rgba(244, 63, 94, 0.08) 0%, rgba(225, 29, 72, 0.05) 100%);
+  --mesh-cool: linear-gradient(135deg, rgba(251, 113, 133, 0.08) 0%, rgba(244, 63, 94, 0.05) 100%);
+  --mesh-threat: linear-gradient(135deg, rgba(225, 29, 72, 0.1) 0%, rgba(159, 18, 57, 0.08) 100%);
 
   /* ── STATUS COLORS ── */
   --status-ok: #10b981;
   --status-ok-bg: rgba(16, 185, 129, 0.12);
   --status-ok-border: rgba(16, 185, 129, 0.25);
-  --status-warn: #f59e0b;
-  --status-warn-bg: rgba(245, 158, 11, 0.12);
-  --status-warn-border: rgba(245, 158, 11, 0.25);
+  --status-warn: #fb7185;
+  --status-warn-bg: rgba(251, 113, 133, 0.12);
+  --status-warn-border: rgba(251, 113, 133, 0.25);
   --status-error: #f43f5e;
   --status-error-bg: rgba(244, 63, 94, 0.12);
   --status-error-border: rgba(244, 63, 94, 0.25);

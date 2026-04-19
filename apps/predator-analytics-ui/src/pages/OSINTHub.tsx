@@ -39,12 +39,13 @@ const OSINTHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="Інтелект Мережі"
+      title="РОЗВІДКА СУБ'ЄКТІВ"
       subtitle="Глибока OSINT-розвідка суб'єктів та детекція прихованих мережевих зв'язків"
       icon={<Fingerprint size={24} />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
+      accent="warn"
     >
       <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/5">
         {activeTab === 'diligence' && <DiligenceTab />}

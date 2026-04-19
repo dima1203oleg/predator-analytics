@@ -41,12 +41,13 @@ const MarketHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="MarketHub"
+      title="ТОРГОВА РОЗВІДКА"
       subtitle="Торгова розвідка та аналіз товарних ринків"
       icon={<BarChart3 size={24} />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
+      accent="amber"
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider">

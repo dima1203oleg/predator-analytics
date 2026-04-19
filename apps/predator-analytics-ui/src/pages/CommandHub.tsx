@@ -41,15 +41,16 @@ const CommandHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="CommandHub"
+      title="КОМАНДНИЙ ЦЕНТР"
       subtitle="Центральний штаб управління та стратегічного планування"
       icon={<LayoutDashboard size={24} />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
+      accent="sky"
       actions={
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] font-bold uppercase tracking-wider">
             <Zap size={12} className="animate-pulse" />
             {backendStatus.statusLabel}
           </div>

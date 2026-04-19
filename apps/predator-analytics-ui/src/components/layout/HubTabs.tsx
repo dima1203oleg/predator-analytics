@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { NavAccent, navAccentStyles } from '@/config/navigation';
 
 interface Tab {
   id: string;
@@ -13,6 +14,7 @@ interface HubTabsProps {
   activeTab: string;
   onChange: (id: string) => void;
   className?: string;
+  accent?: NavAccent;
 }
 
 /**
@@ -23,8 +25,11 @@ export const HubTabs: React.FC<HubTabsProps> = ({
   tabs, 
   activeTab, 
   onChange, 
-  className 
+  className,
+  accent = 'rose'
 }) => {
+  const styles = navAccentStyles[accent];
+
   return (
     <div className={cn("flex items-center gap-2 p-1 bg-slate-950/40 backdrop-blur-md border border-slate-800/50 rounded-xl", className)}>
       {tabs.map((tab) => {
@@ -36,7 +41,7 @@ export const HubTabs: React.FC<HubTabsProps> = ({
             onClick={() => onChange(tab.id)}
             className={cn(
               "relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-lg outline-none",
-              isActive ? "text-amber-400" : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+              isActive ? styles.icon : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
             )}
           >
             {tab.icon && (
@@ -49,7 +54,11 @@ export const HubTabs: React.FC<HubTabsProps> = ({
             {isActive && (
               <motion.div
                 layoutId="hub-active-tab"
-                className="absolute inset-0 border border-amber-500/30 bg-amber-500/5 rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+                className={cn(
+                  "absolute inset-0 border rounded-lg",
+                  styles.sectionBorder,
+                  "bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                )}
                 initial={false}
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
               />

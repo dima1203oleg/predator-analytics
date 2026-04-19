@@ -85,8 +85,8 @@ export default function CustomsIntelligencePremium() {
     <PageTransition>
       <div className="min-h-screen bg-[#020202] text-slate-200 relative overflow-hidden font-sans pb-40 px-4 xl:px-12">
         <AdvancedBackground />
-        <CyberGrid color="rgba(212, 175, 55, 0.04)" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
+        <CyberGrid color="rgba(225, 29, 72, 0.04)" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
@@ -95,24 +95,24 @@ export default function CustomsIntelligencePremium() {
             title={
               <div className="flex items-center gap-12">
                 <div className="relative group">
-                  <div className="absolute inset-0 bg-yellow-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
-                  <div className="relative p-8 bg-black border-2 border-yellow-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
-                    <Crown size={48} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
+                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-8 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-3 hover:rotate-0 transition-all duration-700">
+                    <Crown size={48} className="text-rose-500 shadow-[0_0_30px_#e11d48]" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className={cn(
                       "px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl border",
-                      isOffline ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
+                      isOffline ? "bg-rose-500/10 border-rose-500/20 text-rose-500" : "bg-rose-600/10 border-rose-600/20 text-rose-500"
                     )}>
                       {isOffline ? 'SOVEREIGN_EMERGENCY' : 'PREMIUM_MARKET_INTEL'} // SOVEREIGN_QUOTA
                     </span>
-                    <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <div className="h-px w-16 bg-rose-500/20" />
+                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                    МИТНИЙ <span className={cn("underline decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-yellow-500 decoration-yellow-600/30")}>PROJECT</span>
+                    МИТНИЙ <span className={cn("underline decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter", isOffline ? "text-rose-500 decoration-rose-500/20" : "text-rose-600 decoration-rose-600/30")}>PROJECT</span>
                   </h1>
                 </div>
               </div>
@@ -133,14 +133,14 @@ export default function CustomsIntelligencePremium() {
                  <button 
                   onClick={handleRefresh} 
                   className={cn(
-                    "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-yellow-500 transition-all shadow-4xl group/btn",
+                    "p-7 bg-black border-2 border-white/[0.04] rounded-[2rem] text-slate-500 hover:text-rose-500 transition-all shadow-4xl group/btn",
                     refreshing && "animate-spin cursor-not-allowed opacity-50"
                   )}
                 >
                   <RefreshCw size={32} className={cn("transition-transform duration-700", refreshing ? "" : "group-hover/btn:rotate-180")} />
                 </button>
                 <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-rose-600 to-rose-500 transition-transform duration-500 group-hover/main:scale-105" />
                   <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
                     <Crown size={24} /> АКТИВУВАТИ_VIP_АНАЛІЗ
                   </div>
@@ -153,9 +153,9 @@ export default function CustomsIntelligencePremium() {
           {/* KPI GRID SOVEREIGN */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
-                { label: 'РИНКОВА_ЧАСТКА_СУБ\'ЄКТА', value: '42.8%', icon: Target, color: '#D4AF37', sub: 'За охопленим сегментом' },
-                { label: 'ШІ_ПРЕДИКЦІЙНІ_ТОЧКИ', value: '2,841', icon: Sparkles, color: '#D4AF37', sub: 'Активні вузли аналізу' },
-                { label: 'РІВЕНЬ_КОНФІДЕНЦІЙНОСТІ', value: 'MAX', icon: ShieldCheck, color: '#D4AF37', sub: 'Квантове шифрування GDS' },
+                { label: 'РИНКОВА_ЧАСТКА_СУБ\'ЄКТА', value: '42.8%', icon: Target, color: '#e11d48', sub: 'За охопленим сегментом' },
+                { label: 'ШІ_ПРЕДИКЦІЙНІ_ТОЧКИ', value: '2,841', icon: Sparkles, color: '#e11d48', sub: 'Активні вузли аналізу' },
+                { label: 'РІВЕНЬ_КОНФІДЕНЦІЙНОСТІ', value: 'MAX', icon: ShieldCheck, color: '#e11d48', sub: 'Квантове шифрування GDS' },
               ].map((m, i) => (
                 <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
                   <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
@@ -181,7 +181,7 @@ export default function CustomsIntelligencePremium() {
             <div className="col-span-12 xl:col-span-8 space-y-12">
                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {[
-                    { l: 'ЗАГАЛЬНИЙ_ІМПОРТ', v: '$1.42B', c: '+12.4%', i: Package, cl: 'text-yellow-500' },
+                    { l: 'ЗАГАЛЬНИЙ_ІМПОРТ', v: '$1.42B', c: '+12.4%', i: Package, cl: 'text-rose-500' },
                     { l: 'УНІКАЛЬНИХ_ГРАВЦІВ', v: '14,842', c: '+8.2%', i: Factory, cl: 'text-slate-400' },
                     { l: 'МИТНІ_ПЛАТЕЖІ', v: '₴2.8B', c: '-3.1%', i: DollarSign, cl: 'text-emerald-500' },
                   ].map((k, i) => (
@@ -201,21 +201,21 @@ export default function CustomsIntelligencePremium() {
                <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
                   <div className="flex items-center justify-between pb-8 border-b border-white/[0.04]">
                      <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase flex items-center gap-6">
-                        <Users className="text-yellow-500" size={32} /> ТОП ІМПОРТЕРІВ СЕГМЕНТУ
+                        <Users className="text-rose-500" size={32} /> ТОП ІМПОРТЕРІВ СЕГМЕНТУ
                      </h3>
-                     <button className="text-yellow-500 text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3 hover:gap-5 transition-all">
+                     <button className="text-rose-500 text-[10px] font-black uppercase tracking-widest italic flex items-center gap-3 hover:gap-5 transition-all">
                         ПОВНИЙ СПИСОК <ChevronRight size={16} />
                      </button>
                   </div>
                   <div className="space-y-6">
                      {TOP_IMPORTERS.map((comp, i) => (
-                       <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.04] hover:border-yellow-500/20 transition-all group flex items-center justify-between">
+                       <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border-2 border-white/[0.04] hover:border-rose-500/20 transition-all group flex items-center justify-between">
                           <div className="flex items-center gap-8">
-                             <div className="w-16 h-16 rounded-3xl bg-black border border-white/10 flex items-center justify-center text-slate-600 group-hover:text-yellow-500 transition-colors">
+                             <div className="w-16 h-16 rounded-3xl bg-black border border-white/10 flex items-center justify-center text-slate-600 group-hover:text-rose-500 transition-colors">
                                 <Building2 size={24} />
                              </div>
                              <div className="space-y-1">
-                                <h4 className="text-xl font-black text-white italic tracking-tighter uppercase group-hover:text-yellow-500 transition-colors leading-none">{comp.name}</h4>
+                                <h4 className="text-xl font-black text-white italic tracking-tighter uppercase group-hover:text-rose-500 transition-colors leading-none">{comp.name}</h4>
                                 <div className="flex items-center gap-3 text-[9px] font-black text-slate-700 uppercase italic tracking-[0.2em]">
                                    <span>{comp.countries.join(', ')}</span>
                                    <span>|</span>
@@ -240,9 +240,9 @@ export default function CustomsIntelligencePremium() {
 
             {/* SIDE RECON BAR */}
             <div className="col-span-12 xl:col-span-4 space-y-10">
-               <div className="p-10 rounded-[4rem] bg-black border-2 border-yellow-500/10 shadow-3xl flex flex-col gap-10">
+               <div className="p-10 rounded-[4rem] bg-black border-2 border-rose-500/10 shadow-3xl flex flex-col gap-10">
                   <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase flex items-center gap-6">
-                     <Sparkles className="text-yellow-500" size={32} /> ШІ-АНАЛІЗ РИНКУ
+                     <Sparkles className="text-rose-500" size={32} /> ШІ-АНАЛІЗ РИНКУ
                   </h3>
                   <div className="space-y-6">
                      {[
@@ -252,21 +252,21 @@ export default function CustomsIntelligencePremium() {
                      ].map((insight, i) => (
                        <div key={i} className="p-6 rounded-3xl bg-white/[0.01] border-2 border-white/[0.04] space-y-3">
                           <div className="flex items-center justify-between">
-                             <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest italic">{insight.t}</span>
-                             <span className={cn("w-2 h-2 rounded-full", insight.r === 'high' ? 'bg-amber-500 shadow-[0_0_8px_#e11d48]' : insight.r === 'medium' ? 'bg-amber-500' : 'bg-emerald-500')} />
+                             <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">{insight.t}</span>
+                             <span className={cn("w-2 h-2 rounded-full", insight.r === 'high' ? 'bg-rose-500 shadow-[0_0_8px_#e11d48]' : insight.r === 'medium' ? 'bg-rose-600' : 'bg-emerald-500')} />
                           </div>
                           <p className="text-[11px] text-slate-400 italic font-medium leading-relaxed uppercase">{insight.d}</p>
                        </div>
                      ))}
                   </div>
-                  <button className="w-full py-6 bg-yellow-600 hover:bg-yellow-500 text-black rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] font-serif italic shadow-4xl transition-all">
+                  <button className="w-full py-6 bg-rose-600 hover:bg-rose-500 text-black rounded-[2rem] text-[11px] font-black uppercase tracking-[0.3em] font-serif italic shadow-4xl transition-all">
                      ЗГЕНЕРУВАТИ_ПОВНИЙ_ЗВІТ_PDF
                   </button>
                </div>
 
                <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl text-center space-y-6">
-                  <div className="mx-auto w-24 h-24 bg-yellow-500/5 border border-yellow-500/30 rounded-full flex items-center justify-center mb-4">
-                     <Lock className="text-yellow-500 animate-pulse" size={40} />
+                  <div className="mx-auto w-24 h-24 bg-rose-500/5 border border-rose-500/30 rounded-full flex items-center justify-center mb-4">
+                     <Lock className="text-rose-500 animate-pulse" size={40} />
                   </div>
                   <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">БЕЗПЕКА_ДАННИХ_S1</h4>
                   <p className="text-[10px] text-slate-700 uppercase tracking-widest leading-relaxed">ВЕСЬ АНАЛІЗ ПРОВОДИТЬСЯ В ІЗОЛЬОВАНОМУ КВАНТОВОМУ СЕРЕДОВИЩІ PREDATOR QUANTUM</p>
@@ -277,7 +277,7 @@ export default function CustomsIntelligencePremium() {
 
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
-            .shadow-4xl { box-shadow: 0 40px 80px -20px rgba(212,175,55,0.3); }
+            .shadow-4xl { box-shadow: 0 40px 80px -20px rgba(225,29,72,0.3); }
         `}} />
       </div>
     </PageTransition>

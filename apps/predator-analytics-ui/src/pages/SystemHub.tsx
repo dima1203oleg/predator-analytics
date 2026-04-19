@@ -35,7 +35,7 @@ const SystemHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="System Core"
+      title="СИСТЕМНЕ ЯДРО"
       subtitle="Безпека, пайплайни даних та моніторинг інфраструктури"
       icon={<Settings size={24} />}
       tabs={hubTabs}

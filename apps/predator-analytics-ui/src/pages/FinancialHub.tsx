@@ -39,12 +39,13 @@ const FinancialHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="FinancialHub"
+      title="ФІНАНСОВА РОЗВІДКА"
       subtitle="Фінансова розвідка та моніторинг капіталу"
       icon={<Landmark size={24} />}
       tabs={hubTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
+      accent="rose"
       actions={
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold uppercase tracking-wider">

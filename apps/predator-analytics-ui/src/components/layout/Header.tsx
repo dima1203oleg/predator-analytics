@@ -38,9 +38,9 @@ const sectionGlowMap: Record<string, { gradient: string; glow: string; border: s
     border: 'rgba(6,182,212,0.18)',
   },
   amber: {
-    gradient: 'radial-gradient(circle at 0% 0%, rgba(245,158,11,0.1) 0%, transparent 60%)',
-    glow: 'rgba(245,158,11,0.15)',
-    border: 'rgba(245,158,11,0.18)',
+    gradient: 'radial-gradient(circle at 0% 0%, rgba(244,63,94,0.1) 0%, transparent 60%)',
+    glow: 'rgba(244,63,94,0.15)',
+    border: 'rgba(244,63,94,0.18)',
   },
   indigo: {
     gradient: 'radial-gradient(circle at 0% 0%, rgba(99,102,241,0.1) 0%, transparent 60%)',
@@ -134,11 +134,10 @@ const Header: React.FC = () => {
                     borderColor: sectionGlow.border,
                     color: accent.icon.includes('emerald') ? '#6ee7b7' :
                            accent.icon.includes('cyan')    ? '#67e8f9' :
-                           accent.icon.includes('amber')   ? '#fcd34d' :
+                           accent.icon.includes('rose')    ? '#fda4af' :
                            accent.icon.includes('indigo')  ? '#a5b4fc' :
                            accent.icon.includes('violet')  ? '#c4b5fd' :
-                           accent.icon.includes('rose')    ? '#fda4af' :
-                           '#94a3b8',
+                           '#fda4af', // Default to rose for WRAITH
                   }}
                 >
                   {section?.label ?? 'Платформа'}

@@ -7,7 +7,6 @@ import { useUser } from './context/UserContext';
 import { UserRole } from './config/roles';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
-import PredatorV24 from './pages/PredatorV24';
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));

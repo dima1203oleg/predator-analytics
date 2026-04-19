@@ -1,8 +1,14 @@
 import React, { Suspense, lazy } from 'react';
-const PredatorV24 = lazy(() => import('@/pages/PredatorV24'));
+
+const ExecutiveBoardView = lazy(() => import('@/features/dashboard/ExecutiveBoardView'));
 
 export const ExecutiveBoardTab = () => (
-  <Suspense fallback={<div className="p-8 text-slate-400">Ініціалізація Командного Центру...</div>}>
-    <PredatorV24 />
+  <Suspense fallback={
+    <div className="flex items-center justify-center p-12 text-slate-400 font-mono text-xs tracking-widest animate-pulse italic">
+      ІНІЦІАЛІЗАЦІЯ ВИКОНАВЧОЇ РАДИ...
+    </div>
+  }>
+    <ExecutiveBoardView />
   </Suspense>
 );
+

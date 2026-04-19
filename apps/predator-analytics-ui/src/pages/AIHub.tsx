@@ -33,7 +33,7 @@ const AIHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="AI Nexus"
+      title="AI НЕКСУС"
       subtitle="Автономні агенти, гіпотези та предиктивна аналітика"
       icon={<BrainCircuit size={24} />}
       tabs={hubTabs}
