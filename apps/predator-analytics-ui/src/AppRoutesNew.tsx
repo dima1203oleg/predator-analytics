@@ -141,7 +141,7 @@ export const AppRoutesNew = () => {
             <Route path="/trade-map" element={<Navigate to="/market?tab=flows" replace />} />
             <Route path="/suppliers" element={<Navigate to="/market?tab=suppliers" replace />} />
             <Route path="/customs-premium" element={<CustomsIntelligencePremium />} />
-            <Route path="/price-compare" element={<PriceComparisonPremium />} />
+            <Route path="/price-compare" element={<Navigate to="/market?tab=price" replace />} />
             <Route path="/cargo-manifest" element={<CargoManifestPremium />} />
             <Route path="/trade-flow-map" element={<Navigate to="/market?tab=flows" replace />} />
             <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
@@ -155,8 +155,8 @@ export const AppRoutesNew = () => {
             <Route path="/documents" element={<Navigate to="/search?tab=documents" replace />} />
             <Route path="/diligence" element={<DiligencePage />} />
             <Route path="/diligence/:ueid" element={<DueDiligence />} />
-            <Route path="/ubo-map" element={<OSINTHub />} />
-            <Route path="/graph" element={<OSINTHub />} />
+            <Route path="/ubo-map" element={<Navigate to="/osint?tab=ubo" replace />} />
+            <Route path="/graph" element={<Navigate to="/osint?tab=graph" replace />} />
             <Route path="/risk-scoring" element={<RiskScoringPremium />} />
             <Route path="/sanctions" element={<Navigate to="/osint?tab=sanctions" replace />} />
             <Route path="/osint" element={<OSINTHub />} />

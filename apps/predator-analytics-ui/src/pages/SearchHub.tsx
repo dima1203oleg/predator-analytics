@@ -3,10 +3,10 @@ import { Search, FileText, Database, Newspaper } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 
-import { GlobalSearchTab } from './tabs/GlobalSearchTab';
-import { RegistriesTab } from './tabs/RegistriesTab';
-import { DocumentsTab } from './tabs/DocumentsTab';
-import { NewspaperTab } from './tabs/NewspaperTab';
+import { GlobalSearchTab } from './tabs/search/GlobalSearchTab';
+import { RegistriesTab } from './tabs/search/RegistriesTab';
+import { DocumentsTab } from './tabs/search/DocumentsTab';
+import { NewspaperTab } from './tabs/search/NewspaperTab';
 
 type SearchHubTab = 'global' | 'registries' | 'documents' | 'newspaper';
 

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Share2, Map, ShieldAlert, Fingerprint } from 'lucide-react';
+import { Activity, Share2, Map, ShieldAlert, Fingerprint } from 'lucide-react';
 import { HubLayout } from '@/components/layout/HubLayout';
 import { useSearchParams } from 'react-router-dom';
 
 // Імпорт реальних вкладок
-import { GraphExplorerTab } from './tabs/GraphExplorerTab';
-import { UBOMapTab } from './tabs/UBOMapTab';
-import { SanctionsTab } from './tabs/SanctionsTab';
+import { GraphExplorerTab } from './tabs/osint/GraphExplorerTab';
+import { UBOMapTab } from './tabs/osint/UBOMapTab';
+import { SanctionsTab } from './tabs/osint/SanctionsTab';
+import { CERSTab } from './tabs/osint/CERSTab';
 
-type OSINTHubTab = 'graph' | 'ubo' | 'sanctions';
+type OSINTHubTab = 'graph' | 'ubo' | 'sanctions' | 'cers';
 
 const OSINTHub: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +21,7 @@ const OSINTHub: React.FC = () => {
     if (tabParam && tabParam !== activeTab) {
       setActiveTab(tabParam);
     }
-  }, [tabParam]);
+  }, [tabParam, activeTab]);
 
   const handleTabChange = (id: string) => {
     setActiveTab(id as OSINTHubTab);
@@ -30,6 +31,7 @@ const OSINTHub: React.FC = () => {
   const hubTabs = [
     { id: 'graph', label: 'Нейронний граф', icon: <Share2 size={16} /> },
     { id: 'ubo', label: 'Карта бенефіціарів', icon: <Map size={16} /> },
+    { id: 'cers', label: 'CERS Моніторинг', icon: <Activity size={16} /> },
     { id: 'sanctions', label: 'Санкції та PEP', icon: <ShieldAlert size={16} /> },
   ];
 
@@ -42,9 +44,10 @@ const OSINTHub: React.FC = () => {
       activeTab={activeTab}
       onTabChange={handleTabChange}
     >
-      <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden">
+      <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/5">
         {activeTab === 'graph' && <GraphExplorerTab />}
         {activeTab === 'ubo' && <UBOMapTab />}
+        {activeTab === 'cers' && <CERSTab />}
         {activeTab === 'sanctions' && <SanctionsTab />}
       </div>
     </HubLayout>

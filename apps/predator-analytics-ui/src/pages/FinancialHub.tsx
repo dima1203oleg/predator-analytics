@@ -5,10 +5,10 @@ import { useSearchParams } from 'react-router-dom';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // Імпорт нових вкладок
-import { SwiftMonitorTab } from './tabs/SwiftMonitorTab';
-import { OffshoreDetectorTab } from './tabs/OffshoreDetectorTab';
-import { AMLRadarTab } from './tabs/AMLRadarTab';
-import { AssetTrackerTab } from './tabs/AssetTrackerTab';
+import { SwiftMonitorTab } from './tabs/finance/SwiftMonitorTab';
+import { OffshoreDetectorTab } from './tabs/finance/OffshoreDetectorTab';
+import { AMLRadarTab } from './tabs/finance/AMLRadarTab';
+import { AssetTrackerTab } from './tabs/finance/AssetTrackerTab';
 
 type FinancialHubTab = 'swift' | 'offshore' | 'aml' | 'assets';
 
