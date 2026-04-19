@@ -2729,10 +2729,30 @@ app.get('/api/v1/system/nodes', (req, res) => {
       ram: { used: 4.1, total: 12, unit: 'GB' },
       disk: { used: 25, total: 80, unit: 'GB' },
       gpu: [
-        { model: 'Tesla T4', vram_used: 0.5, vram_total: 16, temp: 38 }
+        { model: 'Tesla T4', vram_used: 1.2, vram_total: 15, temp: 42 }
       ],
       location: 'Google Cloud (US-East)',
-      uptime: '2h 15m'
+      uptime: '08:24:12',
+      extended: {
+        zrok_id: 'predator-api',
+        zrok_url: 'https://predator-api.share.zrok.io',
+        gdrive_sync: 'ACTIVE',
+        gdrive_usage: '72%',
+        vram_allocated: '14.7 GB',
+        last_sync: new Date().toISOString(),
+        k8s_cluster: 'colab-failover',
+        k8s_nodes: 1,
+        databases: {
+          postgres: 'running',
+          neo4j: 'running',
+          redis: 'running',
+          opensearch: 'running',
+          qdrant: 'running',
+          minio: 'running',
+          kafka: 'running',
+          ollama: 'standby'
+        }
+      }
     }
   ]);
 });

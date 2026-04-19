@@ -22,6 +22,7 @@ import { ResourceDynamicsChart } from './components/ResourceDynamicsChart';
 import { OODALoopPanel } from './components/OODALoopPanel';
 import { BackendSwitcher } from './components/BackendSwitcher';
 import { ResourceNodeCard } from './components/ResourceNodeCard';
+import { ColabDetailedPanel } from './components/ColabDetailedPanel';
 import { OODAStatus, OODAStep } from './ooda-types';
 import { infraApi } from '@/services/api/infra';
 import { useAgents } from '@/context/AgentContext';
@@ -49,6 +50,8 @@ export default function InfraView() {
   const [oodaStatus, setOodaStatus] = React.useState<OODAStatus>('OBSERVING');
   const [activeIncidents, setActiveIncidents] = React.useState<OODAStep[]>([]);
   const [isFullyAutomated, setIsFullyAutomated] = React.useState<boolean>(true);
+  const [selectedNode, setSelectedNode] = React.useState<any>(null);
+  const [isPanelOpen, setIsPanelOpen] = React.useState(false);
   const { agents } = useAgents();
 
   const alertLevel = React.useMemo(() => {
@@ -232,7 +235,16 @@ export default function InfraView() {
                   
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {nodes?.map((node: any) => (
-                      <ResourceNodeCard key={node.id} node={node} />
+                      <ResourceNodeCard 
+                        key={node.id} 
+                        node={node} 
+                        onClick={() => {
+                          if (node.id === 'colab') {
+                            setSelectedNode(node);
+                            setIsPanelOpen(true);
+                          }
+                        }}
+                      />
                     ))}
                   </div>
                 </div>
@@ -284,6 +296,12 @@ export default function InfraView() {
             )}
           </div>
         </motion.div>
+
+        <ColabDetailedPanel 
+          isOpen={isPanelOpen} 
+          onClose={() => setIsPanelOpen(false)} 
+          node={selectedNode} 
+        />
       </div>
     </PageTransition>
   );

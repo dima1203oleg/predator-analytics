@@ -1,0 +1,172 @@
+];
+
+const buildGroupsFromItems = (items: NavItem[] = []): NavGroup[] => {
+  const groups = new Map<string, NavItem[]>();
+
+  for (const item of items) {
+    const groupTitle = item.group ?? 'Загальна група';
+    const currentItems = groups.get(groupTitle) ?? [];
+    currentItems.push(item);
+    groups.set(groupTitle, currentItems);
+  }
+
+  return [...groups.entries()].map(([title, groupItems]) => ({
+    title,
+    items: groupItems.map((item) => ({
+      ...item,
+      group: item.group ?? title,
+    })),
+  }));
+};
+
+const sectionItems = (section: NavSection): NavItem[] =>
+  section.groups?.flatMap((group) =>
+    group.items.map((item) => ({
+      ...item,
+      group: item.group ?? group.title,
+    })),
+  ) ??
+  section.items?.map((item) => ({
+    ...item,
+    group: item.group,
+  })) ??
+  [];
+
+export const navigationConfig: NavSection[] = baseNavigationConfig.map((section) => {
+  const items = sectionItems(section);
+  const groups = section.groups ?? buildGroupsFromItems(items);
+
+  return {
+    ...section,
+    items,
+    groups,
+  };
+});
+
+const itemMatchesPath = (item: NavItem, pathname: string): boolean => {
+  if (item.path === pathname) {
+    return true;
+  }
+
+  if (item.path !== '/' && pathname.startsWith(`${item.path}/`)) {
+    return true;
+  }
+
+  return item.matchPaths?.some((matchPath) => pathname.startsWith(matchPath)) ?? false;
+};
+
+const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
+  const normalizedRole = role?.toLowerCase?.() ?? '';
+
+  if (item.roles && !item.roles.includes(normalizedRole)) {
+    return false;
+  }
+
+  if (normalizedRole === 'admin') {
+    return true;
+  }
+
+  if (!item.audiences || item.audiences.length === 0) {
+    return true;
+  }
+
+  return item.audiences.includes(resolveNavigationAudience(normalizedRole));
+};
+
+const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
+  const normalizedRole = role?.toLowerCase?.() ?? '';
+
+  if (group.roles && !group.roles.includes(normalizedRole)) {
+    return false;
+  }
+
+  if (!group.audiences || group.audiences.length === 0) {
+    return true;
+  }
+
+  if (normalizedRole === 'admin') {
+    return true;
+  }
+
+  return group.audiences.includes(resolveNavigationAudience(normalizedRole));
+};
+
+export const getGlobalNavigationActions = (): NavGlobalAction[] => globalNavigationActions;
+
+export const getVisibleNavigation = (role: string): NavSection[] =>
+  navigationConfig
+    .map((section) => {
+      const visibleGroups = (section.groups ?? [])
+        .filter((group) => isGroupVisibleForRole(group, role))
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => isItemVisibleForRole(item, role)),
+        }))
+        .filter((group) => group.items.length > 0);
+
+      return {
+        ...section,
+        groups: visibleGroups,
+        items: visibleGroups.flatMap((group) =>
+          group.items.map((item) => ({
+            ...item,
+            group: item.group ?? group.title,
+          })),
+        ),
+      };
+    })
+    .filter((section) => section.items.length > 0);
+
+export const getNavigationTotals = (role: string): { items: number; sections: number } => {
+  const sections = getVisibleNavigation(role);
+  return {
+    sections: sections.length,
+    items: sections.reduce((total, section) => total + (section.items?.length ?? 0), 0),
+  };
+};
+
+export const getAllVisibleNavigationItems = (role: string): VisibleNavItem[] =>
+  getVisibleNavigation(role).flatMap((section) =>
+    (section.items ?? []).map((item) => ({
+      ...item,
+      accent: section.accent,
+      sectionId: section.id,
+      sectionLabel: section.label,
+      sectionDescription: section.description,
+      sectionOutcome: section.outcome,
+    })),
+  );
+
+export const getRecommendedNavigation = (role: string, limit: number = 6): VisibleNavItem[] =>
+  [...getAllVisibleNavigationItems(role)]
+    .filter((item) => (item.priority ?? 0) > 0)
+    .sort((left, right) => (right.priority ?? 0) - (left.priority ?? 0))
+    .slice(0, limit);
+
+export const getNavigationContext = (pathname: string, role: string): NavigationContext => {
+  const sections = getVisibleNavigation(role);
+
+  for (const section of sections) {
+    for (const item of section.items ?? []) {
+      if (item.path === pathname) {
+        return { item, section };
+      }
+    }
+  }
+
+  for (const section of sections) {
+    const sortedItems = [...(section.items ?? [])].sort((left, right) => right.path.length - left.path.length);
+    const matchedItem = sortedItems.find((item) => itemMatchesPath(item, pathname));
+
+    if (matchedItem) {
+      return { item: matchedItem, section };
+    }
+  }
+
+  return { item: null, section: null };
+};
+
+export const isNavigationPathVisible = (pathname: string, role: string): boolean =>
+  getVisibleNavigation(role).some((section) =>
+    (section.items ?? []).some((item) => itemMatchesPath(item, pathname)),
+  );

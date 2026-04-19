@@ -40,6 +40,25 @@ Frontend автоматично розпізнає падіння сервера
 - **MinIO** (S3 сховище)
 - **Kafka** (Потокова передача)
 - **Ollama** (Локальний ШІ як бекап)
+- **K3s** (Kubernetes Cluster for Mirroring)
+
+## ☸️ Інтеграція з Kubernetes Panel (IDE)
+
+Щоб бачити Colab у панелі Kubernetes вашого IDE:
+
+1. **Запустіть K3s у Colab**:
+   В блокноті додайте клітинку:
+   ```bash
+   curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+   zrok reserve public localhost:6443 --name colab-k8s
+   zrok share reserved colab-k8s --headless
+   ```
+
+2. **На Mac**:
+   Отримайте `kubeconfig` з Colab (через Google Drive або `cat` в терміналі) та змініть `server: https://127.0.0.1:6443` на адресу вашого ZROK тунелю: `https://colab-k8s.share.zrok.io`.
+
+3. **Додайте в ~/.kube/config**:
+   Додайте нову секцію `context` для `PREDATOR-COLAB`. Тепер він з'явиться в панелі "Kubernetes" (ms-kubernetes-tools).
 
 ---
 **v56.4-ELITE** | *Sovereign Intelligence Systems*

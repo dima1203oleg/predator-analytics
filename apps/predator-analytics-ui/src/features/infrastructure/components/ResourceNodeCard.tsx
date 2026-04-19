@@ -30,15 +30,17 @@ export interface NodeHardwareProps {
   uptime: string;
 }
 
-export function ResourceNodeCard({ node }: { node: NodeHardwareProps }) {
+export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, onClick?: () => void }) {
   const isOnline = node.status === 'online';
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      onClick={onClick}
       className={cn(
-        "bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative overflow-hidden group",
+        "bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm relative overflow-hidden group transition-all duration-300",
+        onClick && "cursor-pointer hover:border-white/20 hover:bg-black/50 shadow-lg hover:shadow-white/5",
         !isOnline && "opacity-50 grayscale"
       )}
     >

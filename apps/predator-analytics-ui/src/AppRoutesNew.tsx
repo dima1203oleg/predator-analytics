@@ -209,6 +209,7 @@ export const AppRoutesNew = () => {
             <Route path="/datagov" element={<DataGovView />} />
             <Route path="/maritime" element={<MaritimeView />} />
             <Route path="/registries" element={<RegistriesView />} />
+            <Route path="/dossier" element={<UBOMapView />} />
 
             {/* Data Management */}
             <Route path="/parsers" element={onlyAdmin(<ParsersView />)} />
@@ -231,6 +232,7 @@ export const AppRoutesNew = () => {
             <Route path="/dashboards" element={<MonitoringView />} />
             <Route path="/intelligence" element={<IntelligenceView />} />
             <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
+            <Route path="/customs" element={<CustomsIntelligenceView />} />
             <Route path="/nexus" element={<PredictiveNexusView />} />
             <Route path="/forecast-view" element={<ForecastView />} />
             <Route path="/aml" element={<AMLScoringView />} />
@@ -251,6 +253,7 @@ export const AppRoutesNew = () => {
             <Route path="/competitor-intel" element={<CompetitorIntelligenceView />} />
             <Route path="/competitor-radar" element={<EntityRadarView />} />
             <Route path="/morning-brief" element={<ExecutiveBriefView />} />
+            <Route path="/radar" element={<GeopoliticalRadarView />} />
 
             <Route path="/entity-graph" element={<GraphAnalyticsPage />} />
             <Route path="/network/:ueid" element={<NetworkGraph />} />
@@ -313,6 +316,7 @@ export const AppRoutesNew = () => {
             <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
 
             {/* ✅ НОВІ МОДУЛІ v57.2-WRAITH — Бізнес-орієнтована розвідка */}
+            <Route path="/financials"         element={<FinancialSigintView />} />
             <Route path="/financial-sigint"   element={<FinancialSigintView />} />
             <Route path="/swift-monitor"      element={<FinancialSigintView />} />
             <Route path="/offshore-detector"  element={<FinancialSigintView />} />

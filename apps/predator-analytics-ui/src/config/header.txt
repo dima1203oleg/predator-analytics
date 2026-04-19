@@ -1,0 +1,230 @@
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bot,
+  Box,
+  BrainCircuit,
+  Briefcase,
+  Building2,
+  Compass,
+  Database,
+  Eye,
+  Factory,
+  FileText,
+  FlaskConical,
+  Globe,
+  History,
+  Landmark,
+  LayoutDashboard,
+  Layers,
+  Lock,
+  Network,
+  Newspaper,
+  Radar,
+  Scale,
+  Search,
+  Settings,
+  Shield,
+  Radio,
+  Ship,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp,
+  Upload,
+  Users,
+  Zap,
+  ShieldX,
+  Fingerprint,
+  type LucideIcon,
+} from 'lucide-react';
+
+export type NavAccent =
+  | 'gold'
+  | 'amber'
+  | 'warn'
+  | 'slate';
+
+export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
+export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
+
+export interface NavItem {
+  id: string;
+  label: string;
+  path: string;
+  icon: LucideIcon;
+  description: string;
+  badge?: string;
+  group?: string;
+  roles?: string[];
+  audiences?: NavigationAudience[];
+  priority?: number;
+  matchPaths?: string[];
+}
+
+export interface NavGroup {
+  title?: string;
+  items: NavItem[];
+  roles?: string[];
+  audiences?: NavigationAudience[];
+}
+
+export interface NavSection {
+  id: string;
+  label: string;
+  description: string;
+  outcome: string;
+  accent: NavAccent;
+  groups?: NavGroup[];
+  items?: NavItem[];
+  collapsed?: boolean;
+}
+
+export interface NavigationContext {
+  item: NavItem | null;
+  section: NavSection | null;
+}
+
+export interface VisibleNavItem extends NavItem {
+  accent: NavAccent;
+  sectionId: string;
+  sectionLabel: string;
+  sectionDescription: string;
+  sectionOutcome: string;
+}
+
+export interface NavGlobalAction {
+  id: string;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+  kind: 'focus-search' | 'mode' | 'link';
+  mode?: NavWorkspaceMode;
+  path?: string;
+}
+
+export const navAccentStyles: Record<
+  NavAccent,
+  {
+    badge: string;
+    dot: string;
+    glow: string;
+    icon: string;
+    iconBorder: string;
+    sectionBorder: string;
+    softText: string;
+  }
+> = {
+  gold: {
+    badge: 'bg-yellow-500/15 text-yellow-500 border-yellow-400/20',
+    dot: 'bg-yellow-500',
+    glow: 'from-yellow-600/20 via-yellow-500/5 to-transparent',
+    icon: 'text-yellow-500',
+    iconBorder: 'border-yellow-400/25 bg-yellow-500/10',
+    sectionBorder: 'border-yellow-400/15',
+    softText: 'text-yellow-400/90',
+  },
+  amber: {
+    badge: 'bg-amber-500/15 text-amber-500 border-amber-400/20',
+    dot: 'bg-amber-500',
+    glow: 'from-amber-600/20 via-amber-500/5 to-transparent',
+    icon: 'text-amber-500',
+    iconBorder: 'border-amber-400/25 bg-amber-500/10',
+    sectionBorder: 'border-amber-400/15',
+    softText: 'text-amber-400/90',
+  },
+  warn: {
+    badge: 'bg-orange-500/15 text-orange-500 border-orange-400/20',
+    dot: 'bg-orange-600',
+    glow: 'from-orange-600/20 via-orange-500/5 to-transparent',
+    icon: 'text-orange-500',
+    iconBorder: 'border-orange-400/25 bg-orange-500/10',
+    sectionBorder: 'border-orange-400/15',
+    softText: 'text-orange-400/90',
+  },
+  slate: {
+    badge: 'bg-slate-500/15 text-slate-400 border-slate-400/20',
+    dot: 'bg-slate-500',
+    glow: 'from-slate-600/20 via-slate-500/5 to-transparent',
+    icon: 'text-slate-400',
+    iconBorder: 'border-slate-400/25 bg-slate-500/10',
+    sectionBorder: 'border-slate-400/15',
+    softText: 'text-slate-400/90',
+  },
+};
+
+const navigationAudienceAliases: Record<string, NavigationAudience> = {
+  admin: 'admin',
+  commander: 'admin',
+  client_premium: 'analyst',
+  analyst: 'analyst',
+  operator: 'supply_chain',
+  supply: 'supply_chain',
+  'supply-chain': 'supply_chain',
+  supply_chain: 'supply_chain',
+  logistician: 'supply_chain',
+  logistics: 'supply_chain',
+  client_basic: 'business',
+  viewer: 'business',
+  explorer: 'business',
+  ceo: 'business',
+  owner: 'business',
+};
+
+export const resolveNavigationAudience = (role: string): NavigationAudience =>
+  navigationAudienceAliases[role?.toLowerCase?.() ?? ''] ?? 'business';
+
+export const globalNavigationActions: NavGlobalAction[] = [
+  {
+    id: 'search',
+    label: 'Пошук',
+    description: 'Cmd/Ctrl + K',
+    icon: Search,
+    kind: 'focus-search',
+  },
+  {
+    id: 'favorites',
+    label: 'Обране',
+    description: 'Закріплені маршрути',
+    icon: Star,
+    kind: 'mode',
+    mode: 'favorites',
+  },
+  {
+    id: 'recent',
+    label: 'Нещодавнє',
+    description: 'Останні переходи',
+    icon: History,
+    kind: 'mode',
+    mode: 'recent',
+  },
+  {
+    id: 'recommended',
+    label: 'ШІ-рекомендації',
+    description: 'Найкращий наступний крок',
+    icon: Sparkles,
+    kind: 'mode',
+    mode: 'recommended',
+  },
+  {
+    id: 'assistant',
+    label: 'ШІ-асистент',
+    description: 'Агенти та підказки',
+    icon: Bot,
+    kind: 'link',
+    path: '/agents',
+  },
+];
+
+/**
+ * Канонічна бізнес-орієнтована навігація PREDATOR Analytics v57.2-WRAITH OSINT-HUB.
+ * Шість верхніх блоків зберігають попередні модулі, але прибирають перевантаження на рівні головних секцій.
+ */
+const baseNavigationConfig: NavSection[] = [
+  {
+    id: 'command',
+    label: 'КОМАНДНИЙ ЦЕНТР',
+    description: 'CEO-рівень: стратегічний контроль, P&L ризиків, ранковий брифінг, оперативний пульс.',
+    outcome: 'Sovereign Command: Повний 360° контроль над бізнес-периметром за 3 секунди.',
+    accent: 'gold',
