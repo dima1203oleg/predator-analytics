@@ -39,7 +39,7 @@ const OSINTHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="Network Intelligence"
+      title="Інтелект Мережі"
       subtitle="Глибока OSINT-розвідка суб'єктів та детекція прихованих мережевих зв'язків"
       icon={<Fingerprint size={24} />}
       tabs={hubTabs}

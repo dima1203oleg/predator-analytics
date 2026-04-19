@@ -53,18 +53,18 @@ export const LiveAgentTerminal: React.FC = () => {
 
   return (
     <div className="bg-[#050505] border border-white/5 rounded-[2rem] overflow-hidden flex flex-col h-full shadow-2xl relative group">
-      <div className="absolute inset-0 bg-emerald-500/[0.02] pointer-events-none" />
+      <div className="absolute inset-0 bg-rose-500/[0.02] pointer-events-none" />
       
       {/* Terminal Header */}
       <div className="flex items-center justify-between px-8 py-5 border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-4">
-          <Terminal size={18} className="text-[#D4AF37]" />
-          <h4 className="text-[10px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ТЕХНІЧНИЙ_ЛОГ_АГЕНТІВ</h4>
+          <Terminal size={18} className="text-rose-500" />
+          <h4 className="text-[10px] font-black text-white uppercase tracking-[0.4em] italic leading-none">WRAITH_TACTICAL_LOG</h4>
         </div>
         <div className="flex gap-2">
-          <div className="w-2 h-2 rounded-full bg-rose-500/20 border border-rose-500/40" />
-          <div className="w-2 h-2 rounded-full bg-amber-500/20 border border-amber-500/40" />
-          <div className="w-2 h-2 rounded-full bg-emerald-500/20 border border-emerald-500/40" />
+          <div className="w-2 h-2 rounded-full bg-rose-600/40 border border-rose-500" />
+          <div className="w-2 h-2 rounded-full bg-orange-600/40 border border-orange-500" />
+          <div className="w-2 h-2 rounded-full bg-slate-600/40 border border-slate-500" />
         </div>
       </div>
 
@@ -84,28 +84,31 @@ export const LiveAgentTerminal: React.FC = () => {
               <span className="text-slate-600 shrink-0">[{log.timestamp}]</span>
               <span className={cn(
                 "px-2 py-0.5 rounded text-[8px] font-black tracking-widest shrink-0 border",
-                log.type === 'warn' ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                log.type === 'error' ? "bg-rose-500/10 border-rose-500/20 text-rose-500" :
+                log.type === 'warn' ? "bg-orange-500/10 border-orange-500/20 text-orange-500" :
+                log.type === 'error' ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.2)]" :
                 log.type === 'success' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                "bg-blue-500/10 border-blue-500/20 text-blue-400"
+                "bg-rose-500/10 border-rose-500/20 text-rose-400"
               )}>
                 {log.module}
               </span>
-              <span className="text-slate-300 tracking-tight leading-relaxed group-hover/line:text-white transition-colors">
+              <span className={cn(
+                "tracking-tight leading-relaxed transition-colors",
+                log.type === 'error' ? "text-rose-300 font-bold" : "text-slate-300 group-hover/line:text-white"
+              )}>
                 {log.message}
               </span>
               <motion.div 
                 animate={{ opacity: [1, 0, 1] }}
                 transition={{ repeat: Infinity, duration: 1 }}
-                className="w-1 h-3 bg-[#D4AF37]/40 shrink-0 mt-0.5 opacity-0 group-hover/line:opacity-100"
+                className="w-1 h-3 bg-rose-500/40 shrink-0 mt-0.5 opacity-0 group-hover/line:opacity-100"
               />
             </motion.div>
           ))}
         </AnimatePresence>
         {logs.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full space-y-4 opacity-20">
-            <Activity className="animate-pulse text-[#D4AF37]" size={32} />
-            <p className="uppercase tracking-[0.5em] font-black">Очікування потоку даних...</p>
+            <Activity className="animate-pulse text-rose-500" size={32} />
+            <p className="uppercase tracking-[0.5em] font-black italic text-rose-500/50">WRAITH_SCAN_PENDING</p>
           </div>
         )}
       </div>
@@ -114,19 +117,20 @@ export const LiveAgentTerminal: React.FC = () => {
       <div className="px-8 py-4 border-t border-white/5 bg-black/40 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic">STREAM_LIVE</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic">INTEL_LIVE</span>
           </div>
           <div className="flex items-center gap-2">
             <Database size={12} className="text-slate-600" />
-            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic">BSON/ORJSON</span>
+            <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic">NEO4J_REALTIME</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-[#D4AF37]">
+        <div className="flex items-center gap-2 text-rose-500">
           <Zap size={12} />
-          <span className="text-[8px] font-black uppercase tracking-[0.2em] italic">PREDATOR_CORE v57.8</span>
+          <span className="text-[8px] font-black uppercase tracking-[0.2em] italic">WRAITH_ENGINE v57.8</span>
         </div>
       </div>
     </div>
   );
+
 };

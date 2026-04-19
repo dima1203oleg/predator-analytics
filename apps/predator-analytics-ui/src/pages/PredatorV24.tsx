@@ -112,10 +112,10 @@ const scaleIn = {
 
 /* ── Кольорова палітра ── */
 const tones = {
-  gold: { bg: 'bg-yellow-500/8 border-yellow-400/15', icon: 'text-yellow-500', glow: 'group-hover:shadow-[0_0_40px_rgba(212,175,55,0.15)]', line: 'from-yellow-600 to-yellow-400' },
-  amber: { bg: 'bg-amber-600/8 border-amber-500/15', icon: 'text-amber-500', glow: 'group-hover:shadow-[0_0_40px_rgba(180,83,9,0.15)]', line: 'from-amber-600 to-amber-400' },
-  orange: { bg: 'bg-orange-500/8 border-orange-400/15', icon: 'text-orange-400', glow: 'group-hover:shadow-[0_0_40px_rgba(249,115,22,0.15)]', line: 'from-orange-600 to-orange-400' },
-  warm: { bg: 'bg-yellow-600/10 border-yellow-500/20', icon: 'text-yellow-400', glow: 'group-hover:shadow-[0_0_40px_rgba(234,179,8,0.12)]', line: 'from-yellow-700 to-yellow-500' },
+  rose: { bg: 'bg-rose-500/8 border-rose-400/15', icon: 'text-rose-500', glow: 'group-hover:shadow-[0_0_40px_rgba(225,29,72,0.15)]', line: 'from-rose-600 to-rose-400' },
+  crimson: { bg: 'bg-rose-600/8 border-rose-500/15', icon: 'text-rose-600', glow: 'group-hover:shadow-[0_0_40px_rgba(190,18,60,0.15)]', line: 'from-rose-700 to-rose-500' },
+  pink: { bg: 'bg-rose-400/8 border-rose-300/15', icon: 'text-rose-400', glow: 'group-hover:shadow-[0_0_40px_rgba(244,63,94,0.15)]', line: 'from-rose-500 to-rose-300' },
+  warm: { bg: 'bg-rose-500/10 border-rose-500/20', icon: 'text-rose-400', glow: 'group-hover:shadow-[0_0_40px_rgba(225,29,72,0.12)]', line: 'from-rose-600 to-rose-400' },
 } as const;
 
 /* ══════════════════════════════════════════════════════════════
@@ -155,10 +155,10 @@ const PredatorV24 = () => {
 
   /* ── 4 головні KPI ── */
   const kpis = useMemo(() => [
-    { label: 'Обсяг операцій', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'gold' as const },
+    { label: 'Обсяг операцій', value: s ? formatCurrency(s.total_value_usd) : '—', hint: 'Загальна вартість ЗЕД', icon: DollarSign, tone: 'rose' as const },
     { label: 'Декларації', value: s ? formatNumber(s.total_declarations) : '—', hint: 'Підтверджених записів', icon: Activity, tone: 'warm' as const },
-    { label: 'Ризикових сигналів', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'amber' as const },
-    { label: 'Граф зв\'язків', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'orange' as const },
+    { label: 'Ризикових сигналів', value: s ? formatNumber(s.high_risk_count) : '—', hint: `Середні: ${s ? formatNumber(s.medium_risk_count) : '—'}`, icon: AlertTriangle, tone: 'crimson' as const },
+    { label: 'Граф зв\'язків', value: s ? formatNumber(s.graph_nodes) : '—', hint: `${s ? formatNumber(s.graph_edges) : '—'} зв'язків`, icon: Network, tone: 'pink' as const },
   ], [s]);
 
   /* ── Навігаційні секції з іконками ── */
@@ -179,21 +179,21 @@ const PredatorV24 = () => {
          ═══════════════════════════════════════════════ */}
       <motion.section variants={fadeUp} className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-[#030810] p-6 sm:p-8">
         {/* Фонові елементи */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_-10%,rgba(16,185,129,0.06),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_-10%,rgba(225,29,72,0.06),transparent_60%)] pointer-events-none" />
         <div className="absolute top-4 right-4 opacity-[0.02] pointer-events-none">
-          <Shield size={200} strokeWidth={0.5} className="text-emerald-400" />
+          <Shield size={200} strokeWidth={0.5} className="text-rose-400" />
         </div>
 
         {/* Верхній рядок: badge + status */}
         <div className="relative z-10 flex flex-wrap items-center gap-2.5 mb-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-yellow-500 uppercase italic">
-            <div className="h-1.5 w-1.5 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(212,175,55,0.8)] animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-rose-500 uppercase italic">
+            <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
             PREDATOR v58.2-WRAITH
           </div>
           <div className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase italic text-yellow-600 border-yellow-500/20 bg-yellow-500/10",
+            "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase italic text-rose-600 border-rose-500/20 bg-rose-500/10",
           )}>
-            <div className={cn("h-1.5 w-1.5 rounded-full bg-yellow-500 animate-pulse")} />
+            <div className={cn("h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse")} />
             {backendStatus.statusLabel}
           </div>
           <div className="ml-auto text-[10px] font-mono text-slate-600 tracking-wider">
@@ -236,7 +236,7 @@ const PredatorV24 = () => {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative z-10 mt-4 rounded-xl border border-amber-400/15 bg-amber-500/5 px-4 py-2.5 text-xs text-amber-300 flex items-center gap-2"
+            className="relative z-10 mt-4 rounded-xl border border-rose-400/15 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-300 flex items-center gap-2"
           >
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             {error}
@@ -256,7 +256,7 @@ const PredatorV24 = () => {
               <h2 className="text-lg font-black text-white">Оперативний контур</h2>
               <p className="text-xs text-slate-500 mt-0.5">6 стратегічних Titan-модулів</p>
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-400/15 bg-indigo-500/8 px-2.5 py-1 text-[10px] font-bold text-indigo-400">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/15 bg-rose-500/8 px-2.5 py-1 text-[10px] font-bold text-rose-400">
               <Layers3 className="h-3 w-3" />
               {navigationSections.reduce((t, sec) => t + (sec.items?.length || 0), 0)} модулів
             </div>
@@ -321,7 +321,7 @@ const PredatorV24 = () => {
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-black text-white flex items-center gap-2">
-                <Flame className="h-4 w-4 text-amber-500" />
+                <Flame className="h-4 w-4 text-rose-500" />
                 Критичні сигнали
               </h2>
               <div className="inline-flex items-center gap-1 rounded-full border border-rose-400/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-400">
@@ -356,9 +356,9 @@ const PredatorV24 = () => {
                     </div>
                     <span className={cn(
                       'shrink-0 rounded-md border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider',
-                      alert.severity === 'critical' ? 'border-rose-400/20 bg-rose-500/10 text-rose-400'
-                        : alert.severity === 'warning' ? 'border-amber-400/20 bg-amber-500/10 text-amber-400'
-                        : 'border-cyan-400/20 bg-cyan-500/10 text-cyan-400',
+                      alert.severity === 'critical' ? 'border-rose-400/20 bg-rose-600/10 text-rose-400'
+                        : alert.severity === 'warning' ? 'border-rose-500/20 bg-rose-500/10 text-rose-300'
+                        : 'border-slate-400/20 bg-slate-500/10 text-slate-400',
                     )}>
                       {alert.severity === 'critical' ? 'Критично'
                         : alert.severity === 'warning' ? 'Увага'
@@ -380,20 +380,20 @@ const PredatorV24 = () => {
           <div className="rounded-2xl border border-white/[0.05] bg-[#060c18]/40 p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-black text-white flex items-center gap-2">
-                <Database className="h-4 w-4 text-yellow-500" />
+                <Database className="h-4 w-4 text-rose-500" />
                 Покриття даних
               </h2>
-              <div className="inline-flex items-center gap-1 rounded-full border border-yellow-500/15 bg-yellow-500/8 px-2 py-0.5 text-[10px] font-bold text-yellow-500">
+              <div className="inline-flex items-center gap-1 rounded-full border border-rose-500/15 bg-rose-500/8 px-2 py-0.5 text-[10px] font-bold text-rose-500">
                 Онлайн
               </div>
             </div>
 
             <div className="space-y-1.5">
               {[
-                { label: 'Пошуковий індекс', value: s ? formatNumber(s.search_documents) : '—', hint: 'документів', icon: Search, tone: tones.warm },
-                { label: 'Векторні ембедінги', value: s ? formatNumber(s.vectors) : '—', hint: 'записів', icon: Brain, tone: tones.gold },
-                { label: 'Митні офіси', value: overview ? formatNumber(Object.keys(overview.customs_offices || {}).length) : '—', hint: 'активних', icon: ShieldCheck, tone: tones.gold },
-                { label: 'Пайплайни', value: s ? formatNumber(s.active_pipelines) : '—', hint: `${s ? formatNumber(s.completed_pipelines) : '—'} завершених`, icon: Zap, tone: tones.amber },
+                { label: 'Пошуковий індекс', value: s ? formatNumber(s.search_documents) : '—', hint: 'документів', icon: Search, tone: tones.rose },
+                { label: 'Векторні ембедінги', value: s ? formatNumber(s.vectors) : '—', hint: 'записів', icon: Brain, tone: tones.pink },
+                { label: 'Митні офіси', value: overview ? formatNumber(Object.keys(overview.customs_offices || {}).length) : '—', hint: 'активних', icon: ShieldCheck, tone: tones.rose },
+                { label: 'Пайплайни', value: s ? formatNumber(s.active_pipelines) : '—', hint: `${s ? formatNumber(s.completed_pipelines) : '—'} завершених`, icon: Zap, tone: tones.crimson },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -422,10 +422,10 @@ const PredatorV24 = () => {
             </h2>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { label: 'Пошук', path: '/search?tab=global', icon: Search, accent: 'cyan' },
+                { label: 'Пошук', path: '/search?tab=global', icon: Search, accent: 'rose' },
                 { label: 'Ризики', path: '/diligence', icon: Target, accent: 'rose' },
-                { label: 'Ринок', path: '/market?tab=overview', icon: TrendingUp, accent: 'emerald' },
-                { label: 'Брифінг', path: '/command?tab=brief', icon: Eye, accent: 'amber' },
+                { label: 'Ринок', path: '/market?tab=overview', icon: TrendingUp, accent: 'rose' },
+                { label: 'Брифінг', path: '/command?tab=brief', icon: Eye, accent: 'rose' },
               ].map((action) => (
                 <Link
                   key={action.label}

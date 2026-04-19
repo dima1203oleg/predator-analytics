@@ -50,7 +50,7 @@ export type NavAccent =
   | 'slate'
   | 'blue'
   | 'indigo'
-  | 'emerald';
+  | 'rose';
 
 export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
@@ -123,31 +123,31 @@ export const navAccentStyles: Record<
   }
 > = {
   gold: {
-    badge: 'bg-yellow-500/15 text-yellow-500 border-yellow-400/20',
-    dot: 'bg-yellow-500',
-    glow: 'from-yellow-600/20 via-yellow-500/5 to-transparent',
-    icon: 'text-yellow-500',
-    iconBorder: 'border-yellow-400/25 bg-yellow-500/10',
-    sectionBorder: 'border-yellow-400/15',
-    softText: 'text-yellow-400/90',
+    badge: 'bg-rose-500/15 text-rose-500 border-rose-400/20',
+    dot: 'bg-rose-500',
+    glow: 'from-rose-600/20 via-rose-500/5 to-transparent',
+    icon: 'text-rose-500',
+    iconBorder: 'border-rose-400/25 bg-rose-500/10',
+    sectionBorder: 'border-rose-400/15',
+    softText: 'text-rose-400/90',
   },
   amber: {
-    badge: 'bg-amber-500/15 text-amber-500 border-amber-400/20',
-    dot: 'bg-amber-500',
-    glow: 'from-amber-600/20 via-amber-500/5 to-transparent',
-    icon: 'text-amber-500',
-    iconBorder: 'border-amber-400/25 bg-amber-500/10',
-    sectionBorder: 'border-amber-400/15',
-    softText: 'text-amber-400/90',
+    badge: 'bg-rose-600/15 text-rose-500 border-rose-500/20',
+    dot: 'bg-rose-600',
+    glow: 'from-rose-700/20 via-rose-600/5 to-transparent',
+    icon: 'text-rose-600',
+    iconBorder: 'border-rose-500/25 bg-rose-600/10',
+    sectionBorder: 'border-rose-500/15',
+    softText: 'text-rose-500/90',
   },
   warn: {
-    badge: 'bg-orange-500/15 text-orange-500 border-orange-400/20',
-    dot: 'bg-orange-600',
-    glow: 'from-orange-600/20 via-orange-500/5 to-transparent',
-    icon: 'text-orange-500',
-    iconBorder: 'border-orange-400/25 bg-orange-500/10',
-    sectionBorder: 'border-orange-400/15',
-    softText: 'text-orange-400/90',
+    badge: 'bg-rose-500/15 text-rose-400 border-rose-400/20',
+    dot: 'bg-rose-500',
+    glow: 'from-rose-600/20 via-rose-500/5 to-transparent',
+    icon: 'text-rose-400',
+    iconBorder: 'border-rose-400/25 bg-rose-500/10',
+    sectionBorder: 'border-rose-400/15',
+    softText: 'text-rose-400/90',
   },
   slate: {
     badge: 'bg-slate-500/15 text-slate-400 border-slate-400/20',
@@ -159,31 +159,31 @@ export const navAccentStyles: Record<
     softText: 'text-slate-400/90',
   },
   blue: {
-    badge: 'bg-blue-500/15 text-blue-400 border-blue-400/20',
-    dot: 'bg-blue-500',
-    glow: 'from-blue-600/20 via-blue-500/5 to-transparent',
-    icon: 'text-blue-400',
-    iconBorder: 'border-blue-400/25 bg-blue-500/10',
-    sectionBorder: 'border-blue-400/15',
-    softText: 'text-blue-400/90',
+    badge: 'bg-rose-400/15 text-rose-300 border-rose-300/20',
+    dot: 'bg-rose-400',
+    glow: 'from-rose-500/20 via-rose-400/5 to-transparent',
+    icon: 'text-rose-300',
+    iconBorder: 'border-rose-300/25 bg-rose-400/10',
+    sectionBorder: 'border-rose-300/15',
+    softText: 'text-rose-300/90',
   },
   indigo: {
-    badge: 'bg-indigo-500/15 text-indigo-400 border-indigo-400/20',
-    dot: 'bg-indigo-500',
-    glow: 'from-indigo-600/20 via-indigo-500/5 to-transparent',
-    icon: 'text-indigo-400',
-    iconBorder: 'border-indigo-400/25 bg-indigo-500/10',
-    sectionBorder: 'border-indigo-400/15',
-    softText: 'text-indigo-400/90',
+    badge: 'bg-rose-500/15 text-rose-400 border-rose-400/20',
+    dot: 'bg-rose-500',
+    glow: 'from-rose-600/20 via-rose-500/5 to-transparent',
+    icon: 'text-rose-400',
+    iconBorder: 'border-rose-400/25 bg-rose-500/10',
+    sectionBorder: 'border-rose-400/15',
+    softText: 'text-rose-400/90',
   },
-  emerald: {
-    badge: 'bg-emerald-500/15 text-emerald-400 border-emerald-400/20',
-    dot: 'bg-emerald-500',
-    glow: 'from-emerald-600/20 via-emerald-500/5 to-transparent',
-    icon: 'text-emerald-400',
-    iconBorder: 'border-emerald-400/25 bg-emerald-500/10',
-    sectionBorder: 'border-emerald-400/15',
-    softText: 'text-emerald-400/90',
+  rose: {
+    badge: 'bg-rose-500/15 text-rose-400 border-rose-400/20',
+    dot: 'bg-rose-500',
+    glow: 'from-rose-600/20 via-rose-500/5 to-transparent',
+    icon: 'text-rose-400',
+    iconBorder: 'border-rose-400/25 bg-rose-500/10',
+    sectionBorder: 'border-rose-400/15',
+    softText: 'text-rose-400/90',
   },
 };
 
@@ -545,7 +545,7 @@ const baseNavigationConfig: NavSection[] = [
     label: 'ФІНАНСОВА РОЗВІДКА',
     description: 'Моніторинг транзакцій, офшорів та активів.',
     outcome: 'Фінансова Розвідка: Виявлення незаконних фінансових потоків.',
-    accent: 'emerald',
+    accent: 'rose',
     items: [
       {
         id: 'financial-hub',

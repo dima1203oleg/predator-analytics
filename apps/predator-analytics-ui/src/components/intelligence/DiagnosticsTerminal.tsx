@@ -65,7 +65,7 @@ export const DiagnosticsTerminal: React.FC = () => {
           logs.some(l => l.severity === 'critical')
             ? "bg-rose-600 border-rose-400 text-white animate-pulse"
             : logs.length > 0
-            ? "bg-[#D4AF37] border-[#D4AF37]/40 text-black"
+            ? "bg-rose-500 border-rose-500/40 text-black shadow-[0_0_20px_rgba(225,29,72,0.3)]"
             : "bg-black border-white/10 text-slate-500 hover:text-white"
         )}
       >
@@ -88,8 +88,8 @@ export const DiagnosticsTerminal: React.FC = () => {
             {/* Terminal Header */}
             <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-red-600/20 rounded-xl">
-                  <Activity size={18} className="text-red-500 animate-pulse" />
+                <div className="p-3 bg-rose-600/20 rounded-xl">
+                  <Activity size={18} className="text-rose-500 animate-pulse" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">SYSLOG_DIAGNOSTICS</h3>
@@ -140,7 +140,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <span className={cn(
                           "w-2 h-2 rounded-full",
-                          log.severity === 'critical' ? "bg-rose-600 animate-pulse" : "bg-[#D4AF37]"
+                          log.severity === 'critical' ? "bg-rose-600 animate-pulse" : "bg-rose-400"
                         )} />
                         <span className="text-[9px] font-black text-slate-400 uppercase italic tracking-widest">{log.service}</span>
                       </div>
@@ -167,11 +167,11 @@ export const DiagnosticsTerminal: React.FC = () => {
             <div className="p-6 border-t border-white/5 bg-black/60 flex items-center justify-between backdrop-blur-xl">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
-                  <Cpu size={12} className="text-[#D4AF37]" />
-                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v57.2-PRO</span>
+                  <Cpu size={12} className="text-rose-500" />
+                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v57.3-WRAITH</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Database size={12} className="text-[#D4AF37]" />
+                  <Database size={12} className="text-rose-500" />
                   <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">BUFF: {logs.length}/50</span>
                 </div>
               </div>

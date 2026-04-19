@@ -70,7 +70,7 @@ const NetworkMapPage: React.FC = () => {
                     selector: 'node[type="company"]',
                     style: {
                         'background-color': '#020617',
-                        'border-color': '#10b981',
+                        'border-color': '#e11d48',
                         'border-opacity': 0.4,
                         'shape': 'round-rectangle',
                         'width': 45,
@@ -81,7 +81,7 @@ const NetworkMapPage: React.FC = () => {
                     selector: 'node[type="person"]',
                     style: {
                         'background-color': '#020617',
-                        'border-color': '#f59e0b',
+                        'border-color': '#fb7185',
                         'border-opacity': 0.4,
                         'shape': 'ellipse'
                     }
@@ -170,23 +170,23 @@ const NetworkMapPage: React.FC = () => {
 
     return (
         <div className="flex flex-col h-screen bg-[#02040a] text-white overflow-hidden relative">
-            <CyberGrid color="rgba(245, 158, 11, 0.03)" />
+            <CyberGrid color="rgba(225, 29, 72, 0.03)" />
             
             {/* Header HUD */}
             <div className="p-8 border-b border-white/[0.03] bg-black/40 backdrop-blur-3xl flex items-center justify-between z-30">
                 <div className="flex items-center gap-6">
                     <div className="relative group">
-                        <div className="absolute inset-0 bg-amber-500/10 blur-2xl rounded-full scale-150 animate-pulse" />
-                        <div className="relative p-5 bg-black border border-amber-900/30 rounded-2xl shadow-2xl">
-                            <Network className="text-amber-500" size={28} />
+                        <div className="absolute inset-0 bg-rose-500/10 blur-2xl rounded-full scale-150 animate-pulse" />
+                        <div className="relative p-5 bg-black border border-rose-900/30 rounded-2xl shadow-2xl">
+                            <Network className="text-rose-500" size={28} />
                         </div>
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v57.2-WRAITH.4</span>
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v58.2-WRAITH-ELITE</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                         </div>
-                        <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕРЕЖЕВИЙ <span className="text-amber-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
+                        <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕРЕЖЕВИЙ <span className="text-rose-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
                     </div>
                 </div>
 
@@ -194,21 +194,21 @@ const NetworkMapPage: React.FC = () => {
                     <div className="flex items-center gap-3 px-6 py-2 bg-black/40 border border-white/5 rounded-2xl">
                         <div className="text-right">
                             <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">ВУЗЛІВ_В_ПАМʼЯТІ</p>
-                            <p className="text-xs font-mono font-black text-emerald-500">{(graphData?.nodes?.length || 0) + (graphData?.edges?.length || 0)}</p>
+                            <p className="text-xs font-mono font-black text-rose-500">{(graphData?.nodes?.length || 0) + (graphData?.edges?.length || 0)}</p>
                         </div>
                         <div className="w-px h-8 bg-white/5 mx-2" />
                         <div className="text-right">
                             <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest">СТАТУС_КЛАСТЕРА</p>
-                            <p className="text-xs font-mono font-black text-amber-500 uppercase">READY</p>
+                            <p className="text-xs font-mono font-black text-rose-500 uppercase">READY</p>
                         </div>
                     </div>
 
                     <div className="relative group/search">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/search:text-amber-500 transition-colors" size={20} />
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/search:text-rose-500 transition-colors" size={20} />
                         <input 
                             type="text" 
                             placeholder="ВВЕДІТЬ_ЄДРПОУ_АБО_ПІБ"
-                            className="bg-black border-2 border-white/5 rounded-[2rem] pl-16 pr-8 py-5 text-sm w-96 focus:outline-none focus:border-amber-500/40 focus:bg-amber-500/5 transition-all font-mono italic uppercase tracking-widest placeholder:text-slate-800"
+                            className="bg-black border-2 border-white/5 rounded-[2rem] pl-16 pr-8 py-5 text-sm w-96 focus:outline-none focus:border-rose-500/40 focus:bg-rose-500/5 transition-all font-mono italic uppercase tracking-widest placeholder:text-slate-800"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -217,7 +217,7 @@ const NetworkMapPage: React.FC = () => {
                     
                     <button 
                         onClick={() => refetch()}
-                        className="p-5 bg-black border border-white/5 rounded-2xl hover:border-amber-500/40 transition-all text-slate-500 hover:text-amber-500 group"
+                        className="p-5 bg-black border border-white/5 rounded-2xl hover:border-rose-500/40 transition-all text-slate-500 hover:text-rose-500 group"
                     >
                         <RefreshCw size={24} className={cn("transition-transform duration-1000", isLoading && "animate-spin")} />
                     </button>
@@ -230,29 +230,29 @@ const NetworkMapPage: React.FC = () => {
 
                 {/* HUD Overlay Elements */}
                 <div className="absolute inset-0 pointer-events-none border-[40px] border-black/40 z-10 border-double opacity-20" />
-                <div className="absolute top-1/2 left-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-amber-500/40 to-transparent z-20" />
-                <div className="absolute top-1/2 right-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-amber-500/40 to-transparent z-20" />
+                <div className="absolute top-1/2 left-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-rose-500/40 to-transparent z-20" />
+                <div className="absolute top-1/2 right-10 -translate-y-1/2 w-px h-64 bg-gradient-to-b from-transparent via-rose-500/40 to-transparent z-20" />
 
                 {/* Controls HUD */}
                 <div className="absolute bottom-10 left-10 flex items-center gap-4 z-30">
                     <div className="flex flex-col bg-black/60 border border-white/5 p-2 rounded-2xl backdrop-blur-xl">
-                        <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-4 text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded-xl transition-all">
+                        <button onClick={() => cy?.zoom(cy.zoom() * 1.2)} className="p-4 text-slate-500 hover:text-rose-500 hover:bg-white/5 rounded-xl transition-all">
                             <ZoomIn size={24} />
                         </button>
-                        <button onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="p-4 text-slate-500 hover:text-amber-500 hover:bg-white/5 rounded-xl transition-all">
+                        <button onClick={() => cy?.zoom(cy.zoom() / 1.2)} className="p-4 text-slate-500 hover:text-rose-500 hover:bg-white/5 rounded-xl transition-all">
                             <ZoomOut size={24} />
                         </button>
                     </div>
-                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-amber-500 backdrop-blur-xl transition-all shadow-2xl">
+                    <button onClick={() => cy?.fit()} className="p-6 bg-black/60 border border-white/5 rounded-[2rem] text-slate-500 hover:text-rose-500 backdrop-blur-xl transition-all shadow-2xl">
                         <Maximize size={28} />
                     </button>
                     <div className="ml-10 space-y-2">
                         <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                            <div className="w-2 h-2 rounded-full bg-rose-500" />
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">ОРГАНІЗАЦІЇ</span>
                         </div>
                         <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/5 rounded-full">
-                            <div className="w-2 h-2 rounded-full bg-amber-500" />
+                            <div className="w-2 h-2 rounded-full bg-rose-400" />
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">ФІЗИЧНІ_ОСОБИ</span>
                         </div>
                     </div>
@@ -269,17 +269,17 @@ const NetworkMapPage: React.FC = () => {
                         >
                             <TacticalCard 
                                 variant="cyber" 
-                                className="h-full bg-black/90 border-amber-500/30 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden"
+                                className="h-full bg-black/90 border-rose-500/30 shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden"
                                 noPadding
                             >
                                 <div className="p-10 space-y-10 h-full flex flex-col">
                                     <div className="flex items-center justify-between border-b border-white/5 pb-8">
                                         <div className="flex items-center gap-5">
-                                            <div className="p-4 bg-amber-500/10 rounded-2xl">
-                                                <Target size={24} className="text-amber-500" />
+                                            <div className="p-4 bg-rose-500/10 rounded-2xl">
+                                                <Target size={24} className="text-rose-500" />
                                             </div>
                                             <div>
-                                                <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.4em] italic leading-none">TARGET_SCAN</h4>
+                                                <h4 className="text-[11px] font-black text-rose-500 uppercase tracking-[0.4em] italic leading-none">TARGET_SCAN</h4>
                                                 <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ID: {selectedNode.id}</p>
                                             </div>
                                         </div>
@@ -306,9 +306,9 @@ const NetworkMapPage: React.FC = () => {
                                         </div>
 
                                         <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[3rem] space-y-6">
-                                            <div className="flex items-center gap-4 text-emerald-500">
+                                            <div className="flex items-center gap-4 text-rose-500">
                                                 <Zap size={20} />
-                                                <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙРО-ВИСНОВОК v4</span>
+                                                <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙРО-ВИСНОВОК v5</span>
                                             </div>
                                             <p className="text-sm font-black text-slate-300 leading-relaxed italic opacity-80">
                                                 Об'єкт ідентифіковано як {selectedNode.type === 'company' ? "центральний вузол холдингової структури" : "пов'язану особу з правом вирішального впливу"}.
@@ -323,7 +323,7 @@ const NetworkMapPage: React.FC = () => {
                                             </div>
                                             <div className="p-6 bg-black border border-white/5 rounded-2xl space-y-2">
                                                 <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">RELIANCE_INDEX</p>
-                                                <p className="text-3xl font-black text-amber-500 italic font-mono">{selectedNode.primary_risk === 'high' ? 'CRIT' : 'STBL'}</p>
+                                                <p className="text-3xl font-black text-rose-500 italic font-mono">{selectedNode.primary_risk === 'high' ? 'CRIT' : 'STBL'}</p>
                                             </div>
                                         </div>
 
@@ -340,7 +340,7 @@ const NetworkMapPage: React.FC = () => {
                                     </div>
 
                                     <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">
-                                        <button className="w-full py-6 bg-amber-500 hover:bg-white text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
+                                        <button className="w-full py-6 bg-rose-600 hover:bg-white text-white hover:text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
                                             <Share2 size={20} /> ВІДКРИТИ_CERS_ДОСЬЄ
                                         </button>
                                         <button className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-500 font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5">

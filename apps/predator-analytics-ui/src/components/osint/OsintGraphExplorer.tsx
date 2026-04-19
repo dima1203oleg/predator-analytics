@@ -24,11 +24,11 @@ import { api, apiClient } from '@/services/api';
 // Іконки для вузлів
 const getNodeIcon = (type: NodeType, className = "w-5 h-5") => {
     switch (type) {
-        case 'Person': return <User className={cn("text-blue-400", className)} />;
-        case 'Organization': return <Building2 className={cn("text-emerald-400", className)} />;
+        case 'Person': return <User className={cn("text-rose-300", className)} />;
+        case 'Organization': return <Building2 className={cn("text-rose-400", className)} />;
         case 'Location': return <MapPin className={cn("text-amber-400", className)} />;
-        case 'Asset': return <Target className={cn("text-pink-400", className)} />;
-        case 'Indicator': return <AlertOctagon className={cn("text-red-400", className)} />;
+        case 'Asset': return <Target className={cn("text-rose-200", className)} />;
+        case 'Indicator': return <AlertOctagon className={cn("text-rose-600", className)} />;
         default: return <LinkIcon className={cn("text-slate-400", className)} />;
     }
 };
@@ -64,7 +64,7 @@ export function OsintGraphExplorer() {
                         type: (topRisk.type || 'Organization') as NodeType,
                         riskLevel: topRisk.riskScore >= 80 ? 'critical' : topRisk.riskScore >= 50 ? 'high' : 'medium',
                         riskScore: topRisk.riskScore,
-                        properties: { source: 'Global Graph Init', ...topRisk }
+                        properties: { source: 'Ініціалізація Глобального Графа', ...topRisk }
                     };
                     setNodes([initialNode]);
                     setSelectedNode(initialNode);
@@ -194,7 +194,7 @@ export function OsintGraphExplorer() {
                 type: (item.type || searchType === 'All' ? 'Organization' : searchType) as NodeType,
                 riskLevel: (item.score || 50) >= 80 ? 'critical' : 'medium',
                 riskScore: item.score || 50,
-                properties: { source: 'Global Search', ...item }
+                properties: { source: 'Глобальний Пошук', ...item }
             };
             
             setNodes([newNode]);
@@ -232,7 +232,7 @@ export function OsintGraphExplorer() {
                 type: found.type, 
                 riskLevel: found.score >= 80 ? 'critical' : 'medium', 
                 riskScore: found.score, 
-                properties: { loaded: 'from_history' } 
+                properties: { loaded: 'з_історії' } 
             }]);
             setEdges([]);
             setSelectedNode(null);
@@ -269,7 +269,7 @@ export function OsintGraphExplorer() {
                        type: 'Person',
                        riskLevel: 'high',
                        riskScore: ubo.cers || 90,
-                       properties: { status: 'UBO Revealed', ...ubo }
+                       properties: { status: 'Виявлено UBO', ...ubo }
                     });
                 }
                 
@@ -297,7 +297,7 @@ export function OsintGraphExplorer() {
             <div className="w-72 bg-slate-950 border-r border-slate-800 flex flex-col shrink-0 z-20 shadow-2xl">
                 <div className="p-4 border-b border-slate-800/60 bg-slate-900/50">
                     <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                        <History className="w-4 h-4 text-cyan-500" />
+                        <History className="w-4 h-4 text-rose-500" />
                         Ваші Розслідування
                     </h2>
                 </div>
@@ -313,7 +313,7 @@ export function OsintGraphExplorer() {
                             onClick={() => loadTarget(target.id)}
                             className="w-full text-left p-3 rounded-xl bg-slate-900/40 hover:bg-slate-800 border border-slate-800/60 hover:border-slate-700 transition-all group relative overflow-hidden"
                         >
-                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-slate-900 rounded-lg shadow-inner">
                                     {getNodeIcon(target.type as NodeType, "w-4 h-4")}
@@ -326,7 +326,7 @@ export function OsintGraphExplorer() {
                                     "px-2 py-1 rounded text-[10px] font-black font-mono shadow-sm border",
                                     target.score >= 80 ? "bg-red-500/10 text-red-500 border-red-500/20" :
                                     target.score >= 50 ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
-                                    "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                    "bg-rose-500/10 text-rose-500 border-rose-500/20"
                                 )}>
                                     {target.score}
                                 </div>
@@ -335,9 +335,9 @@ export function OsintGraphExplorer() {
                     ))}
                 </div>
                 <div className="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase text-emerald-400 bg-emerald-500/10 px-3 py-2 border border-emerald-500/20 rounded-lg">
+                    <div className="flex items-center justify-between text-[10px] font-black uppercase text-rose-400 bg-rose-500/10 px-3 py-2 border border-rose-500/20 rounded-lg">
                         <span className="flex items-center gap-1.5"><Database size={14} /> NEO4J GRAPH DB</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"/> LIVE</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"/> LIVE</span>
                     </div>
                     <button className="w-full py-2.5 rounded-lg border border-dashed border-slate-700 text-slate-400 text-xs font-bold uppercase tracking-widest hover:text-white hover:border-slate-500 transition-colors flex items-center justify-center gap-2">
                         <Bookmark className="w-4 h-4" />
@@ -358,7 +358,7 @@ export function OsintGraphExplorer() {
                         onSubmit={handleGlobalSearch} 
                         className={cn(
                             "relative flex items-center backdrop-blur-xl border rounded-2xl shadow-2xl transition-all duration-300",
-                            isSearchActive ? "bg-slate-900/90 border-cyan-500/50 shadow-cyan-500/10" : "bg-slate-900/80 border-slate-700",
+                            isSearchActive ? "bg-slate-900/90 border-rose-500/50 shadow-rose-500/10" : "bg-slate-900/80 border-slate-700",
                             isSearching ? "animate-pulse" : ""
                         )}
                     >
@@ -385,7 +385,7 @@ export function OsintGraphExplorer() {
                             placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."}
                             className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none disabled:opacity-50"
                         />
-                        <button type="submit" disabled={isSearching} className="p-2 mr-2 bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
+                        <button type="submit" disabled={isSearching} className="p-2 mr-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
                             {isSearching ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
                         </button>
                     </form>
@@ -427,7 +427,7 @@ export function OsintGraphExplorer() {
                         disabled={isSearching || isExpanding}
                         className="p-3 bg-slate-900/80 hover:bg-slate-800 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors tooltip group relative"
                     >
-                        <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-cyan-400")} />
+                        <RefreshCw className={cn("h-5 w-5", (isExpanding || isSearching) && "animate-spin text-rose-400")} />
                         <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] uppercase font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Скинути Граф</span>
                     </button>
                     <button className="p-3 bg-slate-900/80 hover:bg-slate-800 text-slate-300 rounded-xl border border-slate-700 shadow-2xl backdrop-blur-md transition-colors group relative">
@@ -471,10 +471,10 @@ export function OsintGraphExplorer() {
                         {/* Glow effect at top based on risk */}
                         <div className={cn(
                             "absolute top-0 left-0 right-0 h-1",
-                            selectedNode.riskLevel === 'critical' ? 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]' :
+                            selectedNode.riskLevel === 'critical' ? 'bg-rose-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]' :
                             selectedNode.riskLevel === 'high' ? 'bg-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.8)]' :
                             selectedNode.riskLevel === 'medium' ? 'bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.8)]' :
-                            'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.8)]'
+                            'bg-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.8)]'
                         )} />
 
                         {/* Хедер досьє */}
@@ -551,10 +551,10 @@ export function OsintGraphExplorer() {
                                                         cx="32" cy="32" r="28" fill="none" 
                                                         className={cn(
                                                             "transition-all duration-1000 ease-out",
-                                                            selectedNode.riskLevel === 'critical' ? 'stroke-red-500' :
+                                                            selectedNode.riskLevel === 'critical' ? 'stroke-rose-500' :
                                                             selectedNode.riskLevel === 'high' ? 'stroke-orange-500' :
                                                             selectedNode.riskLevel === 'medium' ? 'stroke-amber-500' :
-                                                            'stroke-emerald-500'
+                                                            'stroke-rose-400'
                                                         )}
                                                         strokeWidth="6" 
                                                         strokeDasharray="175" 
@@ -566,13 +566,13 @@ export function OsintGraphExplorer() {
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">OSINT Score</div>
+                                                <div className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1">Рейтинг OSINT</div>
                                                 <div className={cn(
                                                     "text-lg font-bold leading-none",
-                                                    selectedNode.riskLevel === 'critical' ? 'text-red-400' :
+                                                    selectedNode.riskLevel === 'critical' ? 'text-rose-400' :
                                                     selectedNode.riskLevel === 'high' ? 'text-orange-400' :
                                                     selectedNode.riskLevel === 'medium' ? 'text-amber-400' :
-                                                    'text-emerald-400'
+                                                    'text-rose-300'
                                                 )}>
                                                     {selectedNode.riskLevel === 'critical' ? 'Критичний Ризик' : 
                                                      selectedNode.riskLevel === 'high' ? 'Високий Ризик' : 
@@ -588,7 +588,7 @@ export function OsintGraphExplorer() {
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => expandNode(selectedNode.id)}
                                                 disabled={isExpanding}
-                                                className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-blue-600/90 to-indigo-600/90 hover:from-blue-500 hover:to-indigo-500 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-blue-500/50"
+                                                className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-rose-600/90 to-rose-800/90 hover:from-rose-500 hover:to-rose-700 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-rose-500/50"
                                             >
                                                 <Network className={cn("w-5 h-5", isExpanding && "animate-spin")} /> 
                                                 <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Оточення</span>
@@ -600,7 +600,7 @@ export function OsintGraphExplorer() {
                                                     whileTap={{ scale: 0.98 }}
                                                     onClick={() => runUboTracer(selectedNode.id)}
                                                     disabled={isExpanding}
-                                                    className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-emerald-600/90 to-teal-600/90 hover:from-emerald-500 hover:to-teal-500 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-emerald-500/50"
+                                                    className="w-full relative overflow-hidden group flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-rose-700/90 to-rose-900/90 hover:from-rose-600 hover:to-rose-800 text-white p-3 rounded-xl transition-all shadow-lg disabled:opacity-50 border border-rose-600/50"
                                                 >
                                                     <Target className={cn("w-5 h-5", isExpanding && "animate-pulse")} /> 
                                                     <span className="text-[10px] font-bold uppercase tracking-widest leading-tight mt-1">Знайти UBO</span>
@@ -625,7 +625,7 @@ export function OsintGraphExplorer() {
                                                             (key === 'address' || key === 'status' || String(value).length > 20) && "col-span-2"
                                                         )}
                                                     >
-                                                        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1 truncate">{key}</div>
+                                                        <div className="text-[9px] font-mono text-slate-500 uppercase tracking-widest mb-1 truncate">{key === 'address' ? 'адреса' : key === 'status' ? 'статус' : key}</div>
                                                         <div className="text-sm font-bold text-slate-200 truncate">{String(value)}</div>
                                                     </motion.div>
                                                 )) : (
@@ -650,11 +650,11 @@ export function OsintGraphExplorer() {
                                         {selectedNode.type === 'Organization' || selectedNode.type === 'Person' ? (
                                             <>
                                                 <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-4">
-                                                    <div className="p-2 bg-slate-800 rounded-lg shrink-0 mt-0.5"><Building2 className="w-4 h-4 text-emerald-400" /></div>
+                                                    <div className="p-2 bg-slate-800 rounded-lg shrink-0 mt-0.5"><Building2 className="w-4 h-4 text-rose-400" /></div>
                                                     <div>
                                                         <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄДР)</div>
                                                         <div className="text-xs text-slate-400 mb-2">Натисніть для запиту до API Мінюсту</div>
-                                                        <button className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hover:text-cyan-300">Оновити Витяг →</button>
+                                                        <button className="text-[10px] font-bold text-rose-400 uppercase tracking-widest hover:text-rose-300">Оновити Витяг →</button>
                                                     </div>
                                                 </div>
                                                 <div className="p-4 bg-slate-900 border border-red-900/50 bg-red-950/20 rounded-xl flex items-start gap-4">

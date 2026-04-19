@@ -1,5 +1,5 @@
 /**
- * 🛡️ САНКЦІЙНА МАТРИЦЯ | v57.2-WRAITH
+ * 🛡️ САНКЦІЙНА МАТРИЦЯ | v57.3-WRAITH
  * PREDATOR Analytics — Sanctions Screening & Compliance
  *
  * Перевірка сутностей за міжнародними санкційними списками
@@ -61,15 +61,15 @@ const SELECTABLE_LISTS: SelectableListType[] = ['OFAC', 'EU', 'UN', 'UK', 'РН�
 
 const severityConfig: Record<SanctionSeverity, { bg: string; border: string; text: string; label: string }> = {
     high: {
-        bg: 'bg-amber-600/10',
-        border: 'border-amber-600/40',
-        text: 'text-amber-500',
+        bg: 'bg-rose-600/10',
+        border: 'border-rose-600/40',
+        text: 'text-rose-500',
         label: 'Критично',
     },
     medium: {
-        bg: 'bg-yellow-600/10',
-        border: 'border-yellow-600/30',
-        text: 'text-yellow-600',
+        bg: 'bg-rose-400/10',
+        border: 'border-rose-400/30',
+        text: 'text-rose-400',
         label: 'Попередження',
     },
     low: {
@@ -97,16 +97,16 @@ const statusConfig: Record<ScreenStatus, { label: string; icon: LucideIcon; cls:
     warning: {
         label: 'Увага',
         icon: AlertTriangle,
-        cls: 'text-yellow-600',
-        bg: 'bg-yellow-600/10 border-yellow-600/30',
-        glow: 'shadow-[0_0_20px_rgba(212,175,55,0.3)]',
+        cls: 'text-rose-400',
+        bg: 'bg-rose-400/10 border-rose-400/30',
+        glow: 'shadow-[0_0_20px_rgba(251,113,133,0.3)]',
     },
     blocked: {
         label: 'Заблоковано',
         icon: AlertOctagon,
-        cls: 'text-amber-600',
-        bg: 'bg-amber-600/10 border-amber-600/30',
-        glow: 'shadow-[0_0_20px_rgba(217,119,6,0.3)]',
+        cls: 'text-rose-600',
+        bg: 'bg-rose-600/10 border-rose-600/30',
+        glow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]',
     },
 };
 
@@ -117,13 +117,13 @@ const entityIconMap: Record<EntityType, LucideIcon> = {
 };
 
 const listConfigs: Record<string, { color: string; flag: string }> = {
-    OFAC: { color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20', flag: '🇺🇸' },
+    OFAC: { color: 'bg-rose-500/10 text-rose-500 border-rose-500/20', flag: '🇺🇸' },
     EU: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇪🇺' },
     UN: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🌐' },
     UK: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇬🇧' },
-    'РНБО': { color: 'bg-yellow-600/20 text-yellow-500 border-yellow-600/40', flag: '🇺🇦' },
-    PEP: { color: 'bg-amber-600/10 text-amber-500 border-amber-600/20', flag: '👤' },
-    PREDATOR: { color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/40 font-black', flag: '🦅' },
+    'РНБО': { color: 'bg-rose-600/20 text-rose-500 border-rose-600/40', flag: '🇺🇦' },
+    PEP: { color: 'bg-rose-600/10 text-rose-500 border-rose-600/20', flag: '👤' },
+    PREDATOR: { color: 'bg-rose-500/10 text-rose-500 border-rose-500/40 font-black', flag: '🦅' },
 };
 
 const formatTimestamp = (value?: string | null): string => {
@@ -140,7 +140,7 @@ const getListConfig = (list: string): { color: string; flag: string } =>
     listConfigs[list] ?? { color: 'bg-white/10 text-slate-200 border-white/10', flag: '•' };
 
 const RiskGauge: React.FC<{ score: number }> = ({ score }) => {
-    const color = score >= 80 ? '#D97706' : score >= 50 ? '#D4AF37' : '#22c55e';
+    const color = score >= 80 ? '#E11D48' : score >= 50 ? '#FB7185' : '#22c55e';
     const angle = (score / 100) * 180 - 90;
 
     return (
@@ -233,7 +233,7 @@ const HistoryRow: React.FC<{ result: ScreeningResult; isSelected: boolean; onCli
             onClick={onClick}
             className={cn(
                 'relative w-full cursor-pointer overflow-hidden rounded-[2.5rem] border-2 p-6 text-left transition-all group shadow-xl',
-                isSelected ? 'border-yellow-500/40 bg-white/[0.04] shadow-4xl' : 'border-white/5 bg-black hover:border-white/10',
+                isSelected ? 'border-rose-500/40 bg-white/[0.04] shadow-4xl' : 'border-white/5 bg-black hover:border-white/10',
             )}
         >
             <div className="flex items-center gap-6">
@@ -381,29 +381,29 @@ const SanctionsScreening: React.FC = () => {
         <PageTransition>
             <div className="relative min-h-screen overflow-hidden px-4 pb-32 sm:px-6 lg:px-12 bg-[#020202]">
                 <AdvancedBackground />
-                <CyberGrid color="rgba(212, 175, 55, 0.04)" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
+                <CyberGrid color="rgba(225, 29, 72, 0.04)" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.05),transparent_70%)] pointer-events-none" />
 
                 <div className="relative mb-16">
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-10">
                                 <div className="relative group">
-                                     <div className="absolute inset-0 bg-amber-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                                     <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
-                                         <ShieldAlert size={42} className="text-amber-500 shadow-[0_0_20px_#d4af37]" />
+                                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                                     <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform rotate-2 hover:rotate-0 transition-all">
+                                         <ShieldAlert hideDefaultIcon size={42} className="text-rose-500 shadow-[0_0_20px_#e11d48]" />
                                      </div>
                                 </div>
                                 <div className="space-y-4">
                                      <div className="flex items-center gap-4">
-                                        <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                            SANCTIONS_HUB // MATRIX_ARRAY
+                                        <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                                            САНКЦІЙНИЙ_ХАБ // MATRIX_ARRAY
                                         </span>
-                                        <div className="h-px w-12 bg-amber-500/20" />
-                                        <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                                        <div className="h-px w-12 bg-rose-500/20" />
+                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.3-WRAITH</span>
                                      </div>
                                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif">
-                                        САНКЦІЙНА <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТРИЦЯ</span>
+                                        САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТРИЦЯ</span>
                                      </h1>
                                 </div>
                             </div>
@@ -428,10 +428,10 @@ const SanctionsScreening: React.FC = () => {
 
                     <div className="mt-12 flex flex-wrap items-center gap-4 px-4 py-3 bg-black border-2 border-white/5 rounded-[2rem] shadow-2xl backdrop-blur-3xl italic">
                         {[
-                            { l: 'DATA_SOURCE', v: '/sanctions/screen', c: 'text-yellow-600' },
-                            { l: 'BACKEND_NODE', v: backendStatus.sourceLabel.toUpperCase(), c: 'text-white' },
-                            { l: 'STATUS', v: backendStatus.statusLabel.toUpperCase(), c: 'text-emerald-500' },
-                            { l: 'LAST_SYNC', v: formatTimestamp(lastConfirmedAt), c: 'text-slate-600' }
+                            { l: 'ДЖЕРЕЛО_ДАНИХ', v: '/sanctions/screen', c: 'text-rose-600' },
+                            { l: 'ВУЗОЛ_БЕКЕНДУ', v: backendStatus.sourceLabel.toUpperCase(), c: 'text-white' },
+                            { l: 'СТАТУС', v: backendStatus.statusLabel.toUpperCase(), c: 'text-emerald-500' },
+                            { l: 'ОСТАННЯ_СИНХРОНІЗАЦІЯ', v: formatTimestamp(lastConfirmedAt), c: 'text-slate-600' }
                         ].map((m, i) => (
                             <div key={i} className="flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10">
                                 <span className="text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase">{m.l}:</span>
@@ -449,10 +449,10 @@ const SanctionsScreening: React.FC = () => {
 
                 <div className="mb-16 grid grid-cols-2 gap-8 md:grid-cols-4">
                     {[
-                        { label: 'Заблоковано', value: summary.blocked, icon: AlertOctagon, cls: 'text-amber-600', bg: 'from-amber-600/20', border: 'border-amber-600/30', glow: 'shadow-amber-900/40' },
-                        { label: 'Попереджень', value: summary.warning, icon: AlertTriangle, cls: 'text-yellow-600', bg: 'from-yellow-600/20', border: 'border-yellow-600/30', glow: 'shadow-yellow-900/40' },
+                        { label: 'Заблоковано', value: summary.blocked, icon: AlertOctagon, cls: 'text-rose-600', bg: 'from-rose-600/20', border: 'border-rose-600/30', glow: 'shadow-rose-900/40' },
+                        { label: 'Попереджень', value: summary.warning, icon: AlertTriangle, cls: 'text-rose-400', bg: 'from-rose-400/20', border: 'border-rose-400/30', glow: 'shadow-rose-900/40' },
                         { label: 'Чистих', value: summary.clean, icon: ShieldCheck, cls: 'text-emerald-500', bg: 'from-emerald-600/20', border: 'border-emerald-600/30', glow: 'shadow-emerald-900/40' },
-                        { label: 'PEP виявлено', value: summary.pep, icon: Crown, cls: 'text-yellow-500', bg: 'from-yellow-500/10', border: 'border-yellow-500/20', glow: 'shadow-yellow-900/20' },
+                        { label: 'PEP виявлено', value: summary.pep, icon: Crown, cls: 'text-rose-500', bg: 'from-rose-500/10', border: 'border-rose-500/20', glow: 'shadow-rose-900/20' },
                     ].map((item, index) => (
                         <motion.div key={item.label} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
                             <TacticalCard variant="cyber" className={cn('relative overflow-hidden border-2 p-10 shadow-4xl rounded-[3rem]', item.border, item.glow)}>
@@ -471,12 +471,12 @@ const SanctionsScreening: React.FC = () => {
 
                 {/* SEARCH SECTION WRAITH */}
                 <TacticalCard variant="holographic" className="relative mb-16 overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl group/search">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.03),transparent_70%)] pointer-events-none" />
-                    <CyberOrb color="amber" size="lg" intensity="low" className="right-0 top-0 opacity-[0.05]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
+                    <CyberOrb color="rose" size="lg" intensity="low" className="right-0 top-0 opacity-[0.05]" />
 
                     <div className="relative z-10">
                         <div className="mb-12 flex items-center gap-10">
-                            <div className="p-6 bg-amber-600/10 border-2 border-amber-600/20 rounded-[2rem] text-amber-500 shadow-2xl transform group-hover/search:scale-110 transition-transform">
+                            <div className="p-6 bg-rose-600/10 border-2 border-rose-600/20 rounded-[2rem] text-rose-500 shadow-2xl transform group-hover/search:scale-110 transition-transform">
                                 <ScanLine size={32} />
                             </div>
                             <div className="space-y-4">
@@ -497,7 +497,7 @@ const SanctionsScreening: React.FC = () => {
                                         className={cn(
                                             'flex items-center gap-5 rounded-[2rem] border-2 px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] transition-all italic font-serif shadow-xl',
                                             entityType === type
-                                                ? 'border-yellow-500/40 bg-yellow-500/10 text-yellow-500 shadow-4xl scale-105'
+                                                ? 'border-rose-500/40 bg-rose-500/10 text-rose-500 shadow-4xl scale-105'
                                                 : 'border-white/5 bg-black text-slate-700 hover:border-white/20 hover:text-white',
                                         )}
                                     >
@@ -509,14 +509,14 @@ const SanctionsScreening: React.FC = () => {
 
                         <div className="mb-10 flex gap-6">
                             <div className="group/input relative flex-1">
-                                <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 transition-colors group-hover/input:text-yellow-500 group-focus-within/input:text-yellow-500" size={32} />
+                                <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 transition-colors group-hover/input:text-rose-500 group-focus-within/input:text-rose-500" size={32} />
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(event) => setSearchQuery(event.target.value)}
                                     onKeyDown={(event) => { if (event.key === 'Enter') void handleSearch(); }}
                                     placeholder="Введіть назву компанії, ім'я особи або назву судна..."
-                                    className="w-full rounded-[3rem] border-2 border-white/5 bg-black py-8 pl-24 pr-10 text-xl font-black italic tracking-tight text-white placeholder-slate-800 transition-all focus:border-yellow-500/40 focus:ring-8 focus:ring-yellow-500/5 focus:outline-none shadow-inner"
+                                    className="w-full rounded-[3rem] border-2 border-white/5 bg-black py-8 pl-24 pr-10 text-xl font-black italic tracking-tight text-white placeholder-slate-800 transition-all focus:border-rose-500/40 focus:ring-8 focus:ring-rose-500/5 focus:outline-none shadow-inner"
                                 />
                             </div>
 
@@ -524,10 +524,10 @@ const SanctionsScreening: React.FC = () => {
                                 type="button"
                                 onClick={() => void handleSearch()}
                                 disabled={isSearching || searchQuery.trim().length < 2}
-                                className="flex shrink-0 items-center gap-6 rounded-[3rem] bg-amber-600 px-16 py-6 text-[13px] font-black uppercase tracking-[0.5em] text-white shadow-4xl shadow-amber-900/40 transition-all hover:brightness-110 disabled:opacity-30 italic font-bold border-4 border-amber-500/20"
+                                className="flex shrink-0 items-center gap-6 rounded-[3rem] bg-rose-600 px-16 py-6 text-[13px] font-black uppercase tracking-[0.5em] text-white shadow-4xl shadow-rose-900/40 transition-all hover:brightness-110 disabled:opacity-30 italic font-bold border-4 border-rose-500/20"
                             >
                                 {isSearching ? <RefreshCw className="animate-spin" size={24} /> : <Target size={24} />}
-                                {isSearching ? 'SCAN_ACTIVE' : 'EXECUTE_VETTING'}
+                                {isSearching ? 'СКАН_АКТИВНИЙ' : 'ЗАПУСТИТИ_СКРИНІНГ'}
                             </button>
                         </div>
 
@@ -543,7 +543,7 @@ const SanctionsScreening: React.FC = () => {
                                         onClick={() => toggleList(list)}
                                         className={cn(
                                             'rounded-[1.5rem] border-2 px-6 py-2.5 text-[10px] font-black transition-all italic tracking-widest uppercase shadow-xl',
-                                            active ? `${config.color} border-yellow-500/40 shadow-yellow-900/20 scale-105` : 'border-white/5 bg-black text-slate-800 hover:border-white/15',
+                                            active ? `${config.color} border-rose-500/40 shadow-rose-900/20 scale-105` : 'border-white/5 bg-black text-slate-800 hover:border-white/15',
                                         )}
                                     >
                                         {config.flag} {list}
@@ -557,10 +557,10 @@ const SanctionsScreening: React.FC = () => {
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 h-full min-h-[800px]">
                     {/* LEFT: SESSION LOG WRAITH */}
                     <div className="space-y-6 lg:col-span-2 flex flex-col">
-                        <div className="mb-6 flex items-center gap-6 px-10 py-5 bg-black/40 border-l-4 border-yellow-500 rounded-r-3xl">
-                            <History className="text-yellow-600" size={22} />
+                        <div className="mb-6 flex items-center gap-6 px-10 py-5 bg-black/40 border-l-4 border-rose-500 rounded-r-3xl">
+                            <History className="text-rose-600" size={22} />
                             <h3 className="text-xl font-black uppercase tracking-[0.4em] text-white font-serif italic">СЕСІЙНИЙ ЖУРНАЛ</h3>
-                            <span className="ml-auto px-4 py-1 bg-black border border-white/10 rounded-lg text-[10px] font-black text-slate-800 tracking-widest">{history.length}_BLOCKS</span>
+                            <span className="ml-auto px-4 py-1 bg-black border border-white/10 rounded-lg text-[10px] font-black text-slate-800 tracking-widest">{history.length}_БЛОКІВ</span>
                         </div>
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-6">
@@ -602,7 +602,7 @@ const SanctionsScreening: React.FC = () => {
                                 <motion.div key={selected.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="h-full">
                                     <TacticalCard variant="holographic" className="relative overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl h-full flex flex-col">
                                         <CyberOrb
-                                            color={selected.status === 'blocked' ? 'amber' : selected.status === 'warning' ? 'yellow' : 'cyan'}
+                                            color={selected.status === 'blocked' ? 'rose' : selected.status === 'warning' ? 'rose' : 'emerald'}
                                             size="xl" intensity="low"
                                             className="bottom-0 right-0 opacity-[0.05]"
                                         />
@@ -635,7 +635,7 @@ const SanctionsScreening: React.FC = () => {
 
                                                 {selected.riskScore !== undefined && (
                                                     <div className="shrink-0 flex flex-col items-center gap-4">
-                                                        <div className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif underline decoration-yellow-600/30 underline-offset-8">FIDELITY_SCORE</div>
+                                                        <div className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif underline decoration-rose-600/30 underline-offset-8">ПОКАЗНИК_ВІДПОВІДНОСТІ</div>
                                                         <RiskGauge score={selected.riskScore} />
                                                     </div>
                                                 )}
@@ -645,11 +645,11 @@ const SanctionsScreening: React.FC = () => {
                                                 {selected.matches.length > 0 ? (
                                                     <div className="space-y-8">
                                                         <div className="mb-8 flex items-center gap-6 pb-6 border-b-2 border-white/[0.04]">
-                                                            <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-500 shadow-xl">
+                                                            <div className="p-4 bg-rose-600/10 border-2 border-rose-600/20 rounded-2xl text-rose-500 shadow-xl">
                                                                 <AlertOctagon size={28} className="animate-pulse" />
                                                             </div>
                                                             <h3 className="text-xl font-black uppercase tracking-[0.5em] text-white font-serif italic">
-                                                                ВИЯВЛЕНІ ЗБІГІВ: <span className="text-amber-600 underline decoration-amber-600/20 decoration-8">{selected.matches.length}</span>
+                                                                ВИЯВЛЕНІ ЗБІГИ: <span className="text-rose-600 underline decoration-rose-600/20 decoration-8">{selected.matches.length}</span>
                                                             </h3>
                                                         </div>
                                                         {selected.matches.map((match, index) => (
@@ -675,9 +675,9 @@ const SanctionsScreening: React.FC = () => {
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t-2 border-white/[0.04] pt-12">
                                                 <div className="rounded-[2.5rem] border-2 border-white/[0.04] bg-black p-10 shadow-4xl group/lists relative overflow-hidden">
-                                                    <div className="absolute inset-0 bg-yellow-500/[0.02] opacity-0 group-hover/lists:opacity-100 transition-opacity" />
-                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif flex items-center gap-4 mb-8 underline decoration-yellow-600/20 underline-offset-8">
-                                                        <Boxes size={18} className="text-yellow-600" /> ПЕРЕВІРЕНІ РЕЄСТРИ
+                                                    <div className="absolute inset-0 bg-rose-500/[0.02] opacity-0 group-hover/lists:opacity-100 transition-opacity" />
+                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif flex items-center gap-4 mb-8 underline decoration-rose-600/20 underline-offset-8">
+                                                        <Boxes size={18} className="text-rose-600" /> ПЕРЕВІРЕНІ РЕЄСТРИ
                                                     </div>
                                                     <div className="flex flex-wrap gap-4 relative z-10">
                                                         {(selected.listsChecked.length > 0 ? selected.listsChecked : selectedRegistrySet).map((list) => {
@@ -694,13 +694,13 @@ const SanctionsScreening: React.FC = () => {
                                                     </div>
                                                 </div>
 
-                                                <div className="rounded-[2.5rem] border-2 border-amber-900/20 bg-black p-10 shadow-4xl group/lim relative overflow-hidden">
-                                                    <div className="absolute inset-0 bg-amber-600/[0.02] opacity-0 group-hover/lim:opacity-100 transition-opacity" />
-                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-900 italic font-serif flex items-center gap-4 mb-8 underline decoration-amber-600/20 underline-offset-8">
-                                                        <FileText size={18} className="text-amber-600" /> BOUNDARY_LIMITS
+                                                <div className="rounded-[2.5rem] border-2 border-rose-900/20 bg-black p-10 shadow-4xl group/lim relative overflow-hidden">
+                                                    <div className="absolute inset-0 bg-rose-600/[0.02] opacity-0 group-hover/lim:opacity-100 transition-opacity" />
+                                                    <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-900 italic font-serif flex items-center gap-4 mb-8 underline decoration-rose-600/20 underline-offset-8">
+                                                        <FileText size={18} className="text-rose-600" /> ОБМЕЖЕННЯ_ДОСТУПУ
                                                     </div>
-                                                    <p className="text-[13px] leading-relaxed text-slate-600 font-bold italic uppercase tracking-tight relative z-10 border-l-4 border-amber-900/30 pl-8">
-                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг потребують доступу рівня <span className="text-amber-500">TITAN_WRAITH</span>.
+                                                    <p className="text-[13px] leading-relaxed text-slate-600 font-bold italic uppercase tracking-tight relative z-10 border-l-4 border-rose-900/30 pl-8">
+                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг потребують доступу рівня <span className="text-rose-500">TITAN_WRAITH</span>.
                                                     </p>
                                                 </div>
                                             </div>
@@ -717,7 +717,7 @@ const SanctionsScreening: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.2)}.shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 60px rgba(212,175,55,0.03); }` }} />
+            <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,.1);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,.2)}.shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 60px rgba(225,29,72,0.03); }` }} />
         </PageTransition>
     );
 };

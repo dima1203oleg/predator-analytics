@@ -62,11 +62,11 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'BUSINESS',
     icon: Building2,
     accent: {
-      border: 'border-cyan-500/20',
-      panel: 'bg-cyan-500/10',
-      text: 'text-cyan-200',
-      badge: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-100',
-      glow: 'from-cyan-500/24 via-cyan-500/8 to-transparent',
+      border: 'border-rose-500/20',
+      panel: 'bg-rose-500/10',
+      text: 'text-rose-200',
+      badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+      glow: 'from-rose-500/24 via-rose-500/8 to-transparent',
     },
   },
   {
@@ -76,11 +76,11 @@ const SEGMENTS: SegmentCardDefinition[] = [
     persona: 'BANKING',
     icon: DollarSign,
     accent: {
-      border: 'border-emerald-500/20',
-      panel: 'bg-emerald-500/10',
-      text: 'text-emerald-200',
-      badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
-      glow: 'from-emerald-500/24 via-emerald-500/8 to-transparent',
+      border: 'border-rose-600/20',
+      panel: 'bg-rose-600/10',
+      text: 'text-rose-300',
+      badge: 'border-rose-600/20 bg-rose-600/10 text-rose-100',
+      glow: 'from-rose-600/24 via-rose-600/8 to-transparent',
     },
   },
   {
@@ -142,9 +142,9 @@ const SEGMENTS: SegmentCardDefinition[] = [
 ];
 
 const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
-  emerald: {
-    badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
-    text: 'text-emerald-200',
+  rose: {
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
+    text: 'text-rose-200',
   },
   amber: {
     badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
@@ -161,10 +161,10 @@ const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
 };
 
 const summaryToneClasses: Record<ClientsHubTone, { border: string; panel: string; value: string }> = {
-  emerald: {
-    border: 'border-emerald-500/20',
-    panel: 'bg-emerald-500/10',
-    value: 'text-emerald-200',
+  rose: {
+    border: 'border-rose-500/20',
+    panel: 'bg-rose-500/10',
+    value: 'text-rose-200',
   },
   amber: {
     border: 'border-amber-500/20',
@@ -333,30 +333,30 @@ export default function ClientsHubView() {
     <PageTransition>
       <div className="relative min-h-screen overflow-hidden bg-[#040915] pb-20 text-slate-100">
         <AdvancedBackground />
-        <CyberGrid color="rgba(34,211,238,0.05)" />
+        <CyberGrid color="rgba(225,29,72,0.05)" />
 
         <div className="relative z-10 mx-auto max-w-[1760px] space-y-8 px-4 py-8 sm:px-8 lg:px-12">
           <ViewHeader
             title={(
               <div className="flex items-center gap-5">
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-[48px]" />
-                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-cyan-500/20 bg-slate-950/90 shadow-2xl">
-                    <Sparkles className="h-8 w-8 text-cyan-300" />
+                  <div className="absolute inset-0 rounded-full bg-rose-500/20 blur-[48px]" />
+                  <div className="relative flex h-16 w-16 items-center justify-center rounded-[26px] border border-rose-500/20 bg-slate-950/90 shadow-2xl">
+                    <Sparkles className="h-8 w-8 text-rose-400" />
                   </div>
                 </div>
                 <div>
                   <h1 className="text-4xl font-black uppercase tracking-[0.14em] text-white sm:text-5xl">
-                    Клієнтські <span className="text-cyan-300">контури</span>
+                    Клієнтські <span className="text-rose-400">контури</span>
                   </h1>
-                  <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-cyan-200/70">
+                  <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-rose-300/70">
                     <Zap size={12} className="animate-pulse" />
                     Робочі режими без локальних лічильників
                   </p>
                 </div>
               </div>
             )}
-            icon={<Sparkles className="h-5 w-5 text-cyan-300" />}
+            icon={<Sparkles className="h-5 w-5 text-rose-400" />}
             breadcrumbs={['PREDATOR', 'Клієнти', 'Контури']}
             stats={[
               {
@@ -369,7 +369,7 @@ export default function ClientsHubView() {
                 label: 'Декларації',
                 value: snapshot.summary[0]?.value ?? 'Н/д',
                 icon: <Database size={14} />,
-                color: 'cyan',
+                color: 'rose',
               },
               {
                 label: 'Сервіси',
@@ -536,13 +536,13 @@ export default function ClientsHubView() {
             })}
           </motion.div>
 
-          <div className="rounded-[36px] border border-cyan-500/20 bg-[linear-gradient(135deg,rgba(8,47,73,0.72),rgba(2,6,23,0.94))] p-6 shadow-[0_24px_70px_rgba(14,116,144,0.22)]">
+          <div className="rounded-[36px] border border-rose-500/20 bg-[linear-gradient(135deg,rgba(71,0,36,0.72),rgba(2,6,23,0.94))] p-6 shadow-[0_24px_70px_rgba(159,18,57,0.22)]">
             <div className="flex items-start gap-4">
-              <div className="rounded-[24px] border border-cyan-500/20 bg-cyan-500/10 p-3 text-cyan-200">
+              <div className="rounded-[24px] border border-rose-500/20 bg-rose-500/10 p-3 text-rose-200">
                 <Radio className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/70">Робочий принцип</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-rose-100/70">Робочий принцип</div>
                 <div className="mt-2 text-lg font-black text-white">Хаб показує сегменти доступу, а не намальовану операційну статистику.</div>
                 <div className="mt-3 text-sm leading-6 text-slate-300">
                   Кожна картка тепер бере підтверджені агрегати з API дашборду та системного API. Якщо значення відсутнє, воно позначається як `Н/д`, а не підмінюється випадковими діапазонами чи локальними таймерами.

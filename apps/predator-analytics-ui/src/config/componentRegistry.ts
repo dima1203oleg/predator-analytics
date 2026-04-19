@@ -44,7 +44,7 @@ export interface ComponentCategory {
 export const CATEGORIES: Record<string, ComponentCategory> = {
     'orchestration': { id: 'orchestration', name: 'Infrastructure & Orchestration', icon: Server, color: 'blue', gradient: 'from-blue-500 to-indigo-600', description: 'Core compute and networking layer' },
     'ai_ml': { id: 'ai_ml', name: 'AI/ML & Cognitive Layer', icon: Brain, color: 'purple', gradient: 'from-purple-500 to-fuchsia-600', description: 'LLMs, Vectors, and Inference' },
-    'databases': { id: 'databases', name: 'Databases & Storage', icon: Database, color: 'emerald', gradient: 'from-emerald-500 to-teal-600', description: 'Persistence and State' },
+    'databases': { id: 'databases', name: 'Databases & Storage', icon: Database, color: 'rose', gradient: 'from-rose-500 to-rose-700', description: 'Persistence and State' },
     'etl': { id: 'etl', name: 'ETL & Data Pipelines', icon: Layers, color: 'cyan', gradient: 'from-cyan-500 to-sky-600', description: 'Data movement and transformation' },
     'observability': { id: 'observability', name: 'Observability & Monitoring', icon: Activity, color: 'amber', gradient: 'from-amber-500 to-orange-600', description: 'Metrics, Logs, Traces' },
     'security': { id: 'security', name: 'Security & Integrity', icon: Shield, color: 'rose', gradient: 'from-rose-500 to-red-600', description: 'Identity, Policy, Secrets' },

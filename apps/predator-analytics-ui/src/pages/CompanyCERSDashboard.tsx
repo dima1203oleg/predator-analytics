@@ -49,14 +49,14 @@ const getGradeConfig = (value?: string) => {
         case 'critical':
             return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50' };
         case 'high':
-            return { grade: 'C', color: 'text-amber-500', ringColor: 'stroke-amber-500', glow: 'shadow-amber-500/50' };
+            return { grade: 'C', color: 'text-rose-600', ringColor: 'stroke-rose-600', glow: 'shadow-rose-600/50' };
         case 'elevated':
         case 'medium':
-            return { grade: 'B-', color: 'text-yellow-500', ringColor: 'stroke-yellow-500', glow: 'shadow-yellow-500/50' };
+            return { grade: 'B-', color: 'text-orange-500', ringColor: 'stroke-orange-500', glow: 'shadow-orange-500/50' };
         case 'watchlist':
-            return { grade: 'B', color: 'text-cyan-400', ringColor: 'stroke-cyan-400', glow: 'shadow-cyan-400/50' };
+            return { grade: 'B', color: 'text-amber-500', ringColor: 'stroke-amber-500', glow: 'shadow-amber-500/50' };
         default:
-            return { grade: 'A', color: 'text-emerald-500', ringColor: 'stroke-emerald-500', glow: 'shadow-emerald-500/50' };
+            return { grade: 'A', color: 'text-rose-400', ringColor: 'stroke-rose-400', glow: 'shadow-rose-400/50' };
     }
 };
 
@@ -66,7 +66,7 @@ function CERSRadarECharts({ data }: { data: any[] }) {
         tooltip: {
             trigger: 'item',
             backgroundColor: 'rgba(7, 15, 28, 0.95)',
-            borderColor: 'rgba(16, 185, 129, 0.3)',
+            borderColor: 'rgba(244, 63, 94, 0.3)',
             textStyle: { color: '#fff', fontSize: 12 },
             padding: [8, 12]
         },
@@ -74,17 +74,17 @@ function CERSRadarECharts({ data }: { data: any[] }) {
             indicator: data.map(d => ({ name: d.subject, max: d.fullMark })),
             shape: 'polygon',
             splitNumber: 5,
-            name: {
-                textStyle: { color: '#94a3b8', fontSize: 11, fontWeight: 'bold' }
+            axisName: {
+                color: '#94a3b8', fontSize: 11, fontWeight: 'bold'
             },
             splitLine: {
                 lineStyle: {
-                    color: ['rgba(255,255,255,0.05)', 'rgba(52, 211, 153, 0.1)', 'rgba(255,255,255,0.05)']
+                    color: ['rgba(255,255,255,0.05)', 'rgba(244, 63, 94, 0.1)', 'rgba(255,255,255,0.05)']
                 }
             },
             splitArea: {
                 areaStyle: {
-                    color: ['rgba(16, 185, 129, 0.02)', 'rgba(16, 185, 129, 0.05)']
+                    color: ['rgba(244, 63, 94, 0.02)', 'rgba(244, 63, 94, 0.05)']
                 }
             },
             axisLine: {
@@ -102,19 +102,19 @@ function CERSRadarECharts({ data }: { data: any[] }) {
                         type: 'radial',
                         x: 0.5, y: 0.5, r: 0.5,
                         colorStops: [
-                            { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
-                            { offset: 1, color: 'rgba(16, 185, 129, 0.1)' }
+                            { offset: 0, color: 'rgba(244, 63, 94, 0.4)' },
+                            { offset: 1, color: 'rgba(244, 63, 94, 0.1)' }
                         ]
                     }
                 },
                 lineStyle: {
-                    color: '#10b981',
+                    color: '#f43f5e',
                     width: 3,
                     shadowBlur: 10,
-                    shadowColor: 'rgba(16, 185, 129, 0.5)'
+                    shadowColor: 'rgba(244, 63, 94, 0.5)'
                 },
                 itemStyle: {
-                    color: '#10b981',
+                    color: '#f43f5e',
                     borderColor: '#fff',
                     borderWidth: 1
                 },
@@ -140,13 +140,13 @@ function CERSRadarECharts({ data }: { data: any[] }) {
                                 type: 'radial',
                                 x: 0.5, y: 0.5, r: 0.5,
                                 colorStops: [
-                                    { offset: 0, color: 'rgba(16, 185, 129, 0.2)' },
-                                    { offset: 1, color: 'rgba(16, 185, 129, 0.6)' }
+                                    { offset: 0, color: 'rgba(244, 63, 94, 0.2)' },
+                                    { offset: 1, color: 'rgba(244, 63, 94, 0.6)' }
                                 ]
                             }
                         },
-                        lineStyle: { color: '#10b981', width: 2 },
-                        itemStyle: { color: '#34d399', borderWidth: 2 }
+                        lineStyle: { color: '#f43f5e', width: 2 },
+                        itemStyle: { color: '#fb7185', borderWidth: 2 }
                     }]
                 }} 
                 style={{ height: '100%', width: '100%' }} 
@@ -200,8 +200,8 @@ function SHAPChart({ data }: { data: any[] }) {
                                 { offset: 0, color: '#f43f5e' },
                                 { offset: 1, color: '#9f1239' }
                             ] : [
-                                { offset: 0, color: '#059669' },
-                                { offset: 1, color: '#10b981' }
+                                { offset: 0, color: '#94a3b8' },
+                                { offset: 1, color: '#475569' }
                             ]
                         };
                     },
@@ -318,7 +318,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
         <div className={`flex flex-col h-full ${isTab ? 'bg-transparent' : 'bg-[#030712]'} text-white overflow-hidden w-full relative`}>
             {!isTab && (
                 <>
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.05),transparent_70%)] pointer-events-none" />
                     <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
                 </>
             )}
@@ -326,15 +326,15 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
             {!isTab && (
                 <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20">
                     <div className="flex items-center gap-4">
-                        <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                            <ShieldAlert className="w-6 h-6 text-emerald-400" />
+                        <div className="p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                            <ShieldAlert className="w-6 h-6 text-rose-400" />
                         </div>
                         <div>
                             <h1 className="text-xl font-black tracking-widest text-white uppercase italic">
-                                CERS <span className="text-emerald-500">ТАКТИЧНИЙ</span> HUD
+                                CERS <span className="text-rose-500">ТАКТИЧНИЙ</span> HUD
                             </h1>
                             <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-tighter">Sovereign Аналітика v57.2</span>
+                                <span className="text-[10px] font-mono text-rose-500/60 uppercase tracking-tighter">Sovereign Аналітика v58.2</span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
                                 <span className="text-[10px] font-mono text-slate-500 uppercase">Статус: Оперативний</span>
                             </div>
@@ -343,15 +343,15 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
                     <div className="flex items-center gap-6">
                         <form onSubmit={handleSearch} className="relative group w-80">
-                            <div className="absolute inset-0 bg-emerald-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-rose-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
                             <input
                                 type="text"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
-                                className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-emerald-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
+                                className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-rose-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
                             />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors z-10" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-rose-400 transition-colors z-10" />
                         </form>
                         
                         <div className="flex items-center gap-2">
@@ -375,23 +375,23 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                         <div className="space-y-3">
                             <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Метрики Вузла</h3>
                             <div className="grid grid-cols-1 gap-2">
-                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-emerald-500/20 transition-colors">
+                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-rose-500/20 transition-colors">
                                     <div className="flex items-center justify-between mb-2">
-                                        <Cpu className="w-3.5 h-3.5 text-emerald-400" />
+                                        <Cpu className="w-3.5 h-3.5 text-rose-400" />
                                         <span className="text-[10px] font-mono text-slate-500">ЗАВАНТАЖЕННЯ LLM</span>
                                     </div>
                                     <div className="text-lg font-black text-white">42.8%</div>
                                     <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                                        <div className="h-full bg-emerald-500 w-[42.8%]" />
+                                        <div className="h-full bg-rose-500 w-[42.8%]" />
                                     </div>
                                 </div>
-                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-cyan-500/20 transition-colors">
+                                <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-rose-500/20 transition-colors">
                                     <div className="flex items-center justify-between mb-2">
-                                        <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                                        <Activity className="w-3.5 h-3.5 text-rose-400" />
                                         <span className="text-[10px] font-mono text-slate-500">СТАТИСТИКА I/O</span>
                                     </div>
                                     <div className="text-lg font-black text-white">1.2 GB/s</div>
-                                    <div className="text-[10px] font-mono text-cyan-500/60 mt-1 uppercase tracking-tighter">Висока пропускна здатність</div>
+                                    <div className="text-[10px] font-mono text-rose-500/60 mt-1 uppercase tracking-tighter">Висока пропускна здатність</div>
                                 </div>
                             </div>
                         </div>
@@ -400,7 +400,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                             <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Сигнали Ризику</h3>
                             <div className="space-y-2">
                                 {displayEvents.slice(0, 3).map((event: any, i: number) => (
-                                    <div key={i} className="bg-slate-950/30 border-l-2 border-emerald-500/50 p-2 rounded-r-lg">
+                                    <div key={i} className="bg-slate-950/30 border-l-2 border-rose-500/50 p-2 rounded-r-lg">
                                         <div className="text-[9px] font-mono text-slate-500 mb-1">{event.date}</div>
                                         <div className="text-[11px] text-slate-300 leading-tight line-clamp-2">{event.text}</div>
                                     </div>
@@ -423,14 +423,14 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             >
                                 <div className="relative w-32 h-32">
-                                    <div className="absolute inset-0 border-2 border-emerald-500/20 rounded-full"></div>
-                                    <div className="absolute inset-0 border-t-2 border-emerald-500 rounded-full animate-spin"></div>
-                                    <div className="absolute inset-4 border-2 border-cyan-500/20 rounded-full"></div>
-                                    <div className="absolute inset-4 border-b-2 border-cyan-500 rounded-full animate-spin-reverse"></div>
-                                    <ShieldAlert className="absolute inset-0 m-auto w-10 h-10 text-emerald-500 animate-pulse" />
+                                    <div className="absolute inset-0 border-2 border-rose-500/20 rounded-full"></div>
+                                    <div className="absolute inset-0 border-t-2 border-rose-500 rounded-full animate-spin"></div>
+                                    <div className="absolute inset-4 border-2 border-orange-500/20 rounded-full"></div>
+                                    <div className="absolute inset-4 border-b-2 border-orange-500 rounded-full animate-spin-reverse"></div>
+                                    <ShieldAlert className="absolute inset-0 m-auto w-10 h-10 text-rose-500 animate-pulse" />
                                 </div>
                                 <h2 className="mt-8 text-xl font-black italic tracking-widest text-white uppercase animate-pulse">
-                                    Ініціалізація <span className="text-emerald-500">WRAITH</span> Сканера
+                                    Ініціалізація <span className="text-rose-500">WRAITH</span> Сканера
                                 </h2>
                                 <p className="mt-2 text-slate-500 font-mono text-xs uppercase tracking-widest">
                                     Декомпозиція SHAP-векторів та нейронний скоринг...
@@ -445,11 +445,11 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                                     {/* Company Identity Card */}
                                     <div className="xl:col-span-8 bg-slate-900/60 border border-white/10 rounded-3xl p-8 relative overflow-hidden group">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[80px] -mr-32 -mt-32 transition-colors group-hover:bg-emerald-500/10" />
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/5 rounded-full blur-[80px] -mr-32 -mt-32 transition-colors group-hover:bg-rose-500/10" />
                                         
                                         <div className="relative z-10">
                                             <div className="flex items-center gap-3 mb-6">
-                                                <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-widest italic">
+                                                <span className="px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-rose-400 uppercase tracking-widest italic">
                                                     Верифікований Об'єкт
                                                 </span>
                                                 <span className="w-1.5 h-1.5 bg-slate-700 rounded-full"></span>
@@ -462,28 +462,28 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             
                                             <div className="flex flex-wrap gap-4 mt-6">
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
-                                                    <Fingerprint className="w-4 h-4 text-emerald-500" />
+                                                    <Fingerprint className="w-4 h-4 text-rose-500" />
                                                     <span className="text-xs font-mono text-slate-300">ЄДРПОУ: {profile.edrpou || "Н/Д"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
-                                                    <Boxes className="w-4 h-4 text-cyan-500" />
+                                                    <Boxes className="w-4 h-4 text-rose-400" />
                                                     <span className="text-xs font-mono text-slate-300 max-w-[200px] truncate">{profile.kved || "КВЕД не вказано"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
-                                                    <CheckCircle2 className={`w-4 h-4 ${profile.status === 'Активний' ? 'text-emerald-500' : 'text-amber-500'}`} />
-                                                    <span className="text-xs font-mono text-slate-300 uppercase">{profile.status || "Активний"}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                                    <CheckCircle2 className={`w-4 h-4 ${profile.st                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                                 {[
-                                                    { label: 'СКАН-САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'emerald' },
-                                                    { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'amber' : 'emerald' },
-                                                    { label: 'РЕЄСТР-БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'amber' : 'emerald' },
-                                                    { label: 'ЮРИД-СТАН', status: 'СТАБІЛЬНИЙ', color: 'emerald' }
+                                                    { label: 'СКАН-САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'slate' },
+                                                    { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'orange' : 'slate' },
+                                                    { label: 'РЕЄСТР-БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'orange' : 'slate' },
+                                                    { label: 'ЮРИД-СТАН', status: 'СТАБІЛЬНИЙ', color: 'slate' }
                                                 ].map((item, idx) => (
                                                     <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
                                                         <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
+                                                        <span className={cn("text-xs font-mono font-bold", `text-${item.color}-400`)}>{item.status}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
                                                         <span className={`text-xs font-mono font-bold text-${item.color}-400`}>{item.status}</span>
                                                     </div>
                                                 ))}
@@ -493,7 +493,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
                                     {/* CERS Score Radial Card */}
                                     <div className="xl:col-span-4 bg-slate-900/60 border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center relative group">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5 opacity-50" />
+                                        <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-rose-600/5 opacity-50" />
                                         
                                         <div className="relative w-48 h-48 mb-6">
                                             <svg className="w-full h-full transform -rotate-90">
@@ -532,7 +532,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                     <div className="xl:col-span-7 bg-slate-900/60 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
                                         <div className="flex items-center justify-between mb-6">
                                             <div className="flex items-center gap-2">
-                                                <Activity className="w-4 h-4 text-emerald-400" />
+                                                <Activity className="w-4 h-4 text-rose-400" />
                                                 <h3 className="text-sm font-black text-white uppercase tracking-widest italic">SHAP ДЕКОМПОЗИЦІЯ (ДРАЙВЕРИ РИЗИКУ)</h3>
                                             </div>
                                             <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Alpha</span>
@@ -548,13 +548,13 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
                                     {/* AI Summary Panel */}
                                     <div className="xl:col-span-5 flex flex-col gap-6">
-                                        <div className="flex-1 bg-gradient-to-br from-[#0A111F] to-[#040811] border border-cyan-500/20 rounded-3xl p-6 shadow-2xl shadow-cyan-900/10 relative overflow-hidden flex flex-col">
+                                        <div className="flex-1 bg-gradient-to-br from-[#0A111F] to-[#040811] border border-rose-500/20 rounded-3xl p-6 shadow-2xl shadow-rose-900/10 relative overflow-hidden flex flex-col">
                                             <div className="absolute top-0 right-0 p-8 opacity-10">
-                                                <Zap className="w-32 h-32 text-cyan-500" />
+                                                <Zap className="w-32 h-32 text-rose-500" />
                                             </div>
-                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
                                             
-                                            <h3 className="text-sm font-black text-cyan-400 mb-4 flex items-center gap-2 uppercase tracking-widest italic">
+                                            <h3 className="text-sm font-black text-rose-400 mb-4 flex items-center gap-2 uppercase tracking-widest italic">
                                                 <Target className="w-4 h-4" /> AI КОНСІЛІУМ (РЕЗЮМЕ)
                                             </h3>
                                             
@@ -565,7 +565,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             </div>
 
                                             <div className="grid grid-cols-1 gap-2">
-                                                <button className="flex items-center justify-between w-full p-4 bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-cyan-300 transition-all group">
+                                                <button className="flex items-center justify-between w-full p-4 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-300 transition-all group">
                                                     <span>Побудувати Тіньову Карту Зв'язків</span>
                                                     <GitBranch className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                                 </button>
@@ -582,7 +582,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                                     <div className="xl:col-span-12 bg-slate-900/60 border border-white/10 rounded-3xl p-6">
                                         <div className="flex items-center gap-2 mb-8">
-                                            <Boxes className="w-4 h-4 text-emerald-400" />
+                                            <Boxes className="w-4 h-4 text-rose-400" />
                                             <h3 className="text-sm font-black text-white uppercase tracking-widest italic">5-ШАРОВА СТРУКТУРНА ОЦІНКА CERS</h3>
                                         </div>
                                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -591,10 +591,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     <div key={i} className="flex flex-col gap-1">
                                                         <div className="flex justify-between items-end">
                                                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{r.subject}</span>
-                                                            <span className="text-xs font-mono text-emerald-400">{r.A}%</span>
+                                                            <span className="text-xs font-mono text-rose-400">{r.A}%</span>
                                                         </div>
                                                         <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                                                            <div className="h-full bg-emerald-500/50" style={{ width: `${r.A}%` }} />
+                                                            <div className="h-full bg-rose-500/50" style={{ width: `${r.A}%` }} />
                                                         </div>
                                                     </div>
                                                 ))}
@@ -619,10 +619,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     <div className={`absolute -left-[50px] top-1 w-5 h-5 rounded-full border-4 border-slate-950 ${
                                                         event.type === 'alert' ? 'bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]' :
                                                         event.type === 'warning' ? 'bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.5)]' :
-                                                        'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
+                                                        'bg-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.5)]'
                                                     }`} />
                                                     <div className="flex flex-col">
-                                                        <span className="text-[10px] font-mono text-emerald-500 uppercase tracking-[0.2em] mb-2">{event.date}</span>
+                                                        <span className="text-[10px] font-mono text-rose-500 uppercase tracking-[0.2em] mb-2">{event.date}</span>
                                                         <p className="text-white text-md font-semibold leading-relaxed">{event.text}</p>
                                                         <div className="mt-3 flex gap-2">
                                                             <span className="text-[9px] px-2 py-0.5 bg-white/5 rounded text-slate-500 uppercase font-mono">Верифіковано</span>

@@ -17,7 +17,7 @@ export const RadarBackground: React.FC = () => {
             {[1, 2, 3, 4].map(i => (
                 <motion.div
                     key={i}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-500/10"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-rose-500/10"
                     style={{ width: `${i * 25}%`, height: `${i * 25}%` }}
                     animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.15, 0.3] }}
                     transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut' }}
@@ -26,7 +26,7 @@ export const RadarBackground: React.FC = () => {
             <motion.div
                 className="absolute left-1/2 top-1/2 w-1/2 h-[1px] origin-left"
                 style={{
-                    background: 'linear-gradient(90deg, rgba(16,185,129,0.4), transparent)',
+                    background: 'linear-gradient(90deg, rgba(244,63,94,0.4), transparent)',
                 }}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
@@ -34,7 +34,7 @@ export const RadarBackground: React.FC = () => {
             {Array.from({ length: 12 }).map((_, i) => (
                 <motion.div
                     key={`dot-${i}`}
-                    className="absolute w-1 h-1 rounded-full bg-cyan-400/30"
+                    className="absolute w-1 h-1 rounded-full bg-rose-400/30"
                     style={{
                         left: `${15 + Math.random() * 70}%`,
                         top: `${10 + Math.random() * 80}%`,
@@ -52,7 +52,7 @@ export const RiskHeatmapBar: React.FC<{ source: string; risk: number; count: num
     const color = risk >= 90 ? 'from-red-600 to-red-500' :
                   risk >= 70 ? 'from-amber-600 to-amber-500' :
                   risk >= 50 ? 'from-yellow-600 to-yellow-500' :
-                               'from-emerald-600 to-emerald-500';
+                               'from-rose-600 to-rose-500';
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}

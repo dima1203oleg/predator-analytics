@@ -69,8 +69,8 @@ interface GraphViewerProps {
 
 // Кольори для типів вузлів
 const NODE_COLORS: Record<NodeType, string> = {
-  Person: '#3b82f6',      // blue-500
-  Organization: '#10b981', // emerald-500
+  Person: '#fda4af',      // rose-300
+  Organization: '#fb7185', // rose-400
   Location: '#f59e0b',     // amber-500
   Event: '#8b5cf6',        // violet-500
   Asset: '#ec4899',        // pink-500
@@ -140,7 +140,7 @@ const getCytoscapeStyle = (highVisibility: boolean) => {
     selector: 'node:selected',
     style: {
       'border-width': 6,
-      'border-color': '#38bdf8',
+      'border-color': '#fb7185',
       'background-opacity': 1,
       'shadow-blur': 20,
       'shadow-color': 'rgba(56, 189, 248, 0.45)',
@@ -152,7 +152,7 @@ const getCytoscapeStyle = (highVisibility: boolean) => {
     selector: 'node:active',
     style: {
       'overlay-opacity': 0.18,
-      'overlay-color': '#38bdf8',
+      'overlay-color': '#fb7185',
     },
   },
   // Базовий стиль зв'язків
@@ -182,8 +182,8 @@ const getCytoscapeStyle = (highVisibility: boolean) => {
     selector: 'edge:selected',
     style: {
       'width': 4,
-      'line-color': '#38bdf8',
-      'target-arrow-color': '#38bdf8',
+      'line-color': '#fb7185',
+      'target-arrow-color': '#fb7185',
       'arrow-scale': 1.2,
     },
   },
@@ -191,15 +191,15 @@ const getCytoscapeStyle = (highVisibility: boolean) => {
   {
     selector: 'edge[type="OWNS"]',
     style: {
-      'line-color': '#10b981',
-      'target-arrow-color': '#10b981',
+      'line-color': '#fb7185',
+      'target-arrow-color': '#fb7185',
     },
   },
   {
     selector: 'edge[type="MANAGES"]',
     style: {
-      'line-color': '#3b82f6',
-      'target-arrow-color': '#3b82f6',
+      'line-color': '#fda4af',
+      'target-arrow-color': '#fda4af',
     },
   },
   {

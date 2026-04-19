@@ -32,24 +32,24 @@ type DiagnosticSection = {
 
 const STATUS_STYLES: Record<string, { tone: string; badge: string; border: string }> = {
   ok: {
-    tone: 'text-emerald-400',
-    badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    border: 'border-emerald-500/30',
-  },
-  degraded: {
-    tone: 'text-amber-400',
-    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    border: 'border-amber-500/30',
-  },
-  offline: {
-    tone: 'text-amber-400',
-    badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-    border: 'border-amber-500/30',
-  },
-  error: {
     tone: 'text-rose-400',
     badge: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
     border: 'border-rose-500/30',
+  },
+  degraded: {
+    tone: 'text-rose-300',
+    badge: 'bg-rose-400/15 text-rose-200 border-rose-400/30',
+    border: 'border-rose-400/30',
+  },
+  offline: {
+    tone: 'text-slate-400',
+    badge: 'bg-slate-500/15 text-slate-300 border-slate-500/30',
+    border: 'border-slate-500/30',
+  },
+  error: {
+    tone: 'text-rose-500',
+    badge: 'bg-rose-600/20 text-rose-400 border-rose-600/40',
+    border: 'border-rose-600/40',
   },
   unknown: {
     tone: 'text-slate-300',
@@ -189,8 +189,8 @@ const DiagnosticsPage: React.FC = () => {
             animate={{ x: 0, opacity: 1 }}
             className="text-4xl md:text-6xl font-display font-black tracking-tighter flex items-center gap-6"
           >
-            <div className="p-4 glass-ultra rounded-2xl border-cyan-500/30 shadow-[0_0_30px_rgba(34,211,238,0.15)]">
-              <Activity size={48} className="text-cyan-400" />
+            <div className="p-4 glass-ultra rounded-2xl border-rose-500/30 shadow-[0_0_30px_rgba(225,29,72,0.15)]">
+              <Activity size={48} className="text-rose-400" />
             </div>
             <span className="text-iridescent">СИСТЕМНА ДІАГНОСТИКА</span>
           </motion.h1>
@@ -201,8 +201,8 @@ const DiagnosticsPage: React.FC = () => {
             </p>
             <div className="h-4 w-px bg-slate-800" />
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">
                 API контроль активний
               </span>
             </div>
@@ -217,7 +217,7 @@ const DiagnosticsPage: React.FC = () => {
           className={`group flex items-center gap-4 px-10 py-5 rounded-2xl font-black uppercase tracking-[0.18em] text-[10px] md:text-xs transition-all duration-500 shadow-2xl relative overflow-hidden ${
             loading
               ? 'bg-slate-900 text-slate-600 cursor-not-allowed border border-white/5'
-              : 'bg-cyan-600 text-white shadow-cyan-500/30 border border-cyan-400/30 hover:shadow-cyan-500/50'
+              : 'bg-rose-600 text-white shadow-rose-500/30 border border-rose-400/30 hover:shadow-rose-500/50'
           }`}
         >
           {!loading && (
@@ -256,7 +256,7 @@ const DiagnosticsPage: React.FC = () => {
               className="glass-ultra rounded-[32px] p-8 border border-white/10 shadow-2xl"
             >
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 flex items-center justify-center">
                   {section.icon}
                 </div>
                 <div>
@@ -283,7 +283,7 @@ const DiagnosticsPage: React.FC = () => {
             className="glass-ultra rounded-[32px] p-8 border border-white/10 shadow-2xl"
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 flex items-center justify-center">
                 <Terminal size={20} />
               </div>
               <div>
@@ -316,11 +316,11 @@ const DiagnosticsPage: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
                   <span>Здорові</span>
-                  <span className="font-black text-emerald-400">{result.results.summary.healthy}</span>
+                  <span className="font-black text-rose-400">{result.results.summary.healthy}</span>
                 </div>
                 <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
                   <span>Деградовані</span>
-                  <span className="font-black text-amber-400">{result.results.summary.degraded}</span>
+                  <span className="font-black text-rose-300">{result.results.summary.degraded}</span>
                 </div>
                 <div className="flex items-center justify-between rounded-2xl bg-black/30 border border-white/5 px-4 py-3">
                   <span>Критичні</span>

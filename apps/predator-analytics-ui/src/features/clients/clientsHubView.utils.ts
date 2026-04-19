@@ -3,7 +3,7 @@ import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/s
 
 export type SegmentKey = 'business' | 'banking' | 'government' | 'law' | 'regulators' | 'legal';
 export type ClientPersona = 'BUSINESS' | 'BANKING' | 'GOVERNMENT' | 'INTELLIGENCE';
-export type ClientsHubTone = 'emerald' | 'amber' | 'sky' | 'slate';
+export type ClientsHubTone = 'rose' | 'amber' | 'sky' | 'slate';
 
 export interface ClientsHubMetric {
   label: string;
@@ -70,7 +70,7 @@ const resolveTone = (metrics: ClientsHubMetric[]): ClientsHubTone => {
   const confirmed = metrics.filter((metric) => metric.value !== 'Н/д').length;
 
   if (confirmed === metrics.length) {
-    return 'emerald';
+    return 'rose';
   }
 
   if (confirmed > 0) {
@@ -265,7 +265,7 @@ export const normalizeClientsHubSnapshot = (
       label: 'Справні сервіси',
       value: formatPair(serviceSummary?.healthy, serviceSummary?.total),
       hint: 'Стан системи з `/system/status.summary`.',
-      tone: 'emerald',
+      tone: 'rose',
     },
   ];
 
