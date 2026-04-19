@@ -54,11 +54,13 @@ const SupplyChainAnalyticsView = lazy(() => import('./features/supply-chain/Supp
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
+const CommandHub = lazy(() => import('./pages/CommandHub'));
 const MarketHub = lazy(() => import('./pages/MarketHub'));
 const SearchHub = lazy(() => import('./pages/SearchHub'));
 const OSINTHub = lazy(() => import('./pages/OSINTHub'));
-const DiligencePage = lazy(() => import('./pages/DiligencePage'));
 const FinancialHub = lazy(() => import('./pages/FinancialHub'));
+const AIHub = lazy(() => import('./pages/AIHub'));
+const SystemHub = lazy(() => import('./pages/SystemHub'));
 
 
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
@@ -128,12 +130,13 @@ export const AppRoutesNew = () => {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             {/* 1. КОМАНДНИЙ ЦЕНТР (GOLD HUB) */}
-            <Route path="/" element={<PredatorV24 />} />
-            <Route path="/morning-brief" element={<ExecutiveBriefView />} />
-            <Route path="/portfolio-risk" element={<PortfolioRiskView />} />
-            <Route path="/newspaper" element={<NewspaperView />} />
-            <Route path="/som" element={<SovereignObserverView />} />
-            <Route path="/war-room" element={<WarRoomView />} />
+            <Route path="/" element={<Navigate to="/command?tab=board" replace />} />
+            <Route path="/command" element={<CommandHub />} />
+            <Route path="/morning-brief" element={<Navigate to="/command?tab=brief" replace />} />
+            <Route path="/portfolio-risk" element={<Navigate to="/command?tab=risk" replace />} />
+            <Route path="/newspaper" element={<Navigate to="/search?tab=newspaper" replace />} />
+            <Route path="/som" element={<Navigate to="/command?tab=observer" replace />} />
+            <Route path="/war-room" element={<Navigate to="/command?tab=warroom" replace />} />
 
             {/* 2. ТОРГОВА РОЗВІДКА (AMBER HUB) */}
             <Route path="/market" element={<MarketHub />} />
@@ -153,7 +156,7 @@ export const AppRoutesNew = () => {
             <Route path="/search" element={<SearchHub />} />
             <Route path="/registries" element={<Navigate to="/search?tab=registries" replace />} />
             <Route path="/documents" element={<Navigate to="/search?tab=documents" replace />} />
-            <Route path="/diligence" element={<DiligencePage />} />
+            <Route path="/diligence" element={<Navigate to="/osint?tab=diligence" replace />} />
             <Route path="/diligence/:ueid" element={<DueDiligence />} />
             <Route path="/ubo-map" element={<Navigate to="/osint?tab=ubo" replace />} />
             <Route path="/graph" element={<Navigate to="/osint?tab=graph" replace />} />
@@ -177,25 +180,26 @@ export const AppRoutesNew = () => {
 
 
             {/* 5. AI НЕКСУС (BLUE HUB) */}
-            <Route path="/nexus" element={<PredictiveNexusView />} />
-            <Route path="/agents" element={<AgentsView />} />
-            <Route path="/ai-hypothesis" element={<HypothesisEngineView />} />
-            <Route path="/ai-insights" element={<AIInsightsHub />} />
-            <Route path="/knowledge" element={<KnowledgeEngineeringView />} />
-            <Route path="/oracle" element={<SovereignIntelHub />} />
+            <Route path="/nexus" element={<AIHub />} />
+            <Route path="/agents" element={<Navigate to="/nexus?tab=agents" replace />} />
+            <Route path="/ai-hypothesis" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
+            <Route path="/ai-insights" element={<Navigate to="/nexus?tab=insights" replace />} />
+            <Route path="/knowledge" element={<Navigate to="/nexus?tab=knowledge" replace />} />
+            <Route path="/oracle" element={<Navigate to="/nexus?tab=oracle" replace />} />
             <Route path="/forecast/:ueid" element={<ForecastingEngine />} />
             <Route path="/conversation-intel" element={<ConversationIntelView />} />
-            <Route path="/hypothesis-engine" element={<HypothesisEngineView />} />
+            <Route path="/hypothesis-engine" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
             
             {/* 6. СИСТЕМНЕ ЯДРО (SLATE HUB) */}
-            <Route path="/ingestion" element={onlyAdmin(<DataIngestionHub />)} />
-            <Route path="/monitoring" element={<MonitoringView />} />
-            <Route path="/security" element={onlyAdmin(<SecurityView />)} />
-            <Route path="/settings" element={<SettingsView />} />
-            <Route path="/deployment" element={onlyAdmin(<DeploymentView />)} />
-            <Route path="/governance" element={onlyAdmin(<SovereignGovernanceDashboard />)} />
+            <Route path="/system" element={<SystemHub />} />
+            <Route path="/ingestion" element={onlyAdmin(<Navigate to="/system?tab=ingestion" replace />)} />
+            <Route path="/monitoring" element={<Navigate to="/system?tab=monitoring" replace />} />
+            <Route path="/security" element={onlyAdmin(<Navigate to="/system?tab=security" replace />)} />
+            <Route path="/settings" element={<Navigate to="/system?tab=settings" replace />} />
+            <Route path="/deployment" element={onlyAdmin(<Navigate to="/system?tab=deployment" replace />)} />
+            <Route path="/governance" element={onlyAdmin(<Navigate to="/system?tab=governance" replace />)} />
             <Route path="/datasets" element={onlyAdmin(<DatasetStudio />)} />
-            <Route path="/system-factory" element={onlyAdmin(<SystemFactoryView />)} />
+            <Route path="/system-factory" element={onlyAdmin(<Navigate to="/system?tab=factory" replace />)} />
             <Route path="/api-docs" element={<ApiDocumentationView />} />
             <Route path="/reports" element={<ReportBuilderPage />} />
             <Route path="/monitoring/realtime" element={onlyAdmin(<RealTimeMonitor />)} />

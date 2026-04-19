@@ -14,16 +14,7 @@ export const SanctionsTab: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div className="flex flex-col h-full gap-6 p-6 overflow-y-auto custom-scrollbar">
-      <ViewHeader 
-        title="САНКЦІЙНІ СПИСКИ ТА PEP"
-        subtitle="Глобальний моніторинг санкційних режимів (OFAC, EU, UN, РНБО)"
-        stats={[
-          { label: 'АКТИВНІ САНКЦІЇ', value: '12,482' },
-          { label: 'PEP ОСОБИ', value: '45,102' },
-          { label: 'ОНОВЛЕНО', value: 'СЬОГОДНІ' }
-        ]}
-      />
+    <div className="flex flex-col h-full gap-4 p-4 lg:p-6 overflow-y-auto custom-scrollbar">
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <TacticalCard className="md:col-span-1">

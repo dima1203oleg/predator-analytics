@@ -5,16 +5,7 @@ import { ViewHeader } from '@/components/ui/ViewHeader';
 
 export const UBOMapTab: React.FC = () => {
   return (
-    <div className="flex flex-col h-full gap-6 p-6">
-      <ViewHeader 
-        title="КАРТА БЕНЕФІЦІАРІВ"
-        subtitle="Геопросторовий аналіз кінцевих власників (UBO) та офшорних юрисдикцій"
-        stats={[
-          { label: 'ЮРИСДИКЦІЇ', value: '184' },
-          { label: 'ОФШОРНІ ТОЧКИ', value: '4,212' },
-          { label: 'АКТИВНІСТЬ', value: 'LIVE' }
-        ]}
-      />
+    <div className="flex flex-col h-full gap-4 p-4 lg:p-6 overflow-hidden">
 
       <div className="flex-1 relative rounded-2xl border border-white/5 bg-slate-900/40 overflow-hidden shadow-2xl">
         {/* Імітація мапи */}

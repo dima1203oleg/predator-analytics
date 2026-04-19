@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactECharts from '@/components/ECharts';
 import { 
@@ -125,7 +125,32 @@ function CERSRadarECharts({ data }: { data: any[] }) {
 
     return (
         <div className="h-full w-full min-h-[300px]">
-            <ReactECharts option={radarOption} style={{ height: '100%', width: '100%' }} />
+            <ReactECharts 
+                option={{
+                    ...radarOption,
+                    radar: {
+                        ...radarOption.radar,
+                        indicator: data.map(d => ({ name: d.subject, max: d.fullMark })),
+                    },
+                    series: [{
+                        ...radarOption.series[0],
+                        value: data.map(d => d.A),
+                        areaStyle: {
+                            color: {
+                                type: 'radial',
+                                x: 0.5, y: 0.5, r: 0.5,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(16, 185, 129, 0.2)' },
+                                    { offset: 1, color: 'rgba(16, 185, 129, 0.6)' }
+                                ]
+                            }
+                        },
+                        lineStyle: { color: '#10b981', width: 2 },
+                        itemStyle: { color: '#34d399', borderWidth: 2 }
+                    }]
+                }} 
+                style={{ height: '100%', width: '100%' }} 
+            />
         </div>
     );
 }
@@ -167,16 +192,27 @@ function SHAPChart({ data }: { data: any[] }) {
                 data: data.map(d => d.impact),
                 itemStyle: {
                     color: (params: any) => {
-                        return data[params.dataIndex].impact < 0 ? 
-                            '#f43f5e' : '#10b981';
+                        const val = data[params.dataIndex].impact;
+                        return {
+                            type: 'linear',
+                            x: 0, y: 0, x2: 1, y2: 0,
+                            colorStops: val < 0 ? [
+                                { offset: 0, color: '#f43f5e' },
+                                { offset: 1, color: '#9f1239' }
+                            ] : [
+                                { offset: 0, color: '#059669' },
+                                { offset: 1, color: '#10b981' }
+                            ]
+                        };
                     },
                     borderRadius: [0, 4, 4, 0]
                 },
-                barWidth: '50%',
+                barWidth: '40%',
                 emphasis: {
                     itemStyle: {
-                        shadowBlur: 15,
-                        shadowColor: 'rgba(0,0,0,0.5)'
+                        shadowBlur: 20,
+                        shadowColor: 'rgba(0,0,0,0.8)',
+                        opacity: 0.9
                     }
                 }
             }
@@ -190,10 +226,15 @@ function SHAPChart({ data }: { data: any[] }) {
     );
 }
 
-export function CompanyCERSDashboard() {
+export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
     const { id } = useParams();
-    const [inputValue, setInputValue] = useState(id || '');
-    const [searchQuery, setSearchQuery] = useState(id || 'ТОВ ЕНЕРГО-РЕСУРС 41829391');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const ueidParam = searchParams.get('ueid');
+    
+    const initialSearch = ueidParam || id || 'ТОВ ЕНЕРГО-РЕСУРС 41829391';
+    
+    const [inputValue, setInputValue] = useState(initialSearch);
+    const [searchQuery, setSearchQuery] = useState(initialSearch);
 
     const [companyData, setCompanyData] = useState<any>(null);
     const [loadingData, setLoadingData] = useState(false);
@@ -211,6 +252,15 @@ export function CompanyCERSDashboard() {
                 
                 if (entity) {
                     const entityIdentifier = entity.ueid || entity.edrpou;
+                    
+                    if (entityIdentifier !== ueidParam) {
+                        setSearchParams(prev => {
+                            const next = new URLSearchParams(prev);
+                            next.set('ueid', entityIdentifier);
+                            return next;
+                        }, { replace: true });
+                    }
+
                     const profile = await diligenceApi.getCompanyProfile(entityIdentifier);
                     const riskScores = await diligenceApi.getRiskScores([entityIdentifier]);
                     const scoreData = riskScores[entityIdentifier] || {};
@@ -247,7 +297,7 @@ export function CompanyCERSDashboard() {
             }
         };
         fetchCompanyData();
-    }, [searchQuery]);
+    }, [searchQuery, setSearchParams, ueidParam]);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -265,52 +315,56 @@ export function CompanyCERSDashboard() {
     const cersRingColor = companyData?.ringColor || "stroke-slate-700";
 
     return (
-        <div className="flex flex-col h-full bg-[#030712] text-white overflow-hidden w-full relative">
-            {/* Background Aesthetics */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
-            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
+        <div className={`flex flex-col h-full ${isTab ? 'bg-transparent' : 'bg-[#030712]'} text-white overflow-hidden w-full relative`}>
+            {!isTab && (
+                <>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03] pointer-events-none" />
+                </>
+            )}
 
-            {/* Tactical Top Bar */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20">
-                <div className="flex items-center gap-4">
-                    <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                        <ShieldAlert className="w-6 h-6 text-emerald-400" />
+            {!isTab && (
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20">
+                    <div className="flex items-center gap-4">
+                        <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                            <ShieldAlert className="w-6 h-6 text-emerald-400" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-black tracking-widest text-white uppercase italic">
+                                CERS <span className="text-emerald-500">ТАКТИЧНИЙ</span> HUD
+                            </h1>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-tighter">Sovereign Аналітика v57.2</span>
+                                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+                                <span className="text-[10px] font-mono text-slate-500 uppercase">Статус: Оперативний</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-xl font-black tracking-widest text-white uppercase italic">
-                            CERS <span className="text-emerald-500">TACTICAL</span> HUD
-                        </h1>
-                        <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px] font-mono text-emerald-500/60 uppercase tracking-tighter">Sovereign Analysis v57.2</span>
-                            <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                            <span className="text-[10px] font-mono text-slate-500 uppercase">Статус: Оперативний</span>
+
+                    <div className="flex items-center gap-6">
+                        <form onSubmit={handleSearch} className="relative group w-80">
+                            <div className="absolute inset-0 bg-emerald-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
+                                className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-emerald-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
+                            />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors z-10" />
+                        </form>
+                        
+                        <div className="flex items-center gap-2">
+                            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                                <Share2 className="w-4 h-4" />
+                            </button>
+                            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
+                                <Download className="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <div className="flex items-center gap-6">
-                    <form onSubmit={handleSearch} className="relative group w-80">
-                        <div className="absolute inset-0 bg-emerald-500/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <input
-                            type="text"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            placeholder="ПОШУК ОБ'ЄКТА РИЗИКУ..."
-                            className="w-full bg-slate-950/80 border border-white/10 text-white rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:border-emerald-500/50 transition-all font-mono text-xs tracking-widest relative z-10"
-                        />
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors z-10" />
-                    </form>
-                    
-                    <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
-                            <Share2 className="w-4 h-4" />
-                        </button>
-                        <button className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-400">
-                            <Download className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </div>
+            )}
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Left Sidebar: Intelligence HUD */}
@@ -324,7 +378,7 @@ export function CompanyCERSDashboard() {
                                 <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-emerald-500/20 transition-colors">
                                     <div className="flex items-center justify-between mb-2">
                                         <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-                                        <span className="text-[10px] font-mono text-slate-500">LLM LOAD</span>
+                                        <span className="text-[10px] font-mono text-slate-500">ЗАВАНТАЖЕННЯ LLM</span>
                                     </div>
                                     <div className="text-lg font-black text-white">42.8%</div>
                                     <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
@@ -334,7 +388,7 @@ export function CompanyCERSDashboard() {
                                 <div className="bg-slate-950/50 border border-white/5 rounded-xl p-3 hover:border-cyan-500/20 transition-colors">
                                     <div className="flex items-center justify-between mb-2">
                                         <Activity className="w-3.5 h-3.5 text-cyan-400" />
-                                        <span className="text-[10px] font-mono text-slate-500">I/O STATS</span>
+                                        <span className="text-[10px] font-mono text-slate-500">СТАТИСТИКА I/O</span>
                                     </div>
                                     <div className="text-lg font-black text-white">1.2 GB/s</div>
                                     <div className="text-[10px] font-mono text-cyan-500/60 mt-1 uppercase tracking-tighter">Висока пропускна здатність</div>
@@ -423,10 +477,10 @@ export function CompanyCERSDashboard() {
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                                 {[
-                                                    { label: 'SANC-SCAN', status: profile.is_sanctioned ? 'FAILED' : 'CLEAN', color: profile.is_sanctioned ? 'rose' : 'emerald' },
-                                                    { label: 'OFF-SHORE', status: profile.has_offshores ? 'DETECTED' : 'NONE', color: profile.has_offshores ? 'amber' : 'emerald' },
-                                                    { label: 'DEBT-REG', status: profile.is_debtor ? 'FLAGGED' : 'CLEAR', color: profile.is_debtor ? 'amber' : 'emerald' },
-                                                    { label: 'LEGAL-W', status: 'STABLE', color: 'emerald' }
+                                                    { label: 'СКАН-САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'emerald' },
+                                                    { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'amber' : 'emerald' },
+                                                    { label: 'РЕЄСТР-БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'amber' : 'emerald' },
+                                                    { label: 'ЮРИД-СТАН', status: 'СТАБІЛЬНИЙ', color: 'emerald' }
                                                 ].map((item, idx) => (
                                                     <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
                                                         <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
@@ -456,7 +510,7 @@ export function CompanyCERSDashboard() {
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                                 <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-2xl`}>
-                                                    {companyData?.grade || 'N/A'}
+                                                    {companyData?.grade || 'Н/Д'}
                                                 </span>
                                                 <span className="text-xs font-mono text-slate-400 mt-2 uppercase tracking-widest">Оцінка: {score}/100</span>
                                             </div>
@@ -481,7 +535,7 @@ export function CompanyCERSDashboard() {
                                                 <Activity className="w-4 h-4 text-emerald-400" />
                                                 <h3 className="text-sm font-black text-white uppercase tracking-widest italic">SHAP ДЕКОМПОЗИЦІЯ (ДРАЙВЕРИ РИЗИКУ)</h3>
                                             </div>
-                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Vector Analysis Alpha</span>
+                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Alpha</span>
                                         </div>
                                         {displayShap.length > 0 ? (
                                             <SHAPChart data={displayShap} />

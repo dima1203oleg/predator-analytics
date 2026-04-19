@@ -265,7 +265,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'dashboard',
         label: 'Панель управління',
-        path: '/',
+        path: '/command?tab=board',
         icon: LayoutDashboard,
         description: 'Головна точка входу з ROI-пульсом та швидкими переходами.',
         group: 'Управління',
@@ -274,7 +274,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'morning-brief',
         label: 'Ранковий брифінг',
-        path: '/morning-brief',
+        path: '/command?tab=brief',
         icon: Compass,
         description: 'Пріоритетний аналіз ризиків та цілей на день.',
         group: 'Управління',
@@ -283,7 +283,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'portfolio-risk',
         label: 'P&L Ризиків',
-        path: '/portfolio-risk',
+        path: '/command?tab=risk',
         icon: TrendingUp,
         description: 'Фінансовий стан портфелю у зоні ризику.',
         group: 'Управління',
@@ -293,7 +293,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'war-room',
         label: 'Кризовий штаб',
-        path: '/war-room',
+        path: '/command?tab=warroom',
         icon: Target,
         description: 'Оперативний штаб для кризового управління.',
         group: 'Управління',
@@ -303,7 +303,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'som',
         label: 'Суверенний Обсерватор',
-        path: '/som',
+        path: '/command?tab=observer',
         icon: Eye,
         description: 'Система пасивного спостереження за аномаліями.',
         group: 'Розвідка',
@@ -312,7 +312,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'newspaper',
         label: 'Ранкова газета',
-        path: '/newspaper',
+        path: '/search?tab=newspaper',
         icon: Newspaper,
         description: 'Персоналізована щоденна аналітика.',
         group: 'Розвідка',
@@ -348,7 +348,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'customs-intel',
         label: 'Митна аналітика',
-        path: '/customs-intel',
+        path: '/market?tab=customs',
         icon: Shield,
         description: 'Аналіз декларацій та ризикових категорій.',
         group: 'Митниця',
@@ -367,7 +367,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'price-compare',
         label: 'Аудитор цін',
-        path: '/price-compare',
+        path: '/market?tab=price',
         icon: BarChart3,
         description: 'Пошук демпінгу та цінових відхилень.',
         group: 'Торгівля',
@@ -376,7 +376,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'trade-map',
         label: 'Карта торгівлі',
-        path: '/trade-map',
+        path: '/market?tab=flows',
         icon: Globe,
         description: 'Візуалізація міжнародних потоків.',
         group: 'Логістика',
@@ -385,7 +385,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'suppliers',
         label: 'Пошук постачальників',
-        path: '/suppliers',
+        path: '/market?tab=suppliers',
         icon: Briefcase,
         description: 'Глобальний пошук та верифікація контрагентів.',
         group: 'Торгівля',
@@ -449,7 +449,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'search',
         label: 'Пошуковий центр',
-        path: '/search',
+        path: '/search?tab=global',
         icon: Search,
         description: 'Гібридний пошук по реєстрах та джерелах.',
         group: 'Розвідка',
@@ -458,7 +458,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'diligence',
         label: 'Персональне досьє',
-        path: '/diligence',
+        path: '/osint?tab=diligence',
         icon: User,
         description: 'Повний профіль компанії та аналіз зв\'язків.',
         group: 'Розвідка',
@@ -467,7 +467,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'ubo-map',
         label: 'Трекер бенефіціарів',
-        path: '/ubo-map',
+        path: '/osint?tab=ubo',
         icon: Network,
         description: 'Бенефіціарна структура та публічні особи.',
         group: 'Розвідка',
@@ -477,7 +477,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'graph',
         label: 'Граф зв\'язків',
-        path: '/graph',
+        path: '/osint?tab=graph',
         icon: Network,
         description: 'Візуальний аналіз кластерів та бенефіціарів.',
         group: 'Розвідка',
@@ -486,7 +486,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'sanctions',
         label: 'Санкційний комплаєнс',
-        path: '/sanctions',
+        path: '/osint?tab=sanctions',
         icon: ShieldX,
         description: 'Перевірка по міжнародних та локальних списках.',
         group: 'Комплаєнс',
@@ -514,7 +514,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'registries',
         label: 'Центр реєстрів',
-        path: '/registries',
+        path: '/search?tab=registries',
         icon: Database,
         description: 'Прямий доступ до державних баз даних.',
         group: 'Дані',
@@ -616,7 +616,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'oracle',
         label: 'Суверенний Оракул',
-        path: '/oracle',
+        path: '/nexus?tab=oracle',
         icon: Sparkles,
         description: 'Запит до Lead Architect для генеративного синтезу.',
         group: 'ШІ Когніція',
@@ -625,7 +625,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'ai-hypothesis',
         label: 'Генератор гіпотез',
-        path: '/ai-hypothesis',
+        path: '/nexus?tab=hypothesis',
         icon: FlaskConical,
         description: 'Автоматична генерація слідчих гіпотез.',
         group: 'ШІ Когніція',
@@ -634,7 +634,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'agents',
         label: 'Автономні агенти',
-        path: '/agents',
+        path: '/nexus?tab=agents',
         icon: Users,
         description: 'Керування автономними ШІ-співробітниками.',
         group: 'ШІ Когніція',
@@ -643,7 +643,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'ai-insights',
         label: 'ШІ-інсайти',
-        path: '/ai-insights',
+        path: '/nexus?tab=insights',
         icon: Zap,
         description: 'Добірка висновків на базі сигналів.',
         group: 'ШІ Когніція',
@@ -661,7 +661,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'knowledge',
         label: 'База знань',
-        path: '/knowledge',
+        path: '/nexus?tab=knowledge',
         icon: Database,
         description: 'Актуалізація знань для ШІ-моделей.',
         group: 'ШІ Когніція',
@@ -679,7 +679,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'ingestion',
         label: 'Кузня Даних',
-        path: '/ingestion',
+        path: '/system?tab=ingestion',
         icon: Upload,
         description: 'Пайплайни інгестії та обробки джерел.',
         group: 'Інфраструктура',
@@ -689,7 +689,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'monitoring',
         label: 'Моніторинг',
-        path: '/monitoring',
+        path: '/system?tab=monitoring',
         icon: Activity,
         description: 'Технічний стан сервісів та вузлів.',
         group: 'Інфраструктура',
@@ -708,7 +708,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'security',
         label: 'Безпека та Доступ',
-        path: '/security',
+        path: '/system?tab=security',
         icon: Lock,
         description: 'Контроль периметру та прав доступу.',
         group: 'Керування',
@@ -718,7 +718,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'deployment',
         label: 'Розгортання',
-        path: '/deployment',
+        path: '/system?tab=deployment',
         icon: Box,
         description: 'Керування розгортанням сервісів платформи.',
         group: 'Інфраструктура',
@@ -728,7 +728,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'governance',
         label: 'Управління (G&C)',
-        path: '/governance',
+        path: '/system?tab=governance',
         icon: Shield,
         description: 'Суверенне управління: етичні та юридичні рамки.',
         group: 'Керування',
@@ -738,7 +738,7 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'system-factory',
         label: 'Фабрика Систем',
-        path: '/system-factory',
+        path: '/system?tab=factory',
         icon: Factory,
         description: 'Генерація нових модулів та сервісів.',
         group: 'Інфраструктура',
