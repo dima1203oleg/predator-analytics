@@ -54,8 +54,10 @@ const SupplyChainAnalyticsView = lazy(() => import('./features/supply-chain/Supp
 
 // Canonical v4.2.0 Pages
 const MarketPage = lazy(() => import('./pages/MarketPage'));
+const MarketHub = lazy(() => import('./pages/MarketHub'));
+const SearchHub = lazy(() => import('./pages/SearchHub'));
+const OSINTHub = lazy(() => import('./pages/OSINTHub'));
 const DiligencePage = lazy(() => import('./pages/DiligencePage'));
-const CompanyCERSDashboard = lazy(() => import('./pages/CompanyCERSDashboard'));
 
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
@@ -132,27 +134,30 @@ export const AppRoutesNew = () => {
             <Route path="/war-room" element={<WarRoomView />} />
 
             {/* 2. ТОРГОВА РОЗВІДКА (AMBER HUB) */}
-            <Route path="/market" element={<MarketPage />} />
-            <Route path="/customs-intel" element={<CustomsIntelligenceView />} />
+            <Route path="/market" element={<MarketHub />} />
+            <Route path="/customs-intel" element={<Navigate to="/market?tab=customs" replace />} />
+            <Route path="/trade-map" element={<Navigate to="/market?tab=flows" replace />} />
+            <Route path="/suppliers" element={<Navigate to="/market?tab=suppliers" replace />} />
             <Route path="/customs-premium" element={<CustomsIntelligencePremium />} />
             <Route path="/price-compare" element={<PriceComparisonPremium />} />
-            <Route path="/trade-map" element={<TradeFlowMapPremium />} />
-            <Route path="/suppliers" element={<SupplierDiscoveryPremium />} />
             <Route path="/cargo-manifest" element={<CargoManifestPremium />} />
-            <Route path="/trade-flow-map" element={<TradeFlowMapPremium />} />
+            <Route path="/trade-flow-map" element={<Navigate to="/market?tab=flows" replace />} />
             <Route path="/geopolitical-radar" element={<GeopoliticalRadarView />} />
             <Route path="/supply-chain" element={<SupplyChainAnalyticsView />} />
             <Route path="/maritime" element={<MaritimeView />} />
             <Route path="/tenders" element={<TendersView />} />
 
             {/* 3. РОЗВІДКА СУБ'ЄКТІВ (WARN HUB) */}
-            <Route path="/search" element={<SearchPage />} />
+            <Route path="/search" element={<SearchHub />} />
+            <Route path="/registries" element={<Navigate to="/search?tab=registries" replace />} />
+            <Route path="/documents" element={<Navigate to="/search?tab=documents" replace />} />
             <Route path="/diligence" element={<DiligencePage />} />
             <Route path="/diligence/:ueid" element={<DueDiligence />} />
-            <Route path="/ubo-map" element={<UBOMapView />} />
-            <Route path="/graph" element={<GraphAnalyticsPage />} />
+            <Route path="/ubo-map" element={<OSINTHub />} />
+            <Route path="/graph" element={<OSINTHub />} />
             <Route path="/risk-scoring" element={<RiskScoringPremium />} />
-            <Route path="/sanctions" element={<SanctionsScreening />} />
+            <Route path="/sanctions" element={<Navigate to="/osint?tab=sanctions" replace />} />
+            <Route path="/osint" element={<OSINTHub />} />
             <Route path="/aml" element={<AMLScoringView />} />
             <Route path="/network/:ueid" element={<NetworkGraph />} />
             <Route path="/cases" element={<CasesView />} />
