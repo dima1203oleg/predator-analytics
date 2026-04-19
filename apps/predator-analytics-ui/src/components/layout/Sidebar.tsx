@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -21,7 +21,6 @@ import {
   getGlobalNavigationActions,
   getNavigationTotals,
   getVisibleNavigation,
-  itemMatchesPath,
   navAccentStyles,
   type NavSection,
   resolveNavigationAudience,
@@ -140,7 +139,6 @@ export const Sidebar: React.FC = () => {
   const [workspaceMode, setWorkspaceMode] = useState<NavWorkspaceMode>('all');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(getInitialCollapsed);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const location = useLocation();
 
   const visibleSections = useMemo(() => getVisibleNavigation(userRole), [userRole]);
   const {
@@ -596,29 +594,23 @@ export const Sidebar: React.FC = () => {
                                       to={item.path}
                                       title={!isOpen ? item.label : undefined}
                                       onClick={() => pushRecent(item.id)}
-                                      className={({ isActive: linkActive }) => {
-                                        const isActive = linkActive || itemMatchesPath(item, location.pathname);
-                                        return cn(
+                                      className={({ isActive }) =>
+                                        cn(
                                           'group relative flex items-center gap-2 rounded-lg border transition-all duration-200',
                                           isOpen ? 'px-2 py-1.5 pr-8' : 'mx-auto h-8 w-8 justify-center',
                                           isActive
                                             ? 'text-white'
                                             : 'text-slate-400 hover:text-white active:scale-[0.98]',
-                                        );
-                                      }}
-                                      style={({ isActive: linkActive }) => {
-                                        const isActive = linkActive || itemMatchesPath(item, location.pathname);
-                                        return {
-                                          background: isActive ? colors.activeItemBg : 'transparent',
-                                          borderColor: isActive ? colors.activeItemBorder : 'transparent',
-                                          boxShadow: isActive ? `0 0 12px ${colors.glowColor.replace('0.4', '0.1')}` : 'none',
-                                        };
-                                      }}
+                                        )
+                                      }
+                                      style={({ isActive }) => ({
+                                        background: isActive ? colors.activeItemBg : 'transparent',
+                                        borderColor: isActive ? colors.activeItemBorder : 'transparent',
+                                        boxShadow: isActive ? `0 0 12px ${colors.glowColor.replace('0.4', '0.1')}` : 'none',
+                                      })}
                                     >
-                                      {({ isActive: linkActive }) => {
-                                        const isActive = linkActive || itemMatchesPath(item, location.pathname);
-                                        return (
-                                          <>
+                                      {({ isActive }) => (
+                                        <>
                                           {/* Іконка */}
                                           <div
                                             className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-all"
@@ -665,17 +657,16 @@ export const Sidebar: React.FC = () => {
                                           )}
 
                                           {/* Активний індикатор (вертикальна лінія) */}
-                                            {isOpen && isActive && (
-                                              <div
-                                                className={cn(
-                                                  'absolute inset-y-1.5 right-1 w-[3px] rounded-full bg-gradient-to-b',
-                                                  colors.activeIndicator,
-                                                )}
-                                              />
-                                            )}
-                                          </>
-                                        );
-                                      }}
+                                          {isOpen && isActive && (
+                                            <div
+                                              className={cn(
+                                                'absolute inset-y-1.5 right-1 w-[3px] rounded-full bg-gradient-to-b',
+                                                colors.activeIndicator,
+                                              )}
+                                            />
+                                          )}
+                                        </>
+                                      )}
                                     </NavLink>
 
                                     {/* Кнопка Обране */}
