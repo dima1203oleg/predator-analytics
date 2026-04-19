@@ -58,6 +58,8 @@ const MarketHub = lazy(() => import('./pages/MarketHub'));
 const SearchHub = lazy(() => import('./pages/SearchHub'));
 const OSINTHub = lazy(() => import('./pages/OSINTHub'));
 const DiligencePage = lazy(() => import('./pages/DiligencePage'));
+const FinancialHub = lazy(() => import('./pages/FinancialHub'));
+
 
 const FactoryStudio = lazy(() => import('./features/factory/FactoryStudio'));
 const SystemFactoryView = lazy(() => import('./features/factory/SystemFactoryView'));
@@ -158,18 +160,21 @@ export const AppRoutesNew = () => {
             <Route path="/risk-scoring" element={<RiskScoringPremium />} />
             <Route path="/sanctions" element={<Navigate to="/osint?tab=sanctions" replace />} />
             <Route path="/osint" element={<OSINTHub />} />
-            <Route path="/aml" element={<AMLScoringView />} />
+            <Route path="/aml" element={<Navigate to="/financial?tab=aml" replace />} />
+
             <Route path="/network/:ueid" element={<NetworkGraph />} />
             <Route path="/cases" element={<CasesView />} />
             <Route path="/power-structure" element={<PowerStructureView />} />
             <Route path="/compliance" element={<ComplianceView />} />
 
             {/* 4. ФІНАНСОВА РОЗВІДКА (EMERALD HUB) */}
-            <Route path="/swift-monitor" element={<FinancialSigintView />} />
-            <Route path="/offshore-detector" element={<FinancialSigintView />} />
-            <Route path="/asset-freeze-tracker" element={<FinancialSigintView />} />
+            <Route path="/financial" element={<FinancialHub />} />
+            <Route path="/swift-monitor" element={<Navigate to="/financial?tab=swift" replace />} />
+            <Route path="/offshore-detector" element={<Navigate to="/financial?tab=offshore" replace />} />
+            <Route path="/asset-freeze-tracker" element={<Navigate to="/financial?tab=assets" replace />} />
             <Route path="/financials/:ueid" element={<FinancialDashboardPage />} />
             <Route path="/portfolio-analysis" element={<PortfolioRiskView />} />
+
 
             {/* 5. AI НЕКСУС (BLUE HUB) */}
             <Route path="/nexus" element={<PredictiveNexusView />} />

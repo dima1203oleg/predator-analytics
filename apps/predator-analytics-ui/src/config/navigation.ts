@@ -38,8 +38,10 @@ import {
   ShieldX,
   Fingerprint,
   User,
+  ShieldCheck,
   type LucideIcon,
 } from 'lucide-react';
+
 
 export type NavAccent =
   | 'gold'
@@ -502,12 +504,13 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'aml',
         label: 'AML Аналізатор',
-        path: '/aml',
+        path: '/financial?tab=aml',
         icon: Scale,
         description: 'Виявлення схем відмивання коштів.',
         group: 'Комплаєнс',
         priority: 92,
       },
+
       {
         id: 'registries',
         label: 'Центр реєстрів',
@@ -545,9 +548,18 @@ const baseNavigationConfig: NavSection[] = [
     accent: 'emerald',
     items: [
       {
+        id: 'financial-hub',
+        label: 'Консолідований хаб',
+        path: '/financial',
+        icon: Landmark,
+        description: 'Єдиний центр управління фінансовою розвідкою.',
+        group: 'Управління',
+        priority: 100,
+      },
+      {
         id: 'swift-monitor',
         label: 'Транзакційний монітор',
-        path: '/swift-monitor',
+        path: '/financial?tab=swift',
         icon: Activity,
         description: 'Аналіз транзакцій у реальному часі.',
         group: 'Фінанси',
@@ -557,21 +569,31 @@ const baseNavigationConfig: NavSection[] = [
       {
         id: 'offshore-detector',
         label: 'Офшорний детектор',
-        path: '/offshore-detector',
+        path: '/financial?tab=offshore',
         icon: Globe,
         description: 'Виявлення підставних компаній та прихованих активів.',
         group: 'Фінанси',
         priority: 97,
       },
       {
+        id: 'aml-radar',
+        label: 'AML Радар',
+        path: '/financial?tab=aml',
+        icon: ShieldCheck,
+        description: 'Виявлення схем відмивання коштів.',
+        group: 'Фінанси',
+        priority: 92,
+      },
+      {
         id: 'asset-freeze-tracker',
         label: 'Трекер активів',
-        path: '/asset-freeze-tracker',
+        path: '/financial?tab=assets',
         icon: Lock,
         description: 'Моніторинг заморожених та ризикових активів.',
         group: 'Фінанси',
         priority: 88,
       },
+
     ],
   },
   {

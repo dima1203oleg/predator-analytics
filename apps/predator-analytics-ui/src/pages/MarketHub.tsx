@@ -5,27 +5,24 @@ import {
   Truck, 
   Users, 
   Settings2,
-  Zap
+  Zap,
+  TrendingUp,
+  Activity,
+  FileText
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { HubLayout } from '@/components/layout/HubLayout';
-import { MarketOverviewTab } from '../features/market/components/MarketOverviewTab';
 import { dashboardApi } from '@/services/api';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import type { MarketOverviewResponse, TopProduct } from '@/features/market/types';
 import { ValueScreen, type ValueBreakdown } from '@/components/shared/ValueScreen';
-import { TrendingUp, Activity, FileText } from 'lucide-react';
 
-// Ледаче завантаження важких компонентів
-const CustomsIntelligenceView = React.lazy(() => import('@/features/intelligence/CustomsIntelligenceView'));
+// Імпорт компонентів вкладок
+import { MarketOverviewTab } from '../features/market/components/MarketOverviewTab';
+import { CustomsIntelligenceTab } from './tabs/CustomsIntelligenceTab';
+import { SupplyChainTab } from './tabs/SupplyChainTab';
+import { SuppliersTab } from './tabs/SuppliersTab';
 
 type MarketHubTab = 'overview' | 'customs' | 'flows' | 'suppliers';
-
-interface MarketOverviewPayload extends MarketOverviewResponse {
-  overview?: {
-    stats?: any;
-    top_products?: any[];
-  };
-}
 
 const MOCK_OVERVIEW = {
   overview: {
@@ -104,21 +101,21 @@ const MarketHub: React.FC = () => {
           value: stats.total_declarations?.toLocaleString() || '0',
           change: `${stats.declarations_change > 0 ? '+' : ''}${stats.declarations_change}%`,
           positive: stats.declarations_change >= 0,
-          icon: FileText
+          buttonIcon: FileText
         },
         {
           title: 'Обсяг (USD)',
           value: `$${(stats.total_value_usd / 1e9).toFixed(1)}B`,
           change: `${stats.value_change > 0 ? '+' : ''}${stats.value_change}%`,
           positive: stats.value_change >= 0,
-          icon: TrendingUp
+          buttonIcon: TrendingUp
         },
         {
           title: 'Компанії',
           value: stats.active_companies?.toLocaleString() || '0',
           change: `${stats.companies_change > 0 ? '+' : ''}${stats.companies_change}%`,
           positive: stats.companies_change >= 0,
-          icon: Users
+          buttonIcon: Users
         }
       ],
       topProducts: topProducts.map((p: any) => ({
@@ -135,8 +132,8 @@ const MarketHub: React.FC = () => {
     setValueAmount(amount);
     setValueDescription(`Аналітичний звіт по ніші "${productName}" виявив потенціал оптимізації митних витрат.`);
     setValueBreakdown([
-      { label: 'Пряма вигода', value: `$${amount.toLocaleString()}`, detail: 'Оптимізація митної вартості', icon: TrendingUp, tone: 'amber' },
-      { label: 'Ризик-скоринг', value: 'Low', detail: 'Надійність ланцюга', icon: Activity, tone: 'emerald' }
+      { label: 'Пряма вигода', value: `$${amount.toLocaleString()}`, detail: 'Оптимізація митної вартості', buttonIcon: TrendingUp, tone: 'amber' },
+      { label: 'Ризик-скоринг', value: 'Low', detail: 'Надійність ланцюга', buttonIcon: Activity, tone: 'emerald' }
     ]);
     setIsValueScreenOpen(true);
   };
@@ -168,7 +165,7 @@ const MarketHub: React.FC = () => {
         </div>
       }
     >
-      <React.Suspense fallback={<div className="flex items-center justify-center h-64 text-amber-500 animate-pulse font-mono">Ініціалізація нейронного контуру...</div>}>
+      <div className="h-full bg-slate-950/20 backdrop-blur-sm rounded-2xl overflow-hidden">
         {activeTab === 'overview' && (
           <MarketOverviewTab 
             data={normalizedOverview}
@@ -178,22 +175,10 @@ const MarketHub: React.FC = () => {
           />
         )}
         
-        {activeTab === 'customs' && (
-          <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 h-full">
-            <CustomsIntelligenceView />
-          </div>
-        )}
-        
-        {(activeTab === 'flows' || activeTab === 'suppliers') && (
-          <div className="flex flex-col items-center justify-center h-96 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
-            <div className="p-4 rounded-full bg-amber-500/10 text-amber-500 mb-4">
-              <Zap size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white uppercase italic tracking-widest">Модуль у розробці</h3>
-            <p className="text-slate-400 text-sm mt-2 font-mono">INTEGRATION_STATUS: PENDING_v57.4</p>
-          </div>
-        )}
-      </React.Suspense>
+        {activeTab === 'customs' && <CustomsIntelligenceTab />}
+        {activeTab === 'flows' && <SupplyChainTab />}
+        {activeTab === 'suppliers' && <SuppliersTab />}
+      </div>
 
       <ValueScreen
         isOpen={isValueScreenOpen}
