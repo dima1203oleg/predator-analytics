@@ -13,7 +13,45 @@ const ADMIN_KEYS = {
   gitops: ['admin', 'gitops'] as const,
   dataops: ['admin', 'dataops'] as const,
   audit: ['admin', 'audit'] as const,
+  systemStatus: ['admin', 'system', 'status'] as const,
+  systemStats: ['admin', 'system', 'stats'] as const,
+  aiEngines: ['admin', 'system', 'engines'] as const,
+  systemLogs: ['admin', 'system', 'logs'] as const,
 };
+
+// ─── System & AI ─────────────────────────────────────────────────────────────
+
+export function useSystemStatus() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.systemStatus,
+    queryFn: () => adminApi.system.getStatus(),
+    refetchInterval: 10000,
+  });
+}
+
+export function useSystemStats() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.systemStats,
+    queryFn: () => adminApi.system.getStats(),
+    refetchInterval: 2000, // Faster for meters
+  });
+}
+
+export function useAIEngines() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.aiEngines,
+    queryFn: () => adminApi.system.getEngines(),
+    refetchInterval: 5000,
+  });
+}
+
+export function useSystemLogs() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.systemLogs,
+    queryFn: () => adminApi.system.getLogs(),
+    refetchInterval: 8000,
+  });
+}
 
 // ─── Telemetry ───────────────────────────────────────────────────────────────
 

@@ -7,8 +7,8 @@
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   Activity,
   AlertCircle,
@@ -33,7 +33,7 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { systemApi, type SystemStatsResponse, type SystemStatusResponse } from '@/services/api/system';
+import { useSystemStatus, useSystemStats, useAIEngines, useSystemLogs } from '@/hooks/useAdminApi';
 import { cn } from '@/utils/cn';
 import {
   normalizeAIControlPlaneSnapshot,
@@ -59,7 +59,7 @@ const toneClasses: Record<AIControlTone, { border: string; panel: string; text: 
     badge: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
   },
   sky: {
-    border: 'border-amber-500/20', // Migrated to Gold accent
+    border: 'border-amber-500/20', 
     panel: 'bg-amber-500/10',
     text: 'text-amber-500',
     badge: 'border-amber-500/20 bg-amber-500/10 text-amber-500',
@@ -213,82 +213,52 @@ const LogRow = ({ log }: { log: AIControlLogRecord }) => {
 export default function AIControlPlane() {
   const backendStatus = useBackendStatus();
   const [activeTab, setActiveTab] = useState<TabId>('engines');
-  const [enginesPayload, setEnginesPayload] = useState<unknown>(null);
-  const [systemStatus, setSystemStatus] = useState<SystemStatusResponse | null>(null);
-  const [systemStats, setSystemStats] = useState<SystemStatsResponse | null>(null);
-  const [logsPayload, setLogsPayload] = useState<unknown>([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [feedback, setFeedback] = useState<string | null>(null);
 
-  const loadData = useCallback(async (silent: boolean = false) => {
-    if (silent) {
-      setRefreshing(true);
-    }
+  // TanStack Query Hooks (v56.5-ELITE Integration)
+  const { data: statusData, isLoading: statusLoading, refetch: refetchStatus, isRefetching: statusRefetching } = useSystemStatus();
+  const { data: statsData, refetch: refetchStats, isRefetching: statsRefetching } = useSystemStats();
+  const { data: enginesData, isLoading: enginesLoading, refetch: refetchEngines, isRefetching: enginesRefetching } = useAIEngines();
+  const { data: logsData, isLoading: logsLoading, refetch: refetchLogs, isRefetching: logsRefetching } = useSystemLogs();
 
-    try {
-      const [enginesResult, statusResult, statsResult, logsResult] = await Promise.allSettled([
-        systemApi.getEngines(),
-        systemApi.getStatus(),
-        systemApi.getStats(),
-        systemApi.getLogs(24),
-      ]);
+  const isInitialLoading = statusLoading || enginesLoading || logsLoading;
+  const isRefreshing = statusRefetching || statsRefetching || enginesRefetching || logsRefetching;
 
-      setEnginesPayload(enginesResult.status === 'fulfilled' ? enginesResult.value : null);
-      setSystemStatus(statusResult.status === 'fulfilled' ? statusResult.value : null);
-      setSystemStats(statsResult.status === 'fulfilled' ? statsResult.value : null);
-      setLogsPayload(logsResult.status === 'fulfilled' ? logsResult.value : []);
+  const snapshot = normalizeAIControlPlaneSnapshot(
+    enginesData,
+    statusData ?? null,
+    statsData ?? null,
+    logsData
+  );
 
-      const failures = [enginesResult, statusResult, statsResult, logsResult].filter((result) => result.status === 'rejected').length;
+  const handleRefresh = async () => {
+    await Promise.all([
+      refetchStatus(),
+      refetchStats(),
+      refetchEngines(),
+      refetchLogs()
+    ]);
+  };
 
-      if (failures === 4) {
-        setFeedback('Контур керування ШІ не отримав підтверджених даних від системних маршрутів.');
-      } else {
-        setFeedback(null);
-        
-        if (!silent) {
-            // ЕЛІТ-діагностика: успішна синхронізація контуру
-            if (backendStatus.isOffline) {
-                window.dispatchEvent(new CustomEvent('predator-error', {
-                  detail: {
-                    service: 'AI_ControlPlane',
-                    message: `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`,
-                    severity: 'warning',
-                    timestamp: new Date().toISOString(),
-                    code: 'CONTROL_PLANE_OFFLINE'
-                  }
-                }));
-            } else {
-                window.dispatchEvent(new CustomEvent('predator-error', {
-                  detail: {
-                    service: 'AI_ControlPlane',
-                    message: `КОНТУР_КЕРУВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`,
-                    severity: 'info',
-                    timestamp: new Date().toISOString(),
-                    code: 'CONTROL_PLANE_SUCCESS'
-                  }
-                }));
-            }
-        }
-      }
-    } catch (error) {
-      console.error('[AIControlPlane] Не вдалося завантажити дані:', error);
-      setFeedback('Контур керування ШІ не зміг синхронізувати реальні дані з бекендом.');
-    } finally {
-      setRefreshing(false);
-    }
-  }, []);
-
+  // Ефект для діагностики контуру
   useEffect(() => {
-    void loadData();
+    if (!isInitialLoading && snapshot.hasAnyData) {
+      const message = backendStatus.isOffline
+        ? `АВТОНОМНИЙ_КОНТУР [${backendStatus.nodeSource}]: Телеметрія рушіїв завантажена з кешу Mirror Vault.`
+        : `КОНТУР_КЕРУВАННЯ [${backendStatus.nodeSource}]: Телеметрію рушіїв успішно синхронізовано.`;
 
-    const interval = window.setInterval(() => {
-      void loadData(true);
-    }, 30000);
-
-    return () => window.clearInterval(interval);
-  }, [loadData]);
-
-  const snapshot = normalizeAIControlPlaneSnapshot(enginesPayload, systemStatus, systemStats, logsPayload);
+      window.dispatchEvent(
+        new CustomEvent('predator-error', {
+          detail: {
+            service: 'AI_ControlPlane',
+            message,
+            severity: backendStatus.isOffline ? 'warning' : 'info',
+            timestamp: new Date().toISOString(),
+            code: backendStatus.isOffline ? 'CONTROL_PLANE_OFFLINE' : 'CONTROL_PLANE_SUCCESS',
+          },
+        })
+      );
+    }
+  }, [isInitialLoading, snapshot.hasAnyData, backendStatus.isOffline, backendStatus.nodeSource]);
 
   return (
     <PageTransition>
@@ -343,16 +313,14 @@ export default function AIControlPlane() {
             actions={(
               <button
                 type="button"
-                onClick={() => {
-                  void loadData(true);
-                }}
-                disabled={refreshing}
+                onClick={handleRefresh}
+                disabled={isRefreshing}
                 className={cn(
                   'inline-flex items-center justify-center gap-3 rounded-[22px] border border-white/10 bg-white/5 px-5 py-3 text-[11px] font-black uppercase tracking-[0.24em] text-white transition hover:bg-white/10',
-                  refreshing && 'cursor-not-allowed opacity-60',
+                  isRefreshing && 'cursor-not-allowed opacity-60',
                 )}
               >
-                {refreshing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+                {isRefreshing ? <Loader2 size={15} className="animate-spin" /> : <RefreshCw size={15} />}
                 Оновити дані
               </button>
             )}
@@ -376,17 +344,24 @@ export default function AIControlPlane() {
             </Badge>
           </div>
 
-          {feedback && (
-            <div className="rounded-[24px] border border-amber-500/20 bg-amber-500/10 px-5 py-4 text-sm leading-6 text-amber-100">
-              {feedback}
+          {isInitialLoading && !snapshot.hasAnyData && (
+            <div className="flex min-h-[400px] flex-col items-center justify-center space-y-6">
+               <Loader2 className="h-12 w-12 animate-spin text-[#D4AF37]" />
+               <div className="text-sm font-black uppercase tracking-widest text-[#D4AF37]/70">Завантаження контуру...</div>
             </div>
           )}
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
-            {snapshot.metrics.map((metric) => (
-              <MetricCard key={metric.id} metric={metric} />
-            ))}
-          </div>
+          {!isInitialLoading && snapshot.metrics.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid gap-6 md:grid-cols-2 xl:grid-cols-5"
+            >
+              {snapshot.metrics.map((metric) => (
+                <MetricCard key={metric.id} metric={metric} />
+              ))}
+            </motion.div>
+          )}
 
           <div className="flex flex-wrap gap-3 rounded-[28px] border border-white/10 bg-slate-950/50 p-3">
             {[

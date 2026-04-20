@@ -63,9 +63,73 @@ export interface DataOpsStatus {
   factoryModules: any[];
 }
 
+export interface SystemEngine {
+  id: string;
+  status: 'optimal' | 'calibrating' | 'degraded' | 'offline';
+  score: number;
+  throughput: number;
+  latency: number;
+  load: number;
+  trend: string;
+  tone: string;
+}
+
+export interface SystemStats {
+  cpu_percent: number;
+  memory_percent: number;
+  memory_total: number;
+  memory_used: number;
+  gpu_available: boolean;
+  gpu_name?: string;
+  gpu_temp?: number;
+  gpu_utilization?: number;
+  gpu_mem_total?: number;
+  gpu_mem_used?: number;
+  uptime_seconds: number;
+  timestamp: string;
+}
+
+export interface SystemStatus {
+  status: string;
+  healthy: boolean;
+  overall_status: string;
+  version: string;
+  uptime: string;
+  services: Array<{
+    name: string;
+    status: string;
+    label: string;
+    latency_ms: number;
+  }>;
+  summary: {
+    total: number;
+    healthy: number;
+    degraded: number;
+    failed: number;
+  };
+  timestamp: string;
+}
+
+import { apiClient } from './api/config';
+import { v2Client } from './v2Api';
+
 // ─── API Implementation ──────────────────────────────────────────────────────
 
 export const adminApi = {
+  system: {
+    getStatus: async (): Promise<SystemStatus> => {
+      return (await apiClient.get<SystemStatus>('/system/status')).data;
+    },
+    getStats: async (): Promise<SystemStats> => {
+      return (await apiClient.get<SystemStats>('/system/stats')).data;
+    },
+    getEngines: async (): Promise<SystemEngine[]> => {
+      return (await apiClient.get<SystemEngine[]>('/system/engines')).data;
+    },
+    getLogs: async (): Promise<{ logs: any[] }> => {
+      return (await apiClient.get<{ logs: any[] }>('/system/logs/stream')).data;
+    },
+  },
   infra: {
     getTelemetry: async (): Promise<InfraTelemetryResponse> => {
       return (await v2Client.get<InfraTelemetryResponse>('/admin/telemetry')).data;

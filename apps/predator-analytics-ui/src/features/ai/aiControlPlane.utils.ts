@@ -1,5 +1,5 @@
 import type { EngineInfo } from '@/services/api/dashboard';
-import type { SystemStatsResponse, SystemStatusResponse } from '@/services/api/system';
+import type { SystemStats, SystemStatus, SystemEngine } from '@/services/adminApi';
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -269,8 +269,8 @@ const readLatestLogTimestamp = (value: unknown): string | null => {
 
 export const normalizeAIControlPlaneSnapshot = (
   enginesPayload: unknown,
-  systemStatus: SystemStatusResponse | null,
-  systemStats: SystemStatsResponse | null,
+  systemStatus: SystemStatus | null,
+  systemStats: SystemStats | null,
   logsPayload: unknown,
 ): AIControlSnapshot => {
   const engineEntries = normalizeEngineEntries(enginesPayload);

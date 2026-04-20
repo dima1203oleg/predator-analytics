@@ -90,6 +90,38 @@ let systemState = {
     recentEvents: [
       { id: 'log-1', ts: new Date().toISOString(), user: 'admin@predator', method: 'GET', endpoint: '/api/v2/admin/telemetry', status: 200, latencyMs: 15, ip: '127.0.0.1' }
     ]
+  },
+  system: {
+    status: {
+      status: 'ok',
+      healthy: true,
+      overall_status: 'HEALTHY',
+      version: 'v56.5-ELITE',
+      environment: 'production',
+      uptime: '12d 4h 21m',
+      last_sync: new Date().toISOString(),
+      services: [
+        { name: 'API Gateway', status: 'ok', label: 'API', latency_ms: 12 },
+        { name: 'Kafka Cluster', status: 'ok', label: 'KAFKA', latency_ms: 5 },
+        { name: 'Neo4j DB', status: 'ok', label: 'NEO4J', latency_ms: 24 },
+        { name: 'Redis Cache', status: 'ok', label: 'REDIS', latency_ms: 2 },
+        { name: 'Ollama Node', status: 'ok', label: 'OLLAMA', latency_ms: 890 },
+      ],
+      summary: { total: 5, healthy: 5, degraded: 0, failed: 0 },
+      metrics: { api_qps: 124, active_users: 12 },
+      timestamp: new Date().toISOString(),
+    },
+    engines: [
+      { id: 'qwen3-coder', status: 'optimal', score: 98, throughput: 1240, latency: 450, load: 32, trend: 'stable', tone: 'emerald' },
+      { id: 'nemotron-30b', status: 'optimal', score: 94, throughput: 850, latency: 1200, load: 55, trend: 'improving', tone: 'emerald' },
+      { id: 'vision-mini', status: 'calibrating', score: 88, throughput: 120, latency: 2400, load: 12, trend: 'testing', tone: 'amber' },
+      { id: 'search-rag', status: 'optimal', score: 91, throughput: 3400, latency: 120, load: 18, trend: 'stable', tone: 'emerald' },
+    ],
+    logs: [
+      { id: 'l1', level: 'info', service: 'core-api', message: 'Систему моніторингу активовано', timestamp: new Date().toISOString() },
+      { id: 'l2', level: 'warn', service: 'ingestion', message: 'Виявлено затримку в Kafka topic: customs.raw', timestamp: new Date().toISOString() },
+      { id: 'l3', level: 'info', service: 'ai-engine', message: 'Модель Qwen3-Coder завантажена у VRAM', timestamp: new Date().toISOString() },
+    ]
   }
 };
 
@@ -178,6 +210,39 @@ const server = http.createServer((req, res) => {
   // 6. Security Audit
   if (path === '/api/v2/admin/security/audit' && req.method === 'GET') {
     return sendJSON(res, systemState.security.recentEvents);
+  }
+
+  // 7. System (V1)
+  if (path === '/api/v1/system/status' && req.method === 'GET') {
+    systemState.system.status.timestamp = new Date().toISOString();
+    return sendJSON(res, systemState.system.status);
+  }
+
+  if (path === '/api/v1/system/stats' && req.method === 'GET') {
+    const memoryTotal = 32768; // 32GB
+    const vramTotal = 8192;   // 8GB
+    return sendJSON(res, {
+      cpu_percent: 15 + Math.random() * 20,
+      memory_percent: 45 + Math.random() * 5,
+      memory_total: memoryTotal,
+      memory_used: memoryTotal * 0.45,
+      gpu_available: true,
+      gpu_name: 'NVIDIA RTX 4090 (Mock)',
+      gpu_temp: 65 + Math.random() * 5,
+      gpu_utilization: 30 + Math.random() * 10,
+      gpu_mem_total: vramTotal,
+      gpu_mem_used: 4200 + Math.random() * 500,
+      uptime_seconds: 1044000,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (path === '/api/v1/system/engines' && req.method === 'GET') {
+    return sendJSON(res, systemState.system.engines);
+  }
+
+  if (path === '/api/v1/system/logs/stream' && req.method === 'GET') {
+    return sendJSON(res, { logs: systemState.system.logs });
   }
 
   // 404
