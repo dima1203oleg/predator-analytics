@@ -1,9 +1,9 @@
 /**
- * 🚨 RISK SCORING PREMIUM // МОНІТОРИНГ РИЗИКІВ | v57.3-WRAITH
+ * 🚨 RISK SCORING PREMIUM // МОНІТОРИНГ РИЗИКІВ | v58.2-WRAITH
  * PREDATOR Analytics — Advanced Risk Assessment & Forensic Investigation
  * 
  * Система виявлення схем, санкційного комплаєнсу та глибокої перевірки суб'єктів.
- * PREDATOR_WRATH v57.3 · Tactical · Tier-1
+ * PREDATOR_WRAITH v58.2 · Tactical · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -31,8 +31,7 @@ import { SovereignReportWidget } from '@/components/intelligence/SovereignReport
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { SovereignAudio } from '@/utils/sovereign-audio';
-
-
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 interface Investigation {
   id: string;
@@ -56,10 +55,8 @@ const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; bo
   elevated: { label: 'ПІДВИЩЕНИЙ', color: '#F43F5E', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-none', icon: AlertTriangle },
 };
 
-import { useBackendStatus } from '@/hooks/useBackendStatus';
-
 // ========================
-// Background Scanning HUD v57.2
+// Background Scanning HUD v58.2
 // ========================
 
 const ScanningHUD: React.FC = () => {
@@ -73,7 +70,7 @@ const ScanningHUD: React.FC = () => {
             <div className="absolute top-40 left-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic">
                 <span>ARRAY_STATUS: ACTIVE</span>
                 <span>FAILOVER_READY: STANDBY</span>
-                <span>COGNITIVE_ENGINE: WRAITH_57.3</span>
+                <span>COGNITIVE_ENGINE: WRAITH_58.2</span>
             </div>
             <div className="absolute bottom-40 right-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic text-right">
                 <span>РИЗИК_МАТРИЦЯ_ОТЛАДКА: ON</span>
@@ -84,7 +81,7 @@ const ScanningHUD: React.FC = () => {
 };
 
 // ========================
-// Risk Cognitive Parser v57.2
+// Risk Cognitive Parser v58.2
 // ========================
 
 const RiskCognitiveParser: React.FC = () => {
@@ -260,7 +257,7 @@ export default function RiskScoringPremium() {
                       WRAITH_COGNITIVE_SCAN // {isOffline ? 'FAILOVER_ACTIVE' : 'COGNITIVE_SYNC'}
                     </span>
                     <div className="h-px w-16 bg-rose-500/20" />
-                    <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v57.3-WRAITH</span>
+                    <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РИЗИК <span className="text-rose-500 underline decoration-rose-500/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СКОРИНГ</span>
@@ -282,7 +279,7 @@ export default function RiskScoringPremium() {
             ]}
           />
 
-          {/* COGNITIVE HUB v57.2 */}
+          {/* COGNITIVE HUB v58.2 */}
           <div className="grid grid-cols-12 gap-10">
               <div className="col-span-12 xl:col-span-8">
                   <RiskCognitiveParser />

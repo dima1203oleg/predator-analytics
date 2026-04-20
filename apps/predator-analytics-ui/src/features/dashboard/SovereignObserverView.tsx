@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Observer Matrix | v57.2-WRAITH ПРЕМІУМ-МАТРИЦЯ
+ * 👁️ Sovereign Observer Matrix | v58.2-WRAITH ПРЕМІУМ-МАТРИЦЯ
  * PREDATOR SOM (МОДУЛЬ СУВЕРЕННОГО НАГЛЯДУ)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
@@ -9,7 +9,7 @@
  * - Idea Garden (Сад Гіпотез)
  * - Стан "Цифрового двійника" (Digital Twin)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect, useRef } from 'react';

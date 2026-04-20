@@ -1,5 +1,5 @@
 /**
- * 💎 CUSTOMS PREMIUM // МИТНИЙ ПРО | v57.2-WRAITH
+ * 💎 CUSTOMS PREMIUM // МИТНИЙ ПРО | v58.2-WRAITH
  * PREDATOR Analytics — Commercial Intelligence & Deep Market Analysis
  * 
  * Глибока аналітика для бізнесу: Аналіз конкурентів, ринкові ніші,
@@ -109,7 +109,7 @@ export default function CustomsIntelligencePremium() {
                       {isOffline ? 'SOVEREIGN_EMERGENCY' : 'PREMIUM_MARKET_INTEL'} // SOVEREIGN_QUOTA
                     </span>
                     <div className="h-px w-16 bg-rose-500/20" />
-                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     МИТНИЙ <span className={cn("underline decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter", isOffline ? "text-rose-500 decoration-rose-500/20" : "text-rose-600 decoration-rose-600/30")}>PROJECT</span>

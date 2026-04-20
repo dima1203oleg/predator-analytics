@@ -1,5 +1,5 @@
 /**
- * 📡 ГЕОПОЛІТИЧНИЙ СЕЙСМОГРАФ | v57.2-WRAITH
+ * 📡 ГЕОПОЛІТИЧНИЙ СЕЙСМОГРАФ | v58.2-WRAITH
  * PREDATOR Analytics — Geopolitical Risk Intelligence
  *
  * Real-time геополітичні тренди, санкції, конфлікти,
@@ -253,7 +253,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     ГЕОПОЛІТИЧНА_SIGINT // АКТИВНИЙ_МАСИВ
                   </span>
                   <div className="h-px w-12 bg-amber-500/20" />
-                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                   ГЕОПОЛІТИЧНИЙ <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СЕЙСМОГРАФ</span>

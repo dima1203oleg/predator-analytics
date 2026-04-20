@@ -1,5 +1,5 @@
 /**
- * 🛰️ ENTITY RADAR // РАДАР СУБ'ЄКТІВ | v57.2-WRAITH
+ * 🛰️ ENTITY RADAR // РАДАР СУБ'ЄКТІВ | v58.2-WRAITH
  * PREDATOR Analytics — Sovereign Intelligence & Network Analysis
  * 
  * Модуль глобального моніторингу та радарного виявлення аномальних
@@ -286,7 +286,7 @@ const EntityRadarView: React.FC = () => {
                       PREDATOR_RADAR // {isOffline ? 'MIRROR_SCAN' : 'NEURAL_ENTITY_SCANNER'}
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РАДАР <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СУБ'ЄКТІВ</span>

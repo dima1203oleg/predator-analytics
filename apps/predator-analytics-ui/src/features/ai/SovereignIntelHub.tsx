@@ -1,5 +1,5 @@
 /**
- * 🎯 Sovereign Intelligence Hub | v57.2-WRAITH
+ * 🎯 Sovereign Intelligence Hub | v58.2-WRAITH
  * PREDATOR — Центральний Вузол Когнітивної Розвідки
  * 
  * Інтерактивний інтерфейс для взаємодії з Оракулом та аналізу нейронних потоків.
@@ -19,7 +19,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -119,7 +119,7 @@ export default function SovereignIntelHub() {
                                 <div className="flex items-center gap-4 mb-2">
                                     <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
                                     <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.8em]">
-                                        GLM-5.1 SOVEREIGN AGENT · v57.2-WRAITH
+                                        GLM-5.1 SOVEREIGN AGENT · v58.2-WRAITH
                                     </span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none italic">

@@ -20,7 +20,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
         >
             {/* Core RLHF Control Section */}
             <div className="lg:col-span-2 space-y-8">
-                <TacticalCard variant="holographic" title="TEXT-TO-SQL RLHF CALIBRATION v57.2-WRAITH" className="panel-3d group">
+                <TacticalCard variant="holographic" title="TEXT-TO-SQL RLHF CALIBRATION v58.2-WRAITH" className="panel-3d group">
                     <div className="space-y-8">
                         {/* Model Status Module */}
                         <div className="relative p-8 bg-slate-900/60 border border-white/5 rounded-[40px] overflow-hidden">
@@ -38,7 +38,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                                         <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">CodeLlama-34b-v45-Instruct</h3>
                                         <div className="flex gap-4 mt-3">
                                             <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-slate-700" /> Weights: Frozen</span>
-                                            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> LoRA: Active_v57.2-WRAITH</span>
+                                            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-widest flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> LoRA: Active_v58.2-WRAITH</span>
                                         </div>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@ export const CalibrationView: React.FC<CalibrationViewProps> = ({ trainingPairs,
                     </div>
                 </TacticalCard>
 
-                {/* System Logs v57.2-WRAITH */}
+                {/* System Logs v58.2-WRAITH */}
                 <div className="p-8 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[40px] space-y-4">
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Synthesis Logs</span>

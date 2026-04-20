@@ -16,7 +16,7 @@ import type {
 } from '@/features/diligence/types';
 import { cn } from '@/utils/cn';
 import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import ReactECharts from '@/components/ECharts';
 
 // --- TYPES & HELPERS ---

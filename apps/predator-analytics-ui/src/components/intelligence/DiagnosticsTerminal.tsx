@@ -1,5 +1,5 @@
 /**
- * 📟 DIAGNOSTICS TERMINAL | v57.2-WRAITH
+ * 📟 DIAGNOSTICS TERMINAL | v58.2-WRAITH
  * Centralized error tracking and system logging for the Intelligence Nexus.
  * Listens for 'predator-error' events and displays them in a cinematic UX.
  * 
@@ -93,7 +93,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-rose-500 italic tracking-widest uppercase">SYSLOG_DIAGNOSTICS</h3>
-                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v57.2-WRAITH // ERR_TRACKER</p>
+                  <p className="text-[8px] font-bold text-slate-700 uppercase tracking-[0.3em]">v58.2-WRAITH // ERR_TRACKER</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -168,7 +168,7 @@ export const DiagnosticsTerminal: React.FC = () => {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <Cpu size={12} className="text-rose-500" />
-                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v57.3-WRAITH</span>
+                  <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">KERNEL: v58.3-WRAITH</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Database size={12} className="text-rose-500" />

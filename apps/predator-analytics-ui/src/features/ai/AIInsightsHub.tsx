@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';

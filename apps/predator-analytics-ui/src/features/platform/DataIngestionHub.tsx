@@ -1,9 +1,9 @@
 /**
- * 🌀 Omni-Data Ingestion Nexus | v57.2-WRAITH Premium Matrix
+ * 🌀 Omni-Data Ingestion Nexus | v58.2-WRAITH Premium Matrix
  * PREDATOR Цитадель Захоплення та Обробки Даних
  * 
  * Керування потоками інформації, підключення джерел та моніторинг ETL.
- * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -19,7 +19,7 @@ import {
 import { useIngestionStore, IngestionJob } from '@/store/useIngestionStore';
 import { apiClient as api } from '@/services/api/config';
 import { cn } from '@/utils/cn';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -458,7 +458,7 @@ const DataIngestionHub: React.FC = () => {
 
                         <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v57.2-WRAITH
+                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v58.2-WRAITH
                             </div>
                             <div className="flex gap-6">
                                 <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">

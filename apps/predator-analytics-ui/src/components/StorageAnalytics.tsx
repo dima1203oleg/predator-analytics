@@ -22,7 +22,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './TacticalCard';
+import { TacticalCard } from './ui/TacticalCard';
 
 interface BucketInfo {
   name: string;

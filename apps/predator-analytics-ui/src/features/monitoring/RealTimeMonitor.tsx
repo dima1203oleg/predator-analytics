@@ -1,5 +1,5 @@
 /**
- * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v57.2-WRAITH
+ * 🔴 REAL-TIME EVENT MONITOR // МОНІТОРИНГ ПОДІЙ | v58.2-WRAITH
  * Live feed від Kafka + WebSocket streaming
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -16,7 +16,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -156,7 +156,7 @@ export const RealTimeMonitor: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span className="badge-v2 bg-red-600/10 border border-red-600/20 text-red-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                      LIVE_MONITORING // TITAN_v57.2
+                      LIVE_MONITORING // TITAN_v58.2
                     </span>
                     <div className="h-px w-10 bg-red-600/20" />
                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">REALTIME_SCAN</span>

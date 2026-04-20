@@ -1,5 +1,5 @@
 /**
- * 📊 CERS 5-Layer Gauge | PREDATOR v57.2-WRAITH-SM-EXTENDED
+ * 📊 CERS 5-Layer Gauge | PREDATOR v58.2-WRAITH-SM-EXTENDED
  * Візуалізація 5 шарів ризику (Behavioral, Institutional, Influence, Structural, Predictive).
  */
 import React from 'react';
@@ -111,7 +111,7 @@ export const Cers5LayerGauge: React.FC<Cers5LayerGaugeProps> = ({ factors, total
                     </div>
                     <div>
                         <h3 className="text-xl font-black text-white uppercase tracking-tighter">Canonical CERS Score</h3>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">v57.2-WRAITH_MOD_INTEGRITY</p>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">v58.2-WRAITH_MOD_INTEGRITY</p>
                     </div>
                 </div>
 

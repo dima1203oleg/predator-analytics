@@ -65,7 +65,7 @@ const GlobalNeuralMesh: React.FC<GlobalNeuralMeshProps> = ({ status }) => {
             </div>
             <div>
               <h2 className="text-xl font-black text-white tracking-widest uppercase italic uppercase">ГЛОБАЛЬНА НЕЙРОННА МЕРЕЖА</h2>
-              <p className="text-[10px] text-yellow-600/60 font-black font-mono uppercase tracking-[0.3em]">Distributed Intelligence v57.2-WRAITH</p>
+              <p className="text-[10px] text-yellow-600/60 font-black font-mono uppercase tracking-[0.3em]">Distributed Intelligence v58.2-WRAITH</p>
             </div>
           </div>
           <div className="flex gap-4 items-center">

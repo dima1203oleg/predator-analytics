@@ -20,7 +20,7 @@ import {
   Network
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { TacticalCard } from './TacticalCard';
+import { TacticalCard } from './ui/TacticalCard';
 
 interface LLMProvider {
   id: string;

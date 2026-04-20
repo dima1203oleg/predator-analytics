@@ -20,7 +20,7 @@ import {
     GitBranch,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { HoloContainer } from '@/components/HoloContainer';

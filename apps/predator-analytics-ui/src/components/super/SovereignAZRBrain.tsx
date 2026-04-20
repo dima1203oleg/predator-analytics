@@ -26,7 +26,7 @@ interface OSINTSignal {
 }
 
 /**
- * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v57.2-WRAITH
+ * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v58.2-WRAITH
  * -------------------------------------------------------------
  * Central Intelligence Nexus — Вершина OSINT-архітектури України.
  * Керує автономним навчанням, загоєнням та стратегічним висновком.
@@ -149,7 +149,7 @@ const SovereignAZRBrain: React.FC = () => {
               <div>
                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic flex items-center gap-4">
                   SOVEREIGN <span className="text-yellow-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">AZR BRAIN</span>
-                  <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v57.2-WRAITH</span>
+                  <span className="text-[11px] bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 px-4 py-1.5 rounded-full not-italic tracking-[0.4em] font-black uppercase shadow-inner">v58.2-WRAITH</span>
                 </h1>
                 <p className="text-sm text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-3 mt-2">
                   <TrendingUp size={14} className="text-emerald-400" />
@@ -286,7 +286,7 @@ const SovereignAZRBrain: React.FC = () => {
               </div>
             </div>
 
-            {/* Sovereign Auto-Heal (v57.2) */}
+            {/* Sovereign Auto-Heal (v58.2) */}
             <div className="p-8 bg-slate-950/60 backdrop-blur-3xl border border-rose-500/10 rounded-[40px] shadow-2xl relative overflow-hidden group">
                <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
                <div className="flex items-center justify-between mb-6">
@@ -406,7 +406,7 @@ const SovereignAZRBrain: React.FC = () => {
                <Fingerprint className="absolute -bottom-4 -right-4 text-yellow-500 opacity-10" size={100} />
                <h4 className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase mb-4">СЕРТИФІКАТ СУВЕРЕНІТЕТУ</h4>
                <p className="text-[11px] text-slate-300 font-bold italic leading-relaxed opacity-70">
-                 Платформа PREDATOR Analytics v57.2-WRAITH є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
+                 Платформа PREDATOR Analytics v58.2-WRAITH є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
                </p>
                <div className="mt-6 flex justify-between items-center text-[10px] font-black font-mono">
                   <span className="text-yellow-600">ID: SOV-99-AX</span>

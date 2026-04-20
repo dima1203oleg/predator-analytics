@@ -24,7 +24,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ResourceDynamicsChart } from '../infrastructure/components/ResourceDynamicsChart';
@@ -136,7 +136,7 @@ export default function PredictiveNexusView() {
                     className="relative z-10 h-full w-full flex flex-col p-6"
                 >
                     <ViewHeader 
-                        title="PREDICTIVE NEXUS v57.2-WRAITH"
+                        title="PREDICTIVE NEXUS v58.2-WRAITH"
                         subtitle="Квантовий Контур Стратегічного Прогнозування (NVIDIA GLM-5.1 Sovereign)"
                         icon={Brain}
                         badges={[

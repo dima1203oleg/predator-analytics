@@ -37,7 +37,7 @@ describe('AIInsightsHub Component', () => {
     render(<AIInsightsHub />);
     
     expect(screen.getByText(/ШІ-Аналіз/i)).toBeDefined();
-    expect(screen.getByText(/v57.2-WRAITH/i)).toBeDefined();
+    expect(screen.getByText(/v58.2-WRAITH/i)).toBeDefined();
   });
 
   it('відправляє подію INSIGHTS_SUCCESS при успішному завантаженні в онлайн режимі', async () => {

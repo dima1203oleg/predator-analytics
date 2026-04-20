@@ -133,7 +133,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
 
-      {/* ── STATUS BAR (v57.2) ── */}
+      {/* ── STATUS BAR (v58.2) ── */}
       <motion.div
         initial={{ y: 100 }} animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 z-[60] h-9 border-t border-white/[0.07] flex items-center px-4 justify-between overflow-hidden"
@@ -188,7 +188,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           <div className="h-3.5 w-px bg-white/10" />
           <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/20">
-            PREDATOR <span className="text-yellow-500/70">WRAITH</span> v58.2
+            PREDATOR <span className="text-rose-500/70">ELITE</span> v57.3-ELITE
           </div>
         </div>
       </motion.div>

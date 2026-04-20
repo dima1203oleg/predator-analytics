@@ -1,5 +1,5 @@
 /**
- * ✅ DUE DILIGENCE WORKFLOW | v57.2-WRAITH
+ * ✅ DUE DILIGENCE WORKFLOW | v58.2-WRAITH
  * PREDATOR Analytics — Tactical Compliance Auditing
  * 
  * Багатоетапний процес перевірки контрагентів із застосуванням
@@ -94,7 +94,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                        DUE_DILIGENCE // COMPLIANCE_SHIELD
                      </span>
                      <div className="h-px w-10 bg-sky-600/20" />
-                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                     ВЕРИФІКАЦІЯ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8">КОНТРАГЕНТА</span>

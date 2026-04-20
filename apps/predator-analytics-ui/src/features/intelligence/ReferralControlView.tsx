@@ -35,7 +35,7 @@ import {
   Activity
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -203,7 +203,7 @@ export default function ReferralControlView() {
           breadcrumbs={['Аналітика', 'Реферальний Контроль']}
           badges={[
             { label: isOffline ? 'MIRROR_MONITORING' : 'CENTRAL_CONTROL', color: isOffline ? 'warning' : 'primary' },
-            { label: 'v57.2-WRAITH', color: 'danger' }
+            { label: 'v58.2-WRAITH', color: 'danger' }
           ]}
           actions={
             <Button 

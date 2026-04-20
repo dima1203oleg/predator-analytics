@@ -1,5 +1,5 @@
 /**
- * ⚙️ КОНФІГУРАЦІЯ API | PREDATOR Analytics v57.2-WRAITH
+ * ⚙️ КОНФІГУРАЦІЯ API | PREDATOR Analytics v58.2-WRAITH
  * Гібридний протокол відмовостійкості (Failover Protocol)
  *
  * Каскад пріоритетів:

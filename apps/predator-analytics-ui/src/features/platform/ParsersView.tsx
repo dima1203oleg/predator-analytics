@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
+ * PREDATOR v58.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТР КЕРУВАННЯ ДЖЕРЕЛАМИ
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
@@ -23,7 +23,7 @@ import {
 
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { PipelineMonitor } from '@/components/pipeline/PipelineMonitor';
@@ -163,7 +163,7 @@ const ParsersView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full pb-20">
                 
-                {/* View Header v57.2-WRAITH */}
+                {/* View Header v58.2-WRAITH */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">

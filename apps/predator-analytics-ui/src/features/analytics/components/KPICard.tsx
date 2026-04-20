@@ -1,5 +1,5 @@
 /**
- * 💰 KPI Card Component | v57.2-WRAITH
+ * 💰 KPI Card Component | v58.2-WRAITH
  * PREDATOR Analytics — Ключові показники
  * Sovereign Power Design · Classified · Tier-1
  */

@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH | Newspaper API — Газета PREDATOR
+ * PREDATOR v58.2-WRAITH | Newspaper API — Газета PREDATOR
  * Сервіс для отримання даних газети: компромат, тренди, митниця, алерти.
  */
 

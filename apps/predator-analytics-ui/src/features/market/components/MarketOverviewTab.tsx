@@ -95,7 +95,7 @@ export const MarketOverviewTab: React.FC<MarketOverviewTabProps> = ({
           <h3 className="text-sm font-bold text-white uppercase tracking-wider italic">
             ТОП-10 товарних категорій за обсягом
           </h3>
-          <div className="text-[10px] text-slate-500 font-mono">CORE_MARKET_SCAN_v57.2</div>
+          <div className="text-[10px] text-slate-500 font-mono">CORE_MARKET_SCAN_v58.2</div>
         </div>
 
         <div className="overflow-x-auto">

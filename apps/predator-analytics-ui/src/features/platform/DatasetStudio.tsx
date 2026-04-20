@@ -19,7 +19,7 @@ import { cn } from '@/utils/cn';
 import { api, mlStudioApi } from '@/services/api';
 import { premiumLocales } from '../../locales/uk/premium';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineMonitor';
 import { UserDatasetsPanel, UserDataset } from '@/components/datasets/UserDatasetsPanel';

@@ -1,5 +1,5 @@
 /**
- * 🗺️ БЕНЕФІЦІАРНА КАРТА (UBO MAP) | v57.2-WRAITH
+ * 🗺️ БЕНЕФІЦІАРНА КАРТА (UBO MAP) | v58.2-WRAITH
  * PREDATOR Analytics — Ultimate Beneficial Owner Intelligence
  *
  * Граф кінцевих бенефіціарів, ланцюги власності,
@@ -369,7 +369,7 @@ const UBOMapView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
                   <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
-                    UBO · SOVEREIGN BENEFICIAL INTEL · v57.2-WRAITH
+                    UBO · SOVEREIGN BENEFICIAL INTEL · v58.2-WRAITH
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">

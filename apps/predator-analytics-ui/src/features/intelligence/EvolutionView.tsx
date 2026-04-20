@@ -1,5 +1,5 @@
 /**
- * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v57.2-WRAITH
+ * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v58.2-WRAITH
  * PREDATOR Analytics — Sovereign Mutation & AZR Synthesis
  * 
  * Центр фіксації та впровадження системних мутацій AZR.
@@ -42,7 +42,7 @@ import EvolutionForge from '@/components/super/EvolutionForge';
 import { AZRImprovementTrace } from '@/components/super/AZRImprovementTrace';
 import { AZRDeploymentCenter } from '@/components/super/AZRDeploymentCenter';
 import { premiumLocales } from '@/locales/uk/premium';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -153,7 +153,7 @@ const EvolutionView: React.FC = () => {
                                             EVOLUTIONARY_LEDGER // {isOffline ? 'MIRROR_MUTATION' : 'NEURAL_MUTATION_CORE'}
                                         </span>
                                         <div className="h-px w-16 bg-yellow-500/20" />
-                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                                     </div>
                                     <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                                         ДВИГУН <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕВОЛЮЦІЇ</span>
@@ -296,7 +296,7 @@ const EvolutionView: React.FC = () => {
                                                 <CyberOrb size={320} color="#D4AF37" intensity={0.8} pulse={true} className="drop-shadow-[0_0_80px_rgba(212,175,55,0.3)]" />
                                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 space-y-4">
                                                     <div className="text-[12px] font-black text-yellow-500/60 uppercase tracking-[0.8em] italic">EVOLUTION_ACTIVE</div>
-                                                    <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v57.2.GEN</div>
+                                                    <div className="text-6xl font-black text-white font-mono tracking-tighter shadow-sm italic uppercase">v58.2.GEN</div>
                                                     <div className="p-4 bg-yellow-500/10 rounded-full border border-yellow-500/20 blur-sm animate-pulse w-32 h-32 absolute -z-10" />
                                                 </div>
                                             </div>
@@ -307,11 +307,11 @@ const EvolutionView: React.FC = () => {
                                                 </h4>
                                                 <div className="space-y-6 pt-4 max-h-[500px] overflow-y-auto no-scrollbar custom-scrollbar italic pr-4">
                                                     {[
-                                                        { version: 'v57.2-WRAITH.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
-                                                        { version: 'v57.2.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
-                                                        { version: 'v57.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
-                                                        { version: 'v57.2-WRAITH.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
-                                                        { version: 'v57.2-WRAITH.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
+                                                        { version: 'v58.2-WRAITH.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
+                                                        { version: 'v58.2.9', date: 'ВЧОРА', changes: 12, type: 'feature' },
+                                                        { version: 'v58.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
+                                                        { version: 'v58.2-WRAITH.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
+                                                        { version: 'v58.2-WRAITH.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
                                                     ].map((v, i) => (
                                                         <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
                                                             <div className="flex items-center gap-5">

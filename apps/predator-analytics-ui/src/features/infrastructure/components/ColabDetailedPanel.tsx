@@ -131,7 +131,7 @@ users:
                   <div className="text-base font-black text-emerald-400">{extended.vram_allocated || '14.7 GB'}</div>
                 </div>
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center">
-                  <div className="text-[9px] font-bold text-slate-500 uppercase mb-1">Uptime</div>
+                  <div className="text-[9px] font-bold text-slate-500 uppercase mb-1">АПТАЙМ</div>
                   <div className="text-base font-black text-cyan-400">{node.uptime || '00:00'}</div>
                 </div>
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center transition-all hover:bg-white/10 cursor-help">
@@ -148,7 +148,7 @@ users:
                   <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                     <Share2 className="w-4 h-4 text-cyan-400" /> ZROK ТУНЕЛЬ
                   </h3>
-                  <div className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase">АКТheaderИВНИЙ</div>
+                  <div className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase">АКТИВНИЙ</div>
                 </div>
                 <div className="bg-black/40 border border-white/5 rounded-xl p-4 space-y-3 shadow-inner">
                   <div className="flex justify-between items-center">
@@ -183,7 +183,7 @@ users:
                       </div>
                       <div>
                         <div className="text-xs font-black text-white uppercase tracking-tight">{extended.k8s_cluster}</div>
-                        <div className="text-[10px] text-slate-500 font-mono italic">Cluster Version: v1.28.4+k3s1</div>
+                        <div className="text-[10px] text-slate-500 font-mono italic">Версія Кластера: v1.28.4+k3s1</div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
@@ -214,23 +214,23 @@ users:
               <section className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Database className="w-4 h-4 text-amber-400" /> КЛАСТЕР БАЗ ДАНИХ (8 БД)
+                    <Database className="w-4 h-4 text-rose-400" /> КЛАСТЕР БАЗ ДАНИХ (8 БД)
                   </h3>
                   <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {Object.entries(databases).map(([name, status]: [string, any]) => (
-                    <div key={name} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-amber-500/30 transition-all">
+                    <div key={name} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-rose-500/30 transition-all">
                       <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">{name}</span>
                       <div className="flex items-center gap-2">
                         <div className={cn(
                           "w-1.5 h-1.5 rounded-full shadow-[0_0_8px]",
-                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-amber-500 shadow-amber-500/50"
+                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-500 shadow-rose-500/50"
                         )} />
                         <span className={cn(
                           "text-[9px] font-bold uppercase",
-                          status === 'running' ? "text-emerald-500/70" : "text-amber-500/70"
-                        )}>{status === 'running' ? 'Active' : status}</span>
+                          status === 'running' ? "text-emerald-500/70" : "text-rose-500/70"
+                        )}>{status === 'running' ? 'Активно' : status}</span>
                       </div>
                     </div>
                   ))}
@@ -267,7 +267,7 @@ users:
                   onClick={handleSyncCode}
                   className="flex items-center justify-center gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-[11px] font-black uppercase hover:bg-white/10 hover:border-white/20 transition-all group"
                 >
-                  <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" /> Github Sync
+                  <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" /> Github Синхр.
                 </button>
                 <a 
                   href={extended.zrok_url}
@@ -275,7 +275,7 @@ users:
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 px-5 py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl text-orange-400 text-[11px] font-black uppercase hover:bg-orange-500 hover:text-white transition-all shadow-lg shadow-orange-500/5 group"
                 >
-                  <ExternalLink className="w-5 h-5" /> Open Colab
+                  <ExternalLink className="w-5 h-5" /> Відкрити Colab
                 </a>
               </div>
 
@@ -283,17 +283,18 @@ users:
 
             {/* Footer */}
             <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
-              <div className="flex items-start gap-4 text-amber-500 bg-amber-500/5 p-4 rounded-2xl border border-amber-500/20">
+              <div className="flex items-start gap-4 text-rose-500 bg-rose-500/5 p-4 rounded-2xl border border-rose-500/20">
                 <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-wider mb-1">УВАГА: РЕЖИМ ДЗЕРКАЛЬНОСТІ</p>
-                  <p className="text-[10px] leading-relaxed text-amber-500/80 font-medium italic">
+                  <p className="text-[10px] leading-relaxed text-rose-500/80 font-medium italic">
                     Резервний кластер працює в режимі суверенної дзеркальності. 
                     Пряме втручання в K8s контур може порушити цілісність failover-сценаріїв.
                   </p>
                 </div>
               </div>
             </div>
+
           </motion.div>
         </>
       )}

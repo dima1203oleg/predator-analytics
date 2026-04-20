@@ -1,5 +1,5 @@
 import React from 'react';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Database, Network, Search, HardDrive, Cpu, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { FactoryRegistryStatsSnapshot, RegistryAvailability } from '../systemFactoryView.utils';

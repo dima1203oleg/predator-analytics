@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
+ * PREDATOR v57.3-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
  * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
@@ -149,18 +149,18 @@ const HolographicAccessGate: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#020202] flex items-center justify-center p-8 relative overflow-hidden">
       <AdvancedBackground />
-      <CyberGrid color="rgba(212, 175, 55, 0.05)" />
+      <CyberGrid color="rgba(225, 29, 72, 0.05)" />
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#D4AF37]/5 blur-[200px] rounded-full animate-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] bg-[#E11D48]/5 blur-[200px] rounded-full animate-pulse" />
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="relative z-10 max-w-5xl w-full"
       >
-        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-[#D4AF37]/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(212,175,55,0.1)] relative overflow-hidden">
+        <div className="bg-[#0b0f1a]/80 backdrop-blur-3xl border border-[#E11D48]/20 rounded-[80px] p-16 sm:p-24 shadow-[0_0_150px_rgba(225,29,72,0.1)] relative overflow-hidden">
           <div className="absolute top-0 right-0 p-12 opacity-5">
-            <Crown size={300} className="text-[#D4AF37]" />
+            <Crown size={300} className="text-[#E11D48]" />
           </div>
 
           <div className="flex flex-col items-center text-center space-y-12">
@@ -176,11 +176,11 @@ const HolographicAccessGate: React.FC = () => {
 
             <div className="space-y-6">
               <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-6deg]">
-                ДОСТУП <span className="text-[#D4AF37]">ОБМЕЖЕНО</span>
+                ДОСТУП <span className="text-[#E11D48]">ОБМЕЖЕНО</span>
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
                 Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕРЕН". 
-                Виявлено обмежений доступ. Активуйте статус v57.2-WRAITH для розблокування протоколів.
+                Виявлено обмежений доступ. Активуйте статус v57.3-ELITE для розблокування протоколів.
               </p>
             </div>
 
@@ -192,12 +192,12 @@ const HolographicAccessGate: React.FC = () => {
             </div>
 
 
-            <button className="px-20 py-8 bg-[#D4AF37] hover:brightness-110 text-black text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#D4AF37]/40 border border-[#D4AF37]/30 transition-all hover:scale-105 active:scale-95 group italic">
+            <button className="px-20 py-8 bg-[#E11D48] hover:brightness-110 text-white text-lg font-black tracking-[0.3em] uppercase rounded-[40px] shadow-2xl shadow-[#E11D48]/40 border border-[#E11D48]/30 transition-all hover:scale-105 active:scale-95 group italic">
               <span className="flex items-center gap-4">
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </button>
-            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v57.2-WRAITH | SOVEREIGN_POWER</p>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v57.3-ELITE | SOVEREIGN_POWER</p>
           </div>
         </div>
       </motion.div>
@@ -294,33 +294,33 @@ const PremiumHubView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-12">
             
-            {/* View Header v57.2-WRAITH */}
+            {/* View Header v57.3-ELITE */}
             <ViewHeader
                 title={
                     <div className="flex items-center gap-8">
                         <div className="relative group">
-                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", persona === 'INQUISITOR' ? "bg-amber-500/20" : "bg-[#D4AF37]/20")} />
+                            <div className={cn("absolute inset-0 blur-[50px] rounded-full scale-150 animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
                             <div className="relative w-16 h-16 bg-black border border-white/10 rounded-2xl flex items-center justify-center panel-3d shadow-2xl">
-                                <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-amber-400" : "text-[#D4AF37]", "drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]")} />
+                                <currentConfig.icon size={32} className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "drop-shadow-[0_0_15px_rgba(225,29,72,0.8)]")} />
                             </div>
                         </div>
                         <div>
                             <h1 className="text-4xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                ПРЕМІУМ <span className={cn(persona === 'INQUISITOR' ? "text-amber-500" : "text-[#D4AF37]")}>{persona}</span> ХАБ
+                                ПРЕМІУМ <span className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]")}>{persona}</span> ХАБ
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
-                                <Gem size={12} className="text-[#D4AF37] hover:scale-125 transition-transform" /> 
-                                КОМЕРЦІЙНА_РОЗВІДКА_v57.2_WRAITH
+                                <Gem size={12} className="text-[#E11D48] hover:scale-125 transition-transform" /> 
+                                КОМЕРЦІЙНА_РОЗВІДКА_v57.3_ELITE
                             </p>
                         </div>
                     </div>
                 }
-                icon={<Crown size={22} className="text-[#D4AF37]" />}
+                icon={<Crown size={22} className="text-[#E11D48]" />}
                 breadcrumbs={['PREDATOR', 'PREMIUM', persona]}
                 badges={[
-                    { label: 'SOVEREIGN_ACCESS', color: 'amber', icon: <Crown size={10} /> },
+                    { label: 'SOVEREIGN_ACCESS', color: 'danger', icon: <Crown size={10} /> },
                     { label: isOffline ? 'MIRROR_NODE' : 'CENTRAL_NVIDIA', color: isOffline ? 'warning' : 'primary', icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> },
-                    { label: 'v57.2-WRAITH', color: 'danger', icon: <Shield size={10} /> }
+                    { label: 'v57.3-ELITE', color: 'danger', icon: <Shield size={10} /> }
                 ]}
                 stats={[
                     { label: 'ДАНІ_В_ОБРОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
@@ -335,10 +335,10 @@ const PremiumHubView: React.FC = () => {
                 ]}
             />
 
-            {/* Persona Switcher & Tactical Nav (v57.2-WRAITH) */}
-            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#D4AF37]/10">
+            {/* Persona Switcher & Tactical Nav (v57.3-ELITE) */}
+            <div className="flex flex-wrap items-center justify-between gap-8 bg-black/60 backdrop-blur-3xl p-4 rounded-[40px] border border-[#E11D48]/10">
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
-                    <div className="px-10 py-4 flex items-center gap-3 text-[#D4AF37]">
+                    <div className="px-10 py-4 flex items-center gap-3 text-[#E11D48]">
                         <Crown size={18} />
                         <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕРЕННИЙ РЕЖИМ</span>
                     </div>
@@ -360,7 +360,7 @@ const PremiumHubView: React.FC = () => {
                             className={cn(
                                 "px-8 py-3.5 rounded-[22px] text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all italic",
                                 activeTab === tab.id
-                                    ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30"
+                                    ? "bg-[#E11D48]/10 text-[#E11D48] border border-[#E11D48]/30"
                                     : "text-slate-500 hover:text-white hover:bg-white/5"
                             )}
                         >
@@ -407,8 +407,8 @@ const PremiumHubView: React.FC = () => {
                                             {currentConfig.subtitle}
                                         </h2>
                                         <div className="flex items-center gap-6">
-                                            <Badge className="bg-[#D4AF37]/20 text-[#D4AF37] border-[#D4AF37]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(212,175,55,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
-                                            <span className="text-xs text-slate-500 font-mono">v57.2-WRAITH.1-stable</span>
+                                            <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
+                                            <span className="text-xs text-slate-500 font-mono">v57.3-ELITE.1-stable</span>
                                         </div>
                                     </div>
                                 </div>
@@ -419,10 +419,10 @@ const PremiumHubView: React.FC = () => {
                                         <motion.div
                                             key={i}
                                             whileHover={{ scale: 1.02 }}
-                                            className="p-6 bg-black/40 border border-white/5 rounded-[32px] group hover:border-[#D4AF37]/20 transition-all cursor-pointer"
+                                            className="p-6 bg-black/40 border border-white/5 rounded-[32px] group hover:border-[#E11D48]/20 transition-all cursor-pointer"
                                         >
-                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", persona === 'INQUISITOR' ? "bg-amber-500/10" : "bg-[#D4AF37]/10")}>
-                                                <feature.icon className={cn(persona === 'INQUISITOR' ? "text-amber-400" : "text-[#D4AF37]", "group-hover:scale-110 transition-transform")} size={24} />
+                                            <div className={cn("p-4 rounded-2xl mb-4 w-fit", persona === 'INQUISITOR' ? "bg-rose-500/10" : "bg-[#E11D48]/10")}>
+                                                <feature.icon className={cn(persona === 'INQUISITOR' ? "text-rose-400" : "text-[#E11D48]", "group-hover:scale-110 transition-transform")} size={24} />
                                             </div>
                                             <h4 className="text-[10px] font-black text-white uppercase tracking-widest mb-2">{feature.label}</h4>
                                             <p className="text-[10px] text-slate-500 italic leading-relaxed">{feature.desc}</p>
@@ -438,8 +438,8 @@ const PremiumHubView: React.FC = () => {
                                     </h3>
                                     <div className="space-y-4">
                                         {currentConfig.insights.map((insight, i) => (
-                                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-[#D4AF37]/10 transition-all">
-                                                <div className="shrink-0 p-2 bg-[#D4AF37]/20 rounded-lg text-[#D4AF37] h-fit"><Sparkles size={14} /></div>
+                                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-[#E11D48]/10 transition-all">
+                                                <div className="shrink-0 p-2 bg-[#E11D48]/20 rounded-lg text-[#E11D48] h-fit"><Sparkles size={14} /></div>
                                                 <p className="text-xs text-slate-300 font-medium italic">"{insight}"</p>
                                             </div>
                                         ))}
@@ -496,7 +496,7 @@ const PremiumHubView: React.FC = () => {
                     {activeTab === 'analytics' && (
                         <div className="space-y-12">
                             <AIInsightsPanel persona={persona as string} />
-                            <div className="p-10 bg-black/80 border border-[#D4AF37]/10 rounded-[48px] backdrop-blur-3xl">
+                            <div className="p-10 bg-black/80 border border-[#E11D48]/10 rounded-[48px] backdrop-blur-3xl">
                                 <TradeSankeyWidget persona={persona as string} />
                             </div>
                         </div>
@@ -504,15 +504,15 @@ const PremiumHubView: React.FC = () => {
 
                     {/* Placeholder for other tabs - each should be deeply informative */}
                     {['modeling', 'reports', 'builder'].includes(activeTab) && (
-                        <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-[#D4AF37]/10 rounded-[60px]">
+                        <div className="flex flex-col items-center justify-center py-40 gap-12 bg-slate-900/20 border border-dashed border-[#E11D48]/10 rounded-[60px]">
                             <div className="relative">
-                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-amber-500/20" : "bg-[#D4AF37]/20")} />
-                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-amber-500" : "text-[#D4AF37]", "animate-pulse")} />
+                                <div className={cn("absolute inset-0 blur-[100px] rounded-full", persona === 'INQUISITOR' ? "bg-rose-500/20" : "bg-[#E11D48]/20")} />
+                                <Cpu size={80} className={cn(persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]", "animate-pulse")} />
                             </div>
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
-                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v57.2-WRAITH.
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v57.3-ELITE.
                                 </p>
                             </div>
                         </div>

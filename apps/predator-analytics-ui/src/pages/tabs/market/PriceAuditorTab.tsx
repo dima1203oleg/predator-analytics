@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE AUDITOR TAB // ПРАЙС-АУДИТОР | v57.2-WRAITH
+ * 💰 PRICE AUDITOR TAB // ПРАЙС-АУДИТОР | v58.2-WRAITH
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  */
 

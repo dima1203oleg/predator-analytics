@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "Predator v57.2-WRAITH | Neural Analytics",
+    "title": "Predator v58.2-WRAITH | Neural Analytics",
     "subtitle": "Система раннього попередження, аналізу ризиків та інформаційної переваги",
     "loading": "Завантаження системи...",
     "access_denied": "Доступ заборонено",
     "not_found": "Сторінку не знайдено",
-    "version": "v57.2-WRAITH.2.5-SM"
+    "version": "v58.2-WRAITH.2.5-SM"
   },
   "auth": {
     "login": "Увійти",

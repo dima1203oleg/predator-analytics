@@ -865,6 +865,13 @@ const itemMatchesPath = (item: NavItem, pathname: string): boolean => {
     return true;
   }
 
+  const itemPathNoQuery = item.path.split('?')[0];
+  const pathnameNoQuery = pathname.split('?')[0];
+
+  if (itemPathNoQuery !== '/' && itemPathNoQuery === pathnameNoQuery) {
+    return true;
+  }
+
   if (item.path !== '/' && pathname.startsWith(`${item.path}/`)) {
     return true;
   }

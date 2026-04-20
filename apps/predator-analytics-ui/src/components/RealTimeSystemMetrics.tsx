@@ -1,10 +1,10 @@
 /**
- * RealTimeSystemMetrics - v57.2-WRAITH Omniscience Real-Time Matrix
+ * RealTimeSystemMetrics - v58.2-WRAITH Omniscience Real-Time Matrix
  * 
  * Преміальна візуалізація системних метрик у реальному часі.
  * Використовує TacticalCard, Cyber-Scanlines та розширені анімації.
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -16,7 +16,7 @@ import {
   ArrowUpRight, ArrowDownRight, Circle
 } from 'lucide-react';
 import { cn } from '../utils/cn';
-import { TacticalCard } from './TacticalCard';
+import { TacticalCard } from './ui/TacticalCard';
 
 interface SystemMetrics {
   cpu: number;
@@ -277,7 +277,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             <div className="text-center">
               <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.5em] mb-4 block">Коефіцієнт Живучості</span>
               <p className="text-[9px] text-slate-400 font-mono uppercase tracking-widest max-w-[200px] leading-relaxed mx-auto">
-                Агрегований індекс стабільності вузлів обробки v57.2-WRAITH
+                Агрегований індекс стабільності вузлів обробки v58.2-WRAITH
               </p>
             </div>
           </TacticalCard>

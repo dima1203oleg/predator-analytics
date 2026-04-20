@@ -1,5 +1,5 @@
 /**
- * 🔗 SUPPLY CHAIN MATRIX // ЦИФРОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v57.2-WRAITH
+ * 🔗 SUPPLY CHAIN MATRIX // ЦИФРОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v58.2-WRAITH
  * PREDATOR Analytics — Supply Chain Risk & Logistics Intelligence
  * 
  * Моніторинг логістичних ланцюгів, AIS-трекінг суден та аналіз маршрутів.
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -152,7 +152,7 @@ export default function SupplyChainAnalyticsView() {
                                   SUPPLY_CHAIN_MATRIX // DIGITAL_TWINS
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase">РАДАР</span>

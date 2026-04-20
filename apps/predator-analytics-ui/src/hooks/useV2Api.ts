@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH — React Hooks for v2 API
+ * PREDATOR v58.2-WRAITH — React Hooks for v2 API
  * Real-time data fetching with React Query for CERS, Signals, Entities, Pipeline.
  */
 

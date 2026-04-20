@@ -1,5 +1,5 @@
 /**
- * 🏛️ PROZORRO INTELLIGENCE // КОНТУР ЗАКУПІВЕЛЬ | v57.2-WRAITH
+ * 🏛️ PROZORRO INTELLIGENCE // КОНТУР ЗАКУПІВЕЛЬ | v58.2-WRAITH
  * PREDATOR Analytics — Anti-Corruption OSINT Matrix
  * 
  * Антикорупційний моніторинг публічних закупівель Prozorro у реальному часі.
@@ -25,7 +25,7 @@ import {
 } from 'recharts';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -215,7 +215,7 @@ export default function TendersView() {
                                   ANTICORRUPTION_CORE // PROZORRO_OSINT
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                РЕЄСТР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЗАКУПІВЕЛЬ</span>

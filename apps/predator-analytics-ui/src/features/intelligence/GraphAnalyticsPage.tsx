@@ -1,5 +1,5 @@
 /**
- * 🕸️ PREDATOR Topology Sanctum | v57.2-WRAITH
+ * 🕸️ PREDATOR Topology Sanctum | v58.2-WRAITH
  * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙРОФОРМНОЇ ГРАФ ОПТИМІЗАЦІЇ
  * 
  * Глибинний аналіз зв'язків (Neo4j), детекція картелів та аномалій.
@@ -235,7 +235,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                          SOVEREIGN_GRAPH // TOPOLOGY_SANCTUM
                                        </span>
                                        <div className="h-px w-12 bg-yellow-500/20" />
-                                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                         МАПИ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОГНІЦІЇ</span>

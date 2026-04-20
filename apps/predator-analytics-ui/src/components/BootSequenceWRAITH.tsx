@@ -309,8 +309,11 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
     let i = 0;
     const interval = setInterval(() => {
       if (i < logs.length) {
-        setBootLogs(prev => [...prev.slice(-12), logs[i]]);
-        sfx.playEliteClick();
+        const nextLog = logs[i];
+        if (nextLog) {
+          setBootLogs(prev => [...prev.slice(-12), nextLog]);
+          sfx.playEliteClick();
+        }
         i++;
       } else {
         clearInterval(interval);

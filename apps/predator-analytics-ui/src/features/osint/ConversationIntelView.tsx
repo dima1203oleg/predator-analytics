@@ -1,5 +1,5 @@
 /**
- * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕР | v57.2-WRAITH
+ * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕР | v58.2-WRAITH
  * PREDATOR Analytics — Neural Signal Decoding & OSINT
  * 
  * Моніторинг Telegram каналів, ЗМІ, соцмереж та даркнет-форумів.
@@ -21,7 +21,7 @@ import {
 import ReactECharts from '@/components/ECharts';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -68,7 +68,7 @@ export default function ConversationIntelView() {
         refetchInterval: 15000 
     });
 
-    // Trace: v57.2-WRAITH Error Protocol Integration
+    // Trace: v58.2-WRAITH Error Protocol Integration
     useEffect(() => {
         if (isOffline) {
             window.dispatchEvent(new CustomEvent('predator-error', { 

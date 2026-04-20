@@ -349,7 +349,7 @@ class CatalogService {
 }
 
 // ============================================================================
-// INTELLIGENCE & OSINT - v57.2-WRAITH Core
+// INTELLIGENCE & OSINT - v58.2-WRAITH Core
 // ============================================================================
 
 class IntelligenceService {
@@ -407,7 +407,7 @@ class IntelligenceService {
    */
   async getSignalFeed() {
     try {
-      // Trace: v57.2-WRAITH Signal Acquisition
+      // Trace: v58.2-WRAITH Signal Acquisition
       const res = await apiClient.get('/telegram/feed');
       return Array.isArray(res.data) ? res.data : [];
     } catch (error) {

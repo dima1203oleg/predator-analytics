@@ -1,5 +1,5 @@
 /**
- * 🔮 PREDATOR ANALYTICS v57.2-WRAITH — Моделювання Сценаріїв (What-If Analysis)
+ * 🔮 PREDATOR ANALYTICS v58.2-WRAITH — Моделювання Сценаріїв (What-If Analysis)
  * =========================================================================
  * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
  */
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import ReactECharts from '@/components/ECharts';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
@@ -205,7 +205,7 @@ const ScenarioModeling: React.FC = () => {
         <PageTransition className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
             <ViewHeader 
                 title="МОДЕЛЮВАННЯ СЦЕНАРІЇВ"
-                subtitle="WHAT-IF ANALYSIS CORE v57.2-WRAITH"
+                subtitle="WHAT-IF ANALYSIS CORE v58.2-WRAITH"
                 badges={[{ label: isOffline ? 'MIRROR_SIMULATION' : 'SIMULATION_WRAITH', color: isOffline ? 'warning' : 'primary' }]}
                 stats={[
                     { label: 'ПРОГНОЗ РУХУ', value: '$12.4M', color: 'success' },

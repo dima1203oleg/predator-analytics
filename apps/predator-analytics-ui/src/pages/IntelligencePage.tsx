@@ -1,5 +1,5 @@
 /**
- * 🧠 PREDATOR Strategic Intelligence Center | v57.2-WRAITH
+ * 🧠 PREDATOR Strategic Intelligence Center | v58.2-WRAITH
  * Sovereign Power Edition — МOДУЛЬ СТРАТЕГІЧНОЇ РОЗВІДКИ ТА КОГНІТИВНОГО МОНІТОРИНГУ
  *
  * Центр управління AI-агентами та стратегічного аналізу.
@@ -15,7 +15,7 @@ import {
     Terminal, Sparkles, Radio,
     PieChart, Atom, Fingerprint
 } from 'lucide-react';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
@@ -66,7 +66,7 @@ const IntelligenceNode: React.FC<{
                     <Badge className={cn("px-3 py-1 text-[8px] font-black uppercase tracking-widest border-none", color === 'rose' ? "bg-rose-600 text-white" : "bg-[#D4AF37] text-black")}>
                         {status}
                     </Badge>
-                    <span className="text-[10px] font-mono text-slate-600 mt-2">v57.2.P0</span>
+                    <span className="text-[10px] font-mono text-slate-600 mt-2">v58.2.P0</span>
                  </div>
              </div>
 
@@ -148,7 +148,7 @@ const IntelligencePage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-[#D4AF37]/50" />
                                         <span className="text-[10px] font-mono font-black text-[#D4AF37]/80 uppercase tracking-[0.5em] animate-pulse">
-                                            КОГНІТИВНЕ_ЯДРО // v57.2-WRAITH
+                                            КОГНІТИВНЕ_ЯДРО // v58.2-WRAITH
                                         </span>
                                     </div>
                                 </div>

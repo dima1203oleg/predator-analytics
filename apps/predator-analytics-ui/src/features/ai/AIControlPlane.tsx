@@ -1,5 +1,5 @@
 /**
- * 🕹️ AI Sovereign Control Plane | v57.2-WRAITH
+ * 🕹️ AI Sovereign Control Plane | v58.2-WRAITH
  * PREDATOR — Контур Суверенного Керування Інтелектом
  * 
  * Моніторинг та налаштування нейронних рушіїв, телеметрія та управління політиками.
@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
@@ -312,7 +312,7 @@ export default function AIControlPlane() {
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="animate-pulse" />
-                    v57.2-WRAITH · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
+                    v58.2-WRAITH · МОНІТОРИНГ СУВЕРЕННИХ РУШІЇВ
                   </div>
                 </div>
               </div>

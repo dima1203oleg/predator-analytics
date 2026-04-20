@@ -1,5 +1,5 @@
 /**
- * 🔍 useBackendStatus | PREDATOR v57.2-WRAITH
+ * 🔍 useBackendStatus | PREDATOR v58.2-WRAITH
  * Хук для відстеження стану вузлів інфраструктури в реальному часі.
  */
 import { useEffect, useMemo, useState } from 'react';

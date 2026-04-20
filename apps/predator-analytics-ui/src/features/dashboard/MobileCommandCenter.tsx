@@ -1,5 +1,5 @@
 /**
- * 📱 Mobile Command Center | v57.2-WRAITH Orbital Matrix
+ * 📱 Mobile Command Center | v58.2-WRAITH Orbital Matrix
  * PREDATOR Mobile - Цитадель оперативного управління у вашій кишені.
  * 
  * Включає:
@@ -8,7 +8,7 @@
  * - 🛡️ Моніторинг ризиків (Risk Watch)
  * - 🛰️ Супутниковий зв'язок (Orbital Link)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect } from 'react';
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
 import { premiumLocales } from '@/locales/uk/premium';

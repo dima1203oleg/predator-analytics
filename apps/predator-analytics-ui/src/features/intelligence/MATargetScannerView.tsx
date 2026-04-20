@@ -1,5 +1,5 @@
 /**
- * 🎯 M&A TARGET SCANNER | v57.2-WRAITH
+ * 🎯 MA TARGET SCANNER // СКАНЕР ЦІЛЬОВИХ РИНКІВ | v58.2-WRAITH
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -28,7 +28,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -195,10 +195,10 @@ const MATargetScannerView: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      M&A_INTELLIGENCE // DEAL_SOURCING
+                      UBO · SOVEREIGN TARGET SCAN · v58.2-WRAITHNG
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     TARGET <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCANNER</span>

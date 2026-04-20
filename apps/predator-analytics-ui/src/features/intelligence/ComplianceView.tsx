@@ -7,7 +7,7 @@ import {
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { security } from '@/services/dataService';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { DataSkeleton, SkeletonGroup } from '@/components/shared/DataSkeleton';
@@ -113,10 +113,10 @@ export const ComplianceView = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-6">
                                     <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        COMPLIANCE_WATCH // {isOffline ? 'OFFLINE_COMPLIANCE' : 'AUDIT_TRIAL_v56'}
+                                        COMPLIANCE_WATCH // {isOffline ? 'OFFLINE_COMPLIANCE' : 'AUDIT_TRIAL_v58'}
                                     </span>
                                     <div className="h-px w-12 bg-emerald-500/20" />
-                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     ЦЕНТР <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>

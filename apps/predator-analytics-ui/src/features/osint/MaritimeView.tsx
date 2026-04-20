@@ -1,5 +1,5 @@
 /**
- * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v57.2-WRAITH
+ * 🌊 MARITIME INTELLIGENCE // МОРСЬКИЙ СУВЕРЕН | v58.2-WRAITH
  * PREDATOR Analytics — Global Maritime Traffic & Risk Intelligence
  * 
  * Моніторинг морського трафіку, AIS-трекінг суден та аналіз портів.
@@ -21,7 +21,7 @@ import {
 import ReactECharts from '@/components/ECharts';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -191,7 +191,7 @@ export default function MaritimeView() {
                                   MARITIME_SOVEREIGN // GLOBAL_AIS_NET
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МОРСЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕРЕН</span>

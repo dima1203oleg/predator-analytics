@@ -1,5 +1,5 @@
 /**
- * 🕸️ PREDATOR Cognitive Graph Analytics | v57.2-WRAITH
+ * 🕸️ PREDATOR Cognitive Graph Analytics | v58.2-WRAITH
  * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
@@ -19,7 +19,7 @@ import {
     Circle, Square, Triangle, Terminal, Radio, Binary, Fingerprint,
     ListFilter, MoreVertical, LayoutGrid, LayoutList
 } from 'lucide-react';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
@@ -215,7 +215,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-[#D4AF37]/50" />
                                         <span className="text-[10px] font-mono font-black text-[#D4AF37]/80 uppercase tracking-[0.5em] animate-pulse">
-                                            NEURAL_TOPOLOGY_ANALYZER // v57.2-WRAITH
+                                            NEURAL_TOPOLOGY_ANALYZER // v58.2-WRAITH
                                         </span>
                                     </div>
                                 </div>
@@ -420,7 +420,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕРЕВІРКА ВУЗЛА 1234:5678... [OK]</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНО ПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
-                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v57.2-WRAITH</p>
+                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v58.2-WRAITH</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКОР = 0.9984</p>
                                          <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕРІ "B-12"</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} АРХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕРШЕНО]</p>
@@ -507,7 +507,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="p-6 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] flex items-center justify-between">
                                           <div className="flex items-center gap-4">
                                                <Cpu size={18} className="text-indigo-400" />
-                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v57.2-WRAITH</span>
+                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v58.2-WRAITH</span>
                                           </div>
                                           <span className="text-xl font-mono font-black text-white italic tracking-tighter">X256</span>
                                      </div>

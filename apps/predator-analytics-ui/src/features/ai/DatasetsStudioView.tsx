@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
@@ -58,7 +58,7 @@ const DatasetsStudioView = () => {
       <AdvancedBackground />
       
       <ViewHeader 
-        title="СТУДІЯ ДАТАСЕТІВ v57.2-WRAITH"
+        title="СТУДІЯ ДАТАСЕТІВ v58.2-WRAITH"
         subtitle="Керування даними для навчання ШІ-моделей та OSINT-аналітики"
         icon={<Database size={24} className="text-cyan-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ДАТАСЕТИ']}

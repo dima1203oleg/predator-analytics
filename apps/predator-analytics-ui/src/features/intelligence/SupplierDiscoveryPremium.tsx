@@ -1,5 +1,5 @@
 /**
- * 🔍 SUPPLIER DISCOVERY // ПОШУК ПОСТАЧАЛЬНИКІВ | v57.2-WRAITH
+ * 🔍 SUPPLIER DISCOVERY // ПОШУК ПОСТАЧАЛЬНИКІВ | v58.2-WRAITH
  * PREDATOR Analytics — Strategic Sourcing & Global Supply Chain Recon
  * 
  * Знаходження нових постачальняків на основі аналізу митних даних.
@@ -162,7 +162,7 @@ export default function SupplierDiscoveryPremium() {
                       GLOBAL_SOURCING // PREM_INTEL_RADAR
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     ПОШУК <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ПОСТАЧАЛЬНИКІВ</span>

@@ -395,7 +395,7 @@ export const premiumLocales = {
       expandAnalytics: 'Відкрити Прогнози',
       collapseAnalytics: 'Згорнути Аналітику',
       liveData: 'ЖИВІ ДАНІ',
-      footer: 'PREDATOR ANALYTICS v57.2-WRAITH • NEXUS STRATEGIC CORE',
+      footer: 'PREDATOR ANALYTICS v58.2-WRAITH • NEXUS STRATEGIC CORE',
       confidence: 'Впевненість',
       growth: 'Зростання',
       decline: 'Спад',
@@ -602,7 +602,7 @@ export const premiumLocales = {
     intelBriefing: '{persona}_INTEL_BRIEFING',
     commandCenter: 'КОМАНДНИЙ ЦЕНТР',
     situationCommandCenter: 'СИТУАЦІЙНИЙ КОМАНДНИЙ ЦЕНТР',
-    godModeActive: 'v57.2-WRAITH NEXUS РЕЖИМ БОГА АКТИВОВАНО',
+    godModeActive: 'v58.2-WRAITH NEXUS РЕЖИМ БОГА АКТИВОВАНО',
     sovereigntyProtocol: 'Протокол Суверенітету NEXUS в реальному часі активовано',
     systemMap: 'Карта Системи',
     pulseSync: 'Синхронізація Пульсу',
@@ -1065,7 +1065,7 @@ export const premiumLocales = {
   // ============================================
   semanticRadar: {
     title: "СЕМАНТИЧНИЙ РАДАР ЗВ'ЯЗКІВ WRAITH",
-    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v57.2'],
+    breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v58.2'],
     stats: {
       nodes: 'Вузли',
       edges: 'Зв\'язки',
@@ -1201,7 +1201,7 @@ export const premiumLocales = {
       upgrade: 'ОНОВИТИ ДО ПРЕМІУМ',
       forgeView: {
         title: 'КУЗНЯ ЕВОЛЮЦІЇ WRAITH',
-        subtitle: 'Ковальський Цех Нейронних Моделей v57.2',
+        subtitle: 'Ковальський Цех Нейронних Моделей v58.2',
         liveActive: 'АКТИВНЕ КУВАННЯ',
       },
       features: {
@@ -1575,7 +1575,7 @@ export const premiumLocales = {
   // ============================================
   evolution: {
     title: 'ДВИГУН ЕВОЛЮЦІЇ WRAITH',
-    subtitle: 'Цикл Автономного Самовдосконалення v57.2_Активний',
+    subtitle: 'Цикл Автономного Самовдосконалення v58.2_Активний',
     stats: {
       azrCycles: 'AZR_CYCLES',
       ledgerEntries: 'LEDGER_ENTRIES',

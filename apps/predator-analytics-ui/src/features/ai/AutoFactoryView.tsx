@@ -1,5 +1,5 @@
 /**
- * 🏭 Sovereign Auto-Factory | v57.2-WRAITH
+ * 🏭 Sovereign Auto-Factory | v58.2-WRAITH
  * PREDATOR — Робочий Центр Автономного Вдосконалення
  * 
  * Контроль OODA-циклу, патч-менеджмент та еволюція нейронних архітектур.
@@ -30,7 +30,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -393,7 +393,7 @@ export default function AutoFactoryView() {
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
                     <Sparkles size={12} className="animate-pulse" />
-                    v57.2-WRAITH · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
+                    v58.2-WRAITH · МОДУЛЬ НЕЙРОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>
               </div>

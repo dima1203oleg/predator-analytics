@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
     Bot, Activity, Server, Zap, Network, Cpu, HardDrive,
@@ -516,7 +516,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'NEXUS v57.2-WRAITH', 'МЕНЕДЖЕР ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v58.2-WRAITH', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },

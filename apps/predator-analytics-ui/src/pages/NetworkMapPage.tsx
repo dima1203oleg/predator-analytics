@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/utils/cn';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { FinancialFlowPanel } from '@/components/graph/FinancialFlowPanel';
 import { analyticsService } from '@/services/unified/analytics.service';

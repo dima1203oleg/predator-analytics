@@ -28,7 +28,7 @@ import {
 } from 'recharts';
 import { forecastApi } from '@/features/forecast';
 import { ForecastResponse, ForecastPoint } from '@/features/forecast/types';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
 import { ViewHeader } from '@/components/ViewHeader';

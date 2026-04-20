@@ -1,5 +1,5 @@
 /**
- * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v57.2-WRAITH
+ * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v58.2-WRAITH
  * PREDATOR Analytics — Advanced Market Intelligence & Strategic Forecasting
  * 
  * Глобальний моніторинг ринків, аналіз трендів та виявлення прихованих можливостей.
@@ -26,7 +26,7 @@ import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { CyberGrid } from '@/components/CyberGrid';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { ViewHeader } from '@/components/ViewHeader';
@@ -142,7 +142,7 @@ export default function MarketAnalyticsPremium() {
                       MARKET_INTEL_WRAITH // QUORUM_SCAN
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РИНКОВА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">АНАЛІТИКА</span>
@@ -276,7 +276,7 @@ export default function MarketAnalyticsPremium() {
                         </p>
                         <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">
                            <span className="text-[9px] font-black text-yellow-800 uppercase tracking-widest">Confidence: 94.2%</span>
-                           <span className="text-[9px] font-bold text-slate-700 italic">Predator Intel v57.2</span>
+                           <span className="text-[9px] font-bold text-slate-700 italic">Predator Intel v58.2</span>
                         </div>
                      </div>
 

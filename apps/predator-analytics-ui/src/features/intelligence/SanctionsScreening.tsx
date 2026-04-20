@@ -41,7 +41,7 @@ import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { CyberOrb } from '@/components/CyberOrb';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
@@ -408,7 +408,7 @@ const SanctionsScreening: React.FC = () => {
                                 </div>
                             </div>
                         }
-                        breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'GLOBAL_SCREENING_v57.2']}
+                        breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'GLOBAL_SCREENING_v58.2']}
                         badges={[
                             { label: 'SOVEREIGN_WRAITH_FORCE', color: 'amber', icon: <Zap size={10} /> },
                             { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },

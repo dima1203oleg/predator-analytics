@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { ViewHeader } from '@/components/ViewHeader';
 import { api } from '@/services/api';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Brain, Database, Network, Search, GitBranch, Sparkles, Zap, Layers } from 'lucide-react';
 
 // Custom Node component for our CSS-based graph

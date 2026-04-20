@@ -1,6 +1,6 @@
 
 import React, { useRef, useState, useEffect, Suspense } from 'react';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import {
     Zap, BrainCircuit, Activity, Scale, GitBranch,
@@ -85,7 +85,7 @@ const SuperIntelligenceView: React.FC = () => {
                             icon: <Server size={14} />,
                             color: isOffline ? 'warning' : 'gold'
                         },
-                        { label: 'Версія WRAITH', value: 'v57.2', icon: <Cpu size={14} />, color: 'primary' },
+                        { label: 'Версія WRAITH', value: 'v58.2', icon: <Cpu size={14} />, color: 'primary' },
                     ]}
                     actions={
                         <div className="flex flex-wrap gap-4 w-full sm:w-auto">

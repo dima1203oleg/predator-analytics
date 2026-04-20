@@ -1,5 +1,5 @@
 /**
- * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v57.2-WRAITH
+ * 🗺️ TRADE FLOW MAP // КАРТА ТОРГОВИХ ПОТОКІВ | v58.2-WRAITH
  * PREDATOR Analytics — Global Trade & Logistics Intelligence
  * 
  * Візуалізація імпорту/експорту в реальному часі.
@@ -21,7 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -141,7 +141,7 @@ export default function TradeFlowMapPremium() {
                            TRADE_MATRIX // FLOW_GEOSPATIAL
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         КАРТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ПОТОКІВ</span>
@@ -149,7 +149,7 @@ export default function TradeFlowMapPremium() {
                    </div>
                 </div>
               }
-              breadcrumbs={['INTEL', 'TRADE', 'GLOBAL_FLOW_v5']}
+              breadcrumbs={['INTEL', 'TRADE', 'GLOBAL_FLOW_v58']}
               badges={[
                 { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Crown size={10} /> },
                 { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },

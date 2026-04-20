@@ -1,3 +1,7 @@
+/**
+ * 🚨 AML SCORING VIEW // КОГНІТИВНИЙ AML-МОНІТОРИНГ | v57.3-ELITE
+ * PREDATOR Analytics — Advanced Compliance & Anti-Money Laundering Array
+ * 
  * © 2026 PREDATOR Analytics — HR-04 compliant, тільки українська
  */
 
@@ -18,7 +22,7 @@ import { AxiosError } from 'axios';
 import { cn } from '@/utils/cn';
 import { Badge } from '@/components/ui/badge';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
@@ -30,7 +34,6 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 // Типи
 // ========================
 
-// Використовуємо типи з analyticsService
 interface BatchEntry {
     id: string;
     entity_id: string;
@@ -50,7 +53,7 @@ interface RiskLevelInfo {
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
     critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]' },
-    high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-crimson-950/20', border: 'border-rose-700/40',   glow: 'shadow-[0_0_30px_rgba(159,18,57,0.2)]' },
+    high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-rose-950/20', border: 'border-rose-700/40',   glow: 'shadow-[0_0_30px_rgba(159,18,57,0.2)]' },
     medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-rose-500/40',   glow: 'shadow-[0_0_30px_rgba(225,29,72,0.2)]' },
     low:      { label: 'НИЗЬКИЙ',     color: '#71717a', bg: 'bg-zinc-900/20',     border: 'border-zinc-500/40',     glow: 'shadow-none' },
     minimal:  { label: 'МІНІМАЛЬНИЙ', color: '#3f3f46', bg: 'bg-zinc-950/20',     border: 'border-zinc-800/40',     glow: 'shadow-none' },
@@ -123,7 +126,7 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
             splitNumber: 5,
             axisLine: { lineStyle: { color: 'rgba(225,29,72,0.1)' } },
             splitLine: { lineStyle: { color: 'rgba(225,29,72,0.1)' } },
-            splitArea: { areaStyle: { areaStyle: { color: ['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.6)'] } } },
+            splitArea: { areaStyle: { color: ['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.6)'] } },
         },
         series: [{
             type: 'radar',
@@ -165,7 +168,7 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                 className={cn(
                     "absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent to-transparent shadow-[0_0_20px_rgba(225,29,72,0.3)]",
                     vramStatus === 'critical' ? 'via-rose-500/80 shadow-[0_0_30px_rgba(244,63,94,0.5)]' : 'via-rose-500/50'
-                ) uppercase}
+                )}
             />
 
             {/* Координати та цифри */}
@@ -187,14 +190,14 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
                 <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕРА: 99.8%</span>
-                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v3.0_ELITE</span>
+                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v57.3_ELITE</span>
             </div>
         </div>
     );
 };
 
 // ========================
-// Live Cognitive Terminal v57.2
+// Live Cognitive Terminal v57.3-ELITE
 // ========================
 
 const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' }> = ({ active, targetName, mode }) => {
@@ -260,7 +263,7 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
                 </div>
                 <div className="flex items-center gap-2">
                     <Activity size={10} className="text-rose-500" />
-                    <span className="text-[8px] font-mono text-slate-800 uppercase italic">1.4 ТБ/С_ПОТІК_ДАНИХ</span>
+                    <span className="text-[8px] font-mono text-slate-500 uppercase italic">1.4 ТБ/С_ПОТІК_ДАНИХ</span>
                 </div>
             </div>
             <div ref={scrollRef} className="space-y-1 h-56 overflow-y-hidden font-mono scroll-smooth">
@@ -271,10 +274,9 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
                         animate={{ opacity: 1, x: 0 }}
                         className={cn(
                             "text-[9px] whitespace-nowrap overflow-hidden transition-colors border-l-2 pl-2 tracking-tighter italic",
-                            idx === lines.length - 1 ? "text-rose-400 border-rose-500 font-bold" : "text-slate-800 border-transparent"
-                        )
-                    }
-                >
+                            idx === lines.length - 1 ? "text-rose-400 border-rose-500 font-bold" : "text-slate-500 border-transparent"
+                        )}
+                    >
                         {l}
                     </motion.div>
                 ))}
@@ -480,7 +482,7 @@ const AMLScoringView: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [entityId, entityName, entityType]);
+    }, [entityId, entityName, entityType, nodeSource]);
 
     const runBatch = useCallback(async () => {
         if (batchList.length === 0) return;
@@ -491,7 +493,7 @@ const AMLScoringView: React.FC = () => {
                 batchList.map(e => ({
                     entity_id:   e.entity_id,
                     entity_name: e.entity_name,
-                    entity_type: e.entity_type,
+                    entity_type: e.entity_type as 'organization' | 'person',
                 }))
             );
             setBatchResult(data);
@@ -510,7 +512,7 @@ const AMLScoringView: React.FC = () => {
         } finally {
             setBatchLoading(false);
         }
-    }, [batchList]);
+    }, [batchList, nodeSource]);
 
     const handleCSVImport = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -561,7 +563,7 @@ const AMLScoringView: React.FC = () => {
                                         МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКОРІНГ
                                     </span>
                                     <div className="h-px w-12 bg-rose-500/20" />
-                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v57.3-WRAITH</span>
+                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v57.3-ELITE</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     AML <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКОРІНГ</span>
@@ -571,7 +573,7 @@ const AMLScoringView: React.FC = () => {
                     }
                     breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML_COGNITIVE_ARRAY']}
                     badges={[
-                        { label: 'SOVEREIGN_WRAITH_v57.3', color: 'rose', icon: <Zap size={10} /> },
+                        { label: 'SOVEREIGN_ELITE_v57.3', color: 'rose', icon: <Zap size={10} /> },
                         { label: 'CLASSIFIED_T1_ACCESS', color: 'primary', icon: <Lock size={10} /> },
                     ]}
                     stats={[
@@ -580,11 +582,11 @@ const AMLScoringView: React.FC = () => {
                             label: isOffline ? 'ДЗЕРКАЛЬНЕ_ВІДНОВЛЕННЯ' : 'ДЖЕРЕЛО_ВУЗЛА', 
                             value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
                             icon: isOffline ? <Activity /> : <Cpu />, 
-                            color: isOffline ? 'warning' : 'rose',
+                            color: isOffline ? 'danger' : 'rose',
                             animate: isOffline
                         },
-                        { label: 'СТАБІЛЬНІСТЬ', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'warning' : 'success', icon: <ShieldCheck size={14} /> },
-                        { label: 'AI_TIER', value: llmTriStateMode, color: llmTriStateMode === 'CLOUD' ? 'rose' : llmTriStateMode === 'HYBRID' ? 'primary' : 'warning', icon: <Cpu size={14} /> }
+                        { label: 'СТАБІЛЬНІСТЬ', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', color: isOffline ? 'danger' : 'success', icon: <ShieldCheck size={14} /> },
+                        { label: 'AI_TIER', value: llmTriStateMode, color: llmTriStateMode === 'CLOUD' ? 'rose' : llmTriStateMode === 'HYBRID' ? 'primary' : 'rose', icon: <Cpu size={14} /> }
                     ]}
                 />
 
@@ -601,7 +603,7 @@ const AMLScoringView: React.FC = () => {
                 {/* === Режими WRAITH === */}
                 <div className="z-10 flex gap-6">
                     {[
-                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_WRAITH',    icon: <Target size={18} /> },
+                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_ELITE',    icon: <Target size={18} /> },
                         { id: true,  label: 'ПАКЕТНИЙ_ДЕПЛОЙ_CSV', icon: <Upload size={18} /> },
                     ].map(({ id, label, icon }) => (
                         <button
@@ -697,7 +699,6 @@ const AMLScoringView: React.FC = () => {
                                     )}
                                     {!loading && <span className="text-[8px] opacity-40 group-hover/btn:opacity-100 transition-opacity">ДОСТУП TIER-1 АВТОРИЗОВАНО // ШИФРУВАННЯ: AES-512</span>}
                                     
-                                    {/* Ефект пульсації при наведенні */}
                                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/btn:opacity-100 group-active:bg-white/10 transition-all pointer-events-none" />
                                 </button>
 
@@ -798,228 +799,187 @@ const AMLScoringView: React.FC = () => {
                                 >
                                     <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-rose-500/10 shadow-4xl bg-black/80 backdrop-blur-3xl relative overflow-hidden">
                                         <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none">
-                                            <BarChart3 size={300} className="text-rose-500" />
+                                            <Database size={300} className="text-rose-500" />
                                         </div>
-                                        <h3 className="text-[16px] font-black text-white uppercase tracking-[0.5em] mb-12 flex items-center gap-8 italic font-serif">
-                                            <BarChart3 size={32} className="text-rose-500" />
-                                            РОЗПОДІЛ_МАСИВУ // {batchResult.total}_ВУЗЛІВ_ПЕРЕВІРЕНО
-                                        </h3>
-                                        <div className="grid grid-cols-5 gap-6 relative z-10">
-                                            {Object.entries(batchResult.distribution || {}).map(([lvl, cnt]) => {
-                                                const conf = RISK_CONFIG[lvl] || RISK_CONFIG.minimal;
-                                                const pct = batchResult.total ? Math.round((cnt / batchResult.total) * 100) : 0;
-                                                return (
-                                                    <div key={lvl} className={cn("flex flex-col items-center gap-5 p-8 rounded-[2.5rem] border-2 italic group hover:bg-white/[0.02] transition-all", conf.bg, conf.border)}>
-                                                        <span className="text-5xl font-black font-mono leading-none tracking-tighter" style={{ color: conf.color, textShadow: `0 0 15px ${conf.color}40` }}>{cnt}</span>
-                                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] font-serif" style={{ color: conf.color }}>{conf.label.split(' ')[0]}</span>
-                                                        <div className="w-full h-1 bg-black rounded-full overflow-hidden mt-2 border border-white/5">
-                                                            <div className="h-full bg-slate-900" style={{ width: `${pct}%`, backgroundColor: conf.color }} />
-                                                        </div>
-                                                        <span className="text-[9px] font-black text-slate-800 mt-2">{pct}%_ЧАСТКА</span>
-                                                    </div>
-                                                );
-                                            })}
+                                        <div className="flex items-center justify-between mb-12 relative z-10">
+                                            <div className="space-y-2">
+                                                <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">ПАКЕТНИЙ_ВЕРДИКТ_DATA</h2>
+                                                <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">BATCH_ID: {Math.random().toString(36).substring(7).toUpperCase()}</p>
+                                            </div>
+                                            <div className="flex gap-4">
+                                                <button className="p-5 bg-black border-2 border-white/5 rounded-2xl text-slate-700 hover:text-white transition-all"><Download size={24} /></button>
+                                                <button className="p-5 bg-rose-600 text-white rounded-2xl shadow-4xl"><FileText size={24} /></button>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+                                            {[
+                                                { l: 'ОБРОБЛЕНО', v: batchResult.total_processed, c: 'text-white' },
+                                                { l: 'КРИТИЧНО', v: batchResult.distribution?.critical || 0, c: 'text-rose-500' },
+                                                { l: 'ВИСОКИЙ', v: batchResult.distribution?.high || 0, c: 'text-rose-600' },
+                                                { l: 'СЕРЕДНІЙ', v: batchResult.distribution?.medium || 0, c: 'text-rose-700' },
+                                            ].map((stat, i) => (
+                                                <div key={i} className="p-8 rounded-[2.5rem] bg-black/60 border-2 border-white/5 flex flex-col items-center gap-3 shadow-inner">
+                                                    <span className="text-[9px] font-black text-slate-800 uppercase tracking-widest italic">{stat.l}</span>
+                                                    <span className={cn("text-5xl font-black font-mono italic tracking-tighter", stat.c)}>{stat.v}</span>
+                                                </div>
+                                            ))}
                                         </div>
                                     </TacticalCard>
 
-                                    <TacticalCard variant="holographic" className="p-12 rounded-[4rem] border-white/5 shadow-4xl bg-black/60 relative overflow-hidden">
-                                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">РЕЄСТР_ПАКЕТНОГО_ВВОДУ // ПОВНЕ_РОЗКРИТТЯ</h3>
-                                        <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-4">
-                                            {batchResult.scores?.map((s) => {
-                                                const conf = RISK_CONFIG[s.risk_level] || RISK_CONFIG.minimal;
-                                                return (
-                                                    <div key={s.entity_id} className={cn("flex items-center gap-10 px-8 py-6 rounded-[2.5rem] border-2 italic group hover:bg-white/[0.02] transition-all", conf.border, conf.bg)}>
-                                                        <div className="flex flex-col items-end min-w-[100px] border-r-2 border-slate-900 pr-10">
-                                                            <span className="text-4xl font-black font-mono italic leading-none" style={{ color: conf.color }}>{s.total_score}</span>
-                                                            <span className="text-[8px] font-black text-slate-800 uppercase tracking-widest mt-2">{conf.label.split(' ')[0]}</span>
-                                                        </div>
-                                                        <div className="flex-1 space-y-2">
-                                                            <span className="text-xl font-black text-white italic font-serif group-hover:text-rose-500 transition-colors uppercase leading-none">{s.entity_name}</span>
-                                                            <div className="flex items-center gap-4">
-                                                                <span className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.3em] italic">ІДЕНТ: {s.entity_id}</span>
-                                                                <div className="h-px w-6 bg-slate-900" />
-                                                                <span className="text-[9px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">{s.detected_factors}_ВЕКТОРІВ_РИЗИКУ</span>
-                                                            </div>
-                                                        </div>
-                                                        <ChevronRight size={24} className="text-slate-900 group-hover:text-white transition-colors" />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </TacticalCard>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {batchResult.results?.map((res, i) => (
+                                            <motion.div
+                                                key={i}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0, transition: { delay: i * 0.05 } }}
+                                                className="p-8 rounded-[3rem] bg-black border-2 border-white/5 flex items-center justify-between group hover:border-rose-500/30 transition-all shadow-xl italic"
+                                            >
+                                                <div className="flex items-center gap-6">
+                                                   <div className="w-16 h-16 rounded-2xl bg-black border-2 border-white/5 flex items-center justify-center text-rose-500 font-black font-mono text-xl italic group-hover:border-rose-500/40 transition-colors">{res.total_score}</div>
+                                                   <div>
+                                                      <h4 className="text-lg font-black text-white italic uppercase tracking-tight truncate max-w-[180px]">{res.entity_name}</h4>
+                                                      <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mt-1 font-mono italic">{res.entity_id}</p>
+                                                   </div>
+                                                </div>
+                                                <RiskBadge level={res.risk_level} />
+                                            </motion.div>
+                                        ))}
+                                    </div>
                                 </motion.div>
                             )}
 
-                            {/* --- Single result WRAITH --- */}
+                            {/* --- Одиночний результат WRAITH --- */}
                             {!batchMode && result && (
                                 <motion.div
-                                    key={result.entity_id}
+                                    key="single-result"
                                     initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                                     className="flex flex-col gap-10"
                                 >
-                                    <TacticalCard variant="holographic" className="p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black relative overflow-hidden">
-                                        <div className="absolute -right-16 -top-16 p-32 opacity-5 pointer-events-none group-hover:scale-125 transition-transform duration-[10s]">
-                                            <ShieldAlert size={400} className="text-rose-500" />
-                                        </div>
-                                        <div className="flex flex-col xl:flex-row items-center gap-16 relative z-10">
-                                            <ScoreMeter score={result.total_score} level={result.risk_level} />
-
-                                            <div className="flex-1 flex flex-col gap-10">
-                                                <div>
-                                                    <div className="flex items-center gap-6 mb-4">
-                                                        <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                                            ІДЕНТИФІКОВАНА_ЦІЛЬ
-                                                        </span>
-                                                        <div className="h-px w-10 bg-rose-500/20" />
-                                                        <span className="text-[10px] font-black text-slate-800 font-mono tracking-widest uppercase italic">X_КОГНІТИВНИЙ_МАСИВ</span>
-                                                    </div>
-                                                    <h2 className="text-5xl font-black text-white uppercase tracking-tighter italic font-serif leading-none mb-6">{result.entity_name}</h2>
-                                                    <div className="flex items-center gap-6">
-                                                        <div className="flex items-center gap-3 bg-white/5 px-5 py-2 rounded-xl border border-white/5">
-                                                            <Fingerprint size={14} className="text-slate-700" />
-                                                            <span className="text-[11px] font-mono text-slate-500 uppercase italic">ІДЕНТ: {result?.entity_id}</span>
-                                                        </div>
-                                                        <Badge variant="outline" className="border-white/5 text-slate-700 text-[9px] px-4 py-2 uppercase font-black tracking-[0.3em] bg-black italic">
-                                                            {result.entity_type === 'organization' ? 'ЮРИДИЧНА_ОСОБА' : 'ПЕРСОНАЛЬНИЙ_ВУЗОЛ'}
-                                                        </Badge>
-                                                    </div>
-                                                </div>
-
-                                                <div className="grid grid-cols-2 gap-8">
-                                                    <div className="p-8 bg-rose-950/20 border-2 border-rose-500/20 rounded-[2.5rem] flex items-center gap-8 shadow-inner group hover:border-rose-500/40 transition-all">
-                                                        <div className="p-4 bg-black rounded-2xl border-2 border-rose-600/20 text-rose-600 group-hover:scale-110 transition-transform">
-                                                            <AlertTriangle size={32} className="animate-pulse" />
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-4xl font-black text-rose-500 font-mono italic tracking-tighter leading-none mb-2">{detectedCount}</div>
-                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">ВЕКТОРІВ_ВИЯВЛЕНО</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="p-8 bg-emerald-950/20 border-2 border-emerald-500/20 rounded-[2.5rem] flex items-center gap-8 shadow-inner group hover:border-emerald-500/40 transition-all">
-                                                        <div className="p-4 bg-black rounded-2xl border-2 border-emerald-600/20 text-emerald-600 group-hover:scale-110 transition-transform">
-                                                            <CheckCircle size={32} />
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-4xl font-black text-emerald-500 font-mono italic tracking-tighter leading-none mb-2">{result.factors.length - detectedCount}</div>
-                                                            <div className="text-[10px] text-slate-700 uppercase font-black tracking-widest italic leading-none">ЦІЛІСНІСТЬ_БЕЗПЕЧНА</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-center gap-4 pt-4 opacity-30">
-                                                    <Clock size={14} className="text-slate-700" />
-                                                    <span className="text-[10px] font-mono text-slate-800 uppercase italic tracking-widest">
-                                                        ЧАС_ФІКСАЦІЇ: {new Date(result.calculated_at).toLocaleString('uk-UA').toUpperCase()}
-                                                    </span>
-                                                </div>
+                                    <div className="grid grid-cols-12 gap-10">
+                                        {/* Скор-метр панель */}
+                                        <TacticalCard variant="holographic" className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] border-rose-500/10 shadow-4xl bg-black/80 backdrop-blur-3xl flex flex-col items-center justify-center relative overflow-hidden">
+                                            <div className="absolute top-0 left-0 p-16 opacity-[0.02] pointer-events-none w-full h-full flex items-center justify-center">
+                                                <Radar size={400} className="text-rose-500 animate-spin-slow" />
                                             </div>
-                                        </div>
-                                    </TacticalCard>
-
-                                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                                        <TacticalCard variant="holographic" className="p-10 rounded-[4rem] border-white/5 bg-black/80 backdrop-blur-3xl shadow-4xl relative overflow-hidden">
-                                            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-                                               <Radar size={150} className="text-rose-600" />
-                                            </div>
-                                            <h3 className="text-[11px] font-black text-rose-600/70 uppercase tracking-[0.5em] mb-10 italic font-serif">
-                                                ТОПОЛОГІЯ_КОГНІТИВНИХ_РИЗИКІВ
+                                            <h3 className="text-[14px] font-black text-white uppercase tracking-[0.6em] mb-12 italic font-serif flex items-center gap-6 relative z-10">
+                                                <Target size={20} className="text-rose-500" /> РЕЗУЛЬТАТ_WRAITH_SCAN
                                             </h3>
-                                            <RadarChart factors={result.factors} />
+                                            <div className="relative z-10 w-full flex justify-center">
+                                                <ScoreMeter score={result.total_score} level={result.risk_level} />
+                                            </div>
+                                            <div className="mt-12 flex flex-col items-center gap-3 relative z-10">
+                                                <span className="text-[10px] text-slate-800 font-black uppercase tracking-[0.4em] italic mb-2">РЕКОМЕНДАЦІЯ_COMPLIANCE</span>
+                                                <div className="px-8 py-5 bg-black/60 border-2 border-white/5 rounded-[2rem] text-center shadow-inner">
+                                                    <p className="text-sm font-black text-slate-300 italic uppercase leading-relaxed tracking-tighter">
+                                                        {result.total_score > 70 ? 'КРИТИЧНО: НЕГАЙНЕ_БЛОКУВАННЯ_ВУЗЛА' : 'ДОЗВОЛЕНО: ПОВЕРХНЕВИЙ_МОНІТОРИНГ'}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </TacticalCard>
 
-                                        <TacticalCard variant="holographic" className="p-10 rounded-[4rem] border-white/5 bg-black/80 backdrop-blur-3xl shadow-4xl relative overflow-hidden">
-                                            <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-10 italic font-serif">
-                                                РОЗКРИТТЯ_ВЕКТОРІВ // {result.factors.length}_ПРОАНАЛІЗОВАНО
+                                        {/* Радар факторів */}
+                                        <TacticalCard variant="cyber" className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] border-white/5 bg-black/40 shadow-inner flex flex-col relative overflow-hidden">
+                                            <div className="absolute -top-10 -right-10 p-20 opacity-[0.03] pointer-events-none">
+                                                <Network size={200} className="text-rose-600" />
+                                            </div>
+                                            <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 italic flex items-center gap-6">
+                                                <Activity size={20} className="text-rose-500" /> ВЕКТОР_AML_РИЗИКІВ
                                             </h3>
-                                            <div className="flex flex-col gap-4 max-h-[380px] overflow-y-auto custom-scrollbar pr-4">
-                                                {result.factors
-                                                    .sort((a, b) => Number(b.detected) - Number(a.detected) || b.weight - a.weight)
-                                                    .map(f => <FactorCard key={f.category} factor={f} />)
-                                                }
+                                            <div className="flex-1 flex items-center justify-center relative z-10">
+                                                <RadarChart factors={result.factors} />
+                                            </div>
+                                            <div className="mt-8 grid grid-cols-2 gap-4 relative z-10">
+                                                <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
+                                                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">ВИЯВЛЕНО_ЗАГРОЗ</span>
+                                                    <span className="text-2xl font-black text-rose-500 font-mono italic">{detectedCount}</span>
+                                                </div>
+                                                <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
+                                                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">TIER_ОЦІНКИ</span>
+                                                    <span className="text-2xl font-black text-white font-mono italic">ELITE</span>
+                                                </div>
                                             </div>
                                         </TacticalCard>
                                     </div>
 
-                                    {/* Рекомендації WRAITH */}
-                                    {(result.recommendations?.length || 0) > 0 && (
-                                        <TacticalCard variant="cyber" className="p-12 rounded-[5rem] border-rose-500/20 bg-rose-950/10 shadow-4xl relative overflow-hidden">
-                                            <div className="absolute -left-12 -top-12 opacity-5 rotate-45 pointer-events-none">
-                                                 <Flame size={200} className="text-rose-500" />
-                                            </div>
-                                            <h3 className="text-2xl font-black text-rose-500 uppercase tracking-[0.4em] mb-12 flex items-center gap-6 italic font-serif">
-                                                <Flame size={32} className="animate-pulse" /> ВЕРДИКТИ_СТРАТЕГІЧНОЇ_ПІДТРИМКИ
-                                            </h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-                                                {result.recommendations?.map((rec, i) => (
-                                                    <div key={i} className="flex items-start gap-6 p-8 bg-black border-2 border-rose-500/10 rounded-[2.5rem] group hover:border-rose-500/30 transition-all shadow-inner">
-                                                        <ChevronRight size={24} className="text-rose-600 shrink-0 mt-1 transform group-hover:translate-x-1 transition-transform" />
-                                                        <p className="text-[13px] font-black text-slate-300 leading-relaxed italic uppercase tracking-tight">{rec}</p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="flex items-center gap-8 mt-12 relative z-10">
-                                                <button className="flex-1 py-6 bg-white/[0.02] border-2 border-white/5 rounded-[2rem] text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] italic hover:text-white hover:bg-rose-600 hover:border-rose-500 transition-all flex items-center justify-center gap-5 shadow-xl font-bold">
-                                                    <Download size={24} /> ЗАВАНТАЖИТИ_ЗВІТ_PDF
-                                                </button>
-                                                <button className="flex-1 py-6 bg-white/[0.02] border-2 border-white/5 rounded-[2rem] text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] italic hover:text-white hover:bg-rose-600 hover:border-rose-500 transition-all flex items-center justify-center gap-5 shadow-xl font-bold">
-                                                    <FileText size={24} /> ДОДАТИ_ДО_СПРАВИ
-                                                </button>
-                                            </div>
-                                        </TacticalCard>
-                                    )}
-                                </motion.div>
-                            )}
-
-                            {/* --- Заглушка WRAITH --- */}
-                            {!result && !batchResult && !loading && (
-                                <motion.div
-                                    key="empty"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    className="flex flex-col items-center justify-center py-60 gap-12 text-slate-800"
-                                >
-                                    <div className="relative group">
-                                        <div className="absolute inset-0 bg-rose-500/10 blur-[150px] animate-pulse rounded-full group-hover:bg-rose-500/20 transition-all duration-[5s]" />
-                                        <ShieldAlert size={140} className="opacity-5 transform group-hover:scale-110 transition-transform duration-[10s]" />
+                                    {/* Список факторів WRAITH */}
+                                    <div className="space-y-8">
+                                        <h3 className="text-2xl font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-6 pl-4 font-serif">
+                                            <Fingerprint size={28} className="text-rose-500" /> ДЕТАЛІЗАЦІЯ_ЗНАЙДЕНИХ_АРТЕФАКТІВ
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            {result.factors.map((f, i) => (
+                                                <FactorCard key={i} factor={f} />
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="text-center space-y-6 relative z-10">
-                                        <p className="text-[18px] font-black uppercase tracking-[1em] animate-pulse italic text-slate-700">
-                                            ОЧІКУВАННЯ_СИГНАЛУ
-                                        </p>
-                                        <div className="h-px w-32 bg-slate-900 mx-auto" />
-                                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-[0.5em] italic">
-                                            ІНІЦІЮЙТЕ СКАНУВАННЯ ЧЕРЕЗ ТЕРМІНАЛ ПАРАМЕТРІВ
-                                        </p>
+
+                                    {/* Footer дії WRAITH */}
+                                    <div className="flex gap-8 mt-4">
+                                        <button className="flex-1 py-10 bg-rose-600 text-white rounded-[3rem] font-black italic uppercase text-[12px] tracking-[0.5em] transition-all shadow-4xl hover:scale-[1.02] active:scale-95 border-4 border-rose-500/20">
+                                            ЗГЕНЕРУВАТИ_VIP_AML_REPORT
+                                        </button>
+                                        <button className="flex-1 py-10 bg-black border-2 border-white/5 text-slate-600 hover:text-white hover:border-rose-500/40 rounded-[3rem] font-black italic uppercase text-[11px] tracking-[0.4em] transition-all shadow-xl">
+                                            ВІДПРАВИТИ_В_REDRUM_КАНАЛ
+                                        </button>
                                     </div>
                                 </motion.div>
                             )}
 
-                            {/* --- Loading WRAITH --- */}
-                            {loading && (
+                            {/* --- Empty State WRAITH --- */}
+                            {!result && !batchResult && !loading && !batchLoading && (
                                 <motion.div
-                                    key="loading"
-                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                    className="flex flex-col items-center justify-center py-60 gap-12"
+                                    key="empty-state"
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                                    className="h-[800px] rounded-[5rem] border-2 border-dashed border-white/5 bg-black/20 flex flex-col items-center justify-center gap-12 group p-20"
                                 >
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-rose-500/20 blur-[100px] animate-pulse rounded-full" />
-                                        <div className="w-32 h-32 border-t-4 border-r-4 border-rose-600 rounded-full animate-spin shadow-[0_0_30px_rgba(225,29,72,0.4)]" />
-                                        <Zap size={32} className="absolute inset-0 m-auto text-rose-500 animate-pulse" />
+                                        <div className="absolute inset-0 bg-rose-500/10 blur-[100px] rounded-full scale-150 animate-pulse" />
+                                        <div className="relative p-12 bg-black border-2 border-white/5 rounded-full group-hover:border-rose-500/40 transition-all duration-1000 shadow-4xl">
+                                            <ShieldAlert size={100} className="text-slate-900 group-hover:text-rose-500 transition-all duration-1000 group-hover:scale-110" />
+                                        </div>
                                     </div>
-                                    <div className="text-center space-y-4">
-                                        <p className="text-xl font-black text-rose-500 uppercase tracking-[0.6em] animate-pulse italic font-serif">AML_КОГНІТИВНЕ_СКАНУВАННЯ...</p>
-                                        <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.4em] italic leading-none border-b border-slate-900 pb-2">ДЕШИФРУВАННЯ_10_КАТЕГОРІЙ // SOVEREIGN_CORE</p>
+                                    <div className="text-center space-y-4 max-w-2xl px-12">
+                                        <h3 className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter group-hover:text-white transition-colors duration-1000">ОЧІКУВАННЯ_ВВОДУ_DATA</h3>
+                                        <p className="text-[11px] text-slate-900 font-bold uppercase tracking-[0.6em] italic leading-relaxed">
+                                            ВВЕДІТЬ ІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-ПРОТОКОЛУ WRAITH v57.3-ELITE
+                                        </p>
+                                    </div>
+                                    <div className="flex gap-6 mt-8">
+                                        <div className="flex items-center gap-3 px-6 py-2 bg-black border border-white/5 rounded-xl">
+                                            <Database size={14} className="text-rose-900" />
+                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">CONNECTED_TO: PRED_CORE_v57.3</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 px-6 py-2 bg-black border border-white/5 rounded-xl">
+                                            <Lock size={14} className="text-rose-900" />
+                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">LEVEL: UNLIMITED_ELITE</span>
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </div>
                 </div>
-                <style dangerouslySetInnerHTML={{ __html: `.custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,0.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,0.3)}` }} />
+
+                {/* DiagnosticsTerminal WRAITH */}
                 <DiagnosticsTerminal />
+
+                {/* Внутрішній стиль для WRAITH */}
+                <style dangerouslySetInnerHTML={{ __html: `
+                    .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(225,29,72,0.02); }
+                    .animate-scanline { animation: scanline 4s linear infinite; }
+                    @keyframes scanline { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+                    .animate-spin-slow { animation: spin 30s linear infinite; }
+                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                    .bg-noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+                    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.2); border-radius: 10px; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.4); }
+                `}} />
             </div>
         </PageTransition>
     );
 };
 
 export default AMLScoringView;
-

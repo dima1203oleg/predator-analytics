@@ -1,5 +1,5 @@
 /**
- * 🧠 AI HYPOTHESIS ENGINE | v57.2-WRAITH
+ * 🧠 AI HYPOTHESIS ENGINE | v58.2-WRAITH
  * PREDATOR Analytics — Autonomous Intelligence Hypothesis Generation
  *
  * Автоматична генерація слідчих гіпотез на базі аномалій, патернів
@@ -217,7 +217,7 @@ const HypothesisEngineView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <Sparkles size={12} className="text-yellow-600 animate-pulse" />
                   <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
-                    SOVEREIGN HYPOTHESIS ENGINE · v57.2-WRAITH
+                    SOVEREIGN HYPOTHESIS ENGINE · v58.2-WRAITH
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">

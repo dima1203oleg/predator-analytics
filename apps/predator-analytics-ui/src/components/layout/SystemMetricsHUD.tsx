@@ -57,7 +57,7 @@ export const SystemMetricsHUD: React.FC = () => {
         { 
             label: 'GPU_ВІДЕОПАМЯТЬ', 
             icon: Zap, 
-            value: stats.gpu_available ? `${stats.gpu_utilization || 0}%` : 'N/A', 
+            value: stats.gpu_available ? `${Math.round(stats.gpu_utilization || 0)}%` : 'N/A', 
             sub: stats.gpu_available 
                 ? `ВІЛЬНО: ${(((stats.gpu_mem_total || 0) - (stats.gpu_mem_used || 0)) / (1024**2)).toFixed(0)}МБ` 
                 : 'GPU_ВІДСУТНІЙ',

@@ -71,7 +71,7 @@ const NetworkGraph = lazy(() => import('./features/network/NetworkGraph'));
 const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
-// ✅ Нові бізнес-розвідувальні модулі v57.2-WRAITH
+// ✅ Нові бізнес-розвідувальні модулі v58.2-WRAITH
 const FinancialSigintView    = lazy(() => import('./features/intelligence/FinancialSigintView'));
 const UBOMapView             = lazy(() => import('./features/intelligence/UBOMapView'));
 const GeopoliticalRadarView  = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));

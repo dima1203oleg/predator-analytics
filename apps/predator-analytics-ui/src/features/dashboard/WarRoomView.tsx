@@ -1,5 +1,5 @@
 /**
- * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v57.2-WRAITH
+ * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТР | v58.2-WRAITH
  * PREDATOR Analytics — Tactical Multi-Screen Command Center
  * 
  * Єдиний віртуальний простір для CEO з агрегацією всіх критичних потоків.
@@ -27,7 +27,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 
@@ -90,7 +90,7 @@ export default function WarRoomView() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v57.2-WRAITH
+                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v58.2-WRAITH
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -252,7 +252,7 @@ export default function WarRoomView() {
                             <span className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic leading-none">ЖИВІ_ПОТОКИ_ЯДРА</span>
                          </div>
                          <div className="space-y-3 opacity-80 italic font-bold">
-                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v57.2</p>
+                            <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v58.2</p>
                             <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ТРИВОГА:</span> Порушення порогу ризику POS-001</p>
                             <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">СУВЕРЕН:</span> Резолюція Kyoto Holdings активна</p>
                             <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>

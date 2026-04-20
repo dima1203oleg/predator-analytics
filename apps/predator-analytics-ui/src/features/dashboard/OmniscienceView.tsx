@@ -1,5 +1,5 @@
 /**
- * 🌌 Hyper-Omniscience Nexus | v57.2-WRAITH Premium Matrix
+ * 🌌 Hyper-Omniscience Nexus | v58.2-WRAITH Premium Matrix
  * PREDATOR Omniscience - Центр всеосяжного контролю та нейронного управління.
  * 
  * Включає:
@@ -9,7 +9,7 @@
  * - 🛡️ Тіньовий Контроль (Shadow Control)
  * - 🧬 Революція AZR (AZR Evolution)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -32,7 +32,7 @@ import { useAgents } from '@/context/AgentContext';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { HoloContainer } from '@/components/HoloContainer';

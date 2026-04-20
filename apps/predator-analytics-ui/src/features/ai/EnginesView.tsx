@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
+ * PREDATOR v58.2-WRAITH | Cognitive Engines Matrix — ЦЕНТР АНАЛІТИЧНИХ ДВИГУНІВ
  * 
  * Потужний хаб моніторингу та керування 6 нейронними двигунами:
  * Behavioral, Institutional, Influence, Structural, Predictive, CERS.
@@ -26,7 +26,7 @@ import { cn } from '@/utils/cn';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { CyberGrid } from '@/components/CyberGrid';
 import { Badge } from '@/components/ui/badge';
@@ -373,7 +373,7 @@ const EnginesView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full">
                 
-                {/* View Header v57.2-WRAITH */}
+                {/* View Header v58.2-WRAITH */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">

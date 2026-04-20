@@ -1,5 +1,5 @@
 /**
- * 📋 Report Builder | v57.2-WRAITH
+ * 📋 Report Builder | v58.2-WRAITH
  * PREDATOR Analytics — Конструктор звітів
  * Sovereign Power Design · Classified · Tier-1
  */
@@ -153,7 +153,7 @@ export const ReportBuilder: React.FC = () => {
               <div>
                 <div className="flex items-center gap-4 mb-2">
                   <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black tracking-widest uppercase italic rounded">
-                    INTEL_REPORT_v57.2
+                    INTEL_REPORT_v58.2
                   </span>
                   <div className="h-px w-8 bg-amber-500/20" />
                   <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic">WRAITH_CONSTRUCTOR</span>
@@ -164,7 +164,7 @@ export const ReportBuilder: React.FC = () => {
               </div>
             </div>
           }
-          breadcrumbs={['INTEL', 'REPORTS', 'BUILDER_v57.2']}
+          breadcrumbs={['INTEL', 'REPORTS', 'BUILDER_v58.2']}
           badges={[
             { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <ShieldCheck size={10} /> },
             { label: 'PDF_ENGINE_v4', color: 'primary', icon: <Cpu size={10} /> },

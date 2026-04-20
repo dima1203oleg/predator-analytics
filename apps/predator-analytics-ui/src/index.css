@@ -9,15 +9,15 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-    /* Predator Elite Tokens v58.2 */
+    /* Predator Elite Tokens v57.3-ELITE */
     --background: 230 25% 2%;
     --foreground: 210 40% 98%;
-    --primary: 348 100% 60%; /* Wraith Rose */
+    --primary: 348 100% 60%; /* Elite Rose */
     --primary-glow: rgba(244, 63, 94, 0.4);
     
     --wraith-glass: rgba(8, 12, 22, 0.82);
     --wraith-border: rgba(244, 63, 94, 0.15);
-    --wraith-accent: #f43f5e; /* Wraith Rose */
+    --wraith-accent: #f43f5e; /* Elite Rose */
     
     --aura-gold: hsla(348, 100%, 60%, 0.12);
     --aura-amber: hsla(340, 100%, 50%, 0.08);
@@ -974,7 +974,7 @@ kbd {
 }
 
 /* ============================================================================
-   PREDATOR v57.2-WRAITH — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
+   PREDATOR v58.2-WRAITH — ПОСИЛЕНА ВІЗУАЛЬНА ЯКІСТЬ
    Контраст, читабельність, динамічні ефекти, мікро-анімації
    ============================================================================ */
 
@@ -1343,7 +1343,7 @@ tbody tr:hover {
 
 
 /* ════════════════════════════════════════════════════════════════
-   PREDATOR v57.2 — SECTION-CARD DESIGN SYSTEM
+   PREDATOR v58.2 — SECTION-CARD DESIGN SYSTEM
    ════════════════════════════════════════════════════════════════ */
 
 .page-section {

@@ -3,7 +3,7 @@ import { Volume2, VolumeX, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
- * 🔊 SYNERGETIC AUDIO SANCTUARY | v57.2-WRAITH
+ * 🔊 SYNERGETIC AUDIO SANCTUARY | v58.2-WRAITH
  * ПРЕДАТОР: АУДІО-СУПРОВІД (TACTICAL AMBIENCE)
  * 
  * Генерує низькочастотний ембієнт та тактичні звукові ефекти через Web Audio API.

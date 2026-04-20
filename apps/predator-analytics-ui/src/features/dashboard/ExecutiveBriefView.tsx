@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v57.2-WRAITH — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
+ * 🦅 PREDATOR v58.2-WRAITH — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
  * Розділ I.3 — ШІ-керований звіт для вищого керівництва.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -136,7 +136,7 @@ export default function ExecutiveBriefView() {
               СУВЕРЕННЕ <span className="text-red-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v57.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
+              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТРАЛЬНОГО ЯДРА | v58.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
             </p>
           </div>
           

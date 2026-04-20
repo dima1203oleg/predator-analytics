@@ -1,5 +1,5 @@
 /**
- * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v57.2-WRAITH
+ * 🏢 FIRM DOSSIER // КОМПРОМАТ НА ФІРМУ | v58.2-WRAITH
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
  * Повний збір даних про суб'єкта: Реєстри, Митниця, Податки,
@@ -21,7 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -111,7 +111,7 @@ export default function FirmDossierView() {
                           CORPORATE_INTEL // DOSSIER_360
                         </span>
                         <div className="h-px w-10 bg-sky-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІРМИ</span>

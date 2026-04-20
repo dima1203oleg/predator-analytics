@@ -1,5 +1,5 @@
 /**
- * Predator v57.2-WRAITH | Sovereign Activity Ledger — Журнал Подій
+ * Predator v58.2-WRAITH | Sovereign Activity Ledger — Журнал Подій
  * Хронологічна матриця всіх системних маневрів та нейронних зсувів.
  */
 
@@ -15,7 +15,7 @@ import { useAgents } from '@/context/AgentContext';
 import { api } from '@/services/api';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 

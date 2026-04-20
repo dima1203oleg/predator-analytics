@@ -84,7 +84,7 @@ export const ClusterTopology: React.FC = () => {
     return (
         <div className="flex flex-col gap-6 p-4">
             <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                <LinkIcon size={16} className="text-yellow-400" /> ТОПОЛОГІЯ КЛАСТЕРА v57.2
+                <LinkIcon size={16} className="text-yellow-400" /> ТОПОЛОГІЯ КЛАСТЕРА v58.2
             </h3>
 
             <div className="flex items-center justify-between gap-2">

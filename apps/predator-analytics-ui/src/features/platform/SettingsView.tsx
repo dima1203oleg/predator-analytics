@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useToast } from "@/context/ToastContext";
 import { api } from "@/services/api";
 import { ViewHeader } from "@/components/ViewHeader";
-import { TacticalCard } from "@/components/TacticalCard";
+import { TacticalCard } from "@/components/ui/TacticalCard";
 import { Switch } from "@/components/ui/switch";
 import { useAppStore } from "@/store/useAppStore";
 import {

@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR STRATEGIC NEXUS | v57.2.0-TITAN
+ * 🦅 PREDATOR STRATEGIC NEXUS | v58.2.0-TITAN
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митних ризиків та торговельних потоків.
@@ -329,7 +329,7 @@ const DashboardView: React.FC = () => {
                   <div className="flex items-center gap-6 mt-6">
                     <div className="h-0.5 w-20 bg-gradient-to-r from-red-600 to-transparent" />
                     <span className="text-[11px] font-mono font-black text-red-500/90 uppercase tracking-[0.6em] animate-pulse">
-                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v57.2.0-TITAN
+                    ЦЕНТРАЛЬНЕ КОМАНДУВАННЯ // v58.2.0-TITAN
                     </span>
                   </div>
                 </div>
@@ -651,7 +651,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="grid grid-cols-2 gap-4 relative z-10">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v57.2-WRAITH</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v58.2-WRAITH</span>
                                    <span className="text-sm font-black text-white italic">{company.count} ДЕКЛ.</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -732,7 +732,7 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v57.2.0 WRAITH NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
+                `СИСТЕМА: v58.2.0 WRAITH NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,

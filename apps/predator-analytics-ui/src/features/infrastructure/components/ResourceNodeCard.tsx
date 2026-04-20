@@ -47,18 +47,18 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
       <div className="absolute top-0 right-0 p-4">
         <div className={cn(
           "px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest",
-          isOnline ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-500"
+          isOnline ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-500"
         )}>
-          {node.status}
+          {node.status === 'online' ? 'В МЕРЕЖІ' : node.status === 'offline' ? 'ОФЛАЙН' : 'ДЕГРАДОВАНО'}
         </div>
       </div>
 
       <div className="flex items-center gap-4 mb-6">
         <div className={cn(
           "p-3 rounded-xl bg-white/5",
-          node.type === 'SERVER' ? "text-cyan-400" : node.type === 'LAPTOP' ? "text-amber-400" : "text-violet-400"
+          node.type === 'SERVER' ? "text-cyan-400" : node.type === 'LAPTOP' ? "text-rose-400" : "text-violet-400"
         )}>
-          {node.type === 'SERVER' ? <Box className="w-6 h-6" /> : <Laptop className="w-6 h-6" />}
+          {node.type === 'SERVER' ? <Box className="w-6 h-6" /> : <LaptopIcon className="w-6 h-6" />}
         </div>
         <div>
           <h3 className="text-lg font-bold text-white leading-tight">{node.name}</h3>
@@ -69,21 +69,21 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
       <div className="grid grid-cols-3 gap-4 mb-6">
         <ResourceMiniStat 
           icon={Cpu} 
-          label="CPU" 
+          label="ЦП" 
           value={`${node.cpu.used}${node.cpu.unit}`} 
           percent={(node.cpu.used / node.cpu.total) * 100}
           color="cyan"
         />
         <ResourceMiniStat 
           icon={Database} 
-          label="RAM" 
+          label="ОЗП" 
           value={`${node.ram.used}/${node.ram.total} ${node.ram.unit}`} 
           percent={(node.ram.used / node.ram.total) * 100}
           color="violet"
         />
         <ResourceMiniStat 
           icon={HardDrive} 
-          label="DISK" 
+          label="ДИСК" 
           value={`${node.disk.used}/${node.disk.total} ${node.disk.unit}`} 
           percent={(node.disk.used / node.disk.total) * 100}
           color="emerald"
@@ -92,8 +92,8 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">GPU ACCELERATORS</span>
-          <span className="text-[10px] text-slate-600 font-mono">{node.gpu.length} UNIT(S)</span>
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">ГРАФІЧНІ ПРИСКОРЮВАЧІ (NVIDIA)</span>
+          <span className="text-[10px] text-slate-600 font-mono">{node.gpu.length} ОДИН.</span>
         </div>
         
         {node.gpu.map((g, i) => (
@@ -101,18 +101,19 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
             <div className="flex justify-between items-center text-[10px]">
               <span className="text-slate-300 font-bold">{g.model}</span>
               <div className="flex items-center gap-2 text-slate-500">
-                <Thermometer className="w-3 h-3 text-amber-500" />
+                <Thermometer className="w-3 h-3 text-rose-500" />
                 <span>{g.temp}°C</span>
               </div>
             </div>
             <GpuGauge utilization={(g.vram_used / g.vram_total) * 100} label="" />
             <div className="flex justify-between text-[9px] text-slate-600 font-mono">
-              <span>VRAM USED</span>
+              <span>ВИТРАТА VRAM</span>
               <span>{g.vram_used} / {g.vram_total} GB</span>
             </div>
           </div>
         ))}
       </div>
+
     </motion.div>
   );
 }

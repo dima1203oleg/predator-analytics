@@ -1,5 +1,5 @@
 /**
- * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v57.2-WRAITH
+ * 🧠 SOVEREIGN INTELLIGENCE NEXUS | v58.2-WRAITH
  * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ (INTEL NEXUS)
  * 
  * Центральна точка розвідувального циклу:
@@ -121,7 +121,7 @@ const IntelligenceView: React.FC = () => {
                                          {isOffline ? 'MIRROR_NEXUS' : 'INTEL_NEXUS'} // GLOBAL_RECON
                                        </span>
                                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v57.2-WRAITH</span>
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v58.2-WRAITH</span>
                                     </div>
                                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                                         ЦЕНТР <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8">РОЗВІДКИ</span>
@@ -228,7 +228,7 @@ const IntelligenceView: React.FC = () => {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТРИЦЯ</h3>
-                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v57.2</p>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v58.2</p>
                                         </div>
                                     </div>
                                     <div className="flex bg-white/[0.02] rounded-xl p-1.5 border border-white/5 backdrop-blur-3xl">

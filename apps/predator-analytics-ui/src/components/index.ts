@@ -3,7 +3,7 @@ export * from './StatusIndicator';
 export * from './CyberOrb';
 export * from './CyberGrid';
 export * from './HoloContainer';
-export * from './TacticalCard';
+export * from './ui/TacticalCard';
 export * from './ViewHeader';
 export * from './EnhancedButton';
 

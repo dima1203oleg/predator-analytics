@@ -1,6 +1,6 @@
 
 /**
- * 🎯 Competitor Intelligence View v57.2-WRAITH
+ * 🎯 Competitor Intelligence View v58.2-WRAITH
  * "Strategic Competitor Nexus Matrix"
  * Sovereign Power Design · Tactical Market Domination · Tier-1
  *
@@ -24,7 +24,7 @@ import { intelligenceApi } from '@/services/api';
 import { ViewHeader } from '@/components/ViewHeader';
 import { cn } from '@/utils/cn';
 import { DataSkeleton } from '@/components/shared/DataSkeleton';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { PageTransition } from '@/components/layout/PageTransition';
@@ -35,7 +35,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 // --- LOCALIZATION ---
 const localLocales = {
   title: 'СТРАТЕГІЧНИЙ НЕКСУС КОНКУРЕНТІВ',
-  breadcrumbs: ['РОЗВІДКА', 'МАТРИЦЯ РИНКУ', 'v57.2.WRAITH'],
+  breadcrumbs: ['РОЗВІДКА', 'МАТРИЦЯ РИНКУ', 'v58.2.WRAITH'],
   stats: {
     database: 'БАЗА ДАНИХ',
     monitoring: 'МОНІТОРИНГ',
@@ -386,7 +386,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                       COMPETITOR_SIGINT // {isOffline ? 'OFFLINE_MIRROR' : 'HUB_MATRIX'}
                     </span>
                     <div className="h-px w-12 bg-[#D4AF37]/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     {localLocales.title}

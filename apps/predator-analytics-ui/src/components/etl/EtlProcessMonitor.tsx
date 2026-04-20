@@ -55,7 +55,7 @@ export const EtlProcessMonitor: React.FC = () => {
 
     return (
         <div className="w-full space-y-8">
-            {/* Global Pipeline Metrics v57.2-WRAITH */}
+            {/* Global Pipeline Metrics v58.2-WRAITH */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Active Streams', val: globalStatus?.active_jobs_count || 0, icon: Radio, color: 'text-cyan-400' },
@@ -184,7 +184,7 @@ const EtlJobModule: React.FC<{ job: EtlJob }> = ({ job }) => {
                 </div>
             </div>
 
-            {/* Pipeline Visual Flow v57.2-WRAITH */}
+            {/* Pipeline Visual Flow v58.2-WRAITH */}
             <div className="grid grid-cols-5 gap-2 relative">
                 {/* Background Connecting Tube */}
                 <div className="absolute top-6 left-10 right-10 h-1 bg-white/5 rounded-full z-0" />

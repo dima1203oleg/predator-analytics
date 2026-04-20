@@ -111,7 +111,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 
                 <div className="hidden xl:flex flex-col">
                     <h1 className="text-xl font-black text-white italic uppercase tracking-[0.3em] leading-none mb-1">
-                        PREDATOR <span className="text-yellow-500">v57.2</span>
+                        PREDATOR <span className="text-yellow-500">v58.2</span>
                     </h1>
                     <div className="flex items-center gap-4 text-[9px] font-black text-slate-700 uppercase tracking-widest italic">
                         <span className="flex items-center gap-2">

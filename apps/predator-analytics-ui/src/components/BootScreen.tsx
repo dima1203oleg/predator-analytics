@@ -1,5 +1,5 @@
 /**
- * BootScreen — PREDATOR NEXUS v57.2-WRAITH — SOVEREIGN CLASSIFIED INTRO
+ * BootScreen — PREDATOR NEXUS v58.2-WRAITH — SOVEREIGN CLASSIFIED INTRO
  * ===============================================================
  * Billion-dollar intelligence platform. Доступ виключно для авторизованого персоналу.
  * Кінематографічна заставка рівня державної розвідки.

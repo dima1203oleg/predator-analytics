@@ -1,5 +1,5 @@
 /**
- * 📊 ADVANCED CHARTS WRAITH // РОЗШИРЕНА АНАЛІТИКА | v57.2-WRAITH
+ * 📊 ADVANCED CHARTS WRAITH // РОЗШИРЕНА АНАЛІТИКА | v58.2-WRAITH
  * PREDATOR Analytics — High-Fidelity Data Visualization
  * 
  * Потужні графіки для аналітики товарних потоків, ринків та ризиків.
@@ -19,7 +19,7 @@ import {
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -352,7 +352,7 @@ const AdvancedChartsPremium: React.FC = () => {
                       ANALYTICS_WRAITH // QUANTUM_VIEW
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     АНАЛІТИЧНІ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ГРАФІКИ</span>
@@ -362,7 +362,7 @@ const AdvancedChartsPremium: React.FC = () => {
             }
             breadcrumbs={['INTEL_POOL', 'QUANT_LAB', 'VISUAL_ARRAY']}
             badges={[
-              { label: 'SOVEREIGN_WRAITH_v57.2', color: 'gold', icon: <Crown size={10} /> },
+              { label: 'SOVEREIGN_WRAITH_v58.2', color: 'gold', icon: <Crown size={10} /> },
               { label: 'LIVE_TELEMETRY', color: 'primary', icon: <Activity size={10} /> },
             ]}
             stats={[

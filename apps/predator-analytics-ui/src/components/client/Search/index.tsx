@@ -1,5 +1,5 @@
 /**
- * 🛰️ GLOBAL OSINT SEARCH // ГЛОБАЛЬНИЙ ПОШУК | v57.2-WRAITH
+ * 🛰️ GLOBAL OSINT SEARCH // ГЛОБАЛЬНИЙ ПОШУК | v58.2-WRAITH
  * PREDATOR Analytics — High-Fidelity Retrieval Engine
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -69,7 +69,7 @@ export const Search: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
                   <span className="badge-v2 bg-blue-600/10 border border-blue-600/20 text-blue-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                    GLOBAL_OSINT // RETRIEVAL_v57.2
+                    GLOBAL_OSINT // RETRIEVAL_v58.2
                   </span>
                   <div className="h-px w-10 bg-blue-600/20" />
                   <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">SCAN_MODE_ACTIVE</span>

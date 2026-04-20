@@ -1,5 +1,5 @@
 /**
- * 🌍 MARKET ENTRY SCORE | v57.2-WRAITH
+ * 🌍 MARKET ENTRY SCORE | v58.2-WRAITH
  * PREDATOR Analytics — Оцінка ринкового входу
  *
  * Скоринг привабливості ринків для входу:
@@ -236,7 +236,7 @@ const MarketEntryView: React.FC = () => {
                     {isOffline ? 'SOVEREIGN_EMERGENCY' : 'MARKET_ENTRY_SIGINT'} // ACTIVE_CORE
                   </span>
                   <div className="h-px w-12 bg-yellow-500/20" />
-                  <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                  <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                   MARKET ENTRY <span className={cn("underline decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-yellow-500 decoration-yellow-600/30")}>SCORE</span>
@@ -244,7 +244,7 @@ const MarketEntryView: React.FC = () => {
               </div>
             </div>
           }
-          breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v57.2']}
+          breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v58.2']}
           badges={[
             { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Lock size={10} /> },
             { label: 'PREDICTIVE_CORE_v5', color: 'primary', icon: <Cpu size={10} /> },
@@ -544,7 +544,7 @@ const MarketEntryView: React.FC = () => {
                                 <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic font-serif">PREDATIVE_ENTRY_VERDICT</h3>
                                 <div className="flex items-center gap-3 mt-2">
                                     <Cpu size={14} className="text-amber-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v57.2-WRAITH</span>
+                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v58.2-WRAITH</span>
                                 </div>
                             </div>
                         </div>

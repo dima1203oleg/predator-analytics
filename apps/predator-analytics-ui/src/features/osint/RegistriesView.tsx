@@ -1,5 +1,5 @@
 /**
- * 📂 REGISTRIES // СКАНЕР РЕЄСТРІВ | v57.2-WRAITH
+ * 📂 REGISTRIES // СКАНЕР РЕЄСТРІВ | v58.2-WRAITH
  * PREDATOR Analytics — Business Intelligence & Registry Forensic
  *
  * Глибоке сканування юридичних осіб: ЄДРПОУ, Бенефіціари, Ризики.
@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -171,7 +171,7 @@ export default function RegistriesView() {
                                   REGISTRY_FORENSIC // OSINT_CORE
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                СКАНЕР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">РЕЄСТРІВ</span>

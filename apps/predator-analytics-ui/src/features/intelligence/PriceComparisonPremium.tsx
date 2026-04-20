@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v57.2-WRAITH
+ * 💰 PRICE COMPARISON // ПОРІВНЯННЯ ЦІН | v58.2-WRAITH
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  * 
  * Знаходження найкращих пропозицій від глобальних постачальників.
@@ -21,7 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient as api } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -129,7 +129,7 @@ export default function PriceComparisonPremium() {
                            MARKET_SIGINT // PRICE_DYNAMICS
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         ПОРІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>

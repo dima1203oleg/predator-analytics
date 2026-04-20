@@ -1,5 +1,5 @@
 /**
- * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v57.2-WRAITH
+ * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v58.2-WRAITH
  * PREDATOR Analytics — Sovereign Investigative Framework
  * 
  * Модуль керування оперативними розслідуваннями та чергою подій.
@@ -162,7 +162,7 @@ const CasesView: React.FC = () => {
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
                       INSPECT_OPS // ТЕРМІНАЛ КЕЙСІВ
                     </span>
-                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v57.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕРАТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>

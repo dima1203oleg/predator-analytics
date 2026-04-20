@@ -470,7 +470,12 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     <span className="text-xs font-mono text-slate-300 max-w-[200px] truncate">{profile.kved || "КВЕД не вказано"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
-                                                    <CheckCircle2 className={`w-4 h-4 ${profile.st                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                                                    <CheckCircle2 className={`w-4 h-4 ${profile.status === 'active' ? 'text-emerald-500' : 'text-slate-500'}`} />
+                                                    <span className="text-xs font-mono text-slate-300">Статус: {profile.status === 'active' ? 'АКТИВНИЙ' : 'ПРИЗУПИНЕНО'}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                                 {[
                                                     { label: 'СКАН-САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'slate' },
                                                     { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'orange' : 'slate' },
@@ -479,12 +484,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 ].map((item, idx) => (
                                                     <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
                                                         <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
-                                                        <span className={cn("text-xs font-mono font-bold", `text-${item.color}-400`)}>{item.status}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
-                                                        <span className={`text-xs font-mono font-bold text-${item.color}-400`}>{item.status}</span>
+                                                        <span className={`text-xs font-mono font-bold text-${item.color === 'slate' ? 'slate' : item.color}-400`}>{item.status}</span>
                                                     </div>
                                                 ))}
                                             </div>

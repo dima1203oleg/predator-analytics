@@ -1,5 +1,5 @@
 /**
- * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v57.2-WRAITH
+ * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v58.2-WRAITH
  * PREDATOR Analytics — Tactical OSINT Media Parser
  * 
  * Автоматичний дайджест: Компромат, Тренди, Митниця та ШІ-алерти.
@@ -25,7 +25,7 @@ import type {
   NewspaperData, ComprommatItem, TrendItem, CustomsItem, AlertItem,
 } from '@/services/api/newspaper';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -152,7 +152,7 @@ export default function NewspaperView() {
                           TACTICAL_OSINT // MEDIA_PARSER
                         </span>
                         <div className="h-px w-10 bg-yellow-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ГАЗЕТА <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">PREDATOR</span>
@@ -202,7 +202,7 @@ export default function NewspaperView() {
                        <Flame size={14} /> {data.headline.tag}
                     </span>
                     <div className="h-px w-20 bg-amber-600/20" />
-                    <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v57.2</span>
+                    <span className="text-[10px] font-black text-amber-500/60 uppercase tracking-widest italic font-mono">ГАРЯЧИЙ_ВЕКТОР_v58.2</span>
                  </div>
                  <h2 className="text-7xl font-black text-white italic tracking-tighter uppercase leading-[0.9] max-w-5xl group-hover:text-amber-500 transition-colors">
                     {data.headline.title}

@@ -55,7 +55,7 @@ export default function SystemFactoryView() {
     {
       id: 'msg-0',
       sender: 'system',
-      text: 'ЗАВОД PREDATOR v57.2-WRAITH ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
+      text: 'ЗАВОД PREDATOR v58.2-WRAITH ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
       timestamp: new Date()
     }
   ]);
@@ -760,7 +760,7 @@ export default function SystemFactoryView() {
               <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
                 <Factory size={14} className="text-amber-400" />
               </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">Factory v57.2-WRAITH</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-300">Factory v58.2-WRAITH</span>
             </div>
             <div className="text-[9px] text-slate-500 font-mono">
               {activeTab === 'autonomous' || activeTab === 'evolution' ? (

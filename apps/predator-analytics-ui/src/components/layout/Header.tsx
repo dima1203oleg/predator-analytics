@@ -14,7 +14,9 @@ import {
   ShieldCheck,
   UserCircle,
   ChevronRight,
+  Terminal,
 } from 'lucide-react';
+import { useAppStore } from '../../store/useAppStore';
 import { getNavigationContext, navAccentStyles } from '../../config/navigation';
 import { useUser } from '../../context/UserContext';
 import { useBackendStatus } from '../../hooks/useBackendStatus';
@@ -77,13 +79,14 @@ const Header: React.FC = () => {
   const currentDate = format(new Date(), "d MMMM yyyy 'р.'", { locale: uk });
   const backendStatus = useBackendStatus();
   const currentRole = user?.role ?? 'viewer';
-  const { item, section } = getNavigationContext(location.pathname, currentRole);
+  const { item, section } = getNavigationContext(location.pathname + location.search, currentRole);
   const accent = section ? navAccentStyles[section.accent] : navAccentStyles.amber;
   const sectionGlow = section ? (sectionGlowMap[section.accent] ?? sectionGlowMap.amber) : sectionGlowMap.amber;
   const roleLabel = getRoleLabel(currentRole);
   const [isPaletteOpen, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
   const [isContextRailOpen, setIsContextRailOpen] = useAtom(shellContextRailOpenAtom);
   const shellV2Enabled = isShellV2Enabled();
+  const { isTerminalOpen, setTerminalOpen } = useAppStore();
 
   return (
     <header
@@ -283,6 +286,21 @@ const Header: React.FC = () => {
                 className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-400"
                 style={{ boxShadow: '0 0 6px rgba(244,63,94,0.8)' }}
               />
+            </button>
+
+            {/* Системний термінал */}
+            <button
+              id="header-terminal-toggle"
+              title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
+              onClick={() => setTerminalOpen(!isTerminalOpen)}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
+              style={{
+                background: isTerminalOpen ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)',
+                borderColor: isTerminalOpen ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)',
+                color: isTerminalOpen ? '#34d399' : '#64748b',
+              }}
+            >
+              <Terminal className="h-4 w-4" />
             </button>
 
             {/* Профіль та операційний режим */}

@@ -138,7 +138,7 @@ const createScenarioPoints = (points: ForecastPoint[], multiplier: number): Fore
         confidence_upper: Math.round(point.confidence_upper * multiplier),
     }));
 
-// --- MOCK DATA FALLBACK (v57.2-WRAITH-WRAITH) ---
+// --- MOCK DATA FALLBACK (v58.2-WRAITH-WRAITH) ---
 const MOCK_FORECAST: ForecastResponse = {
   product_code: '84713000',
   product_name: 'Обчислювальні машини',
@@ -273,7 +273,7 @@ export default function ForecastPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-red">
-                                <span className="relative z-10 text-white font-black italic">PREDATOR v57.2-WRAITH | ML-FORECASTING</span>
+                                <span className="relative z-10 text-white font-black italic">PREDATOR v58.2-WRAITH | ML-FORECASTING</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(

@@ -1,5 +1,5 @@
 /**
- * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v57.2-WRAITH
+ * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v58.2-WRAITH
  * PREDATOR Analytics — Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
@@ -23,7 +23,7 @@ import { apiClient } from '@/services/api/config';
 import ReactECharts from '@/components/ECharts';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
@@ -162,10 +162,10 @@ export default function SearchConsole() {
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-3">
                                         <span className="badge-v2 bg-yellow-600/10 border border-yellow-600/20 text-yellow-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v57.2
+                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v58.2
                                         </span>
                                         <div className="h-px w-10 bg-yellow-600/20" />
-                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
                                         SYNAPTIC <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">DISCOVERY</span>

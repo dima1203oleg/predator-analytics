@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Intelligence Advisor | v57.2-WRAITH Premium Matrix
+ * 👁️ Sovereign Intelligence Advisor | v58.2-WRAITH Premium Matrix
  * PREDATOR Глибокий експертний висновок.
  * 
  * Генерація та візуалізація суверенних аналітичних звітів з ШІ-підтримкою.
@@ -93,7 +93,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v57.2-WRAITH</span>
+                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v58.2-WRAITH</span>
                             <Badge className="bg-[#D4AF37]/10 text-[#D4AF37] border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
                         <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕРЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
@@ -145,7 +145,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                             </div>
                             <div className="text-center space-y-3">
                                 <p className="text-[#D4AF37] font-black tracking-[0.6em] uppercase text-xs animate-pulse">СИНТЕЗУЮ_ЕКСПЕРТНИЙ_ВИСНОВОК...</p>
-                                <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Sovereign Engine Analysing 5-Layer Risk Matrix v57.2</p>
+                                <p className="text-slate-600 text-[10px] uppercase font-mono italic tracking-widest">Sovereign Engine Analysing 5-Layer Risk Matrix v58.2</p>
                             </div>
                             <div className="flex gap-2">
                                 {[1,2,3,4,5].map(i => (
@@ -168,7 +168,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                                 <AlertTriangle size={40} className="text-rose-500" />
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-rose-500 uppercase italic mb-2 tracking-tighter">СИСТЕМНИЙ_ЗБІЙ_v57.2</h4>
+                                <h4 className="text-xl font-black text-rose-500 uppercase italic mb-2 tracking-tighter">СИСТЕМНИЙ_ЗБІЙ_v58.2</h4>
                                 <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">{error}</p>
                             </div>
                             <button 

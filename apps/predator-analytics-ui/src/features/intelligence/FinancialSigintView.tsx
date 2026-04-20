@@ -1,11 +1,11 @@
 /**
- * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v57.2-WRAITH
+ * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v58.2-WRAITH
  * PREDATOR Analytics — Суверенна Транзакційна та Офшорна Розвідка
  * 
  * Власність: ДЕРЖАВНА МИТНА СЛУЖБА УКРАЇНИ
  * Статус: ОБМЕЖЕНИЙ ДОСТУП
  * 
- * PREDATOR_WRATH v57.2 · ТАЄМНО · РІВЕНЬ-1
+ * PREDATOR_WRATH v58.2 · ТАЄМНО · РІВЕНЬ-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -40,7 +40,7 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 import { AxiosError } from 'axios';
 
 // ========================
-// Background Scanning HUD v57.2
+// Background Scanning HUD v58.2
 // ========================
 
 const ScanningHUD: React.FC = () => {
@@ -285,7 +285,7 @@ export default function FinancialSigintView() {
                           ГЕОПОЛІТИЧНИЙ_SIGINT // НЕЙРО_РАДАР_КАПІТАЛУ
                         </span>
                         <div className="h-px w-16 bg-yellow-500/20" />
-                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                        ФІНАНСОВА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">РОЗВІДКА</span>

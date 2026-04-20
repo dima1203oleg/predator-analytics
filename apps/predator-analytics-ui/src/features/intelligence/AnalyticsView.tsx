@@ -1,5 +1,5 @@
 /**
- * 🛰️ Semantic Radar Matrix | v57.2-WRAITH Sovereign Matrix
+ * 🛰️ Semantic Radar Matrix | v58.2-WRAITH Sovereign Matrix
  * PREDATOR Семантичний Аналітичний Радар — Когнітивний Граф Зв'язків
  *
  * Візуалізація зв'язків між сутностями (Граф) та глибока аналітика.
@@ -11,7 +11,7 @@
  *
  * Sovereign Power Design · Classified · Tier-1
  * 
- * © 2026 PREDATOR Analytics — Повна українізація v57.2-WRAITH
+ * © 2026 PREDATOR Analytics — Повна українізація v58.2-WRAITH
  */
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -30,7 +30,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { api } from '@/services/api';
 import { cn } from '@/utils/cn';
 import { premiumLocales } from '@/locales/uk/premium';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberOrb } from '@/components/CyberOrb';
 import { HoloContainer } from '@/components/HoloContainer';
 import { VisualAnalytics } from '@/components/premium/VisualAnalytics';
@@ -426,7 +426,7 @@ const AnalyticsView: React.FC = () => {
             <AdvancedBackground />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.05),transparent_70%)] pointer-events-none" />
 
-            {/* ViewHeader v57.2-WRAITH */}
+            {/* ViewHeader v58.2-WRAITH */}
             <ViewHeader
                 title={
                     <div className="flex items-center gap-10">
@@ -442,7 +442,7 @@ const AnalyticsView: React.FC = () => {
                                     SEMANTIC_CORE // {isOffline ? 'MIRROR_SCAN' : 'RADAR_ARRAY'}
                                 </span>
                                 <div className="h-px w-12 bg-yellow-500/20" />
-                                <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                                <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                 СЕМАНТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РАДАР</span>
@@ -450,7 +450,7 @@ const AnalyticsView: React.FC = () => {
                         </div>
                     </div>
                 }
-                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_COGNITION_v57.2']}
+                breadcrumbs={['OSINT-HUB', 'АНАЛІТИКА', 'GLOBAL_COGNITION_v58.2']}
                 badges={[
                     { label: 'SOVEREIGN_WRAITH_FORCE', color: 'primary', icon: <Zap size={10} /> },
                     { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },

@@ -1,9 +1,9 @@
 /**
- * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ ЗРАДИ | v57.2-WRAITH
+ * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ ЗРАДИ | v57.3-ELITE
  * PREDATOR Analytics — Corruption & Collaboration Intelligence
  * 
  * Моніторинг ризиків: Корупція, Колаборація, промислове шпигунство.
- * Sovereign Power Design · Integrity Sentinel · Tier-1
+ * Elite Power Design · Integrity Sentinel · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -20,7 +20,7 @@ import {
   Lock
 } from 'lucide-react';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -150,28 +150,28 @@ export default function ZradaControlView() {
              title={
                <div className="flex items-center gap-10">
                   <div className="relative group">
-                     <div className="absolute inset-0 bg-amber-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                     <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
-                        <ShieldX size={42} className="text-amber-600 shadow-[0_0_20px_#e11d48]" />
+                     <div className="absolute inset-0 bg-rose-600/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                     <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[2.5rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all">
+                        <ShieldX size={42} className="text-rose-600 shadow-[0_0_20px_#e11d48]" />
                      </div>
                   </div>
                   <div className="space-y-2">
                      <div className="flex items-center gap-4">
-                        <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
+                        <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
                           INTEGRITY_WATCH // CONTOUR_ZRADA
                         </span>
-                        <div className="h-px w-12 bg-amber-500/20" />
-                        <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v57.2-WRAITH</span>
+                        <div className="h-px w-12 bg-rose-500/20" />
+                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.3-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                       СИСТЕМА <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗРАДА</span>
+                       СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗРАДА</span>
                      </h1>
                   </div>
                </div>
              }
              breadcrumbs={['INTEL', 'INTEGRITY', 'ZRADA_SCREEN']}
              badges={[
-               { label: 'CLASSIFIED_S2', color: 'amber', icon: <Lock size={10} /> },
+               { label: 'CLASSIFIED_S2', color: 'danger', icon: <Lock size={10} /> },
                { label: 'SENTINEL_SHIELD', color: 'primary', icon: <ShieldCheck size={10} /> },
              ]}
              stats={[
@@ -220,19 +220,19 @@ export default function ZradaControlView() {
                        <motion.div key={subject.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => setSelectedSubject(subject)} className={cn("p-8 rounded-[2.5rem] bg-black border-2 cursor-pointer transition-all group relative overflow-hidden", selectedSubject?.id === subject.id ? "border-amber-500/40 bg-amber-500/[0.05]" : "border-white/[0.04] hover:border-amber-600/20")}>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-6">
-                                <div className={cn("p-4 rounded-2xl border bg-black/40 shadow-xl", subject.risk === 'Підтверджено' ? "text-amber-500 border-amber-500/30" : "text-slate-600 border-white/10")}>
+                                <div className={cn("p-4 rounded-2xl border bg-black/40 shadow-xl", subject.risk === 'Підтверджено' ? "text-rose-500 border-rose-500/30" : "text-slate-600 border-white/10")}>
                                    <UserX size={28} />
                                 </div>
                                 <div className="space-y-1">
-                                   <h3 className="text-xl font-black text-white uppercase italic tracking-tighter group-hover:text-amber-500 transition-colors leading-none">{subject.name}</h3>
+                                   <h3 className="text-xl font-black text-white uppercase italic tracking-tighter group-hover:text-rose-500 transition-colors leading-none">{subject.name}</h3>
                                    <div className="flex items-center gap-3">
-                                      <span className={cn("text-[9px] font-black uppercase border px-2 py-0.5 rounded", subject.risk === 'Підтверджено' ? "text-amber-500 border-amber-500/20" : "text-slate-700 border-white/5")}>{subject.risk}</span>
+                                      <span className={cn("text-[9px] font-black uppercase border px-2 py-0.5 rounded", subject.risk === 'Підтверджено' ? "text-rose-500 border-rose-500/20" : "text-slate-700 border-white/5")}>{subject.risk}</span>
                                       <span className="text-[9px] font-black text-slate-800 uppercase italic font-mono tracking-widest">{subject.role}</span>
                                    </div>
                                 </div>
                              </div>
                              <div className="text-right">
-                                <p className="text-3xl font-black text-amber-500 italic font-mono leading-none tracking-tighter mb-1">{subject.evidenceCount}</p>
+                                <p className="text-3xl font-black text-rose-500 italic font-mono leading-none tracking-tighter mb-1">{subject.evidenceCount}</p>
                                 <p className="text-[8px] font-black text-slate-800 uppercase tracking-widest leading-none opacity-50">ДОКАЗІВ</p>
                              </div>
                           </div>
@@ -284,7 +284,7 @@ export default function ZradaControlView() {
                          <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10 flex-1 overflow-y-auto no-scrollbar border-t-[#D4AF37]/10">
                               <div className="flex items-center gap-6 pb-6 border-b border-white/[0.04]">
                                  <Crosshair size={24} className="text-amber-600 animate-spin-slow" />
-                                 <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em]">СИГНАЛЬНИЙ ДЕШБОРД (DETECTION_LOG)</h3>
+                                 <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] ">СИГНАЛЬНИЙ ДЕШБОРД (DETECTION_LOG)</h3>
                               </div>
                               <div className="space-y-6">
                                  {selectedSubject.signals.map((signal, i) => (
@@ -330,7 +330,7 @@ export default function ZradaControlView() {
                    </div>
                    <div className="space-y-2 relative z-10 border-l-4 border-amber-600 pl-8">
                       <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter skew-x-[-2deg] leading-none">АВТОРИЗАЦІЯ ОБ'ЄКТА</h2>
-                      <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] italic leading-none">NEW_INTEGRITY_TARGET_v57.2 WRAITH</p>
+                      <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] italic leading-none">NEW_INTEGRITY_TARGET_v58.2 WRAITH</p>
                    </div>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                       <div className="space-y-3">

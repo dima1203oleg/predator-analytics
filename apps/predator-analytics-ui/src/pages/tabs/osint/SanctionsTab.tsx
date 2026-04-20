@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { ShieldAlert, Search, Filter, Download, ExternalLink, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { TacticalCard } from '@/components/ui/TacticalCard';
-import { ViewHeader } from '@/components/ui/ViewHeader';
+import { ViewHeader } from '@/components/ViewHeader';
+import { cn } from '@/lib/utils';
 
 const MOCK_SANCTIONS = [
   { id: 1, name: 'ТОВ "Вектор Плюс"', type: 'Юридична особа', list: 'OFAC SDN', date: '2024-03-12', reason: 'Сприяння обходу санкцій', risk: 'Critical' },

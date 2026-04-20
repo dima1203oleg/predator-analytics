@@ -1,5 +1,5 @@
 /**
- * 👤 PERSON DOSSIER // КОМПРОМАТ НА ОСОБУ | v57.2-WRAITH
+ * 👤 PERSON DOSSIER // КОМПРОМАТ НА ОСОБУ | v58.2-WRAITH
  * PREDATOR Analytics — 360° Personal Intelligence
  * 
  * Глибинний аналіз персони: Суди, Борги, Кримінал, Санкції,
@@ -21,7 +21,7 @@ import {
 import { cn } from '@/utils/cn';
 import { apiClient } from '@/services/api/config';
 import { PageTransition } from '@/components/layout/PageTransition';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { Badge } from '@/components/ui/badge';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -139,7 +139,7 @@ export default function ComprompatPersonView() {
                           PERSON_INTEL // DOSSIER_DETECTION
                         </span>
                         <div className="h-px w-10 bg-orange-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v57.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-orange-500 underline decoration-orange-600/20 decoration-8 italic uppercase">ОСОБИ</span>

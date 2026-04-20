@@ -17,8 +17,8 @@ export function GpuGauge({ utilization = 72, label = 'RTX 4090' }: { utilization
             width: 15,
             color: [
               [0.4, '#10b981'], // Emerald
-              [0.8, '#f59e0b'], // Amber
-              [1, '#ef4444']    // Red
+              [0.8, '#f43f5e'], // Rose
+              [1, '#e11d48']    // Crimson
             ]
           }
         },

@@ -1,5 +1,5 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v58.2-WRAITH
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v57.3-ELITE
  * Екран авторизації глобальної розвідувальної платформи.
  * Атмосфера: суверенітет, абсолютний контроль, елітарність.
  */
@@ -154,7 +154,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 {/* Глобальна сітка координат */}
                 <div className="absolute inset-0 opacity-[0.06]"
                      style={{
-                         backgroundImage: 'linear-gradient(rgba(180,140,20,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(180,140,20,0.1) 1px, transparent 1px)',
+                         backgroundImage: 'linear-gradient(rgba(225,29,72,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(225,29,72,0.1) 1px, transparent 1px)',
                          backgroundSize: '160px 160px'
                      }}
                 />
@@ -168,21 +168,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 
                 {/* WORLD MAP SILHOUETTE */}
                 <div className="absolute inset-0 opacity-[0.06] flex items-center justify-center p-20 mix-blend-screen overflow-hidden">
-                    <Globe size={1400} className="text-yellow-900/40 blur-[1px] animate-spin-slow" />
+                    <Globe size={1400} className="text-rose-900/40 blur-[1px] animate-spin-slow" />
                 </div>
 
                 {/* Вертикальна смуга скану */}
                 <motion.div
                     animate={{ left: ['-10%', '110%'] }}
                     transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                    className="absolute top-0 bottom-0 w-[600px] bg-gradient-to-r from-transparent via-yellow-600/[0.03] to-transparent"
+                    className="absolute top-0 bottom-0 w-[600px] bg-gradient-to-r from-transparent via-rose-600/[0.03] to-transparent"
                 />
                 
                 {/* LASER SCAN LINE (Horizontal) */}
                 <motion.div
                     animate={{ top: ['0%', '100%'] }}
                     transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                    className="absolute left-0 right-0 h-[2px] bg-yellow-600/30 shadow-[0_0_35px_rgba(212,175,55,0.9)] z-10"
+                    className="absolute left-0 right-0 h-[2px] bg-rose-600/30 shadow-[0_0_35px_rgba(225,29,72,0.9)] z-10"
                 />
             </div>
 
@@ -200,20 +200,20 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             animate={{ opacity: threatPulse ? 1 : 0.4 }}
                             className="flex items-center gap-2"
                         >
-                            <div className="w-2.5 h-2.5 bg-yellow-600 rounded-full shadow-[0_0_20px_#d4af37] animate-pulse" />
-                            <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(212,175,55,0.8)]">
-                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_V58.2
+                            <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] animate-pulse" />
+                            <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]">
+                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v57.3_ELITE
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
-                        <span className="text-[8px] text-amber-600/80 font-bold tracking-[0.3em]">
+                        <span className="text-[8px] text-rose-600/80 font-bold tracking-[0.3em]">
                             КАТЕГОРІЯ ДОСТУПУ: СУВЕРЕННИЙ
                         </span>
                     </div>
 
                     {/* Центр — час */}
                     <div className="flex flex-col items-center">
-                        <div className="text-[10px] font-black text-yellow-500/60 tracking-[0.5em] tabular-nums">
+                        <div className="text-[10px] font-black text-rose-500/60 tracking-[0.5em] tabular-nums">
                             {formatTime(clock)} UTC+3
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-[0.4em]">
@@ -224,15 +224,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     {/* Права частина — статус мережі */}
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1">
-                            <Satellite size={9} className="text-yellow-500/70" />
-                            <span className="text-[8px] text-yellow-500/70 font-bold tracking-wider">
+                            <Satellite size={9} className="text-rose-500/70" />
+                            <span className="text-[8px] text-rose-500/70 font-bold tracking-wider">
                                 {nodesOnline.toLocaleString()} ВУЗЛІВ
                             </span>
                         </div>
                         <span className="text-[8px] text-slate-700">│</span>
                         <div className="flex items-center gap-1">
-                            <Globe size={9} className="text-yellow-600/60" />
-                            <span className="text-[8px] text-yellow-600/60 font-bold tracking-wider">
+                            <Globe size={9} className="text-rose-600/60" />
+                            <span className="text-[8px] text-rose-600/60 font-bold tracking-wider">
                                 {countriesMonitored} КРАЇН
                             </span>
                         </div>
@@ -246,10 +246,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 {/* Перехоплені транзакції */}
                 <div className="space-y-4">
                     <div className="space-y-1">
-                        <div className="text-[7px] text-yellow-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
+                        <div className="text-[7px] text-rose-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
                             <Eye size={8} /> ПЕРЕХОПЛЕНО
                         </div>
-                        <div className="text-lg font-black text-yellow-400/80 tabular-nums tracking-wider">
+                        <div className="text-lg font-black text-rose-400/80 tabular-nums tracking-wider">
                             {interceptedTx.toLocaleString()}
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-wider">ТРАНЗАКЦІЙ ЗА ДОБУ</div>
@@ -258,10 +258,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <div className="h-[1px] w-16 bg-slate-800/50" />
 
                     <div className="space-y-1">
-                        <div className="text-[7px] text-amber-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
+                        <div className="text-[7px] text-rose-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
                             <AlertTriangle size={8} /> ЗАГРОЗИ
                         </div>
-                        <div className="text-lg font-black text-amber-400/80 tabular-nums tracking-wider">
+                        <div className="text-lg font-black text-rose-400/80 tabular-nums tracking-wider">
                             {flaggedEntities.toLocaleString()}
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-wider">ВИЯВЛЕНИХ ОБ'ЄКТІВ</div>
@@ -270,10 +270,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     <div className="h-[1px] w-16 bg-slate-800/50" />
 
                     <div className="space-y-1">
-                        <div className="text-[7px] text-yellow-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
+                        <div className="text-[7px] text-rose-500/50 font-bold tracking-[0.3em] uppercase flex items-center gap-1">
                             <Crosshair size={8} /> АКТИВНИХ
                         </div>
-                        <div className="text-lg font-black text-yellow-400/80 tabular-nums tracking-wider">
+                        <div className="text-lg font-black text-rose-400/80 tabular-nums tracking-wider">
                             {activeOps.toLocaleString()}
                         </div>
                         <div className="text-[7px] text-slate-700 tracking-wider">ОПЕРАЦІЙ У СВІТІ</div>
@@ -288,12 +288,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute right-0 top-20 bottom-20 w-52 z-10 pointer-events-none flex flex-col justify-between py-4 pr-5 items-end text-right">
                 <div className="space-y-3">
                     {[
-                        { label: 'CRYSTALS-KYBER-1024', status: 'АКТИВНО', color: 'text-yellow-500', icon: Shield },
-                        { label: 'ДАРКНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-yellow-500', icon: Radar },
-                        { label: 'СУПУТН. ЗВ\'ЯЗОК [47]', status: 'ОНЛАЙН', color: 'text-yellow-500', icon: Satellite },
-                        { label: 'SWIFT/SEPA ПЕРЕХВАТ', status: 'АКТИВНО', color: 'text-amber-500', icon: Radio },
-                        { label: 'INTERPOL RED NOTICE', status: 'АКТИВНО', color: 'text-amber-500', icon: Crosshair },
-                        { label: 'БІОМЕТРІЯ / СІТКІВКА', status: 'ОЧІКУЄ', color: 'text-amber-600', icon: Fingerprint },
+                        { label: 'CRYSTALS-KYBER-1024', status: 'АКТИВНО', color: 'text-rose-500', icon: Shield },
+                        { label: 'ДАРКНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-rose-500', icon: Radar },
+                        { label: 'СУПУТН. ЗВ\'ЯЗОК [47]', status: 'ОНЛАЙН', color: 'text-rose-500', icon: Satellite },
+                        { label: 'SWIFT/SEPA ПЕРЕХВАТ', status: 'АКТИВНО', color: 'text-rose-500', icon: Radio },
+                        { label: 'INTERPOL RED NOTICE', status: 'АКТИВНО', color: 'text-rose-500', icon: Crosshair },
+                        { label: 'БІОМЕТРІЯ / СІТКІВКА', status: 'ОЧІКУЄ', color: 'text-rose-600', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
                             key={sys.label}
@@ -326,11 +326,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 key={i}
                                 animate={i <= 5 ? { opacity: [0.6, 1, 0.6] } : {}}
                                 transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.08 }}
-                                className={`w-4 h-2 rounded-[2px] ${i <= 2 ? 'bg-yellow-800' : i <= 4 ? 'bg-yellow-600' : 'bg-yellow-500'}`}
+                                className={`w-4 h-2 rounded-[2px] ${i <= 2 ? 'bg-rose-900' : i <= 4 ? 'bg-rose-700' : 'bg-rose-500'}`}
                             />
                         ))}
                     </div>
-                    <div className="text-[9px] font-black text-yellow-500 tracking-[0.3em]">КРИТИЧНИЙ</div>
+                    <div className="text-[9px] font-black text-rose-500 tracking-[0.3em]">КРИТИЧНИЙ</div>
                     <div className="text-[7px] text-slate-700 tracking-[0.25em] mt-0.5">{(dataProcessedPb / 1000).toFixed(1)} TB ОБРОБЛЕНО</div>
                 </motion.div>
 
@@ -355,24 +355,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                                className="absolute -inset-10 border border-yellow-500/[0.06] rounded-full"
+                                className="absolute -inset-10 border border-rose-500/[0.06] rounded-full"
                             />
                             <motion.div
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                                className="absolute -inset-7 border border-yellow-500/[0.08] rounded-full border-dashed"
+                                className="absolute -inset-7 border border-rose-500/[0.08] rounded-full border-dashed"
                             />
 
                             {/* Монета */}
                             <div
-                                className="w-44 h-44 rounded-full bg-slate-950 border-2 border-yellow-600/40 shadow-[0_0_80px_rgba(180,140,20,0.15),0_0_150px_rgba(234,179,8,0.08)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_100px_rgba(180,140,20,0.4),0_0_200px_rgba(234,179,8,0.15)] group-hover:border-yellow-500/80"
+                                className="w-44 h-44 rounded-full bg-slate-950 border-2 border-rose-600/40 shadow-[0_0_80px_rgba(225,29,72,0.15),0_0_150px_rgba(159,18,57,0.08)] flex items-center justify-center relative transition-all duration-700 group-hover:shadow-[0_0_100px_rgba(225,29,72,0.4),0_0_200px_rgba(159,18,57,0.15)] group-hover:border-rose-500/80"
                                 style={{ perspective: '1200px' }}
                             >
                                 <motion.div
                                     animate={{
                                         y: [0, -5, 0],
                                         rotateY: [0, 360],
-                                        filter: ['drop-shadow(0 0 12px rgba(180,140,20,0.4))', 'drop-shadow(0 0 35px rgba(212,175,55,0.6))', 'drop-shadow(0 0 12px rgba(180,140,20,0.4))']
+                                        filter: ['drop-shadow(0 0 12px rgba(225,29,72,0.4))', 'drop-shadow(0 0 35px rgba(225,29,72,0.6))', 'drop-shadow(0 0 12px rgba(225,29,72,0.4))']
                                     }}
                                     transition={{
                                         y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
@@ -389,9 +389,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <motion.div
                                     animate={{ top: ['0%', '100%', '0%'] }}
                                     transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="absolute left-0 right-0 h-[1px] bg-yellow-400 shadow-[0_0_10px_rgba(212,175,55,1)] z-20 opacity-20"
+                                    className="absolute left-0 right-0 h-[1px] bg-rose-400 shadow-[0_0_10px_rgba(225,29,72,1)] z-20 opacity-20"
                                 />
-                                <div className="absolute inset-[3px] rounded-full border border-yellow-500/10 pointer-events-none" />
+                                <div className="absolute inset-[3px] rounded-full border border-rose-500/10 pointer-events-none" />
                             </div>
                         </div>
 
@@ -400,9 +400,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             <motion.h1
                                 animate={{ 
                                     textShadow: [
-                                        '0 4px 15px rgba(212,175,55,0.4), 0 8px 40px rgba(245,158,11,0.2)', 
-                                        '0 4px 50px rgba(212,175,55,0.8), 0 8px 120px rgba(245,158,11,0.4)', 
-                                        '0 4px 15px rgba(212,175,55,0.4), 0 8px 40px rgba(245,158,11,0.2)'
+                                        '0 4px 15px rgba(225,29,72,0.4), 0 8px 40px rgba(159,18,57,0.2)', 
+                                        '0 4px 50px rgba(225,29,72,0.8), 0 8px 120px rgba(159,18,57,0.4)', 
+                                        '0 4px 15px rgba(225,29,72,0.4), 0 8px 40px rgba(159,18,57,0.2)'
                                     ],
                                     scale: [1, 1.02, 1]
                                 }}
@@ -412,46 +412,46 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 PREDATOR
                             </motion.h1>
                             <div className="flex items-center justify-center gap-6">
-                                <div className="h-[1.5px] w-24 bg-gradient-to-r from-transparent via-yellow-600 to-transparent opacity-60" />
-                            <h2 className="text-[13px] font-black tracking-[0.7em] text-yellow-500 uppercase bg-yellow-950/20 px-8 py-2 border border-yellow-700/30 skew-x-[-15deg]">
+                                <div className="h-[1.5px] w-24 bg-gradient-to-r from-transparent via-rose-600 to-transparent opacity-60" />
+                            <h2 className="text-[13px] font-black tracking-[0.7em] text-rose-500 uppercase bg-rose-950/20 px-8 py-2 border border-rose-700/30 skew-x-[-15deg]">
                                     SOVEREIGN INTELLIGENCE ASSET
                                 </h2>
-                                <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-yellow-600 to-transparent opacity-60" />
+                                <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-rose-600 to-transparent opacity-60" />
                             </div>
-                            <p className="text-[10px] text-yellow-600 font-black tracking-[0.55em] uppercase italic group-hover:text-yellow-400 transition-colors">
-                                WRAITH GLOBAL CONTROL TERMINAL v58.2 · TIER-1 CLASSIFIED
+                            <p className="text-[10px] text-rose-600 font-black tracking-[0.55em] uppercase italic group-hover:text-rose-400 transition-colors">
+                                ELITE GLOBAL CONTROL TERMINAL v57.3-ELITE · TIER-1 CLASSIFIED
                             </p>
                         </div>
 
                         {/* ФОРМА АВТОРИЗАЦІЇ */}
                         <form className="w-72 space-y-2.5" onSubmit={(e) => { e.preventDefault(); setStep('scanning'); }}>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-700 group-focus-within:text-yellow-500 transition-colors">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-700 group-focus-within:text-rose-500 transition-colors">
                                     <Fingerprint size={16} />
                                 </div>
                                 <input
                                     readOnly
                                     placeholder="ОПЕРАТИВНИЙ КОД"
-                                    className="w-full bg-black/80 border border-yellow-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-yellow-900/50 focus:border-yellow-600/60 outline-none transition-all shadow-inner"
+                                    className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
                                 />
                             </div>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-yellow-700 group-focus-within:text-yellow-500 transition-colors">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-700 group-focus-within:text-rose-500 transition-colors">
                                     <Lock size={16} />
                                 </div>
                                 <input
                                     readOnly
                                     type="password"
                                     placeholder="КРИПТО-КЛЮЧ"
-                                    className="w-full bg-black/80 border border-yellow-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-yellow-900/50 focus:border-yellow-600/60 outline-none transition-all shadow-inner"
+                                    className="w-full bg-black/80 border border-rose-900/40 rounded py-3 pl-10 pr-4 text-[11px] tracking-[0.4em] font-black text-white placeholder:text-rose-900/50 focus:border-rose-600/60 outline-none transition-all shadow-inner"
                                 />
                             </div>
 
                             <motion.button
                                 type="submit"
-                                whileHover={{ scale: 1.02, backgroundColor: 'rgba(212,175,55,0.1)' }}
+                                whileHover={{ scale: 1.02, backgroundColor: 'rgba(225,29,72,0.1)' }}
                                 whileTap={{ scale: 0.98 }}
-                                className="w-full bg-yellow-600 text-black font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase shadow-[0_0_30px_rgba(212,175,55,0.3)] border border-yellow-400/50 mt-4"
+                                className="w-full bg-rose-600 text-black font-black py-4 rounded tracking-[0.8em] text-[11px] transition-all uppercase shadow-[0_0_30px_rgba(225,29,72,0.3)] border border-rose-400/50 mt-4"
                             >
                                 УВІЙТИ В СИСТЕМУ
                             </motion.button>
@@ -475,17 +475,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         className="text-center z-10 space-y-8"
                     >
                         <div className="relative w-56 h-56 mx-auto flex items-center justify-center">
-                            {/* Зовнішнє кільце (Золото) */}
+                            {/* Зовнішнє кільце (Elite Rose) */}
                             <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 border-t-2 border-r border-yellow-500/60 rounded-full shadow-[0_0_25px_rgba(212,175,55,0.3)]"
+                                className="absolute inset-0 border-t-2 border-r border-rose-500/60 rounded-full shadow-[0_0_25px_rgba(225,29,72,0.3)]"
                             />
-                            {/* Внутрішнє кільце (Бурштин) */}
+                            {/* Внутрішнє кільце (Crimson) */}
                             <motion.div
                                 animate={{ rotate: -360 }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-4 border-b-2 border-amber-500/40 rounded-full shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                                className="absolute inset-4 border-b-2 border-rose-500/40 rounded-full shadow-[0_0_20px_rgba(159,18,57,0.2)]"
                             />
                             {/* Перехрестя */}
                             <div className="absolute inset-10 border border-slate-800/40 rounded-full" />
@@ -517,12 +517,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         <div className="w-80 mx-auto space-y-2">
                             <div className="h-[3px] bg-slate-950 border border-white/5 rounded-full overflow-hidden shadow-inner">
                                 <motion.div
-                                    className="h-full bg-gradient-to-r from-yellow-700 via-yellow-500 to-amber-600 rounded-full"
+                                    className="h-full bg-gradient-to-r from-rose-700 via-rose-500 to-rose-600 rounded-full"
                                     animate={{ width: `${scanProgress}%` }}
                                     transition={{ duration: 0.3 }}
                                 />
                             </div>
-                            <div className="flex justify-between text-[8px] text-yellow-600/60 font-black tracking-widest uppercase">
+                            <div className="flex justify-between text-[8px] text-rose-600/60 font-black tracking-widest uppercase">
                                 <span>AUTHENTICATION</span>
                                 <span>READY_TO_COMMAND</span>
                             </div>
@@ -543,10 +543,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             animate={{ opacity: 1 }}
                             className="text-center space-y-2 mb-8"
                         >
-                            <div className="text-[10px] text-yellow-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-yellow-600/30">
-                                <Shield size={14} className="text-yellow-600" />
-                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v58.2-WRAITH]
-                                <Shield size={14} className="text-yellow-600" />
+                            <div className="text-[10px] text-rose-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-rose-600/30">
+                                <Shield size={14} className="text-rose-600" />
+                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v57.3-ELITE]
+                                <Shield size={14} className="text-rose-600" />
                             </div>
                             <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">
                                 ОБЕРІТЬ РІВЕНЬ СУВЕРЕННОГО ДОПУСКУ ТІР-1
@@ -561,13 +561,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     label: 'КОМАНДНИК СУВЕРЕНІТЕТУ',
                                     desc: 'Абсолютний контроль екосистеми. Тір-1 доступ до всіх стратегічних вузлів та AI Oracle.',
                                     icon: ShieldAlert,
-                                    level: 'TOP-SECRET WRAITH',
+                                    level: 'TOP-SECRET ELITE',
                                     clearance: 'SOVEREIGN',
-                                    borderColor: 'border-yellow-500/40 hover:border-yellow-400 shadow-[0_0_50px_rgba(212,175,55,0.05)]',
-                                    glowColor: 'hover:shadow-[0_0_60px_rgba(212,175,55,0.2)]',
-                                    accentColor: 'text-yellow-400',
-                                    bgAccent: 'bg-yellow-950/20',
-                                    tagColor: 'text-yellow-500 border-yellow-500/40',
+                                    borderColor: 'border-rose-500/40 hover:border-rose-400 shadow-[0_0_50px_rgba(225,29,72,0.05)]',
+                                    glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.2)]',
+                                    accentColor: 'text-rose-400',
+                                    bgAccent: 'bg-rose-950/20',
+                                    tagColor: 'text-rose-500 border-rose-500/40',
                                 },
                                 {
                                     role: UserRole.CLIENT_PREMIUM,
@@ -575,12 +575,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     desc: 'Глибока OSINT-розвідка, закриті фінансові потоки UA_SWIFT, AI-прогнозування.',
                                     icon: Activity,
                                     level: 'CLASSIFIED PLUS',
-                                    clearance: 'WRAITH-IV',
-                                    borderColor: 'border-yellow-500/30 hover:border-yellow-400/60 shadow-[0_0_50px_rgba(212,175,55,0.03)]',
-                                    glowColor: 'hover:shadow-[0_0_60px_rgba(212,175,55,0.15)]',
-                                    accentColor: 'text-yellow-400',
-                                    bgAccent: 'bg-yellow-950/20',
-                                    tagColor: 'text-yellow-500 border-yellow-500/40',
+                                    clearance: 'ELITE-IV',
+                                    borderColor: 'border-rose-500/30 hover:border-rose-400/60 shadow-[0_0_50px_rgba(225,29,72,0.03)]',
+                                    glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.15)]',
+                                    accentColor: 'text-rose-400',
+                                    bgAccent: 'bg-rose-950/20',
+                                    tagColor: 'text-rose-500 border-rose-500/40',
                                 },
                                 {
                                     role: UserRole.CLIENT_BASIC,
@@ -588,7 +588,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     desc: 'Моніторинг митних коридорів, базовий аудит та оперативна підтримка інгестії.',
                                     icon: Terminal,
                                     level: 'SECRET',
-                                    clearance: 'WRAITH-III',
+                                    clearance: 'ELITE-III',
                                     borderColor: 'border-slate-700/40 hover:border-slate-500/60',
                                     glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.15)]',
                                     accentColor: 'text-slate-200',
@@ -606,11 +606,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     onClick={() => handleDemoLogin(item.role)}
                                     className={`group flex-1 p-8 bg-slate-950/60 ${item.borderColor} border-2 rounded-[32px] text-left space-y-4 backdrop-blur-2xl relative overflow-hidden transition-all duration-700 ${item.glowColor} shadow-inner`}
                                 >
-                                    {/* Скан-ефект (Золото) */}
+                                    {/* Скан-ефект (Elite Rose) */}
                                     <motion.div
                                         animate={{ left: ['-100%', '200%'] }}
                                         transition={{ duration: 5, repeat: Infinity, ease: "linear", delay: idx * 0.8 }}
-                                        className="absolute inset-y-0 w-40 bg-gradient-to-r from-transparent via-yellow-500/[0.05] to-transparent skew-x-[-30deg] pointer-events-none"
+                                        className="absolute inset-y-0 w-40 bg-gradient-to-r from-transparent via-rose-500/[0.05] to-transparent skew-x-[-30deg] pointer-events-none"
                                     />
 
                                     {/* Верхній рядок */}
@@ -641,8 +641,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     {/* Нижній рядок */}
                                     <div className="pt-1 flex items-center justify-between">
                                         <div className="flex items-center gap-1.5">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-yellow-500/60 shadow-[0_0_6px_rgba(212,175,55,0.6)]" />
-                                            <span className="text-[7px] text-yellow-600/60 font-bold tracking-[0.2em] uppercase">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500/60 shadow-[0_0_6px_rgba(225,29,72,0.6)]" />
+                                            <span className="text-[7px] text-rose-600/60 font-bold tracking-[0.2em] uppercase">
                                                 З'ЄДНАННЯ АКТИВНЕ
                                             </span>
                                         </div>
@@ -662,9 +662,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             </AnimatePresence>
 
             {/* ═══ НИЖНЯ ПАНЕЛЬ: GLOBAL TICKER ═══ */}
-            <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-yellow-900/30 backdrop-blur-md">
+            <div className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden bg-black/80 border-t border-rose-900/30 backdrop-blur-md">
                 <div className="flex items-center">
-                    <div className="bg-yellow-600 text-black text-[10px] font-black px-4 py-2 z-10 tracking-widest whitespace-nowrap">
+                    <div className="bg-rose-600 text-black text-[10px] font-black px-4 py-2 z-10 tracking-widest whitespace-nowrap">
                         ОПЕРАТИВНИЙ КАНАЛ
                     </div>
                     <div className="relative flex-1 py-2 overflow-hidden items-center flex">
@@ -673,19 +673,19 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
                             className="flex gap-12 whitespace-nowrap"
                         >
-                            <span className="text-[9px] text-yellow-500 font-bold tracking-widest">
+                            <span className="text-[9px] text-rose-500 font-bold tracking-widest">
                                 [ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФРОВАНИХ ТРАНЗАКЦІЙ У СЕКТОРІ GAMMA-4 — АНАЛІЗ АКТИВНИЙ
                             </span>
-                            <span className="text-[9px] text-orange-600 font-bold tracking-widest">
+                            <span className="text-[9px] text-rose-600 font-bold tracking-widest">
                                 [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕРЕЖУ $47M ЧЕРЕЗ SHELL-КОМПАНІЇ У BVI — DE-ANONYMIZING...
                             </span>
-                            <span className="text-[9px] text-yellow-400 font-bold tracking-widest">
+                            <span className="text-[9px] text-rose-400 font-bold tracking-widest">
                                 [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV-CORE-03 · POLYGON-7)
                             </span>
-                            <span className="text-[9px] text-amber-500 font-bold tracking-widest">
+                            <span className="text-[9px] text-rose-500 font-bold tracking-widest">
                                 [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — FREEZE INITIATED
                             </span>
-                            <span className="text-[9px] text-yellow-600 font-bold tracking-widest">
+                            <span className="text-[9px] text-rose-600 font-bold tracking-widest">
                                 [УВАГА] INTERPOL RED NOTICE: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — MONITORING
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold tracking-widest">

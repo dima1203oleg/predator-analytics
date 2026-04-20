@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.2-WRAITH | Nexus Sovereign Matrix — Панель Автономної Еволюції
+ * PREDATOR v58.2-WRAITH | Nexus Sovereign Matrix — Панель Автономної Еволюції
  * 
  * Центр стратегічного самовдосконалення та конституційного контролю AZR.
  * - Нейронний моніторинг еволюції ядра
@@ -22,7 +22,7 @@ import {
     Layers, MousePointer2, Share2, Award, ZapOff, Globe, Crown
 } from 'lucide-react';
 import { api } from '@/services/api';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { HoloContainer } from '@/components/HoloContainer';
 import { CyberOrb } from '@/components/CyberOrb';
@@ -92,7 +92,7 @@ export const AutonomyDashboard: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'overview' | 'hypotheses' | 'council' | 'constitution' | 'progress'>('overview');
     const [isLoading, setIsLoading] = useState(false);
     
-    // Neural Metrics (v57.2-WRAITH Core)
+    // Neural Metrics (v58.2-WRAITH Core)
     const metrics = {
         latency: 184,
         errorRate: 0.002,
@@ -122,7 +122,7 @@ export const AutonomyDashboard: React.FC = () => {
 
                 <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                     
-                    {/* View Header v57.2-WRAITH */}
+                    {/* View Header v58.2-WRAITH */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-8">
@@ -138,13 +138,13 @@ export const AutonomyDashboard: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-cyan-500/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Dna size={12} className="animate-pulse" /> 
-                                        SELF_MODIFICATION_CORE_v57.2-WRAITH
+                                        SELF_MODIFICATION_CORE_v58.2-WRAITH
                                     </p>
                                 </div>
                             </div>
                         }
                         icon={<Cpu size={22} className="text-cyan-400" />}
-                        breadcrumbs={['СИНАПСИС', 'NEXUS v57.2-WRAITH', 'СУВЕРЕННА МАТРИЦЯ']}
+                        breadcrumbs={['СИНАПСИС', 'NEXUS v58.2-WRAITH', 'СУВЕРЕННА МАТРИЦЯ']}
                         stats={[
                             { label: 'ПОКОЛІННЯ', value: `G${status.generation}`, color: 'primary', icon: <GitBranch size={14} />, animate: true },
                             { label: 'КОНСТИТУЦІЙНІСТЬ', value: `${status.compliance}%`, color: 'success', icon: <Shield size={14} /> },
@@ -152,7 +152,7 @@ export const AutonomyDashboard: React.FC = () => {
                         ]}
                     />
 
-                    {/* Evolutionary Navigation (v57.2-WRAITH) */}
+                    {/* Evolutionary Navigation (v58.2-WRAITH) */}
                     <div className="flex flex-wrap items-center justify-center gap-6 p-2 bg-[#0b0f1a]/60 backdrop-blur-3xl rounded-[40px] border border-white/5 w-fit mx-auto shadow-2xl">
                         {[
                             { id: 'overview', label: uk.tabs.overview, icon: Activity },
@@ -202,7 +202,7 @@ export const AutonomyDashboard: React.FC = () => {
                                                     <Brain size={64} className="text-white opacity-40 animate-pulse" />
                                                     <div className="space-y-1">
                                                         <p className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.6em]">NEXUS_CORE</p>
-                                                        <h3 className="text-4xl font-black text-white tracking-widest">v57.2-WRAITH ALPHA</h3>
+                                                        <h3 className="text-4xl font-black text-white tracking-widest">v58.2-WRAITH ALPHA</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -256,14 +256,14 @@ export const AutonomyDashboard: React.FC = () => {
                                             ))}
                                         </div>
 
-                                        {/* Evolutionary Phases (v57.2-WRAITH Visuals) */}
+                                        {/* Evolutionary Phases (v58.2-WRAITH Visuals) */}
                                         <div className="p-12 bg-slate-900/40 border border-white/5 rounded-[60px] space-y-10">
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-4">
                                                     <Compass size={16} className="text-yellow-500" />
                                                     ФАЗИ ЕВОЛЮЦІЙНОГО РОЗВИТКУ
                                                 </h3>
-                                                <Badge className="bg-yellow-500 text-white text-[9px] font-black px-4 py-1.5">v57.2-WRAITH_LOCKED</Badge>
+                                                <Badge className="bg-yellow-500 text-white text-[9px] font-black px-4 py-1.5">v58.2-WRAITH_LOCKED</Badge>
                                             </div>
                                             <div className="flex items-center justify-between gap-10 relative">
                                                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/5 -translate-y-1/2" />
@@ -313,7 +313,7 @@ export const AutonomyDashboard: React.FC = () => {
                                                 <h3 className="text-5xl font-black text-white tracking-widest uppercase italic skew-x-[-6deg]">
                                                     КОНСТИТУЦІЯ <span className="text-amber-500">NEXUS</span>
                                                 </h3>
-                                                <p className="text-xs font-black text-amber-500/70 uppercase tracking-[0.4em]">ФУНДАМЕНТАЛЬНІ_ПРИНЦИПИ_AZR_v57.2-WRAITH</p>
+                                                <p className="text-xs font-black text-amber-500/70 uppercase tracking-[0.4em]">ФУНДАМЕНТАЛЬНІ_ПРИНЦИПИ_AZR_v58.2-WRAITH</p>
                                             </div>
                                         </div>
 

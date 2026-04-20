@@ -1,5 +1,5 @@
 /**
- * 🎯 PREDATOR AI Copilot - v57.2-WRAITH
+ * 🎯 PREDATOR AI Copilot - v58.2-WRAITH
  * -------------------------------------------------------------
  * Sovereign AI Assistant with Neuro-Voice Integration.
  * Focused on Strategic Customs Analytics and Threat Intelligence.
@@ -288,7 +288,7 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 animate-ping shadow-[0_0_10px_#d4af37]" />
-                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_WRAITH_v57.2_GLM-5.1</p>
+                    <p className="text-[10px] text-yellow-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_WRAITH_v58.2_GLM-5.1</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-orange-500/40 text-orange-500 bg-orange-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-amber-500/40 text-amber-500 bg-amber-500/5"))}>
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}

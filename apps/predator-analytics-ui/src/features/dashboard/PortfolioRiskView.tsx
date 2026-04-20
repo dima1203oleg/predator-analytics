@@ -1,5 +1,5 @@
 /**
- * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v57.2-WRAITH
+ * 💼 P&L РИЗИКІВ ПОРТФЕЛЮ | v58.2-WRAITH
  * PREDATOR Analytics — Portfolio Risk Management
  *
  * Скільки $ у зоні ризику прямо зараз:
@@ -28,7 +28,7 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
-import { TacticalCard } from '@/components/TacticalCard';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { RiskLevelValue } from '@/types/intelligence';
@@ -212,7 +212,7 @@ const PortfolioRiskView: React.FC = () => {
                   <div className="flex items-center gap-4 mb-3">
                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#e11d48]" />
                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.6em]">
-                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v57.2-WRAITH
+                      ЦЕНТР ПОРТФЕЛЬНИХ РИЗИКІВ · v58.2-WRAITH
                     </span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
