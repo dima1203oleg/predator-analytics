@@ -40,6 +40,7 @@ export const premiumLocales = {
     analyze: 'Аналіз',
     optimize: 'Оптимізація',
     ai: 'AI Асистент',
+    terminal: 'Термінал',
     expand: 'Відкрити швидкі дії',
     collapse: 'Сховати дії',
     toasts: {

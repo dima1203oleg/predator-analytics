@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, CheckCircle2, X, Binary, Cpu, Zap, Activity, ShieldCheck, Database, ArrowRight, BrainCircuit } from 'lucide-react';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { SqlTrainingPair } from '../../types';
 import { cn } from '../../utils/cn';
 

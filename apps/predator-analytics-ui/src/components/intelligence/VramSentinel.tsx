@@ -36,7 +36,7 @@ export const VramSentinel: React.FC = () => {
   }, []);
 
   const limit = 8.0;
-  const statusColor = vram.total > 7.6 ? 'rose' : vram.total > 7.0 ? 'amber' : 'emerald';
+  const statusColor = vram.total > 7.6 ? 'crimson' : vram.total > 7.0 ? 'rose' : 'emerald';
   const modeLabel = {
     SOVEREIGN: { text: 'SOVEREIGN (Red)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
     HYBRID: { text: 'HYBRID (Green)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
@@ -86,8 +86,8 @@ export const VramSentinel: React.FC = () => {
             <motion.div 
               className={cn(
                 "h-full rounded-full shadow-lg relative",
-                vram.total > 7.6 ? 'bg-rose-500 shadow-rose-500/50' : 
-                vram.total > 7.0 ? 'bg-amber-500 shadow-amber-500/50' : 
+                vram.total > 7.6 ? 'bg-crimson-600 shadow-crimson-600/50' : 
+                vram.total > 7.0 ? 'bg-rose-500 shadow-rose-500/50' : 
                 'bg-emerald-500 shadow-emerald-500/50'
               )}
               initial={{ width: 0 }}

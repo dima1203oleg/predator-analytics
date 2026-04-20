@@ -3,7 +3,7 @@
  * PREDATOR — Центральний Вузол Когнітивної Розвідки
  * 
  * Інтерактивний інтерфейс для взаємодії з Оракулом та аналізу нейронних потоків.
- * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * Sovereign Power Design System · WRAITH Crimson Palette · Tier-1 Access
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -110,20 +110,20 @@ export default function SovereignIntelHub() {
                     <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10 mb-10">
                         <div className="flex items-center gap-8">
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full group-hover:scale-125 transition-transform duration-1000" />
-                                <div className="relative p-6 bg-black border border-yellow-500/40 shadow-4xl rounded-[2.5rem] transition-all group-hover:border-yellow-500/80">
-                                    <Brain size={42} className="text-yellow-500 drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full group-hover:scale-125 transition-transform duration-1000" />
+                                <div className="relative p-6 bg-black border border-rose-500/40 shadow-4xl rounded-[2.5rem] transition-all group-hover:border-rose-500/80">
+                                    <Brain size={42} className="text-rose-500 drop-shadow-[0_0_15px_rgba(225,29,72,0.8)]" />
                                 </div>
                             </div>
                             <div>
                                 <div className="flex items-center gap-4 mb-2">
-                                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
-                                    <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.8em]">
+                                    <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#e11d48]" />
+                                    <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.8em]">
                                         GLM-5.1 SOVEREIGN AGENT · v58.2-WRAITH
                                     </span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none italic">
-                                    ХАБ <span className="text-yellow-500">ІНТЕЛЕКТУ</span>
+                                    ХАБ <span className="text-rose-500">ІНТЕЛЕКТУ</span>
                                 </h1>
                             </div>
                         </div>
@@ -131,12 +131,12 @@ export default function SovereignIntelHub() {
                         <div className="flex items-center gap-4">
                                 <div className="flex -space-x-2">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className="w-6 h-6 rounded-full border border-black bg-yellow-600 flex items-center justify-center text-[8px] font-black">
+                                        <div key={i} className="w-6 h-6 rounded-full border border-black bg-rose-600 flex items-center justify-center text-[8px] font-black">
                                             {i}
                                         </div>
                                     ))}
                                 </div>
-                                <span className={cn("text-[9px] font-black uppercase tracking-widest", isOffline ? "text-amber-500" : "text-yellow-500")}>
+                                <span className={cn("text-[9px] font-black uppercase tracking-widest", isOffline ? "text-rose-400" : "text-rose-500")}>
                                     {isOffline ? 'OFFLINE_RECOVERY_MODE' : (nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL ACTIVE' : 'MIRROR_ORACLE_ACTIVE')}
                                 </span>
                             </div>
@@ -146,7 +146,7 @@ export default function SovereignIntelHub() {
                                     <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">FAILOVER SYNC: {Math.floor(healingProgress)}%</span>
                                 </div>
                             )}
-                            <Button variant="ghost" className="text-yellow-500/60 hover:text-yellow-500 uppercase text-[9px] font-black tracking-widest gap-2">
+                            <Button variant="ghost" className="text-rose-500/60 hover:text-rose-500 uppercase text-[9px] font-black tracking-widest gap-2">
                                 <Command size={14} /> ТЕРМІНАЛ
                             </Button>
                     </div>
@@ -155,12 +155,12 @@ export default function SovereignIntelHub() {
                         
                         {/* 🧠 LEFT: Thought Stream (AI Logs) */}
                         <div className="col-span-12 lg:col-span-4 flex flex-col gap-8 overflow-hidden">
-                            <TacticalCard variant="holographic" className="flex-1 p-8 relative overflow-hidden flex flex-col bg-black/60 border-yellow-500/10 rounded-[3rem]">
+                            <TacticalCard variant="holographic" className="flex-1 p-8 relative overflow-hidden flex flex-col bg-black/60 border-rose-500/10 rounded-[3rem]">
                                 <div className="flex items-center justify-between mb-8">
-                                    <h3 className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em] flex items-center gap-3 italic">
-                                        <Terminal size={18} className="text-yellow-500" /> ПОТІК_МИСЛЕННЯ_GLM
+                                    <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] flex items-center gap-3 italic">
+                                        <Terminal size={18} className="text-rose-500" /> ПОТІК_МИСЛЕННЯ_GLM
                                     </h3>
-                                    <div className="w-3 h-3 bg-yellow-500 rounded-full animate-ping opacity-40 shadow-[0_0_10px_#d4af37]" />
+                                    <div className="w-3 h-3 bg-rose-500 rounded-full animate-ping opacity-40 shadow-[0_0_10px_#e11d48]" />
                                 </div>
                                 
                                 <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar font-mono">
@@ -170,7 +170,7 @@ export default function SovereignIntelHub() {
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="p-6 bg-white/[0.02] rounded-[2rem] border border-white/5 group hover:border-yellow-500/30 transition-all cursor-default"
+                                            className="p-6 bg-white/[0.02] rounded-[2rem] border border-white/5 group hover:border-rose-500/30 transition-all cursor-default"
                                         >
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className={cn(
@@ -195,19 +195,19 @@ export default function SovereignIntelHub() {
                                 <div className="mt-8 pt-8 border-t border-white/5">
                                     <div className="flex items-center justify-between text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4 italic">
                                         <span>SWE-BENCH PRO (SOTA)</span>
-                                        <span className="text-yellow-500">98.9%</span>
+                                        <span className="text-rose-500">98.9%</span>
                                     </div>
                                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
-                                        <motion.div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" initial={{ width: 0 }} animate={{ width: '98.9%' }} />
+                                        <motion.div className="h-full bg-gradient-to-r from-rose-600 to-rose-400" initial={{ width: 0 }} animate={{ width: '98.9%' }} />
                                     </div>
                                 </div>
                             </TacticalCard>
 
-                            <HoloContainer className="p-8 h-[220px] bg-gradient-to-br from-amber-900/10 to-transparent border-amber-500/10 rounded-[3rem] backdrop-blur-3xl relative overflow-hidden group">
+                            <HoloContainer className="p-8 h-[220px] bg-gradient-to-br from-rose-900/10 to-transparent border-rose-500/10 rounded-[3rem] backdrop-blur-3xl relative overflow-hidden group">
                                 <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                                    <Shield size={180} className="text-amber-500" />
+                                    <Shield size={180} className="text-rose-500" />
                                 </div>
-                                <h3 className="text-[10px] font-black text-amber-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
+                                <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
                                     <Shield size={16} /> СУВЕРЕННИЙ_БРАНДМАУЕР
                                 </h3>
                                 <div className="space-y-4">
@@ -223,15 +223,15 @@ export default function SovereignIntelHub() {
                         </div>
 
                         {/* 💬 CENTER: Neural Chat Interface */}
-                        <div className="col-span-12 lg:col-span-8 bg-black/60 border border-yellow-500/5 rounded-[4rem] flex flex-col overflow-hidden relative shadow-4xl group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none group-hover:from-yellow-500/8 transition-all duration-1000" />
+                        <div className="col-span-12 lg:col-span-8 bg-black/60 border border-rose-500/5 rounded-[4rem] flex flex-col overflow-hidden relative shadow-4xl group">
+                            <div className="absolute inset-0 bg-gradient-to-b from-rose-500/5 to-transparent pointer-events-none group-hover:from-rose-500/8 transition-all duration-1000" />
                             
                             {/* Chat Header */}
-                            <div className="p-8 border-b border-yellow-500/10 flex items-center justify-between relative z-10 backdrop-blur-3xl bg-black/20">
+                            <div className="p-8 border-b border-rose-500/10 flex items-center justify-between relative z-10 backdrop-blur-3xl bg-black/20">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-yellow-600 to-yellow-500 flex items-center justify-center shadow-4xl border border-yellow-400/30 relative">
+                                    <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-rose-600 to-rose-500 flex items-center justify-center shadow-4xl border border-rose-400/30 relative">
                                         <Zap className="text-black" size={28} />
-                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full border-4 border-black" />
+                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-rose-300 rounded-full border-4 border-black" />
                                     </div>
                                     <div>
                                         <h4 className="text-lg font-black text-white uppercase tracking-wider italic">GLM-5.1:SOVEREIGN_OPERATIONS</h4>
@@ -245,10 +245,10 @@ export default function SovereignIntelHub() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                     <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-yellow-500/30 text-slate-500 hover:text-yellow-500 transition-all">
+                                     <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-rose-500/30 text-slate-500 hover:text-rose-500 transition-all">
                                         <Bookmark size={20} />
                                     </Button>
-                                    <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-yellow-500/30 text-slate-500 hover:text-yellow-500 transition-all">
+                                    <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-rose-500/30 text-slate-500 hover:text-rose-500 transition-all">
                                         <RefreshCw size={20} />
                                     </Button>
                                 </div>
@@ -269,8 +269,8 @@ export default function SovereignIntelHub() {
                                         <div className={cn(
                                             "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 border shadow-2xl transition-all",
                                             msg.role === 'user' 
-                                                ? "bg-black border-yellow-500/20 text-yellow-500" 
-                                                : "bg-yellow-500 text-black border-transparent shadow-yellow-500/20"
+                                                ? "bg-black border-rose-500/20 text-rose-500" 
+                                                : "bg-rose-500 text-black border-transparent shadow-rose-500/20"
                                         )}>
                                             {msg.role === 'user' ? <Fingerprint size={22} /> : <Bot size={22} />}
                                         </div>
@@ -280,7 +280,7 @@ export default function SovereignIntelHub() {
                                                 ? "bg-yellow-500 text-black rounded-tr-none font-bold italic shadow-xl" 
                                                 : "bg-white/[0.03] text-slate-200 border border-white/5 rounded-tl-none font-medium backdrop-blur-md"
                                         )}>
-                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1 bg-yellow-500/40" />}
+                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1 bg-rose-500/40" />}
                                             {msg.content}
                                         </div>
                                     </motion.div>
@@ -288,12 +288,12 @@ export default function SovereignIntelHub() {
                                 {chatMutation.isPending && (
                                     <div className="flex gap-6 max-w-[90%] items-center animate-pulse">
                                         <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                                            <Sparkles size={22} className="text-yellow-600 animate-spin-slow" />
+                                            <Sparkles size={22} className="text-rose-600 animate-spin-slow" />
                                         </div>
                                         <div className="flex flex-col gap-2">
                                             <div className="h-4 w-64 bg-white/5 rounded-full" />
                                             <div className="h-4 w-48 bg-white/5 rounded-full opacity-50" />
-                                            <span className="text-[9px] font-black text-yellow-600 uppercase tracking-[0.5em] mt-2 italic">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
+                                            <span className="text-[9px] font-black text-rose-600 uppercase tracking-[0.5em] mt-2 italic">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
                                         </div>
                                     </div>
                                 )}
@@ -302,20 +302,20 @@ export default function SovereignIntelHub() {
                             {/* Chat Input */}
                             <div className="p-8 bg-black/40 border-t border-yellow-500/10 relative z-10 backdrop-blur-3xl">
                                 <div className="relative group">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600/20 to-amber-600/20 blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-rose-600/20 to-crimson-600/20 blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
                                     <Input 
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                                         placeholder="Введіть директиву для GLM-5.1 (напр. 'Проаналізувати критичні порти NVIDIA серверу')..." 
-                                        className="h-20 pl-16 pr-28 bg-black border-2 border-white/5 rounded-3xl text-white focus:border-yellow-500/60 focus:ring-0 transition-all font-bold tracking-tight text-lg placeholder:text-slate-700 placeholder:italic relative z-10"
+                                        className="h-20 pl-16 pr-28 bg-black border-2 border-white/5 rounded-3xl text-white focus:border-rose-500/60 focus:ring-0 transition-all font-bold tracking-tight text-lg placeholder:text-slate-700 placeholder:italic relative z-10"
                                     />
-                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-yellow-500 transition-colors z-20" size={24} />
+                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-rose-500 transition-colors z-20" size={24} />
                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-4 z-20">
                                         <Button 
                                             onClick={handleSend}
                                             disabled={!input.trim() || chatMutation.isPending}
-                                            className="h-12 w-16 bg-yellow-500 hover:bg-yellow-400 text-black rounded-2xl shadow-4xl transition-all hover:scale-105 active:scale-95"
+                                            className="h-12 w-16 bg-rose-500 hover:bg-rose-400 text-black rounded-2xl shadow-4xl transition-all hover:scale-105 active:scale-95"
                                         >
                                             <Send size={22} />
                                         </Button>
@@ -324,17 +324,17 @@ export default function SovereignIntelHub() {
                                 <div className="mt-5 flex items-center justify-between px-2">
                                     <div className="flex items-center gap-6">
                                         <div className="flex items-center gap-2 group cursor-help">
-                                            <Cpu size={14} className="text-yellow-500/60 group-hover:text-yellow-500" />
+                                            <Cpu size={14} className="text-rose-500/60 group-hover:text-rose-500" />
                                             <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">GLM-5.1:SOVEREIGN</span>
                                         </div>
                                         <div className="flex items-center gap-2 group cursor-help">
-                                            <Globe size={14} className="text-amber-500/60 group-hover:text-amber-500" />
+                                            <Globe size={14} className="text-rose-500/60 group-hover:text-rose-500" />
                                             <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">NODE: {nodeSource}</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-                                        <span className="text-[9px] font-black uppercase text-yellow-600 tracking-widest italic font-bold">ZROK_LINK: ENCRYPTED</span>
+                                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                                        <span className="text-[9px] font-black uppercase text-rose-600 tracking-widest italic font-bold">ZROK_LINK: ENCRYPTED</span>
                                     </div>
                                 </div>
                             </div>
@@ -350,8 +350,8 @@ export default function SovereignIntelHub() {
                     __html: `
                     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.15); border-radius: 20px; }
-                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.3); }
+                    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225, 29, 72, 0.15); border-radius: 20px; }
+                    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225, 29, 72, 0.3); }
                     `
                 }} />
             </div>

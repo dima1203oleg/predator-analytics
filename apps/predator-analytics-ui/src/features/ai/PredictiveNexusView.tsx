@@ -42,13 +42,13 @@ import { useBackendStatus } from '../../hooks/useBackendStatus';
 const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
   <TacticalCard variant="premium" className="group">
     <div className="flex justify-between items-start mb-4">
-      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
-        <Brain className="w-5 h-5 text-amber-500" />
+      <div className="h-10 w-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+        <Brain className="w-5 h-5 text-rose-500" />
       </div>
       <Badge className={cn(
         scenario.impact === 'critical' || scenario.impact === 'high' 
-          ? "bg-amber-900/40 text-amber-500 border border-amber-500/30" 
-          : "bg-yellow-900/40 text-yellow-500 border border-yellow-500/30"
+          ? "bg-rose-900/40 text-rose-500 border border-rose-500/30" 
+          : "bg-crimson-900/40 text-crimson-500 border border-crimson-500/30"
       )}>
         {scenario.impact === 'critical' || scenario.impact === 'high' ? 'КРИТИЧНО' : 'ПОМІРНО'}
       </Badge>
@@ -140,12 +140,12 @@ export default function PredictiveNexusView() {
                         subtitle="Квантовий Контур Стратегічного Прогнозування (NVIDIA GLM-5.1 Sovereign)"
                         icon={Brain}
                         badges={[
-                            { label: `CORE: GLM-5.1`, color: 'warning', icon: <Cpu size={10} /> },
+                            { label: `CORE: GLM-5.1`, color: 'danger', icon: <Cpu size={10} /> },
                             { label: `NODE: ${nodeSource}`, color: activeFailover ? 'danger' : 'success', icon: <Activity size={10} /> },
                             { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
-                            <Button onClick={startScan} disabled={isScanning} className="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black gap-2 border border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                            <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
                                 <Zap size={16} className={isScanning ? "animate-pulse" : ""} />
                                 {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ ПРЕКОГНІЦІЮ"}
                             </Button>
@@ -155,16 +155,16 @@ export default function PredictiveNexusView() {
                     <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6 overflow-hidden">
                         {/* Ліву колонку: OODA Loop */}
                         <div className="lg:col-span-1 flex flex-col gap-6">
-                            <div className="bg-black/40 border border-amber-900/30 rounded-xl p-6 backdrop-blur-md shadow-[0_0_30px_rgba(245,158,11,0.02)]">
-                                <h3 className="text-sm font-black text-amber-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <div className="bg-black/40 border border-rose-900/30 rounded-xl p-6 backdrop-blur-md shadow-[0_0_30px_rgba(244,63,94,0.02)]">
+                                <h3 className="text-sm font-black text-rose-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Bot size={16} /> ЦИКЛ OODA
                                 </h3>
                                 <div className="grid grid-cols-2 gap-2">
                                     {['OBSERVE', 'ORIENT', 'DECIDE', 'ACT'].map((step, idx) => (
-                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-amber-500/30 text-amber-500" : "border-white/10 text-slate-600")}>
+                                        <div key={step} className={cn("p-2 rounded border text-center", idx === 0 ? "border-rose-500/30 text-rose-500" : "border-white/10 text-slate-600")}>
                                             <div className="text-[8px] font-black">{step}</div>
                                             <div className="h-1 w-full bg-white/5 mt-1 rounded-full overflow-hidden">
-                                                {idx === 0 && <motion.div className="h-full bg-amber-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
+                                                {idx === 0 && <motion.div className="h-full bg-rose-500" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5, repeat: Infinity }} />}
                                             </div>
                                         </div>
                                     ))}
@@ -179,7 +179,7 @@ export default function PredictiveNexusView() {
                                     <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-[10px] font-bold text-slate-400 uppercase">Сховище</span>
-                                            <span className="text-xs font-black text-amber-400">{predictions.disk_exhaustion_days || '--'} днів</span>
+                                            <span className="text-xs font-black text-rose-400">{predictions.disk_exhaustion_days || '--'} днів</span>
                                         </div>
                                         <p className="text-[9px] text-slate-500 mb-2 italic">"{predictions.recommendation || 'Аналіз триває...'}"</p>
                                     </div>
@@ -188,7 +188,7 @@ export default function PredictiveNexusView() {
                                             <ShieldCheck size={14} />
                                             <span className="text-[10px] font-black uppercase">Цілісність</span>
                                         </div>
-                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ ZROK Tunnel: <span className={cn(activeFailover ? "text-amber-300" : "text-emerald-300")}>{activeFailover ? 'ACTIVE_FAILOVER' : 'SYNCHRONIZED'}</span></p>
+                                        <p className="text-[9px] text-slate-400">NVIDIA ↔ ZROK Tunnel: <span className={cn(activeFailover ? "text-rose-300" : "text-emerald-300")}>{activeFailover ? 'ACTIVE_FAILOVER' : 'SYNCHRONIZED'}</span></p>
                                     </div>
                                 </div>
                             </div>

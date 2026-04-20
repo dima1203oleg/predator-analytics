@@ -1,5 +1,5 @@
 /**
- * 🛡️ САНКЦІЙНА МАТРИЦЯ | v57.3-WRAITH
+ * 🛡️ САНКЦІЙНА МАТРИЦЯ | v58.2-WRAITH
  * PREDATOR Analytics — Sanctions Screening & Compliance
  *
  * Перевірка сутностей за міжнародними санкційними списками
@@ -400,7 +400,7 @@ const SanctionsScreening: React.FC = () => {
                                             САНКЦІЙНИЙ_ХАБ // MATRIX_ARRAY
                                         </span>
                                         <div className="h-px w-12 bg-rose-500/20" />
-                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.3-WRAITH</span>
+                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                                      </div>
                                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif">
                                         САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТРИЦЯ</span>

@@ -23,13 +23,13 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
         {
           selector: 'node',
           style: {
-            'background-color': '#1e293b',
+            'background-color': '#0f172a',
             'border-width': 1,
-            'border-color': '#334155',
+            'border-color': '#e11d48',
             'width': 40,
             'height': 40,
             'label': 'data(label)',
-            'color': '#cbd5e1',
+            'color': '#f8fafc',
             'font-size': '8px',
             'text-valign': 'bottom',
             'text-margin-y': 5,
@@ -40,17 +40,17 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
         {
           selector: 'node[status="THINKING"]',
           style: {
-            'border-color': '#f59e0b',
+            'border-color': '#e11d48',
             'border-width': 2,
-            'background-color': '#451a03',
+            'background-color': '#4c0519',
           }
         },
         {
           selector: 'node[status="EXECUTING"]',
           style: {
-            'border-color': '#10b981',
+            'border-color': '#f43f5e',
             'border-width': 2,
-            'background-color': '#064e3b',
+            'background-color': '#881337',
           }
         },
         {
@@ -59,14 +59,16 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
             'shape': 'hexagon',
             'width': 50,
             'height': 50,
+            'border-color': '#be123c',
+            'border-width': 3,
           }
         },
         {
           selector: 'edge',
           style: {
             'width': 1,
-            'line-color': '#1e293b',
-            'target-arrow-color': '#1e293b',
+            'line-color': '#310a14',
+            'target-arrow-color': '#310a14',
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
           }
@@ -122,20 +124,20 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
   return (
     <div className={cn("relative group transition-all duration-700", className)}>
       {/* Background Glow */}
-      <div className="absolute inset-0 bg-blue-500/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-blue-500/10 transition-colors" />
+      <div className="absolute inset-0 bg-rose-500/5 rounded-full blur-[100px] pointer-events-none group-hover:bg-rose-500/10 transition-colors" />
       
       {/* Cy Container */}
       <div ref={containerRef} className="w-full h-full min-h-[400px]" />
       
       {/* Overlay Status */}
       <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Autonomous_Swarm</h4>
-        <div className="text-[12px] font-black text-white italic">NODE_MAP v5.0</div>
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Autonomous_Swarm</h4>
+        <div className="text-[12px] font-black text-rose-500 italic">NODE_MAP v58.2-WRAITH</div>
       </div>
 
       <div className="absolute bottom-6 right-6 pointer-events-none text-right">
-        <div className="text-[8px] font-mono text-slate-600 uppercase">Load: {(agents.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)}GB_VRAM_POOL</div>
-        <div className="text-[8px] font-mono text-slate-600 uppercase">Status: OK_P2P_MESH</div>
+        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Load: {(agents.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)}GB_VRAM_POOL</div>
+        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Status: OK_P2P_SWARM_MESH</div>
       </div>
     </div>
   );

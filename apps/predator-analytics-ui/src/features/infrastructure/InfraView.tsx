@@ -103,7 +103,7 @@ export default function InfraView() {
           status: oodaStatus,
           component: key.toUpperCase(),
           finding: c.status === 'DOWN' ? 'Вузол не відповідає на запити.' : 'Спостерігається висока затримка (>50ms).',
-          action_plan: c.status === 'DOWN' ? ['Restart service container', 'Check resource limits', 'Notify SRE team'] : ['Optimize queries', 'Flush buffers'],
+          action_plan: c.status === 'DOWN' ? ['Перезапуск контейнера сервісу', 'Перевірка лімітів ресурсів', 'Сповіщення команди SRE'] : ['Оптимізація запитів', 'Очищення буферів'],
           automated: true,
           human_approval_required: !isFullyAutomated && idx === 0 && oodaStatus === 'DECIDING', 
           assigned_agent: {
@@ -134,9 +134,9 @@ export default function InfraView() {
 
   return (
     <PageTransition>
-      <div className="relative w-full h-screen bg-slate-950 overflow-hidden">
+      <div className="relative w-full h-screen bg-[#020202] overflow-hidden">
         <AdvancedBackground />
-        <CyberGrid opacity={0.05} />
+        <CyberGrid opacity={0.03} />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -144,32 +144,32 @@ export default function InfraView() {
           transition={{ duration: 0.5 }}
           className="relative z-10 h-full w-full flex flex-col"
         >
-          <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-between">
+          <div className="p-6 border-b border-rose-500/10 bg-black/60 backdrop-blur-2xl flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
-              subtitle="Моніторинг NVIDIA Server, MacBook та Google Colab"
+              subtitle="v58.2-WRAITH • Моніторинг NVIDIA Server, MacBook та Google Colab"
               icon={Server}
             />
             
             <div className="flex items-center gap-6">
               <BackendSwitcher />
               
-              <div className="h-10 w-px bg-white/10" />
+              <div className="h-10 w-px bg-white/5" />
 
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">РЕЖИМ АВТОМАТИЗАЦІЇ</span>
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">РЕЖИМ АВТОМАТИЗАЦІЇ</span>
                 <div 
                   onClick={() => setIsFullyAutomated(!isFullyAutomated)}
                   className={cn(
                     "flex items-center gap-2 px-3 py-1.5 rounded-lg border cursor-pointer transition-all duration-300",
                     isFullyAutomated 
-                      ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" 
-                      : "bg-amber-500/20 border-amber-500/30 text-amber-400"
+                      ? "bg-rose-500/20 border-rose-500/30 text-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.1)]" 
+                      : "bg-slate-800/40 border-slate-700/50 text-slate-400"
                   )}
                 >
-                  <Bot className={cn("w-4 h-4", isFullyAutomated && "animate-pulse")} />
+                  <Bot className={cn("w-4 h-4", isFullyAutomated && "animate-pulse text-rose-500")} />
                   <span className="text-[10px] font-black uppercase tracking-widest">
-                    {isFullyAutomated ? "Fully Automated" : "Human in the Loop"}
+                    {isFullyAutomated ? "ПОВНИЙ АВТОПІЛОТ" : "ВТРУЧАННЯ ОПЕРАТОРА"}
                   </span>
                 </div>
               </div>
@@ -177,11 +177,11 @@ export default function InfraView() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-auto p-6 scrollbar-hide">
             {isLoading && !infrastructure ? (
               <div className="flex items-center justify-center h-full">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity }}>
-                  <RefreshCw className="w-8 h-8 text-yellow-400" />
+                  <RefreshCw className="w-8 h-8 text-rose-500" />
                 </motion.div>
               </div>
             ) : error ? (
@@ -198,10 +198,10 @@ export default function InfraView() {
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
-                    { icon: Activity, label: 'Статус Сервісів', value: 'Online', color: 'emerald' },
-                    { icon: Cpu, label: 'Сумарна RAM', value: '172 GB', color: 'amber' },
-                    { icon: DatabaseIcon, label: 'Загальне Сховище', value: '11.5 TB', color: 'yellow' },
-                    { icon: ShieldCheck, label: 'Uptime', value: '30 дн.', color: 'violet' },
+                    { icon: Activity, label: 'Статус Сервісів', value: 'Онлайн', color: 'rose' },
+                    { icon: Cpu, label: 'Сумарна RAM', value: '172 GB', color: 'rose' },
+                    { icon: DatabaseIcon, label: 'Загальне Сховище', value: '11.5 TB', color: 'slate' },
+                    { icon: ShieldCheck, label: 'Аптайм', value: '30 дн.', color: 'rose' },
                   ].map((stat, idx) => (
                     <motion.div
                       key={idx}
@@ -212,10 +212,10 @@ export default function InfraView() {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="text-slate-400 text-xs font-bold uppercase tracking-wider">{stat.label}</div>
-                          <div className="text-2xl font-bold text-white mt-1">{stat.value}</div>
+                          <div className="text-slate-500 text-[10px] font-black uppercase tracking-widest">{stat.label}</div>
+                          <div className="text-2xl font-black text-white mt-1">{stat.value}</div>
                         </div>
-                        <div className={cn("p-3 rounded-full bg-white/5", `text-${stat.color}-400`)}>
+                        <div className={cn("p-3 rounded-xl bg-white/5", `text-${stat.color}-500`)}>
                           <stat.icon className="w-6 h-6" />
                         </div>
                       </div>
@@ -227,10 +227,10 @@ export default function InfraView() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tighter">
-                      <Layers className="text-blue-500 w-6 h-6" /> 
-                      Моніторинг Апаратних Вузлів
+                      <Layers className="text-rose-600 w-6 h-6" /> 
+                      МОНІТОРИНГ АПАРАТНИХ ВУЗЛІВ
                     </h2>
-                    <span className="text-[10px] text-slate-500 font-mono">3 СИСТЕМИ ВИЯВЛЕНО</span>
+                    <span className="text-[10px] text-slate-600 font-mono uppercase font-black">3 СИСТЕМИ ВИЯВЛЕНО</span>
                   </div>
                   
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -252,28 +252,28 @@ export default function InfraView() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left Column */}
                   <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
-                      <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-cyan-400" /> Динаміка Ресурсів (24г)
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-black text-white mb-2 flex items-center gap-2 uppercase tracking-tight">
+                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА РЕСУРСІВ (24г)
                       </h3>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
+                      <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
                       <ResourceDynamicsChart />
                     </div>
 
-                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
-                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <DatabaseIcon className="w-5 h-5 text-yellow-400" /> БД та Сховища
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
+                        <DatabaseIcon className="w-5 h-5 text-rose-600" /> БД ТА СХОВИЩА
                       </h3>
                       {infrastructure?.components ? (
                         <ServiceStatusGrid data={infrastructure.components} />
                       ) : (
-                        <div className="text-slate-500 text-sm">Дані відсутні</div>
+                        <div className="text-slate-600 text-sm font-black uppercase">Дані відсутні</div>
                       )}
                     </div>
 
-                    <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
-                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <DatabaseIcon className="w-5 h-5 text-yellow-400" /> Розподіл Сховища
+                    <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
+                        <DatabaseIcon className="w-5 h-5 text-rose-500" /> РОЗПОДІЛ СХОВИЩА
                       </h3>
                       <StorageChart />
                     </div>

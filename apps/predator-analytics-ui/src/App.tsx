@@ -27,8 +27,6 @@ import { Predator } from './components/premium/AICopilot';
 import OnboardingWizard from './components/premium/OnboardingWizard';
 import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
-import { OfflineBanner } from './components/shared/OfflineBanner';
-import { CyberTerminal } from './components/ui/CyberTerminal';
 import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
@@ -48,7 +46,10 @@ const queryClient = new QueryClient({
 function App() {
   // SOVEREIGN NEXUS EXPERIENCE: Start with cinematic BootScreen
   const [appState, setAppState] = useState<'BOOTING' | 'LOGIN' | 'READY'>('BOOTING');
-  const highVisibility = useAppStore((state) => state.highVisibility);
+  const { highVisibility, isTerminalOpen } = useAppStore((state) => ({
+    highVisibility: state.highVisibility,
+    isTerminalOpen: state.isTerminalOpen
+  }));
 
   useEffect(() => {
     if (typeof document === 'undefined') return;
@@ -155,11 +156,8 @@ function App() {
                                 <OnboardingWizard />
                                 <OfflineBanner />
                                 <Predator />
-                                <div className="fixed bottom-32 right-6 z-[100] w-[450px] h-[400px] pointer-events-none">
-                                  <div className="w-full h-full pointer-events-auto">
-                                    <LiveAgentTerminal />
-                                  </div>
-                                </div>
+                                
+                                <LiveAgentTerminal />
                               </>
                             )}
                           </SuperIntelligenceProvider>

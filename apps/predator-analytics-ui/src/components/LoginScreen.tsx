@@ -1,7 +1,7 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v57.3-ELITE
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v58.2-WRAITH
  * Екран авторизації глобальної розвідувальної платформи.
- * Атмосфера: суверенітет, абсолютний контроль, елітарність.
+ * Атмосфера: суверенітет, абсолютний контроль, міць WRAITH.
  */
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -191,8 +191,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
             {/* ═══ ВЕРХНЯ ПАНЕЛЬ: КЛАСИФІКАЦІЯ ═══ */}
             <div className="absolute top-0 left-0 right-0 z-20 pointer-events-none">
-                {/* Золота лінія класифікації */}
-                <div className="h-[2px] bg-gradient-to-r from-transparent via-yellow-600 to-transparent opacity-60" />
+                {/* Рожева лінія класифікації */}
+                <div className="h-[2px] bg-gradient-to-r from-transparent via-rose-600 to-transparent opacity-60" />
                 <div className="flex items-center justify-between px-6 py-2">
                     {/* Ліва частина — класифікація */}
                     <div className="flex items-center gap-3">
@@ -202,7 +202,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] animate-pulse" />
                             <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]">
-                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v57.3_ELITE
+                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v58.2_WRAITH
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
@@ -419,7 +419,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-rose-600 to-transparent opacity-60" />
                             </div>
                             <p className="text-[10px] text-rose-600 font-black tracking-[0.55em] uppercase italic group-hover:text-rose-400 transition-colors">
-                                ELITE GLOBAL CONTROL TERMINAL v57.3-ELITE · TIER-1 CLASSIFIED
+                                WRAITH GLOBAL CONTROL TERMINAL v58.2-WRAITH · TIER-1 CLASSIFIED
                             </p>
                         </div>
 
@@ -469,38 +469,28 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                 {step === 'scanning' && (
                     <motion.div
                         key="scanning"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="text-center z-10 space-y-8"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center z-10 flex flex-col items-center justify-center space-y-8 relative"
                     >
-                        <div className="relative w-56 h-56 mx-auto flex items-center justify-center">
-                            {/* Зовнішнє кільце (Elite Rose) */}
-                            <motion.div
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 border-t-2 border-r border-rose-500/60 rounded-full shadow-[0_0_25px_rgba(225,29,72,0.3)]"
-                            />
-                            {/* Внутрішнє кільце (Crimson) */}
-                            <motion.div
-                                animate={{ rotate: -360 }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-4 border-b-2 border-rose-500/40 rounded-full shadow-[0_0_20px_rgba(159,18,57,0.2)]"
-                            />
+                        {/* Скануюча мандала */}
+                        <div className="relative flex items-center justify-center mb-8 w-64 h-64">
                             {/* Перехрестя */}
                             <div className="absolute inset-10 border border-slate-800/40 rounded-full" />
-                            <div className="absolute w-[1px] h-full bg-yellow-500/10 left-1/2" />
-                            <div className="absolute h-[1px] w-full bg-yellow-500/10 top-1/2" />
+                            <div className="absolute w-[1px] h-full bg-rose-500/10 left-1/2" />
+                            <div className="absolute h-[1px] w-full bg-rose-500/10 top-1/2" />
 
                             <div className="flex flex-col items-center gap-2">
                                 <motion.div
-                                    animate={{ scale: [1, 1.08, 1], textShadow: ['0 0 10px rgba(212,175,55,0.5)', '0 0 30px rgba(212,175,55,0.8)', '0 0 10px rgba(212,175,55,0.5)'] }}
+                                    animate={{ scale: [1, 1.08, 1], textShadow: ['0 0 10px rgba(225,29,72,0.5)', '0 0 30px rgba(225,29,72,0.8)', '0 0 10px rgba(225,29,72,0.5)'] }}
                                     transition={{ duration: 0.8, repeat: Infinity }}
                                     className="text-4xl font-black text-white tracking-widest tabular-nums italic"
                                 >
                                     {scanProgress}%
                                 </motion.div>
-                                <div className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase bg-yellow-950/20 px-3 py-1 border border-yellow-700/30">
+                                <div className="text-[10px] font-black text-rose-500 tracking-[0.4em] uppercase bg-rose-950/20 px-3 py-1 border border-rose-700/30">
                                     BIOMETRIC_SYNC
                                 </div>
                                 <motion.div
@@ -545,7 +535,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="text-[10px] text-rose-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-rose-600/30">
                                 <Shield size={14} className="text-rose-600" />
-                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v57.3-ELITE]
+                                ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v58.2-WRAITH]
                                 <Shield size={14} className="text-rose-600" />
                             </div>
                             <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">

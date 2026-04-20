@@ -90,19 +90,20 @@ const sectionColorMap: Record<string, {
     hoverBg: 'rgba(190,18,60,0.05)',
   },
   warn: {
-    bg: 'rgba(244,63,94,0.04)',
-    border: 'rgba(244,63,94,0.18)',
-    headerBg: 'rgba(244,63,94,0.08)',
-    headerText: '#fda4af',
-    dotColor: '#f43f5e',
-    glowColor: 'rgba(244,63,94,0.4)',
-    activeItemBg: 'rgba(244,63,94,0.08)',
-    activeItemBorder: 'rgba(244,63,94,0.25)',
-    activeIconBg: 'rgba(244,63,94,0.15)',
-    activeIconColor: '#fda4af',
-    activeIndicator: 'from-rose-400/80 to-rose-300/20',
-    hoverBg: 'rgba(244,63,94,0.05)',
+    bg: 'rgba(234,88,12,0.04)',
+    border: 'rgba(234,88,12,0.18)',
+    headerBg: 'rgba(234,88,12,0.08)',
+    headerText: '#fdba74',
+    dotColor: '#ea580c',
+    glowColor: 'rgba(234,88,12,0.4)',
+    activeItemBg: 'rgba(234,88,12,0.08)',
+    activeItemBorder: 'rgba(234,88,12,0.25)',
+    activeIconBg: 'rgba(234,88,12,0.15)',
+    activeIconColor: '#fdba74',
+    activeIndicator: 'from-orange-500/80 to-orange-400/20',
+    hoverBg: 'rgba(234,88,12,0.05)',
   },
+  // ── emerald — зарезервований ──────────────────────────────────────────────
   emerald: {
     bg: 'rgba(16,185,129,0.04)',
     border: 'rgba(16,185,129,0.18)',
@@ -117,6 +118,22 @@ const sectionColorMap: Record<string, {
     activeIndicator: 'from-emerald-500/80 to-emerald-400/20',
     hoverBg: 'rgba(16,185,129,0.05)',
   },
+  // ── EXECUTIVE badge (sky) — командний хаб ────────────────────────────────
+  sky: {
+    bg: 'rgba(14,165,233,0.04)',
+    border: 'rgba(14,165,233,0.18)',
+    headerBg: 'rgba(14,165,233,0.08)',
+    headerText: '#38bdf8',
+    dotColor: '#0ea5e9',
+    glowColor: 'rgba(14,165,233,0.4)',
+    activeItemBg: 'rgba(14,165,233,0.08)',
+    activeItemBorder: 'rgba(14,165,233,0.25)',
+    activeIconBg: 'rgba(14,165,233,0.15)',
+    activeIconColor: '#38bdf8',
+    activeIndicator: 'from-sky-500/80 to-sky-400/20',
+    hoverBg: 'rgba(14,165,233,0.05)',
+  },
+  // ── AI CORE (blue) — штучний інтелект ────────────────────────────────────
   blue: {
     bg: 'rgba(59,130,246,0.04)',
     border: 'rgba(59,130,246,0.18)',
@@ -131,6 +148,7 @@ const sectionColorMap: Record<string, {
     activeIndicator: 'from-blue-500/80 to-blue-400/20',
     hoverBg: 'rgba(59,130,246,0.05)',
   },
+  // ── INVESTIGATION (indigo) — розслідування ───────────────────────────────
   indigo: {
     bg: 'rgba(99,102,241,0.04)',
     border: 'rgba(99,102,241,0.18)',
@@ -145,6 +163,7 @@ const sectionColorMap: Record<string, {
     activeIndicator: 'from-indigo-500/80 to-indigo-400/20',
     hoverBg: 'rgba(99,102,241,0.05)',
   },
+  // ── SYSTEM (slate) — інфраструктура ──────────────────────────────────────
   slate: {
     bg: 'rgba(71,85,105,0.05)',
     border: 'rgba(71,85,105,0.22)',

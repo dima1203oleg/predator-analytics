@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Binary, Scan, Target, Cpu, Activity, Info, ChevronRight, Zap } from 'lucide-react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, CartesianGrid, Cell } from 'recharts';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { cn } from '../../utils/cn';
 
 interface VectorData {

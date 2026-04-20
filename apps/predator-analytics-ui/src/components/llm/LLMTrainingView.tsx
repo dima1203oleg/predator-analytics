@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Building2, Stethoscope, Briefcase, Leaf, RefreshCw, Play, ChevronRight, Microscope, LineChart as LineChartIcon } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { premiumLocales } from '../../locales/uk/premium';
 
 export type TrainingDomain = 'GOV' | 'MED' | 'SCI' | 'BIZ';

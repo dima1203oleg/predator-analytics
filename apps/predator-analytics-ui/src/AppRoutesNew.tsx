@@ -71,7 +71,7 @@ const NetworkGraph = lazy(() => import('./features/network/NetworkGraph'));
 const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
-// ✅ Нові бізнес-розвідувальні модулі v58.2-WRAITH
+// ✅ Бізнес-розвідувальні модулі v58.2-WRAITH
 const FinancialSigintView    = lazy(() => import('./features/intelligence/FinancialSigintView'));
 const UBOMapView             = lazy(() => import('./features/intelligence/UBOMapView'));
 const GeopoliticalRadarView  = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
@@ -82,6 +82,13 @@ const ConversationIntelView  = lazy(() => import('./features/osint/ConversationI
 const MarketEntryView        = lazy(() => import('./features/intelligence/MarketEntryView'));
 const WarRoomView            = lazy(() => import('./features/dashboard/WarRoomView'));
 const SovereignIntelHub      = lazy(() => import('./features/ai/SovereignIntelHub'));
+
+// ✅ Нові модулі v59.0-NEXUS (Фаза 3)
+const DecisionsJournal      = lazy(() => import('./features/decisions/DecisionsJournal'));
+const AlertCenterView       = lazy(() => import('./features/alerts/AlertCenterView'));
+const TimelineBuilderView   = lazy(() => import('./features/investigation/TimelineBuilderView'));
+const EntityResolverView    = lazy(() => import('./features/analytics/EntityResolverView'));
+const ScenarioModelingView  = lazy(() => import('./features/ai/ScenarioModelingView'));
 
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen bg-slate-950 relative overflow-hidden">
@@ -188,6 +195,13 @@ export const AppRoutesNew = () => {
             <Route path="/forecast/:ueid" element={<ForecastingEngine />} />
             <Route path="/conversation-intel" element={<ConversationIntelView />} />
             <Route path="/hypothesis-engine" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
+            <Route path="/scenarios" element={<ScenarioModelingView />} />
+
+            {/* v59.0-NEXUS — Нові модулі */}
+            <Route path="/decisions" element={<DecisionsJournal />} />
+            <Route path="/alerts" element={<AlertCenterView />} />
+            <Route path="/timeline" element={<TimelineBuilderView />} />
+            <Route path="/entity-resolver" element={<EntityResolverView />} />
             
             {/* 6. СИСТЕМНЕ ЯДРО (SLATE HUB) */}
             <Route path="/system" element={<SystemHub />} />

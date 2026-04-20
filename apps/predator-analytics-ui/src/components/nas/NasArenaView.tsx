@@ -3,7 +3,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Trophy, Sparkles, GitBranch, Activity, Zap, Layers, Brain } from 'lucide-react';
 import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { NasTournament, ModelCandidate } from '../../types';
 
 interface NasArenaViewProps {

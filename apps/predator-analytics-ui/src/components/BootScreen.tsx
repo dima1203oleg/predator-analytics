@@ -296,7 +296,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       s: Math.random() * 2.5 + 1.2,
       vx: (Math.random() - 0.5) * 0.8,
       vy: (Math.random() - 0.5) * 0.8,
-      c: Math.random() > 0.85 ? '#D4AF37' : '#B45309' // Gold & Deep Amber (expensive, no bright red)
+      c: Math.random() > 0.85 ? '#e11d48' : '#be123c' // Rose & Deep Crimson (WRAITH)
     }));
   }, []);
 
@@ -478,7 +478,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
     // Detonation Flash
     if (targetLocked) {
       const flashAlpha = Math.sin(now * 0.05) * 0.3 + 0.4;
-      ctx.fillStyle = `rgba(245, 158, 11, ${flashAlpha * 0.7})`; // Deep Amber Flash
+      ctx.fillStyle = `rgba(225, 29, 72, ${flashAlpha * 0.7})`; // Crimson Flash
       ctx.fillRect(0, 0, W, H);
       // Chromatic anomaly
       ctx.translate((Math.random()-0.5)*15, (Math.random()-0.5)*15);
@@ -488,11 +488,11 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
 
     /* ── Атмосферне світіння (завжди) ── */
     if (cp < 5) {
-      // Sovereign Gold / Amber Glow
+      // Sovereign Rose / Crimson Glow
       const ri = cp === 4 ? 0.25 : cp === 3 ? 0.15 : 0.08;
       const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.7);
-      rg.addColorStop(0, `rgba(251, 191, 36, ${ri})`); // Amber-400
-      rg.addColorStop(0.5, `rgba(180, 83, 9, ${ri * 0.4})`); // Amber-900
+      rg.addColorStop(0, `rgba(225, 29, 72, ${ri})`); // Rose-600
+      rg.addColorStop(0.5, `rgba(159, 18, 57, ${ri * 0.4})`); // Rose-900
       rg.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       // Холодний синій акцент зверху залишаємо як констраст
@@ -533,27 +533,27 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       const p = Math.min(1, elapsed / PHASE_DURATIONS[0]);
       // Хаотичні глітч-рядки
       for (let i = 0; i < 35; i++) {
-        ctx.fillStyle = `rgba(251, 191, 36, ${(1 - p) * 0.15 * Math.random()})`;
+        ctx.fillStyle = `rgba(225, 29, 72, ${(1 - p) * 0.15 * Math.random()})`;
         ctx.fillRect(Math.random() * W * 0.35, Math.random() * H, Math.random() * W * 0.45, Math.random() * 6 + 1);
       }
       // Бінарний дощ
       ctx.font = '9px monospace';
       for (let col = 0; col < W; col += 16) {
         for (let row = 0; row < Math.random() * 6 + 1; row++) {
-          ctx.fillStyle = `rgba(180, 140, 20, ${(Math.random() * 0.3 + 0.05) * p})`;
+          ctx.fillStyle = `rgba(159, 18, 57, ${(Math.random() * 0.3 + 0.05) * p})`;
           ctx.fillText('01'[Math.floor(Math.random() * 2)], col, Math.random() * H);
         }
       }
       // Сітка що проявляється
-      ctx.strokeStyle = `rgba(180, 140, 20, ${0.08 * p})`; ctx.lineWidth = 0.8;
+      ctx.strokeStyle = `rgba(159, 18, 57, ${0.08 * p})`; ctx.lineWidth = 0.8;
       for (let x = 0; x < W; x += 55) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
       for (let y = 0; y < H; y += 55) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
       // Сканлінія
       const sy2 = (elapsed / PHASE_DURATIONS[0]) * H;
       const sg = ctx.createLinearGradient(0, sy2 - 4, 0, sy2 + 4);
-      sg.addColorStop(0, 'rgba(251, 191, 36, 0)');
-      sg.addColorStop(0.5, `rgba(251, 191, 36, ${0.8 * p})`);
-      sg.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      sg.addColorStop(0, 'rgba(225, 29, 72, 0)');
+      sg.addColorStop(0.5, `rgba(225, 29, 72, ${0.8 * p})`);
+      sg.addColorStop(1, 'rgba(225, 29, 72, 0)');
       ctx.fillStyle = sg; ctx.fillRect(0, sy2 - 4, W, 8);
     }
 
@@ -564,7 +564,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
       const maxR = Math.min(W, H) * 0.38;
 
       // Фіббоначчі спіраль
-      ctx.strokeStyle = `rgba(251, 191, 36, ${0.25 * p})`; ctx.lineWidth = 0.9;
+      ctx.strokeStyle = `rgba(225, 29, 72, ${0.25 * p})`; ctx.lineWidth = 0.9;
       ctx.beginPath();
       for (let t = 0; t < 720 * p; t += 2) {
         const r = (maxR / 720) * t;
@@ -578,7 +578,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         const rr = (maxR / 7) * ring;
         const pulse = Math.sin(now * 0.0018 + ring * 0.6) * 0.5 + 0.5;
         ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(180, 140, 20, ${(0.06 + pulse * 0.1) * p})`;
+        ctx.strokeStyle = `rgba(159, 18, 57, ${(0.06 + pulse * 0.1) * p})`;
         ctx.lineWidth = ring === 7 ? 1.8 : 0.7; ctx.stroke();
       }
 
@@ -590,7 +590,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
         ctx.beginPath();
         ctx.moveTo(Math.cos(a) * ir2, Math.sin(a) * ir2);
         ctx.lineTo(Math.cos(a) * or2, Math.sin(a) * or2);
-        ctx.strokeStyle = `rgba(251, 191, 36, ${(isLong ? 0.65 : 0.25) * p})`;
+        ctx.strokeStyle = `rgba(225, 29, 72, ${(isLong ? 0.65 : 0.25) * p})`;
         ctx.lineWidth = isLong ? 1.8 : 0.7; ctx.stroke();
       }
 

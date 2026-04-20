@@ -295,9 +295,9 @@ const Header: React.FC = () => {
               onClick={() => setTerminalOpen(!isTerminalOpen)}
               className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
               style={{
-                background: isTerminalOpen ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)',
-                borderColor: isTerminalOpen ? 'rgba(16,185,129,0.3)' : 'rgba(255,255,255,0.08)',
-                color: isTerminalOpen ? '#34d399' : '#64748b',
+                background: isTerminalOpen ? 'rgba(244,63,94,0.1)' : 'rgba(255,255,255,0.04)',
+                borderColor: isTerminalOpen ? 'rgba(244,63,94,0.3)' : 'rgba(255,255,255,0.08)',
+                color: isTerminalOpen ? '#fb7185' : '#64748b',
               }}
             >
               <Terminal className="h-4 w-4" />

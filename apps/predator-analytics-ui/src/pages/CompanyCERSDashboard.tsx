@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { VramSentinel } from '@/components/intelligence/VramSentinel';
-import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
+
 
 const normalizeRiskLevel = (value?: string): string => {
     switch (value) {

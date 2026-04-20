@@ -102,14 +102,14 @@ users:
             {/* Header */}
             <div className="p-6 border-b border-white/5 bg-slate-900/50 backdrop-blur-xl flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/30 to-orange-600/10 text-orange-400 border border-orange-500/20">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-rose-500/30 to-rose-600/10 text-rose-500 border border-rose-500/20">
                   <Cloud className="w-6 h-6" />
                 </div>
                 <div>
                   <h2 className="text-xl font-black text-white tracking-tight uppercase">COLAB_MANAGER</h2>
-                  <p className="text-[10px] text-orange-500 font-mono tracking-widest uppercase flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                    Конфігурація та Керування
+                  <p className="text-[10px] text-rose-500 font-mono tracking-[0.2em] uppercase flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                    SECURITY_FAILOVER_NODE
                   </p>
                 </div>
               </div>
@@ -127,83 +127,83 @@ users:
               {/* Node Health Quick Metrics */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center">
-                  <div className="text-[9px] font-bold text-slate-500 uppercase mb-1">VRAM</div>
-                  <div className="text-base font-black text-emerald-400">{extended.vram_allocated || '14.7 GB'}</div>
+                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">VRAM</div>
+                  <div className="text-base font-black text-rose-500">{extended.vram_allocated || '14.7 GB'}</div>
                 </div>
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center">
-                  <div className="text-[9px] font-bold text-slate-500 uppercase mb-1">АПТАЙМ</div>
-                  <div className="text-base font-black text-cyan-400">{node.uptime || '00:00'}</div>
+                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Uptime</div>
+                  <div className="text-base font-black text-slate-200">{node.uptime || '00:00'}</div>
                 </div>
                 <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center transition-all hover:bg-white/10 cursor-help">
-                  <div className="text-[9px] font-bold text-slate-500 uppercase mb-1 flex items-center justify-center gap-1">
+                  <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1 flex items-center justify-center gap-1">
                     GDrive <HardDrive className="w-2.5 h-2.5" />
                   </div>
-                  <div className="text-base font-black text-blue-400">{extended.gdrive_usage || '0%'}</div>
+                  <div className="text-base font-black text-emerald-500">{extended.gdrive_usage || '0%'}</div>
                 </div>
               </div>
 
               {/* ZROK Tunnel Status */}
               <section className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Share2 className="w-4 h-4 text-cyan-400" /> ZROK ТУНЕЛЬ
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Share2 className="w-4 h-4 text-rose-500" /> ZROK_NETWORK_TUNNEL
                   </h3>
-                  <div className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase">АКТИВНИЙ</div>
+                  <div className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-tighter">CONNECTED</div>
                 </div>
                 <div className="bg-black/40 border border-white/5 rounded-xl p-4 space-y-3 shadow-inner">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-500 uppercase tracking-tight font-bold">Публічна URL</span>
+                    <span className="text-xs text-slate-500 uppercase tracking-tight font-black">HOST_URL</span>
                     <a 
                       href={extended.zrok_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1 font-mono"
+                      className="text-xs text-rose-500 hover:text-rose-400 transition-colors flex items-center gap-1 font-mono font-bold"
                     >
                       {extended.zrok_id}.share.zrok.io <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-500 uppercase tracking-tight font-bold">ID Статус</span>
-                    <span className="text-white font-mono uppercase bg-white/5 px-2 py-0.5 rounded">1eeje4...yvA</span>
+                    <span className="text-slate-500 uppercase tracking-tight font-black">GATEWAY_ID</span>
+                    <span className="text-slate-200 font-mono uppercase bg-white/5 px-2 py-0.5 rounded text-[10px]">1eeje4...yvA</span>
                   </div>
                 </div>
               </section>
 
               {/* Kubernetes Mirror Status */}
               <section className="space-y-4">
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-violet-400" /> KUBERNETES КОНТУР
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-rose-500" /> K8S_SECURITY_DOMAIN
                 </h3>
-                <div className="bg-gradient-to-br from-violet-500/10 to-transparent border border-violet-500/20 rounded-xl p-5 space-y-4">
+                <div className="bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/20 rounded-xl p-5 space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center text-violet-400 border border-violet-500/10">
+                      <div className="w-12 h-12 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-500 border border-rose-500/10 shadow-[0_0_20px_rgba(225,29,72,0.15)]">
                         <Terminal className="w-6 h-6" />
                       </div>
                       <div>
                         <div className="text-xs font-black text-white uppercase tracking-tight">{extended.k8s_cluster}</div>
-                        <div className="text-[10px] text-slate-500 font-mono italic">Версія Кластера: v1.28.4+k3s1</div>
+                        <div className="text-[10px] text-slate-500 font-mono italic">v1.28.4+k3s_WRAITH</div>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
                       <button 
                         onClick={handleSyncConfig}
-                        className="px-4 py-1.5 bg-violet-500/20 text-violet-400 border border-violet-500/30 rounded-lg text-[9px] font-black hover:bg-violet-500 hover:text-white transition-all uppercase"
+                        className="px-4 py-1.5 bg-rose-500/20 text-rose-500 border border-rose-500/30 rounded-lg text-[9px] font-black hover:bg-rose-500 hover:text-white transition-all uppercase tracking-widest"
                       >
-                        Синхронізувати
+                        SYNC_CONFIG
                       </button>
                       <button 
                         onClick={handleCopyKubeconfig}
-                        className="px-4 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg text-[9px] font-black hover:bg-white/10 transition-all uppercase flex items-center gap-2"
+                        className="px-4 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg text-[9px] font-black hover:bg-white/10 transition-all uppercase tracking-widest flex items-center gap-2"
                       >
-                        <Copy className="w-3 h-3" /> Kubeconfig
+                        <Copy className="w-3 h-3" /> COPY_CFG
                       </button>
                     </div>
                   </div>
-                  <div className="p-3 bg-black/60 rounded-lg font-mono text-[9px] text-violet-300 border border-violet-500/10 group relative cursor-pointer" onClick={handleCopyKubeconfig}>
+                  <div className="p-3 bg-black/60 rounded-lg font-mono text-[9px] text-rose-300 border border-rose-500/10 group relative cursor-pointer" onClick={handleCopyKubeconfig}>
                     <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Copy className="w-3 h-3 text-violet-400" />
+                      <Copy className="w-3 h-3 text-rose-500" />
                     </div>
                     kubectl get nodes --context {extended.k8s_cluster}
                   </div>
@@ -213,24 +213,24 @@ users:
               {/* 8 Databases Monitoring */}
               <section className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <Database className="w-4 h-4 text-rose-400" /> КЛАСТЕР БАЗ ДАНИХ (8 БД)
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Database className="w-4 h-4 text-rose-500" /> DATABASE_MIRROR_ARRAY
                   </h3>
-                  <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+                  <Activity className="w-4 h-4 text-emerald-500 animate-pulse" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {Object.entries(databases).map(([name, status]: [string, any]) => (
-                    <div key={name} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-rose-500/30 transition-all">
-                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">{name}</span>
+                    <div key={name} className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-rose-500/40 transition-all hover:bg-rose-500/5 cursor-default">
+                      <span className="text-[10px] font-black text-slate-300 uppercase tracking-tight">{name}</span>
                       <div className="flex items-center gap-2">
                         <div className={cn(
                           "w-1.5 h-1.5 rounded-full shadow-[0_0_8px]",
-                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-500 shadow-rose-500/50"
+                          status === 'running' ? "bg-emerald-500 shadow-emerald-500/50" : "bg-rose-600 shadow-rose-600/50"
                         )} />
                         <span className={cn(
-                          "text-[9px] font-bold uppercase",
-                          status === 'running' ? "text-emerald-500/70" : "text-rose-500/70"
-                        )}>{status === 'running' ? 'Активно' : status}</span>
+                          "text-[9px] font-black uppercase tracking-widest",
+                          status === 'running' ? "text-emerald-500/70" : "text-rose-600/70"
+                        )}>{status === 'running' ? 'ALIVE' : 'OFFLINE'}</span>
                       </div>
                     </div>
                   ))}
@@ -239,22 +239,22 @@ users:
 
               {/* Google Drive Sync */}
               <section className="space-y-4">
-                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                  <RefreshCcw className="w-4 h-4 text-blue-400" /> GDRIVE СИНХРОНІЗАЦІЯ
+                <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <RefreshCcw className="w-4 h-4 text-emerald-500" /> DATA_REPLICATION_MIRROR
                 </h3>
-                <div className="bg-gradient-to-r from-blue-600/10 to-transparent border border-blue-500/20 rounded-xl p-5 flex items-center justify-between shadow-lg">
+                <div className="bg-gradient-to-r from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-xl p-5 flex items-center justify-between shadow-lg">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                       <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-black text-white uppercase tracking-tight">ДТП Копіювання Успішне</div>
-                      <div className="text-[9px] text-slate-500 font-mono mt-1">Останній чек: {new Date(extended.last_sync).toLocaleString('uk-UA')}</div>
+                      <div className="text-[10px] font-black text-white uppercase tracking-tight">MIRRORING_VERIFIED</div>
+                      <div className="text-[9px] text-slate-500 font-mono mt-1 uppercase">SYNC_TS: {new Date(extended.last_sync).toLocaleString('uk-UA')}</div>
                     </div>
                   </div>
                   <button 
                     onClick={handleGDriveSync}
-                    className="p-3 bg-blue-500/10 hover:bg-blue-500 text-blue-400 hover:text-white rounded-xl transition-all border border-blue-500/20 active:scale-95"
+                    className="p-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white rounded-xl transition-all border border-emerald-500/20 active:scale-95 shadow-lg shadow-emerald-500/5"
                   >
                     <RefreshCcw className="w-5 h-5" />
                   </button>
@@ -265,17 +265,17 @@ users:
               <div className="grid grid-cols-2 gap-4 pt-4">
                 <button 
                   onClick={handleSyncCode}
-                  className="flex items-center justify-center gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-[11px] font-black uppercase hover:bg-white/10 hover:border-white/20 transition-all group"
+                  className="flex items-center justify-center gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-[11px] font-black uppercase tracking-widest hover:bg-white/10 hover:border-white/20 transition-all group shadow-2xl"
                 >
-                  <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" /> Github Синхр.
+                  <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" /> GITHUB_PULL
                 </button>
                 <a 
                   href={extended.zrok_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 px-5 py-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl text-orange-400 text-[11px] font-black uppercase hover:bg-orange-500 hover:text-white transition-all shadow-lg shadow-orange-500/5 group"
+                  className="flex items-center justify-center gap-3 px-5 py-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-500 text-[11px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-[0_0_30px_rgba(225,29,72,0.2)] group"
                 >
-                  <ExternalLink className="w-5 h-5" /> Відкрити Colab
+                  <ExternalLink className="w-5 h-5" /> OPEN_COLAB
                 </a>
               </div>
 
@@ -283,11 +283,11 @@ users:
 
             {/* Footer */}
             <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
-              <div className="flex items-start gap-4 text-rose-500 bg-rose-500/5 p-4 rounded-2xl border border-rose-500/20">
+              <div className="flex items-start gap-4 text-rose-600 bg-rose-600/5 p-4 rounded-2xl border border-rose-600/20 shadow-[inset_0_0_20px_rgba(225,29,72,0.05)]">
                 <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-wider mb-1">УВАГА: РЕЖИМ ДЗЕРКАЛЬНОСТІ</p>
-                  <p className="text-[10px] leading-relaxed text-rose-500/80 font-medium italic">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">WARNING: SOVEREIGN_MODE</p>
+                  <p className="text-[10px] leading-relaxed text-rose-600/80 font-bold uppercase tracking-tight">
                     Резервний кластер працює в режимі суверенної дзеркальності. 
                     Пряме втручання в K8s контур може порушити цілісність failover-сценаріїв.
                   </p>

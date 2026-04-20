@@ -1,11 +1,11 @@
 /**
- * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v57.5-WRAITH
+ * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v58.2-WRAITH
  * PREDATOR Analytics — Logistics & Trade Flow Intelligence
  * 
  * Моніторинг митних декларацій, аналіз контрагентів (ЗЕД),
  * трекінг товарних груп та виявлення митних ризиків.
  * 
- * PREDATOR_WRATH v57.5 · Classified · Tier-1
+ * PREDATOR_WRATH v58.2 · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -33,11 +33,10 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { CyberGrid } from '@/components/CyberGrid';
 import { ViewHeader } from '@/components/ViewHeader';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
-// Background Scanning HUD v57.5
+// Background Scanning HUD v58.2
 // ========================
 
 const ScanningHUD: React.FC = () => {
@@ -49,7 +48,7 @@ const ScanningHUD: React.FC = () => {
                 className="absolute left-0 w-full h-[1px] bg-rose-500/40 shadow-[0_0_15px_rgba(225,29,72,0.3)]"
             />
             <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic font-bold">
-                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_WRAITH_ELITE</span>
+                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_WRAITH_SOVEREIGN</span>
                 <span>ДЖЕРЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX</span>
                 <span>ЯДРО_WRAITH: АКТИВНЕ</span>
             </div>
@@ -260,7 +259,7 @@ export default function CustomsIntelligenceView() {
                           WRAITH_MANIFEST_XRAY // {isOffline ? 'OFFLINE_CACHE' : 'LIVE_FEED'}
                         </span>
                         <div className="h-px w-12 bg-rose-500/20" />
-                        <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v57.5-WRAITH</span>
+                        <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                        МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РОЗВІДКА</span>
@@ -274,7 +273,7 @@ export default function CustomsIntelligenceView() {
              badges={[
                { label: 'WRAITH_T1', color: 'primary', icon: <Anchor size={10} /> },
                { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Database size={10} /> },
-               { label: 'v57.5-ELITE', color: 'rose', icon: <Crown size={10} /> }
+               { label: 'v58.2-WRAITH', color: 'rose', icon: <Crown size={10} /> }
              ]}
              stats={[
                { label: 'ДІЮЧИХ_ЗЕД', value: '12.8K', icon: <Box size={14} />, color: 'primary' },
@@ -322,7 +321,7 @@ export default function CustomsIntelligenceView() {
               ))}
            </div>
 
-           {/* LIVE PARSING TERMINAL v57.5 */}
+           {/* LIVE PARSING TERMINAL v58.2 */}
            <motion.div 
                initial={{ opacity: 0, scale: 0.98 }}
                animate={{ opacity: 1, scale: 1 }}
@@ -562,7 +561,6 @@ export default function CustomsIntelligenceView() {
             .no-scrollbar::-webkit-scrollbar { display: none; }
             .custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(225,29,72,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(225,29,72,.3)}
         `}} />
-        <DiagnosticsTerminal />
       </div>
     </PageTransition>
   );
@@ -571,29 +569,4 @@ export default function CustomsIntelligenceView() {
 // Utility to wrap messages in quotes correctly for the new theme
 function msg_wrap(text: string) {
     return text.startsWith('"') ? text.slice(1, -1) : text;
-}
-           <div className="p-10 rounded-[4rem] bg-black border-2 border-yellow-500/10 shadow-4xl relative overflow-hidden group hover:border-yellow-500/30 transition-all cursor-crosshair">
-                             <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
-                             <h4 className="text-[10px] font-black text-yellow-700 uppercase tracking-[0.6em] mb-6 italic">СУВЕРЕННИЙ_ШІ_ВАРТОВИЙ (SENTINEL)</h4>
-                             <p className="text-[14px] font-black text-slate-400 italic leading-relaxed uppercase tracking-tighter border-l-4 border-yellow-500/30 pl-8 group-hover:text-white transition-colors">
-                               Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендується перегляд лімітів для імпортерів електроніки категорії A.
-                             </p>
-                          </div>
-                       </div>
-                    </motion.div>
-                 )}
-              </AnimatePresence>
-           </div>
-        </div>
-
-        <style dangerouslySetInnerHTML={{ __html: `
-            .shadow-3xl { box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8); }
-            .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 40px rgba(212,175,55,0.05); }
-            .no-scrollbar::-webkit-scrollbar { display: none; }
-            .custom-scrollbar::-webkit-scrollbar{width:6px}.custom-scrollbar::-webkit-scrollbar-track{background:transparent}.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(212,175,55,.15);border-radius:20px;border:2px solid black}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.3)}
-        `}} />
-        <DiagnosticsTerminal />
-      </div>
-    </PageTransition>
-  );
 }

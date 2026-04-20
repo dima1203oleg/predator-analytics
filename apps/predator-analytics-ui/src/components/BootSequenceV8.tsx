@@ -148,7 +148,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
   const particlesRef = useRef<{x:number, y:number, s:number, vx:number, vy:number, c:string}[]>([]);
 
   const LOG_ENTRIES = [
-    "[✓] IDENTITY LOCKED: ОБ'ЄКТ \"В\" (ПО-БАТЬКОВІ: ВАСИЛЬОВИЧ)",
+    "[✓] IDENTITY LOCKED: ОБ'ЄКТ 'В' (ПО-БАТЬКОВІ: ВАСИЛЬОВИЧ)",
     "[✓] FINANCIAL FOOTPRINT MAPPED (14 BANKS)",
     "[✓] PARSING RELATIVES: БРАТ (О. ВАСИЛЬОВИЧ) -> ТОП-МЕНЕДЖЕР БАНКУ",
     "[!] ANOMALY DETECTED: ТЕНДЕР №481516",

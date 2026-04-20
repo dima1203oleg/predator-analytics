@@ -1,5 +1,5 @@
 /**
- * PREDATOR v57.3-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
+ * PREDATOR v58.2-WRAITH | Sovereign Intelligence Sanctum — Хаб Комерційної Розвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
  * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
@@ -81,9 +81,9 @@ const PERSONA_CONFIG = {
     title: 'РИНКОВИЙ ТИТАН',
     subtitle: 'Стратегічний аналіз та конкурентна розвідка',
     icon: Target,
-    color: 'amber',
-    gradient: 'from-[#D4AF37] via-amber-600 to-[#D4AF37]',
-    glow: 'rgba(212, 175, 55, 0.4)',
+    color: 'rose',
+    gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
+    glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: Eye, label: 'АНАЛІЗ КОНКУРЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
       { icon: TrendingUp, label: 'РИНКОВІ ПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
@@ -101,8 +101,8 @@ const PERSONA_CONFIG = {
     title: 'ВЕЛИКИЙ ІНКВІЗИТОР',
     subtitle: 'Контроль ризиків та виявлення прихованих схем',
     icon: Shield,
-    color: 'amber',
-    gradient: 'from-[#E11D48] via-amber-600 to-[#E11D48]',
+    color: 'rose',
+    gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
     glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: AlertTriangle, label: 'ДЕТЕКЦІЯ АНОМАЛІЙ', desc: 'AI-сканування на предмет заниження вартості та пересортиці' },
@@ -121,9 +121,9 @@ const PERSONA_CONFIG = {
     title: 'МАКРО-СУВЕРЕН',
     subtitle: 'Архітектор торгових стратегій та геополітики',
     icon: Crown,
-    color: 'amber',
-    gradient: 'from-[#D4AF37] via-[#E11D48] to-[#D4AF37]',
-    glow: 'rgba(212, 175, 55, 0.4)',
+    color: 'rose',
+    gradient: 'from-[#E11D48] via-[#BE123C] to-[#E11D48]',
+    glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТОР', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
       { icon: Landmark, label: 'СЕКТОРНИЙ АРХІТЕКТОР', desc: 'Картування цілих галузей економіки через митні дані' },
@@ -180,13 +180,13 @@ const HolographicAccessGate: React.FC = () => {
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
                 Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕРЕН". 
-                Виявлено обмежений доступ. Активуйте статус v57.3-ELITE для розблокування протоколів.
+                Виявлено обмежений доступ. Активуйте статус v58.2-WRAITH для розблокування протоколів.
               </p>
             </div>
 
             <div className="flex items-center gap-8 justify-center">
-              <div className="p-8 bg-white/5 border border-[#D4AF37]/30 rounded-[40px] group transition-all">
-                <Crown size={48} className="text-[#D4AF37] mb-4 mx-auto" />
+              <div className="p-8 bg-white/5 border border-[#E11D48]/30 rounded-[40px] group transition-all">
+                <Crown size={48} className="text-[#E11D48] mb-4 mx-auto" />
                 <h3 className="text-xs font-black text-white uppercase tracking-widest">SOVEREIGN CORE ACTIVE</h3>
               </div>
             </div>
@@ -197,7 +197,7 @@ const HolographicAccessGate: React.FC = () => {
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </button>
-            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v57.3-ELITE | SOVEREIGN_POWER</p>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v58.2-WRAITH | SOVEREIGN_POWER</p>
           </div>
         </div>
       </motion.div>
@@ -310,7 +310,7 @@ const PremiumHubView: React.FC = () => {
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                 <Gem size={12} className="text-[#E11D48] hover:scale-125 transition-transform" /> 
-                                КОМЕРЦІЙНА_РОЗВІДКА_v57.3_ELITE
+                                КОМЕРЦІЙНА_РОЗВІДКА_v58.2_WRAITH
                             </p>
                         </div>
                     </div>
@@ -320,7 +320,7 @@ const PremiumHubView: React.FC = () => {
                 badges={[
                     { label: 'SOVEREIGN_ACCESS', color: 'danger', icon: <Crown size={10} /> },
                     { label: isOffline ? 'MIRROR_NODE' : 'CENTRAL_NVIDIA', color: isOffline ? 'warning' : 'primary', icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> },
-                    { label: 'v57.3-ELITE', color: 'danger', icon: <Shield size={10} /> }
+                    { label: 'v58.2-WRAITH', color: 'danger', icon: <Shield size={10} /> }
                 ]}
                 stats={[
                     { label: 'ДАНІ_В_ОБРОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
@@ -328,7 +328,7 @@ const PremiumHubView: React.FC = () => {
                         label: isOffline ? 'MIRROR_RECOVERY' : 'ВУЗОЛ_SOURCE', 
                         value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
                         icon: isOffline ? <Activity /> : <Cpu />, 
-                        color: isOffline ? 'warning' : 'gold',
+                        color: isOffline ? 'warning' : 'danger',
                         animate: isOffline
                     },
                     { label: 'STABILITY', value: isOffline ? 'MIRROR_VAULT' : 'STABLE', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
@@ -393,14 +393,14 @@ const PremiumHubView: React.FC = () => {
                                 <div className={cn(
                                     "p-10 rounded-[48px] border border-white/5 relative overflow-hidden panel-3d",
                                     persona === 'INQUISITOR' 
-                                        ? "bg-gradient-to-br from-amber-500/10 via-black/40 to-black"
-                                        : "bg-gradient-to-br from-[#D4AF37]/10 via-black/40 to-black"
+                                        ? "bg-gradient-to-br from-rose-500/10 via-black/40 to-black"
+                                        : "bg-gradient-to-br from-[#E11D48]/10 via-black/40 to-black"
                                 )}>
                                     <div className="absolute -top-10 -right-10 opacity-5">
                                         <currentConfig.icon size={280} />
                                     </div>
                                     <div className="relative z-10 space-y-6">
-                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", persona === 'INQUISITOR' ? "text-amber-500" : "text-[#D4AF37]")}>
+                                        <div className={cn("text-xs font-mono font-black uppercase tracking-[0.4em]", persona === 'INQUISITOR' ? "text-rose-500" : "text-[#E11D48]")}>
                                             {currentConfig.title}
                                         </div>
                                         <h2 className="text-4xl font-black text-white tracking-tight uppercase leading-tight italic">
@@ -408,7 +408,7 @@ const PremiumHubView: React.FC = () => {
                                         </h2>
                                         <div className="flex items-center gap-6">
                                             <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
-                                            <span className="text-xs text-slate-500 font-mono">v57.3-ELITE.1-stable</span>
+                                            <span className="text-xs text-slate-500 font-mono">v58.2-WRAITH.1-stable</span>
                                         </div>
                                     </div>
                                 </div>
@@ -433,7 +433,7 @@ const PremiumHubView: React.FC = () => {
                                 {/* Neural Insights Feed */}
                                 <div className="p-8 bg-black/40 border border-white/5 rounded-[40px] space-y-6">
                                     <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-4">
-                                        <div className={cn("w-2 h-2 rounded-full animate-pulse", persona === 'INQUISITOR' ? "bg-amber-500" : "bg-[#D4AF37]")} />
+                                        <div className={cn("w-2 h-2 rounded-full animate-pulse", persona === 'INQUISITOR' ? "bg-rose-500" : "bg-[#E11D48]")} />
                                         НЕЙРОННІ ІНСАЙДИ (24h)
                                     </h3>
                                     <div className="space-y-4">
@@ -512,7 +512,7 @@ const PremiumHubView: React.FC = () => {
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБРОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
-                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v57.3-ELITE.
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v58.2-WRAITH.
                                 </p>
                             </div>
                         </div>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrainCircuit, Send, RefreshCw, Zap, Activity, Cpu } from 'lucide-react';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { premiumLocales } from '../../locales/uk/premium';
 
 interface ChatMessage { role: 'system' | 'user' | 'assistant'; content: string; }

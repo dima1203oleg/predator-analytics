@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Play, Share2, Activity, Database, Zap, Cpu, Terminal, ShieldAlert, Network, Box } from 'lucide-react';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { cn } from '../../utils/cn';
 
 interface GraphDBViewProps {

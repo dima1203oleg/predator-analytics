@@ -89,12 +89,12 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                       transition={{ delay: 0.2 + (bIdx * 0.1) }}
                       className={`
                         flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-tight
-                        ${badge.color === 'success' || badge.color === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]' :
+                        {badge.color === 'success' || badge.color === 'emerald' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]' :
                           badge.color === 'primary' || badge.color === 'cyan' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]' :
-                          badge.color === 'danger' || badge.color === 'rose' ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
-                          badge.color === 'warning' || badge.color === 'amber' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.15)]' :
+                          badge.color === 'danger' || badge.color === 'rose' || badge.color === 'error' ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
+                          badge.color === 'warning' || badge.color === 'amber' || badge.color === 'gold' ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
                           badge.color === 'purple' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.15)]' :
-                          badge.color === 'gold' ? 'bg-yellow-500/10 border-yellow-500/30 text-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.15)]' :
+                          badge.color === 'crimson' ? 'bg-crimson-500/10 border-crimson-500/30 text-crimson-400 shadow-[0_0_10px_rgba(225,29,72,0.15)]' :
                           'bg-slate-800/40 border-slate-700/50 text-slate-300'
                         }
                       `}
@@ -125,11 +125,11 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                   stat.animate ? 'animate-pulse' : ''
                 } ${
                    stat.color === 'success' ? 'text-success-500 shadow-[0_0_10px_rgba(34,197,94,0.1)]' :
-                  stat.color === 'warning' ? 'text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.1)]' :
-                  stat.color === 'danger' ? 'text-danger-500 shadow-[0_0_10px_rgba(239,68,68,0.1)]' :
+                  stat.color === 'warning' || stat.color === 'amber' ? 'text-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.1)]' :
+                  stat.color === 'danger' || stat.color === 'error' ? 'text-danger-500 shadow-[0_0_10px_rgba(239,68,68,0.1)]' :
                   stat.color === 'primary' ? 'text-primary-500 shadow-[0_0_10px_rgba(6,182,212,0.1)]' :
                   stat.color === 'purple' ? 'text-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.1)]' :
-                  stat.color === 'gold' ? 'text-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.1)]' :
+                  stat.color === 'gold' || stat.color === 'rose' || stat.color === 'crimson' ? 'text-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.1)]' :
                   stat.color === 'cyan' ? 'text-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.1)]' :
                   stat.color === 'secondary' ? 'text-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.1)]' : 'text-slate-400'
                 }`}>
@@ -140,11 +140,11 @@ export const ViewHeader: React.FC<ViewHeaderProps> = ({
                 <span className="text-[9px] text-slate-300 uppercase font-bold tracking-wider">{stat.label}</span>
                 <span className={`text-sm font-mono font-bold ${
                     stat.color === 'success' ? 'text-success-400' :
-                   stat.color === 'warning' ? 'text-yellow-400' :
-                   stat.color === 'danger' ? 'text-danger-400' :
+                   stat.color === 'warning' || stat.color === 'amber' ? 'text-rose-400' :
+                   stat.color === 'danger' || stat.color === 'error' ? 'text-danger-400' :
                    stat.color === 'primary' ? 'text-primary-400' :
                    stat.color === 'purple' ? 'text-purple-400' :
-                   stat.color === 'gold' ? 'text-[#D4AF37]' :
+                   stat.color === 'gold' || stat.color === 'rose' || stat.color === 'crimson' ? 'text-rose-400' :
                    stat.color === 'cyan' ? 'text-cyan-400' :
                    stat.color === 'secondary' ? 'text-indigo-400' : 'text-slate-200'
                 }`}>{stat.value}</span>

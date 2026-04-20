@@ -207,13 +207,13 @@ const getRiskIcon = (level: RiskLevel) => {
 
 const getRiskColors = (level: RiskLevel) => {
   if (level === 'LOW') return { border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-400', dot: 'bg-emerald-400' };
-  if (level === 'MEDIUM') return { border: 'border-amber-500/30', bg: 'bg-amber-500/10', text: 'text-amber-400', dot: 'bg-amber-400' };
+  if (level === 'MEDIUM') return { border: 'border-rose-500/30', bg: 'bg-rose-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
   return { border: 'border-rose-500/30', bg: 'bg-rose-500/10', text: 'text-rose-400', dot: 'bg-rose-400' };
 };
 
 const getProviderColors = (provider: LlmCascadeEntry['provider']) => {
   if (provider === 'gemini') return 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10';
-  if (provider === 'groq') return 'border-amber-500/40 text-amber-400 bg-amber-500/10';
+  if (provider === 'groq') return 'border-rose-500/40 text-rose-400 bg-rose-500/10';
   if (provider === 'zai') return 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10';
   if (provider === 'azure') return 'border-sky-500/40 text-sky-400 bg-sky-500/10';
   return 'border-white/20 text-white bg-white/5';
@@ -300,7 +300,7 @@ const VramDonutChart = ({ metrics }: { metrics: VramMetrics }) => {
           <div className="pt-2 border-t border-white/5">
             <div className="text-[9px] text-slate-600 uppercase font-black tracking-widest mb-1">Активні моделі</div>
             {metrics.active_models.map((m) => (
-              <div key={m} className="text-[10px] font-mono text-amber-400/80">{m}</div>
+              <div key={m} className="text-[10px] font-mono text-rose-400/80">{m}</div>
             ))}
           </div>
         )}
@@ -560,7 +560,7 @@ export function FabrykaAutonomousTab() {
         'relative rounded-[32px] border p-6 overflow-hidden transition-all duration-700',
         isAutonomous
           ? 'border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-slate-950/60'
-          : 'border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-slate-950/60',
+          : 'border-rose-500/30 bg-gradient-to-br from-rose-950/40 to-slate-950/60',
       )}>
         <div className="absolute inset-0 opacity-5 pointer-events-none"
           style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 31px), repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 31px)' }}
@@ -571,7 +571,7 @@ export function FabrykaAutonomousTab() {
           <div className="flex items-center gap-5">
             <div className={cn(
               'w-16 h-16 rounded-2xl border flex items-center justify-center transition-all duration-500',
-              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-amber-500/40 bg-amber-500/15 text-amber-400 shadow-[0_0_30px_rgba(212,175,55,0.3)]',
+              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 shadow-[0_0_30px_rgba(212,175,55,0.3)]',
             )}>
               {isAutonomous ? <WifiOff size={28} /> : <Wifi size={28} />}
             </div>
@@ -579,7 +579,7 @@ export function FabrykaAutonomousTab() {
               <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-1">
                 FABRYKA v2.0 — Поточний режим
               </div>
-              <div className={cn('text-2xl font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-amber-400')}>
+              <div className={cn('text-2xl font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-rose-400')}>
                 {isAutonomous ? 'AUTONOMOUS' : 'API MODE'}
               </div>
               <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-tighter">
@@ -603,7 +603,7 @@ export function FabrykaAutonomousTab() {
               onClick={() => handleModeSwitch(isAutonomous ? 'API' : 'AUTONOMOUS')}
               className={cn(
                 'relative w-20 h-10 rounded-full border-2 transition-all duration-500 cursor-pointer',
-                isAutonomous ? 'border-emerald-500/60 bg-emerald-950/50' : 'border-amber-500/60 bg-amber-950/50',
+                isAutonomous ? 'border-emerald-500/60 bg-emerald-950/50' : 'border-rose-500/60 bg-rose-950/50',
               )}
             >
               {isSwitching ? (
@@ -614,12 +614,12 @@ export function FabrykaAutonomousTab() {
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   className={cn(
                     'absolute top-1 w-7 h-7 rounded-full shadow-lg',
-                    isAutonomous ? 'bg-emerald-400' : 'bg-amber-400',
+                    isAutonomous ? 'bg-emerald-400' : 'bg-rose-400',
                   )}
                 />
               )}
             </button>
-            <span className={cn('text-sm font-black uppercase tracking-widest', !isAutonomous ? 'text-amber-400' : 'text-slate-400')}>
+            <span className={cn('text-sm font-black uppercase tracking-widest', !isAutonomous ? 'text-rose-400' : 'text-slate-400')}>
               API
             </span>
           </div>
@@ -634,9 +634,9 @@ export function FabrykaAutonomousTab() {
           {llmMode.rules.map((rule, i) => (
             <div key={i} className={cn(
               'flex items-center gap-2 border rounded-full px-3 py-1.5 text-[10px] font-mono',
-              rule.triggered ? 'border-amber-500/40 bg-amber-500/10 text-amber-300' : 'border-white/5 bg-white/5 text-slate-600',
+              rule.triggered ? 'border-rose-500/40 bg-rose-500/10 text-rose-300' : 'border-white/5 bg-white/5 text-slate-600',
             )}>
-              {rule.triggered && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />}
+              {rule.triggered && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />}
               <ChevronRight size={10} />
               {rule.condition} → {rule.switch_to}
             </div>
@@ -683,7 +683,7 @@ export function FabrykaAutonomousTab() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 rounded-[14px] border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                 coderSource === 'api'
-                  ? 'border-amber-500/50 bg-amber-500/15 text-amber-300 shadow-[0_0_16px_rgba(212,175,55,0.25)]'
+                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 shadow-[0_0_16px_rgba(212,175,55,0.25)]'
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
@@ -734,7 +734,7 @@ export function FabrykaAutonomousTab() {
                     </div>
                     <div className="shrink-0 text-right space-y-1">
                       {model.vram_gb && (
-                        <div className="text-[9px] font-mono text-amber-400/80">{model.vram_gb}GB VRAM</div>
+                        <div className="text-[9px] font-mono text-rose-400/80">{model.vram_gb}GB VRAM</div>
                       )}
                       <div className="text-[9px] font-mono text-slate-600">{model.context_k}K ctx</div>
                     </div>
@@ -747,8 +747,8 @@ export function FabrykaAutonomousTab() {
           {/* ── Права колонка: API ── */}
           <div className="p-4 space-y-2">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-amber-400">API · Зовнішні сервіси</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-rose-400">API · Зовнішні сервіси</span>
               <span className="text-[9px] text-slate-600 font-mono ml-auto">LiteLLM proxy :4000</span>
             </div>
             {CODER_MODELS.filter((m) => m.source === 'api').map((model) => {
@@ -763,18 +763,18 @@ export function FabrykaAutonomousTab() {
                   className={cn(
                     'w-full text-left rounded-[18px] border p-3.5 transition-all duration-200 relative overflow-hidden',
                     isActive
-                      ? 'border-amber-500/50 bg-amber-500/10 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
+                      ? 'border-rose-500/50 bg-rose-500/10 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
                       : model.online
                         ? 'border-white/8 bg-black/20 hover:border-white/20 hover:bg-white/5 cursor-pointer'
                         : 'border-white/4 bg-black/10 opacity-40 cursor-not-allowed',
                   )}
                 >
-                  {isActive && <div className="absolute right-0 top-0 w-16 h-16 bg-amber-500/10 rounded-full translate-x-6 -translate-y-6 blur-xl pointer-events-none" />}
+                  {isActive && <div className="absolute right-0 top-0 w-16 h-16 bg-rose-500/10 rounded-full translate-x-6 -translate-y-6 blur-xl pointer-events-none" />}
                   <div className="flex items-start justify-between gap-2 relative">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />}
-                        <span className={cn('text-[11px] font-black', isActive ? 'text-amber-300' : 'text-white')}>{model.name}</span>
+                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />}
+                        <span className={cn('text-[11px] font-black', isActive ? 'text-rose-300' : 'text-white')}>{model.name}</span>
                       </div>
                       <div className="text-[9px] font-mono text-slate-500 mb-1 truncate">{model.tag}</div>
                       <div className="text-[9px] text-slate-400">{model.specialty}</div>
@@ -795,15 +795,15 @@ export function FabrykaAutonomousTab() {
         {/* Статус-рядок активного кодера */}
         <div className="px-5 py-3 border-t border-white/5 bg-black/20 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <Zap size={12} className={coderSource === 'ollama' ? 'text-emerald-400' : 'text-amber-400'} />
+            <Zap size={12} className={coderSource === 'ollama' ? 'text-emerald-400' : 'text-rose-400'} />
             <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Активний кодер:</span>
-            <span className={cn('text-[10px] font-black font-mono', coderSource === 'ollama' ? 'text-emerald-300' : 'text-amber-300')}>
+            <span className={cn('text-[10px] font-black font-mono', coderSource === 'ollama' ? 'text-emerald-300' : 'text-rose-300')}>
               {CODER_MODELS.find((m) => m.id === activeCoderModel)?.tag ?? '—'}
             </span>
           </div>
           <div className="h-3 w-px bg-white/10" />
           <div className="text-[10px] font-mono text-slate-500">
-            Джерело: <span className={cn('font-black', coderSource === 'ollama' ? 'text-emerald-400' : 'text-amber-400')}>
+            Джерело: <span className={cn('font-black', coderSource === 'ollama' ? 'text-emerald-400' : 'text-rose-400')}>
               {coderSource === 'ollama' ? 'Локальний Ollama (сервер)' : 'API Gateway (LiteLLM :4000)'}
             </span>
           </div>
@@ -834,7 +834,7 @@ export function FabrykaAutonomousTab() {
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-2xl border text-[10px] font-black uppercase tracking-wider transition-all',
               activeSection === id
-                ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
+                ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
                 : 'border-white/5 bg-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10',
             )}
           >
@@ -859,13 +859,13 @@ export function FabrykaAutonomousTab() {
           >
             {/* Observer Mode Header Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-amber-500/20 transition-colors">
+              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Active_Swarm_Load</div>
                   <div className="text-xl font-black text-white italic">{(swarm.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)} GB VRAM</div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 group-hover:scale-110 transition-transform">
-                  <Cpu size={18} className="text-amber-500" />
+                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
+                  <Cpu size={18} className="text-rose-500" />
                 </div>
               </div>
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/20 transition-colors">
@@ -914,10 +914,10 @@ export function FabrykaAutonomousTab() {
             </div>
 
             {/* VRAM Watchdog Protocol Overlay */}
-            <div className="p-6 rounded-[32px] border border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
+            <div className="p-6 rounded-[32px] border border-rose-500/20 bg-rose-500/5 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center border border-amber-500/40">
-                  <Activity size={24} className="text-amber-500 animate-pulse" />
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/20 flex items-center justify-center border border-rose-500/40">
+                  <Activity size={24} className="text-rose-500 animate-pulse" />
                 </div>
                 <div>
                   <h4 className="text-xs font-black text-white uppercase tracking-widest">Hardware Watchdog Protocol v5.0</h4>
@@ -926,7 +926,7 @@ export function FabrykaAutonomousTab() {
               </div>
               <div className="flex gap-2">
                 <Badge className="bg-emerald-500/20 text-emerald-400 border-none text-[8px] font-black italic">OLLAMA_MESH_LINK: OK</Badge>
-                <Badge className="bg-amber-500/20 text-amber-300 border-none text-[8px] font-black italic">VRAM_LOAD: 6.2GB</Badge>
+                <Badge className="bg-rose-500/20 text-rose-300 border-none text-[8px] font-black italic">VRAM_LOAD: 6.2GB</Badge>
               </div>
             </div>
           </motion.div>
@@ -937,7 +937,7 @@ export function FabrykaAutonomousTab() {
           <motion.div key="vram" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <div className={cn(
               'rounded-[32px] border p-6 transition-all',
-              vram.warning ? 'border-rose-500/40 bg-rose-950/20' : 'border-amber-500/20 bg-slate-950/60',
+              vram.warning ? 'border-rose-500/40 bg-rose-950/20' : 'border-rose-500/20 bg-slate-950/60',
             )}>
               <div className="flex items-center justify-between mb-5">
                 <div>
@@ -987,7 +987,7 @@ export function FabrykaAutonomousTab() {
                     <div className="flex gap-2 flex-wrap">
                       {['Інференс', 'Тестування', 'UI Rendering'].map((p, i) => (
                         <div key={p} className="flex items-center gap-1.5 border border-white/5 bg-black/30 rounded-full px-2.5 py-1 text-[9px] font-black uppercase text-slate-500">
-                          <span className="text-amber-400">#{i + 1}</span> {p}
+                          <span className="text-rose-400">#{i + 1}</span> {p}
                         </div>
                       ))}
                     </div>
@@ -1022,10 +1022,10 @@ export function FabrykaAutonomousTab() {
             {/* 4 колонки KPI */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
               {/* Backend */}
-              <div className="rounded-[24px] border border-amber-500/20 bg-black/30 p-5 space-y-3">
+              <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
                 <div className="flex items-center gap-2 mb-2">
-                  <Network size={14} className="text-amber-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-400">Backend</span>
+                  <Network size={14} className="text-rose-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Backend</span>
                 </div>
                 <KpiBar label="Latency P95" value={fitness.backend.latency_p95_ms} max={fitness.backend.latency_threshold_ms} unit="ms" ok={fitness.backend.latency_p95_ms < fitness.backend.latency_threshold_ms} />
                 <KpiBar label="Error Rate" value={fitness.backend.error_rate_percent} max={0.5} unit="%" ok={fitness.backend.error_rate_percent < 0.5} />
@@ -1155,7 +1155,7 @@ export function FabrykaAutonomousTab() {
               <div className="flex items-center gap-3 border-b border-white/5 bg-black/30 px-5 py-3.5">
                 <Sliders size={14} className="text-slate-400" />
                 <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Feature Flags</span>
-                <Badge className="border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black text-amber-300">
+                <Badge className="border border-rose-500/25 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
                   {flags.filter((f) => f.enabled).length} активні
                 </Badge>
                 <div className="ml-auto text-[9px] text-slate-600 font-mono">Зберігаються локально · HR-15 compliant</div>
@@ -1177,7 +1177,7 @@ export function FabrykaAutonomousTab() {
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-[10px] text-slate-500 font-mono whitespace-nowrap">
-                        Rollout: <span className="text-amber-400 font-black">{flag.rollout_percent}%</span>
+                        Rollout: <span className="text-rose-400 font-black">{flag.rollout_percent}%</span>
                       </div>
                       <button
                         type="button"
@@ -1278,7 +1278,7 @@ export function FabrykaAutonomousTab() {
                     <div key={entry.id} className="grid grid-cols-[90px_1fr] gap-2 font-mono text-[10px]">
                       <span className={cn(
                         'font-black uppercase',
-                        entry.status === 'running' ? 'text-amber-400' : entry.status === 'completed' ? 'text-emerald-400' : 'text-rose-400',
+                        entry.status === 'running' ? 'text-rose-400' : entry.status === 'completed' ? 'text-emerald-400' : 'text-rose-400',
                       )}>
                         {entry.status === 'running' ? '⟳ ACTIVE' : entry.status === 'completed' ? '✓ DONE' : '✗ FAIL'}
                       </span>

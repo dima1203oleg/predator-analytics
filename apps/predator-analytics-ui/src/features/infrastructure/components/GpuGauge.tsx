@@ -17,8 +17,8 @@ export function GpuGauge({ utilization = 72, label = 'RTX 4090' }: { utilization
             width: 15,
             color: [
               [0.4, '#10b981'], // Emerald
-              [0.8, '#f43f5e'], // Rose
-              [1, '#e11d48']    // Crimson
+              [0.7, '#e11d48'], // Crimson
+              [1, '#9f1239']    // Rose-900 (Danger)
             ]
           }
         },
@@ -34,19 +34,22 @@ export function GpuGauge({ utilization = 72, label = 'RTX 4090' }: { utilization
         axisLabel: { show: false },
         title: {
           show: true,
-          offsetCenter: [0, '20%'],
-          fontSize: 12,
-          color: '#94a3b8'
+          offsetCenter: [0, '25%'],
+          fontSize: 10,
+          color: '#64748b',
+          fontWeight: '900',
+          fontFamily: 'Inter, sans-serif'
         },
         detail: {
-          fontSize: 24,
-          offsetCenter: [0, '-15%'],
+          fontSize: 22,
+          offsetCenter: [0, '-10%'],
           valueAnimation: true,
           formatter: '{value}%',
-          color: '#f1f5f9',
-          fontWeight: 'bold'
+          color: '#f8fafc',
+          fontWeight: '900',
+          fontFamily: 'Orbitron, sans-serif'
         },
-        data: [{ value: utilization, name: label }]
+        data: [{ value: utilization, name: label.toUpperCase() }]
       }
     ]
   };

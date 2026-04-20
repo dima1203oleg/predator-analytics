@@ -24,8 +24,8 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-            <Brain size={16} className="text-amber-500" />
+          <div className="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center">
+            <Brain size={16} className="text-rose-500" />
           </div>
           <div>
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Live Reasoning Stream</h3>
@@ -36,8 +36,8 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
         </div>
         {isStreaming && (
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-[8px] font-black text-amber-500 uppercase tracking-widest">Inference_Active</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Inference_Active</span>
           </div>
         )}
       </div>
@@ -61,25 +61,25 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
                 animate={{ opacity: 1, x: 0 }}
                 className={cn(
                   "relative pl-6 border-l",
-                  idx === steps.length - 1 ? "border-amber-500/50" : "border-white/10"
+                  idx === steps.length - 1 ? "border-rose-500/50" : "border-white/10"
                 )}
               >
                 {/* Dot */}
                 <div className={cn(
                   "absolute left-[-5px] top-1 w-2 h-2 rounded-full",
-                  idx === steps.length - 1 ? "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" : "bg-white/20"
+                  idx === steps.length - 1 ? "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" : "bg-white/20"
                 )} />
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 text-[9px] font-mono text-slate-500">
-                    <span className="text-amber-500/60">[{new Date(step.timestamp).toLocaleTimeString()}]</span>
+                    <span className="text-rose-500/60">[{new Date(step.timestamp).toLocaleTimeString()}]</span>
                     <span className="uppercase tracking-tighter">Confidence: {(step.confidence * 100).toFixed(0)}%</span>
                   </div>
                   
                   <div className="p-4 rounded-2xl bg-white/5 border border-white/5 font-mono text-[11px] leading-relaxed text-slate-300">
-                    <span className="text-amber-500/40">{'<thinking>'}</span>
+                    <span className="text-rose-500/40">{'<thinking>'}</span>
                     <p className="my-2 whitespace-pre-wrap">{step.thought}</p>
-                    <span className="text-amber-500/40">{'</thinking>'}</span>
+                    <span className="text-rose-500/40">{'</thinking>'}</span>
                   </div>
 
                   {step.action && (

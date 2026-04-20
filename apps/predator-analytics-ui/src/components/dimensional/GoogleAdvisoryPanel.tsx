@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lightbulb, Code, ExternalLink, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TacticalCard } from '../TacticalCard'; // Assuming TacticalCard is available in parent components folder
+import { TacticalCard } from '../ui/TacticalCard'; // Assuming TacticalCard is available in parent components folder
 
 interface GoogleSuggestion {
   id: string;

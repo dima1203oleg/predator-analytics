@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import { ViewHeader } from '../../components/ViewHeader';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { ModelCandidate } from '../../types';
 
 interface NasLeaderboardViewProps {

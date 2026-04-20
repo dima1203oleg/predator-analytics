@@ -188,7 +188,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
           <div className="h-3.5 w-px bg-white/10" />
           <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/20">
-            PREDATOR <span className="text-rose-500/70">ELITE</span> v57.3-ELITE
+            PREDATOR <span className="text-rose-500/70">WRAITH</span> v58.2-WRAITH
           </div>
         </div>
       </motion.div>

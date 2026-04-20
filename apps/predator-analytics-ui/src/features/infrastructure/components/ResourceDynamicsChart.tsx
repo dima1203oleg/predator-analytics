@@ -23,12 +23,12 @@ export const ResourceDynamicsChart: React.FC = () => {
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-slate-900/90 border border-white/10 p-2 rounded-lg backdrop-blur-md shadow-xl">
-                    <p className="text-[10px] font-black text-slate-500 mb-1">{label}</p>
+                <div className="bg-[#050505]/95 border border-rose-500/20 p-3 rounded-xl backdrop-blur-xl shadow-2xl">
+                    <p className="text-[10px] font-black text-slate-500 mb-2 uppercase tracking-widest">{label}</p>
                     {payload.map((entry: any, index: number) => (
-                        <div key={index} className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-[10px] text-white font-mono">{entry.name}: {entry.value}%</span>
+                        <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">
+                            <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(225,29,72,0.4)]" style={{ backgroundColor: entry.color }} />
+                            <span className="text-[10px] text-white font-black uppercase tracking-tighter">{entry.name}: {entry.value}%</span>
                         </div>
                     ))}
                 </div>
@@ -38,33 +38,33 @@ export const ResourceDynamicsChart: React.FC = () => {
     };
 
     return (
-        <div className="h-[200px] w-full mt-4">
+        <div className="h-[220px] w-full mt-4">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={history} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorCpu" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#E11D48" stopOpacity={0.3}/>
+                            <stop offset="95%" stopColor="#E11D48" stopOpacity={0}/>
                         </linearGradient>
                         <linearGradient id="colorRam" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#FB7185" stopOpacity={0.2}/>
+                            <stop offset="95%" stopColor="#FB7185" stopOpacity={0}/>
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="white" strokeOpacity={0.03} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="white" strokeOpacity={0.02} />
                     <XAxis 
                         dataKey="time" 
                         name="Час"
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{ fill: '#475569', fontSize: 8, fontWeight: 800 }} 
+                        tick={{ fill: '#64748b', fontSize: 8, fontWeight: 900 }} 
                         interval={Math.floor(history.length / 6)}
                     />
                     <YAxis 
                         domain={[0, 100]} 
                         axisLine={false} 
                         tickLine={false} 
-                        tick={{ fill: '#475569', fontSize: 8, fontWeight: 800 }} 
+                        tick={{ fill: '#64748b', fontSize: 8, fontWeight: 900 }} 
                     />
 
                     <Tooltip content={<CustomTooltip />} />
@@ -72,7 +72,7 @@ export const ResourceDynamicsChart: React.FC = () => {
                         type="monotone" 
                         dataKey="cpu" 
                         name="ПРОЦЕСОР"
-                        stroke="#22d3ee" 
+                        stroke="#E11D48" 
                         strokeWidth={2}
                         fillOpacity={1} 
                         fill="url(#colorCpu)" 
@@ -82,8 +82,9 @@ export const ResourceDynamicsChart: React.FC = () => {
                         type="monotone" 
                         dataKey="ram" 
                         name="ПАМʼЯТЬ"
-                        stroke="#10b981" 
-                        strokeWidth={2}
+                        stroke="#FB7185" 
+                        strokeWidth={1.5}
+                        strokeDasharray="5 5"
                         fillOpacity={1} 
                         fill="url(#colorRam)" 
                         isAnimationActive={true}

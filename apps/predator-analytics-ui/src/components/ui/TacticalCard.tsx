@@ -54,8 +54,8 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
   // Map status to colors
   const statusColors = {
     success: 'text-emerald-400',
-    warning: 'text-amber-400',
-    error: 'text-rose-400',
+    warning: 'text-rose-400',
+    error: 'text-crimson-500',
     info: 'text-cyan-400',
     neutral: 'text-slate-300'
   };
@@ -72,8 +72,8 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
   // Determine section color
   const effectiveGlow = glow !== 'none' ? glow : (
-    status === 'error' || priority === 'critical' ? 'red' :
-      status === 'warning' || priority === 'high' ? 'yellow' :
+    status === 'error' || priority === 'critical' ? 'crimson' :
+      status === 'warning' || priority === 'high' ? 'rose' :
         status === 'success' ? 'green' :
           status === 'info' ? 'blue' : 'none'
   );
@@ -83,13 +83,15 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       case 'blue': return 'cyan';
       case 'cyan': return 'cyan';
       case 'red': return 'rose';
+      case 'crimson': return 'crimson';
       case 'green': return 'emerald';
       case 'emerald': return 'emerald';
-      case 'yellow': return 'amber';
-      case 'amber': return 'amber';
+      case 'yellow': return 'rose';
+      case 'amber': return 'rose';
+      case 'rose': return 'rose';
       case 'purple': return 'violet';
       case 'indigo': return 'indigo';
-      case 'gold': return 'amber';
+      case 'gold': return 'crimson';
       default: return 'slate';
     }
   };
@@ -121,9 +123,9 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                 <h2 className="section-title flex items-center gap-2">
                   {title}
                   {priority && (
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${priority === 'critical' ? 'border-rose-500 text-rose-400 bg-rose-500/10' :
-                      priority === 'high' ? 'border-orange-500 text-orange-400 bg-orange-500/10' :
-                        priority === 'medium' ? 'border-amber-500 text-amber-400 bg-amber-500/10' :
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${priority === 'critical' ? 'border-crimson-600 text-crimson-400 bg-crimson-600/10' :
+                      priority === 'high' ? 'border-rose-500 text-rose-400 bg-rose-500/10' :
+                        priority === 'medium' ? 'border-rose-400/50 text-rose-300 bg-rose-400/5' :
                           'border-cyan-500 text-cyan-400 bg-cyan-500/10'
                       }`}>
                       {priority}

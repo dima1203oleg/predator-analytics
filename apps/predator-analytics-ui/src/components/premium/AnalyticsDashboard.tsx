@@ -21,7 +21,7 @@ import {
   ChevronRight, ArrowUpRight, Maximize2, Share2
 } from 'lucide-react';
 import { api } from '../../services/api';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { cn } from '../../lib/utils';
 import { PremiumRegistryMonitor } from './RegistryMonitor';
 import { IntelligenceFeed } from './IntelligenceFeed';

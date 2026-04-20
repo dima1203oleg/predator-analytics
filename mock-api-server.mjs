@@ -2693,54 +2693,60 @@ app.get('/api/v1/system/nodes', (req, res) => {
   res.json([
     {
       id: 'nvidia',
-      name: 'NVIDIA MASTER',
+      name: 'NVIDIA MASTER (NID-01)',
       type: 'SERVER',
-      status: 'online',
-      cpu: { used: 42, total: 100, unit: '%' },
-      ram: { used: 32.4, total: 128, unit: 'GB' },
-      disk: { used: 2.1, total: 10, unit: 'TB' },
+      status: 'offline', // Reflecting current SSH/ZROK failure
+      cpu: { used: 0, total: 100, unit: '%' },
+      ram: { used: 0, total: 128, unit: 'GB' },
+      disk: { used: 0, total: 10, unit: 'TB' },
       gpu: [
-        { model: 'RTX 4090', vram_used: 12.4, vram_total: 24, temp: 62 },
-        { model: 'RTX 4090', vram_used: 4.2, vram_total: 24, temp: 54 }
+        { model: 'RTX 4090', vram_used: 0, vram_total: 24, temp: 0 },
+        { model: 'RTX 4090', vram_used: 0, vram_total: 24, temp: 0 }
       ],
-      location: 'Data Center (Kyiv)',
-      uptime: '142h 12m'
+      location: 'Data Center (Kyiv) — UNREACHABLE',
+      uptime: '0h 0m',
+      extended: {
+        error: 'SSH_CONNECTION_REFUSED',
+        repair_status: 'IN_PROGRESS',
+        last_heartbeat: '2026-04-20T08:12:44Z'
+      }
     },
     {
       id: 'macbook',
       name: 'MACBOOK PRO (LOCAL)',
       type: 'LAPTOP',
       status: 'online',
-      cpu: { used: 15, total: 100, unit: '%' },
-      ram: { used: 18.2, total: 32, unit: 'GB' },
-      disk: { used: 450, total: 1000, unit: 'GB' },
+      cpu: { used: 22, total: 100, unit: '%' },
+      ram: { used: 24.5, total: 48, unit: 'GB' },
+      disk: { used: 640, total: 1000, unit: 'GB' },
       gpu: [
-        { model: 'Apple M3 Max', vram_used: 4.5, vram_total: 16, temp: 42 }
+        { model: 'Apple M3 Max', vram_used: 8.2, vram_total: 24, temp: 48 }
       ],
       location: 'Local (Home Office)',
-      uptime: '12h 45m'
+      uptime: '14h 22m'
     },
     {
       id: 'colab',
       name: 'GOOGLE COLAB MIRROR',
       type: 'CLOUD',
       status: 'online',
-      cpu: { used: 8, total: 100, unit: '%' },
-      ram: { used: 4.1, total: 12, unit: 'GB' },
-      disk: { used: 25, total: 80, unit: 'GB' },
+      cpu: { used: 25, total: 100, unit: '%' },
+      ram: { used: 10.2, total: 12, unit: 'GB' },
+      disk: { used: 68, total: 80, unit: 'GB' },
       gpu: [
-        { model: 'Tesla T4', vram_used: 1.2, vram_total: 15, temp: 42 }
+        { model: 'Tesla T4', vram_used: 14.8, vram_total: 15, temp: 72 }
       ],
-      location: 'Google Cloud (US-East)',
-      uptime: '08:24:12',
+      location: 'Google Cloud (US-East) — FAILOVER MASTER',
+      uptime: '49:45:11',
       extended: {
-        zrok_id: 'predator-api',
-        zrok_url: 'https://predator-api.share.zrok.io',
-        gdrive_sync: 'ACTIVE',
-        gdrive_usage: '72%',
-        vram_allocated: '14.7 GB',
+        zrok_id: 'predator-api-failover',
+        zrok_url: 'https://predator-api-failover.zrok.io',
+        zrok_status: 'CONNECTED', // Failover tunnel is UP
+        gdrive_sync: 'SYNCHRONIZED',
+        gdrive_usage: '92%',
+        vram_allocated: '14.9 GB',
         last_sync: new Date().toISOString(),
-        k8s_cluster: 'colab-failover',
+        k8s_cluster: 'colab-failover-v56.5',
         k8s_nodes: 1,
         databases: {
           postgres: 'running',
@@ -2748,10 +2754,12 @@ app.get('/api/v1/system/nodes', (req, res) => {
           redis: 'running',
           opensearch: 'running',
           qdrant: 'running',
-          minio: 'running',
           kafka: 'running',
+          minio: 'degraded',
           ollama: 'standby'
-        }
+        },
+        traffic_load: 'HIGH',
+        failover_reason: 'PRIMARY_LINK_LOST'
       }
     }
   ]);

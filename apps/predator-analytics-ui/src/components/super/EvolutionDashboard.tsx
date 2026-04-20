@@ -3,7 +3,7 @@ import {
     api,
     v45Client
 } from '../../services/api';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Zap,

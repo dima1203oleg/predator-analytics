@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Globe, ShieldCheck, CreditCard, Cpu, Sparkles } from 'lucide-react';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 
 export interface FeatureToggle {
   key: string;

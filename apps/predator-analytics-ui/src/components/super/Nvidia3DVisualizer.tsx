@@ -59,17 +59,17 @@ const GPUModel: React.FC<GPUModelProps> = ({ load, color }) => {
         </group>
       ))}
 
-      {/* Connectors / Elite Gold Trim */}
+      {/* Connectors / Elite Crimson Trim */}
       <mesh position={[0, -1.05, 0]}>
         <boxGeometry args={[4, 0.25, 0.1]} />
-        <meshStandardMaterial color="#D4AF37" emissive="#D4AF37" emissiveIntensity={2} />
+        <meshStandardMaterial color="#be123c" emissive="#be123c" emissiveIntensity={2} />
       </mesh>
       
       {/* Structural Bars */}
       {[1.9, -1.9].map((x, i) => (
         <mesh key={i} position={[x, 0, 0]}>
            <boxGeometry args={[0.1, 2, 0.2]} />
-           <meshStandardMaterial color="#D4AF37" opacity={0.4} transparent />
+           <meshStandardMaterial color="#be123c" opacity={0.4} transparent />
         </mesh>
       ))}
     </group>
@@ -78,9 +78,9 @@ const GPUModel: React.FC<GPUModelProps> = ({ load, color }) => {
 
 const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
   const gpuColor = useMemo(() => {
-    if (load > 85) return "#E11D48"; // Elite Rose Peak
-    if (load > 60) return "#F59E0B"; // Sovereign Gold High
-    return "#D4AF37"; // Pure Gold Operational
+    if (load > 85) return "#e11d48"; // Elite Rose Peak
+    if (load > 60) return "#be123c"; // Sovereign Crimson High
+    return "#9f1239"; // Deep Crimson Operational
   }, [load]);
 
   return (
@@ -88,7 +88,7 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
       {/* UI Overlay Labels */}
       <div className="absolute top-10 left-10 z-10 pointer-events-none">
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-[0_0_25px_rgba(212,175,55,1)] animate-pulse" />
+          <div className="w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_25px_rgba(225,29,72,1)] animate-pulse" />
           <span className="text-sm font-black text-white uppercase tracking-[0.4em]">H100 SOVEREIGN_CORE_WRAITH</span>
         </div>
         <div className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter opacity-30 select-none">NODE_READY</div>
@@ -98,7 +98,7 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
         <div className="text-[64px] font-black font-mono leading-none tracking-tighter italic" style={{ color: gpuColor, textShadow: `0 0 40px ${gpuColor}66` }}>
           {load}%
         </div>
-        <div className="text-[11px] text-yellow-600 font-black uppercase tracking-[0.5em] mt-3">COMPUTE_EXHAUST</div>
+        <div className="text-[11px] text-rose-600 font-black uppercase tracking-[0.5em] mt-3">COMPUTE_EXHAUST</div>
       </div>
 
       <Canvas gl={{ antialias: true, alpha: true, stencil: true }} dpr={[1, 2]}>
@@ -106,7 +106,7 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
         <Stars radius={120} depth={70} count={12000} factor={8} saturation={1} fade speed={3} />
         <ambientLight intensity={0.5} />
         <pointLight position={[12, 12, 12]} intensity={3} color={gpuColor} />
-        <spotLight position={[-12, 12, 12]} angle={0.25} penumbra={1} intensity={2.5} castShadow color="#D4AF37" />
+        <spotLight position={[-12, 12, 12]} angle={0.25} penumbra={1} intensity={2.5} castShadow color="#be123c" />
         <pointLight position={[0, -5, 5]} intensity={1} color="#E11D48" />
 
         <Float speed={4} rotationIntensity={1} floatIntensity={1.2}>
@@ -117,10 +117,10 @@ const Nvidia3DVisualizer: React.FC<{ load?: number }> = ({ load = 45 }) => {
       </Canvas>
       
       {/* Elite Digital Overlay */}
-      <div className="absolute inset-0 pointer-events-none border-[1px] border-yellow-500/10 rounded-[40px]" />
+      <div className="absolute inset-0 pointer-events-none border-[1px] border-rose-500/10 rounded-[40px]" />
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-yellow-500/30 blur-[2px]" />
-         <div className="absolute top-0 left-1/2 w-[1px] h-full bg-yellow-500/30 blur-[2px]" />
+         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-rose-500/30 blur-[2px]" />
+         <div className="absolute top-0 left-1/2 w-[1px] h-full bg-rose-500/30 blur-[2px]" />
       </div>
     </div>
   );

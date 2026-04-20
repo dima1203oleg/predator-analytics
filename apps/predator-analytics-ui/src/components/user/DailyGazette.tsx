@@ -6,7 +6,7 @@ import {
   Coffee, ChevronRight, ThumbsUp, ThumbsDown, Check, Download, Archive, ArrowUpRight,
   TrendingUp, TrendingDown, Minus, ShieldAlert
 } from 'lucide-react';
-import { TacticalCard } from '../TacticalCard';
+import { TacticalCard } from '../ui/TacticalCard';
 import Modal from '../Modal';
 
 const GAZETTE_NEWS = [
