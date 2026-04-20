@@ -138,12 +138,28 @@ const getModuleStatus = (row: FactoryModule): RowStatus =>
 type DataOpsSection = 'kafka' | 'datasets' | 'factory';
 
 export const DataOpsTab: React.FC = () => {
+  const { data, isLoading, isError } = useDataOpsStatus();
   const [section, setSection] = useState<DataOpsSection>('kafka');
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація DataOps...</div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return <div>Помилка завантаження даних DataOps</div>;
+  }
+
+  const { kafkaTopics, datasets, factoryModules } = data;
+
   const tabs = [
-    { id: 'kafka'    as const, label: `Kafka Ingestion (${KAFKA_TOPICS.length})`,   icon: Upload },
-    { id: 'datasets' as const, label: `Датасети ШІ (${DATASETS.length})`,           icon: Layers },
-    { id: 'factory'  as const, label: `Фабрика Модулів (${FACTORY_MODULES.length})`,icon: Factory },
+    { id: 'kafka'    as const, label: `Kafka Ingestion (${kafkaTopics.length})`,   icon: Upload },
+    { id: 'datasets' as const, label: `Датасети ШІ (${datasets.length})`,           icon: Layers },
+    { id: 'factory'  as const, label: `Фабрика Модулів (${factoryModules.length})`,icon: Factory },
   ];
 
   return (
@@ -162,15 +178,15 @@ export const DataOpsTab: React.FC = () => {
       {/* Метрики-шапка */}
       <div className="grid grid-cols-4 gap-2">
         {[
-          { label: 'Topics',   value: KAFKA_TOPICS.length,              color: 'text-white/65' },
-          { label: 'Lag Total',value: KAFKA_TOPICS.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-amber-400' },
-          { label: 'Датасети', value: DATASETS.filter(d=>d.status==='ready').length, color: 'text-emerald-400', sub: 'ready' },
-          { label: 'Модулів',  value: FACTORY_MODULES.filter(m=>m.status==='deployed').length, color: 'text-emerald-400', sub: 'deployed' },
+          { label: 'Topics',   value: kafkaTopics.length,              color: 'text-white/65' },
+          { label: 'Lag Total',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-amber-400' },
+          { label: 'Датасети', value: datasets.filter(d=>d.status==='ready').length, color: 'text-emerald-400', sub: 'ready' },
+          { label: 'Модулів',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-emerald-400', sub: 'deployed' },
         ].map((m) => (
           <div key={m.label} className="px-3 py-2 bg-[#1a2620] rounded-sm border border-white/6">
             <div className="text-[8px] font-semibold text-white/20 uppercase tracking-wider mb-0.5">{m.label}</div>
             <div className={cn('text-[16px] font-mono font-bold leading-none', m.color)}>{m.value}</div>
-            {'sub' in m && <div className="text-[8px] font-mono text-white/20 mt-0.5">{(m as {sub: string}).sub}</div>}
+            {'sub' in m && <div className="text-[9px] font-mono text-white/20 mt-0.5">{(m as {sub: string}).sub}</div>}
           </div>
         ))}
       </div>
@@ -200,10 +216,10 @@ export const DataOpsTab: React.FC = () => {
 
       {/* Контент */}
       {section === 'kafka' && (
-        <VirtualTable rows={KAFKA_TOPICS} columns={kafkaCols} rowHeight={28} maxHeight={480} getRowStatus={getKafkaStatus} />
+        <VirtualTable rows={kafkaTopics} columns={kafkaCols} rowHeight={28} maxHeight={480} getRowStatus={getKafkaStatus} />
       )}
       {section === 'datasets' && (
-        <VirtualTable rows={DATASETS} columns={datasetCols} rowHeight={30} maxHeight={480} getRowStatus={getDatasetStatus} />
+        <VirtualTable rows={datasets} columns={datasetCols} rowHeight={30} maxHeight={480} getRowStatus={getDatasetStatus} />
       )}
       {section === 'factory' && (
         <VirtualTable rows={FACTORY_MODULES} columns={moduleCols} rowHeight={30} maxHeight={480} getRowStatus={getModuleStatus} />

@@ -119,7 +119,29 @@ const MetricCard: React.FC<{ label: string; value: string | number; sub?: string
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
+import { useAgentsStats } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
+
+// ─── Вкладка ─────────────────────────────────────────────────────────────────
+
 export const AgentsOpsTab: React.FC = () => {
+  const { data, isLoading, isError } = useAgentsStats();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація агентів...</div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return <div>Помилка завантаження даних агентів</div>;
+  }
+
+  const { stats, list: agents } = data;
+
   return (
     <div className="p-4 space-y-4">
       {/* Заголовок */}
@@ -129,22 +151,22 @@ export const AgentsOpsTab: React.FC = () => {
           Оркестрація Агентів
         </h2>
         <span className="text-[9px] font-mono text-white/20 ml-auto">
-          {MOCK_AGENTS.length} агентів
+          {agents.length} агентів
         </span>
       </div>
 
       {/* Загальні метрики */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        <MetricCard label="Живих"    value={alive}   color="text-emerald-400" sub="ALIVE" />
-        <MetricCard label="Мертвих"  value={dead}    color="text-red-400"     sub="DEAD"  />
-        <MetricCard label="Простій"  value={idle}    color="text-white/35"    sub="IDLE"  />
-        <MetricCard label="Сер. CPU" value={`${avgCPU}%`} sub="avg across alive" />
-        <MetricCard label="Черга"    value={totalQ.toLocaleString()} color={totalQ > 5000 ? 'text-amber-400' : 'text-white/65'} sub="всього завдань" />
+        <MetricCard label="Живих"    value={stats.alive}   color="text-emerald-400" sub="ALIVE" />
+        <MetricCard label="Мертвих"  value={stats.dead}    color="text-red-400"     sub="DEAD"  />
+        <MetricCard label="Простій"  value={stats.idle}    color="text-white/35"    sub="IDLE"  />
+        <MetricCard label="Сер. CPU" value={`${stats.avgCpu}%`} sub="avg across alive" />
+        <MetricCard label="Черга"    value={agents.reduce((s, a) => s + (a.queueDepth || 0), 0).toLocaleString()} sub="всього завдань" />
       </div>
 
       {/* Таблиця агентів */}
       <VirtualTable
-        rows={MOCK_AGENTS}
+        rows={agents}
         columns={agentCols}
         rowHeight={28}
         maxHeight={520}
@@ -154,5 +176,6 @@ export const AgentsOpsTab: React.FC = () => {
     </div>
   );
 };
+
 
 export default AgentsOpsTab;

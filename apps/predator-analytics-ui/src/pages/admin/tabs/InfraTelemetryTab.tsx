@@ -188,7 +188,42 @@ const getServiceStatus = (row: ServiceStatus): RowStatus =>
 
 // ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
 
+import { useInfraTelemetry } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
+
+// ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
+
+// ... (GaugeBar component remains same)
+
+// ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
+
 export const InfraTelemetryTab: React.FC = () => {
+  const { data, isLoading, isError } = useInfraTelemetry();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <div className="text-[10px] font-mono uppercase tracking-widest">Зчитування телеметрії...</div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-red-400/60 p-6 border border-red-500/10 bg-red-500/5 rounded-sm m-4">
+        <Activity className="w-10 h-10 mb-4 opacity-30" />
+        <div className="text-[12px] font-bold uppercase tracking-wider mb-2">Помилка з'єднання з API</div>
+        <div className="text-[10px] font-mono text-white/30 text-center max-w-xs">
+          Не вдалося отримати дані інфраструктури. Перевірте, чи запущено Mock API Server (порт 9080).
+        </div>
+      </div>
+    );
+  }
+
+  const nodes = data.nodes || [];
+  const services = data.services || [];
+
   return (
     <div className="p-4 space-y-4">
       {/* Заголовок */}
@@ -204,7 +239,7 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="ml-auto flex gap-2">
           <div className="text-[9px] font-mono text-white/25">
             Вузлів: <span className="text-emerald-400/70">
-              {MOCK_NODES.filter(n => n.status === 'online').length}/{MOCK_NODES.length}
+              {nodes.filter(n => n.status === 'online').length}/{nodes.length}
             </span>
           </div>
         </div>
@@ -216,7 +251,7 @@ export const InfraTelemetryTab: React.FC = () => {
           Вузли інфраструктури
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          {MOCK_NODES.map((node) => (
+          {nodes.map((node) => (
             <NodeCard key={node.id} node={node} />
           ))}
         </div>
@@ -230,11 +265,11 @@ export const InfraTelemetryTab: React.FC = () => {
             Мікросервіси
           </span>
           <span className="ml-auto text-[9px] font-mono text-white/20">
-            {MOCK_SERVICES.filter(s => s.status === 'ok').length} / {MOCK_SERVICES.length} OK
+            {services.filter(s => s.status === 'ok').length} / {services.length} OK
           </span>
         </div>
         <VirtualTable
-          rows={MOCK_SERVICES}
+          rows={services}
           columns={svcColumns}
           rowHeight={28}
           maxHeight={320}
@@ -244,5 +279,6 @@ export const InfraTelemetryTab: React.FC = () => {
     </div>
   );
 };
+
 
 export default InfraTelemetryTab;

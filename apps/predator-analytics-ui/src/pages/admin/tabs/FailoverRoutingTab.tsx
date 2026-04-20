@@ -60,19 +60,41 @@ const getEventStatus = (row: FailoverEvent): RowStatus =>
 
 // ─── Компонент ───────────────────────────────────────────────────────────────
 
+import { useFailoverStatus, useToggleFailover } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
+
+// ─── Компонент ───────────────────────────────────────────────────────────────
+
 export const FailoverRoutingTab: React.FC = () => {
-  const [activeMode, setActiveMode] = useState<RouteMode>('SOVEREIGN');
-  const [activeNode, setActiveNode] = useState<BackendNode>('local-k3s');
+  const { data, isLoading, isError } = useFailoverStatus();
+  const toggleMutation = useToggleFailover();
   const [confirming, setConfirming] = useState<BackendNode | null>(null);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <div className="text-[10px] font-mono uppercase tracking-widest">Завантаження статусу failover...</div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return <div>Помилка завантаження даних Failover</div>;
+  }
+
+  const activeMode = data.activeMode as RouteMode;
+  const activeNode = data.activeNode as BackendNode;
+  const history = data.history || [];
 
   const handleSwitch = (node: BackendNode) => {
     if (node === activeNode) return;
     setConfirming(node);
   };
 
-  const confirmSwitch = () => {
+  const confirmSwitch = async () => {
     if (confirming) {
-      setActiveNode(confirming);
+      await toggleMutation.mutateAsync(confirming);
       setConfirming(null);
     }
   };
@@ -100,10 +122,11 @@ export const FailoverRoutingTab: React.FC = () => {
               return (
                 <button
                   key={mode}
-                  onClick={() => setActiveMode(mode)}
+                  disabled={toggleMutation.isPending}
                   className={cn(
                     'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm border text-left transition-all duration-150',
                     active ? m.bg : 'bg-[#1a2620] border-white/8 hover:border-white/15',
+                    toggleMutation.isPending && 'opacity-50 cursor-wait'
                   )}
                 >
                   <div className={cn('w-2 h-2 rounded-full', active ? m.color.replace('text-', 'bg-') : 'bg-white/15')} />
@@ -152,14 +175,10 @@ export const FailoverRoutingTab: React.FC = () => {
                     <div className="text-[11px] font-mono text-white/65">{node.label}</div>
                     <div className="text-[9px] font-mono text-white/30">{node.ip}</div>
                   </div>
-                  {!isOffline && (
-                    <div className="text-[9px] font-mono text-white/30">
-                      Навант: <span className={node.load > 75 ? 'text-amber-400' : 'text-white/50'}>{node.load}%</span>
-                    </div>
-                  )}
                   {!isActive && !isOffline && (
                     <button
                       onClick={() => handleSwitch(nodeKey)}
+                      disabled={toggleMutation.isPending}
                       className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 hover:bg-emerald-500/10 hover:border-emerald-400/20 transition-colors"
                     >
                       <ArrowRightLeft className="w-2.5 h-2.5 text-white/40" />
@@ -193,9 +212,10 @@ export const FailoverRoutingTab: React.FC = () => {
           <div className="flex gap-2">
             <button
               onClick={confirmSwitch}
-              className="text-[10px] px-3 py-1 bg-emerald-500/15 border border-emerald-400/25 text-emerald-400 rounded-sm hover:bg-emerald-500/25 transition-colors"
+              disabled={toggleMutation.isPending}
+              className="text-[10px] px-3 py-1 bg-emerald-500/15 border border-emerald-400/25 text-emerald-400 rounded-sm hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
             >
-              Підтвердити
+              {toggleMutation.isPending ? 'Перемикання...' : 'Підтвердити'}
             </button>
             <button
               onClick={() => setConfirming(null)}
@@ -216,7 +236,7 @@ export const FailoverRoutingTab: React.FC = () => {
           </span>
         </div>
         <VirtualTable
-          rows={MOCK_EVENTS}
+          rows={history}
           columns={eventCols}
           rowHeight={28}
           maxHeight={320}
@@ -226,5 +246,6 @@ export const FailoverRoutingTab: React.FC = () => {
     </div>
   );
 };
+
 
 export default FailoverRoutingTab;

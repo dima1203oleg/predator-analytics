@@ -155,12 +155,18 @@ const getKeyStatus = (row: ApiKey): RowStatus =>
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
+import { useAuditLogs } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
+
+// ─── Вкладка ─────────────────────────────────────────────────────────────────
+
 export const ZeroTrustSecurityTab: React.FC = () => {
   const [section, setSection] = useState<'sessions' | 'audit' | 'keys'>('sessions');
+  const { data: auditData, isLoading: isAuditLoading } = useAuditLogs();
 
   const tabs = [
     { id: 'sessions', label: `Сесії (${MOCK_SESSIONS.length})`,   icon: Users },
-    { id: 'audit',    label: `Аудит-лог (${MOCK_AUDIT.length})`,  icon: FileText },
+    { id: 'audit',    label: `Аудит-лог (${auditData?.length || 0})`,  icon: FileText },
     { id: 'keys',     label: `API-ключі (${MOCK_KEYS.length})`,   icon: Key },
   ] as const;
 
@@ -213,15 +219,23 @@ export const ZeroTrustSecurityTab: React.FC = () => {
         />
       )}
       {section === 'audit' && (
-        <VirtualTable
-          rows={MOCK_AUDIT}
-          columns={auditCols}
-          rowHeight={28}
-          maxHeight={560}
-          getRowStatus={getAuditStatus}
-          emptyLabel="Записів аудиту немає"
-        />
+        <div className="relative">
+          {isAuditLoading && (
+            <div className="absolute inset-0 bg-[#0c120e]/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+              <Loader2 className="w-6 h-6 animate-spin text-emerald-400/50" />
+            </div>
+          )}
+          <VirtualTable
+            rows={auditData || []}
+            columns={auditCols}
+            rowHeight={28}
+            maxHeight={560}
+            getRowStatus={getAuditStatus}
+            emptyLabel="Записів аудиту немає"
+          />
+        </div>
       )}
+
       {section === 'keys' && (
         <VirtualTable
           rows={MOCK_KEYS}

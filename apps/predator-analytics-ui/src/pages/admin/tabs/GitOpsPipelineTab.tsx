@@ -127,7 +127,29 @@ const SyncIcon: React.FC<{ status: ArgoCDApp['syncStatus'] }> = ({ status }) => 
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
+import { useGitOpsStatus } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
+
+// ─── Вкладка ─────────────────────────────────────────────────────────────────
+
 export const GitOpsPipelineTab: React.FC = () => {
+  const { data, isLoading, isError } = useGitOpsStatus();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
+        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація GitOps...</div>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return <div>Помилка завантаження даних GitOps</div>;
+  }
+
+  const { argoApps, ciRuns, etlPipelines } = data;
+
   return (
     <div className="p-4 space-y-4">
       {/* Заголовок */}
@@ -147,7 +169,7 @@ export const GitOpsPipelineTab: React.FC = () => {
           </span>
         </div>
         <div className="space-y-1.5">
-          {ARGO_APPS.map((app) => (
+          {argoApps.map((app) => (
             <div key={app.name} className="flex items-center gap-3 px-3 py-2 bg-[#1a2620] rounded-sm border border-white/6">
               <SyncIcon status={app.syncStatus} />
               <span className="text-[11px] font-mono text-white/60 w-36 shrink-0">{app.name}</span>
@@ -176,7 +198,7 @@ export const GitOpsPipelineTab: React.FC = () => {
           </span>
         </div>
         <VirtualTable
-          rows={CI_RUNS}
+          rows={ciRuns}
           columns={ciCols}
           rowHeight={28}
           maxHeight={240}
@@ -193,7 +215,7 @@ export const GitOpsPipelineTab: React.FC = () => {
           </span>
         </div>
         <VirtualTable
-          rows={ETL_PIPELINES}
+          rows={etlPipelines}
           columns={etlCols}
           rowHeight={28}
           maxHeight={200}
@@ -203,5 +225,6 @@ export const GitOpsPipelineTab: React.FC = () => {
     </div>
   );
 };
+
 
 export default GitOpsPipelineTab;
