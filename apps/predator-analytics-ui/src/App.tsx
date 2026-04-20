@@ -30,6 +30,7 @@ import { ToasterProvider } from './components/premium/ToasterProvider';
 import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
+import { OfflineBanner } from './components/shared/OfflineBanner';
 
 // Setup Query Client with optimized settings
 const queryClient = new QueryClient({

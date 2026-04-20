@@ -42,6 +42,9 @@ export interface RoleCapabilities {
   canManageJurisdictions: boolean;
   canViewAuditLogs: boolean;
   canSwitchBackend: boolean;
+
+  // Ізоляція адміна — виключно системна зона
+  isAdminExclusive: boolean;
 }
 
 export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
@@ -61,6 +64,7 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canManageJurisdictions: false,
     canViewAuditLogs: false,
     canSwitchBackend: false,
+    isAdminExclusive: false,
   },
   [UserRole.CLIENT_PREMIUM]: {
     canSeeDashboards: true,
@@ -78,22 +82,24 @@ export const ROLE_CAPABILITIES: Record<UserRole, RoleCapabilities> = {
     canManageJurisdictions: false,
     canViewAuditLogs: false,
     canSwitchBackend: false,
+    isAdminExclusive: false,
   },
   [UserRole.ADMIN]: {
-    canSeeDashboards: true,            // ВИПРАВЛЕНО: адмін бачить продуктові дашборди
-    canSeeVisualAnalytics: true,
-    canSeeRelationsGraph: true,
-    canSeeTimelines: true,
-    canSeeOpenSearch: true,
+    canSeeDashboards: false,           // Адмін ізольований від бізнес-дашбордів
+    canSeeVisualAnalytics: false,      // Тільки системна зона
+    canSeeRelationsGraph: false,
+    canSeeTimelines: false,
+    canSeeOpenSearch: false,
     canSeeSensitiveData: true,
     canSeeSystemCore: true,
-    canSeeInvestigation: true,
-    canAccessFullNewspaper: true,
-    canAccessDetailedTrends: true,
-    canToggleSensitiveData: true,
+    canSeeInvestigation: false,
+    canAccessFullNewspaper: false,
+    canAccessDetailedTrends: false,
+    canToggleSensitiveData: false,
     canManageUsers: true,
     canManageJurisdictions: true,
     canViewAuditLogs: true,
     canSwitchBackend: true,            // тільки адмін перемикає NVIDIA/Colab
+    isAdminExclusive: true,            // Повна ізоляція — тільки System Command Center
   },
 };

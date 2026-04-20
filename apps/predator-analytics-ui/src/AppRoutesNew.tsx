@@ -2,11 +2,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
+import AdminLayout from './components/layout/AdminLayout';
+import { AdminGuard } from './components/guards/AdminGuard';
 import { useAppStore } from './store/useAppStore';
 import { useUser } from './context/UserContext';
 import { UserRole } from './config/roles';
 
 import { LoadingSkeleton } from './components/LoadingSkeleton';
+
+// ─── AdminHub (System Command Center) ────────────────────────────────────────
+const AdminHub = lazy(() => import('./pages/admin/AdminHub'));
 
 // Lazy loaded views
 const SearchPage = lazy(() => import('./features/search/SearchPage'));
@@ -128,8 +133,56 @@ export const AppRoutesNew = () => {
   const { user } = useUser();
   const effectiveRole = user?.role || UserRole.CLIENT_BASIC;
   const isAdmin = effectiveRole === UserRole.ADMIN;
-  const onlyAdmin = (element: JSX.Element) => (isAdmin ? element : <Navigate to="/" replace />);
 
+  // ─── ADMIN TREE (/admin/*) ────────────────────────────────────────────────
+  if (isAdmin) {
+    return (
+      <AdminLayout>
+        <Suspense fallback={<LoadingSkeleton />}>
+          <Routes location={location} key={location.pathname}>
+            {/* Кореневий редірект → System Command Center */}
+            <Route path="/" element={<Navigate to="/admin/command?tab=infra" replace />} />
+            <Route path="/admin" element={<Navigate to="/admin/command?tab=infra" replace />} />
+
+            {/* System Command Center */}
+            <Route
+              path="/admin/command"
+              element={
+                <AdminGuard>
+                  <AdminHub />
+                </AdminGuard>
+              }
+            />
+
+            {/* Legacy системні маршрути → AdminHub таби */}
+            <Route path="/system"            element={<Navigate to="/admin/command?tab=infra"      replace />} />
+            <Route path="/monitoring"        element={<Navigate to="/admin/command?tab=infra"      replace />} />
+            <Route path="/monitoring/realtime" element={<Navigate to="/admin/command?tab=infra"    replace />} />
+            <Route path="/ingestion"         element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+            <Route path="/security"          element={<Navigate to="/admin/command?tab=security"   replace />} />
+            <Route path="/deployment"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
+            <Route path="/governance"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
+            <Route path="/system-factory"    element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+            <Route path="/datasets"          element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+            <Route path="/factory-studio"    element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+            <Route path="/agents"            element={<Navigate to="/admin/command?tab=agents-ops" replace />} />
+            <Route path="/components"        element={<Navigate to="/admin/command?tab=infra"      replace />} />
+            <Route path="/settings"          element={<Navigate to="/admin/command?tab=settings"   replace />} />
+            <Route path="/admin/ai-control"  element={<Navigate to="/admin/command?tab=agents-ops" replace />} />
+
+            {/* Публічні маршрути доступні для адміна */}
+            <Route path="/api-docs"          element={<ApiDocumentationView />} />
+            <Route path="/reports"           element={<ReportBuilderPage />} />
+
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/admin/command?tab=infra" replace />} />
+          </Routes>
+        </Suspense>
+      </AdminLayout>
+    );
+  }
+
+  // ─── CLIENT TREE (всі ролі крім admin) ───────────────────────────────────
   return (
     <MainLayout>
       <Suspense fallback={<LoadingSkeleton />}>
@@ -170,7 +223,6 @@ export const AppRoutesNew = () => {
             <Route path="/sanctions" element={<Navigate to="/osint?tab=sanctions" replace />} />
             <Route path="/osint" element={<OSINTHub />} />
             <Route path="/aml" element={<Navigate to="/financial?tab=aml" replace />} />
-
             <Route path="/network/:ueid" element={<NetworkGraph />} />
             <Route path="/cases" element={<CasesView />} />
             <Route path="/power-structure" element={<PowerStructureView />} />
@@ -184,7 +236,6 @@ export const AppRoutesNew = () => {
             <Route path="/financials/:ueid" element={<FinancialDashboardPage />} />
             <Route path="/portfolio-analysis" element={<PortfolioRiskView />} />
 
-
             {/* 5. AI НЕКСУС (BLUE HUB) */}
             <Route path="/nexus" element={<AIHub />} />
             <Route path="/agents" element={<Navigate to="/nexus?tab=agents" replace />} />
@@ -197,32 +248,25 @@ export const AppRoutesNew = () => {
             <Route path="/hypothesis-engine" element={<Navigate to="/nexus?tab=hypothesis" replace />} />
             <Route path="/scenarios" element={<ScenarioModelingView />} />
 
-            {/* v59.0-NEXUS — Нові модулі */}
+            {/* Нові модулі v59.0-NEXUS */}
             <Route path="/decisions" element={<DecisionsJournal />} />
             <Route path="/alerts" element={<AlertCenterView />} />
             <Route path="/timeline" element={<TimelineBuilderView />} />
             <Route path="/entity-resolver" element={<EntityResolverView />} />
-            
-            {/* 6. СИСТЕМНЕ ЯДРО (SLATE HUB) */}
+
+            {/* 6. СИСТЕМНЕ ЯДРО (тільки для client-ролей) */}
             <Route path="/system" element={<SystemHub />} />
-            <Route path="/ingestion" element={onlyAdmin(<Navigate to="/system?tab=ingestion" replace />)} />
             <Route path="/monitoring" element={<Navigate to="/system?tab=monitoring" replace />} />
-            <Route path="/security" element={onlyAdmin(<Navigate to="/system?tab=security" replace />)} />
             <Route path="/settings" element={<Navigate to="/system?tab=settings" replace />} />
-            <Route path="/deployment" element={onlyAdmin(<Navigate to="/system?tab=deployment" replace />)} />
-            <Route path="/governance" element={onlyAdmin(<Navigate to="/system?tab=governance" replace />)} />
-            <Route path="/datasets" element={onlyAdmin(<DatasetStudio />)} />
-            <Route path="/system-factory" element={onlyAdmin(<Navigate to="/system?tab=factory" replace />)} />
             <Route path="/api-docs" element={<ApiDocumentationView />} />
             <Route path="/reports" element={<ReportBuilderPage />} />
-            <Route path="/monitoring/realtime" element={onlyAdmin(<RealTimeMonitor />)} />
-            <Route path="/factory-studio" element={onlyAdmin(<FactoryStudio />)} />
-            <Route path="/components" element={onlyAdmin(<ComponentsRegistryView />)} />
-            <Route path="/admin/ai-control" element={onlyAdmin(<AIControlPlane />)} />
 
-            {/* Specialized Client Routes */}
+            {/* Клієнтські маршрути */}
             <Route path="/clients" element={<ClientsHubView />} />
             <Route path="/clients/:segment" element={<ClientSegmentView />} />
+
+            {/* Блокування адмін-зони для не-адмінів */}
+            <Route path="/admin/*" element={<Navigate to="/" replace />} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

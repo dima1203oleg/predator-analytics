@@ -286,6 +286,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
 const baseNavigationConfig: NavSection[] = [
   // ══════════════════════════════════════════════════════════════
   // 1. EXECUTIVE — стратегічне командування (sky)
+  //    Доступ: business, analyst (НЕ admin — він у System Command Center)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'executive',
@@ -296,7 +297,7 @@ const baseNavigationConfig: NavSection[] = [
     groups: [
       {
         title: 'Командування',
-        audiences: ['business', 'analyst', 'admin'],
+        audiences: ['business', 'analyst'],
         items: [
           {
             id: 'dashboard',
@@ -305,7 +306,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: LayoutDashboard,
             description: 'Головна точка входу: ROI-пульс, KPI, швидкі переходи.',
             group: 'Командування',
-            audiences: ['business', 'analyst', 'admin'],
+            audiences: ['business', 'analyst'],
             priority: 100,
           },
           {
@@ -315,7 +316,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Compass,
             description: 'Пріоритетний аналіз ризиків та цілей на поточний день.',
             group: 'Командування',
-            audiences: ['business', 'analyst', 'admin'],
+            audiences: ['business', 'analyst'],
             priority: 92,
           },
           {
@@ -325,14 +326,14 @@ const baseNavigationConfig: NavSection[] = [
             icon: Newspaper,
             description: 'Персоналізована щоденна аналітика ринку.',
             group: 'Командування',
-            audiences: ['business', 'analyst', 'admin'],
+            audiences: ['business', 'analyst'],
             priority: 84,
           },
         ],
       },
       {
         title: 'Оперативний штаб',
-        audiences: ['analyst', 'admin'],
+        audiences: ['analyst'],
         items: [
           {
             id: 'war-room',
@@ -342,7 +343,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Оперативний штаб для кризового управління та ескалацій.',
             group: 'Оперативний штаб',
             badge: 'LIVE',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst'],
             priority: 98,
           },
           {
@@ -353,7 +354,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Агрегований фінансовий ризик портфелю клієнтів.',
             group: 'Оперативний штаб',
             badge: 'ОНЛАЙН',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst'],
             priority: 99,
           },
           {
@@ -364,7 +365,7 @@ const baseNavigationConfig: NavSection[] = [
             description: 'Консолідований центр системних та аналітичних алертів.',
             group: 'Оперативний штаб',
             badge: 'NEW',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst'],
             priority: 97,
           },
           {
@@ -374,7 +375,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: History,
             description: 'WORM-журнал прийнятих рішень з прив\'язкою до кейсів.',
             group: 'Оперативний штаб',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst'],
             priority: 88,
           },
           {
@@ -384,7 +385,7 @@ const baseNavigationConfig: NavSection[] = [
             icon: Users,
             description: 'Сегментація та аналіз клієнтської бази.',
             group: 'Оперативний штаб',
-            audiences: ['analyst', 'admin'],
+            audiences: ['analyst'],
             priority: 80,
           },
         ],
@@ -840,147 +841,118 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 6. SYSTEM — лише admin: інфраструктура та ядро (slate)
+  // 6. SYSTEM COMMAND CENTER — тільки admin (emerald)
+  //    Пульт управління інфраструктурою. БЕЗ будь-яких бізнес-даних.
   // ══════════════════════════════════════════════════════════════
   {
     id: 'system',
-    label: 'SYSTEM CORE',
-    description: 'Безпека, пайплайни даних та управління інфраструктурою.',
-    outcome: 'Прозорість і надійність платформи.',
-    accent: 'slate',
+    label: 'SYSTEM COMMAND CENTER',
+    description: 'Телеметрія кластера, безпека, пайплайни та оркестрація агентів.',
+    outcome: 'Повний контроль над інфраструктурою PREDATOR.',
+    accent: 'emerald',
     groups: [
       {
-        title: 'Control Panel',
+        title: 'Моніторинг',
         audiences: ['admin'],
         items: [
           {
-            id: 'system-control',
-            label: 'Control Panel',
-            path: '/system?tab=control',
+            id: 'admin-infra',
+            label: 'Телеметрія Кластера',
+            path: '/admin/command?tab=infra',
             icon: Activity,
-            description: 'NVIDIA / Colab перемикач, метрики та VRAM моніторинг.',
-            group: 'Control Panel',
-            badge: 'NVIDIA',
+            description: 'GPU VRAM, CPU, RAM, мережа — реальний час. Tensor Core Usage%.',
+            group: 'Моніторинг',
+            badge: 'LIVE',
             audiences: ['admin'],
             priority: 100,
           },
           {
-            id: 'monitoring',
-            label: 'Моніторинг',
-            path: '/system?tab=monitoring',
+            id: 'admin-failover',
+            label: 'Failover & Маршрутизація',
+            path: '/admin/command?tab=failover',
             icon: Radio,
-            description: 'Технічний стан сервісів та вузлів інфраструктури.',
-            group: 'Control Panel',
+            description: 'Перемикання трафіку: Local K3s ↔ NVIDIA Server ↔ Colab.',
+            group: 'Моніторинг',
             audiences: ['admin'],
-            priority: 90,
+            priority: 98,
           },
         ],
       },
       {
-        title: 'Інфраструктура',
+        title: 'Пайплайни',
         audiences: ['admin'],
         items: [
           {
-            id: 'ingestion',
-            label: 'Кузня Даних',
-            path: '/system?tab=ingestion',
-            icon: Upload,
-            description: 'Керування потоками та обробкою джерел даних.',
-            group: 'Інфраструктура',
+            id: 'admin-gitops',
+            label: 'GitOps & Пайплайни',
+            path: '/admin/command?tab=gitops',
+            icon: Box,
+            description: 'ArgoCD sync статус, CI/CD runs, ETL пайплайни.',
+            group: 'Пайплайни',
             audiences: ['admin'],
-            priority: 99,
+            priority: 95,
           },
           {
-            id: 'deployment',
-            label: 'Розгортання',
-            path: '/system?tab=deployment',
-            icon: Box,
-            description: 'Kubernetes / Helm / ArgoCD управління сервісами.',
-            group: 'Інфраструктура',
+            id: 'admin-dataops',
+            label: 'DataOps',
+            path: '/admin/command?tab=dataops',
+            icon: Database,
+            description: 'Kafka ingestion, фабрика модулів, датасети ШІ.',
+            group: 'Пайплайни',
             audiences: ['admin'],
             priority: 88,
           },
+        ],
+      },
+      {
+        title: 'Агенти та Безпека',
+        audiences: ['admin'],
+        items: [
           {
-            id: 'system-factory',
-            label: 'Фабрика Систем',
-            path: '/system?tab=factory',
-            icon: Factory,
-            description: 'Генерація нових функціональних модулів платформи.',
-            group: 'Інфраструктура',
+            id: 'admin-agents-ops',
+            label: 'Оркестрація Агентів',
+            path: '/admin/command?tab=agents-ops',
+            icon: Bot,
+            description: 'Статус агентів: CPU, RAM, черга завдань, success rate.',
+            group: 'Агенти та Безпека',
             audiences: ['admin'],
-            priority: 87,
+            priority: 92,
           },
           {
-            id: 'factory-studio',
-            label: 'Студія Агентів',
-            path: '/factory-studio',
-            icon: Zap,
-            description: 'Розробка та налагодження автономних агентів.',
-            group: 'Інфраструктура',
+            id: 'admin-security',
+            label: 'Zero Trust & Безпека',
+            path: '/admin/command?tab=security',
+            icon: Lock,
+            description: 'IAM, аудит сесій, API-ключі, логи доступу.',
+            group: 'Агенти та Безпека',
             audiences: ['admin'],
-            priority: 86,
+            priority: 90,
           },
           {
-            id: 'datasets',
-            label: 'Студія Датасетів',
-            path: '/datasets',
-            icon: Database,
-            description: 'Управління тренувальними даними для ШІ-моделей.',
-            group: 'Інфраструктура',
+            id: 'admin-ai-control',
+            label: 'Контроль ШІ-Моделей',
+            path: '/admin/ai-control',
+            icon: BrainCircuit,
+            description: 'LLM роутинг, A/B тести, VRAM-баланс моделей.',
+            group: 'Агенти та Безпека',
             audiences: ['admin'],
             priority: 85,
           },
         ],
       },
       {
-        title: 'Безпека та Управління',
+        title: 'Конфігурація',
         audiences: ['admin'],
         items: [
           {
-            id: 'security',
-            label: 'Безпека та Доступ',
-            path: '/system?tab=security',
-            icon: Lock,
-            description: 'Контроль периметру, IAM та прав доступу.',
-            group: 'Безпека та Управління',
+            id: 'admin-settings',
+            label: 'Налаштування',
+            path: '/admin/command?tab=settings',
+            icon: Settings,
+            description: 'Глобальна конфігурація платформи.',
+            group: 'Конфігурація',
             audiences: ['admin'],
-            priority: 80,
-          },
-          {
-            id: 'governance',
-            label: 'Суверенне Управління',
-            path: '/system?tab=governance',
-            icon: Shield,
-            description: 'Етичні та юридичні рамки роботи платформи.',
-            group: 'Безпека та Управління',
-            audiences: ['admin'],
-            priority: 78,
-          },
-          {
-            id: 'ai-control',
-            label: 'Контроль ШІ-Моделей',
-            path: '/admin/ai-control',
-            icon: BrainCircuit,
-            description: 'Низькорівневий контроль та A/B тестування моделей.',
-            group: 'Безпека та Управління',
-            audiences: ['admin'],
-            priority: 92,
-          },
-        ],
-      },
-      {
-        title: 'Розробка',
-        audiences: ['admin'],
-        items: [
-          {
-            id: 'components',
-            label: 'Реєстр Компонентів',
-            path: '/components',
-            icon: Layers,
-            description: 'Бібліотека візуальних стандартів WRAITH.',
-            group: 'Розробка',
-            audiences: ['admin'],
-            priority: 65,
+            priority: 70,
           },
           {
             id: 'api-docs',
@@ -988,29 +960,9 @@ const baseNavigationConfig: NavSection[] = [
             path: '/api-docs',
             icon: FileText,
             description: 'Інтеграційні протоколи для зовнішніх систем.',
-            group: 'Розробка',
+            group: 'Конфігурація',
             audiences: ['admin'],
             priority: 60,
-          },
-          {
-            id: 'reports',
-            label: 'Конструктор Звітів',
-            path: '/reports',
-            icon: FileText,
-            description: 'Створення кастомних аналітичних звітів.',
-            group: 'Розробка',
-            audiences: ['analyst', 'admin'],
-            priority: 70,
-          },
-          {
-            id: 'settings',
-            label: 'Налаштування',
-            path: '/system?tab=settings',
-            icon: Settings,
-            description: 'Глобальна конфігурація платформи.',
-            group: 'Розробка',
-            audiences: ['business', 'analyst', 'admin'],
-            priority: 68,
           },
         ],
       },
@@ -1091,9 +1043,11 @@ const isItemVisibleForRole = (item: NavItem, role: string): boolean => {
     return false;
   }
 
-  // Адмін бачить все
+  // Адмін бачить ТІЛЬКИ елементи з audiences: ['admin']
+  // Бізнес-модулі для адміна приховані (ізоляція System Command Center)
   if (normalizedRole === 'admin') {
-    return true;
+    if (!item.audiences || item.audiences.length === 0) return false;
+    return item.audiences.includes('admin');
   }
 
   if (!item.audiences || item.audiences.length === 0) {
@@ -1110,12 +1064,13 @@ const isGroupVisibleForRole = (group: NavGroup, role: string): boolean => {
     return false;
   }
 
-  if (!group.audiences || group.audiences.length === 0) {
-    return true;
+  // Адмін бачить ТІЛЬКИ групи з audiences: ['admin']
+  if (normalizedRole === 'admin') {
+    if (!group.audiences || group.audiences.length === 0) return false;
+    return group.audiences.includes('admin');
   }
 
-  // Адмін бачить все
-  if (normalizedRole === 'admin') {
+  if (!group.audiences || group.audiences.length === 0) {
     return true;
   }
 
