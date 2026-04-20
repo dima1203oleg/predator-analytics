@@ -1,5 +1,5 @@
 /**
- * 🚨 AML SCORING VIEW // КОГНІТИВНИЙ AML-МОНІТОРИНГ | v57.3-ELITE
+ * 🚨 AML SCORING VIEW // КОГНІТИВНИЙ AML-МОНІТОРИНГ | v58.2-WRAITH
  * PREDATOR Analytics — Advanced Compliance & Anti-Money Laundering Array
  * 
  * © 2026 PREDATOR Analytics — HR-04 compliant, тільки українська
@@ -190,14 +190,14 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
                 <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕРА: 99.8%</span>
-                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v57.3_ELITE</span>
+                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v58.2_WRAITH</span>
             </div>
         </div>
     );
 };
 
 // ========================
-// Live Cognitive Terminal v57.3-ELITE
+// Live Cognitive Terminal v58.2-WRAITH
 // ========================
 
 const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' }> = ({ active, targetName, mode }) => {
@@ -563,7 +563,7 @@ const AMLScoringView: React.FC = () => {
                                         МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКОРІНГ
                                     </span>
                                     <div className="h-px w-12 bg-rose-500/20" />
-                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v57.3-ELITE</span>
+                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v58.2-WRAITH</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     AML <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКОРІНГ</span>
@@ -573,7 +573,7 @@ const AMLScoringView: React.FC = () => {
                     }
                     breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML_COGNITIVE_ARRAY']}
                     badges={[
-                        { label: 'SOVEREIGN_ELITE_v57.3', color: 'rose', icon: <Zap size={10} /> },
+                        { label: 'SOVEREIGN_WRAITH_v58.2', color: 'rose', icon: <Zap size={10} /> },
                         { label: 'CLASSIFIED_T1_ACCESS', color: 'primary', icon: <Lock size={10} /> },
                     ]}
                     stats={[
@@ -603,7 +603,7 @@ const AMLScoringView: React.FC = () => {
                 {/* === Режими WRAITH === */}
                 <div className="z-10 flex gap-6">
                     {[
-                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_ELITE',    icon: <Target size={18} /> },
+                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_WRAITH',    icon: <Target size={18} /> },
                         { id: true,  label: 'ПАКЕТНИЙ_ДЕПЛОЙ_CSV', icon: <Upload size={18} /> },
                     ].map(({ id, label, icon }) => (
                         <button
@@ -896,7 +896,7 @@ const AMLScoringView: React.FC = () => {
                                                 </div>
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
                                                     <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">TIER_ОЦІНКИ</span>
-                                                    <span className="text-2xl font-black text-white font-mono italic">ELITE</span>
+                                                    <span className="text-2xl font-black text-white font-mono italic">WRAITH</span>
                                                 </div>
                                             </div>
                                         </TacticalCard>
@@ -942,17 +942,17 @@ const AMLScoringView: React.FC = () => {
                                     <div className="text-center space-y-4 max-w-2xl px-12">
                                         <h3 className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter group-hover:text-white transition-colors duration-1000">ОЧІКУВАННЯ_ВВОДУ_DATA</h3>
                                         <p className="text-[11px] text-slate-900 font-bold uppercase tracking-[0.6em] italic leading-relaxed">
-                                            ВВЕДІТЬ ІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-ПРОТОКОЛУ WRAITH v57.3-ELITE
+                                            ВВЕДІТЬ ІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-ПРОТОКОЛУ v58.2-WRAITH
                                         </p>
                                     </div>
                                     <div className="flex gap-6 mt-8">
                                         <div className="flex items-center gap-3 px-6 py-2 bg-black border border-white/5 rounded-xl">
                                             <Database size={14} className="text-rose-900" />
-                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">CONNECTED_TO: PRED_CORE_v57.3</span>
+                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">CONNECTED_TO: PRED_CORE_v58.2</span>
                                         </div>
                                         <div className="flex items-center gap-3 px-6 py-2 bg-black border border-white/5 rounded-xl">
                                             <Lock size={14} className="text-rose-900" />
-                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">LEVEL: UNLIMITED_ELITE</span>
+                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">LEVEL: UNLIMITED_WRAITH</span>
                                         </div>
                                     </div>
                                 </motion.div>

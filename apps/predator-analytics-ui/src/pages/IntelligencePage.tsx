@@ -295,7 +295,7 @@ const IntelligencePage: React.FC = () => {
 
                                {/* Live Activity Stream */}
                                <div className="h-[400px]">
-                                   <LiveAgentTerminal />
+                                   {/* Термінал активовано в глобальному просторі */}
                                </div>
                         </div>
 

@@ -410,7 +410,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                     </div>
                     
                     <div className="p-4 border-t border-white/5">
-                        <LiveAgentTerminal />
+                        {/* Термінал тепер доступний глобально через заголовок */}
                     </div>
                 </div>
 

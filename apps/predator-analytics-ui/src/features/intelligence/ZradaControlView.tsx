@@ -1,5 +1,5 @@
 /**
- * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ ЗРАДИ | v57.3-ELITE
+ * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ ЗРАДИ | v58.2-WRAITH
  * PREDATOR Analytics — Corruption & Collaboration Intelligence
  * 
  * Моніторинг ризиків: Корупція, Колаборація, промислове шпигунство.
@@ -161,7 +161,7 @@ export default function ZradaControlView() {
                           INTEGRITY_WATCH // CONTOUR_ZRADA
                         </span>
                         <div className="h-px w-12 bg-rose-500/20" />
-                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v57.3-ELITE</span>
+                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                        СИСТЕМА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗРАДА</span>
@@ -330,7 +330,7 @@ export default function ZradaControlView() {
                    </div>
                    <div className="space-y-2 relative z-10 border-l-4 border-rose-600 pl-8">
                       <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter skew-x-[-2deg] leading-none">АВТОРИЗАЦІЯ ОБ'ЄКТА</h2>
-                      <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] italic leading-none">NEW_INTEGRITY_TARGET_v57.3-ELITE</p>
+                      <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] italic leading-none">NEW_INTEGRITY_TARGET_v58.2-WRAITH</p>
                    </div>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                       <div className="space-y-3">

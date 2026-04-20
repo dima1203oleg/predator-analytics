@@ -29,6 +29,7 @@ import QuickActionsBar from './components/premium/QuickActionsBar';
 import { ToasterProvider } from './components/premium/ToasterProvider';
 import { OfflineBanner } from './components/shared/OfflineBanner';
 import { CyberTerminal } from './components/ui/CyberTerminal';
+import { LiveAgentTerminal } from './components/intelligence/LiveAgentTerminal';
 import { AdvancedBackground } from './components/AdvancedBackground';
 import NeuralPulse from './components/NeuralPulse';
 
@@ -154,7 +155,11 @@ function App() {
                                 <OnboardingWizard />
                                 <OfflineBanner />
                                 <Predator />
-                                <CyberTerminal />
+                                <div className="fixed bottom-32 right-6 z-[100] w-[450px] h-[400px] pointer-events-none">
+                                  <div className="w-full h-full pointer-events-auto">
+                                    <LiveAgentTerminal />
+                                  </div>
+                                </div>
                               </>
                             )}
                           </SuperIntelligenceProvider>

@@ -215,7 +215,7 @@ export const DiligenceTab: React.FC = () => {
                     </div>
                 </TacticalCard>
                 <div className=\"flex-1 overflow-hidden\">
-                    <LiveAgentTerminal />
+                    {/* Системний термінал тепер доступний глобально */}
                 </div>
             </div>
 
