@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Radio, ArrowRightLeft, CheckCircle, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
+import { useFailoverStatus, useToggleFailover } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -18,27 +20,7 @@ interface FailoverEvent {
   duration: string;
 }
 
-// ─── Мок-дані ─────────────────────────────────────────────────────────────────
-
-const MOCK_EVENTS: FailoverEvent[] = Array.from({ length: 42 }, (_, i) => ({
-  id: String(i + 1),
-  ts: new Date(Date.now() - i * 3_600_000).toISOString().replace('T', ' ').slice(0, 19),
-  from: ['local-k3s', 'nvidia-server', 'colab-mirror'][i % 3] as BackendNode,
-  to:   ['nvidia-server', 'colab-mirror', 'local-k3s'][i % 3]   as BackendNode,
-  reason: ['VRAM >90%', 'Плановий тест', 'Мережева помилка', 'Ручне перемикання', 'Failover тригер'][i % 5],
-  user:   i % 4 === 0 ? 'auto-sentinel' : 'admin@predator',
-  duration: `${(i * 7 + 1) % 120}с`,
-}));
-
-// ─── Конфіг вузлів ────────────────────────────────────────────────────────────
-
-const NODES: Record<BackendNode, { label: string; ip: string; status: 'online' | 'offline' | 'standby'; load: number }> = {
-  'local-k3s':     { label: 'Local K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
-  'nvidia-server': { label: 'NVIDIA Server', ip: '10.0.0.5',     status: 'online',  load: 61 },
-  'colab-mirror':  { label: 'Colab Mirror',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
-};
-
-const MODES: Record<RouteMode, { label: string; desc: string; color: string; bg: string }> = {
+const MODES: Record<string, { label: string; desc: string; color: string; bg: string }> = {
   SOVEREIGN: { label: 'SOVEREIGN', desc: '100% Local K3s + Ollama',        color: 'text-red-400',     bg: 'bg-red-500/10 border-red-400/25' },
   HYBRID:    { label: 'HYBRID',    desc: 'Баланс: Local + Groq/Gemini',    color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-400/25' },
   CLOUD:     { label: 'CLOUD',     desc: 'Gemini Pro, GLM-5.1, Azure',     color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-400/25' },
@@ -60,15 +42,14 @@ const getEventStatus = (row: FailoverEvent): RowStatus =>
 
 // ─── Компонент ───────────────────────────────────────────────────────────────
 
-import { useFailoverStatus, useToggleFailover } from '@/hooks/useAdminApi';
-import { Loader2 } from 'lucide-react';
+// ─── Компонент ───────────────────────────────────────────────────────────────
 
 // ─── Компонент ───────────────────────────────────────────────────────────────
 
 export const FailoverRoutingTab: React.FC = () => {
   const { data, isLoading, isError } = useFailoverStatus();
   const toggleMutation = useToggleFailover();
-  const [confirming, setConfirming] = useState<BackendNode | null>(null);
+  const [confirming, setConfirming] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -83,11 +64,12 @@ export const FailoverRoutingTab: React.FC = () => {
     return <div>Помилка завантаження даних Failover</div>;
   }
 
-  const activeMode = data.activeMode as RouteMode;
-  const activeNode = data.activeNode as BackendNode;
+  const activeMode = data.activeMode;
+  const activeNode = data.activeNode;
+  const nodes = data.nodes || {};
   const history = data.history || [];
 
-  const handleSwitch = (node: BackendNode) => {
+  const handleSwitch = (node: string) => {
     if (node === activeNode) return;
     setConfirming(node);
   };
@@ -151,8 +133,8 @@ export const FailoverRoutingTab: React.FC = () => {
             Активний вузол
           </div>
           <div className="space-y-2">
-            {(Object.keys(NODES) as BackendNode[]).map((nodeKey) => {
-              const node = NODES[nodeKey];
+            {Object.keys(nodes).map((nodeKey) => {
+              const node = nodes[nodeKey];
               const isActive = activeNode === nodeKey;
               const isOffline = node.status === 'offline';
               return (
@@ -160,7 +142,7 @@ export const FailoverRoutingTab: React.FC = () => {
                   key={nodeKey}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-sm border',
-                    isActive          ? 'bg-emerald-500/8 border-emerald-400/20' :
+                    isActive          ? 'bg-emerald-500/8 border-emerald-400/20 shadow-[0_0_15px_-5px_rgba(52,211,153,0.2)]' :
                     isOffline         ? 'bg-[#1a2620] border-red-400/15 opacity-50' :
                                         'bg-[#1a2620] border-white/8',
                   )}
@@ -203,7 +185,7 @@ export const FailoverRoutingTab: React.FC = () => {
           <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
           <div className="flex-1">
             <div className="text-[11px] text-amber-300 font-semibold">
-              Підтвердіть перемикання на {NODES[confirming].label}
+              Підтвердіть перемикання на {nodes[confirming]?.label || confirming}
             </div>
             <div className="text-[9px] text-white/40 mt-0.5">
               Активні запити будуть перероутовані. Можливе короткочасне переривання.

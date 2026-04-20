@@ -34,35 +34,7 @@ interface FactoryModule {
   createdAt: string;
 }
 
-// ─── Мок-дані ─────────────────────────────────────────────────────────────────
-
-const KAFKA_TOPICS: KafkaTopic[] = [
-  { name: 'customs.raw.xml',       partitions: 8,  lag: 1204, throughput: '2.4 MB/s',  consumers: 3, status: 'warn' },
-  { name: 'entities.enriched',     partitions: 4,  lag: 0,    throughput: '0.8 MB/s',  consumers: 2, status: 'ok' },
-  { name: 'sanctions.feed',        partitions: 2,  lag: 0,    throughput: '0.1 MB/s',  consumers: 1, status: 'ok' },
-  { name: 'graph.relationships',   partitions: 6,  lag: 0,    throughput: '1.1 MB/s',  consumers: 2, status: 'ok' },
-  { name: 'risk.scores.computed',  partitions: 4,  lag: 342,  throughput: '0.5 MB/s',  consumers: 1, status: 'warn' },
-  { name: 'audit.api.events',      partitions: 2,  lag: 0,    throughput: '0.2 MB/s',  consumers: 2, status: 'ok' },
-  { name: 'court.registry.sync',   partitions: 2,  lag: 8901, throughput: '0.0 MB/s',  consumers: 0, status: 'error' },
-  { name: 'llm.agent.output',      partitions: 4,  lag: 0,    throughput: '0.3 MB/s',  consumers: 3, status: 'ok' },
-];
-
-const DATASETS: DatasetRecord[] = [
-  { id: '1', name: 'customs-ner-v4',      type: 'NER',          records: 1_240_000, sizeGb: 4.2,  version: '4.0.1', status: 'ready',    updatedAt: '2026-04-18' },
-  { id: '2', name: 'risk-score-train-v3', type: 'Classification',records: 890_000,  sizeGb: 2.8,  version: '3.2.0', status: 'ready',    updatedAt: '2026-04-10' },
-  { id: '3', name: 'graph-embeddings-v2', type: 'Embeddings',    records: 3_400_000, sizeGb: 8.1, version: '2.1.0', status: 'outdated', updatedAt: '2026-02-01' },
-  { id: '4', name: 'sanctions-finetune',  type: 'LoRA FT',       records: 56_000,   sizeGb: 0.4,  version: '1.0.0', status: 'draft',    updatedAt: '2026-04-19' },
-  { id: '5', name: 'entity-classify-v5',  type: 'Classification',records: 2_100_000, sizeGb: 6.3, version: '5.0.0', status: 'training', updatedAt: 'зараз' },
-];
-
-const FACTORY_MODULES: FactoryModule[] = [
-  { id: '1', name: 'customs-etl-adapter',   template: 'ETL::XmlIngestion',    status: 'deployed', createdBy: 'admin', createdAt: '2026-04-15' },
-  { id: '2', name: 'risk-scorer-v2',        template: 'ML::Classifier',       status: 'deployed', createdBy: 'admin', createdAt: '2026-04-10' },
-  { id: '3', name: 'court-registry-sync',   template: 'ETL::FtpSync',         status: 'pending',  createdBy: 'admin', createdAt: '2026-04-20' },
-  { id: '4', name: 'geo-enrichment-svc',    template: 'API::Enricher',        status: 'deployed', createdBy: 'admin', createdAt: '2026-03-28' },
-  { id: '5', name: 'aml-pattern-detector',  template: 'ML::AnomalyDetector',  status: 'failed',   createdBy: 'admin', createdAt: '2026-04-19' },
-  { id: '6', name: 'deep-osint-crawler-v3', template: 'Crawler::WebScraper',  status: 'draft',    createdBy: 'admin', createdAt: '2026-04-20' },
-];
+// ─── Колонки ──────────────────────────────────────────────────────────────────
 
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
@@ -203,7 +175,7 @@ export const DataOpsTab: React.FC = () => {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-mono transition-all duration-100',
                 active
-                  ? 'bg-emerald-500/12 border border-emerald-400/20 text-emerald-300'
+                  ? 'bg-emerald-500/12 border border-emerald-400/20 text-emerald-300 shadow-[0_0_15px_-5px_rgba(52,211,153,0.1)]'
                   : 'text-white/30 hover:text-white/55 hover:bg-white/4 border border-transparent',
               )}
             >
@@ -222,7 +194,7 @@ export const DataOpsTab: React.FC = () => {
         <VirtualTable rows={datasets} columns={datasetCols} rowHeight={30} maxHeight={480} getRowStatus={getDatasetStatus} />
       )}
       {section === 'factory' && (
-        <VirtualTable rows={FACTORY_MODULES} columns={moduleCols} rowHeight={30} maxHeight={480} getRowStatus={getModuleStatus} />
+        <VirtualTable rows={factoryModules} columns={moduleCols} rowHeight={30} maxHeight={480} getRowStatus={getModuleStatus} />
       )}
     </div>
   );

@@ -4,7 +4,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminApi, type InfraTelemetryResponse, type FailoverStatus, type AgentStats, type GitOpsStatus, type DataOpsStatus } from '../services/adminApi';
+import { adminApi, type InfraTelemetryResponse, type FailoverStatus, type AgentStats, type GitOpsStatus, type DataOpsStatus, type SecuritySession, type SecurityApiKey } from '../services/adminApi';
 
 const ADMIN_KEYS = {
   telemetry: ['admin', 'telemetry'] as const,
@@ -13,6 +13,8 @@ const ADMIN_KEYS = {
   gitops: ['admin', 'gitops'] as const,
   dataops: ['admin', 'dataops'] as const,
   audit: ['admin', 'audit'] as const,
+  sessions: ['admin', 'security', 'sessions'] as const,
+  keys: ['admin', 'security', 'keys'] as const,
   systemStatus: ['admin', 'system', 'status'] as const,
   systemStats: ['admin', 'system', 'stats'] as const,
   aiEngines: ['admin', 'system', 'engines'] as const,
@@ -122,5 +124,21 @@ export function useAuditLogs() {
     queryKey: ADMIN_KEYS.audit,
     queryFn: () => adminApi.security.getAuditLogs(),
     staleTime: 30000,
+  });
+}
+
+export function useSecuritySessions() {
+  return useQuery<SecuritySession[]>({
+    queryKey: ADMIN_KEYS.sessions,
+    queryFn: () => adminApi.security.getSessions(),
+    refetchInterval: 10000,
+  });
+}
+
+export function useSecurityKeys() {
+  return useQuery<SecurityApiKey[]>({
+    queryKey: ADMIN_KEYS.keys,
+    queryFn: () => adminApi.security.getKeys(),
+    staleTime: 60000,
   });
 }

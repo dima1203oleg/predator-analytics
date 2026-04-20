@@ -2,6 +2,8 @@ import React from 'react';
 import { Bot, Cpu, MemoryStick, Clock, CheckCircle, XCircle, MinusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
+import { useAgentsStats } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -19,36 +21,7 @@ interface AgentRow {
   model: string;
 }
 
-// ─── Генерація мок-даних ─────────────────────────────────────────────────────
-
-const AGENT_TYPES = ['Ingestion', 'Graph-Analyze', 'OSINT-Crawler', 'Risk-Scorer', 'Report-Gen', 'AML-Monitor'];
-const MODELS      = ['qwen3-coder:30b', 'nemotron-cascade:30b', 'gemini-flash', 'llama3.3:70b', 'glm-4-flash'];
-const STATUSES    = ['alive', 'alive', 'alive', 'idle', 'dead', 'starting'] as const;
-
-const MOCK_AGENTS: AgentRow[] = Array.from({ length: 64 }, (_, i) => {
-  const status = STATUSES[i % STATUSES.length];
-  return {
-    id:           `agent-${String(i + 1).padStart(3, '0')}`,
-    name:         `${AGENT_TYPES[i % AGENT_TYPES.length]}-${String(i + 1).padStart(3, '0')}`,
-    type:         AGENT_TYPES[i % AGENT_TYPES.length],
-    status,
-    cpu:          status === 'alive' ? Math.floor(Math.random() * 80 + 5) : 0,
-    ram:          status === 'alive' ? Math.floor(Math.random() * 60 + 10) : 0,
-    queueDepth:   status === 'alive' ? Math.floor(Math.random() * 200) : 0,
-    successRate:  status === 'alive' ? +(95 + Math.random() * 5).toFixed(1) : 0,
-    tasksTotal:   Math.floor(Math.random() * 50_000),
-    lastActivity: status === 'dead' ? `${Math.floor(Math.random() * 60 + 1)}хв тому` : 'зараз',
-    model:        MODELS[i % MODELS.length],
-  };
-});
-
-// ─── Агрегації ────────────────────────────────────────────────────────────────
-
-const alive   = MOCK_AGENTS.filter(a => a.status === 'alive').length;
-const dead    = MOCK_AGENTS.filter(a => a.status === 'dead').length;
-const idle    = MOCK_AGENTS.filter(a => a.status === 'idle').length;
-const avgCPU  = Math.round(MOCK_AGENTS.filter(a => a.cpu > 0).reduce((s, a) => s + a.cpu, 0) / alive || 0);
-const totalQ  = MOCK_AGENTS.reduce((s, a) => s + a.queueDepth, 0);
+// ─── Колонки ──────────────────────────────────────────────────────────────────
 
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
@@ -119,8 +92,7 @@ const MetricCard: React.FC<{ label: string; value: string | number; sub?: string
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
-import { useAgentsStats } from '@/hooks/useAdminApi';
-import { Loader2 } from 'lucide-react';
+// ─── Вкладка ─────────────────────────────────────────────────────────────────
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 

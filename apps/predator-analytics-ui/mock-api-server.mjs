@@ -27,9 +27,20 @@ let systemState = {
   failover: {
     activeMode: 'SOVEREIGN',
     activeNode: 'local-k3s',
-    history: [
-      { id: '1', ts: new Date().toISOString(), from: 'nvidia-server', to: 'local-k3s', reason: 'Планове перемикання', user: 'admin@predator', duration: '12с' }
-    ]
+    nodes: {
+      'local-k3s':     { label: 'Local K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
+      'nvidia-server': { label: 'NVIDIA Server', ip: '10.0.0.5',     status: 'online',  load: 61 },
+      'colab-mirror':  { label: 'Colab Mirror',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
+    },
+    history: Array.from({ length: 42 }, (_, i) => ({
+      id: String(i + 1),
+      ts: new Date(Date.now() - i * 3_600_000).toISOString(),
+      from: ['local-k3s', 'nvidia-server', 'colab-mirror'][i % 3],
+      to:   ['nvidia-server', 'colab-mirror', 'local-k3s'][i % 3],
+      reason: ['VRAM >90%', 'Плановий тест', 'Мережева помилка', 'Ручне перемикання', 'Failover тригер'][i % 5],
+      user:   i % 4 === 0 ? 'auto-sentinel' : 'admin@predator',
+      duration: `${(i * 7 + 1) % 120}с`,
+    }))
   },
   agents: {
     stats: {
@@ -88,7 +99,24 @@ let systemState = {
   },
   security: {
     recentEvents: [
-      { id: 'log-1', ts: new Date().toISOString(), user: 'admin@predator', method: 'GET', endpoint: '/api/v2/admin/telemetry', status: 200, latencyMs: 15, ip: '127.0.0.1' }
+      { id: 'log-1', ts: new Date().toISOString(), user: 'admin@predator', method: 'GET', endpoint: '/api/v2/admin/telemetry', status: 200, latencyMs: 15, ip: '127.0.0.1' },
+      { id: 'log-2', ts: new Date().toISOString(), user: 'analyst.dmytro@corp', method: 'POST', endpoint: '/api/v1/decisions', status: 201, latencyMs: 85, ip: '192.168.1.15' },
+    ],
+    sessions: Array.from({ length: 12 }, (_, i) => ({
+      id:           `sess-${i + 1}`,
+      user:         ['admin@predator', 'analyst.dmytro@corp', 'viewer.test@corp', 'analyst.olena@corp'][i % 4],
+      role:         ['admin', 'client_premium', 'client_basic', 'client_premium'][i % 4],
+      ip:           `10.0.${Math.floor(i / 4)}.${(i % 4) * 10 + 1}`,
+      userAgent:    ['Chrome/124 macOS', 'Firefox/125 Ubuntu', 'Chrome/124 Win10'][i % 3],
+      lastActivity: `${i * 2 + 1}хв тому`,
+      createdAt:    new Date(Date.now() - i * 1_800_000).toISOString(),
+      expiresIn:    `${60 - i * 2}хв`,
+    })),
+    keys: [
+      { id: '1', name: 'ingestion-service',   owner: 'system',             scopes: 'read:customs,write:kafka',  lastUsed: '1хв тому',   expiresAt: '2026-12-31', status: 'active' },
+      { id: '2', name: 'graph-service-key',   owner: 'system',             scopes: 'read:neo4j,write:neo4j',    lastUsed: '2хв тому',   expiresAt: '2026-12-31', status: 'active' },
+      { id: '3', name: 'external-partner-01', owner: 'partner@abc.com',    scopes: 'read:entities',             lastUsed: '3д тому',    expiresAt: '2025-06-30', status: 'expired' },
+      { id: '4', name: 'revoked-test',      owner: 'old-service',        scopes: 'write:*',                   lastUsed: '30д тому',   expiresAt: 'n/a',        status: 'revoked' },
     ]
   },
   system: {
@@ -210,6 +238,12 @@ const server = http.createServer((req, res) => {
   // 6. Security Audit
   if (path === '/api/v2/admin/security/audit' && req.method === 'GET') {
     return sendJSON(res, systemState.security.recentEvents);
+  }
+  if (path === '/api/v2/admin/security/sessions' && req.method === 'GET') {
+    return sendJSON(res, systemState.security.sessions);
+  }
+  if (path === '/api/v2/admin/security/keys' && req.method === 'GET') {
+    return sendJSON(res, systemState.security.keys);
   }
 
   // 7. System (V1)

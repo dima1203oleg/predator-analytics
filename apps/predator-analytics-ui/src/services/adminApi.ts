@@ -37,7 +37,25 @@ export interface InfraTelemetryResponse {
 export interface FailoverStatus {
   activeMode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD';
   activeNode: string;
-  history: any[];
+  nodes: Record<string, FailoverNodeInfo>;
+  history: FailoverHistoryEvent[];
+}
+
+export interface FailoverNodeInfo {
+  label: string;
+  ip: string;
+  status: 'online' | 'offline' | 'standby';
+  load: number;
+}
+
+export interface FailoverHistoryEvent {
+  id: string;
+  ts: string;
+  from: string;
+  to: string;
+  reason: string;
+  user: string;
+  duration: string;
 }
 
 export interface AgentStats {
@@ -58,9 +76,59 @@ export interface GitOpsStatus {
 }
 
 export interface DataOpsStatus {
-  kafkaTopics: any[];
-  datasets: any[];
-  factoryModules: any[];
+  kafkaTopics: KafkaTopic[];
+  datasets: DatasetRecord[];
+  factoryModules: FactoryModule[];
+}
+
+export interface KafkaTopic {
+  name: string;
+  partitions: number;
+  lag: number;
+  throughput: string;
+  consumers: number;
+  status: 'ok' | 'warn' | 'error';
+}
+
+export interface DatasetRecord {
+  id: string;
+  name: string;
+  type: string;
+  records: number;
+  sizeGb: number;
+  version: string;
+  status: 'ready' | 'training' | 'outdated' | 'draft';
+  updatedAt: string;
+}
+
+export interface FactoryModule {
+  id: string;
+  name: string;
+  template: string;
+  status: 'deployed' | 'pending' | 'failed' | 'draft';
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface SecuritySession {
+  id: string;
+  user: string;
+  role: string;
+  ip: string;
+  userAgent: string;
+  lastActivity: string;
+  createdAt: string;
+  expiresIn: string;
+}
+
+export interface SecurityApiKey {
+  id: string;
+  name: string;
+  owner: string;
+  scopes: string;
+  lastUsed: string;
+  expiresAt: string;
+  status: 'active' | 'revoked' | 'expired';
 }
 
 export interface SystemEngine {
@@ -161,6 +229,12 @@ export const adminApi = {
   security: {
     getAuditLogs: async (): Promise<any[]> => {
       return (await v2Client.get<any[]>('/admin/security/audit')).data;
+    },
+    getSessions: async (): Promise<SecuritySession[]> => {
+      return (await v2Client.get<SecuritySession[]>('/admin/security/sessions')).data;
+    },
+    getKeys: async (): Promise<SecurityApiKey[]> => {
+      return (await v2Client.get<SecurityApiKey[]>('/admin/security/keys')).data;
     },
   }
 };

@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Activity, Cpu, HardDrive, Wifi, Thermometer, Server, Monitor, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
+import { useInfraTelemetry } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -27,28 +29,7 @@ interface ServiceStatus {
   lastCheck: string;
 }
 
-// ─── Мок-дані ─────────────────────────────────────────────────────────────────
-
-const MOCK_NODES: NodeMetric[] = [
-  { id: '1', node: 'nvidia-master', role: 'GPU Master',   cpu: 34, ram: 61, vram: 52, vramGb: 4.2, temp: 67, net: '↑ 1.2 MB/s ↓ 4.8 MB/s', status: 'online',   uptime: '12д 4г 21хв' },
-  { id: '2', node: 'macbook-edge',  role: 'Edge Node',    cpu: 18, ram: 44, temp: 52,               net: '↑ 0.3 MB/s ↓ 0.9 MB/s', status: 'online',   uptime: '3г 14хв' },
-  { id: '3', node: 'colab-mirror',  role: 'Cloud Mirror', cpu: 0,  ram: 0,                          net: '—',                       status: 'offline',  uptime: 'недоступний' },
-];
-
-const MOCK_SERVICES: ServiceStatus[] = [
-  { name: 'core-api',         status: 'ok',   latencyMs: 12,  version: 'v1.4.2', lastCheck: '00:00:01 тому' },
-  { name: 'graph-service',    status: 'ok',   latencyMs: 28,  version: 'v1.2.0', lastCheck: '00:00:01 тому' },
-  { name: 'ingestion-worker', status: 'warn', latencyMs: 341, version: 'v1.1.5', lastCheck: '00:00:02 тому' },
-  { name: 'opensearch',       status: 'ok',   latencyMs: 8,   version: '2.12.0', lastCheck: '00:00:01 тому' },
-  { name: 'redis',            status: 'ok',   latencyMs: 1,   version: '7.2.4',  lastCheck: '00:00:01 тому' },
-  { name: 'kafka-broker',     status: 'ok',   latencyMs: 5,   version: 'CP7.6',  lastCheck: '00:00:01 тому' },
-  { name: 'qdrant',           status: 'ok',   latencyMs: 19,  version: '1.8.4',  lastCheck: '00:00:01 тому' },
-  { name: 'neo4j',            status: 'ok',   latencyMs: 22,  version: '5.17.0', lastCheck: '00:00:01 тому' },
-  { name: 'minio',            status: 'ok',   latencyMs: 7,   version: 'RELEASE.2024', lastCheck: '00:00:01 тому' },
-  { name: 'ollama',           status: 'warn', latencyMs: 890, version: '0.1.42', lastCheck: '00:00:03 тому' },
-  { name: 'litellm-proxy',    status: 'ok',   latencyMs: 45,  version: '1.30.0', lastCheck: '00:00:01 тому' },
-  { name: 'prometheus',       status: 'ok',   latencyMs: 3,   version: '2.51.0', lastCheck: '00:00:01 тому' },
-];
+// ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
 
 // ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
 
@@ -187,13 +168,6 @@ const getServiceStatus = (row: ServiceStatus): RowStatus =>
   row.status === 'ok' ? 'ok' : row.status === 'warn' ? 'warning' : 'danger';
 
 // ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
-
-import { useInfraTelemetry } from '@/hooks/useAdminApi';
-import { Loader2 } from 'lucide-react';
-
-// ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
-
-// ... (GaugeBar component remains same)
 
 // ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
 

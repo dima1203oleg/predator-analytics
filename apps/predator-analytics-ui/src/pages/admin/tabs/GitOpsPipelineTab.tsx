@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, CheckCircle, XCircle, Clock, GitBranch, Loader, Workflow } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
+import { useGitOpsStatus } from '@/hooks/useAdminApi';
+import { Loader2 } from 'lucide-react';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -36,34 +38,7 @@ interface ETLPipeline {
   lastRun: string;
 }
 
-// ─── Мок-дані ─────────────────────────────────────────────────────────────────
-
-const ARGO_APPS: ArgoCDApp[] = [
-  { name: 'core-api',          namespace: 'predator',  syncStatus: 'Synced',    healthStatus: 'Healthy',     revision: 'a1b2c3d', lastSync: '2 хв тому' },
-  { name: 'graph-service',     namespace: 'predator',  syncStatus: 'Synced',    healthStatus: 'Healthy',     revision: 'd4e5f6g', lastSync: '2 хв тому' },
-  { name: 'ingestion-worker',  namespace: 'predator',  syncStatus: 'OutOfSync', healthStatus: 'Degraded',    revision: 'h7i8j9k', lastSync: '15 хв тому' },
-  { name: 'predator-ui',       namespace: 'predator',  syncStatus: 'Synced',    healthStatus: 'Healthy',     revision: 'l1m2n3o', lastSync: '2 хв тому' },
-  { name: 'monitoring-stack',  namespace: 'monitoring', syncStatus: 'Synced',   healthStatus: 'Progressing', revision: 'p4q5r6s', lastSync: '8 хв тому' },
-];
-
-const CI_RUNS: CIRun[] = Array.from({ length: 30 }, (_, i) => ({
-  id:       `run-${1000 + i}`,
-  ref:      `refs/heads/${['main', 'feat/rbac', 'fix/parser'][i % 3]}`,
-  commit:   Math.random().toString(16).slice(2, 9),
-  branch:   ['main', 'feat/rbac', 'fix/parser'][i % 3],
-  status:   (['success', 'failure', 'running', 'pending'] as const)[i % 4],
-  duration: `${Math.floor(Math.random() * 300 + 60)}с`,
-  trigger:  ['push', 'manual', 'schedule'][i % 3],
-  ts:       new Date(Date.now() - i * 900_000).toISOString().replace('T', ' ').slice(0, 16),
-}));
-
-const ETL_PIPELINES: ETLPipeline[] = [
-  { id: '1', name: 'customs-xml-ingest',  source: 'minio/customs',  status: 'running',   recordsIn: 128_432, recordsOut: 127_890, lag: 542,   lastRun: 'зараз' },
-  { id: '2', name: 'sanctions-feed',      source: 'kafka/sanct',    status: 'completed', recordsIn: 8_204,   recordsOut: 8_204,   lag: 0,     lastRun: '5 хв тому' },
-  { id: '3', name: 'court-registry-sync', source: 'ftp/courts',     status: 'idle',      recordsIn: 0,       recordsOut: 0,       lag: 0,     lastRun: '2г тому' },
-  { id: '4', name: 'tax-data-transform',  source: 'postgres/tax',   status: 'failed',    recordsIn: 45_100,  recordsOut: 12_400,  lag: 32_700,lastRun: '14 хв тому' },
-  { id: '5', name: 'geo-enrichment',      source: 'api/geolite',    status: 'running',   recordsIn: 23_000,  recordsOut: 22_888,  lag: 112,   lastRun: 'зараз' },
-];
+// ─── Колонки ──────────────────────────────────────────────────────────────────
 
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
@@ -127,8 +102,7 @@ const SyncIcon: React.FC<{ status: ArgoCDApp['syncStatus'] }> = ({ status }) => 
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
-import { useGitOpsStatus } from '@/hooks/useAdminApi';
-import { Loader2 } from 'lucide-react';
+// ─── Вкладка ─────────────────────────────────────────────────────────────────
 
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
