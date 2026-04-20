@@ -37,12 +37,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { dashboardApi, type DashboardOverview } from '@/services/api/dashboard';
-import {
-  getVisibleNavigation,
-  navAccentStyles,
-} from '@/config/navigation';
+import { getVisibleNavigation, navAccentStyles } from '@/config/navigation';
 import { useUser } from '@/context/UserContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useDashboardOverview, useDashboardAlerts } from '@/hooks/useDashboard';
 import { cn } from '@/utils/cn';
 
 /* ── Утиліти форматування ── */
@@ -65,36 +63,6 @@ const timeAgo = (timestamp?: string): string => {
   return `${Math.floor(diff / 86_400_000)} дн тому`;
 };
 
-/* ── Mock Fallback ── */
-const MOCK_OVERVIEW: DashboardOverview = {
-  summary: {
-    total_declarations: 4_218_932,
-    total_value_usd: 12_450_000_000,
-    high_risk_count: 142,
-    medium_risk_count: 854,
-    import_count: 2_843_102,
-    export_count: 1_375_830,
-    graph_nodes: 154_200,
-    graph_edges: 892_100,
-    search_documents: 14_205_000,
-    vectors: 14_205_000,
-    active_pipelines: 12,
-    completed_pipelines: 4_580,
-  },
-  radar: [],
-  top_risk_companies: [],
-  alerts: [
-    { id: 'a1', type: 'risk', message: 'Аномальна активність у секторі ПММ — виявлено кругове перевезення', severity: 'critical', timestamp: new Date().toISOString(), sector: 'Паливо', company: 'ТОВ «ЕНЕРДЖИ-ГРУП»', value: 45_000_000 },
-    { id: 'a2', type: 'market', message: 'Різке зростання імпорту електроніки з нових коридорів через Туреччину', severity: 'warning', timestamp: new Date().toISOString(), sector: 'Електроніка', company: 'Global Tech LLC', value: 12_000_000 },
-    { id: 'a3', type: 'info', message: 'Плановий ребілд пошукового індексу завершено — +2.4M документів', severity: 'info', timestamp: new Date().toISOString(), sector: 'Система', company: 'PREDATOR AI', value: 0 },
-  ],
-  categories: {},
-  countries: {},
-  customs_offices: {},
-  infrastructure: {},
-  engines: {},
-  generated_at: new Date().toISOString(),
-};
 
 /* ── Анімації ── */
 const stagger = {
@@ -127,31 +95,13 @@ export default function ExecutiveBoardView() {
   const currentRole = user?.role ?? 'viewer';
   const navigationSections = useMemo(() => getVisibleNavigation(currentRole), [currentRole]);
 
-  const [overview, setOverview] = useState<DashboardOverview | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        setLoading(true);
-        const data = await dashboardApi.getOverview();
-        if (alive) setOverview(data);
-      } catch {
-        if (alive) {
-          setOverview(MOCK_OVERVIEW);
-          setError('Автономний режим — Mock API');
-        }
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-    return () => { alive = false; };
-  }, []);
+  // Реактивні дані через TanStack Query
+  const { data: overview, isLoading: isOverviewLoading } = useDashboardOverview();
+  const { data: alertsData, isLoading: isAlertsLoading } = useDashboardAlerts(4);
 
   const s = overview?.summary;
-  const alerts = overview?.alerts?.slice(0, 4) ?? [];
+  const alerts = alertsData?.items ?? [];
+  const loading = isOverviewLoading || isAlertsLoading;
 
   /* ── 4 головні KPI ── */
   const kpis = useMemo(() => [
@@ -231,17 +181,6 @@ export default function ExecutiveBoardView() {
           })}
         </motion.div>
 
-        {/* Помилка */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative z-10 mt-4 rounded-xl border border-rose-400/15 bg-rose-500/5 px-4 py-2.5 text-xs text-rose-300 flex items-center gap-2"
-          >
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-            {error}
-          </motion.div>
-        )}
       </motion.section>
 
       {/* ═══════════════════════════════════════════════

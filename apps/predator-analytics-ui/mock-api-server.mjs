@@ -150,6 +150,39 @@ let systemState = {
       { id: 'l2', level: 'warn', service: 'ingestion', message: 'Виявлено затримку в Kafka topic: customs.raw', timestamp: new Date().toISOString() },
       { id: 'l3', level: 'info', service: 'ai-engine', message: 'Модель Qwen3-Coder завантажена у VRAM', timestamp: new Date().toISOString() },
     ]
+  },
+  dashboard: {
+    summary: {
+      total_declarations: 4_218_932,
+      total_value_usd: 12_450_000_000,
+      high_risk_count: 142,
+      medium_risk_count: 854,
+      import_count: 2_843_102,
+      export_count: 1_375_830,
+      graph_nodes: 154_200,
+      graph_edges: 892_100,
+      search_documents: 14_205_000,
+      vectors: 14_205_000,
+      active_pipelines: 12,
+      completed_pipelines: 4_580,
+    },
+    alerts: [
+      { id: 'a1', type: 'risk', message: 'Аномальна активність у секторі ПММ — виявлено кругове перевезення', severity: 'critical', timestamp: new Date().toISOString(), sector: 'Паливо', company: 'ТОВ «ЕНЕРДЖИ-ГРУП»', value: 45_000_000 },
+      { id: 'a2', type: 'market', message: 'Різке зростання імпорту електроніки з нових коридорів через Туреччину', severity: 'warning', timestamp: new Date().toISOString(), sector: 'Електроніка', company: 'Global Tech LLC', value: 12_000_000 },
+      { id: 'a3', type: 'info', message: 'Плановий ребілд пошукового індексу завершено — +2.4M документів', severity: 'info', timestamp: new Date().toISOString(), sector: 'Система', company: 'PREDATOR AI', value: 0 },
+    ],
+    categories: {
+      'Електроніка': { count: 1250, value: 45000000, avgRisk: 42 },
+      'Енергетика': { count: 840, value: 120000000, avgRisk: 15 },
+    },
+    countries: {
+      'Китай': { count: 4500, value: 890000000 },
+      'Польща': { count: 12000, value: 540000000 },
+    },
+    customs_offices: {
+      'Одеська': { count: 1200, value: 89000000, highRisk: 12 },
+      'Київська': { count: 4500, value: 450000000, highRisk: 4 },
+    }
   }
 };
 
@@ -277,6 +310,22 @@ const server = http.createServer((req, res) => {
 
   if (path === '/api/v1/system/logs/stream' && req.method === 'GET') {
     return sendJSON(res, { logs: systemState.system.logs });
+  }
+
+  // 8. Dashboard
+  if (path === '/api/v1/dashboard/overview' && req.method === 'GET') {
+    // Симуляція динамічних змін
+    systemState.dashboard.summary.total_declarations += Math.floor(Math.random() * 5);
+    systemState.dashboard.summary.total_value_usd += Math.floor(Math.random() * 10000);
+    
+    return sendJSON(res, {
+      ...systemState.dashboard,
+      generated_at: new Date().toISOString()
+    });
+  }
+
+  if (path === '/api/v1/alerts' && req.method === 'GET') {
+    return sendJSON(res, { items: systemState.dashboard.alerts });
   }
 
   // 404
