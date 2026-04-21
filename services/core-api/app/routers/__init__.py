@@ -59,6 +59,7 @@ from .antigravity import router as antigravity_router
 from .agents import router as agents_router
 from .warroom import router as warroom_router
 from .admin_chaos import router as admin_chaos_router
+from .graph_intelligence import router as graph_intelligence_router
 
 __all__ = [
     "alerts_router",
@@ -94,4 +95,5 @@ __all__ = [
     "agents_router",
     "warroom_router",
     "admin_chaos_router",
+    "graph_intelligence_router",
 ]

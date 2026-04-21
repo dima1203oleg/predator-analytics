@@ -134,7 +134,26 @@ def _collect_system_stats(request: Request) -> dict[str, Any]:
         "indexing_rate": 0,
         "total_indices": 0,
         "storage_gb": round(disk.used / (1024 ** 3), 2),
+        "antigravity": _collect_antigravity_stats(),
         "timestamp": datetime.now(UTC).isoformat(),
+    }
+
+def _collect_antigravity_stats() -> dict[str, Any]:
+    """Збір метрик автономних агентів Antigravity."""
+    from app.services.antigravity_orchestrator import orchestrator
+    status = orchestrator.get_status()
+    tasks = orchestrator.get_tasks()
+    
+    return {
+        "is_running": status.is_running,
+        "active_agents": len([a for a in status.agents if a.is_busy]),
+        "total_agents": len(status.agents),
+        "tasks_pending": len([t for t in tasks if t.status == "pending"]),
+        "tasks_running": len([t for t in tasks if t.status == "running"]),
+        "tasks_completed": status.completed_tasks,
+        "total_spent_usd": round(status.total_spent_usd, 2),
+        "llm_gateway": status.llm_gateway_status,
+        "sandbox": status.sandbox_status
     }
 
 
@@ -275,6 +294,11 @@ async def get_system_stats(request: Request) -> dict[str, Any]:
 async def get_system_stats_alias(request: Request) -> dict[str, Any]:
     """Зворотно сумісний alias для старих UI-модулів."""
     return await get_system_stats(request)
+
+@stats_router.get("/antigravity")
+async def get_antigravity_stats() -> dict[str, Any]:
+    """Детальні метрики автономних агентів для HUD."""
+    return _collect_antigravity_stats()
 
 
 @router.post("/diagnostics/run")

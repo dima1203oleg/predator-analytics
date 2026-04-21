@@ -242,6 +242,7 @@ ROUTERS = [
     ("/api/v1", agents_router),
     ("/api/v1", antigravity_router),
     ("/api/v1", admin_chaos_router),
+    ("/api/v1", graph_intelligence_router),
     ("/api/v1", system_router),
     ("/api/v1", stats_router),
 ]

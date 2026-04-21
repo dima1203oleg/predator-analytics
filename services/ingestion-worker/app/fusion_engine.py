@@ -7,6 +7,7 @@ import logging
 from app.models import Організація
 from app.osint.tools import ІнструментФантом, ІнструментШерлок
 from app.registries.ua_registries import УкраїнськийРеєстр
+from app.core.autonomous_agent import AutonomousTrigger
 
 logger = logging.getLogger(__name__)
 
@@ -80,4 +81,15 @@ class ДвигунЗлиттяДаних:
         )
 
         logger.info(f"Завершено Data Fusion для {edrpou}. Ризик: {org.ризик_скор}")
+
+        # T5.1 - Автономне розслідування для високих ризиків
+        if org.ризик_скор >= 70:
+            trigger = AutonomousTrigger()
+            import asyncio
+            asyncio.create_task(trigger.trigger_investigation(
+                entity_name=org.назва,
+                edrpou=org.edrpou,
+                risk_score=org.ризик_скор
+            ))
+
         return org

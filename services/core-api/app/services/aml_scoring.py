@@ -13,7 +13,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 import logging
-from typing import Any, ClassVar  # Додано Dict для більш точної типізації
+from typing import Any, ClassVar
+from app.services.osint.global_sanctions import GlobalSanctionsService
 
 logger = logging.getLogger(__name__)
 
@@ -235,6 +236,19 @@ class AMLScoringService:
         # 10. Фінансові показники
         financial_factor = await self._check_financial_indicators(data)
         factors.append(financial_factor)
+
+        # T5.2 - Міжнародні санкції (Global Sanctions)
+        global_sanctions = GlobalSanctionsService()
+        gs_result = await global_sanctions.check_entity(entity_name)
+        if gs_result["is_sanctioned"]:
+            factors.append(RiskFactor(
+                category=RiskCategory.SANCTIONS,
+                name="International Sanctions",
+                description=f"Знайдено в списках: {[m['list'] for m in gs_result['matches']]}",
+                weight=100,
+                detected=True,
+                source="GlobalSanctionsService"
+            ))
 
         # Розрахунок загального скору та SHAP пояснень
         total_score = self._calculate_total_score(factors)

@@ -522,6 +522,62 @@ class Neo4jService:
             },
         )
 
+    # ======================== GRAPH INTELLIGENCE (Phase 5) ========================
+
+    async def find_ultimate_beneficiary(
+        self,
+        org_id: str,
+        max_depth: int = 5,
+        threshold: float = 25.0
+    ) -> GraphResult:
+        """Пошук кінцевого бенефіціарного власника (UBO) через ланцюжки володіння.
+        
+        Згідно TZ v5.0 §15.
+        """
+        # Тільки Organization можуть мати UBO
+        query = """
+        MATCH (target:Organization {node_id: $org_id})
+        MATCH path = (ubo:Person)-[:FOUNDED|CONTROLS*1..$max_depth]->(target)
+        WHERE all(rel in relationships(path) WHERE 
+            coalesce(rel.share, 0) >= $threshold OR 
+            coalesce(rel.ownership_percentage, 0) >= $threshold
+        )
+        RETURN 
+            ubo, 
+            nodes(path) as chain, 
+            relationships(path) as rels,
+            length(path) as depth
+        ORDER BY depth DESC
+        LIMIT 5
+        """
+        
+        beneficiaries = []
+        async with await self._get_session() as session:
+            try:
+                result = await session.run(query, org_id=org_id, max_depth=max_depth, threshold=threshold)
+                async for record in result:
+                    beneficiaries.append({
+                        "ubo": dict(record["ubo"]),
+                        "depth": record["depth"],
+                        "chain": [dict(node) for node in record["chain"]],
+                        "percentages": [
+                            rel.get("share") or rel.get("ownership_percentage") 
+                            for rel in record["rels"]
+                        ]
+                    })
+                
+                return GraphResult(
+                    success=True,
+                    data={
+                        "target_org": org_id,
+                        "beneficiaries": beneficiaries,
+                        "count": len(beneficiaries)
+                    }
+                )
+            except Exception as e:
+                logger.error(f"UBO Discovery failed: {e}")
+                return GraphResult(success=False, errors=[str(e)])
+
     # ======================== IMPORT DATA ========================
 
     async def import_company(
