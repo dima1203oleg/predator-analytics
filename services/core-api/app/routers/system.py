@@ -447,3 +447,71 @@ async def get_nexus_scenarios() -> list[dict[str, Any]]:
             "eta": "24-48 годин"
         }
     ]
+
+# ======================== DLQ HANDLER API (T1.2) ========================
+
+dlq_router = APIRouter(prefix="/dlq", tags=["system", "dlq"])
+
+@dlq_router.get("/{tenant_id}")
+async def view_dlq_messages(tenant_id: str, limit: int = 50) -> list[dict[str, Any]]:
+    """Перелік повідомлень з Dead Letter Queue для конкретного tenant (TZ v5.0 §5)."""
+    from aiokafka import AIOKafkaConsumer
+    import json
+    
+    # Визначаємо DLQ топік для tenant
+    topic = f"tenant.{tenant_id}.dlq"
+    
+    messages = []
+    consumer = AIOKafkaConsumer(
+        topic,
+        bootstrap_servers=settings.KAFKA_BROKERS,
+        group_id=f"dlq-viewer-{tenant_id}",
+        enable_auto_commit=False,
+        auto_offset_reset="earliest",
+        consumer_timeout_ms=1000  # Читаємо протягом 1с і виходимо
+    )
+    
+    try:
+        await consumer.start()
+        # Отримуємо частину повідомлень
+        async for msg in consumer:
+            try:
+                payload = json.loads(msg.value.decode("utf-8")) if msg.value else {}
+                messages.append({
+                    "topic": msg.topic,
+                    "partition": msg.partition,
+                    "offset": msg.offset,
+                    "timestamp": msg.timestamp,
+                    "payload": payload
+                })
+                if len(messages) >= limit:
+                    break
+            except Exception:
+                continue
+    except Exception as e:
+        logger.error(f"DLQ Viewer error: {e}")
+    finally:
+        await consumer.stop()
+
+    return messages
+
+@dlq_router.post("/{tenant_id}/retry")
+async def retry_dlq_messages(tenant_id: str, target_topic: str) -> dict[str, Any]:
+    """Повторна обробка (retry) всіх повідомлень з DLQ до target_topic."""
+    # Імпортуємо існуючу логіку з kafka_dlq
+    from app.kafka_dlq import replay_dlq
+    import asyncio
+    
+    dlq_topic = f"tenant.{tenant_id}.dlq"
+    
+    # Запускаємо процес у фоні щоб не блокувати API
+    asyncio.create_task(replay_dlq(dlq_topic, target_topic))
+    
+    return {
+        "status": "processing",
+        "message": f"Почато retry повідомлень з {dlq_topic} до {target_topic}",
+        "dlq_topic": dlq_topic,
+        "target_topic": target_topic
+    }
+
+router.include_router(dlq_router)

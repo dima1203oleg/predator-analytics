@@ -10,8 +10,11 @@ from datetime import UTC, datetime
 import json
 import signal
 from typing import Any
+import uuid
+import hashlib
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
+from pydantic import ValidationError
 
 from app.config import get_settings
 from app.fusion_engine import ДвигунЗлиттяДаних
@@ -186,19 +189,81 @@ async def process_message(
     producer: AIOKafkaProducer,
     postgres_sink: PostgresSink,
 ) -> None:
-    """Маршрутизація повідомлень до відповідних обробників."""
-    # Визначаємо тип повідомлення
-    if "s3_bucket_path" in msg_value:
-        # Це RawFileUpload — завантажений файл
-        await process_file_upload(msg_value, producer, postgres_sink)
-    elif "edrpou" in msg_value:
-        # Це запит на OSINT збагачення
-        await process_osint_enrichment(msg_value, fusion_engine, producer)
-    else:
-        logger.warning(
-            "ingestion_worker.unknown_message_type",
-            keys=list(msg_value.keys()),
+    """Маршрутизація повідомлень до відповідних обробників з ідемпотентністю."""
+    # 1. Генерація або отримання event_id (TZ §5.3)
+    event_id_str = msg_value.get("event_id")
+    if not event_id_str:
+        if "job_id" in msg_value:
+            event_id_str = msg_value["job_id"]
+        else:
+            payload_hash = hashlib.md5(json.dumps(msg_value, sort_keys=True).encode()).hexdigest()  # noqa: S324
+            event_id_str = str(uuid.UUID(payload_hash))
+
+    # Перевірка через таблицю processed_events
+    if await postgres_sink.is_event_processed(event_id_str):
+        logger.info("ingestion_worker.event_already_processed", event_id=event_id_str)
+        return
+
+    tenant_id = msg_value.get("tenant_id", settings.ROOT_TENANT_ID)
+    source = "file_ingestion" if "s3_bucket_path" in msg_value else "osint_enrichment"
+
+    try:
+        # Визначаємо тип повідомлення
+        if "s3_bucket_path" in msg_value:
+            # Це RawFileUpload — завантажений файл
+            await process_file_upload(msg_value, producer, postgres_sink)
+        elif "edrpou" in msg_value:
+            # Це запит на OSINT збагачення
+            await process_osint_enrichment(msg_value, fusion_engine, producer)
+        else:
+            logger.warning(
+                "ingestion_worker.unknown_message_type",
+                keys=list(msg_value.keys()),
+            )
+            # Не позначаємо незнайомі формати як успішні, або можна розмістити в quarantine (T1.4)
+            return
+
+        # Позначаємо як успішно оброблено
+        await postgres_sink.mark_event_processed(event_id_str, tenant_id, source, "SUCCESS")
+
+    except ValidationError as e:
+        # T1.4 - Відправка в quarantine topic при Schema Drift
+        await postgres_sink.mark_event_processed(event_id_str, tenant_id, source, "QUARANTINE")
+        quarantine_topic = getattr(settings, 'KAFKA_TOPIC_QUARANTINE', f"tenant.{tenant_id}.schema.quarantine")
+        
+        quarantine_payload = {
+            "event_id": event_id_str,
+            "original_payload": msg_value,
+            "error_type": "SchemaDrift",
+            "validation_errors": str(e),
+            "timestamp": int(datetime.now(UTC).timestamp() * 1000)
+        }
+        
+        await producer.send_and_wait(
+            quarantine_topic,
+            json.dumps(quarantine_payload).encode("utf-8"),
+            key=event_id_str.encode("utf-8")
         )
+        logger.error(f"Schema Drift for event {event_id_str}. Sent to quarantine: {quarantine_topic}")
+
+    except Exception as e:
+        # Відправка в DLQ при системних помилках
+        await postgres_sink.mark_event_processed(event_id_str, tenant_id, source, "DLQ")
+        dlq_topic = getattr(settings, 'KAFKA_TOPIC_DLQ', f"tenant.{tenant_id}.system.dlq")
+        
+        dlq_payload = {
+            "event_id": event_id_str,
+            "original_payload": msg_value,
+            "error_message": str(e),
+            "timestamp": int(datetime.now(UTC).timestamp() * 1000)
+        }
+        
+        await producer.send_and_wait(
+            dlq_topic,
+            json.dumps(dlq_payload).encode("utf-8"),
+            key=event_id_str.encode("utf-8")
+        )
+        logger.error(f"Error processing event {event_id_str}: {e}. Sent to DLQ: {dlq_topic}")
 
 
 async def consume() -> None:

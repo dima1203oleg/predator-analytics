@@ -190,6 +190,42 @@ class PostgresSink:
         elif table_name == "declarations":
             await self.save_declarations(batch)
 
+    async def is_event_processed(self, event_id: str) -> bool:
+        """Перевіряє, чи було подію вже оброблено (ідемпотентність)."""
+        async with self.async_session() as session:
+            try:
+                result = await session.execute(
+                    text("SELECT 1 FROM processed_events WHERE event_id = :event_id::uuid"),
+                    {"event_id": event_id}
+                )
+                return result.scalar() is not None
+            except Exception as e:
+                logger.error(f"Error checking if event is processed: {e}")
+                return False
+
+    async def mark_event_processed(
+        self, event_id: str, tenant_id: str, source: str, status: str = "SUCCESS"
+    ) -> None:
+        """Позначає подію як оброблену."""
+        async with self.async_session() as session:
+            try:
+                await session.execute(
+                    text("""
+                        INSERT INTO processed_events (event_id, tenant_id, source, status)
+                        VALUES (:event_id::uuid, :tenant_id::uuid, :source, :status)
+                        ON CONFLICT (event_id) DO NOTHING
+                    """),
+                    {
+                        "event_id": event_id,
+                        "tenant_id": tenant_id,
+                        "source": source,
+                        "status": status,
+                    }
+                )
+                await session.commit()
+            except Exception as e:
+                logger.error(f"Failed to mark event as processed: {e}")
+
     async def close(self) -> None:
         """Закриття з'єднання."""
         await self.engine.dispose()
