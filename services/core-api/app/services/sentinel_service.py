@@ -7,6 +7,7 @@ from typing import Any, Dict
 from app.core.graph import graph_db
 from app.services.redis_service import redis_client
 from app.services.kafka_service import kafka_service
+from app.services.audit_service import audit_logger
 from app.config import get_settings
 import httpx
 
@@ -63,8 +64,16 @@ class SentinelService:
         # Визначення загального статусу
         critical_failed = not (checks["redis"] and checks["neo4j"] and checks["kafka"])
         if critical_failed:
+            if checks["status"] != "degraded":
+                logger.critical("🛡️ SENTINEL: Infrastructure is DEGRADED!")
+                # Запис у WORM-аудит (HR-16)
+                asyncio.create_task(audit_logger.log(
+                    action="SENTINEL_DEGRADATION",
+                    resource_type="INFRASTRUCTURE",
+                    resource_id="GLOBAL",
+                    details={"missing": [k for k, v in checks.items() if v is False]}
+                ))
             checks["status"] = "degraded"
-            logger.critical("🛡️ SENTINEL: Infrastructure is DEGRADED!")
 
         return checks
 

@@ -9,6 +9,7 @@ import { dashboardApi, type DashboardOverview, type DashboardAlert } from '../se
 const DASHBOARD_KEYS = {
   overview: ['dashboard', 'overview'] as const,
   alerts:   ['dashboard', 'alerts'] as const,
+  sentinel: ['system', 'sentinel'] as const,
 };
 
 /**
@@ -34,5 +35,21 @@ export function useDashboardAlerts(limit: number = 10) {
     queryFn: () => dashboardApi.getAlerts(limit),
     refetchInterval: 10000,
     staleTime: 5000,
+  });
+}
+
+/**
+ * Хук для моніторингу Sentinel (глобальний статус системи).
+ */
+export function useSystemSentinel() {
+  return useQuery({
+    queryKey: DASHBOARD_KEYS.sentinel,
+    queryFn: async () => {
+      const response = await fetch('/api/v1/health/ready');
+      if (!response.ok) throw new Error('Sentinel node connection failure');
+      return response.json();
+    },
+    refetchInterval: 15000,
+    staleTime: 10000,
   });
 }

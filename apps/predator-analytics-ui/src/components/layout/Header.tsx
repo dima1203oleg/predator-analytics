@@ -26,6 +26,8 @@ import { useAtom } from 'jotai';
 import { shellCommandPaletteOpenAtom, shellContextRailOpenAtom } from '../../store/atoms';
 import { isShellV2Enabled } from '../../services/shell/userWorkspace';
 import OperationalModeSwitch from '../premium/OperationalModeSwitch';
+import { AppLevelSelector } from '../AppLevelSelector';
+import { SystemPulseIndicator } from '../SystemPulseIndicator';
 
 // Кольорові акценти для кожного типу розділу
 const sectionGlowMap: Record<string, { gradient: string; glow: string; border: string }> = {
@@ -226,6 +228,7 @@ const Header: React.FC = () => {
 
           {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
           <div className="flex items-center gap-3 shrink-0">
+            <SystemPulseIndicator />
             {/* Командний пошук */}
             <div
               className="relative hidden sm:block"

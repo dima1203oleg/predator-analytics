@@ -7,6 +7,7 @@ from datetime import datetime, timedelta, UTC
 from typing import Any
 import numpy as np
 from app.services.chaos_service import ChaosService
+from app.services.vram_watchdog import vram_sentinel
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,14 @@ class ForecastService:
         model: str = "prophet"
     ) -> dict[str, Any]:
         """Генерує прогноз попиту для товарного коду."""
+        
+        # Перевірка VRAM для важких моделей (LSTM)
+        if model == "lstm":
+            vram_stats = await vram_sentinel.get_stats()
+            if vram_stats.critical:
+                logger.warning(f"🚨 VRAM Critical ({vram_stats.used_gb}GB). Downgrading LSTM to Prophet.")
+                model = "prophet"
+
         logger.info(f"🔮 Generating {months_ahead}-month forecast for '{product_code}' using {model}")
 
         # Симуляція отримання історичних даних (в реальності - запит до DB/Declarations)

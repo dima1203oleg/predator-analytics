@@ -7,6 +7,7 @@ Middleware для оптимізації продуктивності:
 - Performance metrics
 """
 import time
+import gzip
 
 from fastapi import HTTPException, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
@@ -116,11 +117,26 @@ class CompressionMiddleware(BaseHTTPMiddleware):
 
         # Check if response should be compressed
         body = getattr(response, "body", b"") or b""
+        
+        # Стискаємо лише якщо клієнт підтримує gzip, тіло досить велике і це не бінарний файл
+        content_type = response.headers.get("Content-Type", "")
+        is_compressible = any(t in content_type for t in ["json", "text", "javascript", "xml"])
+
         if (
             "gzip" in request.headers.get("accept-encoding", "")
+            and is_compressible
             and isinstance(body, (bytes, bytearray))
             and len(body) > self.minimum_size
         ):
+            compressed_body = gzip.compress(body)
+            
+            # Створюємо нову відповідь зі стиснутим тілом
+            response = Response(
+                content=compressed_body,
+                status_code=response.status_code,
+                headers=dict(response.headers)
+            )
             response.headers["Content-Encoding"] = "gzip"
+            response.headers["Content-Length"] = str(len(compressed_body))
 
         return response
