@@ -38,7 +38,7 @@ const DEFAULT_TAB: TabId = 'infra';
 
 const TabLoader: React.FC = () => (
   <div className="flex items-center justify-center h-48">
-    <div className="flex items-center gap-2 text-emerald-400/50">
+    <div className="flex items-center gap-2 text-rose-500/50">
       <Loader className="w-4 h-4 animate-spin" />
       <span className="text-[10px] font-mono tracking-wider">Завантаження модуля...</span>
     </div>
@@ -53,7 +53,7 @@ interface TabNavProps {
 }
 
 const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => (
-  <div className="flex items-center gap-1 px-4 border-b border-white/8 bg-[#101613]">
+  <div className="flex items-center gap-1 px-4 border-b border-white/5 bg-[#020202]">
     {TABS.map((tab) => {
       const active = activeTab === tab.id;
       return (
@@ -61,9 +61,9 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => (
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            'relative flex items-center gap-1.5 px-3 py-2.5 text-[10px] font-mono transition-all duration-100',
+            'relative flex items-center gap-1.5 px-3 py-2.5 text-[10px] font-mono transition-all duration-100 uppercase tracking-widest',
             active
-              ? 'text-emerald-300 border-b-2 border-emerald-400'
+              ? 'text-rose-400 border-b-2 border-rose-500'
               : 'text-white/30 hover:text-white/60 border-b-2 border-transparent',
           )}
         >
@@ -71,7 +71,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => (
           {tab.badge && (
             <span className={cn(
               'text-[7px] font-mono font-bold px-1 py-0.5 rounded-sm tracking-wider',
-              active ? 'text-emerald-400/70 bg-emerald-500/15' : 'text-white/20 bg-white/5',
+              active ? 'text-rose-400/70 bg-rose-500/15' : 'text-white/20 bg-white/5',
             )}>
               {tab.badge}
             </span>
@@ -113,7 +113,7 @@ export const AdminHub: React.FC = () => {
   const ActiveComponent = TABS.find((t) => t.id === activeTab)?.component;
 
   return (
-    <div className="flex flex-col h-full" style={{ backgroundColor: '#111814' }}>
+    <div className="flex flex-col h-full" style={{ backgroundColor: '#050202' }}>
       {/* Навігація вкладок */}
       <TabNav activeTab={activeTab} onTabChange={handleTabChange} />
 

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/UserContext';
-import { LiveAgentTerminal } from '@/components/shared/LiveAgentTerminal';
+import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 
 // ─── Навігація системного командного центру ────────────────────────────────────
@@ -57,17 +57,17 @@ const AdminSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex flex-col w-56 min-w-56 h-screen bg-[#101613] border-r border-white/8 overflow-hidden">
+    <aside className="flex flex-col w-56 min-w-56 h-screen bg-[#020202] border-r border-white/8 overflow-hidden">
       {/* Логотип */}
       <div className="flex items-center gap-2 px-3 py-3 border-b border-white/8">
-        <div className="flex items-center justify-center w-6 h-6 rounded bg-emerald-500/15 border border-emerald-400/25">
-          <Shield className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex items-center justify-center w-6 h-6 rounded bg-rose-500/15 border border-rose-500/25">
+          <Shield className="w-3.5 h-3.5 text-rose-500" />
         </div>
         <div>
           <div className="text-[10px] font-bold text-white/80 tracking-[0.2em] uppercase leading-none">
             PREDATOR
           </div>
-          <div className="text-[8px] font-mono text-emerald-400/70 tracking-[0.15em] leading-none mt-0.5">
+          <div className="text-[8px] font-mono text-rose-500/70 tracking-[0.15em] leading-none mt-0.5">
             SYSTEM COMMAND CENTER
           </div>
         </div>
@@ -97,31 +97,31 @@ const AdminSidebar: React.FC = () => {
                     className={cn(
                       'flex items-center gap-2 px-3 py-1.5 mx-1 rounded-sm transition-all duration-100 group',
                       active
-                        ? 'bg-emerald-500/12 border border-emerald-400/20'
+                        ? 'bg-rose-500/12 border border-rose-500/20'
                         : 'hover:bg-white/4 border border-transparent',
                     )}
                   >
                     <Icon
                       className={cn(
                         'w-3.5 h-3.5 shrink-0 transition-colors',
-                        active ? 'text-emerald-400' : 'text-white/30 group-hover:text-white/55',
+                        active ? 'text-rose-500' : 'text-white/30 group-hover:text-white/55',
                       )}
                     />
                     <span
                       className={cn(
                         'text-[11px] truncate transition-colors',
-                        active ? 'text-emerald-300 font-medium' : 'text-white/45 group-hover:text-white/70',
+                        active ? 'text-rose-400 font-medium' : 'text-white/45 group-hover:text-white/70',
                       )}
                     >
                       {item.label}
                     </span>
                     {item.badge && (
-                      <span className="ml-auto text-[8px] font-mono font-semibold text-emerald-400/70 tracking-wider shrink-0">
+                      <span className="ml-auto text-[8px] font-mono font-semibold text-rose-500/70 tracking-wider shrink-0">
                         {item.badge}
                       </span>
                     )}
                     {active && (
-                      <ChevronRight className="ml-auto w-2.5 h-2.5 text-emerald-400/50 shrink-0" />
+                      <ChevronRight className="ml-auto w-2.5 h-2.5 text-rose-500/50 shrink-0" />
                     )}
                   </Link>
                 );
@@ -134,14 +134,14 @@ const AdminSidebar: React.FC = () => {
       {/* Профіль користувача */}
       <div className="border-t border-white/8 p-2">
         <div className="flex items-center gap-2 px-2 py-1.5 rounded-sm">
-          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 shrink-0">
-            <Cpu className="w-2.5 h-2.5 text-emerald-400" />
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-500/20 shrink-0">
+            <Cpu className="w-2.5 h-2.5 text-rose-500" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[10px] font-semibold text-white/65 truncate">
               {user?.name ?? 'Системний адмін'}
             </div>
-            <div className="text-[8px] font-mono text-emerald-400/50 uppercase tracking-wider">
+            <div className="text-[8px] font-mono text-rose-500/50 uppercase tracking-wider">
               ADMIN · {user?.tenant_name ?? 'PREDATOR'}
             </div>
           </div>
@@ -169,12 +169,12 @@ const AdminStatusBar: React.FC = () => {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-4 h-8 bg-[#101613] border-b border-white/8 shrink-0">
+    <header className="flex items-center justify-between px-4 h-8 bg-[#020202] border-b border-white/8 shrink-0">
       <div className="flex items-center gap-4">
         {/* Режим системи */}
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] font-mono text-emerald-400/80 tracking-widest uppercase">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+          <span className="text-[10px] font-mono text-rose-500/80 tracking-widest uppercase">
             SOVEREIGN · LOCAL K3S
           </span>
         </div>
@@ -188,7 +188,7 @@ const AdminStatusBar: React.FC = () => {
             { label: 'REDIS', ok: true },
           ].map((svc) => (
             <div key={svc.label} className="flex items-center gap-1">
-              <span className={cn('w-1 h-1 rounded-full', svc.ok ? 'bg-emerald-400' : 'bg-red-400')} />
+              <span className={cn('w-1 h-1 rounded-full', svc.ok ? 'bg-rose-500' : 'bg-red-400')} />
               <span className="text-[9px] font-mono text-white/30">{svc.label}</span>
             </div>
           ))}
@@ -226,7 +226,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <div
       className="flex h-screen w-screen overflow-hidden"
-      style={{ backgroundColor: '#101613' }}
+      style={{ backgroundColor: '#020202' }}
     >
       {/* Бічна панель */}
       <AdminSidebar />
@@ -237,7 +237,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <AdminStatusBar />
 
         {/* Контентна зона */}
-        <main className="flex-1 overflow-auto" style={{ backgroundColor: '#111814' }}>
+        <main className="flex-1 overflow-auto" style={{ backgroundColor: '#050202' }}>
           <motion.div
             key="admin-content"
             initial={{ opacity: 0 }}

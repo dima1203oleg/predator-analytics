@@ -29,7 +29,7 @@ export interface VirtualTableProps<T extends object> {
 // ─── Колір рядка за статусом ──────────────────────────────────────────────────
 
 const STATUS_CLASSES: Record<RowStatus, string> = {
-  ok:      'hover:bg-emerald-500/5',
+  ok:      'hover:bg-rose-500/5',
   warning: 'hover:bg-amber-500/5',
   danger:  'hover:bg-red-500/8 bg-red-500/3',
   info:    'hover:bg-sky-500/5',
@@ -37,7 +37,7 @@ const STATUS_CLASSES: Record<RowStatus, string> = {
 };
 
 const STATUS_DOT: Record<RowStatus, string> = {
-  ok:      'bg-emerald-400',
+  ok:      'bg-rose-500',
   warning: 'bg-amber-400',
   danger:  'bg-red-400',
   info:    'bg-sky-400',
@@ -90,7 +90,7 @@ export function VirtualTable<T extends object>({
     <div className={cn('flex flex-col border border-white/8 rounded-sm overflow-hidden', className)}>
       {/* Заголовок */}
       <div
-        className="flex items-center gap-0 bg-[#1a2620] border-b border-white/8 sticky top-0 z-10"
+        className="flex items-center gap-0 bg-[#0a0a0a] border-b border-white/8 sticky top-0 z-10"
         style={{ height: 24 }}
       >
         {getRowStatus && <div style={{ width: 20, minWidth: 20 }} />}
@@ -177,7 +177,7 @@ export function VirtualTable<T extends object>({
       </div>
 
       {/* Футер */}
-      <div className="flex items-center px-2 h-5 bg-[#1a2620] border-t border-white/8">
+      <div className="flex items-center px-2 h-5 bg-[#0a0a0a] border-t border-white/8">
         <span className="text-[9px] font-mono text-white/20">
           {rows.length.toLocaleString()} {rows.length === 1 ? 'запис' : 'записів'}
         </span>
