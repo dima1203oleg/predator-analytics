@@ -69,6 +69,13 @@ class Company(Base):
     __tablename__ = "companies"
     id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+    
+    # SCD Type 2 поля
+    business_key = Column(UUID(as_uuid=True), nullable=False, index=True)
+    valid_from = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    valid_to = Column(DateTime(timezone=True))
+    is_current = Column(Boolean, server_default=text("true"), nullable=False, index=True)
+
     ueid = Column(String(64), nullable=False, index=True)
     edrpou = Column(String(10), index=True)
     name = Column(String(500), nullable=False)
@@ -111,6 +118,13 @@ class Person(Base):
     __tablename__ = "persons"
     id = Column(UUID(as_uuid=True), primary_key=True, default=_uuid.uuid4)
     tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, index=True)
+
+    # SCD Type 2 поля
+    business_key = Column(UUID(as_uuid=True), nullable=False, index=True)
+    valid_from = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
+    valid_to = Column(DateTime(timezone=True))
+    is_current = Column(Boolean, server_default=text("true"), nullable=False, index=True)
+
     ueid = Column(String(64), nullable=False, index=True)
     inn = Column(String(10), index=True)
     full_name = Column(String(500), nullable=False)
@@ -122,6 +136,7 @@ class Person(Base):
     sanctions_details = Column(JSONB)
     source = Column(String(100))
     content_hash = Column(String(64))
+    confidence_score = Column(Float, nullable=True)
     raw_data = Column(JSONB)
     created_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=text("now()"), nullable=False)
