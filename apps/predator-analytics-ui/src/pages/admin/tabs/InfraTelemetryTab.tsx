@@ -47,9 +47,9 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
 }) => {
   const pct = Math.min((value / max) * 100, 100);
   const color =
-    pct >= dangerAt ? 'bg-red-400' :
-    pct >= warnAt   ? 'bg-amber-400' :
-                      'bg-emerald-400';
+    pct >= dangerAt ? 'bg-red-500' :
+    pct >= warnAt   ? 'bg-amber-500' :
+                      'bg-rose-500';
 
   return (
     <div className="flex items-center gap-2">
@@ -65,9 +65,9 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
 
 const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => {
   const map = {
-    online:   { label: 'ONLINE',   cls: 'text-emerald-400 bg-emerald-500/12 border-emerald-400/20' },
-    offline:  { label: 'OFFLINE',  cls: 'text-red-400 bg-red-500/12 border-red-400/20' },
-    degraded: { label: 'DEGRADED', cls: 'text-amber-400 bg-amber-500/12 border-amber-400/20' },
+    online:   { label: 'В МЕРЕЖІ', cls: 'text-rose-500 bg-rose-500/12 border-rose-500/20' },
+    offline:  { label: 'ПОЗА МЕРЕЖЕЮ', cls: 'text-red-500 bg-red-500/12 border-red-500/20' },
+    degraded: { label: 'ДЕГРАДАЦІЯ', cls: 'text-amber-500 bg-amber-500/12 border-amber-500/20' },
   };
   const { label, cls } = map[status];
   return (
@@ -82,7 +82,7 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
 const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
   <div
     className={cn(
-      'p-3 rounded-sm border bg-[#1a2620]',
+      'p-3 rounded-sm border bg-[#0a0a0a] group hover:border-rose-500/30 transition-colors',
       node.status === 'online'   ? 'border-white/8' :
       node.status === 'degraded' ? 'border-amber-400/20' :
                                    'border-red-400/15 opacity-60',
@@ -148,15 +148,16 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
     key: 'status', label: 'Статус', width: '80px',
     render: (v) => {
-      const color = v === 'ok' ? 'text-emerald-400' : v === 'warn' ? 'text-amber-400' : 'text-red-400';
-      return <span className={cn('text-[10px] font-mono font-semibold', color)}>{String(v).toUpperCase()}</span>;
+      const color = v === 'ok' ? 'text-rose-500' : v === 'warn' ? 'text-amber-500' : 'text-red-500';
+      const label = v === 'ok' ? 'В ПОРЯДКУ' : v === 'warn' ? 'УВАГА' : 'КРИТИЧНО';
+      return <span className={cn('text-[10px] font-mono font-semibold', color)}>{label}</span>;
     },
   },
   {
     key: 'latencyMs', label: 'Latency', width: '80px', mono: true, align: 'right',
     render: (v) => {
       const ms = Number(v);
-      const color = ms > 500 ? 'text-red-400' : ms > 200 ? 'text-amber-400' : 'text-emerald-400/70';
+      const color = ms > 500 ? 'text-red-500' : ms > 200 ? 'text-amber-500' : 'text-rose-500/70';
       return <span className={color}>{ms} ms</span>;
     },
   },
@@ -177,7 +178,7 @@ export const InfraTelemetryTab: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
         <div className="text-[10px] font-mono uppercase tracking-widest">Зчитування телеметрії...</div>
       </div>
     );
@@ -202,17 +203,17 @@ export const InfraTelemetryTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Activity className="w-4 h-4 text-emerald-400" />
+        <Activity className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           Телеметрія Кластера
         </h2>
         <div className="flex items-center gap-1 ml-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[9px] font-mono text-emerald-400/60">LIVE · оновлення 3с</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+          <span className="text-[9px] font-mono text-rose-500/60">ЖИВИЙ ПОТІК · оновлення 3с</span>
         </div>
         <div className="ml-auto flex gap-2">
           <div className="text-[9px] font-mono text-white/25">
-            Вузлів: <span className="text-emerald-400/70">
+            Вузлів: <span className="text-rose-500/70">
               {nodes.filter(n => n.status === 'online').length}/{nodes.length}
             </span>
           </div>

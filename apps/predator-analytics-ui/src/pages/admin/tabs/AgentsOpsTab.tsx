@@ -32,12 +32,18 @@ const agentCols: VirtualColumn<AgentRow>[] = [
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = {
-        alive:    'text-emerald-400',
-        dead:     'text-red-400',
+        alive:    'text-rose-500',
+        dead:     'text-red-500',
         idle:     'text-white/30',
-        starting: 'text-sky-400',
+        starting: 'text-rose-400/60',
       };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const labelMap: Record<string, string> = {
+        alive:    'АКТИВНИЙ',
+        dead:     'НЕАКТИВНИЙ',
+        idle:     'ОЧІКУВАННЯ',
+        starting: 'ЗАПУСК',
+      };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
   {
@@ -62,10 +68,10 @@ const agentCols: VirtualColumn<AgentRow>[] = [
     },
   },
   {
-    key: 'successRate', label: 'Success%',       width: '80px',  mono: true, align: 'right',
+    key: 'successRate', label: 'Успішність',      width: '80px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={n === 0 ? 'text-white/20' : n < 95 ? 'text-amber-400' : 'text-emerald-400/70'}>{n > 0 ? `${n}%` : '—'}</span>;
+      return <span className={n === 0 ? 'text-white/20' : n < 95 ? 'text-amber-400' : 'text-rose-400/70'}>{n > 0 ? `${n}%` : '—'}</span>;
     },
   },
   { key: 'tasksTotal',  label: 'Завдань',        width: '80px',  mono: true, align: 'right', render: (v) => Number(v).toLocaleString() },
@@ -83,7 +89,7 @@ const getAgentStatus = (row: AgentRow): RowStatus =>
 const MetricCard: React.FC<{ label: string; value: string | number; sub?: string; color?: string }> = ({
   label, value, sub, color = 'text-white/65',
 }) => (
-  <div className="px-3 py-2.5 bg-[#1a2620] rounded-sm border border-white/6">
+  <div className="px-3 py-2.5 bg-[#0a0a0a] rounded-sm border border-white/6 group hover:border-rose-500/30 transition-colors">
     <div className="text-[8px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-1">{label}</div>
     <div className={cn('text-[18px] font-mono font-bold leading-none', color)}>{value}</div>
     {sub && <div className="text-[9px] font-mono text-white/25 mt-0.5">{sub}</div>}
@@ -102,7 +108,7 @@ export const AgentsOpsTab: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
         <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація агентів...</div>
       </div>
     );
@@ -118,7 +124,7 @@ export const AgentsOpsTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Bot className="w-4 h-4 text-emerald-400" />
+        <Bot className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           Оркестрація Агентів
         </h2>
@@ -129,10 +135,10 @@ export const AgentsOpsTab: React.FC = () => {
 
       {/* Загальні метрики */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        <MetricCard label="Живих"    value={stats.alive}   color="text-emerald-400" sub="ALIVE" />
-        <MetricCard label="Мертвих"  value={stats.dead}    color="text-red-400"     sub="DEAD"  />
-        <MetricCard label="Простій"  value={stats.idle}    color="text-white/35"    sub="IDLE"  />
-        <MetricCard label="Сер. CPU" value={`${stats.avgCpu}%`} sub="avg across alive" />
+        <MetricCard label="Живих"    value={stats.alive}   color="text-rose-500" sub="АКТИВНІ" />
+        <MetricCard label="Мертвих"  value={stats.dead}    color="text-red-500"     sub="ПОЗА МЕРЕЖЕЮ"  />
+        <MetricCard label="Простій"  value={stats.idle}    color="text-white/35"    sub="ОЧІКУВАННЯ"  />
+        <MetricCard label="Сер. CPU" value={`${stats.avgCpu}%`} sub="середнє по активних" />
         <MetricCard label="Черга"    value={agents.reduce((s, a) => s + (a.queueDepth || 0), 0).toLocaleString()} sub="всього завдань" />
       </div>
 

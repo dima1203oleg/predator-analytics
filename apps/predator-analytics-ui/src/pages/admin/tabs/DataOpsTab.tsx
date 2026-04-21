@@ -45,7 +45,7 @@ const kafkaCols: VirtualColumn<KafkaTopic>[] = [
     key: 'lag',        label: 'Lag',   width: '80px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={n > 5000 ? 'text-red-400' : n > 500 ? 'text-amber-400' : 'text-emerald-400/70'}>{n.toLocaleString()}</span>;
+      return <span className={n > 5000 ? 'text-red-500' : n > 500 ? 'text-amber-500' : 'text-rose-400/70'}>{n.toLocaleString()}</span>;
     },
   },
   { key: 'throughput', label: 'Трафік',  width: '90px', mono: true },
@@ -54,8 +54,9 @@ const kafkaCols: VirtualColumn<KafkaTopic>[] = [
     key: 'status',     label: 'Статус',  width: '70px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { ok: 'text-emerald-400', warn: 'text-amber-400', error: 'text-red-400' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { ok: 'text-rose-500', warn: 'text-amber-500', error: 'text-red-500' };
+      const labelMap: Record<string, string> = { ok: 'В ПОРЯДКУ', warn: 'УВАГА', error: 'ПОМИЛКА' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
 ];
@@ -73,8 +74,9 @@ const datasetCols: VirtualColumn<DatasetRecord>[] = [
     key: 'status',    label: 'Статус',   width: '80px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { ready: 'text-emerald-400', training: 'text-sky-400', outdated: 'text-amber-400', draft: 'text-white/30' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { ready: 'text-rose-500', training: 'text-rose-400', outdated: 'text-amber-400', draft: 'text-white/30' };
+      const labelMap: Record<string, string> = { ready: 'ГОТОВО', training: 'НАВЧАННЯ', outdated: 'ЗАСТАРІЛО', draft: 'ЧЕРНЕТКА' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
   { key: 'updatedAt', label: 'Оновлено', width: '100px', mono: true },
@@ -92,8 +94,9 @@ const moduleCols: VirtualColumn<FactoryModule>[] = [
     key: 'status',    label: 'Статус',    width: '80px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { deployed: 'text-emerald-400', pending: 'text-sky-400', failed: 'text-red-400', draft: 'text-white/30' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { deployed: 'text-rose-500', pending: 'text-rose-400/70', failed: 'text-red-500', draft: 'text-white/30' };
+      const labelMap: Record<string, string> = { deployed: 'РОЗГОРНУТО', pending: 'В ОЧІКУВАННІ', failed: 'ПОМИЛКА', draft: 'ЧЕРНЕТКА' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
   { key: 'createdBy', label: 'Автор',     width: '90px',  mono: true },
@@ -138,7 +141,7 @@ export const DataOpsTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Database className="w-4 h-4 text-emerald-400" />
+        <Database className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           DataOps
         </h2>
@@ -151,11 +154,11 @@ export const DataOpsTab: React.FC = () => {
       <div className="grid grid-cols-4 gap-2">
         {[
           { label: 'Topics',   value: kafkaTopics.length,              color: 'text-white/65' },
-          { label: 'Lag Total',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-amber-400' },
-          { label: 'Датасети', value: datasets.filter(d=>d.status==='ready').length, color: 'text-emerald-400', sub: 'ready' },
-          { label: 'Модулів',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-emerald-400', sub: 'deployed' },
+          { label: 'Lag Total',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-amber-500' },
+          { label: 'Датасети', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'ГОТОВІ' },
+          { label: 'Модулів',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-rose-500', sub: 'РОЗГОРНУТО' },
         ].map((m) => (
-          <div key={m.label} className="px-3 py-2 bg-[#1a2620] rounded-sm border border-white/6">
+          <div key={m.label} className="px-3 py-2 bg-[#0a0a0a] rounded-sm border border-white/6 group hover:border-rose-500/30 transition-colors">
             <div className="text-[8px] font-semibold text-white/20 uppercase tracking-wider mb-0.5">{m.label}</div>
             <div className={cn('text-[16px] font-mono font-bold leading-none', m.color)}>{m.value}</div>
             {'sub' in m && <div className="text-[9px] font-mono text-white/20 mt-0.5">{(m as {sub: string}).sub}</div>}
@@ -175,7 +178,7 @@ export const DataOpsTab: React.FC = () => {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-mono transition-all duration-100',
                 active
-                  ? 'bg-emerald-500/12 border border-emerald-400/20 text-emerald-300 shadow-[0_0_15px_-5px_rgba(52,211,153,0.1)]'
+                  ? 'bg-rose-500/12 border border-rose-500/20 text-rose-300 shadow-[0_0_15px_-5px_rgba(244,63,94,0.1)]'
                   : 'text-white/30 hover:text-white/55 hover:bg-white/4 border border-transparent',
               )}
             >

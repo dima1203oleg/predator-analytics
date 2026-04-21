@@ -33,7 +33,7 @@ const sessionCols: VirtualColumn<Session>[] = [
     key: 'role',         label: 'Роль',         width: '100px',
     render: (v) => {
       const s = String(v);
-      const color = s === 'admin' ? 'text-emerald-400' : s === 'client_premium' ? 'text-sky-400' : 'text-white/35';
+      const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
       return <span className={cn('text-[10px] font-mono', color)}>{s}</span>;
     },
   },
@@ -53,7 +53,7 @@ const auditCols: VirtualColumn<AuditEntry>[] = [
     key: 'method',    label: 'Метод',    width: '60px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { GET: 'text-sky-400', POST: 'text-emerald-400', PUT: 'text-amber-400', DELETE: 'text-red-400', PATCH: 'text-purple-400' };
+      const map: Record<string, string> = { GET: 'text-rose-400', POST: 'text-rose-600', PUT: 'text-amber-400', DELETE: 'text-red-500', PATCH: 'text-purple-400' };
       return <span className={cn('text-[10px] font-mono font-bold', map[s] ?? 'text-white/40')}>{s}</span>;
     },
   },
@@ -62,7 +62,7 @@ const auditCols: VirtualColumn<AuditEntry>[] = [
     key: 'status',    label: 'HTTP',     width: '60px', mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      const color = n >= 500 ? 'text-red-400' : n >= 400 ? 'text-amber-400' : 'text-emerald-400/70';
+      const color = n >= 500 ? 'text-red-500' : n >= 400 ? 'text-amber-500' : 'text-rose-500/70';
       return <span className={color}>{n}</span>;
     },
   },
@@ -89,8 +89,9 @@ const keyCols: VirtualColumn<ApiKey>[] = [
     key: 'status',    label: 'Статус',    width: '80px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { active: 'text-emerald-400', revoked: 'text-red-400', expired: 'text-white/30' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { active: 'text-rose-500', revoked: 'text-red-500', expired: 'text-white/30' };
+      const labelMap: Record<string, string> = { active: 'АКТИВНИЙ', revoked: 'ВІДКЛИКАНО', expired: 'ПРОТЕРМІНОВАНО' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
 ];
@@ -121,7 +122,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Lock className="w-4 h-4 text-emerald-400" />
+        <Lock className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           Zero Trust & Безпека
         </h2>
@@ -143,7 +144,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-mono transition-all duration-100',
                 active
-                  ? 'bg-emerald-500/12 border border-emerald-400/20 text-emerald-300 shadow-[0_0_15px_-5px_rgba(52,211,153,0.1)]'
+                  ? 'bg-rose-500/12 border border-rose-500/20 text-rose-300 shadow-[0_0_15px_-5px_rgba(244,63,94,0.1)]'
                   : 'text-white/30 hover:text-white/55 hover:bg-white/4 border border-transparent',
               )}
             >
@@ -157,10 +158,10 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       {/* Контент */}
       <div className="relative min-h-[400px]">
         {isLoading && (
-          <div className="absolute inset-0 bg-[#0c120e]/60 flex items-center justify-center z-10 backdrop-blur-[2px] transition-all">
+          <div className="absolute inset-0 bg-[#020202]/60 flex items-center justify-center z-10 backdrop-blur-[2px] transition-all">
             <div className="flex flex-col items-center gap-2">
-              <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
-              <div className="text-[9px] font-mono text-emerald-400/60 uppercase tracking-widest">Синхронізація вузла...</div>
+              <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
+              <div className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest">Синхронізація вузла...</div>
             </div>
           </div>
         )}
@@ -200,8 +201,8 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       {/* Footer Info */}
       <div className="pt-4 flex items-center justify-between border-t border-white/6 opacity-30 group hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-2">
-          <AlertCircle className="w-3 h-3 text-emerald-400" />
-          <span className="text-[9px] font-mono">WORM-захист аудиту активований</span>
+          <AlertCircle className="w-3 h-3 text-rose-500" />
+          <span className="text-[9px] font-mono">WORM-захист активований</span>
         </div>
         <span className="text-[8px] font-mono uppercase tracking-[0.2em]">Zero Trust Core v5.1</span>
       </div>

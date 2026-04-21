@@ -21,9 +21,9 @@ interface FailoverEvent {
 }
 
 const MODES: Record<string, { label: string; desc: string; color: string; bg: string }> = {
-  SOVEREIGN: { label: 'SOVEREIGN', desc: '100% Local K3s + Ollama',        color: 'text-red-400',     bg: 'bg-red-500/10 border-red-400/25' },
-  HYBRID:    { label: 'HYBRID',    desc: 'Баланс: Local + Groq/Gemini',    color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-400/25' },
-  CLOUD:     { label: 'CLOUD',     desc: 'Gemini Pro, GLM-5.1, Azure',     color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-400/25' },
+  SOVEREIGN: { label: 'SOVEREIGN', desc: '100% Локально (K3s + Ollama)',   color: 'text-rose-600',    bg: 'bg-rose-600/10 border-rose-600/25' },
+  HYBRID:    { label: 'HYBRID',    desc: 'Баланс: Local + Groq/Gemini',    color: 'text-rose-500',    bg: 'bg-rose-500/10 border-rose-500/25' },
+  CLOUD:     { label: 'CLOUD',     desc: 'Gemini Pro, GLM-5.1, Azure',     color: 'text-rose-400',    bg: 'bg-rose-400/10 border-rose-400/25' },
 };
 
 // ─── Колонки таблиці ──────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ const MODES: Record<string, { label: string; desc: string; color: string; bg: st
 const eventCols: VirtualColumn<FailoverEvent>[] = [
   { key: 'ts',       label: 'Час',          width: '140px', mono: true },
   { key: 'from',     label: 'З',            width: '120px', mono: true, render: (v) => <span className="text-amber-400/70">{String(v)}</span> },
-  { key: 'to',       label: 'На',           width: '120px', mono: true, render: (v) => <span className="text-emerald-400/70">{String(v)}</span> },
+  { key: 'to',       label: 'На',           width: '120px', mono: true, render: (v) => <span className="text-rose-500/70">{String(v)}</span> },
   { key: 'reason',   label: 'Причина',                                  },
   { key: 'user',     label: 'Ініціатор',    width: '120px', mono: true },
   { key: 'duration', label: 'Тривалість',   width: '80px',  mono: true, align: 'right' },
@@ -54,7 +54,7 @@ export const FailoverRoutingTab: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
         <div className="text-[10px] font-mono uppercase tracking-widest">Завантаження статусу failover...</div>
       </div>
     );
@@ -85,7 +85,7 @@ export const FailoverRoutingTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Radio className="w-4 h-4 text-emerald-400" />
+        <Radio className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           Failover & Маршрутизація
         </h2>
@@ -107,7 +107,7 @@ export const FailoverRoutingTab: React.FC = () => {
                   disabled={toggleMutation.isPending}
                   className={cn(
                     'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm border text-left transition-all duration-150',
-                    active ? m.bg : 'bg-[#1a2620] border-white/8 hover:border-white/15',
+                    active ? m.bg : 'bg-[#0a0a0a] border-white/8 hover:border-white/15',
                     toggleMutation.isPending && 'opacity-50 cursor-wait'
                   )}
                 >
@@ -142,15 +142,15 @@ export const FailoverRoutingTab: React.FC = () => {
                   key={nodeKey}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-sm border',
-                    isActive          ? 'bg-emerald-500/8 border-emerald-400/20 shadow-[0_0_15px_-5px_rgba(52,211,153,0.2)]' :
-                    isOffline         ? 'bg-[#1a2620] border-red-400/15 opacity-50' :
-                                        'bg-[#1a2620] border-white/8',
+                    isActive          ? 'bg-rose-500/8 border-rose-500/20 shadow-[0_0_15px_-5px_rgba(244,63,94,0.2)]' :
+                    isOffline         ? 'bg-[#0a0a0a] border-red-500/15 opacity-50' :
+                                        'bg-[#0a0a0a] border-white/8',
                   )}
                 >
                   <div className={cn(
                     'w-1.5 h-1.5 rounded-full shrink-0',
-                    isActive  ? 'bg-emerald-400 animate-pulse' :
-                    isOffline ? 'bg-red-400' :
+                    isActive  ? 'bg-rose-500 animate-pulse' :
+                    isOffline ? 'bg-red-500' :
                                 'bg-white/20',
                   )} />
                   <div className="flex-1">
@@ -161,15 +161,15 @@ export const FailoverRoutingTab: React.FC = () => {
                     <button
                       onClick={() => handleSwitch(nodeKey)}
                       disabled={toggleMutation.isPending}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 hover:bg-emerald-500/10 hover:border-emerald-400/20 transition-colors"
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 hover:bg-rose-500/10 hover:border-rose-500/20 transition-colors"
                     >
                       <ArrowRightLeft className="w-2.5 h-2.5 text-white/40" />
                       <span className="text-[9px] text-white/40">Перемкнути</span>
                     </button>
                   )}
                   {isActive && (
-                    <span className="text-[8px] font-mono font-bold text-emerald-400/70 bg-emerald-500/10 px-1.5 py-0.5 rounded-sm border border-emerald-400/20">
-                      ACTIVE
+                    <span className="text-[8px] font-mono font-bold text-rose-500/70 bg-rose-500/10 px-1.5 py-0.5 rounded-sm border border-rose-500/20">
+                      АКТИВНИЙ
                     </span>
                   )}
                 </div>
@@ -195,7 +195,7 @@ export const FailoverRoutingTab: React.FC = () => {
             <button
               onClick={confirmSwitch}
               disabled={toggleMutation.isPending}
-              className="text-[10px] px-3 py-1 bg-emerald-500/15 border border-emerald-400/25 text-emerald-400 rounded-sm hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+              className="text-[10px] px-3 py-1 bg-rose-500/15 border border-rose-500/25 text-rose-500 rounded-sm hover:bg-rose-500/25 transition-colors disabled:opacity-50"
             >
               {toggleMutation.isPending ? 'Перемикання...' : 'Підтвердити'}
             </button>

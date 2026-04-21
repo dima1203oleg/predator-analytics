@@ -48,8 +48,9 @@ const ciCols: VirtualColumn<CIRun>[] = [
     key: 'status',  label: 'Статус', width: '80px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { success: 'text-emerald-400', failure: 'text-red-400', running: 'text-sky-400', pending: 'text-white/35' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s] ?? 'text-white/35')}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { success: 'text-rose-500', failure: 'text-red-500', running: 'text-rose-400', pending: 'text-white/35' };
+      const labelMap: Record<string, string> = { success: 'УСПІШНО', failure: 'ПОМИЛКА', running: 'У РОБОТІ', pending: 'В ОЧІКУВАННІ' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s] ?? 'text-white/35')}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
   { key: 'branch',  label: 'Гілка',  width: '120px', mono: true },
@@ -71,8 +72,9 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
     key: 'status',     label: 'Статус',    width: '90px',
     render: (v) => {
       const s = String(v);
-      const map: Record<string, string> = { running: 'text-sky-400', completed: 'text-emerald-400', failed: 'text-red-400', idle: 'text-white/25' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{s.toUpperCase()}</span>;
+      const map: Record<string, string> = { running: 'text-rose-400', completed: 'text-rose-500', failed: 'text-red-500', idle: 'text-white/25' };
+      const labelMap: Record<string, string> = { running: 'У РОБОТІ', completed: 'ЗАВЕРШЕНО', failed: 'ПОМИЛКА', idle: 'ПРОСТІЙ' };
+      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
   { key: 'recordsIn',  label: 'Вхід',      width: '90px',  mono: true, align: 'right', render: (v) => Number(v).toLocaleString() },
@@ -81,7 +83,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
     key: 'lag',        label: 'Лаг',       width: '80px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={n > 1000 ? 'text-red-400' : n > 100 ? 'text-amber-400' : 'text-white/40'}>{n.toLocaleString()}</span>;
+      return <span className={n > 1000 ? 'text-red-500' : n > 100 ? 'text-amber-400' : 'text-white/40'}>{n.toLocaleString()}</span>;
     },
   },
   { key: 'lastRun',    label: 'Запуск',                    mono: true },
@@ -95,7 +97,7 @@ const getETLStatus = (row: ETLPipeline): RowStatus =>
 // ─── ArgoCD картки ────────────────────────────────────────────────────────────
 
 const SyncIcon: React.FC<{ status: ArgoCDApp['syncStatus'] }> = ({ status }) => {
-  if (status === 'Synced')    return <CheckCircle className="w-3 h-3 text-emerald-400" />;
+  if (status === 'Synced')    return <CheckCircle className="w-3 h-3 text-rose-500" />;
   if (status === 'OutOfSync') return <XCircle className="w-3 h-3 text-amber-400" />;
   return <Clock className="w-3 h-3 text-white/30" />;
 };
@@ -112,7 +114,7 @@ export const GitOpsPipelineTab: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
+        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
         <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація GitOps...</div>
       </div>
     );
@@ -128,7 +130,7 @@ export const GitOpsPipelineTab: React.FC = () => {
     <div className="p-4 space-y-4">
       {/* Заголовок */}
       <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Box className="w-4 h-4 text-emerald-400" />
+        <Box className="w-4 h-4 text-rose-500" />
         <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
           GitOps & Пайплайни
         </h2>
@@ -139,22 +141,22 @@ export const GitOpsPipelineTab: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <GitBranch className="w-3 h-3 text-white/25" />
           <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">
-            ArgoCD — Sync Status
+            ArgoCD — Статус синхронізації
           </span>
         </div>
         <div className="space-y-1.5">
           {argoApps.map((app) => (
-            <div key={app.name} className="flex items-center gap-3 px-3 py-2 bg-[#1a2620] rounded-sm border border-white/6">
+            <div key={app.name} className="flex items-center gap-3 px-3 py-2 bg-[#0a0a0a] rounded-sm border border-white/6 group hover:border-rose-500/30 transition-colors">
               <SyncIcon status={app.syncStatus} />
               <span className="text-[11px] font-mono text-white/60 w-36 shrink-0">{app.name}</span>
               <span className="text-[9px] font-mono text-white/25">{app.namespace}</span>
               <span className={cn(
                 'ml-auto text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded-sm border',
-                app.healthStatus === 'Healthy'     ? 'text-emerald-400 bg-emerald-500/10 border-emerald-400/20' :
-                app.healthStatus === 'Degraded'    ? 'text-red-400 bg-red-500/10 border-red-400/20' :
-                                                      'text-sky-400 bg-sky-500/10 border-sky-400/20',
+                app.healthStatus === 'Healthy'     ? 'text-rose-500 bg-rose-500/10 border-rose-500/20' :
+                app.healthStatus === 'Degraded'    ? 'text-red-500 bg-red-500/10 border-red-500/20' :
+                                                      'text-rose-400 bg-rose-400/10 border-rose-400/20',
               )}>
-                {app.healthStatus}
+                {app.healthStatus === 'Healthy' ? 'ЗДОРОВИЙ' : app.healthStatus === 'Degraded' ? 'ДЕГРАДАЦІЯ' : 'У РОБОТІ'}
               </span>
               <span className="text-[9px] font-mono text-white/25 ml-2">{app.revision}</span>
               <span className="text-[9px] font-mono text-white/20 ml-2">{app.lastSync}</span>
@@ -168,7 +170,7 @@ export const GitOpsPipelineTab: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <Loader className="w-3 h-3 text-white/25" />
           <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">
-            CI/CD Pipeline Runs
+            Запуски CI/CD пайплайнів
           </span>
         </div>
         <VirtualTable
