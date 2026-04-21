@@ -193,7 +193,7 @@ const sendJSON = (res, data, status = 200) => {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-version'
   });
   res.end(JSON.stringify(data));
 };
@@ -206,7 +206,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-client-version'
     });
     res.end();
     return;
@@ -277,6 +277,11 @@ const server = http.createServer((req, res) => {
   }
   if (path === '/api/v2/admin/security/keys' && req.method === 'GET') {
     return sendJSON(res, systemState.security.keys);
+  }
+
+  // Health check
+  if (path === '/health' || path === '/api/v1/health') {
+    return sendJSON(res, { status: 'ok', uptime: systemState.system.status.uptime });
   }
 
   // 7. System (V1)

@@ -44,7 +44,10 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
     blue: 'blue',
     indigo: 'indigo',
     rose: 'rose',
-    sky: 'sky'
+    sky: 'sky',
+    emerald: 'emerald',
+    cyan: 'cyan',
+    violet: 'violet'
   };
 
   const baseColor = colorMap[accent];
@@ -58,7 +61,10 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
     blue: "shadow-[0_0_20px_rgba(59,130,246,0.15)]",
     indigo: "shadow-[0_0_20px_rgba(99,102,241,0.15)]",
     rose: "shadow-[0_0_20px_rgba(225,29,72,0.15)]",
-    sky: "shadow-[0_0_20px_rgba(14,165,233,0.15)]"
+    sky: "shadow-[0_0_20px_rgba(14,165,233,0.15)]",
+    emerald: "shadow-[0_0_20px_rgba(16,185,129,0.15)]",
+    cyan: "shadow-[0_0_20px_rgba(6,182,212,0.15)]",
+    violet: "shadow-[0_0_20px_rgba(139,92,246,0.15)]"
   };
 
   const viaColorClass = {
@@ -69,7 +75,10 @@ export const HubLayout: React.FC<HubLayoutProps> = ({
     blue: 'via-blue-500/20',
     indigo: 'via-indigo-500/20',
     rose: 'via-rose-500/20',
-    sky: 'via-sky-500/20'
+    sky: 'via-sky-500/20',
+    emerald: 'via-emerald-500/20',
+    cyan: 'via-cyan-500/20',
+    violet: 'via-violet-500/20'
   }[accent];
 
   return (

@@ -11,7 +11,7 @@ const GitOpsPipelineTab  = lazy(() => import('./tabs/GitOpsPipelineTab'));
 const AgentsOpsTab       = lazy(() => import('./tabs/AgentsOpsTab'));
 const ZeroTrustSecTab    = lazy(() => import('./tabs/ZeroTrustSecurityTab'));
 const DataOpsTab         = lazy(() => import('./tabs/DataOpsTab'));
-const ChaosControlHub    = lazy(() => import('../ChaosControlHub'));
+const ChaosControlHub    = lazy(() => import('./ChaosControlHub'));
 
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 

@@ -145,5 +145,4 @@ export const AutonomousLearningStack: React.FC = () => {
             </div>
         </div>
     );
-    );
 };

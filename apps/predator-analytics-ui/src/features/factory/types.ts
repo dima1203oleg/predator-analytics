@@ -24,7 +24,7 @@ export interface LlmCascadeEntry {
   id: string;
   name: string;
   provider: LlmProvider;
-  role: 'primary' | 'fallback_fast' | 'fallback_smart' | 'fallback_azure' | 'fallback_local';
+  role: 'lead_architect' | 'surgical_coder' | 'light_parser' | 'primary' | 'fallback_fast' | 'fallback_smart' | 'fallback_azure' | 'fallback_local';
   online: boolean;
   latency_ms: number | null;
   model_tag: string;

@@ -8,10 +8,30 @@ class Settings(BaseSettings):
 
     # Основні
     APP_NAME: str = "PREDATOR Analytics Core API"
-    APP_VERSION: str = "56.5-ELITE"
+    APP_VERSION: str = "58.2-WRAITH"
     DEBUG: bool = False
     ENV: str = "development"
     TESTING: bool = False
+
+    # Feature Flags (поступний rollout нового функціоналу)
+    FF_KAFKA_ENABLED: bool = True
+    FF_OPENSEARCH_ENABLED: bool = True
+    FF_QDRANT_ENABLED: bool = True
+    FF_RAG_ENABLED: bool = False
+    FF_ANOMALY_DETECTION: bool = True
+    FF_SOVEREIGN_AI: bool = False
+
+    # Alembic (міграції)
+    ALEMBIC_AUTO_MIGRATE: bool = False
+
+    # Circuit Breaker
+    CB_FAILURE_THRESHOLD: int = 5
+    CB_RESET_TIMEOUT_S: int = 60
+
+    # VRAM Guard (8GB Limit)
+    VRAM_LIMIT_MB: int = 8192
+    VRAM_LLM_POOL_MB: int = 5632  # 5.5 GB
+    VRAM_UI_RESERVE_MB: int = 2560  # 2.5 GB
 
     # Безпека (HR-06: Secrets from ENV)
     SECRET_KEY: str = "REQUIRED_IN_PRODUCTION"  # noqa: S105

@@ -19,7 +19,7 @@ const metaEnv = getMetaEnv();
 const NVIDIA_DIRECT_URL  = 'http://194.177.1.240:8000/api/v1';
 const NVIDIA_ZROK_URL    = 'https://predator.share.zrok.io/api/v1';
 const NVIDIA_COLAB_URL   = metaEnv.VITE_COLAB_URL || 'https://predator-mirror.share.zrok.io/api/v1';
-const MOCK_URL           = 'http://localhost:9080/api/v1';
+const MOCK_URL           = '/api/v1';
 
 // Мітки для зручної ідентифікації в useBackendStatus
 export const NODE_IDS = {
@@ -42,7 +42,7 @@ const resolveApiUrl = (): string => {
 };
 
 export let API_BASE_URL  = resolveApiUrl();
-export const API_V45_URL = metaEnv.VITE_V45_API_URL || 'http://localhost:9080/api/v45';
+export const API_V45_URL = '/api/v45';
 
 /** Визначає поточний вузол за URL */
 const resolveNodeId = (url: string): string => {
@@ -50,7 +50,7 @@ const resolveNodeId = (url: string): string => {
         if (url === NVIDIA_COLAB_URL) return NODE_IDS.COLAB;
         return NODE_IDS.ZROK;
     }
-    if (url.includes('localhost') || url.includes('9080')) return NODE_IDS.MOCK;
+    if (url.includes('localhost') || url.includes('9080') || url.startsWith('/api')) return NODE_IDS.MOCK;
     return NODE_IDS.NVIDIA;
 };
 

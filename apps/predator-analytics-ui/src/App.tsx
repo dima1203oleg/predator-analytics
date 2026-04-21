@@ -7,6 +7,7 @@ import { AgentProvider } from './context/AgentContext';
 import { DisplayModeProvider } from './context/DisplayModeContext';
 import { GlobalProvider } from './context/GlobalContext';
 import { UserProvider } from './context/UserContext';
+import { RoleProvider } from './context/RoleContext';
 // Stores
 import { useAppStore } from './store/useAppStore';
 
@@ -130,45 +131,47 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <UserProvider>
-            <ShellProvider>
-              <AgentProvider>
-                <DisplayModeProvider>
-                  <SensitiveDataProvider>
-                    <ToastProvider>
-                      <GlobalProvider>
-                        <ThemeProvider>
-                          <SuperIntelligenceProvider>
-                            <AdvancedBackground />
-                            <NeuralPulse />
-                            {appState === 'BOOTING' && (
-                              <BootSequenceWRAITH onComplete={handleBootComplete} />
-                            )}
+            <RoleProvider>
+              <ShellProvider>
+                <AgentProvider>
+                  <DisplayModeProvider>
+                    <SensitiveDataProvider>
+                      <ToastProvider>
+                        <GlobalProvider>
+                          <ThemeProvider>
+                            <SuperIntelligenceProvider>
+                              <AdvancedBackground />
+                              <NeuralPulse />
+                              {appState === 'BOOTING' && (
+                                <BootSequenceWRAITH onComplete={handleBootComplete} />
+                              )}
 
-                            {appState === 'LOGIN' && (
-                              <LoginScreen onLogin={handleLogin} />
-                            )}
+                              {appState === 'LOGIN' && (
+                                <LoginScreen onLogin={handleLogin} />
+                              )}
 
-                            {appState === 'READY' && (
-                              <>
-                                <AppRoutes />
-                                {/* Глобальні UI компоненти */}
-                                <QuickActionsBar />
-                                <ToasterProvider />
-                                <OnboardingWizard />
-                                <OfflineBanner />
-                                <Predator />
-                                
-                                <LiveAgentTerminal />
-                              </>
-                            )}
-                          </SuperIntelligenceProvider>
-                        </ThemeProvider>
-                      </GlobalProvider>
-                    </ToastProvider>
-                  </SensitiveDataProvider>
-                </DisplayModeProvider>
-              </AgentProvider>
-            </ShellProvider>
+                              {appState === 'READY' && (
+                                <>
+                                  <AppRoutes />
+                                  {/* Глобальні UI компоненти */}
+                                  <QuickActionsBar />
+                                  <ToasterProvider />
+                                  <OnboardingWizard />
+                                  <OfflineBanner />
+                                  <Predator />
+                                  
+                                  <LiveAgentTerminal />
+                                </>
+                              )}
+                            </SuperIntelligenceProvider>
+                          </ThemeProvider>
+                        </GlobalProvider>
+                      </ToastProvider>
+                    </SensitiveDataProvider>
+                  </DisplayModeProvider>
+                </AgentProvider>
+              </ShellProvider>
+            </RoleProvider>
           </UserProvider>
         </BrowserRouter>
       </QueryClientProvider>

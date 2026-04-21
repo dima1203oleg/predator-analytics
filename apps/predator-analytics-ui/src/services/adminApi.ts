@@ -4,6 +4,7 @@
  */
 
 import { v2Client } from './v2Api';
+import { apiClient } from './api/config';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -178,8 +179,7 @@ export interface SystemStatus {
   timestamp: string;
 }
 
-import { apiClient } from './api/config';
-import { v2Client } from './v2Api';
+
 
 // ─── API Implementation ──────────────────────────────────────────────────────
 

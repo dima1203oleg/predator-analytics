@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRightLeft, TrendingUp, TrendingDown, DollarSign, Calendar } from 'lucide-react';
-import { cn } from '@/utils/cn';
-import { TransactionFlow } from '@/services/unified/analytics.service';
+import { cn } from '../../lib/utils';
+import { TransactionFlow } from '../../services/unified/analytics.service';
 
 interface FinancialFlowPanelProps {
   flows: TransactionFlow[];

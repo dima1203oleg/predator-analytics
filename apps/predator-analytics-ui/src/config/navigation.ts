@@ -52,7 +52,9 @@ export type NavAccent =
   | 'indigo'
   | 'rose'
   | 'sky'
-  | 'emerald';
+  | 'emerald'
+  | 'cyan'
+  | 'violet';
 
 export type NavigationAudience = 'business' | 'analyst' | 'supply_chain' | 'admin';
 export type NavWorkspaceMode = 'all' | 'favorites' | 'recent' | 'recommended';
@@ -206,6 +208,24 @@ export const navAccentStyles: Record<
     iconBorder: 'border-emerald-400/25 bg-emerald-500/10',
     sectionBorder: 'border-emerald-400/15',
     softText: 'text-emerald-400/90',
+  },
+  cyan: {
+    badge: 'bg-cyan-500/15 text-cyan-400 border-cyan-400/20',
+    dot: 'bg-cyan-500',
+    glow: 'from-cyan-600/20 via-cyan-500/5 to-transparent',
+    icon: 'text-cyan-400',
+    iconBorder: 'border-cyan-400/25 bg-cyan-500/10',
+    sectionBorder: 'border-cyan-400/15',
+    softText: 'text-cyan-400/90',
+  },
+  violet: {
+    badge: 'bg-violet-500/15 text-violet-400 border-violet-400/20',
+    dot: 'bg-violet-500',
+    glow: 'from-violet-600/20 via-violet-500/5 to-transparent',
+    icon: 'text-violet-400',
+    iconBorder: 'border-violet-400/25 bg-violet-500/10',
+    sectionBorder: 'border-violet-400/15',
+    softText: 'text-violet-400/90',
   },
 };
 

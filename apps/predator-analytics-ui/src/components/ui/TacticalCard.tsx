@@ -26,7 +26,7 @@ interface TacticalCardProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   actions?: CardAction[];
   expandable?: boolean;
   glow?: 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'cyan' | 'emerald' | 'indigo' | 'amber' | 'gold' | 'none';
-  variant?: 'cyber' | 'glass' | 'minimal' | 'holographic' | 'premium';
+  variant?: 'cyber' | 'glass' | 'minimal' | 'holographic' | 'premium' | 'interactive';
   noPadding?: boolean;
   children?: React.ReactNode;
   action?: React.ReactNode; // Backward compatibility for single custom action

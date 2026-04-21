@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
@@ -54,8 +55,10 @@ from app.routers import (
     stats_router,
     system_router,
     warroom_router,
+    agents_router,
     antigravity_router,
     admin_chaos_router,
+    graph_intelligence_router,
     forecast_router,
 )
 from app.services.factory_repository import FactoryRepository
@@ -176,8 +179,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=get_settings().APP_NAME,
-    version="56.5-ELITE",
-    description="Аналітична платформа PREDATOR Analytics (v56.5-ELITE)",
+    version="58.2-WRAITH",
+    description="Аналітична платформа PREDATOR Analytics (v58.2-WRAITH)",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -292,15 +295,9 @@ async def readiness_check() -> JSONResponse:
     except Exception as e:
         logger.error(f"Sentinel readiness check failed: {e}")
         return JSONResponse({
-            "status": "error",
-            "message": str(e)
-        }, status_code=503)
-
-    except Exception as e:
-        return JSONResponse({
             "status": "not_ready",
             "timestamp": datetime.now(UTC).isoformat(),
-            "error": str(e),
+            "message": str(e),
         }, status_code=503)
 
 
