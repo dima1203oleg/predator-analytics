@@ -102,7 +102,7 @@ const getKeyStatus = (row: ApiKey): RowStatus =>
 // ─── Вкладка ─────────────────────────────────────────────────────────────────
 
 export const ZeroTrustSecurityTab: React.FC = () => {
-  const [section, setSection] = useState<'sessions' | 'audit' | 'keys'>('sessions');
+  const [section, setSection] = useState<'sessions' | 'audit' | 'keys' | 'mtls'>('sessions');
 
   const { data: sessionsData, isLoading: isSessionsLoading } = useSecuritySessions();
   const { data: auditData, isLoading: isAuditLoading } = useAuditLogs();
@@ -112,6 +112,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
     { id: 'sessions', label: `Сесії (${sessionsData?.length || 0})`,   icon: Users, loading: isSessionsLoading },
     { id: 'audit',    label: `Аудит-лог (${auditData?.length || 0})`,  icon: FileText, loading: isAuditLoading },
     { id: 'keys',     label: `API-ключі (${keysData?.length || 0})`,   icon: Key, loading: isKeysLoading },
+    { id: 'mtls',     label: `mTLS Вузли (4)`,                         icon: Shield, loading: false },
   ] as const;
 
   const isLoading = (section === 'sessions' && isSessionsLoading) || 
@@ -195,6 +196,33 @@ export const ZeroTrustSecurityTab: React.FC = () => {
             getRowStatus={getKeyStatus}
             emptyLabel="API-ключів немає"
           />
+        )}
+        {section === 'mtls' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-2">
+            {[
+              { name: 'ingestion-worker', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '12s ago' },
+              { name: 'graph-service', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '5s ago' },
+              { name: 'api-gateway', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '0s ago' },
+              { name: 'admin-sentinel', status: 'PENDING', expiry: '2026-12-01', lastSeen: '1h ago' },
+            ].map(node => (
+              <div key={node.name} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono font-bold text-white/80">{node.name.toUpperCase()}</span>
+                  <span className={cn(
+                    "text-[8px] px-1.5 py-0.5 rounded font-black",
+                    node.status === 'VERIFIED' ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400 animate-pulse"
+                  )}>{node.status}</span>
+                </div>
+                <div className="flex justify-between text-[9px] font-mono text-white/30">
+                  <span>Сертифікат до: {node.expiry}</span>
+                  <span>{node.lastSeen}</span>
+                </div>
+                <div className="mt-1 h-0.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-rose-500/40 w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

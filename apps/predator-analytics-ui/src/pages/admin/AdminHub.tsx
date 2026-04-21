@@ -11,10 +11,11 @@ const GitOpsPipelineTab  = lazy(() => import('./tabs/GitOpsPipelineTab'));
 const AgentsOpsTab       = lazy(() => import('./tabs/AgentsOpsTab'));
 const ZeroTrustSecTab    = lazy(() => import('./tabs/ZeroTrustSecurityTab'));
 const DataOpsTab         = lazy(() => import('./tabs/DataOpsTab'));
+const ChaosControlHub    = lazy(() => import('../ChaosControlHub'));
 
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
-type TabId = 'infra' | 'failover' | 'gitops' | 'agents-ops' | 'security' | 'dataops' | 'settings';
+type TabId = 'infra' | 'failover' | 'gitops' | 'agents-ops' | 'security' | 'dataops' | 'chaos' | 'settings';
 
 interface TabConfig {
   id: TabId;
@@ -30,6 +31,7 @@ const TABS: TabConfig[] = [
   { id: 'agents-ops', label: 'Агенти',                       component: AgentsOpsTab       },
   { id: 'security',   label: 'Zero Trust',                   component: ZeroTrustSecTab    },
   { id: 'dataops',    label: 'DataOps',                      component: DataOpsTab         },
+  { id: 'chaos',      label: 'Chaos Ops',    badge: 'HAZARD', component: ChaosControlHub    },
 ];
 
 const DEFAULT_TAB: TabId = 'infra';

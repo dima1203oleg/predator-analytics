@@ -56,6 +56,7 @@ from app.routers import (
     warroom_router,
     antigravity_router,
     admin_chaos_router,
+    forecast_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (

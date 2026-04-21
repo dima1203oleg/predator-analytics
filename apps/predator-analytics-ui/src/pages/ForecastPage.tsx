@@ -183,11 +183,10 @@ export default function ForecastPage() {
             setForecastLoading(true);
             setForecastError(null);
             const data = await forecastApi.getDemandForecast(params);
-            setForecast(data);
+            setForecast({ ...data, source: 'real' });
         } catch (error) {
-            console.warn('[ForecastPage] API недоступний, активовано автономний режим (MOCK):', error);
-            setForecast(MOCK_FORECAST);
-            setForecastError('Працює в режимі автономної симуляції. Підключення до Core API відсутнє.');
+            console.error('[ForecastPage] Forecast Engine Sync Failure:', error);
+            setForecastError('Помилка синхронізації з Pulse Engine. Перевірте статус ML-воркера.');
         } finally {
             setForecastLoading(false);
         }

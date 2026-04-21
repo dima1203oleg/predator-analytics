@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { VramSentinel } from '@/components/intelligence/VramSentinel';
+import RiskExplanationPanel from '@/components/risk/RiskExplanationPanel';
 
 
 const normalizeRiskLevel = (value?: string): string => {
@@ -538,7 +539,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Alpha</span>
                                         </div>
                                         {displayShap.length > 0 ? (
-                                            <SHAPChart data={displayShap} />
+                                            <RiskExplanationPanel 
+                                                explanation={Object.fromEntries(displayShap.map(s => [s.feature, s.impact]))} 
+                                                factors={displayShap.map(s => ({ name: s.feature, weight: s.impact, category: 'ai', detected: true }))}
+                                            />
                                         ) : (
                                             <div className="h-full min-h-[300px] flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-slate-500 italic">
                                                 Дані декомпозиції відсутні для цього вузла

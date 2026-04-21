@@ -16,6 +16,7 @@ from app.models.antigravity import (
     TaskPriority,
     AntigravityTaskLog
 )
+from app.services.audit_service import audit_logger
 from predator_common.logging import get_logger
 
 logger = get_logger("core_api.antigravity_orchestrator")
@@ -44,10 +45,34 @@ class AntigravityOrchestrator:
             budget_limit_usd=500.0,
             total_spent_usd=24.50,
             agents=[
-                AgentStatus(type=AgentType.ARCHITECT, name="Architect-Prime", technology=AgentTechnology.OPENHANDS, is_busy=False, tasks_completed=12),
-                AgentStatus(type=AgentType.SURGEON, name="Surgeon-Beta", technology=AgentTechnology.AIDER, is_busy=False, tasks_completed=45),
-                AgentStatus(type=AgentType.QA_BROWSER, name="Browser-QA-1", technology=AgentTechnology.PLAYWRIGHT, is_busy=False, tasks_completed=31),
-                AgentStatus(type=AgentType.QA_DEVTOOLS, name="Inspector-CDP", technology=AgentTechnology.CHROME_CDP, is_busy=False, tasks_completed=18),
+                AgentStatus(
+                    type=AgentType.ARCHITECT, 
+                    name="Architect-Prime", 
+                    technology=AgentTechnology.OPENHANDS, 
+                    specialization="System Architecture & Refactoring",
+                    is_busy=False, tasks_completed=12
+                ),
+                AgentStatus(
+                    type=AgentType.SURGEON, 
+                    name="Surgeon-Beta", 
+                    technology=AgentTechnology.AIDER, 
+                    specialization="High-Precision Code Injection",
+                    is_busy=False, tasks_completed=45
+                ),
+                AgentStatus(
+                    type=AgentType.FINANCIAL_ANALYST, 
+                    name="Forensic-AI", 
+                    technology="Custom Python Engine", 
+                    specialization="UBO & Financial Fraud Detection",
+                    is_busy=False, tasks_completed=7
+                ),
+                AgentStatus(
+                    type=AgentType.OSINT_EXPERT, 
+                    name="Phantom-Gatherer", 
+                    technology="Stealth-Web-Engine", 
+                    specialization="Global Sanctions & Registry Scraper",
+                    is_busy=False, tasks_completed=15
+                ),
             ]
         )
         self.tasks: Dict[str, AntigravityTask] = {}
@@ -115,6 +140,19 @@ class AntigravityOrchestrator:
         
         self.add_log(task.task_id, f"Агент {agent.name} розпочав виконання завдання: {task.description[:50]}...", agent.type)
         logger.info(f"Task {task.task_id} assigned to {agent.name}")
+        
+        # Sovereign Audit (HR-16)
+        await audit_logger.log(
+            action="agi_task_assigned",
+            resource_type="antigravity_task",
+            resource_id=task.task_id,
+            details={
+                "agent_name": agent.name,
+                "agent_type": agent.type,
+                "task_description": task.description,
+                "specialization": agent.specialization
+            }
+        )
 
     async def _simulate_progress(self, task: AntigravityTask):
         """Емуляція роботи агента."""
@@ -134,6 +172,18 @@ class AntigravityOrchestrator:
                 agent.current_task_id = None
                 agent.tasks_completed += 1
                 self.add_log(task.task_id, f"Завдання {task.task_id} успішно завершено агентом {agent.name}.", agent.type, level="success")
+                
+                # Sovereign Audit (HR-16)
+                await audit_logger.log(
+                    action="agi_task_completed",
+                    resource_type="antigravity_task",
+                    resource_id=task.task_id,
+                    details={
+                        "agent_name": agent.name,
+                        "cost_usd": task.actual_cost_usd,
+                        "result_artifact": task.result_artifact
+                    }
+                )
         else:
             self.add_log(task.task_id, f"Виконання: {task.progress}%...", task.assigned_agent)
 

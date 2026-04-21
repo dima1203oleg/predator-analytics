@@ -28,6 +28,7 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { cn } from '@/utils/cn';
 import { CyberOrb } from '@/components/CyberOrb';
 import { VramSentinel } from '@/components/intelligence/VramSentinel';
+import AntigravityOperationsHUD from '@/components/intel/AntigravityOperationsHUD';
 
 // ========================
 // Sub-Components
@@ -102,7 +103,7 @@ const IntelligenceNode: React.FC<{
 // ========================
 
 const IntelligencePage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'СТРАТЕГІЯ' | 'ТАКТИКА' | 'НЕЙРОМЕРЕЖА'>('СТРАТЕГІЯ');
+    const [activeTab, setActiveTab] = useState<'СТРАТЕГІЯ' | 'ТАКТИКА' | 'НЕЙРОМЕРЕЖА' | 'АВТОНОМІЯ'>('СТРАТЕГІЯ');
 
     const { data: metrics } = useQuery({
         queryKey: ['system-metrics'],
@@ -168,7 +169,7 @@ const IntelligencePage: React.FC = () => {
 
                              {/* Strategic Tabs */}
                              <div className="flex bg-[#050505]/60 backdrop-blur-3xl p-2 rounded-[2.5rem] border border-white/5 self-start shadow-xl">
-                                {['СТРАТЕГІЯ', 'ТАКТИКА', 'НЕЙРОМЕРЕЖА'].map(tab => (
+                                {['СТРАТЕГІЯ', 'ТАКТИКА', 'НЕЙРОМЕРЕЖА', 'АВТОНОМІЯ'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab as any)}
@@ -183,50 +184,54 @@ const IntelligencePage: React.FC = () => {
                              </div>
 
                              {/* Neural Nodes Matrix */}
-                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                 <IntelligenceNode
-                                    title="МОНІТОРИНГ_ОФШОРІВ"
-                                    status="АКТИВНО"
-                                    progress={84}
-                                    icon={<Globe size={24} />}
-                                    color="rose"
-                                 />
-                                 <IntelligenceNode
-                                    title="ВУЗЛИ_РИЗИКУ_WRAITH"
-                                    status="КРИТИЧНО"
-                                    progress={92}
-                                    icon={<ShieldAlert size={24} />}
-                                    color="crimson"
-                                 />
-                                 <IntelligenceNode
-                                    title="ОПТИМІЗАЦІЯ_OODA"
-                                    status="ОЧІКУЄ"
-                                    progress={12}
-                                    icon={<Zap size={24} />}
-                                    color="rose"
-                                 />
-                                 <IntelligenceNode
-                                    title="СЕМАНТИЧНИЙ_АНАЛІЗ"
-                                    status="СКАНИНГ"
-                                    progress={45}
-                                    icon={<Terminal size={24} />}
-                                    color="rose"
-                                 />
-                                 <IntelligenceNode
-                                    title="КРИПТО_ПОТОКИ"
-                                    status="ЗАШИФРОВАНО"
-                                    progress={68}
-                                    icon={<Lock size={24} />}
-                                    color="rose"
-                                 />
-                                 <IntelligenceNode
-                                    title="НЕЙРО_ПРОГНОЗ"
-                                    status="НАВЧАННЯ"
-                                    progress={77}
-                                    icon={<Sparkles size={24} />}
-                                    color="rose"
-                                 />
-                             </div>
+                             {activeTab !== 'АВТОНОМІЯ' ? (
+                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                     <IntelligenceNode
+                                        title="МОНІТОРИНГ_ОФШОРІВ"
+                                        status="АКТИВНО"
+                                        progress={84}
+                                        icon={<Globe size={24} />}
+                                        color="rose"
+                                     />
+                                     <IntelligenceNode
+                                        title="ВУЗЛИ_РИЗИКУ_WRAITH"
+                                        status="КРИТИЧНО"
+                                        progress={92}
+                                        icon={<ShieldAlert size={24} />}
+                                        color="crimson"
+                                     />
+                                     <IntelligenceNode
+                                        title="ОПТИМІЗАЦІЯ_OODA"
+                                        status="ОЧІКУЄ"
+                                        progress={12}
+                                        icon={<Zap size={24} />}
+                                        color="rose"
+                                     />
+                                     <IntelligenceNode
+                                        title="СЕМАНТИЧНИЙ_АНАЛІЗ"
+                                        status="СКАНИНГ"
+                                        progress={45}
+                                        icon={<Terminal size={24} />}
+                                        color="rose"
+                                     />
+                                     <IntelligenceNode
+                                        title="КРИПТО_ПОТОКИ"
+                                        status="ЗАШИФРОВАНО"
+                                        progress={68}
+                                        icon={<Lock size={24} />}
+                                        color="rose"
+                                     />
+                                     <IntelligenceNode
+                                        title="НЕЙРО_ПРОГНОЗ"
+                                        status="НАВЧАННЯ"
+                                        progress={77}
+                                        icon={<Sparkles size={24} />}
+                                        color="rose"
+                                     />
+                                 </div>
+                             ) : (
+                                 <AntigravityOperationsHUD />
+                             )}
 
                                {/* Central Strategic Visualizer & VRAM Guard */}
                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">

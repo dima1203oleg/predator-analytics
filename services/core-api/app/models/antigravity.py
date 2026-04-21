@@ -13,6 +13,8 @@ class AgentType(str, Enum):
     SURGEON = "surgeon"
     QA_BROWSER = "qa_browser"
     QA_DEVTOOLS = "qa_devtools"
+    FINANCIAL_ANALYST = "financial_analyst"
+    OSINT_EXPERT = "osint_expert"
 
 
 class AgentTechnology(str, Enum):
@@ -45,6 +47,7 @@ class AgentStatus(BaseModel):
     type: AgentType
     name: str
     technology: AgentTechnology | str
+    specialization: str = "General Purpose Intelligence"
     is_busy: bool = False
     current_task_id: str | None = None
     tasks_completed: int = 0

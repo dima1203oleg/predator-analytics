@@ -7,6 +7,7 @@ from fastapi import Depends, HTTPException, Request, status
 
 from app.core.permissions import ROLE_PERMISSIONS, Permission, Role
 from app.core.security import get_current_user_payload
+from app.core.mtls import MTLSSecurity, ServiceNodes
 
 
 async def get_current_active_user(
@@ -57,3 +58,11 @@ class PermissionChecker:
                     detail=f"Недостатньо прав: {perm.value}"
                 )
         return payload
+
+async def verify_mtls_node(request: Request):
+    """Депенденсі для захисту міжсервісних ендпоїнтів."""
+    return MTLSSecurity.verify_node(request, [
+        ServiceNodes.INGESTION_WORKER,
+        ServiceNodes.GRAPH_SERVICE,
+        ServiceNodes.GATEWAY
+    ])

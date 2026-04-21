@@ -43,5 +43,23 @@ export default function () {
     'scoring latency < 2s': (r) => r.timings.duration < 2000,
   });
 
+  // 3. Chaos Injection Scenario (Тільки для першого VU для демонстрації)
+  if (__VU === 1 && __ITER === 5) {
+    console.log("💥 k6: Injecting Chaos (db_latency)...");
+    http.post(`${BASE_URL}/admin/chaos/trigger`, JSON.stringify({
+      experiment_name: "db_latency",
+      active: true
+    }), params);
+  }
+
   sleep(2);
+
+  // 4. Cleanup Chaos (На останній ітерації)
+  if (__VU === 1 && __ITER === 20) {
+    console.log("✅ k6: Cleaning up Chaos...");
+    http.post(`${BASE_URL}/admin/chaos/trigger`, JSON.stringify({
+      experiment_name: "db_latency",
+      active: false
+    }), params);
+  }
 }
