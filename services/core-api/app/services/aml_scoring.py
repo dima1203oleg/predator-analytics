@@ -67,6 +67,7 @@ class RiskScore:
     risk_level: RiskLevel
     factors: list[RiskFactor] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
+    explanation: dict[str, float] = field(default_factory=dict)  # SHAP-подібні внески в %
     calculated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
@@ -235,10 +236,11 @@ class AMLScoringService:
         financial_factor = await self._check_financial_indicators(data)
         factors.append(financial_factor)
 
-        # Розрахунок загального скору
+        # Розрахунок загального скору та SHAP пояснень
         total_score = self._calculate_total_score(factors)
         risk_level = self._get_risk_level(total_score)
         recommendations = self._generate_recommendations(factors)
+        explanation = self.get_shap_explanations(factors)
 
         return RiskScore(
             entity_id=entity_id,
@@ -248,6 +250,7 @@ class AMLScoringService:
             risk_level=risk_level,
             factors=factors,
             recommendations=recommendations,
+            explanation=explanation,
         )
 
     def _calculate_total_score(self, factors: list[RiskFactor]) -> int:
@@ -560,3 +563,25 @@ class AMLScoringService:
             distribution[score.risk_level.value] += 1
 
         return distribution
+
+    def get_shap_explanations(self, factors: list[RiskFactor]) -> dict[str, float]:
+        """Розрахунок внеску кожного детективного фактора (SHAP-подібний метод).
+        
+        Повертає внесок кожного фактора у фінальний нормалізований бал у відсотках.
+        """
+        total_detected_weight = sum(f.weight for f in factors if f.detected)
+        max_possible_weight = sum(f.weight for f in factors)
+        
+        if max_possible_weight == 0 or total_detected_weight == 0:
+            return {}
+
+        explanations = {}
+        for factor in factors:
+            if factor.detected:
+                # Внесок фактора у загальний бал (0-100)
+                # Якщо загальний бал 80, а цей фактор має вагу 100 з 500, 
+                # то його внесок пропорційний його вазі серед виявлених.
+                contribution = (factor.weight / total_detected_weight) * 100
+                explanations[factor.name] = round(contribution, 1)
+        
+        return explanations

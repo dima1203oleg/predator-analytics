@@ -117,6 +117,7 @@ async def calculate_aml_score(
             for f in score.factors
         ],
         "recommendations": score.recommendations,
+        "explanation": score.explanation,
         "calculated_at": score.calculated_at.isoformat(),
     }
 

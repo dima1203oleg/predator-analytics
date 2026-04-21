@@ -11,6 +11,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.orm import Company
+from app.services.ere_service import EREService
 
 logger = logging.getLogger(__name__)
 
@@ -74,10 +75,23 @@ class SearchService:
                 logger.warning("Company not found for UEID: %s в tenant: %s", ueid, tenant_id)
                 return []
 
-            # TODO: Фаза 3 — Vector similarity query через Qdrant
-            # Використати embedding company.description та K-NN пошук
+            # Фаза 3 — Vector similarity query через Qdrant (ERE)
+            ere = EREService()
+            text_context = f"{company.name} {company.industry} {company.description or ''}"
+            duplicates = await ere.find_duplicates(tenant_id, text_context, threshold=0.7)
 
-            # Тимчасова реалізація: пошук схожих за галуззю (з tenant isolation)
+            if duplicates:
+                return [
+                    {
+                        "id": d["entity_id"],
+                        "ueid": d["metadata"].get("ueid"),
+                        "name": d["metadata"].get("name"),
+                        "similarity_score": d["score"],
+                    }
+                    for r in duplicates
+                ]
+            
+            # Фоллбек (якщо в Qdrant нічого не знайдено)
             stmt = (
                 select(Company)
                 .where(

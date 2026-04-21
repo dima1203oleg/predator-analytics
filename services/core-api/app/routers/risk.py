@@ -129,7 +129,13 @@ async def get_risk_scores(
                 predictive=ComponentDetail(value=score_record.predictive_score or 0, weight=0.20)
             ),
             interpretation=determine_interpretation(score_record.cers),
-            key_drivers=[KeyDriver(**flag) for flag in score_record.flags] if score_record.flags else [],
+            key_drivers=[
+                KeyDriver(driver=k, contribution=v) 
+                for k, v in (score_record.explanation or {}).items()
+            ] if score_record.explanation else [
+                KeyDriver(driver=flag["name"], contribution=flag.get("weight", 0))
+                for flag in (score_record.flags or [])
+            ],
             uncertainty=Uncertainty(
                 lower=max(0, score_record.cers - 5),
                 upper=min(100, score_record.cers + 5)

@@ -12,7 +12,7 @@ celery_app = Celery(
     "predator_tasks",
     broker=redis_url,
     backend=redis_url,
-    include=["app.tasks.freshness"]
+    include=["app.tasks.freshness", "app.tasks.ai_maintenance"]
 )
 
 celery_app.conf.update(
@@ -30,5 +30,15 @@ celery_app.conf.beat_schedule = {
     "check-data-freshness-every-15-minutes": {
         "task": "app.tasks.freshness.check_data_freshness",
         "schedule": 900.0,  # 15 хвилин
+    },
+    # Щоденний снапшот графа Neo4j (Фаза 3)
+    "daily-graph-snapshot": {
+        "task": "app.tasks.ai_maintenance.daily_graph_snapshot",
+        "schedule": 86400.0,  # 24 години
+    },
+    # Щотижневий аналіз дрейфу моделей (Фаза 3)
+    "weekly-drift-detection": {
+        "task": "app.tasks.ai_maintenance.weekly_drift_detection",
+        "schedule": 604800.0,  # 7 днів
     },
 }
