@@ -280,52 +280,21 @@ async def health_check() -> JSONResponse:
 
 @app.get("/api/v1/health/ready", tags=["system"])
 @app.get("/health/ready", tags=["system"])
+@app.get("/ready", tags=["system"])
 async def readiness_check() -> JSONResponse:
-    """Readiness probe - перевіряє готовність до прийому трафіку."""
-    import asyncpg
-
-    from app.config import get_settings
-    from app.core.health import health_service
+    """Readiness probe - перевіряє готовність всього AI-стеку через Sentinel."""
+    from app.services.sentinel_service import SentinelService
 
     try:
-        # Пряма перевірка PostgreSQL з правильним DSN
-        settings = get_settings()
-        dsn = settings.DATABASE_URL or ""
-        # Конвертуємо postgresql+asyncpg:// в postgres:// для прямого підключення
-        dsn = dsn.replace("postgresql+asyncpg://", "postgres://")
-        dsn = dsn.replace("postgresql://", "postgres://")
-
-        postgres_ok = False
-        try:
-            conn = await asyncpg.connect(dsn=dsn, command_timeout=3.0)
-            await conn.fetchval("SELECT 1")
-            await conn.close()
-            postgres_ok = True
-        except Exception:
-            pass
-
-        # Перевірка Redis
-        redis_status = await health_service.check_redis()
-        redis_ok = redis_status.get("status") == "ok"
-
-        if postgres_ok and redis_ok:
-            return JSONResponse({
-                "status": "ready",
-                "timestamp": datetime.now(UTC).isoformat(),
-                "checks": {
-                    "postgresql": "ok" if postgres_ok else "error",
-                    "redis": "ok" if redis_ok else "error",
-                }
-            })
-        else:
-            return JSONResponse({
-                "status": "not_ready",
-                "timestamp": datetime.now(UTC).isoformat(),
-                "checks": {
-                    "postgresql": "ok" if postgres_ok else "error",
-                    "redis": "ok" if redis_ok else "error",
-                }
-            }, status_code=503)
+        report = await SentinelService.check_readiness()
+        status_code = 200 if report["status"] == "ready" else 503
+        return JSONResponse(report, status_code=status_code)
+    except Exception as e:
+        logger.error(f"Sentinel readiness check failed: {e}")
+        return JSONResponse({
+            "status": "error",
+            "message": str(e)
+        }, status_code=503)
 
     except Exception as e:
         return JSONResponse({
