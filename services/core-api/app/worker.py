@@ -12,7 +12,7 @@ celery_app = Celery(
     "predator_tasks",
     broker=redis_url,
     backend=redis_url,
-    include=["app.tasks.freshness", "app.tasks.ai_maintenance"]
+    include=["app.tasks.freshness", "app.tasks.ai_maintenance", "app.tasks.cleanup"]
 )
 
 celery_app.conf.update(
@@ -40,5 +40,15 @@ celery_app.conf.beat_schedule = {
     "weekly-drift-detection": {
         "task": "app.tasks.ai_maintenance.weekly_drift_detection",
         "schedule": 604800.0,  # 7 днів
+    },
+    # Очищення даних (GDPR / Retention)
+    "weekly-gdpr-cleanup": {
+        "task": "app.tasks.cleanup.auto_purge_old_data",
+        "schedule": 604800.0,  # 7 днів (щонеділі)
+    },
+    # Щоденне адаптивне перенавчання моделей (AutoML)
+    "daily-automl-retrain": {
+        "task": "app.tasks.ai_maintenance.nightly_model_retrain",
+        "schedule": 86400.0,  # 24 години
     },
 }

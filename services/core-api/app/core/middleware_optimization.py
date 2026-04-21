@@ -11,6 +11,7 @@ import time
 from fastapi import HTTPException, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import StreamingResponse
+from app.services.chaos_service import ChaosService
 
 from predator_common.logging import get_logger
 
@@ -53,6 +54,9 @@ class PerformanceMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
+        # Застосування хаосу (Фаза 4)
+        await ChaosService.apply_chaos()
+
         start_time = time.time()
 
         response = await call_next(request)
