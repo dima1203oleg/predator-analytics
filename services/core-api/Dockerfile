@@ -1,56 +1,78 @@
-FROM python:3.12-slim-bookworm AS builder
+# PREDATOR Core API — Multi-stage Dockerfile v58.2-WRAITH
+# HR-05: Multi-stage build, non-root user (USER predator)
+# HR-01: Python 3.12 ONLY
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
-    POETRY_NO_INTERACTION=1
+# ============================================================
+# Stage 1: Builder — встановлення залежностей
+# ============================================================
+FROM python:3.12-slim AS builder
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    curl \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
+WORKDIR /build
 
-ENV PATH="${POETRY_HOME}/bin:${PATH}"
-
-WORKDIR /app
-
+# Копіюємо predator-common спочатку (рідко змінюється — кешується)
 COPY libs/predator-common /libs/predator-common
-COPY services/core-api/pyproject.toml ./pyproject.toml
+RUN pip install --prefix=/install /libs/predator-common
 
-RUN poetry install --only main --no-root
+# Копіюємо requirements core-api
+COPY services/core-api/requirements.txt .
+RUN pip install --prefix=/install -r requirements.txt
 
-FROM python:3.12-slim-bookworm AS production
+# ============================================================
+# Stage 2: Runtime — тільки необхідне
+# ============================================================
+FROM python:3.12-slim AS runtime
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv/bin:${PATH}" \
-    PYTHONPATH="/app:/libs/predator-common:/app/services/shared"
-
-RUN groupadd -g 10001 predator && \
-    useradd -u 10001 -g predator -s /bin/sh -m predator && \
-    apt-get update && apt-get install -y --no-install-recommends \
+# Runtime системні залежності
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# HR-05: Ніколи root
+RUN useradd --create-home --shell /bin/bash predator
+
 WORKDIR /app
 
-COPY --from=builder /app/.venv /app/.venv
-COPY services/core-api/app/ ./app/
-COPY services/shared/ ./services/shared/
-COPY libs/ /libs/
+# Копіюємо встановлені Python пакети
+COPY --from=builder /install /usr/local
 
-RUN mkdir -p /app/logs && chown -R predator:predator /app /libs
+# Копіюємо predator-common library
+COPY --chown=predator:predator libs/predator-common /libs/predator-common
+
+# Копіюємо application code
+COPY --chown=predator:predator services/core-api/app/ ./app/
+COPY --chown=predator:predator services/core-api/alembic/ ./alembic/ 
+COPY --chown=predator:predator services/core-api/alembic.ini ./alembic.ini
+
+# Створити директорію для offline Kafka повідомлень
+RUN mkdir -p /app/data/kafka_offline && chown -R predator:predator /app/data
 
 USER predator
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health/live || exit 1
+ENV PYTHONPATH="/app:/libs/predator-common" \
+    PYTHONUNBUFFERED=1 \
+    APP_VERSION="58.2-WRAITH"
+
+# Kubernetes probes
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:8000/api/v1/health/live || exit 1
 
 EXPOSE 8000
 
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--loop", "uvloop"]
+CMD ["python", "-m", "uvicorn", "app.main:app", \
+     "--host", "0.0.0.0", "--port", "8000", \
+     "--workers", "4", \
+     "--timeout-keep-alive", "65", \
+     "--access-log", \
+     "--log-level", "info"]

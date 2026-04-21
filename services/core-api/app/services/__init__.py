@@ -19,4 +19,10 @@
 - warroom_service.py — War Room сервіс
 """
 
-__all__: list[str] = []
+__all__ = [
+    "SentinelService",
+    "OpenSearchService",
+    "QdrantService",
+    "RAGService",
+    "EntityResolutionService"
+]

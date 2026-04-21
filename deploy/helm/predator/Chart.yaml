@@ -1,9 +1,9 @@
 apiVersion: v2
 name: predator
-description: PREDATOR Analytics v55.1 Ironclad Full Stack Chart
+description: PREDATOR Analytics v58.2 WRAITH Full Stack Chart
 type: application
-version: 55.1.0
-appVersion: "55.1.0"
+version: 58.2.0
+appVersion: "58.2-WRAITH"
 
 dependencies:
   - name: ingestion-worker
