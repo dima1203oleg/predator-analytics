@@ -24,8 +24,9 @@ from predator_common.logging import get_logger
 logger = get_logger("ingestion_worker")
 settings = get_settings()
 
-TOPIC_RAW = "predator.ingestion.raw"
-TOPIC_ENRICHED = "predator.ingestion.enriched"
+# Канонічні назви топіків (HR-17: tenant.{id}.category.name)
+TOPIC_RAW = settings.KAFKA_TOPIC_INGESTION_RAW if hasattr(settings, 'KAFKA_TOPIC_INGESTION_RAW') else "tenant.default.ingestion.raw"
+TOPIC_ENRICHED = settings.KAFKA_TOPIC_ENRICHMENT if hasattr(settings, 'KAFKA_TOPIC_ENRICHMENT') else "tenant.default.enrichment.events"
 
 
 async def process_file_upload(
@@ -220,14 +221,14 @@ async def consume() -> None:
 
     consumer = AIOKafkaConsumer(
         TOPIC_RAW,
-        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
+        bootstrap_servers=settings.KAFKA_BROKERS,
         group_id="predator-ingestion-group",
         auto_offset_reset="earliest",
         value_deserializer=lambda m: json.loads(m.decode("utf-8")) if m else {},
     )
 
     producer = AIOKafkaProducer(
-        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
+        bootstrap_servers=settings.KAFKA_BROKERS,
     )
 
     await consumer.start()

@@ -194,8 +194,18 @@ app.add_middleware(TenantContextMiddleware)
 cors_origins = add_cors_middleware(app)
 logger.info(f"CORS enabled for origins: {cors_origins}")
 
-# Інструментація OpenTelemetry (TR-03)
-# FastAPIInstrumentor().instrument_app(app)
+# Інструментація OpenTelemetry (TZ v5.0 §8 — активовано умовно)
+if settings.ENABLE_TRACING:
+    try:
+        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+        FastAPIInstrumentor().instrument_app(app)
+        logger.info("OpenTelemetry tracing активовано", extra={
+            "endpoint": settings.OTEL_EXPORTER_OTLP_ENDPOINT
+        })
+    except ImportError:
+        logger.warning("OpenTelemetry пакети не встановлені, tracing вимкнено")
+    except Exception as e:
+        logger.warning(f"OpenTelemetry tracing не вдалося активувати: {e}")
 
 
 # Register Routers - оптимізовано для читабельності

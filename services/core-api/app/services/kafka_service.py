@@ -17,19 +17,28 @@ logger = get_logger("kafka_service")
 settings = get_settings()
 
 
-# ======================== ТОПІКИ (§2.4.1) ========================
+# ======================== ТОПІКИ (TZ v5.0 §5.1 / HR-17) ========================
 
 class KafkaTopics:
-    """Реєстр Kafka топіків згідно TZ §2.4.1."""
+    """Реєстр канонічних Kafka топіків (HR-17: tenant.{id}.category.name).
 
-    INGESTION_RAW = "predator.ingestion.raw"
-    INGESTION_VALIDATED = "predator.ingestion.validated"
-    INGESTION_ENRICHED = "predator.ingestion.enriched"
-    ENTITY_UPSERT = "predator.entity.upsert"
-    RISK_CALCULATED = "predator.risk.calculated"
-    ALERTS_TRIGGERED = "predator.alerts.triggered"
-    EVENTS_USER = "predator.events.user"
-    DLQ_JOBS = "predator.dlq.jobs"
+    Шаблон: tenant.{tenant_id}.{category}.{name}
+    При використанні потрібно підставити конкретний tenant_id.
+    Default значення — для single-tenant / dev середовища.
+    """
+
+    INGESTION_RAW = settings.KAFKA_TOPIC_INGESTION_RAW
+    INGESTION_CLEANED = settings.KAFKA_TOPIC_INGESTION_CLEANED
+    ENTITY_RESOLUTION = settings.KAFKA_TOPIC_ENTITY_RESOLUTION
+    ENRICHMENT = settings.KAFKA_TOPIC_ENRICHMENT
+    RISK_ALERTS = settings.KAFKA_TOPIC_RISK_ALERTS
+    DLQ = settings.KAFKA_TOPIC_DLQ
+    QUARANTINE = settings.KAFKA_TOPIC_QUARANTINE
+
+    @staticmethod
+    def for_tenant(tenant_id: str, category: str, name: str) -> str:
+        """Формує назву топіка для конкретного тенанта."""
+        return f"tenant.{tenant_id}.{category}.{name}"
 
 
 # ======================== МОДЕЛІ ПОВІДОМЛЕНЬ (§2.4.2) ========================
@@ -257,7 +266,7 @@ class KafkaService:
             payload=payload,
             timestamp=int(datetime.now(UTC).timestamp() * 1000),
         )
-        return await self.send(KafkaTopics.ENTITY_UPSERT, event, key=entity_ueid)
+        return await self.send(KafkaTopics.ENTITY_RESOLUTION, event, key=entity_ueid)
 
     async def publish_risk_score(
         self,
@@ -276,7 +285,7 @@ class KafkaService:
             components=components,
             calculated_at=int(datetime.now(UTC).timestamp() * 1000),
         )
-        return await self.send(KafkaTopics.RISK_CALCULATED, event, key=entity_ueid)
+        return await self.send(KafkaTopics.RISK_ALERTS, event, key=entity_ueid)
 
     async def publish_alert_triggered(
         self,
@@ -297,7 +306,7 @@ class KafkaService:
             payload=payload,
             triggered_at=int(datetime.now(UTC).timestamp() * 1000),
         )
-        return await self.send(KafkaTopics.ALERTS_TRIGGERED, event, key=alert_id)
+        return await self.send(KafkaTopics.RISK_ALERTS, event, key=alert_id)
 
 
 # ======================== SINGLETON ========================

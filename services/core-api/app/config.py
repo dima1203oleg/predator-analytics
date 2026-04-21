@@ -75,15 +75,17 @@ class Settings(BaseSettings):
     QDRANT_URL: str = "http://localhost:6333"
     QDRANT_API_KEY: str | None = None
 
-    # Kafka / Signal Bus
+    # Kafka / Redpanda Signal Bus (HR-17: tenant.{id}.category.name)
     KAFKA_BROKERS: str = "localhost:9092"
     KAFKA_OFFLINE_DIR: str = "/tmp/predator_offline"  # noqa: S108
-    KAFKA_TOPIC_INGESTION_RAW: str = "predator.ingestion.raw"
-    KAFKA_TOPIC_INGESTION_VALIDATED: str = "predator.ingestion.validated"
-    KAFKA_TOPIC_INGESTION_ENRICHED: str = "predator.ingestion.enriched"
-    KAFKA_TOPIC_ENTITY_EVENTS: str = "predator.events.entity.update"
-    KAFKA_TOPIC_RISK_EVENTS: str = "predator.events.risk.update"
-    KAFKA_TOPIC_DLQ: str = "predator.dlq"
+    # Канонічні назви топіків — TZ v5.0 §5.1
+    KAFKA_TOPIC_INGESTION_RAW: str = "tenant.default.ingestion.raw"
+    KAFKA_TOPIC_INGESTION_CLEANED: str = "tenant.default.ingestion.cleaned"
+    KAFKA_TOPIC_ENTITY_RESOLUTION: str = "tenant.default.entity.resolution"
+    KAFKA_TOPIC_ENRICHMENT: str = "tenant.default.enrichment.events"
+    KAFKA_TOPIC_RISK_ALERTS: str = "tenant.default.risk.alerts"
+    KAFKA_TOPIC_DLQ: str = "tenant.default.dlq"
+    KAFKA_TOPIC_QUARANTINE: str = "tenant.default.quarantine"
 
     # MinIO/S3
     MINIO_ENDPOINT: str = "localhost:9000"
