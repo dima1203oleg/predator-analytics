@@ -25,9 +25,11 @@ class MinIOService:
     файли зберігаються локально.
     """
 
-    BUCKET_INGESTION = "raw-uploads"
-    BUCKET_EXPORTS = "predator-exports"
-    BUCKET_ARTIFACTS = "predator-artifacts"
+    # Tenant Isolation (TZ §3.1)
+    # Бакети створюються динамічно для кожного тенанта:
+    # 1. tenant-{id}-raw
+    # 2. tenant-{id}-processed
+    # 3. tenant-{id}-artifacts
 
     def __init__(self) -> None:
         self._client: Minio | None = None
@@ -57,9 +59,6 @@ class MinIOService:
             self._client.list_buckets()
             self._connected = True
             logger.info("MinIO підключено", extra={"endpoint": self._endpoint})
-
-            # Створюємо бакети якщо не існують
-            await self._ensure_buckets()
             return True
 
         except Exception as e:
@@ -67,17 +66,34 @@ class MinIOService:
             self._connected = False
             return False
 
-    async def _ensure_buckets(self):
-        """Створює необхідні бакети якщо вони не існують."""
+    def get_raw_bucket(self, tenant_id: str) -> str:
+        """Повертає назву бакету для вхідних файлів тенанта."""
+        return f"tenant-{str(tenant_id).lower()}-raw"
+
+    def get_processed_bucket(self, tenant_id: str) -> str:
+        """Повертає назву бакету для оброблених/збагачених даних."""
+        return f"tenant-{str(tenant_id).lower()}-processed"
+
+    def get_artifacts_bucket(self, tenant_id: str) -> str:
+        """Повертає назву бакету для артефактів та звітів."""
+        return f"tenant-{str(tenant_id).lower()}-artifacts"
+
+    async def ensure_tenant_buckets(self, tenant_id: str):
+        """Створює необхідні бакети для тенанта якщо вони не існують."""
         if not self._client:
             return
 
-        buckets = [self.BUCKET_INGESTION, self.BUCKET_EXPORTS, self.BUCKET_ARTIFACTS]
+        buckets = [
+            self.get_raw_bucket(tenant_id),
+            self.get_processed_bucket(tenant_id),
+            self.get_artifacts_bucket(tenant_id)
+        ]
+        
         for bucket in buckets:
             try:
                 if not self._client.bucket_exists(bucket):
                     self._client.make_bucket(bucket)
-                    logger.info(f"Створено бакет: {bucket}")
+                    logger.info(f"Створено бакет ізоляції: {bucket}")
             except S3Error as e:
                 logger.error(f"Помилка створення бакету {bucket}: {e}")
 

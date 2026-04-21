@@ -105,13 +105,16 @@ async def upload_file(
     db.add(new_job)
     await db.commit()
 
-    # Зберігаємо файл в MinIO/S3
+    # Зберігаємо файл в MinIO/S3 (ізоляція по тенанту)
     minio = get_minio_service()
-    object_name = f"{tenant_id}/{job_id}/{file.filename}"
+    await minio.ensure_tenant_buckets(tenant_id)
+    
+    object_name = f"{job_id}/{file.filename}"
     content_type = file.content_type or "application/octet-stream"
+    bucket_name = minio.get_raw_bucket(tenant_id)
 
     _success, s3_path, _ = await minio.upload_file(
-        bucket=minio.BUCKET_INGESTION,
+        bucket=bucket_name,
         object_name=object_name,
         data=content,
         content_type=content_type,
