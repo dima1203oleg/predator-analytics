@@ -12,15 +12,23 @@ settings = get_settings()
 configure_logging(level="INFO")
 logger = logging.getLogger("graph_service.main")
 
+from app.services.graph_sync import GraphSyncWorker
+
+sync_worker = GraphSyncWorker()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Життєвий цикл додатку. Ініціалізація та завершення."""
     logger.info("Initializing Graph Service...")
     await graph_db.connect()
+    
+    # Запуск фонової синхронізації
+    await sync_worker.start()
 
     yield
 
     logger.info("Shutting down Graph Service...")
+    await sync_worker.stop()
     await graph_db.disconnect()
 
 app = FastAPI(

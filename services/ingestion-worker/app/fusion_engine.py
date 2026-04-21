@@ -17,13 +17,27 @@ class ДвигунЗлиттяДаних:
 
     def __init__(self, ua_registry: УкраїнськийРеєстр):
         self.ua_registry = ua_registry
+        # T2.1 - Інтеграція YouControl з Circuit Breaker
+        from app.osint.youcontrol_client import YouControlClient
+        self.youcontrol = YouControlClient()
 
     async def збагатити_компанію(self, edrpou: str, ueid: str) -> Організація:
         """Повний цикл збагачення даних компанії."""
         logger.info(f"Початок Data Fusion для компанії (ЄДРПОУ {edrpou})")
 
-        # 1. Отримання базових даних з українських реєстрів
-        базові_дані = await self.ua_registry.знайти_за_єдрпоу(edrpou)
+        # 1. Отримання базових даних (з фолбеком на YouControl)
+        try:
+            youcontrol_data = await self.youcontrol.get_company_data(edrpou)
+            базові_дані = {
+                "назва": youcontrol_data.get("name", "Невідомо"),
+                "статус": youcontrol_data.get("status", "registered"),
+                "дата_реєстрації": youcontrol_data.get("registration_date", "2000-01-01T00:00:00"),
+                "податковий_борг": youcontrol_data.get("taxes", {}).get("debt", False),
+                "судові_справи_кількість": youcontrol_data.get("court_cases", 0)
+            }
+        except Exception as e:
+            logger.warning(f"YouControl API failed: {e}. Fallback to UA Registry.")
+            базові_дані = await self.ua_registry.знайти_за_єдрпоу(edrpou)
         санкції = await self.ua_registry.перевірити_санкції(базові_дані["назва"])
 
         # 2. OSINT Аналіз
