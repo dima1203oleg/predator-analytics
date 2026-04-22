@@ -254,7 +254,7 @@ const server = http.createServer((req, res) => {
   }
 
   // 3. Agents
-  if (path === '/api/v2/admin/agents' && req.method === 'GET') {
+  if ((path === '/api/v2/admin/agents' || path === '/api/v1/agents') && req.method === 'GET') {
     return sendJSON(res, systemState.agents);
   }
 
@@ -280,7 +280,7 @@ const server = http.createServer((req, res) => {
   }
 
   // Health check
-  if (path === '/health' || path === '/api/v1/health') {
+  if (path === '/health' || path === '/api/v1/health' || path === '/api/v45/monitoring/health') {
     return sendJSON(res, { status: 'ok', uptime: systemState.system.status.uptime });
   }
 
