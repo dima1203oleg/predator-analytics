@@ -222,7 +222,7 @@ const SystemStatusHeader: React.FC = () => {
       <div className="absolute top-0 right-1/4 w-[500px] h-32 bg-blue-500/[0.07] blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
       
       {/* Noise Texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise" />
 
       {/* Dynamic Scan Line */}
       <motion.div 

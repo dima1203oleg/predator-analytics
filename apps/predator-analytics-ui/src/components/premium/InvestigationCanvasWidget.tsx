@@ -92,7 +92,7 @@ export const InvestigationCanvasWidget: React.FC<{
              </div>
           </div>
       ) : (
-      <div className="flex-1 relative overflow-hidden cursor-crosshair bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-90">
+      <div className="flex-1 relative overflow-hidden cursor-crosshair bg-noise opacity-90">
         {/* Render Links (Lines) */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
             {links.map((link, i) => {

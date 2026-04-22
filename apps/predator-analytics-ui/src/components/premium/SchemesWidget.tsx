@@ -59,7 +59,7 @@ export const SchemesWidget: React.FC<{ persona: string }> = ({ persona }) => {
                 className="group relative bg-black/40 border border-red-500/10 hover:border-red-500/40 rounded-2xl p-5 hover:bg-red-500/5 transition-all cursor-pointer overflow-hidden"
               >
                 {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat opacity-5" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity bg-noise bg-repeat opacity-5" />
 
                 <div className="flex justify-between items-start mb-4 relative z-10">
                   <div className="flex items-center gap-2">

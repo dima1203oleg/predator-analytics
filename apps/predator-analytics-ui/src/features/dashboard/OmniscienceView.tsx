@@ -343,7 +343,7 @@ const OmniscienceView: React.FC = () => {
                         <Activity size={18} className="text-blue-500" /> Системний Осцилограф
                       </h3>
                       <div className="flex-1 flex items-center justify-center relative">
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                        <div className="absolute inset-0 bg-noise opacity-20" />
                         <NeuralPulse color="rgba(59,130,246,0.5)" size={200} />
                       </div>
                     </TacticalCard>

@@ -47,7 +47,7 @@ export const SupplyChainRadarWidget: React.FC<{ persona: string }> = ({ persona 
   return (
     <div className="bg-slate-950/90 border border-emerald-500/20 rounded-[40px] backdrop-blur-3xl overflow-hidden h-full flex flex-col relative group shadow-[0_0_50px_rgba(16,185,129,0.05)]">
       {/* Radar Background Effects */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+      <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none" />
 
       {/* Header */}

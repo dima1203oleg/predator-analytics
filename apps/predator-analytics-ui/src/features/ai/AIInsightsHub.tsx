@@ -71,7 +71,7 @@ const PRIORITY_CONFIG: Record<InsightPriority, { color: string; label: string }>
 // ── ВИСОКОТЕХНОЛОГІЧНИЙ ПЕРЕКРИТТЯ ──
 const WRAITH_Overlay = () => (
     <div className="fixed inset-0 pointer-events-none z-[60]">
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-noise opacity-[0.03] mix-blend-overlay" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20" />
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none overflow-hidden">
             <div className="w-full h-full animate-scanline bg-gradient-to-b from-transparent via-rose-500/10 to-transparent" 

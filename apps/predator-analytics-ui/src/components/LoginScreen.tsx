@@ -147,7 +147,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
     const formatDate = (d: Date) => d.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     return (
-        <div className="h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
+        <div className="h-screen max-h-screen bg-[#020617] flex flex-col items-center justify-center relative overflow-hidden font-mono text-slate-200 select-none">
 
             {/* ═══ ФОНОВИЙ ШАР: Сітка / Матриця ═══ */}
             <div className="absolute inset-0 pointer-events-none z-0">
@@ -426,7 +426,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         {/* ФОРМА АВТОРИЗАЦІЇ */}
                         <form className="w-72 space-y-2.5" onSubmit={(e) => { e.preventDefault(); setStep('scanning'); }}>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-700 group-focus-within:text-rose-500 transition-colors">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-500 group-focus-within:text-rose-400 transition-colors">
                                     <Fingerprint size={16} />
                                 </div>
                                 <input
@@ -436,7 +436,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 />
                             </div>
                             <div className="relative group">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-700 group-focus-within:text-rose-500 transition-colors">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-500 group-focus-within:text-rose-400 transition-colors">
                                     <Lock size={16} />
                                 </div>
                                 <input
@@ -456,8 +456,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 УВІЙТИ В СИСТЕМУ
                             </motion.button>
 
-                            <div className="text-center">
-                                <span className="text-[7px] text-slate-800 tracking-[0.2em]">
+                            <div className="text-center pt-2">
+                                <span className="text-[7px] text-slate-600 tracking-[0.2em] font-bold">
                                     БІОМЕТРИКА // СКАН СІТКІВКИ // ГОЛОСОВА ІДЕНТИФІКАЦІЯ
                                 </span>
                             </div>
