@@ -80,11 +80,11 @@ frontend:
           - "{{ .Values.global.domain }}"
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 300m
+      memory: 256Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
   autoscaling:
     enabled: false
     minReplicas: 2
@@ -110,11 +110,11 @@ coreApi:
     port: 8000
   resources:
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      cpu: 500m
+      memory: 512Mi
     requests:
-      cpu: 250m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
   autoscaling:
     enabled: false
     minReplicas: 2
@@ -250,7 +250,7 @@ security:
 
 # Monitoring
 monitoring:
-  enabled: true
+  enabled: false
   prometheus:
     enabled: true
   grafana:
