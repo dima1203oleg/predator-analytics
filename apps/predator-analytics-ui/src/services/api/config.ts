@@ -17,6 +17,7 @@ const metaEnv = getMetaEnv();
 
 // ─── Точки підключення ───────────────────────────────────────────────────────
 const NVIDIA_DIRECT_URL  = 'http://194.177.1.240:8000/api/v1';
+const NVIDIA_LOCAL_URL   = 'http://192.168.0.199:8000/api/v1';
 const NVIDIA_ZROK_URL    = 'https://predator.share.zrok.io/api/v1';
 const NVIDIA_COLAB_URL   = metaEnv.VITE_COLAB_URL || 'https://predator-mirror.share.zrok.io/api/v1';
 const MOCK_URL           = '/api/v1';
@@ -33,11 +34,15 @@ export const NODE_IDS = {
 const resolveApiUrl = (): string => {
     // 1. Явна настройка через .env.local
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
-    // 2. HTTPS-сторінка — завжди через ZROK (немає mixed-content)
+    
+    // 2. Якщо ми в локальній мережі та це розробка — пріоритет на локальний IP
+    if (metaEnv.DEV) return NVIDIA_LOCAL_URL;
+
+    // 3. HTTPS-сторінка — завжди через ZROK (немає mixed-content)
     if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
         return NVIDIA_ZROK_URL;
     }
-    // 3. По замовчуванню — прямий NVIDIA
+    // 4. По замовчуванню — прямий NVIDIA
     return NVIDIA_DIRECT_URL;
 };
 

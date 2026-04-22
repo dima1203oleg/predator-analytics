@@ -300,5 +300,3 @@ export const ZeroTrustSecurityTab: React.FC = () => {
 };
 
 export default ZeroTrustSecurityTab;
-
-export default ZeroTrustSecurityTab;
