@@ -21,7 +21,7 @@ async def list_pods(
     _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN, Permission.ANALYST]))
 ):
     """Отримати список усіх керованих подів."""
-    return orchestrator_service.get_pods()
+    return await orchestrator_service.get_pods()
 
 @router.post("/pods/{pod_id}/restart")
 async def restart_pod(

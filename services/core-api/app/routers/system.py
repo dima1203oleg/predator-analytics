@@ -352,12 +352,18 @@ async def get_cluster_status(request: Request) -> dict[str, Any]:
 
 
 @router.get("/logs/stream")
-async def stream_system_logs(limit: int = 50) -> list[dict[str, Any]]:
-    """Повертає компактний стрім системних логів на основі health snapshot."""
+async def stream_system_logs(limit: int = 1000) -> list[dict[str, Any]]:
+    """Повертає стрім системних логів, включаючи стан оркестрованих подів."""
+    from app.services.orchestrator_service import orchestrator_service
+    
     health = await _health_snapshot()
+    pods_data = await orchestrator_service.get_pods()
+    pods = [p.dict() for p in pods_data]
+    
     now = datetime.now(UTC)
     logs: list[dict[str, Any]] = []
 
+    # Логи базових сервісів інфраструктури
     for index, (name, service) in enumerate(health.get("services", {}).items()):
         status = service.get("status", "unknown")
         level = "INFO" if status == "ok" else "WARN" if status in {"degraded", "offline"} else "ERROR"
@@ -370,7 +376,7 @@ async def stream_system_logs(limit: int = 50) -> list[dict[str, Any]]:
 
         logs.append(
             {
-                "id": f"log-{index}",
+                "id": f"svc-log-{index}",
                 "timestamp": now.isoformat(),
                 "service": name,
                 "level": level,
@@ -378,7 +384,31 @@ async def stream_system_logs(limit: int = 50) -> list[dict[str, Any]]:
             }
         )
 
-    return logs[:max(limit, 0)]
+    # Логи оркестрованих подів
+    for index, pod in enumerate(pods):
+        status = pod["status"]
+        level = "INFO" if status == "Running" else "WARN" if status == "Pending" else "ERROR"
+        
+        # Симулюємо змістовні повідомлення логів
+        if status == "Running":
+            msg = f"Pod {pod['name']} ({pod['id']}) стабільний. CPU: {pod['cpu']}, MEM: {pod['mem']}."
+        elif status == "Restarting":
+            msg = f"Pod {pod['name']} перезапускається. Кількість рестартів: {pod['restarts']}."
+        else:
+            msg = f"Pod {pod['name']} у стані {status}. Очікування ресурсної квоти кластера."
+
+        logs.append(
+            {
+                "id": f"pod-log-{index}",
+                "timestamp": now.isoformat(),
+                "service": pod["id"],  # Використовуємо ID пода як ім'я сервісу для фільтрації в UI
+                "level": level,
+                "message": msg,
+            }
+        )
+
+    # Сортуємо за часом (хоча в нас все 'now' для симуляції) та обмежуємо лімітом
+    return logs[-max(limit, 0):] if limit > 0 else logs
 
 
 @router.get("/infrastructure")
