@@ -93,230 +93,191 @@ const Header: React.FC = () => {
     <header
       className="sticky top-0 z-40 border-b op-mode-transition"
       style={{
-        background: 'rgba(2,6,18,0.88)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        borderColor: 'rgba(255,255,255,0.07)',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
+        background: 'rgba(2,6,18,0.7)',
+        backdropFilter: 'blur(30px) saturate(200%)',
+        borderColor: 'rgba(255,255,255,0.05)',
+        boxShadow: '0 8px 64px -12px rgba(0,0,0,0.6)',
       }}
     >
+      {/* Cinematic HUD Background Layers */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_-10%,rgba(244,63,94,0.3),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px]" />
+      </div>
+
       {/* Верхня акцентна лінія розділу */}
       <div
-        className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none opacity-80"
         style={{
-          background: `linear-gradient(90deg, transparent 0%, ${sectionGlow.glow} 40%, ${sectionGlow.glow} 60%, transparent 100%)`,
+          background: `linear-gradient(90deg, transparent 0%, ${sectionGlow.glow} 20%, ${sectionGlow.glow} 80%, transparent 100%)`,
         }}
       />
 
-      <div className="mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 xl:px-10">
-        <div className="flex items-center gap-4 py-3">
+      <div className="mx-auto max-w-[1920px] px-3 sm:px-5 lg:px-7 xl:px-10 relative z-10">
+        <div className="flex items-center gap-6 py-4">
 
           {/* ── ЛІВА ЧАСТИНА: Breadcrumb + Title ── */}
           <div className="flex-1 min-w-0">
             {/* Breadcrumb навігація */}
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-3 mb-2.5">
               {/* Іконка розділу */}
               <div
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl shadow-lg relative group overflow-hidden"
                 style={{
                   background: sectionGlow.gradient,
                   border: `1px solid ${sectionGlow.border}`,
                 }}
               >
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 {section ? (
-                  <Layers3 className={cn('h-3.5 w-3.5', accent.icon)} />
+                  <Layers3 className={cn('h-4 w-4 drop-shadow-[0_0_8px_currentColor]', accent.icon)} />
                 ) : (
-                  <ShieldCheck className={cn('h-3.5 w-3.5', accent.icon)} />
+                  <ShieldCheck className={cn('h-4 w-4 drop-shadow-[0_0_8px_currentColor]', accent.icon)} />
                 )}
               </div>
 
               {/* Breadcrumb path */}
-              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em]">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.25em] italic">
                 <span
-                  className="rounded-full border px-2 py-0.5"
+                  className="rounded-lg border px-2.5 py-1 backdrop-blur-md"
                   style={{
-                    background: `${sectionGlow.glow.replace('0.15', '0.08')}`,
+                    background: `${sectionGlow.glow.replace('0.15', '0.1')}`,
                     borderColor: sectionGlow.border,
                     color: accent.icon.includes('emerald') ? '#6ee7b7' :
                            accent.icon.includes('cyan')    ? '#67e8f9' :
                            accent.icon.includes('rose')    ? '#fda4af' :
                            accent.icon.includes('indigo')  ? '#a5b4fc' :
                            accent.icon.includes('violet')  ? '#c4b5fd' :
-                           '#fda4af', // Default to rose for WRAITH
+                           '#fda4af',
                   }}
                 >
-                  {section?.label ?? 'Платформа'}
+                  {section?.label ?? 'ПЛАТФОРМА'}
                 </span>
                 {item && (
                   <>
-                    <ChevronRight className="h-3 w-3 text-slate-600" />
-                    <span className="text-slate-400">{item.label}</span>
+                    <ChevronRight className="h-3 w-3 text-slate-700 shrink-0" />
+                    <span className="text-slate-500 hover:text-slate-300 transition-colors cursor-default drop-shadow-sm">{item.label}</span>
                   </>
                 )}
               </div>
             </div>
 
             {/* Головний заголовок сторінки */}
-            <div className="flex items-end gap-4">
+            <div className="flex items-center gap-5">
               <div className="min-w-0">
                 <h1
-                  className="text-[1.5rem] font-black tracking-tight leading-none truncate"
-                  style={{ color: '#f8fafc', letterSpacing: '-0.025em' }}
+                  className="text-[1.75rem] font-black tracking-tight leading-none truncate italic text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                  style={{ letterSpacing: '-0.03em' }}
                 >
-                  {item?.label ?? 'Панель управління'}
+                  {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
                 </h1>
-                <p
-                  className="mt-1.5 text-sm leading-relaxed line-clamp-1 max-w-2xl"
-                  style={{ color: '#64748b' }}
-                >
-                  {item?.description ??
-                    section?.description ??
-                    'Операційний контекст не визначено для поточного маршруту.'}
-                </p>
               </div>
-            </div>
-
-            {/* Мета-рядок: дата, статус, режим */}
-            <div className="mt-2.5 flex flex-wrap items-center gap-2">
-              <div
-                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  borderColor: 'rgba(255,255,255,0.08)',
-                  color: '#64748b',
-                }}
-              >
-                <Calendar className="h-3 w-3 text-slate-600" />
-                {currentDate}
-              </div>
-
-              <div
-                className={cn(
-                  'flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold',
-                  backendStatus.isOffline
-                    ? 'border-rose-400/20 bg-rose-500/08 text-rose-300'
-                    : 'border-emerald-400/20 bg-emerald-500/08 text-emerald-300',
-                )}
-              >
-                <span
-                  className={cn(
-                    'h-1.5 w-1.5 rounded-full',
-                    backendStatus.isOffline ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse',
-                  )}
-                  style={{
-                    boxShadow: backendStatus.isOffline
-                      ? '0 0 5px rgba(248,113,113,0.7)'
-                      : '0 0 5px rgba(52,211,153,0.7)',
-                  }}
-                />
-                {backendStatus.statusLabel}
-              </div>
-
-              <div
-                className="flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  borderColor: 'rgba(255,255,255,0.08)',
-                  color: '#64748b',
-                }}
-              >
-                <Command className="h-3 w-3" />
-                {backendStatus.modeLabel}
+              
+              {/* Статусні теги в одному рядку з заголовком */}
+              <div className="hidden xl:flex items-center gap-3">
+                <div className="h-4 w-px bg-white/10" />
+                <div className="flex items-center gap-3">
+                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-500 italic">
+                      <Calendar className="h-3 w-3 text-rose-500/50" />
+                      {currentDate}
+                   </div>
+                   
+                   <div className={cn(
+                      "flex items-center gap-2 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest italic",
+                      backendStatus.isOffline 
+                        ? "bg-rose-500/5 border-rose-500/20 text-rose-400" 
+                        : "bg-emerald-500/5 border-emerald-500/20 text-emerald-400"
+                   )}>
+                      <span className={cn(
+                        "w-1.5 h-1.5 rounded-full",
+                        backendStatus.isOffline ? "bg-rose-500" : "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                      )} />
+                      {backendStatus.statusLabel}
+                   </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* ── ПРАВА ЧАСТИНА: Пошук + Дії ── */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-4 shrink-0">
             <SystemPulseIndicator />
+            
             {/* Командний пошук */}
             <div
-              className="relative hidden sm:block group"
+              className="relative hidden md:block group cursor-pointer"
               onClick={() => setIsPaletteOpen(true)}
             >
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500 group-hover:text-rose-400 transition-colors" />
-              <input
-                type="search"
-                readOnly
-                value=""
-                onFocus={() => setIsPaletteOpen(true)}
-                placeholder="Пошук модулів та дій..."
-                aria-label="Відкрити командний пошук"
-                className="h-9 w-52 lg:w-64 cursor-pointer rounded-xl border border-white/5 text-sm text-slate-400 outline-none transition-all placeholder:text-slate-600 shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)] group-hover:border-white/20 group-hover:bg-white/[0.06] bg-white/[0.03]"
-                style={{
-                  paddingLeft: '2.25rem',
-                  paddingRight: '3.5rem',
-                }}
-              />
-              <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
-                <kbd
-                  className="rounded border border-white/10 px-1.5 py-0.5 text-[8px] font-mono bg-black/40 text-slate-500 group-hover:text-rose-400/80 group-hover:border-rose-500/30 transition-all"
-                >⌘K</kbd>
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-600 group-hover:text-rose-500 transition-colors" />
+              </div>
+              <div className="h-10 w-56 lg:w-72 bg-black/40 border border-white/5 rounded-xl text-[11px] font-bold text-slate-400 flex items-center pl-10 pr-12 transition-all group-hover:border-rose-500/30 group-hover:bg-rose-500/[0.02] shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] italic tracking-tight">
+                ПОШУК_МОДУЛІВ...
+              </div>
+              <div className="absolute inset-y-0 right-2.5 flex items-center gap-1">
+                <kbd className="hidden lg:flex items-center justify-center px-1.5 py-0.5 rounded border border-white/10 bg-black/40 text-[9px] font-black text-slate-500 group-hover:text-rose-400/80 group-hover:border-rose-500/30 transition-all">
+                  ⌘K
+                </kbd>
               </div>
             </div>
 
-            {/* Контекстна панель */}
-            {shellV2Enabled && (
+            {/* Контекстні дії */}
+            <div className="flex items-center gap-2 p-1.5 bg-black/40 border border-white/5 rounded-2xl shadow-lg">
+              {shellV2Enabled && (
+                <button
+                  title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
+                  onClick={() => setIsContextRailOpen((current) => !current)}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
+                    isContextRailOpen 
+                      ? "bg-indigo-500/10 text-indigo-400 shadow-[inset_0_0_12px_rgba(99,102,241,0.2)]" 
+                      : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
+                  )}
+                >
+                  <PanelRight className="h-4 w-4" />
+                </button>
+              )}
+
               <button
-                title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
-                onClick={() => setIsContextRailOpen((current) => !current)}
+                title="Сповіщення"
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:text-white hover:bg-white/[0.05] transition-all duration-300 group"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-600 rounded-full shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
+              </button>
+
+              <button
+                id="header-terminal-toggle"
+                title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
+                onClick={() => setTerminalOpen(!isTerminalOpen)}
                 className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-300",
-                  isContextRailOpen 
-                    ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.2)]" 
-                    : "bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.06]"
+                  "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-300 relative group",
+                  isTerminalOpen 
+                    ? "bg-rose-500/10 text-rose-400 shadow-[inset_0_0_12px_rgba(225,29,72,0.2)]" 
+                    : "text-slate-600 hover:text-white hover:bg-white/[0.05]"
                 )}
               >
-                {isContextRailOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
+                <Terminal className="h-4 w-4" />
               </button>
-            )}
-
-            {/* Сповіщення */}
-            <button
-              title="Сповіщення"
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.03] text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all duration-300"
-            >
-              <Bell className="h-4 w-4" />
-              <span
-                className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]"
-              />
-            </button>
-
-            {/* Системний термінал */}
-            <button
-              id="header-terminal-toggle"
-              title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
-              onClick={() => setTerminalOpen(!isTerminalOpen)}
-              className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-300",
-                isTerminalOpen 
-                  ? "bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]" 
-                  : "bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.06]"
-              )}
-            >
-              <Terminal className="h-4 w-4" />
-            </button>
+            </div>
 
             {/* Профіль та операційний режим */}
-            <div className="hidden md:flex items-center gap-2.5">
-              <div className="h-7 w-px bg-white/10" />
-
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-px bg-white/5" />
+              
               {/* Профіль */}
-              <div
-                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-1.5 cursor-pointer hover:bg-white/[0.06] hover:border-white/10 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]"
-              >
-                <div
-                  className="flex h-6 w-6 items-center justify-center rounded-lg"
-                  style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)' }}
-                >
-                  <UserCircle className="h-3.5 w-3.5 text-indigo-300" />
+              <div className="flex items-center gap-3 pl-1 group cursor-pointer">
+                <div className="text-right hidden lg:block">
+                  <div className="text-[11px] font-black text-white tracking-tight uppercase italic">{user?.name || 'ADMIN_CORE'}</div>
+                  <div className="text-[8px] font-black text-rose-500/60 tracking-[0.2em] uppercase mt-0.5">{roleLabel}</div>
                 </div>
-                <div className="hidden lg:block">
-                  <div className="text-[11px] font-bold text-white leading-none">{user?.name || 'Адміністратор'}</div>
-                  <div className="text-[9px] text-slate-500 mt-0.5 leading-none">{roleLabel}</div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 flex items-center justify-center shadow-lg group-hover:border-rose-500/30 transition-all relative overflow-hidden">
+                   <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                   <UserCircle className="h-6 w-6 text-slate-500 group-hover:text-rose-400 transition-colors" />
                 </div>
               </div>
 
-              {/* Операційний режим */}
               <OperationalModeSwitch />
             </div>
           </div>

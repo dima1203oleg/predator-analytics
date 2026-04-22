@@ -53,15 +53,26 @@ export const FailoverRoutingTab: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
-        <div className="text-[10px] font-mono uppercase tracking-widest">Завантаження статусу failover...</div>
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/30 space-y-6">
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
+          <Radio className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
+        </div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">Аналіз маршрутів...</div>
       </div>
     );
   }
 
   if (isError || !data) {
-    return <div>Помилка завантаження даних Failover</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center glass-wraith m-8 border border-rose-500/20 rounded-xl">
+        <AlertTriangle size={48} className="text-rose-500/40 mb-6" />
+        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">ПОМИЛКА КАНАЛУ</div>
+        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
+          Система не змогла отримати стан failover-кластера. Перевірте з'єднання з контролером маршрутизації.
+        </p>
+      </div>
+    );
   }
 
   const activeMode = data.activeMode;
@@ -82,22 +93,37 @@ export const FailoverRoutingTab: React.FC = () => {
   };
 
   return (
-    <div className="p-4 space-y-4">
-      {/* Заголовок */}
-      <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Radio className="w-4 h-4 text-rose-500" />
-        <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
-          Failover & Маршрутизація
-        </h2>
+    <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
+        <div className="flex items-center gap-3">
+          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
+            Failover & Маршрутизація
+          </h2>
+          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
+            L3_TRAFFIC_CONTROL
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span>Link Active</span>
+          </div>
+          <span>•</span>
+          <span>Redundancy: 3/3</span>
+          <span>•</span>
+          <span>Policy: AUTOMATIC_PREEMPTIVE</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Tri-State режими */}
-        <div>
-          <div className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-2">
-            Режим маршрутизації
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+             <div className="w-1 h-1 bg-rose-500 rotate-45" />
+             <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-[0.4em]">Режим маршрутизації</span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {(Object.keys(MODES) as RouteMode[]).map((mode) => {
               const m = MODES[mode];
               const active = activeMode === mode;
@@ -106,20 +132,29 @@ export const FailoverRoutingTab: React.FC = () => {
                   key={mode}
                   disabled={toggleMutation.isPending}
                   className={cn(
-                    'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm border text-left transition-all duration-150',
-                    active ? m.bg : 'bg-[#0a0a0a] border-white/8 hover:border-white/15',
+                    'w-full flex items-center gap-5 px-5 py-4 rounded-xl border text-left transition-all duration-500 relative overflow-hidden group',
+                    active ? 'glass-wraith border-rose-500/40 bg-rose-500/5' : 'bg-white/[0.02] border-white/5 hover:border-white/20',
                     toggleMutation.isPending && 'opacity-50 cursor-wait'
                   )}
                 >
-                  <div className={cn('w-2 h-2 rounded-full', active ? m.color.replace('text-', 'bg-') : 'bg-white/15')} />
-                  <div>
-                    <div className={cn('text-[11px] font-mono font-bold', active ? m.color : 'text-white/45')}>
+                  <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+                  <div className={cn(
+                    'w-3 h-3 rounded-full relative z-10 shadow-[0_0_15px_rgba(225,29,72,0.5)]', 
+                    active ? 'bg-rose-500 animate-pulse' : 'bg-white/10'
+                  )} />
+                  <div className="relative z-10 flex-1">
+                    <div className={cn('text-[13px] font-black tracking-widest italic uppercase', active ? 'text-rose-500' : 'text-white/60')}>
                       {m.label}
                     </div>
-                    <div className="text-[9px] text-white/30">{m.desc}</div>
+                    <div className="text-[9px] font-mono text-white/20 mt-1 uppercase group-hover:text-white/40 transition-colors">{m.desc}</div>
                   </div>
                   {active && (
-                    <CheckCircle className={cn('w-3.5 h-3.5 ml-auto', m.color)} />
+                    <motion.div 
+                      layoutId="active-indicator"
+                      className="p-1.5 bg-rose-500/20 border border-rose-500/40 rounded-lg"
+                    >
+                      <CheckCircle className="w-4 h-4 text-rose-500" />
+                    </motion.div>
                   )}
                 </button>
               );
@@ -128,11 +163,12 @@ export const FailoverRoutingTab: React.FC = () => {
         </div>
 
         {/* Матриця вузлів */}
-        <div>
-          <div className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-2">
-            Активний вузол
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+             <div className="w-1 h-1 bg-rose-500 rotate-45" />
+             <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-[0.4em]">Активний вузол кластера</span>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {Object.keys(nodes).map((nodeKey) => {
               const node = nodes[nodeKey];
               const isActive = activeNode === nodeKey;
@@ -141,36 +177,41 @@ export const FailoverRoutingTab: React.FC = () => {
                 <div
                   key={nodeKey}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-sm border',
-                    isActive          ? 'bg-rose-500/8 border-rose-500/20 shadow-[0_0_15px_-5px_rgba(244,63,94,0.2)]' :
-                    isOffline         ? 'bg-[#0a0a0a] border-red-500/15 opacity-50' :
-                                        'bg-[#0a0a0a] border-white/8',
+                    'flex items-center gap-5 px-5 py-4 rounded-xl border relative overflow-hidden group transition-all duration-500',
+                    isActive  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-2xl shadow-rose-500/10' :
+                    isOffline ? 'bg-black/40 border-rose-500/10 opacity-40' :
+                                'bg-white/[0.02] border-white/5 hover:border-white/10',
                   )}
                 >
+                  <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
                   <div className={cn(
-                    'w-1.5 h-1.5 rounded-full shrink-0',
-                    isActive  ? 'bg-rose-500 animate-pulse' :
-                    isOffline ? 'bg-red-500' :
-                                'bg-white/20',
+                    'w-2 h-2 rounded-full shrink-0 relative z-10',
+                    isActive  ? 'bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(225,29,72,1)]' :
+                    isOffline ? 'bg-rose-900' :
+                                'bg-white/10',
                   )} />
-                  <div className="flex-1">
-                    <div className="text-[11px] font-mono text-white/65">{node.label}</div>
-                    <div className="text-[9px] font-mono text-white/30">{node.ip}</div>
+                  <div className="flex-1 relative z-10">
+                    <div className={cn('text-[13px] font-black tracking-widest italic uppercase', isActive ? 'text-white' : 'text-white/60')}>
+                       {node.label}
+                    </div>
+                    <div className="text-[9px] font-mono text-white/20 mt-1 group-hover:text-white/40 transition-colors uppercase tracking-widest">{node.ip}</div>
                   </div>
                   {!isActive && !isOffline && (
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => handleSwitch(nodeKey)}
                       disabled={toggleMutation.isPending}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded-sm bg-white/5 border border-white/10 hover:bg-rose-500/10 hover:border-rose-500/20 transition-colors"
+                      className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 hover:border-rose-500/50 transition-all group/btn"
                     >
-                      <ArrowRightLeft className="w-2.5 h-2.5 text-white/40" />
-                      <span className="text-[9px] text-white/40">Перемкнути</span>
-                    </button>
+                      <ArrowRightLeft className="w-3 h-3 text-rose-500 group-hover/btn:rotate-180 transition-transform duration-700" />
+                      <span className="text-[9px] text-rose-500 font-black uppercase tracking-widest">Перемкнути</span>
+                    </motion.button>
                   )}
                   {isActive && (
-                    <span className="text-[8px] font-mono font-bold text-rose-500/70 bg-rose-500/10 px-1.5 py-0.5 rounded-sm border border-rose-500/20">
-                      АКТИВНИЙ
-                    </span>
+                    <div className="px-4 py-1.5 bg-rose-500 rounded-lg shadow-[0_0_20px_rgba(225,29,72,0.4)] relative z-10">
+                       <span className="text-[9px] font-black text-white uppercase tracking-widest italic">АКТИВНИЙ</span>
+                    </div>
                   )}
                 </div>
               );
@@ -180,54 +221,78 @@ export const FailoverRoutingTab: React.FC = () => {
       </div>
 
       {/* Діалог підтвердження */}
-      {confirming && (
-        <div className="p-3 bg-amber-500/8 border border-amber-400/25 rounded-sm flex items-center gap-3">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-          <div className="flex-1">
-            <div className="text-[11px] text-amber-300 font-semibold">
-              Підтвердіть перемикання на {nodes[confirming]?.label || confirming}
+      <AnimatePresence>
+        {confirming && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            className="p-6 glass-wraith border border-rose-500/40 rounded-xl flex items-center gap-6 shadow-2xl relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-rose-500/[0.02] animate-pulse pointer-events-none" />
+            <div className="p-4 bg-rose-500/10 rounded-xl border border-rose-500/30">
+               <AlertTriangle className="w-8 h-8 text-rose-500" />
             </div>
-            <div className="text-[9px] text-white/40 mt-0.5">
-              Активні запити будуть перероутовані. Можливе короткочасне переривання.
+            <div className="flex-1 space-y-2 relative z-10">
+              <div className="text-[14px] text-white font-black uppercase tracking-widest italic">
+                ПІДТВЕРДЖЕННЯ РОТАЦІЇ ВУЗЛА: <span className="text-rose-500">{nodes[confirming]?.label || confirming}</span>
+              </div>
+              <p className="text-[10px] font-mono text-white/30 uppercase tracking-widest leading-relaxed">
+                Активні запити будуть перенаправлені на новий вузол. Можливе короткочасне переривання потоку даних (OODA_SYNC_BREAK).
+              </p>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={confirmSwitch}
-              disabled={toggleMutation.isPending}
-              className="text-[10px] px-3 py-1 bg-rose-500/15 border border-rose-500/25 text-rose-500 rounded-sm hover:bg-rose-500/25 transition-colors disabled:opacity-50"
-            >
-              {toggleMutation.isPending ? 'Перемикання...' : 'Підтвердити'}
-            </button>
-            <button
-              onClick={() => setConfirming(null)}
-              className="text-[10px] px-3 py-1 bg-white/5 border border-white/10 text-white/40 rounded-sm hover:bg-white/8 transition-colors"
-            >
-              Скасувати
-            </button>
-          </div>
-        </div>
-      )}
+            <div className="flex gap-4 relative z-10">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={confirmSwitch}
+                disabled={toggleMutation.isPending}
+                className="px-8 py-3 bg-rose-500 text-white text-[11px] font-black uppercase tracking-widest rounded-lg shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-rose-500/50 transition-all disabled:opacity-50"
+              >
+                {toggleMutation.isPending ? 'СИНХРОНІЗАЦІЯ...' : 'ПІДТВЕРДИТИ'}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setConfirming(null)}
+                className="px-8 py-3 bg-white/5 border border-white/10 text-white/60 text-[11px] font-black uppercase tracking-widest rounded-lg hover:bg-white/10 transition-all"
+              >
+                СКАСУВАТИ
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Лог переключень */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <RefreshCw className="w-3 h-3 text-white/25" />
-          <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">
-            Журнал переключень (WORM)
-          </span>
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЖУРНАЛ РОТАЦІЙ (WORM_LOCK)</span>
+            <div className="flex items-center gap-2">
+               <RefreshCw size={10} className="text-rose-500/40 animate-spin-slow" />
+               <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">AUDIT_TRAIL_ACTIVE</span>
+            </div>
+          </div>
+          <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
         </div>
-        <VirtualTable
-          rows={history}
-          columns={eventCols}
-          rowHeight={28}
-          maxHeight={320}
-          getRowStatus={getEventStatus}
-        />
+        <div className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative">
+          <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+          <VirtualTable
+            rows={history}
+            columns={eventCols}
+            rowHeight={40}
+            maxHeight={350}
+            getRowStatus={getEventStatus}
+          />
+        </div>
       </div>
     </div>
   );
 };
+
+export default FailoverRoutingTab;
 
 
 export default FailoverRoutingTab;

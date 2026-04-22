@@ -49,164 +49,147 @@ export const CyberOrb: React.FC<CyberOrbProps> = ({
     const getStatusColor = (s: SystemStatus) => {
         if (legacyColor) return legacyColor;
         switch (s) {
-            case 'idle': return '#94a3b8'; // slate-400
-            case 'active': return '#0ea5e9'; // sky-500
-            case 'processing': return '#3b82f6'; // blue-500
+            case 'idle': return '#64748b'; // slate-500
+            case 'active': return '#e11d48'; // rose-600 (PREDATOR standard)
+            case 'processing': return '#f43f5e'; // rose-500
             case 'alert': return '#f59e0b'; // amber-500
-            case 'critical': return '#ef4444'; // red-500
+            case 'critical': return '#be123c'; // rose-700
             case 'quantum': return '#8b5cf6'; // violet-500
-            default: return '#0ea5e9';
+            default: return '#e11d48';
         }
     };
 
     const color = getStatusColor(status);
 
-    const getAnimationProps = (s: SystemStatus) => {
-        if (!animated) return {};
-        switch (s) {
-            case 'processing':
-                return {
-                    rotate: 360,
-                    scale: [1, 1.1, 1],
-                    transition: { duration: 2, repeat: Infinity, ease: "linear" }
-                };
-            case 'alert':
-            case 'critical':
-                return {
-                    scale: [1, 1.2, 1],
-                    opacity: [0.8, 1, 0.8],
-                    transition: { duration: 0.5, repeat: Infinity, ease: "easeInOut" }
-                };
-            case 'quantum':
-                return {
-                    rotate: -360,
-                    scale: [1, 1.05, 1],
-                    filter: ["hue-rotate(0deg)", "hue-rotate(90deg)", "hue-rotate(0deg)"],
-                    transition: { duration: 5, repeat: Infinity, ease: "linear" }
-                };
-            case 'idle':
-                return {
-                    scale: 1,
-                    opacity: 0.5,
-                    transition: { duration: 0 }
-                };
-            default: // active
-                return {
-                    rotate: 360,
-                    scale: [1, 1.05, 1],
-                    transition: { duration: 10, repeat: Infinity, ease: "linear" }
-                };
-        }
-    };
-
     return (
         <div
-            className={`relative flex items-center justify-center ${className} ${interactive ? 'cursor-pointer hover:scale-105 transition-transform' : ''}`}
+            className={cn(
+                "relative flex items-center justify-center group",
+                interactive ? "cursor-pointer" : "",
+                className
+            )}
             style={{ width: size, height: size }}
             onClick={onClick}
         >
-            {/* Outer rings */}
+            {/* Outer Glow / Aura */}
             <motion.div
-                className="absolute inset-0 rounded-full border border-primary-500/20"
-                style={{ borderColor: `${color}33` }}
+                className="absolute inset-0 rounded-full blur-[60px] opacity-20"
+                style={{ background: color }}
                 animate={animated ? {
-                    rotate: 360,
-                    scale: status === 'alert' || status === 'critical' ? [1, 1.2, 1] : [1, 1.1, 1],
-                    opacity: [0.2, 0.4, 0.2]
+                    scale: [1, 1.2, 1],
+                    opacity: [0.1, 0.3, 0.1]
                 } : {}}
-                transition={{
-                    duration: status === 'alert' || status === 'critical' ? 1 : 10,
-                    repeat: Infinity,
-                    ease: "linear"
-                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
             />
 
+            {/* Scanning HUD Ring */}
             <motion.div
-                className="absolute inset-4 rounded-full border border-primary-400/30"
-                style={{
-                    borderColor: `${color}4D`,
-                    boxShadow: `0 0 ${status === 'critical' ? '50px' : '30px'} ${color}1A`
-                }}
+                className="absolute inset-[-10%] rounded-full border border-white/5"
+                animate={animated ? { rotate: 360 } : {}}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-4 bg-rose-500/40 blur-sm" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-4 bg-rose-500/40 blur-sm" />
+            </motion.div>
+
+            {/* Inner Ring 1 */}
+            <motion.div
+                className="absolute inset-2 rounded-full border border-white/10 glass-wraith shadow-2xl"
                 animate={animated ? {
                     rotate: -360,
-                    scale: [1.1, 1, 1.1]
+                    scale: [1, 1.05, 1]
                 } : {}}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
             />
 
-            {/* Core Orb */}
+            {/* Core Orb Container */}
             <motion.div
-                className="relative rounded-full bg-gradient-to-tr from-slate-900 via-primary-900/40 to-slate-800 flex items-center justify-center "
+                className="relative rounded-full glass-wraith flex items-center justify-center overflow-hidden border border-white/20 shadow-4xl"
                 style={{
-                    width: size * 0.6,
-                    height: size * 0.6,
-                    boxShadow: `inset 0 0 40px ${color}4D`
+                    width: size * 0.7,
+                    height: size * 0.7,
+                    boxShadow: `inset 0 0 50px ${color}33`
                 }}
-                animate={{
-                    boxShadow: isPulsing && animated ? [
-                        `inset 0 0 20px ${color}33, 0 0 20px ${color}11`,
-                        `inset 0 0 60px ${color}66, 0 0 40px ${color}33`,
-                        `inset 0 0 20px ${color}33, 0 0 20px ${color}11`
-                    ] : `inset 0 0 40px ${color}4D`
-                }}
-                transition={{ duration: status === 'critical' ? 0.5 : 3, repeat: Infinity, ease: "easeInOut" }}
+                animate={animated ? {
+                    boxShadow: isPulsing ? [
+                        `inset 0 0 30px ${color}22, 0 0 40px ${color}22`,
+                        `inset 0 0 70px ${color}55, 0 0 80px ${color}44`,
+                        `inset 0 0 30px ${color}22, 0 0 40px ${color}22`
+                    ] : `inset 0 0 50px ${color}33`
+                } : {}}
+                transition={{ duration: status === 'critical' ? 0.8 : 3, repeat: Infinity, ease: "easeInOut" }}
             >
-                {/* Neural Pulse Lines */}
-                <div className="absolute inset-0 opacity-40">
-                    <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <motion.path
-                            d="M0 50 Q 25 20, 50 50 T 100 50"
-                            fill="none"
-                            stroke={color}
-                            strokeWidth="1"
-                            animate={animated ? { d: ["M0 50 Q 25 30, 50 50 T 100 50", "M0 50 Q 25 70, 50 50 T 100 50", "M0 50 Q 25 30, 50 50 T 100 50"] } : {}}
-                            transition={{ duration: status === 'processing' ? 0.5 : 2, repeat: Infinity }}
-                        />
-                        <motion.path
-                            d="M10 20 L 90 80"
-                            stroke={color}
-                            strokeWidth="0.5"
-                            strokeDasharray="5,5"
-                            animate={animated ? { opacity: [0.2, 0.8, 0.2] } : {}}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                        />
-                    </svg>
+                {/* Visual Artifacts */}
+                <div className="absolute inset-0 cyber-scan-grid opacity-10" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-black via-transparent to-white/10 opacity-40" />
+
+                {/* Animated Neural Core */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div 
+                        className="w-1/2 h-1/2 rounded-full blur-2xl"
+                        style={{ background: color }}
+                        animate={animated ? {
+                            scale: [1, 1.5, 1],
+                            opacity: [0.3, 0.6, 0.3]
+                        } : {}}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    />
                 </div>
 
-                {/* Internal Glow */}
-                <div
-                    className="absolute inset-0"
-                    style={{ background: `radial-gradient(circle at 50% 50%, ${color}4D 0%, transparent 70%)` }}
-                />
+                {/* SVG Detail Overlay */}
+                <svg className="absolute inset-0 w-full h-full opacity-60" viewBox="0 0 100 100">
+                    <motion.circle 
+                        cx="50" cy="50" r="45" fill="none" stroke={color} strokeWidth="0.5" strokeDasharray="2 4"
+                        animate={animated ? { rotate: 360 } : {}}
+                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                    />
+                    <motion.path
+                        d="M20 50 Q 50 20, 80 50 T 110 50"
+                        fill="none"
+                        stroke={color}
+                        strokeWidth="1.5"
+                        animate={animated ? { 
+                            d: [
+                                "M20 50 Q 50 30, 80 50 T 110 50", 
+                                "M20 50 Q 50 70, 80 50 T 110 50", 
+                                "M20 50 Q 50 30, 80 50 T 110 50"
+                            ] 
+                        } : {}}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                </svg>
+
+                {/* Top Reflection */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1/3 bg-gradient-to-b from-white/10 to-transparent rounded-full blur-md" />
             </motion.div>
 
-            {/* Data particles - Only for active/processing/quantum */}
-            {animated && (status === 'active' || status === 'processing' || status === 'quantum') && [...Array(6)].map((_, i) => (
+            {/* Floating Data Particles */}
+            {animated && (status !== 'idle') && [...Array(8)].map((_, i) => (
                 <motion.div
                     key={i}
                     className="absolute w-1 h-1 rounded-full"
                     style={{
                         backgroundColor: color,
-                        boxShadow: `0 0 5px ${color}`
+                        boxShadow: `0 0 10px ${color}`
                     }}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
                         scale: [0, 1.5, 0],
-                        opacity: [0, 0.8, 0],
-                        x: [0, (Math.random() - 0.5) * size],
-                        y: [0, (Math.random() - 0.5) * size]
+                        opacity: [0, 1, 0],
+                        x: [0, (Math.random() - 0.5) * size * 1.2],
+                        y: [0, (Math.random() - 0.5) * size * 1.2]
                     }}
                     transition={{
-                        duration: status === 'processing' ? 1 : 2 + Math.random() * 2,
+                        duration: 2 + Math.random() * 3,
                         repeat: Infinity,
-                        delay: i * 0.5
+                        delay: i * 0.4
                     }}
                 />
             ))}
 
             {showMetrics && (
-                <div className="absolute top-full mt-4 text-center">
-                    <p className="text-xs font-bold uppercase tracking-widest" style={{ color }}>{status}</p>
+                <div className="absolute top-full mt-6 text-center">
+                    <p className="text-[10px] font-black uppercase tracking-[0.5em] italic chromatic-elite" style={{ color }}>{status}</p>
                 </div>
             )}
         </div>

@@ -84,75 +84,89 @@ const AdminSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="flex flex-col w-56 min-w-56 h-screen bg-[#020202] border-r border-white/8 overflow-hidden">
+    <aside className="flex flex-col w-64 min-w-64 h-screen bg-black/60 glass-wraith border-r border-white/10 overflow-hidden relative group">
+      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
+      
       {/* Логотип */}
-      <div className="flex items-center gap-2 px-3 py-3 border-b border-white/8">
-        <div className="flex items-center justify-center w-6 h-6 rounded bg-rose-500/15 border border-rose-500/25">
-          <Shield className="w-3.5 h-3.5 text-rose-500" />
+      <div className="flex items-center gap-4 px-4 py-6 border-b border-white/5 relative z-10">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 shadow-[0_0_15px_rgba(225,29,72,0.2)]">
+          <Shield className="w-5 h-5 text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
         </div>
         <div>
-          <div className="text-[10px] font-bold text-white/80 tracking-[0.2em] uppercase leading-none">
+          <div className="text-xs font-black text-white italic tracking-[0.25em] uppercase leading-none">
             PREDATOR
           </div>
-          <div className="text-[8px] font-mono text-rose-500/70 tracking-[0.15em] leading-none mt-0.5">
-            SYSTEM COMMAND CENTER
+          <div className="text-[7px] font-black text-rose-500/60 tracking-[0.3em] leading-none mt-1.5 italic uppercase">
+            COMMAND_CENTER_v60
           </div>
         </div>
       </div>
 
       {/* Навігація */}
-      <nav className="flex-1 overflow-y-auto py-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/8">
+      <nav className="flex-1 overflow-y-auto py-4 px-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 relative z-10">
         {GROUPS.map((group) => {
           const items = ADMIN_NAV.filter((i) => i.group === group);
           return (
-            <div key={group} className="mb-3">
+            <div key={group} className="mb-6">
               {/* Заголовок групи */}
-              <div className="px-3 py-1">
-                <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">
+              <div className="px-3 py-2 flex items-center gap-2">
+                <div className="w-1 h-1 rounded-full bg-rose-500/40" />
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] italic">
                   {group}
                 </span>
               </div>
 
               {/* Пункти */}
-              {items.map((item) => {
-                const active = isActive(item);
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.id}
-                    to={item.path}
-                    className={cn(
-                      'flex items-center gap-2 px-3 py-1.5 mx-1 rounded-sm transition-all duration-100 group',
-                      active
-                        ? 'bg-rose-500/12 border border-rose-500/20'
-                        : 'hover:bg-white/4 border border-transparent',
-                    )}
-                  >
-                    <Icon
+              <div className="space-y-1">
+                {items.map((item) => {
+                  const active = isActive(item);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.path}
                       className={cn(
-                        'w-3.5 h-3.5 shrink-0 transition-colors',
-                        active ? 'text-rose-500' : 'text-white/30 group-hover:text-white/55',
-                      )}
-                    />
-                    <span
-                      className={cn(
-                        'text-[11px] truncate transition-colors',
-                        active ? 'text-rose-400 font-medium' : 'text-white/45 group-hover:text-white/70',
+                        'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group/nav relative overflow-hidden',
+                        active
+                          ? 'bg-rose-500/10 border border-rose-500/30 shadow-[0_0_20px_rgba(225,29,72,0.1)]'
+                          : 'hover:bg-white/[0.03] border border-transparent hover:border-white/5',
                       )}
                     >
-                      {item.label}
-                    </span>
-                    {item.badge && (
-                      <span className="ml-auto text-[8px] font-mono font-semibold text-rose-500/70 tracking-wider shrink-0">
-                        {item.badge}
+                      {active && (
+                        <motion.div 
+                          layoutId="admin-nav-active"
+                          className="absolute inset-0 bg-gradient-to-r from-rose-500/10 to-transparent pointer-events-none"
+                        />
+                      )}
+                      <Icon
+                        className={cn(
+                          'w-4 h-4 shrink-0 transition-all duration-300 relative z-10',
+                          active ? 'text-rose-400 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]' : 'text-slate-500 group-hover/nav:text-slate-300 group-hover/nav:scale-105',
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          'text-[11px] truncate transition-all duration-300 relative z-10 uppercase tracking-tight font-bold italic',
+                          active ? 'text-white' : 'text-slate-400 group-hover/nav:text-slate-200',
+                        )}
+                      >
+                        {item.label}
                       </span>
-                    )}
-                    {active && (
-                      <ChevronRight className="ml-auto w-2.5 h-2.5 text-rose-500/50 shrink-0" />
-                    )}
-                  </Link>
-                );
-              })}
+                      {item.badge && (
+                        <span className={cn(
+                          "ml-auto text-[7px] font-black px-1.5 py-0.5 rounded-md border italic relative z-10",
+                          active ? "bg-rose-500/20 border-rose-500/40 text-rose-400" : "bg-white/5 border-white/10 text-slate-600"
+                        )}>
+                          {item.badge}
+                        </span>
+                      )}
+                      {active && (
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-rose-500 rounded-l-full shadow-[0_0_10px_rgba(225,29,72,0.8)]" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           );
         })}
@@ -165,7 +179,7 @@ const AdminSidebar: React.FC = () => {
             <Cpu className="w-2.5 h-2.5 text-rose-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-semibold text-white/65 truncate">
+            <div className="text-[10px] font-semibold text-white/80 truncate">
               {user?.name ?? 'Системний адмін'}
             </div>
             <div className="text-[8px] font-mono text-rose-500/50 uppercase tracking-wider">
@@ -175,7 +189,7 @@ const AdminSidebar: React.FC = () => {
           <button
             onClick={logout}
             title="Вийти"
-            className="p-1 rounded text-white/20 hover:text-red-400/70 hover:bg-red-500/8 transition-colors"
+            className="p-1 rounded text-white/40 hover:text-red-400 hover:bg-red-500/15 transition-colors"
           >
             <LogOut className="w-3 h-3" />
           </button>
@@ -196,40 +210,57 @@ const AdminStatusBar: React.FC = () => {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-4 h-8 bg-[#020202] border-b border-white/8 shrink-0">
-      <div className="flex items-center gap-4">
+    <header className="flex items-center justify-between px-6 h-12 bg-black/40 glass-wraith border-b border-white/5 shrink-0 relative z-50">
+      <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+      
+      <div className="flex items-center gap-6 relative z-10">
         {/* Режим системи */}
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-          <span className="text-[10px] font-mono text-rose-500/80 tracking-widest uppercase">
-            SOVEREIGN · LOCAL K3S
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1">
+             {[...Array(3)].map((_, i) => (
+               <div key={i} className="w-1 h-3 bg-rose-500 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+             ))}
+          </div>
+          <span className="text-[10px] font-black text-rose-500 italic tracking-[0.25em] uppercase">
+            SOVEREIGN_NODE // LOCAL_K3S
           </span>
         </div>
-        <div className="w-px h-3 bg-white/10" />
+        
+        <div className="w-px h-4 bg-white/10" />
+        
         {/* Статус сервісів */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           {[
-            { label: 'API', ok: true },
-            { label: 'KAFKA', ok: true },
-            { label: 'NEO4J', ok: true },
-            { label: 'REDIS', ok: true },
+            { label: 'API', ok: true, color: 'rose' },
+            { label: 'KAFKA', ok: true, color: 'blue' },
+            { label: 'NEO4J', ok: true, color: 'purple' },
+            { label: 'REDIS', ok: true, color: 'cyan' },
           ].map((svc) => (
-            <div key={svc.label} className="flex items-center gap-1">
-              <span className={cn('w-1 h-1 rounded-full', svc.ok ? 'bg-rose-500' : 'bg-red-400')} />
-              <span className="text-[9px] font-mono text-white/30">{svc.label}</span>
+            <div key={svc.label} className="flex items-center gap-2 group/svc cursor-help">
+              <span className={cn(
+                'w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(var(--color),0.6)]', 
+                svc.ok ? `bg-${svc.color}-500` : 'bg-red-500 animate-ping'
+              )} />
+              <span className="text-[8px] font-black text-slate-500 group-hover/svc:text-slate-300 transition-colors uppercase tracking-widest">{svc.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Terminal className="w-3 h-3 text-white/20" />
-        <span className="text-[10px] font-mono text-white/25">
-          {time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-        </span>
-        <div className="flex items-center gap-1">
-          <Zap className="w-2.5 h-2.5 text-amber-400/50" />
-          <span className="text-[9px] font-mono text-amber-400/50">VRAM 4.2/8 GB</span>
+      <div className="flex items-center gap-6 relative z-10">
+        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+           <Terminal className="w-3 h-3 text-rose-400" />
+           <span className="text-[10px] font-mono font-black text-rose-300 italic tracking-tighter">
+             {time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+           </span>
+        </div>
+        
+        <div className="flex items-center gap-3 px-4 py-1 bg-amber-500/5 border border-amber-500/20 rounded-full group/vram">
+          <Zap className="w-3 h-3 text-amber-400 animate-pulse" />
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black text-amber-500/60 uppercase tracking-widest leading-none">VRAM_LOAD</span>
+            <span className="text-[10px] font-black text-amber-400 italic tracking-tight leading-tight mt-0.5">4.2 / 8.0 GB</span>
+          </div>
         </div>
       </div>
     </header>
@@ -252,25 +283,30 @@ interface AdminLayoutProps {
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <div
-      className="flex h-screen w-screen overflow-hidden"
-      style={{ backgroundColor: '#020202' }}
+      className="flex h-screen w-screen overflow-hidden relative"
+      style={{ backgroundColor: '#020203' }}
     >
+      {/* Global Background HUD Layer */}
+      <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
+
       {/* Бічна панель */}
       <AdminSidebar />
 
       {/* Основна область */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative z-10">
         {/* Статус-бар */}
         <AdminStatusBar />
 
         {/* Контентна зона */}
-        <main className="flex-1 overflow-auto" style={{ backgroundColor: '#050202' }}>
+        <main className="flex-1 overflow-auto relative" style={{ backgroundColor: 'rgba(5,2,2,0.4)' }}>
+          <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.02] pointer-events-none" />
           <motion.div
             key="admin-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="h-full"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="h-full relative z-10"
           >
             {children}
           </motion.div>

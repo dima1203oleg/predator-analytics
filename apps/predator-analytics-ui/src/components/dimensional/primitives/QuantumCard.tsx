@@ -9,25 +9,32 @@ interface QuantumCardProps {
   animated?: boolean;
 }
 
+import { cn } from '../../../lib/utils';
+
 export const QuantumCard: React.FC<QuantumCardProps> = ({ children, className = '', title, metrics, animated = false }) => {
   return (
-    <div className={`relative group ${className}`}>
-      {/* Animated Border Gradient */}
+    <div className={cn("relative group", className)}>
+      {/* Animated Glow Backdrop */}
       {animated && (
-        <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-[32px] blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/30 via-blue-600/30 to-cyan-600/30 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-50 transition duration-1000" />
       )}
 
-      <div className="relative h-full bg-slate-900 border border-slate-700/50 rounded-[32px]  backdrop-blur-xl">
+      <div className="relative h-full bg-black/40 glass-wraith border border-white/10 rounded-[3rem] overflow-hidden backdrop-blur-2xl">
+        <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
+        
         {/* Header if title present */}
         {title && (
-          <div className="px-6 py-4 border-b border-slate-800/50 flex justify-between items-center bg-white/5">
-            <h3 className="text-sm font-black text-white uppercase tracking-wider">{title}</h3>
+          <div className="px-8 py-6 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+              <h3 className="text-sm font-black text-white italic uppercase tracking-[0.2em]">{title}</h3>
+            </div>
             {metrics && (
-              <div className="flex gap-4">
+              <div className="flex gap-6">
                 {metrics.map((m, i) => (
                   <div key={i} className="text-right">
-                    <p className="text-[10px] text-slate-400">{m.label}</p>
-                    <p className="text-xs font-mono text-cyan-400">{m.value}</p>
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">{m.label}</p>
+                    <p className="text-sm font-black text-cyan-400 italic tracking-tighter">{m.value}</p>
                   </div>
                 ))}
               </div>
@@ -36,7 +43,7 @@ export const QuantumCard: React.FC<QuantumCardProps> = ({ children, className = 
         )}
 
         {/* Content */}
-        <div className="h-full">
+        <div className="h-full relative z-10">
           {children}
         </div>
       </div>

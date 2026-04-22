@@ -1,0 +1,16 @@
+FROM nginx:1.25-alpine AS runtime
+
+RUN rm /etc/nginx/conf.d/default.conf
+COPY deploy/nginx/predator-ui.conf /etc/nginx/conf.d/default.conf
+COPY apps/predator-analytics-ui/dist /usr/share/nginx/html
+
+RUN adduser -D -s /bin/sh predator && \
+    chown -R predator:predator /usr/share/nginx/html && \
+    chown -R predator:predator /var/cache/nginx && \
+    chown -R predator:predator /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown predator:predator /var/run/nginx.pid
+
+USER predator
+EXPOSE 3030
+CMD ["nginx", "-g", "daemon off;"]

@@ -61,7 +61,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
     warning: 'text-rose-400',
     error: 'text-crimson-500',
     info: 'text-cyan-400',
-    neutral: 'text-slate-300'
+    neutral: 'text-slate-400'
   };
 
   const getStatusIcon = () => {
@@ -78,7 +78,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
   const effectiveGlow = glow !== 'none' ? glow : (
     status === 'error' || priority === 'critical' ? 'crimson' :
       status === 'warning' || priority === 'high' ? 'rose' :
-        status === 'success' ? 'green' :
+        status === 'success' ? 'emerald' :
           status === 'info' ? 'blue' : 'none'
   );
 
@@ -87,15 +87,15 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       case 'blue': return 'cyan';
       case 'cyan': return 'cyan';
       case 'red': return 'rose';
-      case 'crimson': return 'crimson';
+      case 'crimson': return 'rose';
       case 'green': return 'emerald';
       case 'emerald': return 'emerald';
-      case 'yellow': return 'rose';
-      case 'amber': return 'rose';
+      case 'yellow': return 'amber';
+      case 'amber': return 'amber';
       case 'rose': return 'rose';
       case 'purple': return 'violet';
       case 'indigo': return 'indigo';
-      case 'gold': return 'crimson';
+      case 'gold': return 'rose';
       default: return 'slate';
     }
   };
@@ -108,49 +108,70 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={cn("page-section relative overflow-hidden transition-all duration-500", sectionClass, noPadding ? 'p-0' : '', elite && "hover:scale-[1.01] hover:shadow-2xl", className)}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={cn(
+        "relative overflow-hidden transition-all duration-500",
+        "bg-black/40 glass-wraith border border-white/10 rounded-[3rem] backdrop-blur-3xl shadow-2xl",
+        elite && "hover:scale-[1.01] hover:border-white/20",
+        className
+      )}
       {...rest}
     >
       {/* Background Effects */}
-      {scanGrid && <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />}
-      {elite && <div className="absolute -right-20 -top-20 w-64 h-64 bg-current opacity-[0.03] blur-[80px] rounded-full pointer-events-none" />}
+      {(scanGrid || elite) && (
+        <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
+      )}
+      {elite && (
+        <div className="absolute -right-20 -top-20 w-80 h-80 bg-current opacity-[0.02] blur-[100px] rounded-full pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-1000" />
+      )}
       
+      {/* HUD Accent Line */}
+      <div className={cn(
+        "absolute left-0 top-12 bottom-12 w-1 rounded-full opacity-40 transition-all duration-500",
+        `bg-${sectionColor}-500`
+      )} />
+
       {/* Header */}
       {(title || icon || status || action || expandable) && (
         <div
-          className={`section-header ${expandable ? 'cursor-pointer hover:bg-white/[0.02] transition-colors rounded-t-2xl' : ''} ${noPadding ? 'p-6 pb-2' : ''}`}
+          className={cn(
+            "px-10 py-8 flex items-center justify-between relative z-20",
+            expandable && "cursor-pointer hover:bg-white/[0.02] transition-colors"
+          )}
           onClick={() => expandable && setIsExpanded(!isExpanded)}
         >
-          <div className={dotClass} />
-          
-          <div className="flex-1 min-w-0 pr-4">
-            <div className="flex items-center gap-3">
-              {icon && <div className={`text-${sectionColor}-400 shrink-0`}>{icon}</div>}
-              <div>
-                <h2 className={cn("section-title flex items-center gap-2", elite && "glint-elite chromatic-elite")}>
-                  {title}
-                  {priority && (
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded border font-black tracking-tighter ${priority === 'critical' ? 'border-crimson-600 text-crimson-400 bg-crimson-600/10 shadow-[0_0_10px_rgba(220,38,38,0.2)]' :
-                      priority === 'high' ? 'border-rose-500 text-rose-400 bg-rose-500/10' :
-                        priority === 'medium' ? 'border-rose-400/50 text-rose-300 bg-rose-400/5' :
-                          'border-cyan-500 text-cyan-400 bg-cyan-500/10'
-                      }`}>
-                      {priority.toUpperCase()}
-                    </span>
-                  )}
-                </h2>
-                {subtitle && <p className="section-subtitle mt-0.5">{subtitle}</p>}
-              </div>
-            </div>
+          <div className="flex items-center gap-5 min-w-0">
+             <div className={cn(dotClass, "animate-pulse")} />
+             <div className="flex items-center gap-4">
+                {icon && <div className={cn(`text-${sectionColor}-500`, "drop-shadow-[0_0_8px_rgba(225,29,72,0.4)]")}>{icon}</div>}
+                <div>
+                  <h2 className={cn(
+                    "text-sm font-black text-white italic tracking-[0.2em] uppercase leading-none",
+                    elite && "glint-elite chromatic-elite"
+                  )}>
+                    {title}
+                  </h2>
+                  {subtitle && <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-2 italic">{subtitle}</p>}
+                </div>
+                {priority && (
+                  <span className={cn(
+                    "text-[8px] font-black px-3 py-1 rounded-lg border italic uppercase tracking-widest",
+                    priority === 'critical' ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]" :
+                    priority === 'high' ? "bg-amber-500/20 border-amber-500/40 text-amber-500" :
+                    "bg-white/5 border-white/10 text-slate-500"
+                  )}>
+                    {priority}
+                  </span>
+                )}
+             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 relative z-20">
+          <div className="flex items-center gap-6 shrink-0 relative z-20">
             {action}
             {status && getStatusIcon()}
             {expandable && (
-              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} className="text-slate-400 hover:text-white transition-colors">
-                <ChevronDown size={16} />
+              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} className="text-slate-500 hover:text-white transition-colors">
+                <ChevronDown size={20} />
               </motion.div>
             )}
           </div>
@@ -164,27 +185,34 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className={`relative z-10 ${!noPadding && (title || icon || status || action || expandable) ? 'pt-2' : ''}`}
+            className="relative z-10"
           >
-            <div className={`${!noPadding && !title ? 'p-5' : ''} flex flex-col gap-4`}>
-              {children}
+            <div className={cn(
+              "flex flex-col gap-8",
+              noPadding ? "p-0" : "px-10 pb-10 pt-2"
+            )}>
+              <div className="relative z-10 text-slate-300">
+                {children}
+              </div>
 
               {/* Metrics Section */}
               {metrics && metrics.length > 0 && (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-white/5">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8 border-t border-white/5">
                   {metrics.map((metric, idx) => (
-                    <div key={idx} className={`bg-${sectionColor}-950/10 rounded-xl p-3 border border-${sectionColor}-500/10`}>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-widest">{metric.label}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm font-bold text-white">{metric.value}</span>
+                    <div key={idx} className="relative group/metric">
+                      <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest italic">{metric.label}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xl font-black text-white italic tracking-tighter glint-elite">{metric.value}</span>
                         {metric.trend && (
-                          <div className={`flex items-center text-[10px] ${metric.trend === 'up' ? 'text-emerald-400' :
-                            metric.trend === 'down' ? 'text-rose-400' : 'text-slate-400'
-                            }`}>
+                          <div className={cn(
+                            "flex items-center text-[10px] font-black px-2 py-0.5 rounded-md italic tracking-widest uppercase",
+                            metric.trend === 'up' ? 'bg-emerald-500/10 text-emerald-400' :
+                            metric.trend === 'down' ? 'bg-rose-500/10 text-rose-400' : 'bg-slate-800 text-slate-500'
+                          )}>
                             {metric.trend === 'up' ? <ArrowUp size={10} /> :
-                              metric.trend === 'down' ? <ArrowDown size={10} /> :
-                                <Minus size={10} />}
-                            {metric.trendValue && <span className="ml-1">{(metric.trendValue as any)}</span>}
+                             metric.trend === 'down' ? <ArrowDown size={10} /> :
+                             <Minus size={10} />}
+                            {metric.trendValue && <span className="ml-1">{metric.trendValue}</span>}
                           </div>
                         )}
                       </div>
@@ -195,19 +223,19 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
 
               {/* Actions Section */}
               {actions && actions.length > 0 && (
-                <div className="flex gap-2 justify-end pt-4 border-t border-white/5">
+                <div className="flex gap-4 justify-end pt-8 border-t border-white/5">
                   {actions.map((act, idx) => (
                     <button
                       key={idx}
                       onClick={act.onClick}
-                      className={`
-                              flex items-center gap-2 px-4 py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all
-                              ${act.variant === 'primary' ? `bg-${sectionColor}-500 text-black hover:bg-${sectionColor}-400 shadow-[0_0_15px_rgba(var(--color-${sectionColor}-500),0.3)]` :
-                          act.variant === 'danger' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20' :
-                            'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-white/5'}
-                            `}
+                      className={cn(
+                        "flex items-center gap-3 px-8 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic transition-all duration-300 group/act",
+                        act.variant === 'primary' ? "bg-rose-500 text-black shadow-[0_0_20px_rgba(225,29,72,0.4)] hover:brightness-110" :
+                        act.variant === 'danger' ? "bg-black/40 text-rose-500 border border-rose-500/30 hover:bg-rose-500/10" :
+                        "bg-white/5 text-slate-400 hover:text-white border border-white/10 hover:border-white/30"
+                      )}
                     >
-                      {act.icon}
+                      {act.icon && <span className="group-hover/act:scale-110 transition-transform">{act.icon}</span>}
                       {act.label}
                     </button>
                   ))}

@@ -108,233 +108,271 @@ export default function SovereignIntelHub() {
                     className="relative z-10 flex-1 flex flex-col p-6 lg:p-12 overflow-hidden max-w-[1800px] mx-auto w-full"
                 >
                     <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-10 mb-10">
-                        <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-10">
                             <div className="relative group">
-                                <div className="absolute inset-0 bg-rose-500/20 blur-3xl rounded-full group-hover:scale-125 transition-transform duration-1000" />
-                                <div className="relative p-6 bg-black border border-rose-500/40 shadow-4xl rounded-[2.5rem] transition-all group-hover:border-rose-500/80">
-                                    <Brain size={42} className="text-rose-500 drop-shadow-[0_0_15px_rgba(225,29,72,0.8)]" />
+                                <div className="absolute inset-0 bg-rose-500/20 blur-[100px] rounded-full group-hover:scale-150 transition-transform duration-[3s]" />
+                                <div className="relative p-8 bg-black/60 glass-wraith border border-rose-500/40 shadow-4xl rounded-[3rem] transition-all group-hover:border-rose-500/80">
+                                    <Brain size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,0.8)]" />
+                                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 rounded-full border-4 border-black animate-pulse" />
                                 </div>
                             </div>
                             <div>
-                                <div className="flex items-center gap-4 mb-2">
-                                    <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#e11d48]" />
-                                    <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.8em]">
-                                        GLM-5.1 SOVEREIGN AGENT · v58.2-WRAITH
+                                <div className="flex items-center gap-6 mb-4">
+                                    <div className="w-3 h-3 bg-rose-500 rounded-full animate-ping shadow-[0_0_15px_#e11d48]" />
+                                    <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[1em] italic">
+                                        GLM-5.1 SOVEREIGN AGENT · ELITE_v60.0
                                     </span>
                                 </div>
-                                <h1 className="text-5xl font-black text-white tracking-tighter uppercase leading-none italic">
+                                <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none italic glint-elite chromatic-elite">
                                     ХАБ <span className="text-rose-500">ІНТЕЛЕКТУ</span>
                                 </h1>
+                                <div className="flex items-center gap-4 mt-4">
+                                    <div className="h-px w-20 bg-gradient-to-r from-rose-500/40 to-transparent" />
+                                    <span className="text-[9px] font-mono text-slate-700 font-black tracking-[0.5em] uppercase">SYSTEM_OVERSIGHT: ACTIVATED</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                                <div className="flex -space-x-2">
+                        <div className="flex flex-wrap items-center gap-6">
+                            <div className="flex items-center gap-6 p-4 bg-black/40 glass-wraith border border-white/5 rounded-[2rem]">
+                                <div className="flex -space-x-3">
                                     {[1, 2, 3].map(i => (
-                                        <div key={i} className="w-6 h-6 rounded-full border border-black bg-rose-600 flex items-center justify-center text-[8px] font-black">
+                                        <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-rose-600 flex items-center justify-center text-[10px] font-black text-black shadow-lg">
                                             {i}
                                         </div>
                                     ))}
                                 </div>
-                                <span className={cn("text-[9px] font-black uppercase tracking-widest", isOffline ? "text-rose-400" : "text-rose-500")}>
-                                    {isOffline ? 'OFFLINE_RECOVERY_MODE' : (nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL ACTIVE' : 'MIRROR_ORACLE_ACTIVE')}
-                                </span>
+                                <div className="flex flex-col">
+                                    <span className={cn("text-[10px] font-black uppercase tracking-widest leading-none", isOffline ? "text-rose-400" : "text-rose-500")}>
+                                        {isOffline ? 'OFFLINE_RECOVERY' : (nodeSource === 'NVIDIA_VIA_ZROK' ? 'ZROK_NVIDIA_TUNNEL' : 'MIRROR_ORACLE')}
+                                    </span>
+                                    <span className="text-[8px] font-mono text-slate-700 mt-1 font-bold">STATUS: SUPREME</span>
+                                </div>
                             </div>
+
                             {isOffline && (
-                                <div className="px-6 py-3 bg-red-950/20 border border-red-500/30 rounded-2xl flex items-center gap-4 animate-pulse">
-                                    <AlertTriangle size={14} className="text-red-500" />
-                                    <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">FAILOVER SYNC: {Math.floor(healingProgress)}%</span>
+                                <div className="px-8 py-4 bg-rose-500/5 border border-rose-500/20 rounded-[2rem] flex items-center gap-5 animate-pulse shadow-2xl">
+                                    <AlertTriangle size={18} className="text-rose-500" />
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest leading-none">FAILOVER SYNC</span>
+                                        <span className="text-[12px] font-mono text-rose-400 font-black mt-1">{Math.floor(healingProgress)}%</span>
+                                    </div>
                                 </div>
                             )}
-                            <Button variant="ghost" className="text-rose-500/60 hover:text-rose-500 uppercase text-[9px] font-black tracking-widest gap-2">
-                                <Command size={14} /> ТЕРМІНАЛ
+
+                            <Button 
+                                variant="outline" 
+                                className="h-16 px-10 border-rose-500/20 bg-rose-500/5 hover:bg-rose-500 text-rose-500 hover:text-black rounded-[2rem] text-[10px] font-black tracking-[0.4em] uppercase transition-all duration-500 italic shadow-2xl"
+                            >
+                                <Command size={18} className="mr-3" /> ТЕРМІНАЛ_ДОСТУПУ
                             </Button>
+                        </div>
                     </div>
 
-                    <div className="flex-1 grid grid-cols-12 gap-8 overflow-hidden">
+                    <div className="flex-1 grid grid-cols-12 gap-10 overflow-hidden">
                         
                         {/* 🧠 LEFT: Thought Stream (AI Logs) */}
-                        <div className="col-span-12 lg:col-span-4 flex flex-col gap-8 overflow-hidden">
-                            <TacticalCard variant="holographic" className="flex-1 p-8 relative overflow-hidden flex flex-col bg-black/60 border-rose-500/10 rounded-[3rem]">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] flex items-center gap-3 italic">
-                                        <Terminal size={18} className="text-rose-500" /> ПОТІК_МИСЛЕННЯ_GLM
+                        <div className="col-span-12 lg:col-span-4 flex flex-col gap-10 overflow-hidden">
+                            <TacticalCard variant="holographic" elite scanGrid className="flex-1 p-10 relative overflow-hidden flex flex-col">
+                                <div className="flex items-center justify-between mb-10">
+                                    <h3 className="text-[12px] font-black text-rose-500 uppercase tracking-[0.6em] flex items-center gap-4 italic font-bold">
+                                        <Terminal size={20} className="text-rose-500" /> ПОТІК_МИСЛЕННЯ_GLM
                                     </h3>
-                                    <div className="w-3 h-3 bg-rose-500 rounded-full animate-ping opacity-40 shadow-[0_0_10px_#e11d48]" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-rose-500 rounded-full animate-ping opacity-40 shadow-[0_0_15px_#e11d48]" />
+                                        <span className="text-[9px] font-mono text-slate-700 font-black">STREAM: ACTIVE</span>
+                                    </div>
                                 </div>
                                 
-                                <div className="flex-1 overflow-y-auto space-y-6 pr-4 custom-scrollbar font-mono">
+                                <div className="flex-1 overflow-y-auto space-y-8 pr-6 custom-scrollbar font-mono">
                                     {(messages[messages.length - 1]?.thought_process || MOCK_THOUGHTS).map((t, i) => (
                                         <motion.div 
                                             key={t.id}
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="p-6 bg-white/[0.02] rounded-[2rem] border border-white/5 group hover:border-rose-500/30 transition-all cursor-default"
+                                            className="p-8 bg-black/40 rounded-[2.5rem] border border-white/5 group hover:border-rose-500/40 transition-all cursor-default relative overflow-hidden"
                                         >
-                                            <div className="flex items-center gap-3 mb-3">
+                                            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+                                            <div className="flex items-center gap-4 mb-4 relative z-10">
                                                 <div className={cn(
-                                                    "w-2 h-2 rounded-full shadow-[0_0_10px_currentColor]",
-                                                    t.stage === 'observation' ? 'text-rose-400 bg-rose-400' :
-                                                    t.stage === 'analysis' ? 'text-yellow-400 bg-yellow-400' : 'text-emerald-400 bg-emerald-400'
+                                                    "w-3 h-3 rounded-full shadow-[0_0_12px_currentColor]",
+                                                    t.stage === 'observation' ? 'text-rose-500 bg-rose-500' :
+                                                    t.stage === 'analysis' ? 'text-amber-500 bg-amber-500' : 'text-emerald-500 bg-emerald-500'
                                                 )} />
-                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                                                <span className="text-[11px] font-black uppercase text-slate-500 tracking-[0.3em] italic">
                                                     {t.stage === 'observation' ? 'СПОСТЕРЕЖЕННЯ' : 
                                                      t.stage === 'analysis' ? 'АНАЛІЗ' : 
                                                      t.stage === 'decision' ? 'РІШЕННЯ' : 'ДІЯ'}
                                                 </span>
-                                                <span className="text-[8px] font-mono text-slate-700 ml-auto font-black">{t.confidence * 100}% CONF</span>
+                                                <div className="ml-auto px-3 py-1 bg-white/5 rounded-lg">
+                                                    <span className="text-[9px] font-mono text-slate-700 font-black">{t.confidence * 100}% CONF</span>
+                                                </div>
                                             </div>
-                                            <p className="text-[12px] text-slate-400 leading-relaxed italic group-hover:text-white transition-colors">
+                                            <p className="text-[14px] text-slate-400 leading-relaxed italic group-hover:text-white transition-colors relative z-10">
                                                 {t.content}
                                             </p>
                                         </motion.div>
                                     ))}
                                 </div>
 
-                                <div className="mt-8 pt-8 border-t border-white/5">
-                                    <div className="flex items-center justify-between text-[10px] font-black text-slate-600 uppercase tracking-widest mb-4 italic">
-                                        <span>SWE-BENCH PRO (SOTA)</span>
+                                <div className="mt-10 pt-10 border-t border-white/5">
+                                    <div className="flex items-center justify-between text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] mb-5 italic">
+                                        <span>SWE-BENCH PRO (SOTA_ENGINE)</span>
                                         <span className="text-rose-500">98.9%</span>
                                     </div>
-                                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
-                                        <motion.div className="h-full bg-gradient-to-r from-rose-600 to-rose-400" initial={{ width: 0 }} animate={{ width: '98.9%' }} />
+                                    <div className="h-2 bg-black/60 rounded-full overflow-hidden shadow-inner border border-white/5">
+                                        <motion.div 
+                                            className="h-full bg-gradient-to-r from-rose-600 to-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.4)]" 
+                                            initial={{ width: 0 }} 
+                                            animate={{ width: '98.9%' }} 
+                                            transition={{ duration: 2, ease: "easeOut" }}
+                                        />
                                     </div>
                                 </div>
                             </TacticalCard>
 
-                            <HoloContainer className="p-8 h-[220px] bg-gradient-to-br from-rose-900/10 to-transparent border-rose-500/10 rounded-[3rem] backdrop-blur-3xl relative overflow-hidden group">
-                                <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                                    <Shield size={180} className="text-rose-500" />
+                            <HoloContainer className="p-10 min-h-[240px] bg-black/60 glass-wraith border-rose-500/20 rounded-[3.5rem] relative overflow-hidden group shadow-4xl">
+                                <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
+                                <div className="absolute -right-16 -bottom-16 opacity-5 group-hover:opacity-10 transition-all duration-1000 scale-150">
+                                    <Shield size={220} className="text-rose-500" />
                                 </div>
-                                <h3 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] mb-6 flex items-center gap-3 italic">
-                                    <Shield size={16} /> СУВЕРЕННИЙ_БРАНДМАУЕР
+                                <h3 className="text-[12px] font-black text-rose-500 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
+                                    <Shield size={20} /> СУВЕРЕННИЙ_БРАНДМАУЕР
                                 </h3>
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center bg-black/40 p-4 rounded-2xl border border-white/5">
-                                        <span className="text-[11px] font-black text-slate-400">ZROK_PROTECTION_ENABLED</span>
-                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[9px] font-black">ACTIVE</Badge>
+                                <div className="space-y-6 relative z-10">
+                                    <div className="flex justify-between items-center bg-rose-500/5 p-6 rounded-[2rem] border border-rose-500/20 shadow-xl">
+                                        <div className="flex flex-col">
+                                            <span className="text-[12px] font-black text-white tracking-widest italic">ZROK_PROTECTION</span>
+                                            <span className="text-[8px] font-mono text-rose-600/60 uppercase mt-1">ENCRYPTED_TUNNEL: ON</span>
+                                        </div>
+                                        <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 px-4 py-1.5 text-[10px] font-black italic tracking-widest">ACTIVE</Badge>
                                     </div>
-                                    <div className="text-[10px] text-slate-600 leading-tight font-black uppercase tracking-wider">
-                                        GLM-5.1 МОНІТОРИТЬ КЛАСТЕР NVIDIA ЧЕРЕЗ ШИФРОВАНИЙ ТУНЕЛЬ...
+                                    <div className="text-[11px] text-slate-600 leading-relaxed font-black uppercase tracking-[0.2em] italic max-w-[80%]">
+                                        GLM-5.1 МОНІТОРИТЬ КЛАСТЕР NVIDIA ЧЕРЕЗ ШИФРОВАНИЙ ТУНЕЛЬ ТА АГЕНТНІ ШЛЮЗИ...
                                     </div>
                                 </div>
                             </HoloContainer>
                         </div>
 
                         {/* 💬 CENTER: Neural Chat Interface */}
-                        <div className="col-span-12 lg:col-span-8 bg-black/60 border border-rose-500/5 rounded-[4rem] flex flex-col overflow-hidden relative shadow-4xl group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-rose-500/5 to-transparent pointer-events-none group-hover:from-rose-500/8 transition-all duration-1000" />
+                        <div className="col-span-12 lg:col-span-8 bg-black/60 glass-wraith border border-rose-500/10 rounded-[4.5rem] flex flex-col overflow-hidden relative shadow-4xl group">
+                            <div className="absolute inset-0 bg-gradient-to-b from-rose-500/[0.03] to-transparent pointer-events-none group-hover:from-rose-500/[0.06] transition-all duration-[3s]" />
+                            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02]" />
                             
                             {/* Chat Header */}
-                            <div className="p-8 border-b border-rose-500/10 flex items-center justify-between relative z-10 backdrop-blur-3xl bg-black/20">
-                                <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-rose-600 to-rose-500 flex items-center justify-center shadow-4xl border border-rose-400/30 relative">
-                                        <Zap className="text-black" size={28} />
-                                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-rose-300 rounded-full border-4 border-black" />
+                            <div className="p-10 border-b border-rose-500/10 flex items-center justify-between relative z-10 bg-black/20 backdrop-blur-3xl">
+                                <div className="flex items-center gap-8">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-[2.5rem] animate-pulse" />
+                                        <div className="w-20 h-20 rounded-[2.5rem] bg-gradient-to-br from-rose-600 to-rose-500 flex items-center justify-center shadow-4xl border-2 border-rose-400/40 relative z-10 transition-transform hover:scale-110 duration-500">
+                                            <Zap className="text-black" size={36} />
+                                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-rose-300 rounded-full border-4 border-black animate-ping" />
+                                        </div>
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-black text-white uppercase tracking-wider italic">GLM-5.1:SOVEREIGN_OPERATIONS</h4>
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-                                                <span className="text-[9px] text-emerald-400 font-black uppercase tracking-widest">SECURE_ZROK_NODE</span>
+                                        <h4 className="text-2xl font-black text-white uppercase tracking-tighter italic glint-elite">GLM-5.1:SOVEREIGN_OPERATIONS</h4>
+                                        <div className="flex items-center gap-5 mt-2">
+                                            <div className="flex items-center gap-2.5 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full shadow-lg">
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_#10b981]" />
+                                                <span className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] italic">SECURE_ZROK_NODE</span>
                                             </div>
-                                            <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">AGENTIC_MODE: ON</span>
+                                            <span className="text-[10px] text-slate-700 font-black uppercase tracking-[0.4em] italic">CORE_LOAD: 14.8%</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                     <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-rose-500/30 text-slate-500 hover:text-rose-500 transition-all">
-                                        <Bookmark size={20} />
+                                <div className="flex items-center gap-5">
+                                     <Button variant="outline" size="icon" className="w-14 h-14 rounded-[1.8rem] border-white/5 bg-white/5 hover:border-rose-500/40 text-slate-600 hover:text-rose-500 transition-all duration-500 shadow-xl">
+                                        <Bookmark size={24} />
                                     </Button>
-                                    <Button variant="outline" size="icon" className="w-12 h-12 rounded-2xl border-white/5 bg-white/5 hover:border-rose-500/30 text-slate-500 hover:text-rose-500 transition-all">
-                                        <RefreshCw size={20} />
+                                    <Button variant="outline" size="icon" className="w-14 h-14 rounded-[1.8rem] border-white/5 bg-white/5 hover:border-rose-500/40 text-slate-600 hover:text-rose-500 transition-all duration-500 shadow-xl">
+                                        <RefreshCw size={24} />
                                     </Button>
                                 </div>
                             </div>
 
                             {/* Chat Content */}
-                            <div ref={scrollRef} className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar relative z-10 scroll-smooth">
+                            <div ref={scrollRef} className="flex-1 overflow-y-auto p-12 space-y-12 custom-scrollbar relative z-10 scroll-smooth">
                                 {messages.map((msg, i) => (
                                     <motion.div 
                                         key={i}
-                                        initial={{ opacity: 0, y: 15 }}
+                                        initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5 }}
                                         className={cn(
-                                            "flex gap-6 max-w-[90%]",
+                                            "flex gap-8 max-w-[85%]",
                                             msg.role === 'user' ? "ml-auto flex-row-reverse" : "mr-auto"
                                         )}
                                     >
                                         <div className={cn(
-                                            "w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 border shadow-2xl transition-all",
+                                            "w-14 h-14 rounded-[1.8rem] flex items-center justify-center flex-shrink-0 border-2 shadow-2xl transition-all duration-500",
                                             msg.role === 'user' 
-                                                ? "bg-black border-rose-500/20 text-rose-500" 
-                                                : "bg-rose-500 text-black border-transparent shadow-rose-500/20"
+                                                ? "bg-black border-rose-500/30 text-rose-500 group-hover:border-rose-500" 
+                                                : "bg-rose-500 text-black border-transparent shadow-rose-500/30 scale-110"
                                         )}>
-                                            {msg.role === 'user' ? <Fingerprint size={22} /> : <Bot size={22} />}
+                                            {msg.role === 'user' ? <Fingerprint size={26} /> : <Bot size={26} />}
                                         </div>
                                         <div className={cn(
-                                            "p-7 rounded-[2.5rem] text-[15px] leading-relaxed relative overflow-hidden whitespace-pre-wrap",
+                                            "p-8 rounded-[3rem] text-[16px] leading-relaxed relative overflow-hidden whitespace-pre-wrap shadow-3xl",
                                             msg.role === 'user' 
-                                                ? "bg-yellow-500 text-black rounded-tr-none font-bold italic shadow-xl" 
-                                                : "bg-white/[0.03] text-slate-200 border border-white/5 rounded-tl-none font-medium backdrop-blur-md"
+                                                ? "bg-rose-500 text-black rounded-tr-none font-black italic tracking-tight" 
+                                                : "bg-black/40 glass-wraith text-slate-200 border border-white/10 rounded-tl-none font-medium backdrop-blur-3xl"
                                         )}>
-                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1 bg-rose-500/40" />}
+                                            {msg.role === 'system' && <div className="absolute top-0 left-0 w-full h-1.5 bg-rose-500/50 shadow-[0_0_15px_rgba(225,29,72,0.5)]" />}
                                             {msg.content}
                                         </div>
                                     </motion.div>
                                 ))}
                                 {chatMutation.isPending && (
-                                    <div className="flex gap-6 max-w-[90%] items-center animate-pulse">
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-                                            <Sparkles size={22} className="text-rose-600 animate-spin-slow" />
+                                    <div className="flex gap-8 max-w-[85%] items-center animate-pulse">
+                                        <div className="w-14 h-14 rounded-[1.8rem] bg-white/5 border border-white/10 flex items-center justify-center">
+                                            <Sparkles size={28} className="text-rose-700 animate-spin-slow" />
                                         </div>
-                                        <div className="flex flex-col gap-2">
-                                            <div className="h-4 w-64 bg-white/5 rounded-full" />
-                                            <div className="h-4 w-48 bg-white/5 rounded-full opacity-50" />
-                                            <span className="text-[9px] font-black text-rose-600 uppercase tracking-[0.5em] mt-2 italic">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
+                                        <div className="flex flex-col gap-3">
+                                            <div className="h-5 w-80 bg-white/10 rounded-full" />
+                                            <div className="h-5 w-64 bg-white/5 rounded-full opacity-50" />
+                                            <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[0.6em] mt-3 italic animate-pulse">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
                             {/* Chat Input */}
-                            <div className="p-8 bg-black/40 border-t border-yellow-500/10 relative z-10 backdrop-blur-3xl">
-                                <div className="relative group">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-rose-600/20 to-crimson-600/20 blur opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+                            <div className="p-10 bg-black/60 border-t border-rose-500/10 relative z-10 backdrop-blur-4xl">
+                                <div className="relative group/input">
+                                    <div className="absolute -inset-2 bg-gradient-to-r from-rose-600/30 to-crimson-600/30 blur-[20px] opacity-0 group-focus-within/input:opacity-100 transition duration-[2s]" />
                                     <Input 
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                                        placeholder="Введіть директиву для GLM-5.1 (напр. 'Проаналізувати критичні порти NVIDIA серверу')..." 
-                                        className="h-20 pl-16 pr-28 bg-black border-2 border-white/5 rounded-3xl text-white focus:border-rose-500/60 focus:ring-0 transition-all font-bold tracking-tight text-lg placeholder:text-slate-700 placeholder:italic relative z-10"
+                                        placeholder="ВВЕДІТЬ ДИРЕКТИВУ ДЛЯ GLM-5.1..." 
+                                        className="h-24 pl-20 pr-32 bg-black/80 border-2 border-white/10 rounded-[2.5rem] text-white focus:border-rose-500/80 focus:ring-0 transition-all duration-700 font-black tracking-tight text-xl placeholder:text-slate-800 placeholder:italic placeholder:uppercase relative z-10 shadow-2xl"
                                     />
-                                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-rose-500 transition-colors z-20" size={24} />
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-4 z-20">
+                                    <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within/input:text-rose-500 transition-colors duration-500 z-20" size={28} />
+                                    <div className="absolute right-6 top-1/2 -translate-y-1/2 flex gap-5 z-20">
                                         <Button 
                                             onClick={handleSend}
                                             disabled={!input.trim() || chatMutation.isPending}
-                                            className="h-12 w-16 bg-rose-500 hover:bg-rose-400 text-black rounded-2xl shadow-4xl transition-all hover:scale-105 active:scale-95"
+                                            className="h-14 w-20 bg-rose-500 hover:bg-rose-400 text-black rounded-[1.5rem] shadow-[0_0_30px_rgba(225,29,72,0.4)] transition-all hover:scale-110 active:scale-90"
                                         >
-                                            <Send size={22} />
+                                            <Send size={28} />
                                         </Button>
                                     </div>
                                 </div>
-                                <div className="mt-5 flex items-center justify-between px-2">
-                                    <div className="flex items-center gap-6">
-                                        <div className="flex items-center gap-2 group cursor-help">
-                                            <Cpu size={14} className="text-rose-500/60 group-hover:text-rose-500" />
-                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">GLM-5.1:SOVEREIGN</span>
+                                <div className="mt-8 flex items-center justify-between px-4">
+                                    <div className="flex items-center gap-10">
+                                        <div className="flex items-center gap-3 group cursor-help">
+                                            <Cpu size={16} className="text-rose-500/40 group-hover:text-rose-500 transition-colors" />
+                                            <span className="text-[10px] font-black uppercase text-slate-700 tracking-[0.4em] group-hover:text-slate-500 transition-colors italic">GLM-5.1:SOVEREIGN</span>
                                         </div>
-                                        <div className="flex items-center gap-2 group cursor-help">
-                                            <Globe size={14} className="text-rose-500/60 group-hover:text-rose-500" />
-                                            <span className="text-[9px] font-black uppercase text-slate-600 tracking-widest group-hover:text-slate-400 transition-colors">NODE: {nodeSource}</span>
+                                        <div className="flex items-center gap-3 group cursor-help">
+                                            <Globe size={16} className="text-rose-500/40 group-hover:text-rose-500 transition-colors" />
+                                            <span className="text-[10px] font-black uppercase text-slate-700 tracking-[0.4em] group-hover:text-slate-500 transition-colors italic">NODE: {nodeSource}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                                        <span className="text-[9px] font-black uppercase text-rose-600 tracking-widest italic font-bold">ZROK_LINK: ENCRYPTED</span>
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_12px_#e11d48]" />
+                                        <span className="text-[10px] font-black uppercase text-rose-600 tracking-[0.6em] italic font-bold">ZROK_LINK: ENCRYPTED</span>
                                     </div>
                                 </div>
                             </div>

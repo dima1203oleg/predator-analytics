@@ -99,69 +99,79 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
 
 const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.98 }}
-    animate={{ opacity: 1, scale: 1 }}
-    whileHover={{ y: -2 }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    whileHover={{ y: -4, scale: 1.02 }}
     className={cn(
-      'p-4 rounded-sm border relative overflow-hidden group transition-all duration-300 bg-black/40 backdrop-blur-sm',
-      node.status === 'online'   ? 'border-white/[0.06] hover:border-rose-500/30' :
-      node.status === 'degraded' ? 'border-rose-500/20 shadow-[0_0_20px_rgba(225,29,72,0.05)]' :
-                                   'border-white/5 opacity-50 grayscale',
+      'p-5 rounded-xl border relative overflow-hidden group transition-all duration-500 glass-wraith backdrop-blur-xl',
+      node.status === 'online'   ? 'border-white/10 hover:border-rose-500/50 shadow-2xl hover:shadow-rose-500/10' :
+      node.status === 'degraded' ? 'border-rose-500/30 shadow-[0_0_30px_rgba(225,29,72,0.15)] bg-rose-500/5' :
+                                   'border-white/5 opacity-40 grayscale bg-black/20',
     )}
   >
-    {/* Background Pattern */}
-    <div className="absolute top-0 right-0 p-1 opacity-[0.03] pointer-events-none">
-      <CpuIcon size={48} />
+    {/* Background Pattern & HUD Grids */}
+    <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
+    <div className="absolute top-0 right-0 p-3 opacity-[0.05] pointer-events-none group-hover:opacity-[0.15] transition-opacity duration-700">
+      <CpuIcon size={64} className="text-rose-500" />
     </div>
 
-    <div className="flex items-start justify-between mb-4 relative z-10">
-      <div className="flex flex-col">
-        <div className="flex items-center gap-2 mb-1">
-          <Server size={12} className="text-rose-500/50" />
-          <span className="text-[12px] font-black tracking-wider text-white/90">{node.node}</span>
+    {/* Corner Accents */}
+    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/5 group-hover:border-rose-500/30 transition-colors" />
+    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/5 group-hover:border-rose-500/30 transition-colors" />
+
+    <div className="flex items-start justify-between mb-6 relative z-10">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-rose-500/10 rounded-lg group-hover:bg-rose-500/20 transition-colors shadow-inner">
+            <Server size={14} className="text-rose-500" />
+          </div>
+          <span className="text-[14px] font-black tracking-[0.1em] text-white/90 group-hover:text-white transition-colors italic uppercase">{node.node}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[8px] font-mono text-white/30 uppercase tracking-widest">{node.role}</span>
-          <div className="w-1 h-1 rounded-full bg-white/10" />
-          <span className="text-[8px] font-mono text-white/30">{node.ip || '192.168.1.10' + node.id.slice(-1)}</span>
+        <div className="flex items-center gap-3 pl-1">
+          <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em] font-black italic">{node.role}</span>
+          <div className="w-1 h-1 rounded-full bg-rose-500/30" />
+          <span className="text-[9px] font-mono text-white/40 group-hover:text-rose-500/60 transition-colors">{node.ip || '192.168.1.' + (100 + parseInt(node.id.slice(-2)))}</span>
         </div>
       </div>
       <StatusBadge status={node.status} />
     </div>
 
     {node.status !== 'offline' && (
-      <div className="space-y-3 relative z-10">
-        <div className="grid grid-cols-2 gap-4">
-          <GaugeBar value={node.cpu} label="CPU Load" />
-          <GaugeBar value={node.ram} label="RAM Usage" />
+      <div className="space-y-5 relative z-10">
+        <div className="grid grid-cols-2 gap-5">
+          <GaugeBar value={node.cpu} label="NEURAL_COMPUTE" />
+          <GaugeBar value={node.ram} label="BUFFER_MEMORY" />
         </div>
         
         {node.vram !== undefined && (
-          <GaugeBar value={node.vram} label="VRAM Allocation (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
+          <div className="pt-2">
+             <GaugeBar value={node.vram} label="QUANTUM_VRAM (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
+          </div>
         )}
 
-        <div className="pt-3 border-t border-white/[0.03] flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <Thermometer size={10} className="text-rose-500/40" />
-              <span className={cn("text-[9px] font-mono font-bold", (node.temp || 0) > 75 ? "text-rose-500" : "text-white/50")}>
+        <div className="pt-5 mt-2 border-t border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-2 group/stat-icon">
+              <Thermometer size={12} className="text-rose-500/40 group-hover/stat-icon:text-rose-500 transition-colors" />
+              <span className={cn("text-[10px] font-mono font-black italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 animate-pulse" : "text-white/60")}>
                 {node.temp}°C
               </span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Wifi size={10} className="text-rose-500/40" />
-              <span className="text-[9px] font-mono text-white/50">{node.net}</span>
+            <div className="flex items-center gap-2 group/stat-icon">
+              <Wifi size={12} className="text-sky-500/40 group-hover/stat-icon:text-sky-500 transition-colors" />
+              <span className="text-[10px] font-mono text-white/60 font-black italic tracking-tighter">{node.net}</span>
             </div>
           </div>
-          <div className="text-[8px] font-mono text-white/20 uppercase">
-            UP: {node.uptime}
+          <div className="flex flex-col items-end">
+            <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">UPTIME_SESSION</span>
+            <span className="text-[9px] font-mono text-white/40 italic font-bold">{node.uptime}</span>
           </div>
         </div>
       </div>
     )}
     
-    {/* Corner Ornament */}
-    <div className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-transparent to-rose-500/[0.02] pointer-events-none" />
+    {/* Interactive Glow */}
+    <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-rose-500/5 blur-[60px] group-hover:bg-rose-500/10 transition-all duration-1000 rounded-full" />
   </motion.div>
 );
 
@@ -276,20 +286,41 @@ export const InfraTelemetryTab: React.FC = () => {
       </div>
 
       {/* Grid Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Active Nodes', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server },
-          { label: 'Total Services', value: services.length, icon: Box },
-          { label: 'System Uptime', value: '99.98%', icon: Shield },
-          { label: 'Network Load', value: '1.2 GB/s', icon: Zap },
+          { label: 'АКТИВНІ ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'rose' },
+          { label: 'МІКРОСЕРВІСИ', value: services.length, icon: Box, color: 'sky' },
+          { label: 'СИСТЕМНИЙ АПТАЙМ', value: '99.98%', icon: Shield, color: 'emerald' },
+          { label: 'МЕРЕЖЕВИЙ ТРАФІК', value: '1.2 GB/s', icon: Zap, color: 'amber' },
         ].map((stat, i) => (
-          <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-sm flex items-center justify-between group hover:border-white/10 transition-colors">
-            <div className="flex flex-col">
-              <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest mb-1">{stat.label}</span>
-              <span className="text-[18px] font-black text-white/90">{stat.value}</span>
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+            className="glass-wraith border border-white/5 p-6 rounded-xl flex items-center justify-between group hover:border-rose-500/30 transition-all duration-500 relative overflow-hidden"
+          >
+            {/* Background HUD Grid */}
+            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+            
+            <div className="flex flex-col relative z-10">
+              <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em] font-black mb-2 italic">{stat.label}</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-[24px] font-black text-white italic drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{stat.value}</span>
+                {stat.color === 'emerald' && <span className="text-[8px] text-emerald-500 font-bold animate-pulse">LOCKED</span>}
+              </div>
             </div>
-            <stat.icon size={20} className="text-rose-500/20 group-hover:text-rose-500/40 transition-colors" />
-          </div>
+            
+            <div className="p-3 bg-white/5 rounded-lg group-hover:bg-rose-500/10 transition-all duration-500 relative z-10">
+               <stat.icon size={24} className={cn("transition-all duration-500 group-hover:scale-110", `text-${stat.color}-500/40 group-hover:text-${stat.color}-500`)} />
+            </div>
+
+            {/* Bottom Glow */}
+            <div className={cn(
+              "absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+              `bg-${stat.color}-500/50 shadow-[0_0_15px_rgba(225,29,72,0.5)]`
+            )} />
+          </motion.div>
         ))}
       </div>
 
@@ -310,18 +341,25 @@ export const InfraTelemetryTab: React.FC = () => {
       </div>
 
       {/* Microservices Table */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-[0.4em]">Мікросервіси & Ендпоїнти</span>
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/5 to-transparent" />
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МІКРОСЕРВІСИ & ЕНДПОЇНТИ</span>
+            <div className="flex items-center gap-2">
+               <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,1)]" />
+               <span className="text-[7px] font-mono text-rose-500/60 uppercase tracking-widest font-black">X-DATA_INTEGRITY_VERIFIED</span>
+            </div>
+          </div>
+          <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
         </div>
-        <div className="bg-black/20 border border-white/[0.05] rounded-sm overflow-hidden backdrop-blur-md">
+        <div className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative">
+          <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
           <VirtualTable
             rows={services}
             columns={svcColumns}
-            rowHeight={40}
-            maxHeight={400}
+            rowHeight={48}
+            maxHeight={450}
             getRowStatus={getServiceStatus}
           />
         </div>

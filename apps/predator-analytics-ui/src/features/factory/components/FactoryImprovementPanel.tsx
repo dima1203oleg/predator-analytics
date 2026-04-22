@@ -2,40 +2,54 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   Factory, Zap, Play, AlertTriangle, Binary, BrainCircuit, Sparkles, 
-  Wrench, History as HistoryIcon, Scan, RotateCcw, ShieldCheck, 
-  Server, Cloud, Microscope, Fingerprint, Terminal 
+  Wrench, History as HistoryIcon, Scan, ShieldCheck, Server, Cloud, 
+  Microscope, Fingerprint, RotateCcw
 } from 'lucide-react';
-import { TacticalCard } from '@/components/ui/TacticalCard';
+import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/utils/cn';
+import { TacticalCard } from '@/components/ui/TacticalCard';
 
-interface ImprovementTabProps {
+export interface FactoryImprovementPanelProps {
   infiniteRunning: boolean;
   infinitePhase: 'observe' | 'orient' | 'decide' | 'act';
   improvementStatus: 'idle' | 'running' | 'success' | 'error' | 'done';
   improvementProgress: number;
   improvementMode: 'tech' | 'analytic' | 'complex' | null;
-  setImprovementMode: (mode: 'tech' | 'analytic' | 'complex') => void;
+  setImprovementMode: (mode: 'tech' | 'analytic' | 'complex' | null) => void;
   techComponents: string[];
-  setTechComponents: (list: string[]) => void;
+  setTechComponents: (v: string[]) => void;
   analyticComponents: string[];
-  setAnalyticComponents: (list: string[]) => void;
+  setAnalyticComponents: (v: string[]) => void;
   infiniteLogs: string[];
-  handleStartImprovement: () => void;
-  handleUpdateKnowledgeMap: () => void;
-  startEveryFunction: () => void;
-  stopInfinite: () => Promise<void>;
-  healthChecks: any[];
+  infiniteStats: { improvements: number; bugs: number; cycles: number };
   goldPatterns: any[];
   bugs: any[];
-  techOptions: { id: string; label: string }[];
-  analyticOptions: { id: string; label: string }[];
-  toggleSelection: (id: string, list: string[], setList: (v: string[]) => void) => void;
+  healthChecks: any[];
+  handleStartImprovement: () => void;
+  handleUpdateKnowledgeMap: () => void;
+  handleStopInfinite: () => void;
+  handleMasterStart: () => void;
 }
 
-export const ImprovementTab: React.FC<ImprovementTabProps> = ({
+const techOptions = [
+  { id: 'frontend', label: 'Фронтенд (веб-інтерфейс, візуальність)' },
+  { id: 'backend', label: 'Бекенд (Core API, Meta-Controller, логіка)' },
+  { id: 'infra', label: 'Інфраструктура (K8s Pods, мережа)' },
+  { id: 'db', label: 'База даних та Memory Layer' },
+  { id: 'perf', label: 'Загальна продуктивність і стабільність' }
+];
+
+const analyticOptions = [
+  { id: 'knowledge', label: 'Мапа Знань (Knowledge Map + патерни)' },
+  { id: 'datasets', label: 'Студія Датасетів' },
+  { id: 'facts', label: 'Студія Фактів' },
+  { id: 'activity', label: 'Аналітика Діяльності' },
+  { id: 'data', label: 'Аналітика Даних' }
+];
+
+export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = ({
   infiniteRunning,
   infinitePhase,
   improvementStatus,
@@ -47,24 +61,22 @@ export const ImprovementTab: React.FC<ImprovementTabProps> = ({
   analyticComponents,
   setAnalyticComponents,
   infiniteLogs,
-  handleStartImprovement,
-  handleUpdateKnowledgeMap,
-  startEveryFunction,
-  stopInfinite,
-  healthChecks,
+  infiniteStats,
   goldPatterns,
   bugs,
-  techOptions,
-  analyticOptions,
-  toggleSelection
+  healthChecks,
+  handleStartImprovement,
+  handleUpdateKnowledgeMap,
+  handleStopInfinite,
+  handleMasterStart
 }) => {
+  const toggleSelection = (id: string, list: string[], setList: (v: string[]) => void) => {
+    if (list.includes(id)) setList(list.filter(x => x !== id));
+    else setList([...list, id]);
+  };
+
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }} 
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       {/* Sovereign Control Center Header */}
       <TacticalCard variant="holographic" className="border-rose-500/40 bg-rose-500/5 backdrop-blur-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -96,7 +108,7 @@ export const ImprovementTab: React.FC<ImprovementTabProps> = ({
                variant="neon" 
                size="sm" 
                className="flex-1 lg:flex-none px-6 bg-emerald-600/20 text-emerald-400 border-emerald-500/50 text-[10px] uppercase font-black h-12 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
-               onClick={startEveryFunction}
+               onClick={handleMasterStart}
              >
                <Zap size={14} className="mr-2" /> МАЙСТЕР ЗАПУСК
              </Button>
@@ -112,7 +124,7 @@ export const ImprovementTab: React.FC<ImprovementTabProps> = ({
                variant="cyber" 
                size="sm" 
                className="flex-1 lg:flex-none px-4 bg-slate-800 text-slate-400 border-white/10 text-[10px] uppercase font-black h-12 hover:border-rose-500/50 hover:text-rose-500"
-               onClick={stopInfinite}
+               onClick={handleStopInfinite}
              >
                <AlertTriangle size={14} className="mr-2" /> ЗУПИНКА
              </Button>
@@ -266,123 +278,102 @@ export const ImprovementTab: React.FC<ImprovementTabProps> = ({
              </div>
              <div className="flex-1 min-w-0">
                <div className="text-[11px] font-black uppercase text-white truncate">Cloud Connect</div>
-               <div className="text-[8px] text-rose-400 font-mono mt-1">Очікування контракту</div>
+                <div className="text-[8px] text-rose-400 font-mono mt-1">Очікування контракту</div>
+              </div>
+              <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">Offline</Badge>
+           </div>
+         </div>
+       </TacticalCard>
+
+       {/* Realtime Progress & Results UI */}
+       {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
+         <TacticalCard variant="holographic" className="border-rose-500/30 mt-6">
+           <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
+             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+             <h2 className="text-xs font-black uppercase tracking-widest text-white">Канал Подій Заводу (Events)</h2>
+           </div>
+           <div className="p-4">
+             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
+                <div>
+                   <div className="flex items-center justify-between mb-3">
+                     <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
+                     <span className="font-mono text-2xl font-black text-white">{improvementProgress}%</span>
+                   </div>
+                   <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_20px_rgba(244,63,94,0.1)]" />
+                   
+                   <div className="mt-8 grid grid-cols-2 gap-4">
+                     <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
+                       <Microscope size={28} className="text-rose-400 mb-3" />
+                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
+                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ЗАВЕРШЕНО</Badge>
+                     </div>
+                     <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
+                       <Fingerprint size={28} className="text-rose-400 mb-3" />
+                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
+                       <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ПЕРЕВІРЕНО</Badge>
+                     </div>
+                   </div>
+                </div>
+
+                <div className="bg-slate-950/80 rounded-2xl p-4 border border-rose-500/10 font-mono text-[10px] h-[200px] overflow-y-auto custom-scrollbar shadow-inner relative">
+                   <div className="text-rose-400/60 mb-2 uppercase font-black tracking-widest">[ ПІДТВЕРДЖЕНІ ЛОГИ OODA ]</div>
+                   {infiniteLogs.length > 0 ? (
+                     <div className="space-y-1">
+                       {infiniteLogs.slice(-10).map((log, index) => (
+                         <div key={`${index}-${log}`} className={cn(
+                           'break-words',
+                           log.includes('ERROR') ? 'text-rose-300' : log.includes('SYSTEM') ? 'text-yellow-300' : 'text-slate-400',
+                         )}>
+                           {log}
+                         </div>
+                       ))}
+                     </div>
+                   ) : (
+                     <div className="text-slate-500">Бекенд не повернув журнал OODA. Блок не генерує локальні події.</div>
+                   )}
+                </div>
              </div>
-             <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">Offline</Badge>
-          </div>
-        </div>
-      </TacticalCard>
 
-      {/* Realtime Progress & Results UI */}
-      {(improvementStatus === 'running' || improvementStatus === 'done' || infiniteRunning) && (
-        <TacticalCard variant="holographic" className="border-rose-500/30 mt-6">
-          <div className="flex items-center gap-3 mb-6 p-4 border-b border-rose-500/20 bg-rose-500/5">
-            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
-            <h2 className="text-xs font-black uppercase tracking-widest text-white">Канал Подій Заводу (Events)</h2>
-          </div>
-          <div className="p-4">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
-              <div>
-                 <div className="flex items-center justify-between mb-3">
-                   <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙ ПРОГРЕС ЦИКЛУ</span>
-                   <span className="font-mono text-2xl font-black text-white">{improvementProgress}%</span>
-                 </div>
-                 <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_20px_rgba(244,63,94,0.1)]" />
-                 
-                 <div className="mt-8 grid grid-cols-2 gap-4">
-                   <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
-                     <Microscope size={28} className="text-rose-400 mb-3" />
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Аналіз</span>
-                     <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ЗАВЕРШЕНО</Badge>
-                   </div>
-                   <div className="bg-black/60 border border-white/5 rounded-2xl p-5 flex flex-col items-center shadow-lg">
-                     <Fingerprint size={28} className="text-rose-400 mb-3" />
-                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Автентичність</span>
-                     <Badge variant="cyber" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">ПЕРЕВІРЕНО</Badge>
-                   </div>
-                 </div>
-              </div>
+             {improvementStatus === 'done' && (
+               <div className="mt-8 pt-8 border-t border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
+                      <p className="text-[9px] text-emerald-500/70 font-mono uppercase">Звіт формується лише з підтверджених server-side станів OODA та Factory API</p>
+                    </div>
+                  </div>
 
-              <div className="bg-slate-950 border border-rose-500/20 rounded-2xl p-5 font-mono text-[11px] h-[250px] overflow-y-auto custom-scrollbar shadow-inner relative">
-                 <div className="absolute top-4 right-4 flex gap-1">
-                   <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                   <div className="w-1.5 h-1.5 rounded-full bg-rose-500/40" />
-                   <div className="w-1.5 h-1.5 rounded-full bg-rose-500/20" />
-                 </div>
-                 <div className="text-rose-400/80 mb-4 uppercase font-black tracking-widest border-b border-rose-500/20 pb-2">STDOUT &gt; OODA_FACTORY_CORE</div>
-                 {infiniteLogs.length > 0 ? (
-                   <div className="space-y-1.5">
-                     {infiniteLogs.slice(-15).map((log, index) => (
-                       <div key={`${index}-${log}`} className={cn(
-                         'break-words flex gap-3',
-                         log.includes('ERROR') ? 'text-rose-400' : log.includes('SYSTEM') ? 'text-rose-300' : 'text-slate-400',
-                       )}>
-                         <span className="text-slate-600 shrink-0">{String(index + 1).padStart(2, '0')}</span>
-                         <span>{log}</span>
-                       </div>
-                     ))}
-                   </div>
-                 ) : (
-                   <div className="text-slate-600 italic h-full flex items-center justify-center">Очікування потоку подій від ядра OODA...</div>
-                 )}
-              </div>
-            </div>
-
-            {improvementStatus === 'done' && (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-8 pt-8 border-t border-white/10"
-              >
-                 <div className="flex items-center gap-4 mb-6">
-                   <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                     <ShieldCheck size={24} />
-                   </div>
-                   <div>
-                     <h4 className="text-base font-black uppercase tracking-widest text-white">ФІНАЛЬНИЙ ЗВІТ ПО ВЕРТИКАЛЯХ</h4>
-                     <p className="text-[10px] text-emerald-500/70 font-mono uppercase mt-1">Звіт сформовано на основі серверних станів OODA та Factory API</p>
-                   </div>
-                 </div>
-
-                 <div className="overflow-x-auto rounded-2xl border border-white/5 bg-black/40 p-1">
-                   <table className="w-full text-[11px] font-mono border-separate border-spacing-y-2 px-4">
-                     <thead>
-                       <tr className="text-slate-500 text-[9px] uppercase tracking-widest text-left">
-                         <th className="pb-2 font-black pl-3">Вертикаль</th>
-                         <th className="pb-2 font-black">Стан Впровадження</th>
-                         <th className="pb-2 font-black">Статус</th>
-                       </tr>
-                     </thead>
-                     <tbody>
-                       <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10 group">
-                         <td className="p-4 text-rose-400 font-black border-l-2 border-rose-500 group-hover:pl-6 transition-all">Технологічна</td>
-                         <td className="p-4 text-slate-300">Оптимізація ядра завершена</td>
-                         <td className="p-4 text-emerald-400 font-black flex items-center gap-2">
-                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                           {infiniteRunning ? 'АКТИВНО' : 'ОЧІКУВАННЯ'}
-                         </td>
-                       </tr>
-                       <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10 group">
-                         <td className="p-4 text-rose-400 font-black border-l-2 border-rose-500 group-hover:pl-6 transition-all">Аналітична</td>
-                         <td className="p-4 text-slate-300">Knowledge Map оновлено</td>
-                         <td className="p-4 text-emerald-400 font-black flex items-center gap-2">
-                           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                           {goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}
-                         </td>
-                       </tr>
-                     </tbody>
-                   </table>
-                 </div>
-
-                 <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-white/5">
-                   <Button variant="ghost" className="bg-white/5 text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-white border border-white/10 hover:border-white/20 h-10 px-6 rounded-lg transition-all">ЕКСПОРТ (JSON)</Button>
-                   <Button variant="cyber" className="bg-rose-500/10 text-rose-400 border-rose-500/40 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/20 h-10 px-8 rounded-lg shadow-[0_0_15px_rgba(244,63,94,0.1)] transition-all">Звіт (PDF)</Button>
-                 </div>
-              </motion.div>
-            )}
-          </div>
-        </TacticalCard>
-      )}
-    </motion.div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-[11px] font-mono border-separate border-spacing-y-2">
+                      <thead>
+                        <tr className="text-slate-500 text-[9px] uppercase tracking-widest text-left">
+                          <th className="pb-2 font-black pl-3">Вертикаль</th>
+                          <th className="pb-2 font-black">Впроваджено</th>
+                          <th className="pb-2 font-black">Статус</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
+                          <td className="p-3 text-yellow-400 font-bold border-l-2 border-yellow-500">Технологічна</td>
+                          <td className="p-3 text-slate-200">Стан за OODA та telemetry</td>
+                          <td className="p-3 text-emerald-400 font-bold">{infiniteRunning ? 'АКТИВНО' : 'ОЧІКУВАННЯ'}</td>
+                        </tr>
+                        <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
+                          <td className="p-3 text-rose-400 font-bold border-l-2 border-rose-500">Аналітична</td>
+                          <td className="p-3 text-slate-200">Gold patterns і bug queue</td>
+                          <td className="p-3 text-emerald-400 font-bold">{goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+               </div>
+             )}
+           </div>
+         </TacticalCard>
+       )}
+    </div>
   );
 };

@@ -48,135 +48,130 @@ const sectionColorMap: Record<string, {
   hoverBg: string;
 }> = {
   rose: {
-    bg: 'rgba(225,29,72,0.04)',
-    border: 'rgba(225,29,72,0.18)',
-    headerBg: 'rgba(225,29,72,0.08)',
-    headerText: '#fb7185',
-    dotColor: '#e11d48',
-    glowColor: 'rgba(225,29,72,0.4)',
-    activeItemBg: 'rgba(225,29,72,0.08)',
-    activeItemBorder: 'rgba(225,29,72,0.25)',
-    activeIconBg: 'rgba(225,29,72,0.15)',
-    activeIconColor: '#fb7185',
-    activeIndicator: 'from-rose-500/80 to-rose-400/20',
-    hoverBg: 'rgba(225,29,72,0.05)',
+    bg: 'rgba(225,29,72,0.1)',
+    border: 'rgba(225,29,72,0.3)',
+    headerBg: 'rgba(225,29,72,0.15)',
+    headerText: '#ff4d7d',
+    dotColor: '#ff0040',
+    glowColor: 'rgba(255,0,64,0.6)',
+    activeItemBg: 'rgba(225,29,72,0.2)',
+    activeItemBorder: 'rgba(225,29,72,0.4)',
+    activeIconBg: 'rgba(225,29,72,0.3)',
+    activeIconColor: '#ff4d7d',
+    activeIndicator: 'from-rose-500 to-rose-400/20',
+    hoverBg: 'rgba(225,29,72,0.12)',
   },
   gold: {
-    bg: 'rgba(225,29,72,0.04)',
-    border: 'rgba(225,29,72,0.18)',
-    headerBg: 'rgba(225,29,72,0.08)',
-    headerText: '#f43f5e',
-    dotColor: '#e11d48',
-    glowColor: 'rgba(225,29,72,0.4)',
-    activeItemBg: 'rgba(225,29,72,0.08)',
-    activeItemBorder: 'rgba(225,29,72,0.25)',
-    activeIconBg: 'rgba(225,29,72,0.15)',
-    activeIconColor: '#f43f5e',
-    activeIndicator: 'from-rose-600/80 to-rose-500/20',
-    hoverBg: 'rgba(225,29,72,0.05)',
+    bg: 'rgba(245,158,11,0.08)',
+    border: 'rgba(245,158,11,0.25)',
+    headerBg: 'rgba(245,158,11,0.12)',
+    headerText: '#fbbf24',
+    dotColor: '#f59e0b',
+    glowColor: 'rgba(245,158,11,0.5)',
+    activeItemBg: 'rgba(245,158,11,0.15)',
+    activeItemBorder: 'rgba(245,158,11,0.35)',
+    activeIconBg: 'rgba(245,158,11,0.2)',
+    activeIconColor: '#fbbf24',
+    activeIndicator: 'from-amber-500 to-amber-400/20',
+    hoverBg: 'rgba(245,158,11,0.1)',
   },
   amber: {
-    bg: 'rgba(190,18,60,0.04)',
-    border: 'rgba(190,18,60,0.18)',
-    headerBg: 'rgba(190,18,60,0.08)',
-    headerText: '#fb7185',
-    dotColor: '#be123c',
-    glowColor: 'rgba(190,18,60,0.4)',
-    activeItemBg: 'rgba(190,18,60,0.08)',
-    activeItemBorder: 'rgba(190,18,60,0.25)',
-    activeIconBg: 'rgba(190,18,60,0.15)',
-    activeIconColor: '#fb7185',
-    activeIndicator: 'from-rose-700/80 to-rose-600/20',
-    hoverBg: 'rgba(190,18,60,0.05)',
+    bg: 'rgba(190,18,60,0.1)',
+    border: 'rgba(190,18,60,0.3)',
+    headerBg: 'rgba(190,18,60,0.15)',
+    headerText: '#f43f5e',
+    dotColor: '#e11d48',
+    glowColor: 'rgba(225,29,72,0.6)',
+    activeItemBg: 'rgba(190,18,60,0.2)',
+    activeItemBorder: 'rgba(190,18,60,0.4)',
+    activeIconBg: 'rgba(190,18,60,0.3)',
+    activeIconColor: '#f43f5e',
+    activeIndicator: 'from-rose-600 to-rose-400/20',
+    hoverBg: 'rgba(190,18,60,0.12)',
   },
   warn: {
-    bg: 'rgba(234,88,12,0.04)',
-    border: 'rgba(234,88,12,0.18)',
-    headerBg: 'rgba(234,88,12,0.08)',
-    headerText: '#fdba74',
+    bg: 'rgba(234,88,12,0.08)',
+    border: 'rgba(234,88,12,0.25)',
+    headerBg: 'rgba(234,88,12,0.12)',
+    headerText: '#fb923c',
     dotColor: '#ea580c',
-    glowColor: 'rgba(234,88,12,0.4)',
-    activeItemBg: 'rgba(234,88,12,0.08)',
-    activeItemBorder: 'rgba(234,88,12,0.25)',
-    activeIconBg: 'rgba(234,88,12,0.15)',
-    activeIconColor: '#fdba74',
-    activeIndicator: 'from-orange-500/80 to-orange-400/20',
-    hoverBg: 'rgba(234,88,12,0.05)',
+    glowColor: 'rgba(234,88,12,0.5)',
+    activeItemBg: 'rgba(234,88,12,0.15)',
+    activeItemBorder: 'rgba(234,88,12,0.35)',
+    activeIconBg: 'rgba(234,88,12,0.2)',
+    activeIconColor: '#fb923c',
+    activeIndicator: 'from-orange-500 to-orange-400/20',
+    hoverBg: 'rgba(234,88,12,0.1)',
   },
-  // ── emerald — зарезервований ──────────────────────────────────────────────
   emerald: {
-    bg: 'rgba(16,185,129,0.04)',
-    border: 'rgba(16,185,129,0.18)',
-    headerBg: 'rgba(16,185,129,0.08)',
+    bg: 'rgba(16,185,129,0.08)',
+    border: 'rgba(16,185,129,0.25)',
+    headerBg: 'rgba(16,185,129,0.12)',
     headerText: '#34d399',
     dotColor: '#10b981',
-    glowColor: 'rgba(16,185,129,0.4)',
-    activeItemBg: 'rgba(16,185,129,0.08)',
-    activeItemBorder: 'rgba(16,185,129,0.25)',
-    activeIconBg: 'rgba(16,185,129,0.15)',
+    glowColor: 'rgba(16,185,129,0.5)',
+    activeItemBg: 'rgba(16,185,129,0.15)',
+    activeItemBorder: 'rgba(16,185,129,0.35)',
+    activeIconBg: 'rgba(16,185,129,0.2)',
     activeIconColor: '#34d399',
-    activeIndicator: 'from-emerald-500/80 to-emerald-400/20',
-    hoverBg: 'rgba(16,185,129,0.05)',
+    activeIndicator: 'from-emerald-500 to-emerald-400/20',
+    hoverBg: 'rgba(16,185,129,0.1)',
   },
-  // ── EXECUTIVE badge (sky) — командний хаб ────────────────────────────────
   sky: {
-    bg: 'rgba(14,165,233,0.04)',
-    border: 'rgba(14,165,233,0.18)',
-    headerBg: 'rgba(14,165,233,0.08)',
+    bg: 'rgba(14,165,233,0.08)',
+    border: 'rgba(14,165,233,0.25)',
+    headerBg: 'rgba(14,165,233,0.12)',
     headerText: '#38bdf8',
     dotColor: '#0ea5e9',
-    glowColor: 'rgba(14,165,233,0.4)',
-    activeItemBg: 'rgba(14,165,233,0.08)',
-    activeItemBorder: 'rgba(14,165,233,0.25)',
-    activeIconBg: 'rgba(14,165,233,0.15)',
+    glowColor: 'rgba(14,165,233,0.5)',
+    activeItemBg: 'rgba(14,165,233,0.15)',
+    activeItemBorder: 'rgba(14,165,233,0.35)',
+    activeIconBg: 'rgba(14,165,233,0.2)',
     activeIconColor: '#38bdf8',
-    activeIndicator: 'from-sky-500/80 to-sky-400/20',
-    hoverBg: 'rgba(14,165,233,0.05)',
+    activeIndicator: 'from-sky-500 to-sky-400/20',
+    hoverBg: 'rgba(14,165,233,0.1)',
   },
-  // ── AI CORE (blue) — штучний інтелект ────────────────────────────────────
   blue: {
-    bg: 'rgba(59,130,246,0.04)',
-    border: 'rgba(59,130,246,0.18)',
-    headerBg: 'rgba(59,130,246,0.08)',
+    bg: 'rgba(59,130,246,0.08)',
+    border: 'rgba(59,130,246,0.25)',
+    headerBg: 'rgba(59,130,246,0.12)',
     headerText: '#60a5fa',
     dotColor: '#3b82f6',
-    glowColor: 'rgba(59,130,246,0.4)',
-    activeItemBg: 'rgba(59,130,246,0.08)',
-    activeItemBorder: 'rgba(59,130,246,0.25)',
-    activeIconBg: 'rgba(59,130,246,0.15)',
+    glowColor: 'rgba(59,130,246,0.5)',
+    activeItemBg: 'rgba(59,130,246,0.15)',
+    activeItemBorder: 'rgba(59,130,246,0.35)',
+    activeIconBg: 'rgba(59,130,246,0.2)',
     activeIconColor: '#60a5fa',
-    activeIndicator: 'from-blue-500/80 to-blue-400/20',
-    hoverBg: 'rgba(59,130,246,0.05)',
+    activeIndicator: 'from-blue-500 to-blue-400/20',
+    hoverBg: 'rgba(59,130,246,0.1)',
   },
-  // ── INVESTIGATION (indigo) — розслідування ───────────────────────────────
   indigo: {
-    bg: 'rgba(99,102,241,0.04)',
-    border: 'rgba(99,102,241,0.18)',
-    headerBg: 'rgba(99,102,241,0.08)',
+    bg: 'rgba(99,102,241,0.08)',
+    border: 'rgba(99,102,241,0.25)',
+    headerBg: 'rgba(99,102,241,0.12)',
     headerText: '#818cf8',
     dotColor: '#6366f1',
-    glowColor: 'rgba(99,102,241,0.4)',
-    activeItemBg: 'rgba(99,102,241,0.08)',
-    activeItemBorder: 'rgba(99,102,241,0.25)',
-    activeIconBg: 'rgba(99,102,241,0.15)',
+    glowColor: 'rgba(99,102,241,0.5)',
+    activeItemBg: 'rgba(99,102,241,0.15)',
+    activeItemBorder: 'rgba(99,102,241,0.35)',
+    activeIconBg: 'rgba(99,102,241,0.2)',
     activeIconColor: '#818cf8',
-    activeIndicator: 'from-indigo-500/80 to-indigo-400/20',
-    hoverBg: 'rgba(99,102,241,0.05)',
+    activeIndicator: 'from-indigo-500 to-indigo-400/20',
+    hoverBg: 'rgba(99,102,241,0.1)',
   },
-  // ── SYSTEM (slate) — інфраструктура ──────────────────────────────────────
   slate: {
-    bg: 'rgba(71,85,105,0.05)',
-    border: 'rgba(71,85,105,0.22)',
-    headerBg: 'rgba(71,85,105,0.10)',
-    headerText: '#94a3b8',
-    dotColor: '#64748b',
-    glowColor: 'rgba(100,116,139,0.3)',
-    activeItemBg: 'rgba(71,85,105,0.12)',
-    activeItemBorder: 'rgba(71,85,105,0.30)',
-    activeIconBg: 'rgba(71,85,105,0.20)',
-    activeIconColor: '#94a3b8',
-    activeIndicator: 'from-slate-500/80 to-slate-400/20',
-    hoverBg: 'rgba(71,85,105,0.07)',
+    bg: 'rgba(148,163,184,0.08)',
+    border: 'rgba(148,163,184,0.25)',
+    headerBg: 'rgba(148,163,184,0.12)',
+    headerText: '#e2e8f0',
+    dotColor: '#94a3b8',
+    glowColor: 'rgba(148,163,184,0.4)',
+    activeItemBg: 'rgba(148,163,184,0.15)',
+    activeItemBorder: 'rgba(148,163,184,0.35)',
+    activeIconBg: 'rgba(148,163,184,0.2)',
+    activeIconColor: '#e2e8f0',
+    activeIndicator: 'from-slate-400 to-slate-400/20',
+    hoverBg: 'rgba(148,163,184,0.1)',
   },
 };
 
@@ -325,29 +320,34 @@ export const Sidebar: React.FC = () => {
     <motion.aside
       data-testid="sidebar"
       initial={false}
-      animate={{ width: isOpen ? 296 : 72 }}
-      transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+      animate={{ width: isOpen ? 296 : 80 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="relative sticky top-0 z-50 flex h-screen shrink-0 flex-col overflow-visible"
       style={{
-        background: 'linear-gradient(180deg, rgba(2,8,20,0.98) 0%, rgba(4,10,24,0.97) 100%)',
-        borderRight: '1px solid rgba(255,255,255,0.07)',
-        boxShadow: '4px 0 32px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.03)',
+        background: 'linear-gradient(180deg, rgba(10, 10, 15, 0.7) 0%, rgba(5, 5, 10, 0.85) 100%)',
+        borderRight: '1px solid rgba(225,29,72,0.15)',
+        boxShadow: '20px 0 60px rgba(0,0,0,0.6)',
+        backdropFilter: 'blur(40px)',
       }}
     >
-      {/* Ambient фоновий ефект */}
+      {/* Ambient фоновий ефект - більш виражений для візабіліті */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          className="absolute top-0 left-0 right-0 h-[40%]"
+          className="absolute top-0 left-0 right-0 h-[60%]"
           style={{
-            background: 'radial-gradient(ellipse at 50% -20%, rgba(225,29,72,0.12) 0%, transparent 70%)',
+            background: 'radial-gradient(circle at 0% 0%, rgba(225,29,72,0.2) 0%, transparent 70%)',
           }}
         />
         <div
-          className="absolute bottom-0 left-0 right-0 h-[30%]"
+          className="absolute bottom-0 right-0 w-full h-[50%]"
           style={{
-            background: 'radial-gradient(ellipse at 50% 120%, rgba(99,102,241,0.05) 0%, transparent 70%)',
+            background: 'radial-gradient(circle at 100% 100%, rgba(225,29,72,0.1) 0%, transparent 80%)',
           }}
         />
+        <div className="absolute inset-0 cyber-scan-grid opacity-[0.04]" />
+        
+        {/* Edge Highlight */}
+        <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-rose-500/40 to-transparent" />
       </div>
 
       {/* ── HEADER: Лого + статус ── */}
@@ -675,7 +675,7 @@ export const Sidebar: React.FC = () => {
                                           isOpen ? 'px-2 py-1.5 pr-8' : 'mx-auto h-8 w-8 justify-center',
                                           isActive
                                             ? 'text-white'
-                                            : 'text-slate-400 hover:text-white active:scale-[0.98]',
+                                            : 'text-slate-300 hover:text-white active:scale-[0.98]',
                                         )
                                       }
                                       style={({ isActive }) => ({
@@ -705,8 +705,8 @@ export const Sidebar: React.FC = () => {
                                             <div className="min-w-0 flex-1">
                                               <div className="flex items-center gap-1.5">
                                                 <span
-                                                  className="truncate text-[11px] font-semibold leading-none"
-                                                  style={{ color: isActive ? '#f8fafc' : '#94a3b8' }}
+                                                  className="truncate text-[11px] font-bold leading-none"
+                                                  style={{ color: isActive ? '#ffffff' : '#cbd5e1' }}
                                                 >
                                                   {item.label}
                                                 </span>

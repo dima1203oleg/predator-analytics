@@ -1,0 +1,1703 @@
+---
+# Source: predator/templates/rbac.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: predator
+---
+# Source: predator/charts/postgresql/templates/primary/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+    app.kubernetes.io/component: primary
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: predator
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 5432
+---
+# Source: predator/templates/networkpolicy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: predator-frontend
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: frontend
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow from Ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: TCP
+          port: 3030
+    # Allow from same namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 3030
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow to core-api
+    - to:
+        - podSelector:
+            matchLabels:
+              app: core-api
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow to external (for CDN, APIs)
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+---
+# Source: predator/charts/postgresql/templates/primary/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+    app.kubernetes.io/component: primary
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: predator
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+---
+# Source: predator/templates/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: predator-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+---
+# Source: predator/charts/postgresql/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+automountServiceAccountToken: false
+---
+# Source: predator/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: predator
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: predator/charts/neo4j/templates/neo4j-auth.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "predator-graph-auth"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+type: Opaque
+data:
+  NEO4J_AUTH: "bmVvNGovcHJlZGF0b3JfZ3JhcGhfc2VjcmV0"
+---
+# Source: predator/charts/postgresql/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+type: Opaque
+data:
+  postgres-password: "blI4bXgxeWV5dw=="
+  password: "cHJlZGF0b3JfZGJfc2VjcmV0"
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
+---
+# Source: predator/charts/neo4j/templates/neo4j-config.yaml
+# Neo4j config values that are required for neo4j to work correctly in Kubernetes, these are not overridden by user-provided values
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-k8s-config"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+  server.default_listen_address: "0.0.0.0"
+---
+# Source: predator/charts/neo4j/templates/neo4j-config.yaml
+# User-provided Neo4j config values
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-user-config"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+  server.config.strict_validation.enabled: "false"
+  server.jvm.additional: |-  
+    -XX:+UseG1GC
+    -XX:-OmitStackTraceInFastThrow
+    -XX:+AlwaysPreTouch
+    -XX:+UnlockExperimentalVMOptions
+    -XX:+TrustFinalNonStaticFields
+    -XX:+DisableExplicitGC
+    -Djdk.nio.maxCachedBufferSize=1024
+    -Dio.netty.tryReflectionSetAccessible=true
+    -Djdk.tls.ephemeralDHKeySize=2048
+    -Djdk.tls.rejectClientInitiatedRenegotiation=true
+    -XX:FlightRecorderOptions=stackdepth=256
+    -XX:+UnlockDiagnosticVMOptions
+    -XX:+DebugNonSafepoints
+    --add-opens=java.base/java.nio=ALL-UNNAMED
+    --add-opens=java.base/java.io=ALL-UNNAMED
+    --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+    -Dlog4j2.disable.jmx=true
+---
+# Source: predator/charts/neo4j/templates/neo4j-config.yaml
+# Default Neo4j config values, these are overridden by user-provided values in predator-user-config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-default-config"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+
+  # Neo4j defaults
+  db.tx_log.rotation.retention_policy: 1 days
+  server.windows_service_name: neo4j
+  
+  server.logs.config: /config/server-logs.xml/server-logs.xml
+  server.logs.user.config: /config/user-logs.xml/user-logs.xml
+
+  # Helm defaults
+
+  # Bolt keep alive
+  # this helps to ensure that LoadBalancers do not close bolt connections that are in use but appear idle
+  server.bolt.connection_keep_alive: "30s"
+  server.bolt.connection_keep_alive_for_requests: "ALL"
+  server.bolt.connection_keep_alive_streaming_scheduling_interval: "30s"
+
+  # If we set default advertised address it over-rides the bolt address used to populate the browser in a really annoying way
+  # dbms.default_advertised_address: "$(bash -c 'echo ${SERVICE_DOMAIN}')"
+
+
+  # Other
+  internal.dbms.ssl.system.ignore_dot_files: "true"
+
+  # set the below configs in case of cluster or analytics
+  # Logging
+  server.directories.logs: "/logs"
+  # Import
+  server.directories.import: "/import"
+
+  # Use more reliable defaults SSL / TLS settings for K8s
+  dbms.ssl.policy.bolt.client_auth: "NONE"
+  dbms.ssl.policy.https.client_auth: "NONE"
+---
+# Source: predator/charts/neo4j/templates/neo4j-config.yaml
+# server-logs.xml as configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-server-logs-config"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+  server-logs.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+    
+        Copyright (c) "Neo4j"
+        Neo4j Sweden AB [http://neo4j.com]
+        This file is a commercial add-on to Neo4j Enterprise Edition.
+    
+    -->
+    <!--
+        This is a log4j 2 configuration file.
+    
+        It is highly recommended to keep the original "debug.log" as is, to make sure enough data is captured in case
+        of errors in a format that neo4j developers can work with.
+    
+        All configuration values can be queried with the lookup prefix "config:". You can for example, resolve
+        the path to your neo4j home directory with ${config:dbms.directories.neo4j_home}.
+    
+        Please consult https://logging.apache.org/log4j/2.x/manual/configuration.html for instructions and
+        available configuration options.
+    -->
+    <Configuration status="ERROR" monitorInterval="30" packages="org.neo4j.logging.log4j">
+        <Appenders>
+            <!-- Default debug.log, please keep -->
+            <RollingRandomAccessFile name="DebugLog" fileName="${config:server.directories.logs}/debug.log"
+                                     filePattern="$${config:server.directories.logs}/debug.log.%02i">
+                <Neo4jDebugLogLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p [%c{1.}] %m%n"/>
+                <Policies>
+                    <SizeBasedTriggeringPolicy size="20 MB"/>
+                </Policies>
+                <DefaultRolloverStrategy fileIndex="min" max="7"/>
+            </RollingRandomAccessFile>
+    
+            <RollingRandomAccessFile name="HttpLog" fileName="${config:server.directories.logs}/http.log"
+                                     filePattern="$${config:server.directories.logs}/http.log.%02i">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p %m%n"/>
+                <Policies>
+                    <SizeBasedTriggeringPolicy size="20 MB"/>
+                </Policies>
+                <DefaultRolloverStrategy fileIndex="min" max="5"/>
+            </RollingRandomAccessFile>
+    
+            <RollingRandomAccessFile name="QueryLog" fileName="${config:server.directories.logs}/query.log"
+                                     filePattern="$${config:server.directories.logs}/query.log.%02i">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p %m%n"/>
+                <Policies>
+                    <SizeBasedTriggeringPolicy size="20 MB"/>
+                </Policies>
+                <DefaultRolloverStrategy fileIndex="min" max="7"/>
+            </RollingRandomAccessFile>
+    
+            <RollingRandomAccessFile name="SecurityLog" fileName="${config:server.directories.logs}/security.log"
+                                     filePattern="$${config:server.directories.logs}/security.log.%02i">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p %m%n"/>
+                <Policies>
+                    <SizeBasedTriggeringPolicy size="20 MB"/>
+                </Policies>
+                <DefaultRolloverStrategy fileIndex="min" max="7"/>
+            </RollingRandomAccessFile>
+        </Appenders>
+    
+        <Loggers>
+            <!-- Log levels. One of DEBUG, INFO, WARN, ERROR or OFF -->
+    
+            <!-- The debug log is used as the root logger to catch everything -->
+            <Root level="INFO">
+                <AppenderRef ref="DebugLog"/> <!-- Keep this -->
+            </Root>
+    
+            <!-- The query log, must be named "QueryLogger" -->
+            <Logger name="QueryLogger" level="INFO" additivity="false">
+                <AppenderRef ref="QueryLog"/>
+            </Logger>
+    
+            <!-- The http request log, must be named "HttpLogger" -->
+            <Logger name="HttpLogger" level="INFO" additivity="false">
+                <AppenderRef ref="HttpLog"/>
+            </Logger>
+    
+            <!-- The security log, must be named "SecurityLogger" -->
+            <Logger name="SecurityLogger" level="INFO" additivity="false">
+                <AppenderRef ref="SecurityLog"/>
+            </Logger>
+        </Loggers>
+    </Configuration>
+---
+# Source: predator/charts/neo4j/templates/neo4j-config.yaml
+# user-logs.xml as configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-user-logs-config"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+  user-logs.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+    
+        Copyright (c) "Neo4j"
+        Neo4j Sweden AB [http://neo4j.com]
+        This file is a commercial add-on to Neo4j Enterprise Edition.
+    
+    -->
+    <!--
+        This is a log4j 2 configuration file that provides maximum flexibility.
+    
+        All configuration values can be queried with the lookup prefix "config:". You can for example, resolve
+        the path to your neo4j home directory with ${config:dbms.directories.neo4j_home}.
+    
+        Please consult https://logging.apache.org/log4j/2.x/manual/configuration.html for instructions and
+        available configuration options.
+    -->
+    <Configuration status="ERROR" monitorInterval="30" packages="org.neo4j.logging.log4j">
+    
+        <Appenders>
+            <RollingRandomAccessFile name="Neo4jLog" fileName="${config:server.directories.logs}/neo4j.log"
+                                     filePattern="$${config:server.directories.logs}/neo4j.log.%02i">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p %m%n"/>
+                <Policies>
+                    <SizeBasedTriggeringPolicy size="20 MB"/>
+                </Policies>
+                <DefaultRolloverStrategy fileIndex="min" max="7"/>
+            </RollingRandomAccessFile>
+    
+            <!-- Only used by "neo4j console", will be ignored otherwise -->
+            <Console name="ConsoleAppender" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZ}{GMT+0} %-5p %m%n"/>
+            </Console>
+        </Appenders>
+    
+        <Loggers>
+            <!-- Log level for the neo4j log. One of DEBUG, INFO, WARN, ERROR or OFF -->
+            <Root level="INFO">
+                <AppenderRef ref="Neo4jLog"/>
+                <AppenderRef ref="ConsoleAppender"/>
+            </Root>
+        </Loggers>
+    
+    </Configuration>
+---
+# Source: predator/charts/neo4j/templates/neo4j-env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "predator-env"
+  namespace: "predator"
+  labels:
+    app: "predator-graph"    
+data:
+  # It should not be necessary for neo4j users/administrators to modify this configMap
+  # Neo4j configuration is set in the predator-user-config ConfigMap
+  NEO4J_AUTH_PATH: "/config/neo4j-auth/NEO4J_AUTH"
+  NEO4J_EDITION: "COMMUNITY_K8S"
+  NEO4J_CONF: "/config/"
+  K8S_NEO4J_NAME: "predator-graph"
+  EXTENDED_CONF: "yes"
+---
+# Source: predator/templates/litellm.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: predator-litellm-config
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+data:
+  config.yaml: |
+    model_list:
+      - model_name: qwen3:8b
+        litellm_params:
+          model: ollama/qwen3:8b
+          api_base: "http://predator-ollama:11434"
+      - model_name: deepseek-r1:7b
+        litellm_params:
+          model: ollama/deepseek-r1:7b
+          api_base: "http://predator-ollama:11434"
+---
+# Source: predator/templates/ollama.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: predator-ollama-data
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: local-path
+---
+# Source: predator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: predator-role
+spec:
+  rules:
+    - apiGroups: [""]
+      resources: ["pods", "services", "configmaps", "secrets"]
+      verbs: ["get", "list", "watch"]
+---
+# Source: predator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: predator-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: predator-role
+subjects:
+  - kind: ServiceAccount
+    name: predator
+    namespace: predator
+---
+# Source: predator/charts/neo4j/templates/neo4j-loadbalancer.yaml
+# Service for applications that need access to neo4j
+apiVersion: v1
+kind: Service
+metadata:
+  name: "predator-graph-lb-neo4j"
+  namespace: "predator"
+  labels:
+    helm.neo4j.com/neo4j.name: "predator-graph"
+    app: "predator-graph"
+    helm.neo4j.com/service: "neo4j"    
+  annotations:
+spec:
+  type: "LoadBalancer"
+  
+  externalTrafficPolicy: Local
+  sessionAffinity: None
+  ports:
+    - protocol: TCP
+      port: 7474
+      targetPort: 7474
+      name: http
+    - protocol: TCP
+      port: 7473
+      targetPort: 7473
+      name: https
+    - protocol: TCP
+      port: 7687
+      targetPort: 7687
+      name: tcp-bolt
+    
+    
+  selector:
+    app: "predator-graph"
+    helm.neo4j.com/clustering: "false"
+    helm.neo4j.com/neo4j.loadbalancer: include
+---
+# Source: predator/charts/neo4j/templates/neo4j-svc.yaml
+# ClusterIP service for bolt / http connections
+apiVersion: v1
+kind: Service
+metadata:
+  name: "predator"
+  namespace: "predator"
+  labels:
+    helm.neo4j.com/neo4j.name: "predator-graph"
+    app: "predator-graph"
+    helm.neo4j.com/instance: "predator"
+    helm.neo4j.com/service: "default"    
+spec:
+  publishNotReadyAddresses: false
+  type: ClusterIP
+  selector:
+    app: "predator-graph"
+    helm.neo4j.com/instance: "predator"
+  ports:
+    - protocol: TCP
+      port: 7687
+      targetPort: 7687
+      name: tcp-bolt
+    - protocol: TCP
+      port: 7474
+      targetPort: 7474
+      name: tcp-http
+---
+# Source: predator/charts/neo4j/templates/neo4j-svc.yaml
+# ClusterIP service for admin connections to Neo4j inside Kubernetes.
+apiVersion: v1
+kind: Service
+metadata:
+  name: "predator-admin"
+  namespace: "predator"
+  labels:
+    helm.neo4j.com/neo4j.name: "predator-graph"
+    app: "predator-graph"
+    helm.neo4j.com/instance: "predator"
+    helm.neo4j.com/service: "admin"    
+spec:
+  publishNotReadyAddresses: true
+  type: "ClusterIP"
+  selector:
+    app: "predator-graph"
+    helm.neo4j.com/instance: "predator"
+  ports:
+    - protocol: TCP
+      port: 7687
+      targetPort: 7687
+      name: tcp-bolt
+    - protocol: TCP
+      port: 7474
+      targetPort: 7474
+      name: tcp-http
+---
+# Source: predator/charts/postgresql/templates/primary/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-postgresql-hl
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+    app.kubernetes.io/component: primary
+  annotations:
+    # Use this annotation in addition to the actual publishNotReadyAddresses
+    # field below because the annotation will stop being respected soon but the
+    # field is broken in some versions of Kubernetes:
+    # https://github.com/kubernetes/kubernetes/issues/58662
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  # We want all pods in the StatefulSet to have their addresses published for
+  # the sake of the other Postgresql pods even before they're ready, since they
+  # have to be able to talk to each other in order to become ready.
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: primary
+---
+# Source: predator/charts/postgresql/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+    app.kubernetes.io/component: primary
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: primary
+---
+# Source: predator/templates/litellm.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-litellm
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4000
+      targetPort: 4000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app: litellm
+---
+# Source: predator/templates/ollama.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-ollama
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 11434
+      targetPort: 11434
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app: ollama
+---
+# Source: predator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-core-api
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: core-api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app: core-api
+---
+# Source: predator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-graph-service
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: graph-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8002
+      targetPort: 8002
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app: graph-service
+---
+# Source: predator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: predator-frontend
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: frontend
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 3030
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app: frontend
+---
+# Source: predator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-graph-service
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: graph-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: graph-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: predator
+        app.kubernetes.io/instance: predator
+        app: graph-service
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: graph-service
+          image: "ghcr.io/dima1203oleg/predator-graph-service:v55.0.0"
+          ports:
+            - containerPort: 8002
+          env:
+            - name: NEO4J_URI
+              value: "bolt://predator-neo4j:7687"
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: predator-neo4j
+                  key: neo4j-password
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+---
+# Source: predator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-ingestion-worker
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: ingestion-worker
+spec:
+  # Replicas managed by KEDA if enabled
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: ingestion-worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: predator
+        app.kubernetes.io/instance: predator
+        app: ingestion-worker
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: ingestion-worker
+          image: "ghcr.io/dima1203oleg/predator-ingestion-worker:v56.5-ELITE"
+          env:
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://predator:predator_db_secret@predator-postgresql:5432/predator"
+            - name: DEBUG
+              value: "false"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "predator-v55-redpanda:9092"
+            - name: MINIO_ACCESS_KEY
+              value: "minioadmin"
+            - name: MINIO_ENDPOINT
+              value: "predator-v55-minio:9000"
+            - name: MINIO_SECRET_KEY
+              value: "minioadmin"
+            - name: OPENSEARCH_URL
+              value: "http://opensearch-cluster-master:9200"
+            - name: QDRANT_URL
+              value: "http://predator-qdrant:6333"
+            - name: YOUCONTROL_API_KEY
+              value: "YOUR_PRO_API_KEY_HERE"
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - ps aux | grep '[p]ython' || exit 1
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - python -c 'import kafka; print("ok")' || exit 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 750m
+              memory: 768Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+---
+# Source: predator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-frontend
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: frontend
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: predator
+        app.kubernetes.io/instance: predator
+        app: frontend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+        - name: frontend
+          image: "ghcr.io/dima1203oleg/predator-frontend:v56.5-ELITE"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3030
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: VITE_API_URL
+              value: "https://api.internal.predator.ua/api/v1"
+            - name: API_UPSTREAM
+              value: "http://predator-core-api:8000"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 2
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+---
+# Source: predator/templates/litellm.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-litellm
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: litellm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: predator
+        app.kubernetes.io/instance: predator
+        app: litellm
+    spec:
+      containers:
+        - name: litellm
+          image: "ghcr.io/berriai/litellm:main-stable"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          command: ["/bin/sh", "-c"]
+          args: ["litellm --config /app/config.yaml --port 4000 --detailed_debug"]
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: config
+          configMap:
+            name: predator-litellm-config
+---
+# Source: predator/templates/ollama.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: predator-ollama
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: predator
+        app.kubernetes.io/instance: predator
+        app: ollama
+    spec:
+      runtimeClassName: nvidia # Використовуємо NVIDIA runtime для GPU
+      containers:
+        - name: ollama
+          image: "ollama/ollama:latest"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 11434
+              protocol: TCP
+          env:
+            - name: OLLAMA_HOST
+              value: "0.0.0.0"
+          volumeMounts:
+            - name: data
+              mountPath: /root/.ollama
+          resources:
+            limits:
+              memory: 8Gi
+              nvidia.com/gpu: 1
+            requests:
+              memory: 4Gi
+              nvidia.com/gpu: 1
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: predator-ollama-data
+---
+# Source: predator/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: predator-frontend
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+    app: frontend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: predator-frontend
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 30
+        - type: Pods
+          value: 2
+          periodSeconds: 30
+      selectPolicy: Max
+---
+# Source: predator/charts/neo4j/templates/neo4j-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    helm.neo4j.com/neo4j.name: "predator-graph"
+    helm.neo4j.com/clustering: "false"
+    app: "predator-graph"
+    helm.neo4j.com/instance: predator    
+  name: predator
+  namespace: "predator"
+spec:
+  serviceName: "predator"
+  podManagementPolicy: "Parallel" # This setting means that the StatefulSet controller doesn't block applying changes until the existing Pod is READY.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "predator-graph"
+      helm.neo4j.com/instance: "predator"
+  template:
+    metadata:
+      labels:
+        app: "predator-graph"
+        helm.neo4j.com/neo4j.name: "predator-graph"
+        helm.neo4j.com/clustering: "false"
+        helm.neo4j.com/pod_category: "neo4j-instance" # used for anti affinity rules
+        helm.neo4j.com/neo4j.loadbalancer: "include"
+        helm.neo4j.com/instance: "predator"        
+      annotations:
+        "checksum/predator-config": 1caa61e3e1767d07e95798198111a73eecf13b7a25bdde13942ac7bd89a0731d
+        "checksum/predator-env": 61dfb45e4730dcb937163121b88fcb21f592719e6e9a468ed7a697796fecbcdc        
+    spec:      
+      affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchLabels:
+                    app: "predator-graph"
+                    helm.neo4j.com/pod_category: "neo4j-instance"
+                topologyKey: kubernetes.io/hostname
+      dnsPolicy: ClusterFirst
+      securityContext: 
+        fsGroup: 7474
+        fsGroupChangePolicy: Always
+        runAsGroup: 7474
+        runAsNonRoot: true
+        runAsUser: 7474            
+      
+      terminationGracePeriodSeconds: 3600            
+      containers:
+        - name: "neo4j"
+          image: "neo4j:5.21.0"
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+            - configMapRef:
+                name: "predator-env"
+          env:
+            - name: HELM_NEO4J_VERSION
+              value: "5.21.0"
+            - name: HELM_CHART_VERSION
+              value: "5.21.0"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: SERVICE_NEO4J_ADMIN
+              value: "predator-admin.predator.svc.cluster.local"
+            - name: SERVICE_NEO4J_INTERNALS
+              value: "predator-internals.predator.svc.cluster.local"
+            - name: SERVICE_NEO4J
+              value: "predator.predator.svc.cluster.local"
+          ports:
+            - containerPort: 7474
+              name: http
+            - containerPort: 7687
+              name: bolt
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+          securityContext: 
+              runAsGroup: 7474
+              runAsNonRoot: true
+              runAsUser: 7474
+          volumeMounts:
+            - mountPath: "/config/neo4j.conf"
+              name: neo4j-conf
+            - mountPath: "/config/server-logs.xml"
+              name: neo4j-server-logs
+            - mountPath: "/config/user-logs.xml"
+              name: neo4j-user-logs
+            - mountPath: "/config/neo4j-auth"
+              name: neo4j-auth
+                                                            
+            - mountPath: "/backups"
+              name: "data"
+              subPathExpr: "backups"
+            - mountPath: "/data"
+              name: "data"
+              subPathExpr: "data"
+            - mountPath: "/import"
+              name: "data"
+              subPathExpr: "import"
+            - mountPath: "/licenses"
+              name: "data"
+              subPathExpr: "licenses"
+            - mountPath: "/logs"
+              name: "data"
+              subPathExpr: "logs/$(POD_NAME)"
+            - mountPath: "/metrics"
+              name: "data"
+              subPathExpr: "metrics/$(POD_NAME)"            
+          readinessProbe:
+            tcpSocket:
+              port: 7687
+            failureThreshold: 20
+            timeoutSeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 7687
+            failureThreshold: 40
+            timeoutSeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            tcpSocket:
+              port: 7687
+            failureThreshold: 1000
+            periodSeconds: 5
+      volumes:
+        - name: neo4j-conf
+          projected:
+            defaultMode: 0440
+            sources:
+              - configMap:
+                  name: "predator-default-config"
+              - configMap:
+                  name: "predator-user-config"
+              - configMap:
+                  name: "predator-k8s-config"
+        - name: neo4j-server-logs
+          configMap:
+            name: "predator-server-logs-config"
+        - name: neo4j-user-logs
+          configMap:
+            name: "predator-user-logs-config"
+        - name: "neo4j-auth"
+          secret:
+            secretName: "predator-graph-auth"                                
+  volumeClaimTemplates: 
+    - metadata:
+        name: "data"
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+---
+# Source: predator/charts/postgresql/templates/primary/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: predator-postgresql
+  namespace: "predator"
+  labels:
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.0
+    app.kubernetes.io/component: primary
+spec:
+  replicas: 1
+  serviceName: predator-postgresql-hl
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: predator
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/component: primary
+  template:
+    metadata:
+      name: predator-postgresql
+      labels:
+        app.kubernetes.io/instance: predator
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/version: 16.3.0
+        helm.sh/chart: postgresql-15.5.0
+        app.kubernetes.io/component: primary
+    spec:
+      serviceAccountName: predator-postgresql
+      
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: predator
+                    app.kubernetes.io/name: postgresql
+                    app.kubernetes.io/component: primary
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      hostNetwork: false
+      hostIPC: false
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:16.3.0-debian-12-r10
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "predator"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: predator-postgresql
+                  key: password
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: predator-postgresql
+                  key: postgres-password
+            - name: POSTGRES_DATABASE
+              value: "predator"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            # TLS
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            # Audit
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            # Others
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: "error"
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: "pgaudit"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "predator" -d "dbname=predator" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  exec pg_isready -U "predator" -d "dbname=predator" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 1024Mi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
+          volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/postgresql/conf
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /opt/bitnami/postgresql/tmp
+              subPath: app-tmp-dir
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: empty-dir
+          emptyDir: {}
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: predator/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: predator-ingress
+  labels:
+    helm.sh/chart: predator-58.2.0
+    app.kubernetes.io/name: predator
+    app.kubernetes.io/instance: predator
+    app.kubernetes.io/version: "58.2-WRAITH"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  rules:
+    - host: "internal.predator.ua"
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: predator-core-api
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: predator-frontend
+                port:
+                  number: 80
+---
+# Source: predator/templates/analysis-template.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+spec:
+  metrics:
+    - name: success-rate
+      interval: 1m
+      successCondition: result[0] >= 0.95
+      failureLimit: 3
+      provider:
+        prometheus:
+          address: http://prometheus-server.monitoring.svc.cluster.local:9090
+          query: |
+            sum(irate(http_requests_total{status=~"2.*",app="core-api"}[1m])) 
+            / 
+            sum(irate(http_requests_total{app="core-api"}[1m]))
+---
+# Source: predator/templates/cilium-netpol.yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: predator-zero-trust
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: predator
+      app.kubernetes.io/instance: predator
+      app: core-api
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: predator
+            app.kubernetes.io/instance: predator
+            app: frontend
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+    - toEndpoints:
+        - matchLabels:
+            app: postgresql
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: predator
+            app.kubernetes.io/instance: predator
+            app: graph-service
+---
+# Source: predator/templates/rollout.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: predator-core-api
+spec:
+  replicas: 2
+  strategy:
+    canary:
+      analysis:
+        templates:
+          - templateName: success-rate
+      steps:
+        - setWeight: 20
+        - pause: {duration: 5m}
+        - setWeight: 50
+        - pause: {duration: 5m}
+  selector:
+    matchLabels:
+      app: core-api
+  template:
+    metadata:
+      labels:
+        app: core-api
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: core-api
+          image: "ghcr.io/dima1203oleg/predator-core-api:v56.5-ELITE"
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: ANTIGRAVITY_AGENT_MODEL
+              value: "qwen3:8b"
+            - name: ANTIGRAVITY_ENABLED
+              value: "true"
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://predator:predator_db_secret@predator-postgresql:5432/predator"
+            - name: DEBUG
+              value: "false"
+            - name: ENV
+              value: "production"
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "predator-v55-redpanda:9092"
+            - name: LITELLM_GATEWAY_URL
+              value: "http://predator-litellm:4000"
+            - name: NEO4J_PASSWORD
+              value: "predator_graph_secret"
+            - name: NEO4J_URI
+              value: "bolt://predator-neo4j:7687"
+            - name: NEO4J_USER
+              value: "neo4j"
+            - name: OPENSEARCH_URL
+              value: "http://opensearch-cluster-master:9200"
+            - name: QDRANT_URL
+              value: "http://predator-qdrant:6333"
+            - name: REDIS_URL
+              value: "redis://predator-redis-master:6379/0"
+            - name: SECRET_KEY
+              value: "changeme-production-secret-key-32-chars"
+            - name: YOUCONTROL_API_KEY
+              value: "YOUR_PRO_API_KEY_HERE"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL

@@ -205,10 +205,7 @@ const SystemStatusHeader: React.FC = () => {
   const agentsCount = agentsData?.stats.total ?? 0;
   const healthyCount = status?.summary.healthy ?? 0;
   const totalServices = status?.summary.total ?? 1;
-  const healthPercent = (healthyCount / totalServices) * 100;
   
-  // Threat level simulation based on entropy or real metrics if available
-  // Here we use a stable metric or derived from system status
   const threatLevel = status?.overall_status === 'optimal' ? 12 : 45;
   const entropy = (stats?.memory_percent ?? 42) / 100;
 
@@ -216,63 +213,64 @@ const SystemStatusHeader: React.FC = () => {
   const isHybrid = vramUsed > (vramTotal * 0.75) && !isCritical;
 
   return (
-    <div className="flex flex-col bg-[#020202] border-b border-white/10 relative overflow-hidden group select-none">
+    <div className="flex flex-col bg-black/40 glass-wraith border-b border-white/10 relative overflow-hidden group select-none z-30 backdrop-blur-3xl">
       {/* Background Glows & Tactical Overlays */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-32 bg-rose-500/[0.07] blur-[120px] pointer-events-none animate-pulse" />
-      <div className="absolute top-0 right-1/4 w-[500px] h-32 bg-blue-500/[0.07] blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="absolute top-0 left-1/4 w-[600px] h-32 bg-rose-500/[0.1] blur-[150px] pointer-events-none animate-pulse" />
+      <div className="absolute top-0 right-1/4 w-[600px] h-32 bg-rose-900/[0.08] blur-[150px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
       
       {/* Noise Texture */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-noise" />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-noise" />
+      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
 
       {/* Dynamic Scan Line */}
       <motion.div 
         initial={{ left: '-100%' }}
         animate={{ left: '200%' }}
-        transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-        className="absolute top-0 bottom-0 w-[800px] bg-gradient-to-r from-transparent via-rose-500/[0.08] to-transparent pointer-events-none z-0"
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="absolute top-0 bottom-0 w-[1000px] bg-gradient-to-r from-transparent via-rose-500/[0.1] to-transparent pointer-events-none z-0"
       />
 
       {/* Top Border Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/40 to-transparent shadow-[0_0_15px_rgba(225,29,72,0.5)]" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/50 to-transparent shadow-[0_0_20px_rgba(225,29,72,0.6)]" />
 
-      <div className="flex items-center justify-between px-8 py-4 text-[9px] font-mono tracking-[0.2em] uppercase z-10">
-        <div className="flex items-center gap-12">
+      <div className="flex items-center justify-between px-10 py-5 text-[10px] font-mono tracking-[0.2em] uppercase z-10 relative">
+        <div className="flex items-center gap-14">
           {/* System Identity with Radar-like effect */}
-          <div className="flex items-center gap-6 relative">
+          <div className="flex items-center gap-8 relative">
             <div className="relative group/logo cursor-none">
-              <div className="absolute inset-0 bg-rose-500/30 blur-2xl rounded-full scale-0 group-hover/logo:scale-150 transition-transform duration-1000" />
+              <div className="absolute -inset-10 bg-rose-500/20 blur-3xl rounded-full scale-0 group-hover/logo:scale-150 transition-transform duration-1000 opacity-0 group-hover/logo:opacity-100" />
               
               {/* Radar Circles */}
-              <div className="absolute -inset-4 border border-rose-500/10 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '3s' }} />
-              <div className="absolute -inset-8 border border-rose-500/5 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '5s' }} />
+              <div className="absolute -inset-6 border border-rose-500/15 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '4s' }} />
+              <div className="absolute -inset-12 border border-rose-500/10 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '6s' }} />
               
               <div className="flex flex-col relative">
-                <div className="flex items-center gap-2 mb-1.5">
+                <div className="flex items-center gap-3 mb-2">
                   <motion.div 
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_10px_rgba(225,29,72,1)]" 
+                    animate={{ scale: [1, 1.8, 1], opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 2.5, repeat: Infinity }}
+                    className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(225,29,72,1)]" 
                   />
-                  <span className="text-white/40 text-[7px] leading-none tracking-[0.5em] font-black">СУВЕРЕННИЙ ХАБ</span>
+                  <span className="text-white/40 text-[8px] leading-none tracking-[0.6em] font-black italic">СУВЕРЕННИЙ_ХАБ_ОМЕГА</span>
                 </div>
-                <span className="flex items-center gap-3 text-rose-500 font-black tracking-[0.5em] text-[13px] drop-shadow-[0_0_10px_rgba(225,29,72,0.4)]">
-                  <Atom size={16} className="animate-spin-slow text-rose-400" style={{ animationDuration: '12s' }} />
-                  PREDATOR v60.0-ELITE
+                <span className="flex items-center gap-4 text-white font-black tracking-[0.4em] text-[15px] italic glint-elite chromatic-elite">
+                   <Atom size={20} className="animate-spin-slow text-rose-500" style={{ animationDuration: '15s' }} />
+                   PREDATOR <span className="text-rose-500">v60.0-ELITE</span>
                 </span>
               </div>
             </div>
             
-            <div className="flex flex-col border-l border-white/10 pl-8 h-12 justify-center">
-              <span className="text-white/20 text-[7px] leading-none mb-2 tracking-[0.4em] font-bold uppercase">Стан Архітектури</span>
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col border-l border-white/10 pl-10 h-14 justify-center">
+              <span className="text-white/20 text-[8px] leading-none mb-2.5 tracking-[0.4em] font-black uppercase italic">АРХІТЕКТУРА_СИСТЕМИ</span>
+              <div className="flex items-center gap-5">
                 <div className="relative flex items-center justify-center">
                   <div className={cn(
-                    "w-3 h-3 rounded-full shadow-[0_0_20px]",
+                    "w-3.5 h-3.5 rounded-full shadow-[0_0_25px]",
                     isCritical ? "bg-blue-500 shadow-blue-500/80" : isHybrid ? "bg-emerald-500 shadow-emerald-500/80" : "bg-rose-500 shadow-rose-500/80"
                   )} />
                   <motion.div 
-                    animate={{ scale: [1, 2.5], opacity: [0.4, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
+                    animate={{ scale: [1, 3], opacity: [0.5, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
                     className={cn(
                       "absolute inset-0 rounded-full",
                       isCritical ? "bg-blue-500" : isHybrid ? "bg-emerald-500" : "bg-rose-500"
@@ -281,123 +279,123 @@ const SystemStatusHeader: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className={cn(
-                    "font-black tracking-[0.25em] text-[11px]",
+                    "font-black tracking-[0.3em] text-[12px] italic",
                     isCritical ? "text-blue-400" : isHybrid ? "text-emerald-400" : "text-rose-400"
                   )}>
                     {isCritical ? "CLOUD OVERRIDE" : isHybrid ? "HYBRID SOVEREIGN" : "LOCAL SOVEREIGN"}
                   </span>
-                  <span className="text-white/10 text-[6px] tracking-[0.2em] mt-0.5 uppercase">VRAM ALLOC: {vramUsed.toFixed(1)} GB / {vramTotal.toFixed(1)} GB | {isCritical ? 'EXTERNAL_COMPUTE' : 'LOCAL_ONLY'}</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">VRAM: {vramUsed.toFixed(1)}GB / {vramTotal.toFixed(1)}GB • {isCritical ? 'EXTERNAL_CLUSTER' : 'LOCAL_NEURAL_NODE'}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Detailed Telemetry Grid */}
-          <div className="flex items-center gap-10 border-l border-white/10 pl-10 h-12">
-            <div className="flex items-center gap-6 group/stat">
-              <div className="flex flex-col gap-2 min-w-[140px]">
+          <div className="flex items-center gap-12 border-l border-white/10 pl-12 h-14">
+            <div className="flex items-center gap-8 group/stat">
+              <div className="flex flex-col gap-2.5 min-w-[160px]">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col">
-                    <span className="text-white/20 text-[7px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-bold">NEURAL LOAD</span>
-                    <span className="text-white/10 text-[5px] tracking-widest leading-none mt-0.5 text-right">WEIGHT_SYMBOLS_ACTIVE</span>
+                    <span className="text-white/20 text-[8px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-black italic">NEURAL_LOAD</span>
+                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">WEIGHT_SYMBOLS_ACTIVE</span>
                   </div>
-                  <span className={cn("font-black text-[12px] tracking-tighter italic", cpuPercent > 80 ? "text-rose-500" : "text-white/80")}>
+                  <span className={cn("font-black text-[14px] tracking-tighter italic", cpuPercent > 80 ? "text-rose-500" : "text-white/90")}>
                     {cpuPercent.toFixed(1)}%
                   </span>
                 </div>
-                <div className="h-[5px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.05]">
+                <div className="h-[6px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.08] glass-wraith">
                   <motion.div 
-                    animate={{ width: `${cpuPercent}%`, backgroundColor: cpuPercent > 80 ? '#f43f5e' : '#e11d4880' }}
-                    className="h-full rounded-full shadow-[0_0_12px_rgba(225,29,72,0.5)] relative"
+                    animate={{ width: `${cpuPercent}%`, backgroundColor: cpuPercent > 80 ? '#f43f5e' : '#e11d48' }}
+                    className="h-full rounded-full shadow-[0_0_15px_rgba(225,29,72,0.6)] relative"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                   </motion.div>
                 </div>
               </div>
               <HeartbeatLine />
             </div>
 
-            <div className="flex items-center gap-6 group/stat">
-              <div className="flex flex-col gap-2 min-w-[140px]">
+            <div className="flex items-center gap-8 group/stat">
+              <div className="flex flex-col gap-2.5 min-w-[160px]">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col">
-                    <span className="text-white/20 text-[7px] group-hover/stat:text-emerald-500 transition-colors tracking-widest font-bold">ENTROPY LEVEL</span>
-                    <span className="text-white/10 text-[5px] tracking-widest leading-none mt-0.5 text-right">SYNC_PHASE_LOCKED</span>
+                    <span className="text-white/20 text-[8px] group-hover/stat:text-emerald-500 transition-colors tracking-widest font-black italic">ENTROPY_LEVEL</span>
+                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">SYNC_PHASE_LOCKED</span>
                   </div>
-                  <span className="text-emerald-400 font-black text-[12px] tracking-tighter italic">{entropy.toFixed(3)}</span>
+                  <span className="text-emerald-400 font-black text-[14px] tracking-tighter italic">{entropy.toFixed(3)}</span>
                 </div>
-                <div className="h-[5px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.05]">
+                <div className="h-[6px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.08] glass-wraith">
                   <motion.div 
                     animate={{ width: `${entropy * 100}%` }}
-                    className="h-full bg-emerald-500/50 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.5)] relative"
+                    className="h-full bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.6)] relative opacity-70"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                   </motion.div>
                 </div>
               </div>
               <HeartbeatLine color="emerald" />
             </div>
 
-            <div className="flex flex-col border-l border-white/10 pl-10 h-10 justify-center">
-              <span className="text-white/20 text-[7px] leading-none mb-2 tracking-[0.3em] font-bold">АКТИВНІ ВУЗЛИ</span>
-              <div className="flex items-center gap-4">
-                <Radio size={16} className="text-rose-500/60 animate-pulse" />
+            <div className="flex flex-col border-l border-white/10 pl-12 h-12 justify-center">
+              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic">АКТИВНІ_ВУЗЛИ</span>
+              <div className="flex items-center gap-5">
+                <Radio size={20} className="text-rose-500 animate-pulse" />
                 <div className="flex flex-col">
-                  <span className="text-rose-500 font-black text-[14px] leading-none tracking-tighter italic">
-                    {agentsCount.toString().padStart(2, '0')} <span className="text-[8px] opacity-40 not-italic ml-1">NODES</span>
+                  <span className="text-white font-black text-[16px] leading-none tracking-tighter italic">
+                    {agentsCount.toString().padStart(2, '0')} <span className="text-[9px] text-rose-500 not-italic ml-1 font-black">NODES</span>
                   </span>
-                  <span className="text-white/10 text-[6px] tracking-widest mt-1">LATENCY: {status?.services[0]?.latency_ms ?? 0}ms</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 font-bold">LATENCY: {status?.services[0]?.latency_ms ?? 0}ms</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col border-l border-white/10 pl-10 h-10 justify-center group/threat">
-              <span className="text-white/20 text-[7px] leading-none mb-2 tracking-[0.3em] font-bold group-hover/threat:text-rose-500 transition-colors">THREAT LEVEL</span>
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col border-l border-white/10 pl-12 h-12 justify-center group/threat">
+              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic group-hover/threat:text-rose-500 transition-colors">THREAT_LEVEL</span>
+              <div className="flex items-center gap-5">
                 <div className="relative">
-                  <ShieldAlert size={18} className={cn("transition-all duration-500", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_8px_rgba(225,29,72,0.8)] scale-110" : "text-white/20")} />
-                  {threatLevel > 70 && <motion.div animate={{ scale: [1, 1.5], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1 }} className="absolute inset-0 bg-rose-500 rounded-full blur-md" />}
+                  <ShieldAlert size={22} className={cn("transition-all duration-700", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_12px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
+                  {threatLevel > 70 && <motion.div animate={{ scale: [1, 2], opacity: [0.6, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} className="absolute inset-0 bg-rose-500 rounded-full blur-lg" />}
                 </div>
                 <div className="flex flex-col">
-                  <span className={cn("font-black text-[14px] tracking-tighter italic leading-none", threatLevel > 70 ? "text-rose-500" : "text-white/60")}>
-                    {threatLevel.toFixed(0)}% <span className="text-[8px] opacity-40 ml-1">RISK</span>
+                  <span className={cn("font-black text-[16px] tracking-tighter italic leading-none", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
+                    {threatLevel.toFixed(0)}% <span className="text-[9px] opacity-40 ml-1 not-italic">RISK</span>
                   </span>
-                  <span className="text-white/10 text-[6px] tracking-widest mt-1 uppercase">{threatLevel > 70 ? 'High Alert' : 'Operational'}</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 uppercase font-bold">{threatLevel > 70 ? 'CRITICAL_ALERT' : 'OPERATIONAL_SAFE'}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-10">
-          <div className="flex flex-col items-end border-r border-white/10 pr-10">
-            <span className="text-white/20 text-[7px] leading-none mb-1.5 tracking-widest font-black uppercase">SYSTEM_TIME_UTC</span>
-            <span className="text-white/90 font-mono tracking-[0.35em] text-[14px] font-black italic">
+        <div className="flex items-center gap-12">
+          <div className="flex flex-col items-end border-r border-white/10 pr-12 h-12 justify-center">
+            <span className="text-white/20 text-[8px] leading-none mb-2 tracking-[0.5em] font-black uppercase italic">SYSTEM_TIME_UTC</span>
+            <span className="text-white font-mono tracking-[0.4em] text-[16px] font-black italic glint-elite">
               {time.toLocaleTimeString('uk-UA', { hour12: false })}
-              <span className="text-[9px] opacity-20 ml-1 ml-2">[{time.getMilliseconds().toString().padStart(3, '0')}]</span>
+              <span className="text-[10px] text-rose-500/40 ml-2 font-bold">[{time.getMilliseconds().toString().padStart(3, '0')}]</span>
             </span>
           </div>
           
-          <div className="flex items-center gap-6 bg-rose-500/5 px-8 py-3 rounded-sm border border-rose-500/20 group-hover:border-rose-500/60 transition-all duration-1000 hover:bg-rose-500/10 cursor-crosshair relative group/secured">
-             {/* Corner Ornaments */}
-             <div className="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-             <div className="absolute -top-1 -right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-             <div className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-             <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-             
-            <div className="relative flex items-center justify-center scale-110">
-              <div className="w-4 h-4 rounded-full bg-rose-500 animate-ping absolute opacity-40" />
-              <div className="w-4 h-4 rounded-full bg-rose-500 relative shadow-[0_0_20px_rgba(225,29,72,1)] flex items-center justify-center">
-                <Shield size={8} className="text-black" />
+          <div className="flex items-center gap-8 bg-rose-500/5 px-10 py-4 rounded-[1.2rem] glass-wraith border border-rose-500/20 group-hover:border-rose-500/60 transition-all duration-1000 hover:bg-rose-500/10 cursor-crosshair relative group/secured shadow-2xl">
+              {/* Corner Ornaments */}
+              <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              
+            <div className="relative flex items-center justify-center scale-125">
+              <div className="w-5 h-5 rounded-full bg-rose-500 animate-ping absolute opacity-30" />
+              <div className="w-5 h-5 rounded-full bg-rose-500 relative shadow-[0_0_25px_rgba(225,29,72,1)] flex items-center justify-center border border-white/20">
+                <Shield size={10} className="text-black" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-rose-500 font-black text-[13px] leading-none tracking-[0.2em]">SECURED</span>
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex gap-0.5">
-                  {[1,2,3,4].map(i => <div key={i} className="w-[3px] h-[3px] bg-rose-500/60 rounded-full" />)}
+              <span className="text-rose-500 font-black text-[15px] leading-none tracking-[0.25em] italic">SECURED</span>
+              <div className="flex items-center gap-3 mt-2.5">
+                <div className="flex gap-1">
+                  {[1,2,3,4,5].map(i => <div key={i} className="w-[4px] h-[4px] bg-rose-500/60 rounded-full" />)}
                 </div>
-                <span className="text-white/30 text-[7px] tracking-[0.4em] font-black">X-QUANTUM_L5</span>
+                <span className="text-white/30 text-[8px] tracking-[0.5em] font-black italic">X-QUANTUM_L5</span>
               </div>
             </div>
           </div>

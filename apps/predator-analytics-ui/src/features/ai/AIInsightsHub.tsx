@@ -812,17 +812,16 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             { label: 'СУВЕРЕННИЙ ГРАФ',     value: '1.4M',     sub: 'NODES_MAPPED',      icon: Network,    color: '#e11d48' },
             { label: 'АВТОНОМНІСТЬ ЯДРА',    value: 'TIER-1',     sub: 'S-LEVEL_PROTOCOL',  icon: ShieldCheck, color: '#9f1239' },
           ].map((stat) => (
-            <TacticalCard key={stat.label} variant="holographic" className="p-10 bg-black/60 border-rose-500/10 hover:border-rose-500/30 transition-all rounded-[3rem] group overflow-hidden relative">
-               <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] group-hover:opacity-[0.07] transition-opacity pointer-events-none" />
-               <div className="absolute right-0 bottom-0 opacity-[0.02] group-hover:opacity-[0.08] transition-all duration-700">
+            <TacticalCard key={stat.label} variant="holographic" elite className="p-10 group overflow-hidden">
+               <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] group-hover:opacity-[0.1] group-hover:scale-110 transition-all duration-1000">
                   <stat.icon size={160} />
                </div>
-               <div className="relative z-10 space-y-4">
-                  <p className="text-[9px] font-black text-slate-500 tracking-[0.5em] uppercase">{stat.label}</p>
-                  <h3 className="text-4xl font-black text-white italic tracking-tighter glint-elite">{stat.value}</h3>
-                  <div className="flex items-center gap-3">
-                    <div className="w-1 h-3 bg-rose-500/40" />
-                    <p className="text-[10px] text-rose-600/60 font-black uppercase tracking-[0.3em] font-mono">{stat.sub}</p>
+               <div className="relative z-10 space-y-6">
+                  <p className="text-[10px] font-black text-slate-500 tracking-[0.5em] uppercase italic">{stat.label}</p>
+                  <h3 className="text-5xl font-black text-white italic tracking-tighter glint-elite chromatic-elite">{stat.value}</h3>
+                  <div className="flex items-center gap-4">
+                    <div className="w-1.5 h-4 bg-rose-500/40 rounded-full" />
+                    <p className="text-[11px] text-rose-600 font-black uppercase tracking-[0.3em] font-mono">{stat.sub}</p>
                   </div>
                </div>
             </TacticalCard>
@@ -830,32 +829,32 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
         </div>
 
         {/* ── ФІЛЬТРАЦІЯ СЕКТОРІВ ── */}
-        <div className="flex flex-wrap items-center gap-4 p-4 bg-black/40 border border-white/5 w-fit rounded-[2rem] shadow-2xl backdrop-blur-3xl relative">
-          <ScanningHUD />
+        <div className="flex flex-wrap items-center gap-4 p-6 bg-black/40 glass-wraith border border-white/10 w-fit rounded-[2.5rem] shadow-4xl backdrop-blur-3xl relative">
+          <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-rose-500/40 rounded-full" />
           <button
             onClick={() => { SovereignAudio.playPulse(); setFilter('all'); }}
             className={cn(
-              "px-8 py-3.5 text-[10px] font-black uppercase tracking-[0.4em] transition-all rounded-xl italic",
+              "px-10 py-4 text-[11px] font-black uppercase tracking-[0.4em] transition-all rounded-2xl italic",
               filter === 'all'
-                ? "bg-rose-500 text-black shadow-[0_0_20px_rgba(225,29,72,0.4)]"
+                ? "bg-rose-500 text-black shadow-[0_0_30px_rgba(225,29,72,0.5)] scale-105"
                 : "text-slate-600 hover:text-rose-500 hover:bg-rose-500/5"
             )}
           >
             УСІ СИГНАЛИ
           </button>
-          <div className="w-px h-8 bg-white/10 mx-2" />
+          <div className="w-px h-10 bg-white/10 mx-3" />
           {Object.entries(TYPE_CONFIG).map(([key, config]) => (
             <button
               key={key}
               onClick={() => { SovereignAudio.playPulse(); setFilter(key as InsightType); }}
               className={cn(
-                "flex items-center gap-3 px-7 py-3.5 text-[10px] font-black uppercase tracking-[0.3em] transition-all border-2 border-transparent rounded-xl italic",
+                "flex items-center gap-4 px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] transition-all border-2 border-transparent rounded-2xl italic",
                 filter === key
-                  ? "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-inner"
+                  ? "bg-rose-500/10 text-rose-500 border-rose-500/30 shadow-inner scale-105"
                   : "text-slate-700 hover:text-white"
               )}
             >
-              <config.icon size={16} />
+              <config.icon size={18} />
               {config?.label}
             </button>
           ))}
@@ -895,16 +894,17 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                   >
                     <TacticalCard
                       variant="holographic"
+                      elite
                       className={cn(
-                        "p-12 group overflow-hidden bg-black/60 relative border-rose-500/5 hover:border-rose-500/20 transition-all rounded-[3.5rem] shadow-4xl",
+                        "p-12 group overflow-hidden bg-black/60 relative border-white/5 hover:border-rose-500/20 transition-all shadow-4xl",
                         insight.priority === 'critical' && "shimmer-wraith border-rose-500/20"
                       )}
                     >
                       <HUDCorners color={TYPE_CONFIG[insight.type].color} />
-                      <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none" />
-                      <div className="absolute -right-20 -top-20 w-64 h-64 bg-rose-500/5 blur-[100px] rounded-full group-hover:bg-rose-500/10 transition-all duration-1000" />
+                      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none" />
+                      <div className="absolute -right-32 -top-32 w-80 h-80 bg-rose-500/5 blur-[120px] rounded-full group-hover:bg-rose-500/15 transition-all duration-1000" />
                       
-                      <div className="absolute left-0 top-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent" />
+                      <div className="absolute left-0 top-0 w-2 h-full bg-gradient-to-b from-rose-500/40 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
                       
                       <div className="flex flex-col md:flex-row gap-12 relative z-10">
                         {/* Маркер типу */}

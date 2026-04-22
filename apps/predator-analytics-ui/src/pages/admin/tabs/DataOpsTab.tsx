@@ -119,56 +119,86 @@ export const DataOpsTab: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-400/50" />
-        <div className="text-[10px] font-mono uppercase tracking-widest">Синхронізація DataOps...</div>
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/30 space-y-6">
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
+          <Database className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
+        </div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">Аналіз дата-потоків...</div>
       </div>
     );
   }
 
   if (isError || !data) {
-    return <div>Помилка завантаження даних DataOps</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center glass-wraith m-8 border border-rose-500/20 rounded-xl">
+        <Database size={48} className="text-rose-500/40 mb-6" />
+        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">ПОМИЛКА DATAOPS</div>
+        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
+          Система не змогла отримати стан Kafka та датасетів. Перевірте з'єднання з контролером даних.
+        </p>
+      </div>
+    );
   }
 
   const { kafkaTopics, datasets, factoryModules } = data;
 
   const tabs = [
-    { id: 'kafka'    as const, label: `Kafka Ingestion (${kafkaTopics.length})`,   icon: Upload },
-    { id: 'datasets' as const, label: `Датасети ШІ (${datasets.length})`,           icon: Layers },
-    { id: 'factory'  as const, label: `Фабрика Модулів (${factoryModules.length})`,icon: Factory },
+    { id: 'kafka'    as const, label: `KAFKA`,     count: kafkaTopics.length,    icon: Upload },
+    { id: 'datasets' as const, label: `ДАТАСЕТИ`,  count: datasets.length,       icon: Layers },
+    { id: 'factory'  as const, label: `ФАБРИКА`,   count: factoryModules.length, icon: Factory },
   ];
 
   return (
-    <div className="p-4 space-y-4">
-      {/* Заголовок */}
-      <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Database className="w-4 h-4 text-rose-500" />
-        <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
-          DataOps
-        </h2>
-        <span className="text-[9px] font-mono text-white/20 ml-auto">
-          Kafka · Датасети · Фабрика
-        </span>
+    <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
+        <div className="flex items-center gap-3">
+          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
+            DataOps & Дата-потоки
+          </h2>
+          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
+            DATA_FABRIC_ACTIVE
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span>Kafka Online</span>
+          </div>
+          <span>•</span>
+          <span>Throughput: 850 MB/s</span>
+          <span>•</span>
+          <span>Warehouse: PREDATOR_LAKE</span>
+        </div>
       </div>
 
       {/* Метрики-шапка */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { label: 'Topics',   value: kafkaTopics.length,              color: 'text-white/65' },
-          { label: 'Lag Total',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-amber-500' },
-          { label: 'Датасети', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'ГОТОВІ' },
-          { label: 'Модулів',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-rose-500', sub: 'РОЗГОРНУТО' },
-        ].map((m) => (
-          <div key={m.label} className="px-3 py-2 bg-[#0a0a0a] rounded-sm border border-white/6 group hover:border-rose-500/30 transition-colors">
-            <div className="text-[8px] font-semibold text-white/20 uppercase tracking-wider mb-0.5">{m.label}</div>
-            <div className={cn('text-[16px] font-mono font-bold leading-none', m.color)}>{m.value}</div>
-            {'sub' in m && <div className="text-[9px] font-mono text-white/20 mt-0.5">{(m as {sub: string}).sub}</div>}
-          </div>
+          { label: 'TOPICS',   value: kafkaTopics.length, color: 'text-white/80', sub: 'ACTIVE_CHANNELS' },
+          { label: 'LAG TOTAL',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'BACKLOG_RECORDS' },
+          { label: 'ДАТАСЕТИ', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'SYNCED_READY' },
+          { label: 'МОДУЛІВ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/80', sub: 'ACTIVE_MODULES' },
+        ].map((m, i) => (
+          <motion.div 
+            key={m.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="glass-wraith border border-white/5 p-6 rounded-xl group hover:border-rose-500/30 transition-all duration-500 relative overflow-hidden"
+          >
+            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+            <div className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em] mb-2 font-black italic">{m.label}</div>
+            <div className={cn('text-[24px] font-black tracking-tighter italic leading-none', m.color)}>{m.value}</div>
+            <div className="text-[8px] font-mono text-white/10 mt-3 uppercase tracking-widest font-bold group-hover:text-rose-500/40 transition-colors">{m.sub}</div>
+            <div className="absolute top-2 right-2 w-1.5 h-1.5 border-t border-r border-white/10 group-hover:border-rose-500 transition-colors" />
+          </motion.div>
         ))}
       </div>
 
-      {/* Внутрішні таби */}
-      <div className="flex gap-1 border-b border-white/6 pb-2">
+      {/* Internal Navigation */}
+      <div className="flex gap-4">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = section === t.id;
@@ -177,31 +207,72 @@ export const DataOpsTab: React.FC = () => {
               key={t.id}
               onClick={() => setSection(t.id)}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-mono transition-all duration-100',
+                'flex flex-col items-start gap-2 px-6 py-4 rounded-xl transition-all duration-500 relative overflow-hidden flex-1 group',
                 active
-                  ? 'bg-rose-500/12 border border-rose-500/20 text-rose-300 shadow-[0_0_15px_-5px_rgba(244,63,94,0.1)]'
-                  : 'text-white/30 hover:text-white/55 hover:bg-white/4 border border-transparent',
+                  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-2xl shadow-rose-500/5'
+                  : 'bg-white/[0.02] border border-white/5 hover:border-white/10 text-white/30 hover:text-white/60',
               )}
             >
-              <Icon className="w-3 h-3" />
-              {t.label}
+              <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+              <div className="flex items-center gap-3 w-full">
+                <div className={cn(
+                   'p-2 rounded-lg transition-colors',
+                   active ? 'bg-rose-500/10 text-rose-500' : 'bg-white/5 text-white/20 group-hover:text-white/40'
+                )}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                   <div className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', active ? 'text-white' : 'text-white/40 group-hover:text-white/60')}>
+                     {t.label}
+                   </div>
+                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} об'єктів</div>
+                </div>
+                {active && (
+                   <motion.div 
+                     layoutId="data-tab-indicator"
+                     className="w-1 h-4 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(225,29,72,1)]"
+                   />
+                )}
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Контент */}
-      {section === 'kafka' && (
-        <VirtualTable rows={kafkaTopics} columns={kafkaCols} rowHeight={28} maxHeight={480} getRowStatus={getKafkaStatus} />
-      )}
-      {section === 'datasets' && (
-        <VirtualTable rows={datasets} columns={datasetCols} rowHeight={30} maxHeight={480} getRowStatus={getDatasetStatus} />
-      )}
-      {section === 'factory' && (
-        <VirtualTable rows={factoryModules} columns={moduleCols} rowHeight={30} maxHeight={480} getRowStatus={getModuleStatus} />
-      )}
+      {/* Content Area */}
+      <motion.div
+        key={section}
+        initial={{ opacity: 0, scale: 0.99 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative"
+      >
+        <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+        
+        {section === 'kafka' && (
+          <VirtualTable rows={kafkaTopics} columns={kafkaCols} rowHeight={48} maxHeight={550} getRowStatus={getKafkaStatus} />
+        )}
+        {section === 'datasets' && (
+          <VirtualTable rows={datasets} columns={datasetCols} rowHeight={48} maxHeight={550} getRowStatus={getDatasetStatus} />
+        )}
+        {section === 'factory' && (
+          <VirtualTable rows={factoryModules} columns={moduleCols} rowHeight={48} maxHeight={550} getRowStatus={getModuleStatus} />
+        )}
+      </motion.div>
+
+      {/* Footer Info */}
+      <div className="flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
+        <div className="flex items-center gap-3 px-4 py-2 bg-rose-500/5 border border-rose-500/10 rounded-lg">
+           <TrendingUp className="w-4 h-4 text-rose-500" />
+           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">DATA_PIPELINE_STABLE</span>
+        </div>
+        <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Data Management Layer v6.0 — ELITE_ANALYTICS</span>
+      </div>
     </div>
   );
 };
+
+export default DataOpsTab;
 
 export default DataOpsTab;

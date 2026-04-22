@@ -29,15 +29,19 @@ data/workers/
 services/api-gateway/data/
 
 # Ignore node modules (if any)
-node_modules/
-dist/
-build/
-*.tar.gz
-*.zip
-*.mp3
-*.ogg
-*.xlsx
-*.csv
+**/node_modules/
+**/dist/
+!apps/predator-analytics-ui/dist/
+**/build/
+**/npm_cache/
+**/*.log
+**/*.tmp
+**/*.csv
+**/*.xlsx
+**/*.tar.gz
+**/*.zip
+**/*.mp3
+**/*.ogg
 .DS_Store
 .agent/
 .agents/

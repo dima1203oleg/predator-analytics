@@ -32,80 +32,76 @@ export const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({ children }) => {
   }, [mode]);
 
   return (
-    <div className="flex min-h-screen bg-[#020617] text-slate-200 font-sans selection:bg-blue-500/30">
+    <div className="flex min-h-screen bg-[#050508] text-slate-200 font-sans selection:bg-rose-500/30 overflow-hidden">
 
       {/* ────────────────────────────────────────────────────────── */}
-      {/* SOVEREIGN AMBIENT — Щильний червоний/кримсон фон для відчуття џлітарності */}
+      {/* SOVEREIGN AMBIENT — ELITE CINEMATIC BACKGROUND */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Основний градієнт — глибокий кримсон знизу ліворуч */}
+        {/* Main Neural Core Glow */}
         <motion.div
-          className="absolute w-[55%] h-[55%] rounded-full"
+          className="absolute w-[65%] h-[65%] rounded-full opacity-40"
           style={{
-            background: 'radial-gradient(circle, rgba(185,10,10,0.07) 0%, transparent 70%)',
-            filter: 'blur(130px)',
-            bottom: '-10%',
-            left: '-8%',
+            background: 'radial-gradient(circle, rgba(225,29,72,0.12) 0%, transparent 70%)',
+            filter: 'blur(160px)',
+            bottom: '-15%',
+            left: '-10%',
           }}
           animate={{
-            x: [0, 25, 0],
-            y: [0, -15, 0],
-            scale: [1, 1.08, 1],
+            x: [0, 40, 0],
+            y: [0, -30, 0],
+            scale: [1, 1.15, 1],
           }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Акцентний градієнт — темно-червоний зверху праворуч */}
+        
+        {/* Secondary Intel Flow */}
         <motion.div
-          className="absolute w-[40%] h-[40%] rounded-full"
+          className="absolute w-[45%] h-[45%] rounded-full opacity-30"
           style={{
-            background: 'radial-gradient(circle, rgba(120,5,5,0.06) 0%, transparent 70%)',
-            filter: 'blur(110px)',
-            top: '-5%',
-            right: '-5%',
+            background: 'radial-gradient(circle, rgba(159,18,57,0.08) 0%, transparent 70%)',
+            filter: 'blur(120px)',
+            top: '-10%',
+            right: '-10%',
           }}
           animate={{
-            x: [0, -20, 0],
-            y: [0, 18, 0],
-            scale: [1, 1.12, 1],
+            x: [0, -35, 0],
+            y: [0, 25, 0],
+            scale: [1, 1.2, 1],
           }}
-          transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 30, repeat: Infinity, ease: 'easeInOut' }}
         />
-        {/* Холодний синій акцент — сателітний подтекст */}
-        <motion.div
-          className="absolute w-[28%] h-[28%] rounded-full"
-          style={{
-            background: 'radial-gradient(circle, rgba(5,15,80,0.04) 0%, transparent 70%)',
-            filter: 'blur(90px)',
-            top: '38%',
-            right: '18%',
-          }}
-          animate={{
-            x: [0, 12, -8, 0],
-            y: [0, -18, 10, 0],
-          }}
-          transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        {/* Суверенна віньєтка — кінематографічна рамка */}
+
+        {/* HUD Scan Grid - Primary */}
         <div
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)' }}
-        />
-        {/* Тонка координатна сітка */}
-        <div
-          className="absolute inset-0 opacity-[0.018]"
+          className="absolute inset-0 opacity-[0.03] cyber-scan-grid"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(220, 38, 38, 0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(220, 38, 38, 0.25) 1px, transparent 1px)',
-            backgroundSize: '65px 65px',
+              'linear-gradient(rgba(225, 29, 72, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(225, 29, 72, 0.3) 1px, transparent 1px)',
+            backgroundSize: '80px 80px',
           }}
         />
-        {/* Мікро-сітка */}
+
+        {/* Micro-Telemetry Grid */}
         <div
-          className="absolute inset-0 opacity-[0.012]"
+          className="absolute inset-0 opacity-[0.015]"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.15) 1px, transparent 1px)',
-            backgroundSize: '12px 12px',
+              'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)',
+            backgroundSize: '16px 16px',
           }}
+        />
+
+        {/* Vignette - Cinematic Border */}
+        <div
+          className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.8)]"
+          style={{ background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)' }}
+        />
+        
+        {/* Dynamic Scan Line */}
+        <motion.div 
+          className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-rose-500/10 to-transparent z-10"
+          animate={{ top: ['0%', '100%'] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
         />
       </div>
 

@@ -109,10 +109,10 @@ export const ZeroTrustSecurityTab: React.FC = () => {
   const { data: keysData, isLoading: isKeysLoading } = useSecurityKeys();
 
   const tabs = [
-    { id: 'sessions', label: `Сесії (${sessionsData?.length || 0})`,   icon: Users, loading: isSessionsLoading },
-    { id: 'audit',    label: `Аудит-лог (${auditData?.length || 0})`,  icon: FileText, loading: isAuditLoading },
-    { id: 'keys',     label: `API-ключі (${keysData?.length || 0})`,   icon: Key, loading: isKeysLoading },
-    { id: 'mtls',     label: `mTLS Вузли (4)`,                         icon: Shield, loading: false },
+    { id: 'sessions', label: `СЕСІЇ`, count: sessionsData?.length || 0, icon: Users, loading: isSessionsLoading },
+    { id: 'audit',    label: `АУДИТ`,  count: auditData?.length || 0,   icon: FileText, loading: isAuditLoading },
+    { id: 'keys',     label: `КЛЮЧІ`,  count: keysData?.length || 0,   icon: Key, loading: isKeysLoading },
+    { id: 'mtls',     label: `MTLS`,   count: 4,                        icon: Shield, loading: false },
   ] as const;
 
   const isLoading = (section === 'sessions' && isSessionsLoading) || 
@@ -120,21 +120,31 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                     (section === 'keys' && isKeysLoading);
 
   return (
-    <div className="p-4 space-y-4">
-      {/* Заголовок */}
-      <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Lock className="w-4 h-4 text-rose-500" />
-        <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
-          Zero Trust & Безпека
-        </h2>
-        <div className="ml-auto flex items-center gap-2">
-          <Shield className="w-3 h-3 text-white/20" />
-          <span className="text-[9px] font-mono text-white/20 uppercase tracking-widest">IAM · Аудит · API-ключі</span>
+    <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
+        <div className="flex items-center gap-3">
+          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
+            Zero Trust & Безпека
+          </h2>
+          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
+            SEC_GUARD_ACTIVE
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span>Enforced</span>
+          </div>
+          <span>•</span>
+          <span>IAM: REALTIME_SYNC</span>
+          <span>•</span>
+          <span>WORM: ON</span>
         </div>
       </div>
 
-      {/* Внутрішні таби */}
-      <div className="flex gap-1 border-b border-white/6 pb-2">
+      {/* Internal Navigation */}
+      <div className="flex gap-4">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = section === t.id;
@@ -143,99 +153,152 @@ export const ZeroTrustSecurityTab: React.FC = () => {
               key={t.id}
               onClick={() => setSection(t.id)}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-[10px] font-mono transition-all duration-100',
+                'flex flex-col items-start gap-2 px-6 py-4 rounded-xl transition-all duration-500 relative overflow-hidden flex-1 group',
                 active
-                  ? 'bg-rose-500/12 border border-rose-500/20 text-rose-300 shadow-[0_0_15px_-5px_rgba(244,63,94,0.1)]'
-                  : 'text-white/30 hover:text-white/55 hover:bg-white/4 border border-transparent',
+                  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-2xl shadow-rose-500/5'
+                  : 'bg-white/[0.02] border border-white/5 hover:border-white/10 text-white/30 hover:text-white/60',
               )}
             >
-              {t.loading && active ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Icon className="w-3 h-3" />}
-              {t.label}
+              <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+              <div className="flex items-center gap-3 w-full">
+                <div className={cn(
+                   'p-2 rounded-lg transition-colors',
+                   active ? 'bg-rose-500/10 text-rose-500' : 'bg-white/5 text-white/20 group-hover:text-white/40'
+                )}>
+                  {t.loading && active ? <Loader2 className="w-4 h-4 animate-spin" /> : <Icon className="w-4 h-4" />}
+                </div>
+                <div className="flex-1">
+                   <div className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', active ? 'text-white' : 'text-white/40 group-hover:text-white/60')}>
+                     {t.label}
+                   </div>
+                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} об'єктів</div>
+                </div>
+                {active && (
+                   <motion.div 
+                     layoutId="security-tab-indicator"
+                     className="w-1 h-4 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(225,29,72,1)]"
+                   />
+                )}
+              </div>
             </button>
           );
         })}
       </div>
 
-      {/* Контент */}
-      <div className="relative min-h-[400px]">
+      {/* Content Area */}
+      <div className="relative min-h-[500px]">
         {isLoading && (
-          <div className="absolute inset-0 bg-[#020202]/60 flex items-center justify-center z-10 backdrop-blur-[2px] transition-all">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="w-8 h-8 animate-spin text-rose-500" />
-              <div className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest">Синхронізація вузла...</div>
-            </div>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center space-y-6">
+             <div className="relative">
+                <Loader2 className="w-16 h-16 animate-spin text-rose-500/20" strokeWidth={1} />
+                <Shield className="absolute inset-0 m-auto w-6 h-6 text-rose-500 animate-pulse" />
+             </div>
+             <div className="text-[10px] font-mono text-rose-500/60 uppercase tracking-[0.4em] animate-pulse italic">
+               SEC_SCAN_ACTIVE...
+             </div>
           </div>
         )}
 
-        {section === 'sessions' && (
-          <VirtualTable
-            rows={sessionsData || []}
-            columns={sessionCols}
-            rowHeight={28}
-            maxHeight={560}
-            getRowStatus={getSessionStatus}
-            emptyLabel="Активних сесій немає"
-          />
-        )}
-        {section === 'audit' && (
-          <VirtualTable
-            rows={auditData || []}
-            columns={auditCols}
-            rowHeight={28}
-            maxHeight={560}
-            getRowStatus={getAuditStatus}
-            emptyLabel="Записів аудиту немає"
-          />
-        )}
-        {section === 'keys' && (
-          <VirtualTable
-            rows={keysData || []}
-            columns={keyCols}
-            rowHeight={32}
-            maxHeight={400}
-            getRowStatus={getKeyStatus}
-            emptyLabel="API-ключів немає"
-          />
-        )}
-        {section === 'mtls' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-bottom-2">
-            {[
-              { name: 'ingestion-worker', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '12s ago' },
-              { name: 'graph-service', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '5s ago' },
-              { name: 'api-gateway', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '0s ago' },
-              { name: 'admin-sentinel', status: 'PENDING', expiry: '2026-12-01', lastSeen: '1h ago' },
-            ].map(node => (
-              <div key={node.name} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-mono font-bold text-white/80">{node.name.toUpperCase()}</span>
-                  <span className={cn(
-                    "text-[8px] px-1.5 py-0.5 rounded font-black",
-                    node.status === 'VERIFIED' ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400 animate-pulse"
-                  )}>{node.status}</span>
-                </div>
-                <div className="flex justify-between text-[9px] font-mono text-white/30">
-                  <span>Сертифікат до: {node.expiry}</span>
-                  <span>{node.lastSeen}</span>
-                </div>
-                <div className="mt-1 h-0.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-rose-500/40 w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <motion.div
+          key={section}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative"
+        >
+          <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+          
+          {section === 'sessions' && (
+            <VirtualTable
+              rows={sessionsData || []}
+              columns={sessionCols}
+              rowHeight={48}
+              maxHeight={550}
+              getRowStatus={getSessionStatus}
+              emptyLabel="Активних сесій немає"
+            />
+          )}
+          {section === 'audit' && (
+            <VirtualTable
+              rows={auditData || []}
+              columns={auditCols}
+              rowHeight={44}
+              maxHeight={550}
+              getRowStatus={getAuditStatus}
+              emptyLabel="Записів аудиту немає"
+            />
+          )}
+          {section === 'keys' && (
+            <VirtualTable
+              rows={keysData || []}
+              columns={keyCols}
+              rowHeight={48}
+              maxHeight={550}
+              getRowStatus={getKeyStatus}
+              emptyLabel="API-ключів немає"
+            />
+          )}
+          {section === 'mtls' && (
+            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                { name: 'ingestion-worker', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '12s ago', traffic: '24 GB' },
+                { name: 'graph-service', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '5s ago', traffic: '182 GB' },
+                { name: 'api-gateway', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '0s ago', traffic: '1.2 TB' },
+                { name: 'admin-sentinel', status: 'PENDING', expiry: '2026-12-01', lastSeen: '1h ago', traffic: '0 B' },
+              ].map((node, i) => (
+                <motion.div 
+                  key={node.name}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-rose-500/20 transition-all group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+                  <div className="flex justify-between items-center relative z-10">
+                    <div className="flex flex-col gap-1">
+                       <span className="text-[14px] font-black italic text-white/80 group-hover:text-white transition-colors uppercase tracking-widest">{node.name}</span>
+                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Node ID: {node.name.slice(0, 4)}_{i}99</span>
+                    </div>
+                    <span className={cn(
+                      "text-[9px] px-3 py-1 rounded-lg font-black tracking-widest italic border transition-all",
+                      node.status === 'VERIFIED' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
+                    )}>{node.status}</span>
+                  </div>
+                  <div className="mt-6 flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest relative z-10">
+                    <span>Сертифікат до: <span className="text-white/50">{node.expiry}</span></span>
+                    <span>Потік: <span className="text-white/50">{node.traffic}</span></span>
+                  </div>
+                  <div className="mt-4 h-[1px] w-full bg-white/5 relative z-10">
+                    <motion.div 
+                      className="h-full bg-rose-500/40"
+                      initial={{ width: 0 }}
+                      animate={{ width: node.status === 'VERIFIED' ? '100%' : '30%' }}
+                      transition={{ duration: 1.5, ease: 'circOut' }}
+                    />
+                  </div>
+                  <div className="mt-3 flex justify-end relative z-10">
+                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">LAST_SEEN: {node.lastSeen}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
       </div>
 
-      {/* Footer Info */}
-      <div className="pt-4 flex items-center justify-between border-t border-white/6 opacity-30 group hover:opacity-100 transition-opacity">
-        <div className="flex items-center gap-2">
-          <AlertCircle className="w-3 h-3 text-rose-500" />
-          <span className="text-[9px] font-mono">WORM-захист активований</span>
+      {/* Footer System Status */}
+      <div className="flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
+        <div className="flex items-center gap-3 px-4 py-2 bg-rose-500/5 border border-rose-500/10 rounded-lg">
+           <AlertCircle className="w-4 h-4 text-rose-500" />
+           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">WORM_PROTECTION_ENABLED</span>
         </div>
-        <span className="text-[8px] font-mono uppercase tracking-[0.2em]">Zero Trust Core v5.1</span>
+        <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Zero Trust Core v5.1 — ELITE_ENFORCER</span>
       </div>
     </div>
   );
 };
+
+export default ZeroTrustSecurityTab;
 
 export default ZeroTrustSecurityTab;
