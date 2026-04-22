@@ -179,4 +179,3 @@ export const QuickActionsBar: React.FC = () => {
 
 export default QuickActionsBar;
 
-export default QuickActionsBar;

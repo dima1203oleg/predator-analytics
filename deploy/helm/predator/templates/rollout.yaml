@@ -46,7 +46,7 @@ spec:
             {{- toYaml .Values.coreApi.resources | nindent 12 }}
           env:
             - name: DATABASE_URL
-              value: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+              value: "postgresql+asyncpg://predator:{{ .Values.global.postgres.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgres.auth.database }}"
             - name: REDIS_URL
               value: "redis://{{ .Values.global.redis.host }}:6379/0"
             - name: NEO4J_URI
@@ -56,17 +56,17 @@ spec:
             - name: NEO4J_PASSWORD
               value: "{{ .Values.neo4j.neo4j.password }}"
             - name: LITELLM_GATEWAY_URL
-              value: "{{ .Values.coreApi.env.LITELLM_GATEWAY_URL }}"
+              value: {{ tpl .Values.coreApi.env.LITELLM_GATEWAY_URL . | quote }}
             - name: ANTIGRAVITY_ENABLED
-              value: "{{ .Values.coreApi.env.ANTIGRAVITY_ENABLED }}"
+              value: {{ tpl .Values.coreApi.env.ANTIGRAVITY_ENABLED . | quote }}
             - name: ANTIGRAVITY_AGENT_MODEL
-              value: "{{ .Values.coreApi.env.ANTIGRAVITY_AGENT_MODEL }}"
+              value: {{ tpl .Values.coreApi.env.ANTIGRAVITY_AGENT_MODEL . | quote }}
             - name: SECRET_KEY
-              value: "{{ .Values.coreApi.env.SECRET_KEY }}"
+              value: {{ tpl .Values.coreApi.env.SECRET_KEY . | quote }}
             - name: ENV
-              value: "{{ .Values.coreApi.env.ENV }}"
+              value: {{ tpl .Values.coreApi.env.ENV . | quote }}
             - name: DEBUG
-              value: "{{ .Values.coreApi.env.DEBUG }}"
+              value: {{ tpl .Values.coreApi.env.DEBUG . | quote }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

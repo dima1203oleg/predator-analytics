@@ -939,9 +939,7 @@ tbody tr:hover {
     );
     animation: wraith-shimmer 3s infinite;
 }
-    width: var(--pulse-size);
-    height: var(--pulse-size);
-}
+
 
 .tilt-card-surface {
     transform-style: preserve-3d;
