@@ -215,7 +215,7 @@ const getProviderColors = (provider: LlmCascadeEntry['provider']) => {
   if (provider === 'gemini') return 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10';
   if (provider === 'groq') return 'border-rose-500/40 text-rose-400 bg-rose-500/10';
   if (provider === 'zai') return 'border-indigo-500/40 text-indigo-400 bg-indigo-500/10';
-  if (provider === 'azure') return 'border-sky-500/40 text-sky-400 bg-sky-500/10';
+  if (provider === 'azure') return 'border-rose-500/40 text-rose-400 bg-rose-500/10';
   return 'border-white/20 text-white bg-white/5';
 };
 
@@ -519,8 +519,8 @@ export function FabrykaAutonomousTab() {
             <div className="text-xl font-black italic text-white">{localReserve} GB</div>
             <div className="text-[8px] text-slate-500 mt-1">RESERVED FOR OLLAMA</div>
           </div>
-          <div className="p-4 rounded-2xl bg-sky-500/5 border border-sky-500/20">
-            <div className="text-[8px] font-black text-sky-400 uppercase mb-2">Sovereign OS / UI</div>
+          <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20">
+            <div className="text-[8px] font-black text-rose-400 uppercase mb-2">Sovereign OS / UI</div>
             <div className="text-xl font-black italic text-white">{uiReserve} GB</div>
             <div className="text-[8px] text-slate-500 mt-1">RESERVED FOR THREE.JS</div>
           </div>
@@ -534,7 +534,7 @@ export function FabrykaAutonomousTab() {
           <div className="h-2 bg-white/5 rounded-full overflow-hidden relative">
             <div className="absolute inset-0 flex">
               <div className="h-full bg-emerald-500/40" style={{ width: `${(localReserve / total) * 100}%` }} />
-              <div className="h-full bg-sky-500/40 border-l border-white/10" style={{ width: `${(uiReserve / total) * 100}%` }} />
+              <div className="h-full bg-rose-500/40 border-l border-white/10" style={{ width: `${(uiReserve / total) * 100}%` }} />
             </div>
             <motion.div 
               initial={{ width: 0 }}
@@ -571,7 +571,7 @@ export function FabrykaAutonomousTab() {
           <div className="flex items-center gap-5">
             <div className={cn(
               'w-16 h-16 rounded-2xl border flex items-center justify-center transition-all duration-500',
-              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 shadow-[0_0_30px_rgba(212,175,55,0.3)]',
+              isAutonomous ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' : 'border-rose-500/40 bg-rose-500/15 text-rose-400 shadow-[0_0_30px_rgba(225,29,72,0.3)]',
             )}>
               {isAutonomous ? <WifiOff size={28} /> : <Wifi size={28} />}
             </div>
@@ -683,7 +683,7 @@ export function FabrykaAutonomousTab() {
               className={cn(
                 'flex items-center gap-2 px-4 py-2.5 rounded-[14px] border text-[10px] font-black uppercase tracking-wider transition-all duration-300',
                 coderSource === 'api'
-                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 shadow-[0_0_16px_rgba(212,175,55,0.25)]'
+                  ? 'border-rose-500/50 bg-rose-500/15 text-rose-300 shadow-[0_0_16px_rgba(225,29,72,0.25)]'
                   : 'border-white/10 bg-white/5 text-slate-500 hover:text-slate-300',
               )}
             >
@@ -763,7 +763,7 @@ export function FabrykaAutonomousTab() {
                   className={cn(
                     'w-full text-left rounded-[18px] border p-3.5 transition-all duration-200 relative overflow-hidden',
                     isActive
-                      ? 'border-rose-500/50 bg-rose-500/10 shadow-[0_0_12px_rgba(212,175,55,0.2)]'
+                      ? 'border-rose-500/50 bg-rose-500/10 shadow-[0_0_12px_rgba(225,29,72,0.2)]'
                       : model.online
                         ? 'border-white/8 bg-black/20 hover:border-white/20 hover:bg-white/5 cursor-pointer'
                         : 'border-white/4 bg-black/10 opacity-40 cursor-not-allowed',
@@ -877,13 +877,13 @@ export function FabrykaAutonomousTab() {
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </div>
               </div>
-              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-sky-500/20 transition-colors">
+              <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">OODA_Cycle_Rate</div>
-                  <div className="text-xl font-black text-sky-400 italic">4.2 OPS/SEC</div>
+                  <div className="text-xl font-black text-rose-400 italic">4.2 OPS/SEC</div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center border border-sky-500/20 group-hover:scale-110 transition-transform">
-                  <Zap size={18} className="text-sky-500" />
+                <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
+                  <Zap size={18} className="text-rose-500" />
                 </div>
               </div>
             </div>
@@ -1032,10 +1032,10 @@ export function FabrykaAutonomousTab() {
               </div>
 
               {/* Frontend */}
-              <div className="rounded-[24px] border border-sky-500/20 bg-black/30 p-5 space-y-3">
+              <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
                 <div className="flex items-center gap-2 mb-2">
-                  <Monitor size={14} className="text-sky-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-sky-400">Frontend</span>
+                  <Monitor size={14} className="text-rose-400" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Frontend</span>
                 </div>
                 <KpiBar label="FPS" value={fitness.frontend.fps} max={60} unit="" ok={fitness.frontend.fps >= 50} />
                 <KpiBar label="Memory" value={fitness.frontend.memory_mb} max={fitness.frontend.memory_limit_mb} unit="MB" ok={fitness.frontend.memory_mb < fitness.frontend.memory_limit_mb} />
@@ -1168,7 +1168,7 @@ export function FabrykaAutonomousTab() {
                         <span className="text-sm font-black text-white">{flag.name}</span>
                         <Badge className={cn(
                           'border text-[9px] font-black px-1.5',
-                          flag.storage === 'postgresql' ? 'border-sky-500/30 bg-sky-500/10 text-sky-300' : 'border-slate-500/30 bg-slate-500/10 text-slate-400',
+                          flag.storage === 'postgresql' ? 'border-rose-500/30 bg-rose-500/10 text-rose-300' : 'border-slate-500/30 bg-slate-500/10 text-slate-400',
                         )}>
                           {flag.storage === 'postgresql' ? 'PostgreSQL' : 'Local'}
                         </Badge>
@@ -1213,7 +1213,7 @@ export function FabrykaAutonomousTab() {
                 const isPending = confirmChaos === scenario.id;
                 const severityColors = {
                   low: 'border-emerald-500/20 bg-emerald-950/10',
-                  medium: 'border-amber-500/20 bg-amber-950/10',
+                  medium: 'border-rose-500/20 bg-rose-950/10',
                   high: 'border-rose-500/25 bg-rose-950/15',
                 };
                 return (

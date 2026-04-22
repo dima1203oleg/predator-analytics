@@ -200,7 +200,7 @@ export default function PredictiveNexusView() {
                                 <ClusterTopology />
                             </div>
                             <div className="bg-black/60 border border-white/10 rounded-xl p-6 backdrop-blur-lg flex-1 overflow-hidden flex flex-col">
-                                <h3 className="text-sm font-black text-cyan-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <h3 className="text-sm font-black text-rose-400 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <Activity size={16} /> ДИНАМІКА КЛАСТЕРА (24г)
                                 </h3>
                                 <div className="flex-1 min-h-0">

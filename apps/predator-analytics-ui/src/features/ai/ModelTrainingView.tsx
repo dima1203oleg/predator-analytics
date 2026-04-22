@@ -1,7 +1,7 @@
 /**
- * Робочий центр навчання моделей.
+ * Центр навчання моделей (v60.0-ELITE).
  *
- * Екран не симулює тренування локально:
+ * Використовує реальні дані з API:
  * - /api/v45/ml/training/status
  * - /api/v45/ml/training/history
  * - /api/v45/ml/jobs
@@ -9,28 +9,28 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity,
     AlertCircle,
-    BarChart3,
     Brain,
-    CheckCircle2,
     Cpu,
-    Gauge,
-    HardDrive,
     Loader2,
     Play,
     RefreshCw,
     ScrollText,
     Terminal,
     Timer,
+    Target,
+    Binary,
+    Layers,
+    History as HistoryIcon,
 } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ViewHeader } from '@/components/ViewHeader';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
@@ -39,34 +39,46 @@ import { systemApi, type SystemStatsResponse } from '@/services/api/system';
 import { cn } from '@/utils/cn';
 import { normalizeModelTrainingSnapshot, type TrainingRunRecord, type TrainingTone } from './modelTrainingView.utils';
 
-const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: string }> = {
+const toneClasses: Record<TrainingTone, { badge: string; panel: string; accent: string; glow: string }> = {
     emerald: {
-        badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-100',
-        panel: 'border-emerald-500/20 bg-emerald-500/10',
-        accent: 'text-emerald-300',
+        badge: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
+        panel: 'border-emerald-500/10 bg-emerald-500/[0.02]',
+        accent: 'text-emerald-400',
+        glow: 'bg-emerald-500/20',
     },
     amber: {
-        badge: 'border-amber-500/30 bg-amber-500/10 text-amber-100',
-        panel: 'border-amber-500/20 bg-amber-500/10',
-        accent: 'text-amber-300',
+        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]',
+        panel: 'border-rose-500/10 bg-rose-500/[0.02]',
+        accent: 'text-rose-400',
+        glow: 'bg-rose-500/20',
     },
     slate: {
-        badge: 'border-slate-500/30 bg-slate-500/10 text-slate-100',
-        panel: 'border-slate-500/20 bg-slate-500/10',
-        accent: 'text-slate-300',
+        badge: 'border-white/10 bg-white/5 text-slate-400',
+        panel: 'border-white/5 bg-white/[0.01]',
+        accent: 'text-slate-400',
+        glow: 'bg-slate-500/10',
     },
-    sky: {
-        badge: 'border-sky-500/30 bg-sky-500/10 text-sky-100',
-        panel: 'border-sky-500/20 bg-sky-500/10',
-        accent: 'text-sky-300',
+    rose: {
+        badge: 'border-rose-500/30 bg-rose-500/10 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]',
+        panel: 'border-rose-500/10 bg-rose-500/[0.02]',
+        accent: 'text-rose-400',
+        glow: 'bg-rose-500/20',
     },
 };
 
 const EmptyState = ({ title, description }: { title: string; description: string }) => (
-    <div className="flex min-h-[260px] flex-col items-center justify-center rounded-[28px] border border-dashed border-white/10 bg-black/20 px-8 text-center">
-        <AlertCircle className="mb-4 h-10 w-10 text-amber-300" />
-        <div className="text-lg font-black text-white">{title}</div>
-        <div className="mt-2 max-w-xl text-sm leading-6 text-slate-400">{description}</div>
+    <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/40 px-8 text-center relative overflow-hidden group">
+        <div className="absolute inset-0 bg-rose-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        <motion.div 
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 flex items-center justify-center opacity-[0.03]"
+        >
+            <Brain size={200} />
+        </motion.div>
+        <AlertCircle className="mb-6 h-12 w-12 text-rose-500/40 animate-pulse" />
+        <div className="text-xl font-black text-white/90 tracking-widest uppercase italic">{title}</div>
+        <div className="mt-3 max-w-md text-xs leading-6 text-white/30 font-mono tracking-tighter">{description}</div>
     </div>
 );
 
@@ -75,30 +87,34 @@ const RunCard = ({ run }: { run: TrainingRunRecord }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={cn('rounded-[28px] border p-5 shadow-[0_16px_40px_rgba(2,6,23,0.18)]', tone.panel)}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.02)' }}
+            className={cn('rounded-sm border p-4 transition-all duration-500 relative group overflow-hidden', tone.panel)}
         >
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="text-sm font-black uppercase tracking-wide text-white">{run.title}</div>
-                    <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
+            <div className="absolute top-0 left-0 w-1 h-full bg-current opacity-20 group-hover:opacity-100 transition-opacity" style={{ color: tone.accent.split('-')[1] }} />
+            
+            <div className="flex items-start justify-between gap-4 relative z-10">
+                <div className="flex flex-col gap-1">
+                    <div className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90 group-hover:text-rose-400 transition-colors">{run.title}</div>
+                    <div className="text-[8px] font-mono uppercase tracking-[0.3em] text-white/20">
                         {run.timestampLabel}
                     </div>
                 </div>
-                <Badge className={cn('border px-3 py-1 text-[10px] font-black uppercase tracking-widest', tone.badge)}>
+                <Badge className={cn('border-none px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-none', tone.badge)}>
                     {run.statusLabel}
                 </Badge>
             </div>
-            <div className="mt-5 grid grid-cols-3 gap-3">
+
+            <div className="mt-4 grid grid-cols-3 gap-2 relative z-10">
                 {[
-                    { label: 'Прогрес', value: run.progressLabel },
-                    { label: 'Точність', value: run.accuracyLabel },
-                    { label: 'Loss', value: run.lossLabel },
+                    { label: 'PROGRESS', value: run.progressLabel },
+                    { label: 'ACCURACY', value: run.accuracyLabel },
+                    { label: 'LOSS_FUNC', value: run.lossLabel },
                 ].map((item) => (
-                    <div key={item.label} className="rounded-2xl border border-white/10 bg-black/20 px-3 py-3">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{item.label}</div>
-                        <div className={cn('mt-1 text-lg font-black', tone.accent)}>{item.value}</div>
+                    <div key={item.label} className="bg-white/[0.02] border border-white/[0.05] p-2 flex flex-col gap-1">
+                        <div className="text-[7px] font-mono font-black uppercase tracking-widest text-white/20">{item.label}</div>
+                        <div className={cn('text-[12px] font-black italic', tone.accent)}>{item.value}</div>
                     </div>
                 ))}
             </div>
@@ -119,9 +135,7 @@ export default function ModelTrainingView() {
     const logsEndRef = useRef<HTMLDivElement | null>(null);
 
     const loadData = useCallback(async (silent: boolean = false) => {
-        if (silent) {
-            setRefreshing(true);
-        }
+        if (!silent) setRefreshing(true);
 
         try {
             const [statusResult, historyResult, jobsResult, systemResult] = await Promise.allSettled([
@@ -143,17 +157,16 @@ export default function ModelTrainingView() {
                 systemResult.status === 'rejected'
             ) {
                 setFeedbackTone('amber');
-                setFeedbackMessage('Центр навчання тимчасово не отримав підтверджених даних від бекенду.');
+                setFeedbackMessage('Центр навчання: Системна відмова синхронізації ML-вузла.');
             } else if (!silent) {
                 setFeedbackMessage(null);
                 
-                // ЕЛІТ-діагностика: успішна синхронізація Центру навчання
                 window.dispatchEvent(new CustomEvent('predator-error', {
                     detail: {
                         service: 'AI_ModelTraining',
                         message: backendStatus.isOffline 
-                            ? 'Центр навчання синхронізовано з автономним вузлом MIRROR.' 
-                            : 'Центр навчання успішно підключено до NVIDIA MASTER.',
+                            ? 'Синхронізація з локальним ML-ядром (MIRROR_VRAM_SAFE).' 
+                            : 'ML-контур підключено до NVIDIA MASTER CLUSTER.',
                         severity: 'info',
                         timestamp: new Date().toISOString(),
                         code: backendStatus.isOffline ? 'TRAINING_OFFLINE' : 'TRAINING_SUCCESS'
@@ -161,21 +174,16 @@ export default function ModelTrainingView() {
                 }));
             }
         } catch (error) {
-            console.error('[ModelTrainingView] Не вдалося оновити дані:', error);
             setFeedbackTone('amber');
-            setFeedbackMessage('Центр навчання тимчасово не отримав підтверджених даних від бекенду.');
+            setFeedbackMessage('ML-ENGINE_CRITICAL: Помилка отримання метрик навчання.');
         } finally {
             setRefreshing(false);
         }
-    }, []);
+    }, [backendStatus.isOffline]);
 
     useEffect(() => {
         void loadData();
-
-        const interval = window.setInterval(() => {
-            void loadData(true);
-        }, 30000);
-
+        const interval = window.setInterval(() => void loadData(true), 15000);
         return () => window.clearInterval(interval);
     }, [loadData]);
 
@@ -185,7 +193,9 @@ export default function ModelTrainingView() {
     );
 
     useEffect(() => {
-        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (logsEndRef.current) {
+            logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [snapshot.logs]);
 
     const handleStartTraining = useCallback(async () => {
@@ -195,12 +205,11 @@ export default function ModelTrainingView() {
         try {
             await trainingApi.trigger({ domain: 'ml' });
             setFeedbackTone('emerald');
-            setFeedbackMessage('Запит на запуск навчання передано бекенду. Стан буде оновлено після підтвердження.');
+            setFeedbackMessage('Запуск ML-сесії підтверджено. Ініціалізація ваг нейромережі...');
             await loadData(true);
         } catch (error) {
-            console.error('[ModelTrainingView] Не вдалося запустити навчання:', error);
             setFeedbackTone('amber');
-            setFeedbackMessage('Бекенд не підтвердив запуск навчання. Інтерфейс не симулює сесію локально.');
+            setFeedbackMessage('Запуск відхилено: Недостатньо VRAM або помилка планувальника.');
         } finally {
             setStarting(false);
         }
@@ -210,317 +219,309 @@ export default function ModelTrainingView() {
 
     return (
         <PageTransition>
-            <div className="relative min-h-screen overflow-hidden bg-[#020617] px-4 pb-16 pt-8 sm:px-8 lg:px-12">
-                <AdvancedBackground />
-                <CyberGrid opacity={0.08} />
+            <div className="relative min-h-full bg-[#050202] p-8 lg:p-12 overflow-hidden selection:bg-rose-500/30">
+                <CyberGrid opacity={0.04} />
+                
+                {/* Tactical Overlays */}
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-rose-500/[0.02] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/[0.01] blur-[150px] pointer-events-none" />
 
-                <div className="relative z-10 mx-auto max-w-[1820px] space-y-8">
+                <div className="relative z-10 max-w-[1800px] mx-auto space-y-10">
+                    {/* View Header */}
                     <ViewHeader
                         title={(
-                            <div className="flex items-center gap-6">
-                                <div className="relative">
-                                    <div className="absolute inset-0 scale-150 rounded-full bg-sky-500/20 blur-[60px]" />
-                                    <div className="relative flex h-16 w-16 items-center justify-center rounded-[28px] border border-sky-500/20 bg-slate-950/90 shadow-2xl">
-                                        <Brain size={30} className="text-sky-300 drop-shadow-[0_0_14px_rgba(56,189,248,0.75)]" />
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-4">
+                                    <div className="relative group">
+                                        <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-1000" />
+                                        <div className="relative w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-sm flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.1)]">
+                                            <Brain size={28} className="text-rose-500 animate-pulse" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div>
-                                    <h1 className="text-4xl font-black uppercase tracking-[0.12em] text-white sm:text-5xl">
-                                        Центр <span className="text-sky-400">навчання</span> моделей
-                                    </h1>
-                                    <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.36em] text-sky-300/75">
-                                        <Activity size={12} className="animate-pulse" />
-                                        Робочий контур без симуляції метрик і логів
-                                    </p>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-4xl font-black tracking-[0.2em] uppercase italic text-white/90">
+                                            Fine-Tune <span className="text-rose-500">Lab</span>
+                                        </h1>
+                                        <div className="flex items-center gap-3 text-[9px] font-mono font-black tracking-[0.4em] text-white/20 uppercase mt-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                                            Active Neural Synchronization [X-GRID]
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
-                        icon={<Brain size={20} className="text-sky-400" />}
-                        breadcrumbs={['PREDATOR', 'ШІ', 'Навчання моделей']}
                         stats={[
                             {
-                                label: 'Статус',
+                                label: 'ML_STATUS',
                                 value: snapshot.statusHeadline,
                                 icon: <Activity size={14} />,
                                 color: snapshot.session.statusKey === 'ERROR' ? 'danger' : snapshot.session.statusKey === 'TRAINING' ? 'warning' : 'success',
                                 animate: snapshot.session.isRunning,
                             },
                             {
-                                label: 'Точність',
+                                label: 'ACCURACY_L5',
                                 value: snapshot.accuracyHeadline,
-                                icon: <BarChart3 size={14} />,
+                                icon: <Target size={14} />,
                                 color: 'primary',
                             },
                             {
-                                label: 'Прогрес',
-                                value: snapshot.session.progressLabel,
-                                icon: <Gauge size={14} />,
+                                label: 'VRAM_UTILITY',
+                                value: snapshot.resources.memoryLabel,
+                                icon: <Cpu size={14} />,
                                 color: 'warning',
                             },
                         ]}
+                        breadcrumbs={['PREDATOR', 'AI_FACTORY', 'FINE_TUNE']}
                     />
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.amber.badge : toneClasses.sky.badge)}>
-                            {backendStatus.statusLabel}
-                        </Badge>
-                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
-                            Джерела: /ml/training/status, /ml/training/history, /ml/jobs, /system/stats
-                        </Badge>
-                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
-                            Оновлено: {snapshot.lastUpdatedLabel ?? 'Немає підтвердженої синхронізації'}
-                        </Badge>
-                        <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
-                            Джерело бекенду: {backendStatus.sourceLabel}
-                        </Badge>
-                    </div>
+                    {/* Feedback Bar */}
+                    <AnimatePresence>
+                        {feedbackMessage && (
+                            <motion.div 
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className={cn(
+                                    'p-4 border rounded-sm text-[10px] font-mono font-black uppercase tracking-widest flex items-center gap-4',
+                                    feedbackTone === 'amber'
+                                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                                        : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+                                )}
+                            >
+                                <div className={cn("w-2 h-2 rounded-full animate-pulse", feedbackTone === 'amber' ? "bg-rose-500" : "bg-emerald-500")} />
+                                {feedbackMessage}
+                                <div className="ml-auto flex gap-1">
+                                    {[1,2,3].map(i => <div key={i} className="w-3 h-[1px] bg-current opacity-40" />)}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                    {feedbackMessage && (
-                        <div className={cn(
-                            'rounded-[24px] border px-5 py-4 text-sm leading-6',
-                            feedbackTone === 'amber'
-                                ? 'border-amber-500/20 bg-amber-500/10 text-amber-100'
-                                : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-100',
-                        )}>
-                            {feedbackMessage}
-                        </div>
-                    )}
-
-                    <div className="grid gap-6 xl:grid-cols-[1.08fr_1.2fr_0.92fr]">
-                        <div className="space-y-6">
-                            <TacticalCard variant="holographic" title="Поточна сесія" className="overflow-hidden rounded-[36px] border-white/10 bg-slate-950/50">
-                                <div className="space-y-6">
-                                    <div className="flex items-start justify-between gap-4 rounded-[28px] border border-white/10 bg-black/20 p-5">
-                                        <div>
-                                            <div className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">Стан сесії</div>
-                                            <div className="mt-2 text-2xl font-black text-white">{snapshot.session.modelLabel}</div>
-                                            <div className="mt-2 max-w-md text-sm leading-6 text-slate-300">{snapshot.session.message}</div>
-                                        </div>
-                                        <Badge className={cn('border px-3 py-2 text-[10px] font-black uppercase tracking-widest', statusTone.badge)}>
-                                            {snapshot.session.statusLabel}
-                                        </Badge>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-[0.25em] text-slate-400">
-                                            <span>Прогрес</span>
-                                            <span className={statusTone.accent}>{snapshot.session.progressLabel}</span>
-                                        </div>
-                                        <div className="h-3 overflow-hidden rounded-full border border-white/10 bg-black/30 p-1">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${snapshot.session.progress ?? 0}%` }}
-                                                transition={{ duration: 0.8, ease: 'easeOut' }}
-                                                className="h-full rounded-full bg-gradient-to-r from-sky-500 via-cyan-400 to-emerald-400 shadow-[0_0_18px_rgba(56,189,248,0.45)]"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid gap-4 sm:grid-cols-2">
-                                        {[
-                                            { label: 'Епохи', value: snapshot.session.epochLabel, icon: <Timer size={16} className="text-sky-300" /> },
-                                            { label: 'Loss', value: snapshot.session.lossLabel, icon: <BarChart3 size={16} className="text-amber-300" /> },
-                                            { label: 'Черга', value: snapshot.session.queueLabel, icon: <ScrollText size={16} className="text-amber-300" /> },
-                                            { label: 'Старт', value: snapshot.session.startedAtLabel, icon: <Activity size={16} className="text-emerald-300" /> },
-                                        ].map((item) => (
-                                            <div key={item.label} className="rounded-[24px] border border-white/10 bg-black/20 p-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="rounded-2xl border border-white/10 bg-white/5 p-2">{item.icon}</div>
-                                                    <div>
-                                                        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{item.label}</div>
-                                                        <div className="mt-1 text-lg font-black text-white">{item.value}</div>
-                                                    </div>
-                                                </div>
+                    {/* Main Layout */}
+                    <div className="grid grid-cols-12 gap-8">
+                        
+                        {/* Left Column: Active Session & Controls */}
+                        <div className="col-span-12 xl:col-span-4 space-y-8">
+                            <TacticalCard variant="holographic" title="ACTIVE_SESSION_DATA" className="bg-black/40 border-white/5 shadow-2xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                                    <Binary size={120} />
+                                </div>
+                                
+                                <div className="space-y-8 mt-4 relative z-10">
+                                    <div className="bg-white/[0.02] border border-white/5 p-6 rounded-sm space-y-4">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[8px] font-mono text-white/30 tracking-widest">NEURAL_MODEL_ID</span>
+                                                <span className="text-[18px] font-black text-white italic tracking-tight">{snapshot.session.modelLabel}</span>
                                             </div>
-                                        ))}
+                                            <Badge className={cn('border-none rounded-none text-[9px] px-3 py-1 font-black tracking-[0.2em]', statusTone.badge)}>
+                                                {snapshot.session.statusLabel}
+                                            </Badge>
+                                        </div>
+                                        
+                                        <p className="text-[11px] leading-relaxed text-white/50 font-mono tracking-tight border-l-2 border-rose-500/20 pl-4 italic">
+                                            {snapshot.session.message}
+                                        </p>
+
+                                        <div className="grid grid-cols-2 gap-4 pt-4">
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[7px] font-mono text-white/20 tracking-widest uppercase">EPOCH_CYCLE</span>
+                                                <span className="text-[14px] font-black text-white/80 font-mono">{snapshot.session.epochLabel}</span>
+                                            </div>
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[7px] font-mono text-white/20 tracking-widest uppercase">LOSS_INDEX</span>
+                                                <span className="text-[14px] font-black text-rose-400 font-mono italic">{snapshot.session.lossLabel}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2 pt-4">
+                                            <div className="flex justify-between text-[8px] font-mono font-black text-white/30 tracking-widest uppercase">
+                                                <span>TRAINING_PHASE_COMPLETE</span>
+                                                <span className="text-rose-500">{snapshot.session.progressLabel}</span>
+                                            </div>
+                                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
+                                                <motion.div 
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${snapshot.session.progress ?? 0}%` }}
+                                                    transition={{ duration: 1, ease: "easeOut" }}
+                                                    className="h-full bg-gradient-to-r from-rose-900 via-rose-500 to-rose-400 shadow-[0_0_15px_rgba(225,29,72,0.5)] rounded-full relative"
+                                                >
+                                                    <div className="absolute inset-0 bg-white/20 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                                                </motion.div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Button 
+                                            onClick={handleStartTraining}
+                                            disabled={snapshot.session.isRunning || starting}
+                                            className={cn(
+                                                "h-14 rounded-sm font-black tracking-[0.3em] uppercase text-[11px] transition-all duration-700",
+                                                snapshot.session.isRunning 
+                                                    ? "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
+                                                    : "bg-rose-600 hover:bg-rose-500 text-white shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_50px_rgba(225,29,72,0.5)] border-none"
+                                            )}
+                                        >
+                                            {starting ? <Loader2 className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
+                                            INIT_TRAINING
+                                        </Button>
+                                        <Button 
+                                            onClick={() => loadData()}
+                                            disabled={refreshing}
+                                            variant="outline"
+                                            className="h-14 rounded-sm bg-white/5 border-white/10 hover:border-white/30 text-white/60 hover:text-white font-black tracking-[0.3em] uppercase text-[11px]"
+                                        >
+                                            <RefreshCw className={cn("mr-3", refreshing && "animate-spin")} size={16} />
+                                            SYNC_ENGINE
+                                        </Button>
                                     </div>
                                 </div>
                             </TacticalCard>
 
-                            <TacticalCard variant="glass" title="Системні ресурси" className="rounded-[36px] border-white/10 bg-slate-950/50">
-                                <div className="grid gap-4 sm:grid-cols-2">
+                            <TacticalCard variant="holographic" title="RESOURCE_CONSUMPTION" className="bg-black/40 border-white/5">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     {[
-                                        { label: 'ЦП', value: snapshot.resources.cpuLabel, icon: <Cpu size={16} className="text-sky-300" /> },
-                                        { label: 'Памʼять', value: snapshot.resources.memoryLabel, icon: <HardDrive size={16} className="text-yellow-300" /> },
-                                        { label: 'Активні задачі', value: snapshot.resources.taskLabel, icon: <Activity size={16} className="text-emerald-300" /> },
-                                        { label: 'Затримка API', value: snapshot.resources.latencyLabel, icon: <Gauge size={16} className="text-amber-300" /> },
-                                    ].map((item) => (
-                                        <div key={item.label} className="rounded-[24px] border border-white/10 bg-black/20 p-5">
-                                            <div className="flex items-center gap-3">
-                                                <div className="rounded-2xl border border-white/10 bg-white/5 p-2">{item.icon}</div>
-                                                <div>
-                                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{item.label}</div>
-                                                    <div className="mt-1 text-xl font-black text-white">{item.value}</div>
-                                                </div>
+                                        { label: 'CPU_POWER', value: snapshot.resources.cpuLabel, icon: Activity },
+                                        { label: 'VRAM_ALLOC', value: snapshot.resources.memoryLabel, icon: Cpu },
+                                        { label: 'ACTIVE_JOBS', value: snapshot.resources.taskLabel, icon: Layers },
+                                        { label: 'CORE_LATENCY', value: snapshot.resources.latencyLabel, icon: Timer },
+                                    ].map((res) => (
+                                        <div key={res.label} className="p-4 bg-white/[0.02] border border-white/5 flex flex-col gap-2 group hover:border-white/20 transition-all">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[7px] font-mono text-white/20 tracking-widest uppercase">{res.label}</span>
+                                                <res.icon size={10} className="text-white/20 group-hover:text-rose-500 transition-colors" />
                                             </div>
+                                            <span className="text-[16px] font-black text-white/90 italic">{res.value}</span>
                                         </div>
                                     ))}
                                 </div>
                             </TacticalCard>
                         </div>
 
-                        <div className="space-y-6">
-                            <TacticalCard variant="holographic" title="Метрики навчання" className="rounded-[36px] border-white/10 bg-slate-950/50">
-                                {snapshot.metrics.length > 0 ? (
-                                    <div className="h-[360px]">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={snapshot.metrics}>
-                                                <defs>
-                                                    <linearGradient id="trainingAccuracy" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.28} />
-                                                        <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
-                                                    </linearGradient>
-                                                    <linearGradient id="trainingLoss" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#fb7185" stopOpacity={0.22} />
-                                                        <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
-                                                    </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                                <XAxis dataKey="label" stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} />
-                                                <YAxis yAxisId="accuracy" stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} domain={[0, 100]} />
-                                                <YAxis yAxisId="loss" orientation="right" stroke="#64748b" fontSize={10} axisLine={false} tickLine={false} />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'rgba(2, 6, 23, 0.95)',
-                                                        borderColor: 'rgba(56, 189, 248, 0.2)',
-                                                        borderRadius: '18px',
-                                                        color: '#fff',
-                                                    }}
-                                                    formatter={(value: any, name: string) => {
-                                                        if (value == null) {
-                                                            return ['Н/д', name];
-                                                        }
-
-                                                        return [
-                                                            name === 'Точність' ? `${Math.round(value)}%` : value.toFixed(value < 1 ? 4 : 2),
-                                                            name,
-                                                        ];
-                                                    }}
-                                                />
-                                                <Area yAxisId="accuracy" type="monotone" dataKey="accuracy" stroke="#38bdf8" fill="url(#trainingAccuracy)" strokeWidth={3} name="Точність" connectNulls />
-                                                <Area yAxisId="loss" type="monotone" dataKey="loss" stroke="#fb7185" fill="url(#trainingLoss)" strokeWidth={2} name="Loss" connectNulls />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
+                        {/* Middle Column: Visualization & History */}
+                        <div className="col-span-12 xl:col-span-5 space-y-8">
+                            <TacticalCard variant="cyber" title="NEURAL_ACCURACY_STREAM" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
+                                <div className="flex-1 min-h-0 mt-8">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={snapshot.metrics}>
+                                            <defs>
+                                                <linearGradient id="accuracyGradient" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3}/>
+                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                                            <XAxis 
+                                                dataKey="label" 
+                                                axisLine={false} 
+                                                tickLine={false} 
+                                                tick={{ fill: '#ffffff20', fontSize: 8, fontWeight: 900 }}
+                                            />
+                                            <YAxis 
+                                                axisLine={false} 
+                                                tickLine={false} 
+                                                tick={{ fill: '#ffffff20', fontSize: 8, fontWeight: 900 }}
+                                                domain={[0, 100]}
+                                            />
+                                            <Tooltip 
+                                                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #ffffff10', borderRadius: '4px', fontSize: '10px', color: '#fff' }}
+                                                itemStyle={{ fontWeight: 900, textTransform: 'uppercase' }}
+                                            />
+                                            <Area 
+                                                type="monotone" 
+                                                dataKey="accuracy" 
+                                                stroke="#f43f5e" 
+                                                strokeWidth={3}
+                                                fillOpacity={1} 
+                                                fill="url(#accuracyGradient)" 
+                                                animationDuration={2000}
+                                            />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </div>
+                                <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,1)]" />
+                                        <span>LIVE_TELEMETRY_PHASE_SYNC</span>
                                     </div>
-                                ) : (
-                                    <EmptyState
-                                        title="Метрики епох не повернуті"
-                                        description="Бекенд не надав підтвердженого ряду accuracy/loss. Графік не малює синтетичні точки замість реальних метрик."
-                                    />
-                                )}
-                            </TacticalCard>
-
-                            <TacticalCard variant="glass" title="Журнал навчання" className="overflow-hidden rounded-[36px] border-white/10 bg-slate-950/50">
-                                <div className="flex items-center gap-3 border-b border-white/10 bg-black/20 px-6 py-4">
-                                    <Terminal size={16} className="text-sky-300" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Потік підтверджених повідомлень</span>
-                                </div>
-                                <div className="max-h-[360px] overflow-y-auto px-6 py-5">
-                                    {snapshot.logs.length > 0 ? (
-                                        <div className="space-y-3 font-mono text-[11px]">
-                                            {snapshot.logs.map((log, index) => (
-                                                <motion.div
-                                                    key={`${index}-${log}`}
-                                                    initial={{ opacity: 0, x: -8 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    className="flex gap-3 rounded-2xl border border-white/5 bg-black/20 px-4 py-3"
-                                                >
-                                                    <span className="shrink-0 text-slate-600">{String(index + 1).padStart(2, '0')}</span>
-                                                    <span className="leading-6 text-slate-200">{log}</span>
-                                                </motion.div>
-                                            ))}
-                                            <div ref={logsEndRef} />
-                                        </div>
-                                    ) : (
-                                        <div className="flex min-h-[220px] flex-col items-center justify-center text-center">
-                                            <Terminal className="mb-4 h-10 w-10 text-slate-600" />
-                                            <div className="text-base font-black text-white">Бекенд не повернув журнал навчання</div>
-                                            <div className="mt-2 max-w-xl text-sm leading-6 text-slate-400">
-                                                Консоль не створює локальні рядки і не симулює вивід епох без реальних повідомлень від training API.
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </TacticalCard>
-                        </div>
-
-                        <div className="space-y-6">
-                            <TacticalCard variant="holographic" title="Керування" className="rounded-[36px] border-white/10 bg-slate-950/50">
-                                <div className="space-y-5">
-                                    <div className="rounded-[28px] border border-white/10 bg-black/20 p-5">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">Контур запуску</div>
-                                        <div className="mt-2 text-lg font-black text-white">Навчання запускається лише через бекенд</div>
-                                        <div className="mt-3 text-sm leading-6 text-slate-300">
-                                            Інтерфейс відправляє реальний запит у `POST /ml/training/start`. Локальна імітація тренування вимкнена.
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            void handleStartTraining();
-                                        }}
-                                        disabled={starting || snapshot.session.isRunning}
-                                        className="inline-flex w-full items-center justify-center gap-3 rounded-[28px] border border-sky-400/20 bg-gradient-to-r from-sky-500 to-cyan-500 px-6 py-4 text-[11px] font-black uppercase tracking-[0.28em] text-slate-950 transition hover:shadow-[0_24px_50px_rgba(14,165,233,0.25)] disabled:cursor-not-allowed disabled:opacity-60"
-                                    >
-                                        {starting ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} className="fill-current" />}
-                                        Запустити навчання
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            void loadData(true);
-                                        }}
-                                        disabled={refreshing}
-                                        className="inline-flex w-full items-center justify-center gap-3 rounded-[28px] border border-white/10 bg-white/5 px-6 py-4 text-[11px] font-black uppercase tracking-[0.28em] text-white transition hover:bg-white/10 disabled:opacity-60"
-                                    >
-                                        {refreshing ? <Loader2 size={18} className="animate-spin" /> : <RefreshCw size={18} />}
-                                        Оновити стан
-                                    </button>
+                                    <span>SAMPLES: {snapshot.metrics.length} CYCLES</span>
                                 </div>
                             </TacticalCard>
 
-                            <TacticalCard variant="glass" title="Останні запуски" className="rounded-[36px] border-white/10 bg-slate-950/50">
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between px-2">
+                                    <h3 className="text-[12px] font-black text-white/40 tracking-[0.3em] uppercase italic flex items-center gap-3">
+                                        <HistoryIcon size={14} className="text-rose-500" />
+                                        Training_History
+                                    </h3>
+                                    <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">ARCHIVE_L7</span>
+                                </div>
+                                
                                 {snapshot.runs.length > 0 ? (
-                                    <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-4">
                                         {snapshot.runs.map((run) => (
                                             <RunCard key={run.id} run={run} />
                                         ))}
                                     </div>
                                 ) : (
-                                    <EmptyState
-                                        title="Історія запусків порожня"
-                                        description="Бекенд не повернув завершені або активні ML jobs. Картки не заповнюються демо-результатами."
+                                    <EmptyState 
+                                        title="Історія порожня" 
+                                        description="Жодної підтвердженої сесії навчання не знайдено в локальному або хмарному сховищі." 
                                     />
                                 )}
-                            </TacticalCard>
-
-                            <div className="rounded-[36px] border border-white/10 bg-[linear-gradient(135deg,rgba(14,116,144,0.18),rgba(15,23,42,0.92))] p-6 shadow-[0_22px_60px_rgba(8,47,73,0.35)]">
-                                <div className="flex items-start gap-4">
-                                    <div className="rounded-[24px] border border-emerald-400/20 bg-emerald-500/10 p-3 text-emerald-300">
-                                        {snapshot.session.statusKey === 'ERROR' ? <AlertCircle size={22} /> : <CheckCircle2 size={22} />}
-                                    </div>
-                                    <div>
-                                        <div className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Аналітичний висновок</div>
-                                        <div className="mt-2 text-lg font-black text-white">
-                                            {snapshot.session.isRunning
-                                                ? 'Сесія активна і керується бекендом.'
-                                                : snapshot.session.statusKey === 'COMPLETED'
-                                                    ? 'Останній підтверджений запуск завершився.'
-                                                    : snapshot.session.statusKey === 'ERROR'
-                                                        ? 'Останній підтверджений стан містить помилку.'
-                                                        : 'Активна сесія не підтверджена.'}
-                                        </div>
-                                        <div className="mt-3 text-sm leading-6 text-slate-300">
-                                            Екран показує лише реальні дані з training API. Якщо бракує епох, логів або ресурсних метрик, інтерфейс залишає відповідний блок порожнім замість домальовування.
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+
+                        {/* Right Column: Terminal Logs */}
+                        <div className="col-span-12 xl:col-span-3">
+                            <TacticalCard variant="holographic" title="NEURAL_LOGS_STREAM" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
+                                <div className="flex-1 overflow-auto p-4 font-mono text-[9px] space-y-3 custom-scrollbar">
+                                    {snapshot.logs.length > 0 ? (
+                                        snapshot.logs.map((log, i) => (
+                                            <motion.div 
+                                                initial={{ opacity: 0, x: 10 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                key={i} 
+                                                className="flex gap-3 group"
+                                            >
+                                                <span className="text-rose-500/40 shrink-0 font-black">{`0${i + 1}`.slice(-2)}</span>
+                                                <span className={cn(
+                                                    "transition-colors duration-300",
+                                                    log.includes('ERROR') ? 'text-rose-400 font-bold' : 
+                                                    log.includes('SUCCESS') ? 'text-emerald-400' : 
+                                                    'text-white/40 group-hover:text-white/80'
+                                                )}>
+                                                    {log}
+                                                </span>
+                                            </motion.div>
+                                        ))
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center opacity-20 gap-4 text-center">
+                                            <Terminal size={40} className="animate-pulse" />
+                                            <span className="uppercase tracking-[0.3em] font-black">Waiting for stream...</span>
+                                        </div>
+                                    )}
+                                    <div ref={logsEndRef} />
+                                </div>
+                                <div className="p-4 bg-rose-500/[0.03] border-t border-rose-500/10 flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span className="text-[8px] font-mono font-black text-emerald-500 uppercase tracking-widest italic">STREAM_READY</span>
+                                    </div>
+                                    <ScrollText size={14} className="text-white/20" />
+                                </div>
+                            </TacticalCard>
+                        </div>
+
                     </div>
                 </div>
+
+                {/* Corner Accents */}
+                <div className="absolute top-4 left-4 w-12 h-12 border-t border-l border-white/10 pointer-events-none" />
+                <div className="absolute top-4 right-4 w-12 h-12 border-t border-r border-white/10 pointer-events-none" />
+                <div className="absolute bottom-4 left-4 w-12 h-12 border-b border-l border-white/10 pointer-events-none" />
+                <div className="absolute bottom-4 right-4 w-12 h-12 border-b border-r border-white/10 pointer-events-none" />
             </div>
         </PageTransition>
     );

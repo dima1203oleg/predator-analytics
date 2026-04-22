@@ -55,9 +55,9 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
           )}
           <div className={cn(
             "flex items-center gap-2",
-            session.status === 'ACTIVE' ? "text-emerald-500" : "text-amber-500"
+            session.status === 'ACTIVE' ? "text-emerald-500" : "text-rose-500"
           )}>
-            <div className={cn("w-1.5 h-1.5 rounded-full", session.status === 'ACTIVE' ? "bg-emerald-500 animate-pulse" : "bg-amber-500")} />
+            <div className={cn("w-1.5 h-1.5 rounded-full", session.status === 'ACTIVE' ? "bg-emerald-500 animate-pulse" : "bg-rose-500")} />
             <span className="text-[8px] font-black uppercase tracking-widest">{session.status}</span>
           </div>
         </div>
@@ -77,7 +77,7 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
             <div key={i} className={cn(
               "flex gap-4 p-1 rounded-sm",
               isError ? "bg-red-500/10 text-red-400 border-l-2 border-red-500" :
-              isWarning ? "bg-amber-500/10 text-amber-400 border-l-2 border-amber-500" :
+              isWarning ? "bg-rose-500/10 text-rose-400 border-l-2 border-rose-500" :
               isSystem ? "text-blue-400 font-black italic" : "text-slate-400"
             )}>
               <span className="text-slate-600 select-none w-10 text-right">{i + 1}</span>
@@ -95,8 +95,8 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
       {/* Footer */}
       <div className="px-6 py-3 border-t border-white/5 flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <AlertTriangle size={12} className="text-amber-400" />
-          <span className="text-[8px] font-black text-amber-500 uppercase tracking-[0.2em]">Sandbox_Integrity_Monitor: NORMAL</span>
+          <AlertTriangle size={12} className="text-rose-400" />
+          <span className="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em]">Sandbox_Integrity_Monitor: NORMAL</span>
         </div>
       </div>
     </div>

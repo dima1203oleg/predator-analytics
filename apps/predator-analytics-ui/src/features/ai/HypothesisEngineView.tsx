@@ -107,7 +107,7 @@ const STATUS_CFG = {
   confirmed: { label: 'ПІДТВЕРДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
   probable:  { label: 'ЙМОВІРНО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
   possible:  { label: 'МОЖЛИВО',     color: '#475569', bg: 'bg-slate-900/15',   border: 'border-slate-800/30',  icon: Eye },
-  refuted:   { label: 'СПРОСТОВАНО', color: '#F59E0B', bg: 'bg-amber-900/15',    border: 'border-amber-800/30',   icon: Lock },
+  refuted:   { label: 'СПРОСТОВАНО', color: '#F59E0B', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
 };
 
 const CATEGORY_CFG = {
@@ -524,10 +524,10 @@ const HypothesisEngineView: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-amber-500/10 rounded-2xl"><Target size={20} className="text-amber-500" /></div>
+                        <div className="p-3 bg-rose-500/10 rounded-2xl"><Target size={20} className="text-rose-500" /></div>
                         <div>
                            <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase italic font-bold">ОПЕРАТИВНИЙ ВПЛИВ</p>
-                           <p className="text-[13px] font-black text-amber-500 font-mono italic uppercase">{selected.impactValue}</p>
+                           <p className="text-[13px] font-black text-rose-500 font-mono italic uppercase">{selected.impactValue}</p>
                         </div>
                       </div>
                     </div>
@@ -578,8 +578,8 @@ const HypothesisEngineView: React.FC = () => {
 
                   {/* РЕКОМЕНДОВАНИ ДІЇ WRAITH */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
-                    <h3 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                      <Target size={20} className="text-amber-500 animate-pulse" />
+                    <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
+                      <Target size={20} className="text-rose-500 animate-pulse" />
                       Цілі Операції
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

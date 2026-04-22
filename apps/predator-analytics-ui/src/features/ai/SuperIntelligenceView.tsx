@@ -98,13 +98,13 @@ const SuperIntelligenceView: React.FC = () => {
                                 }}
                                 className="flex-1 sm:flex-none px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all shadow-xl group"
                             >
-                                <Sparkles size={14} className="group-hover:rotate-12 transition-transform text-amber-400" />
+                                <Sparkles size={14} className="group-hover:rotate-12 transition-transform text-rose-400" />
                                 {availableScenarios[0]?.name || 'СЦЕНАРІЙ'}
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                 onClick={toggleLoop}
-                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-amber-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
+                                className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
                                 {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТРИЦІ'}

@@ -78,12 +78,12 @@ type ToneKey = 'amber' | 'emerald' | 'rose' | 'sky' | 'gold' | 'slate';
 
 const TONE_CLASSES: Record<ToneKey, { border: string; bg: string; text: string; badge: string; dot: string; bar: string }> = {
   amber: {
-    border: 'border-amber-500/25',
-    bg: 'bg-amber-500/10',
-    text: 'text-amber-400',
-    badge: 'border-amber-500/25 bg-amber-500/10 text-amber-300',
-    dot: 'bg-amber-400',
-    bar: 'bg-amber-400/80',
+    border: 'border-rose-500/25',
+    bg: 'bg-rose-500/10',
+    text: 'text-rose-400',
+    badge: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+    dot: 'bg-rose-400',
+    bar: 'bg-rose-400/80',
   },
   emerald: {
     border: 'border-emerald-500/25',
@@ -102,12 +102,12 @@ const TONE_CLASSES: Record<ToneKey, { border: string; bg: string; text: string; 
     bar: 'bg-rose-400/80',
   },
   sky: {
-    border: 'border-sky-500/25',
-    bg: 'bg-sky-500/10',
-    text: 'text-sky-400',
-    badge: 'border-sky-500/25 bg-sky-500/10 text-sky-300',
-    dot: 'bg-sky-400',
-    bar: 'bg-sky-400/80',
+    border: 'border-rose-500/25',
+    bg: 'bg-rose-500/10',
+    text: 'text-rose-400',
+    badge: 'border-rose-500/25 bg-rose-500/10 text-rose-300',
+    dot: 'bg-rose-400',
+    bar: 'bg-rose-400/80',
   },
   gold: {
     border: 'border-[#D4AF37]/25',
@@ -132,7 +132,7 @@ const TONE_CLASSES: Record<ToneKey, { border: string; bg: string; text: string; 
 /** Порожній стан — API не повернув даних */
 const EmptyState = ({ title, description }: { title: string; description: string }) => (
   <div className="flex min-h-[200px] flex-col items-center justify-center rounded-[28px] border border-dashed border-white/10 bg-black/20 p-8 text-center">
-    <AlertCircle className="mb-4 h-9 w-9 text-amber-400" />
+    <AlertCircle className="mb-4 h-9 w-9 text-rose-400" />
     <div className="text-base font-black text-white">{title}</div>
     <div className="mt-2 max-w-xl text-sm leading-6 text-slate-400">{description}</div>
   </div>
@@ -161,8 +161,8 @@ const AgentCard = ({ agent, onClick }: { agent: AgentCardSnapshot; onClick?: () 
         </div>
         <div className="flex items-center gap-2">
           {agent.isBusy ? (
-            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-amber-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-rose-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
               Активний
             </span>
           ) : (
@@ -214,7 +214,7 @@ const TaskRow = ({
       className={cn(
         'grid grid-cols-[1fr_120px_90px_90px_80px_36px] gap-3 rounded-[20px] border px-4 py-3.5 text-sm transition-all cursor-pointer',
         isSelected
-          ? 'border-amber-500/40 bg-amber-500/10'
+          ? 'border-rose-500/40 bg-rose-500/10'
           : 'border-white/5 bg-black/20 hover:bg-white/5',
       )}
     >
@@ -280,7 +280,7 @@ const TaskRow = ({
 const LogLine = ({ log }: { log: AgentTaskLog }) => {
   const colorMap: Record<AgentTaskLog['level'], string> = {
     info: 'text-slate-300',
-    warn: 'text-amber-400',
+    warn: 'text-rose-400',
     error: 'text-rose-400',
     debug: 'text-slate-500',
   };
@@ -455,7 +455,7 @@ export function AntigravityAgiTab() {
             className={cn(
               'flex items-center justify-between gap-4 rounded-[22px] border px-5 py-3.5 text-sm leading-6',
               feedback.tone === 'amber'
-                ? 'border-amber-500/25 bg-amber-500/10 text-amber-200'
+                ? 'border-rose-500/25 bg-rose-500/10 text-rose-200'
                 : 'border-emerald-500/25 bg-emerald-500/10 text-emerald-200',
             )}
           >
@@ -511,11 +511,11 @@ export function AntigravityAgiTab() {
         {/* KPI-рядок */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {/* Активні задачі */}
-          <div className="rounded-[22px] border border-amber-500/20 bg-black/30 p-4">
+          <div className="rounded-[22px] border border-rose-500/20 bg-black/30 p-4">
             <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">
               Активні задачі
             </div>
-            <div className="mt-2 text-2xl font-black text-amber-400">{snapshot.activeTasks}</div>
+            <div className="mt-2 text-2xl font-black text-rose-400">{snapshot.activeTasks}</div>
           </div>
 
           {/* Завершено */}
@@ -561,7 +561,7 @@ export function AntigravityAgiTab() {
             </div>
             <div className={cn('mt-2 text-sm font-black',
               snapshot.llmStatus === 'online' ? 'text-emerald-400' :
-              snapshot.llmStatus === 'degraded' ? 'text-amber-400' : 'text-rose-400'
+              snapshot.llmStatus === 'degraded' ? 'text-rose-400' : 'text-rose-400'
             )}>
               {getLlmStatusLabel(snapshot.llmStatus)}
             </div>
@@ -577,7 +577,7 @@ export function AntigravityAgiTab() {
             </div>
             <div className={cn('mt-2 text-sm font-black',
               snapshot.sandboxStatus === 'online' ? 'text-emerald-400' :
-              snapshot.sandboxStatus === 'initializing' ? 'text-amber-400' : 'text-rose-400'
+              snapshot.sandboxStatus === 'initializing' ? 'text-rose-400' : 'text-rose-400'
             )}>
               {getSandboxStatusLabel(snapshot.sandboxStatus)}
             </div>
@@ -613,7 +613,7 @@ export function AntigravityAgiTab() {
               <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-300">
                 Черга AGI-задач
               </span>
-              <Badge className="border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[10px] font-black text-amber-300">
+              <Badge className="border border-rose-500/25 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
                 {tasks.length}
               </Badge>
             </div>
@@ -782,7 +782,7 @@ export function AntigravityAgiTab() {
                     onChange={(e) => setFormDesc(e.target.value)}
                     rows={4}
                     placeholder="Наприклад: Створити FastAPI сервіс з авторизацією через JWT та CRUD для товарів митна декларація. Включити Dockerfile та GitHub Actions CI…"
-                    className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30 resize-none"
+                    className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-rose-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/30 resize-none"
                   />
                   <div className="mt-1 flex justify-end">
                     <span className={cn('text-[10px] font-mono', formDesc.length < 10 ? 'text-slate-600' : 'text-slate-500')}>
@@ -801,7 +801,7 @@ export function AntigravityAgiTab() {
                       id="antigravity-task-priority"
                       value={formPriority}
                       onChange={(e) => setFormPriority(e.target.value as AgentTaskPriority)}
-                      className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none"
+                      className="w-full rounded-[18px] border border-white/10 bg-black/40 px-4 py-3 text-sm text-slate-200 focus:border-rose-500/50 focus:outline-none"
                     >
                       <option value="low">Низький</option>
                       <option value="medium">Середній</option>
@@ -825,7 +825,7 @@ export function AntigravityAgiTab() {
                         value={formBudget}
                         onChange={(e) => setFormBudget(e.target.value)}
                         placeholder="5.00"
-                        className="w-full rounded-[18px] border border-white/10 bg-black/40 pl-9 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-amber-500/50 focus:outline-none"
+                        className="w-full rounded-[18px] border border-white/10 bg-black/40 pl-9 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-rose-500/50 focus:outline-none"
                       />
                     </div>
                   </div>

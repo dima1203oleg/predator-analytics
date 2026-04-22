@@ -118,7 +118,7 @@ const MOCK_SCENARIOS: Scenario[] = [
 // ─── Конфігурація категорій ───────────────────────────────────────────────────
 
 const CATEGORY_CONFIG: Record<ScenarioCategory, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  market: { label: 'Ринок', color: 'text-amber-400 bg-amber-500/10 border-amber-500/25', icon: TrendingUp },
+  market: { label: 'Ринок', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: TrendingUp },
   risk: { label: 'Ризик', color: 'text-rose-400 bg-rose-500/10 border-rose-500/25', icon: AlertTriangle },
   aml: { label: 'AML', color: 'text-orange-400 bg-orange-500/10 border-orange-500/25', icon: Shield },
   geopolitical: { label: 'Геополітика', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/25', icon: Globe },
@@ -126,7 +126,7 @@ const CATEGORY_CONFIG: Record<ScenarioCategory, { label: string; color: string; 
 
 const STATUS_CONFIG: Record<ScenarioStatus, { label: string; color: string }> = {
   draft: { label: 'Чернетка', color: 'text-white/40' },
-  running: { label: 'Виконується...', color: 'text-blue-400' },
+  running: { label: 'Виконується...', color: 'text-rose-400' },
   completed: { label: 'Завершено', color: 'text-emerald-400' },
   failed: { label: 'Помилка', color: 'text-rose-400' },
 };
@@ -187,7 +187,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
         <div className="flex items-center gap-4 flex-shrink-0">
           {scenario.confidence !== undefined && (
             <div className="text-right">
-              <div className="text-sm font-bold font-mono text-blue-400">{scenario.confidence}%</div>
+              <div className="text-sm font-bold font-mono text-rose-400">{scenario.confidence}%</div>
               <div className="text-[10px] text-white/30">впевненість</div>
             </div>
           )}
@@ -218,7 +218,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
                     max={param.max}
                     value={param.value}
                     readOnly
-                    className="w-full h-1.5 rounded-full appearance-none bg-white/10 accent-blue-500"
+                    className="w-full h-1.5 rounded-full appearance-none bg-white/10 accent-rose-500"
                   />
                   <div className="flex justify-between text-[9px] text-white/20 font-mono">
                     <span>{param.min}</span>
@@ -248,7 +248,7 @@ function ScenarioCard({ scenario }: { scenario: Scenario }) {
           )}
 
           {scenario.status === 'draft' && (
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 border border-blue-500/25 text-sm text-blue-400 hover:bg-blue-500/20 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 border border-rose-500/25 text-sm text-rose-400 hover:bg-rose-500/20 transition-colors">
               <Play className="w-4 h-4" />
               Запустити симуляцію
             </button>
@@ -267,8 +267,8 @@ export const ScenarioModelingView: React.FC = () => {
       {/* Заголовок */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-            <FlaskConical className="w-5 h-5 text-blue-400" />
+          <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+            <FlaskConical className="w-5 h-5 text-rose-400" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white tracking-tight">Сценарне Моделювання</h1>
@@ -278,7 +278,7 @@ export const ScenarioModelingView: React.FC = () => {
           </div>
         </div>
 
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-blue-500/30 text-xs text-blue-400 hover:bg-blue-500/10 transition-colors">
+        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-rose-500/30 text-xs text-rose-400 hover:bg-rose-500/10 transition-colors">
           <Plus className="w-3.5 h-3.5" />
           Новий сценарій
         </button>
@@ -289,8 +289,8 @@ export const ScenarioModelingView: React.FC = () => {
         {[
           { label: 'Всього сценаріїв', value: MOCK_SCENARIOS.length, color: 'text-white/60', icon: GitBranch },
           { label: 'Завершені', value: MOCK_SCENARIOS.filter(s => s.status === 'completed').length, color: 'text-emerald-400', icon: CheckCircle2 },
-          { label: 'Серед. впевненість', value: '74%', color: 'text-blue-400', icon: Sparkles },
-          { label: 'Чернетки', value: MOCK_SCENARIOS.filter(s => s.status === 'draft').length, color: 'text-amber-400', icon: FlaskConical },
+          { label: 'Серед. впевненість', value: '74%', color: 'text-rose-400', icon: Sparkles },
+          { label: 'Чернетки', value: MOCK_SCENARIOS.filter(s => s.status === 'draft').length, color: 'text-rose-400', icon: FlaskConical },
         ].map(({ label, value, color, icon: Icon }) => (
           <div key={label} className="p-4 rounded-lg bg-white/[0.03] border border-white/[0.06]">
             <div className="flex items-center gap-2 mb-2">
@@ -303,9 +303,9 @@ export const ScenarioModelingView: React.FC = () => {
       </div>
 
       {/* AI-плашка */}
-      <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/[0.04] border border-blue-500/[0.12]">
-        <BrainCircuit className="w-4 h-4 text-blue-400 flex-shrink-0" />
-        <p className="text-xs text-blue-400/70">
+      <div className="flex items-center gap-3 p-3 rounded-lg bg-rose-500/[0.04] border border-rose-500/[0.12]">
+        <BrainCircuit className="w-4 h-4 text-rose-400 flex-shrink-0" />
+        <p className="text-xs text-rose-400/70">
           ШІ-сценарії генеруються GLM-5.1 (Lead Architect) та верифікуються Nemotron-30B.
           Результати мають рекомендаційний характер.
         </p>

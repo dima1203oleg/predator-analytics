@@ -39,7 +39,7 @@ export function PipelineTable({ data }: { data: KnowledgePattern[] }) {
     }),
     columnHelper.accessor('gold', {
       header: 'Gold',
-      cell: info => info.getValue() ? <Star className="w-4 h-4 text-amber-400 fill-amber-400" /> : null
+      cell: info => info.getValue() ? <Star className="w-4 h-4 text-rose-400 fill-rose-400" /> : null
     }),
     columnHelper.accessor('timestamp', {
       header: 'Дата',

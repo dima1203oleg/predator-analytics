@@ -60,6 +60,7 @@ from app.routers import (
     admin_chaos_router,
     graph_intelligence_router,
     forecast_router,
+    orchestrator_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -249,6 +250,7 @@ ROUTERS = [
     ("/api/v1", graph_intelligence_router),
     ("/api/v1", system_router),
     ("/api/v1", stats_router),
+    ("/api/v1", orchestrator_router),
 ]
 
 for prefix, router in ROUTERS:

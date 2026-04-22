@@ -415,7 +415,7 @@ export default function FactoryStudio() {
                             ? 'bg-emerald-500/10 border-emerald-500/20'
                             : testResult.error 
                               ? 'bg-red-500/10 border-red-500/20'
-                              : 'bg-amber-500/10 border-amber-500/20'
+                              : 'bg-rose-500/10 border-rose-500/20'
                         )}
                       >
                         <div className="flex items-center gap-2">
@@ -424,7 +424,7 @@ export default function FactoryStudio() {
                           ) : testResult.error ? (
                             <AlertCircle className="w-5 h-5 text-red-400" />
                           ) : (
-                            <AlertCircle className="w-5 h-5 text-amber-400" />
+                            <AlertCircle className="w-5 h-5 text-rose-400" />
                           )}
                           <div className="text-sm font-bold text-white">
                             {testResult.status === 'created'

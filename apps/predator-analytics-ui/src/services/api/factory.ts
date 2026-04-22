@@ -136,4 +136,21 @@ export const factoryApi = {
   launchChaos: async (scenario: string) => {
     return (await apiClient.post(`/factory/chaos/launch?scenario=${scenario}`)).data;
   },
+
+  // ─── Infrastructure Orchestration ─────────────────────────────────────────
+
+  /** Перезапустити конкретний под */
+  restartPod: async (podId: string) => {
+    return (await apiClient.post(`/orchestrator/pods/${podId}/restart`)).data;
+  },
+
+  /** Збільшити кількість реплік пода */
+  scalePod: async (podId: string, delta: number = 1) => {
+    return (await apiClient.post(`/orchestrator/pods/${podId}/scale`, { delta })).data;
+  },
+
+  /** Зменшити кількість реплік пода */
+  scaleDownPod: async (podId: string) => {
+    return (await apiClient.post(`/orchestrator/pods/${podId}/scale-down`)).data;
+  },
 };

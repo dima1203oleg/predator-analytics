@@ -61,7 +61,7 @@ const SystemPromptsView = () => {
       <ViewHeader 
         title="СИСТЕМНІ ПРОМПТИ ШІ"
         subtitle="Керування інструкціями для нейромереж та системної логіки PREDATOR"
-        icon={<Terminal size={24} className="text-amber-400" />}
+        icon={<Terminal size={24} className="text-rose-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ПРОМПТИ']}
         stats={[
           { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
@@ -76,9 +76,9 @@ const SystemPromptsView = () => {
            <div className="space-y-4">
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-2 mb-6 italic">КАТЕГОРІЇ_СУТНОСТЕЙ</h3>
               {promptCategories.map(cat => (
-                 <TacticalCard key={cat.id} variant="holographic" className="p-5 hover:border-amber-500/30 transition-all cursor-pointer group">
+                 <TacticalCard key={cat.id} variant="holographic" className="p-5 hover:border-rose-500/30 transition-all cursor-pointer group">
                     <div className="flex items-center justify-between mb-4">
-                       <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500 border border-amber-500/20 group-hover:scale-110 transition-transform">
+                       <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:scale-110 transition-transform">
                           <cat.icon size={18} />
                        </div>
                        <Badge variant={cat.status === 'Critical' ? 'destructive' : 'secondary'} className="text-[8px] font-black">
@@ -86,16 +86,16 @@ const SystemPromptsView = () => {
                        </Badge>
                     </div>
                     <div className="space-y-1">
-                       <h4 className="text-[12px] font-black text-white group-hover:text-amber-400 transition-colors uppercase">{cat.label}</h4>
+                       <h4 className="text-[12px] font-black text-white group-hover:text-rose-400 transition-colors uppercase">{cat.label}</h4>
                        <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest leading-none">{cat.count} ДИРЕКТИВ</p>
                     </div>
                  </TacticalCard>
               ))}
            </div>
            
-           <TacticalCard variant="cyber" className="p-6 bg-amber-500/5 border-amber-500/20">
+           <TacticalCard variant="cyber" className="p-6 bg-rose-500/5 border-rose-500/20">
               <div className="flex items-center gap-3 mb-6">
-                 <Shield className="text-amber-500 h-5 w-5" />
+                 <Shield className="text-rose-500 h-5 w-5" />
                  <span className="text-[10px] font-black text-white uppercase tracking-widest italic leading-none">CORTEX SECURITY OK</span>
               </div>
               <p className="text-[11px] text-slate-500 uppercase tracking-tighter sm:font-mono italic">Усі системні промпти проходять через Firewall на наявність Leak-ин'єкцій.</p>
@@ -106,7 +106,7 @@ const SystemPromptsView = () => {
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v58.2-WRAITH</h3>
-              <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-amber-400">
+              <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-rose-400">
                  <RefreshCw size={14} />
               </Button>
            </div>
@@ -119,13 +119,13 @@ const SystemPromptsView = () => {
                 className={cn(
                    "p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-4",
                    selectedPrompt === p.id 
-                     ? "bg-amber-500/10 border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]" 
+                     ? "bg-rose-500/10 border-rose-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]" 
                      : "bg-slate-900/40 border-white/5 hover:border-white/10"
                 )}
               >
                  <div className="flex items-center justify-between">
                     <div className="flex flex-col">
-                       <span className="text-[13px] font-black text-white group-hover:text-amber-400 transition-colors tracking-tight italic">{p.name}</span>
+                       <span className="text-[13px] font-black text-white group-hover:text-rose-400 transition-colors tracking-tight italic">{p.name}</span>
                        <span className="text-[9px] font-mono text-slate-600 flex items-center gap-2">
                           <FileCode size={10} /> {p.id} | {p.version}
                        </span>
@@ -148,8 +148,8 @@ const SystemPromptsView = () => {
               <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-b border-white/5">
                  <div className="flex items-center gap-4">
                     <div className="flex items-center gap-3">
-                       <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
-                       <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
+                       <div className="w-2.5 h-2.5 rounded-full bg-rose-500/50" />
+                       <div className="w-2.5 h-2.5 rounded-full bg-rose-500/50" />
                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
                     </div>
                     <div className="w-px h-6 bg-white/10 mx-2" />
@@ -169,9 +169,9 @@ const SystemPromptsView = () => {
                  {selectedPrompt ? (
                     <div className="space-y-4">
                        <p className="text-emerald-400/60 break-all leading-tight">{"/* SYSTEM_CONTEXT_INITIALIZATION */"}</p>
-                       <p><span className="text-amber-500">ROLE:</span> Senior Strategic Analyst covering Customs Ukraine Infrastructure.</p>
-                       <p><span className="text-amber-500">MISSION:</span> Identify high-risk entities and corruption-related anomalies in real-time streams.</p>
-                       <p><span className="text-amber-500">CONSTRAINTS:</span> 1. Neutral analytical tone. 2. Legal compliance strict checking. 3. Zero hallucination policy.</p>
+                       <p><span className="text-rose-500">ROLE:</span> Senior Strategic Analyst covering Customs Ukraine Infrastructure.</p>
+                       <p><span className="text-rose-500">MISSION:</span> Identify high-risk entities and corruption-related anomalies in real-time streams.</p>
+                       <p><span className="text-rose-500">CONSTRAINTS:</span> 1. Neutral analytical tone. 2. Legal compliance strict checking. 3. Zero hallucination policy.</p>
                        <div className="w-full h-px bg-white/10 my-4" />
                        <p><span className="text-yellow-400">INSTRUCTION_SET:</span> Analyze 'HS_CODE' against historical seasonal deviations of +/- 15%. If 'IMPORT_VALUE' exceeds median for 'COUNTRY_OF_ORIGIN' by 300%, flag as 'CRITICAL_RISK'.</p>
                        <p className="animate-pulse opacity-40">|</p>
@@ -193,7 +193,7 @@ const SystemPromptsView = () => {
                        TOKEN_COST: $0.002
                     </div>
                  </div>
-                 <Button className="bg-amber-600 hover:bg-amber-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic">
+                 <Button className="bg-rose-600 hover:bg-rose-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic">
                     <Play size={12} className="mr-2" /> ТЕСТ_ІНФЕРЕНСУ
                  </Button>
               </div>

@@ -112,7 +112,7 @@ const getTrendBorder = (direction: EvolutionTrend['direction']) => {
 
 const getPriorityBadge = (p: RefactorProposal['priority']) => {
   if (p === 'high') return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
-  if (p === 'medium') return 'border-amber-500/30 bg-amber-500/10 text-amber-300';
+  if (p === 'medium') return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
   return 'border-slate-500/30 bg-slate-500/10 text-slate-400';
 };
 
@@ -125,7 +125,7 @@ const getPriorityLabel = (p: RefactorProposal['priority']) => {
 const getStatusBadge = (s: RefactorProposal['status']) => {
   if (s === 'accepted') return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
   if (s === 'rejected') return 'border-slate-500/20 bg-slate-500/5 text-slate-600';
-  return 'border-amber-500/30 bg-amber-500/10 text-amber-300';
+  return 'border-rose-500/30 bg-rose-500/10 text-rose-300';
 };
 
 const getStatusLabel = (s: RefactorProposal['status']) => {
@@ -214,10 +214,10 @@ export function EvolutionAgentPanel() {
 
       {/* ── EvolutionAgent Header ── */}
       <div className="rounded-[32px] border border-[#D4AF37]/20 bg-gradient-to-br from-slate-950/90 to-black/70 p-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.06),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(225,29,72,0.06),transparent_60%)] pointer-events-none" />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+            <div className="w-14 h-14 rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.2)]">
               <BrainCircuit size={28} className="text-[#D4AF37]" />
             </div>
             <div>
@@ -244,8 +244,8 @@ export function EvolutionAgentPanel() {
                 <div className="text-2xl font-black text-rose-400">{degradingCount}</div>
                 <div className="text-[9px] text-slate-500 uppercase font-black">Деградують</div>
               </div>
-              <div className="text-center px-4 py-3 border border-amber-500/20 bg-amber-950/20 rounded-2xl">
-                <div className="text-2xl font-black text-amber-400">{proposals.filter((p) => p.status === 'pending').length}</div>
+              <div className="text-center px-4 py-3 border border-rose-500/20 bg-rose-950/20 rounded-2xl">
+                <div className="text-2xl font-black text-rose-400">{proposals.filter((p) => p.status === 'pending').length}</div>
                 <div className="text-[9px] text-slate-500 uppercase font-black">Пропозиції</div>
               </div>
             </div>
@@ -318,7 +318,7 @@ export function EvolutionAgentPanel() {
                 'rounded-[24px] border p-5 transition-all',
                 proposal.status === 'accepted' ? 'border-emerald-500/20 bg-emerald-950/10' :
                 proposal.status === 'rejected' ? 'border-white/5 bg-black/10 opacity-50' :
-                'border-amber-500/20 bg-amber-950/10',
+                'border-rose-500/20 bg-rose-950/10',
               )}
             >
               <div className="flex items-start justify-between gap-4 mb-3">
@@ -341,8 +341,8 @@ export function EvolutionAgentPanel() {
               </div>
 
               <div className="flex items-center gap-2 mb-2">
-                <ChevronRight size={11} className="text-amber-400 shrink-0" />
-                <span className="text-[11px] font-black uppercase tracking-wider text-amber-400">{proposal.component}</span>
+                <ChevronRight size={11} className="text-rose-400 shrink-0" />
+                <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">{proposal.component}</span>
               </div>
               <p className="text-sm text-slate-300 leading-6 mb-4">{proposal.description}</p>
 
@@ -381,8 +381,8 @@ export function EvolutionAgentPanel() {
             <Terminal size={14} className="text-[#D4AF37]" />
             <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#D4AF37]">EvolutionAgent · Термінал</span>
             {isAnalyzing && (
-              <span className="flex items-center gap-1.5 text-[10px] text-amber-300 font-black uppercase ml-auto">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="flex items-center gap-1.5 text-[10px] text-rose-300 font-black uppercase ml-auto">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
                 виконується
               </span>
             )}
@@ -392,7 +392,7 @@ export function EvolutionAgentPanel() {
               <div key={i} className={cn(
                 'py-0.5',
                 log.includes('[DETECTION]') ? 'text-rose-400' :
-                log.includes('[PROPOSALS]') ? 'text-amber-300' :
+                log.includes('[PROPOSALS]') ? 'text-rose-300' :
                 log.includes('[EVOLUTION]') ? 'text-[#D4AF37]' :
                 'text-slate-400',
               )}>

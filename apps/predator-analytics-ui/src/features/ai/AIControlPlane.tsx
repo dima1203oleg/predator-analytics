@@ -53,16 +53,16 @@ const toneClasses: Record<AIControlTone, { border: string; panel: string; text: 
     badge: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400',
   },
   amber: {
-    border: 'border-amber-500/20',
-    panel: 'bg-amber-500/10',
-    text: 'text-amber-400',
-    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
+    border: 'border-rose-500/20',
+    panel: 'bg-rose-500/10',
+    text: 'text-rose-400',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
   },
   sky: {
-    border: 'border-amber-500/20', 
-    panel: 'bg-amber-500/10',
-    text: 'text-amber-500',
-    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-500',
+    border: 'border-rose-500/20', 
+    panel: 'bg-rose-500/10',
+    text: 'text-rose-500',
+    badge: 'border-rose-500/20 bg-rose-500/10 text-rose-500',
   },
   gold: {
     border: 'border-[#D4AF37]/20',
@@ -106,7 +106,7 @@ const governanceCards = [
 
 const EmptyState = ({ title, description }: { title: string; description: string }) => (
   <div className="flex min-h-[260px] flex-col items-center justify-center rounded-[32px] border border-dashed border-white/10 bg-black/20 px-8 text-center">
-    <AlertCircle className="mb-4 h-10 w-10 text-amber-300" />
+    <AlertCircle className="mb-4 h-10 w-10 text-rose-300" />
     <div className="text-lg font-black text-white">{title}</div>
     <div className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">{description}</div>
   </div>

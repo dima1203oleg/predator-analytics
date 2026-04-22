@@ -178,7 +178,7 @@ const EngineCardHeader: React.FC<{ engine: typeof ENGINES[0] }> = ({ engine }) =
                     <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">{engine.name}</h2>
                     <Badge className={cn(
                         "font-black text-[10px] px-3 py-1 italic tracking-widest uppercase",
-                        engine.status === 'ACTIVE' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse"
+                        engine.status === 'ACTIVE' ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" : "bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse"
                     )}>
                         {engine.status}
                     </Badge>
@@ -464,8 +464,8 @@ const EnginesView: React.FC = () => {
                                             <ReactECharts option={gaugeOption} style={{ height: '220px', width: '100%' }} />
                                         </div>
                                         <div className="flex items-center gap-3 mt-4">
-                                            {selectedEngine.trend > 0 ? <ArrowUpRight className="text-emerald-400" size={18} /> : <ArrowDownRight className="text-amber-400" size={18} />}
-                                            <span className={cn("text-sm font-black italic", selectedEngine.trend > 0 ? "text-emerald-400" : "text-amber-400")}>
+                                            {selectedEngine.trend > 0 ? <ArrowUpRight className="text-emerald-400" size={18} /> : <ArrowDownRight className="text-rose-400" size={18} />}
+                                            <span className={cn("text-sm font-black italic", selectedEngine.trend > 0 ? "text-emerald-400" : "text-rose-400")}>
                                                 {selectedEngine.trend > 0 ? '+' : ''}{selectedEngine.trend}% (24г)
                                             </span>
                                         </div>

@@ -328,21 +328,14 @@ async def run_system_diagnostics(request: Request) -> dict[str, Any]:
 @router.get("/cluster")
 async def get_cluster_status(request: Request) -> dict[str, Any]:
     """Отримати фактичний зведений стан сервісів для UI моніторингу."""
+    from app.services.orchestrator_service import orchestrator_service
+    
     health = await _health_snapshot()
     stats = _collect_system_stats(request)
-    age = stats["uptime"]
+    pods_data = await orchestrator_service.get_pods()
 
-    pods = [
-        {
-            "name": f"predator-{name}",
-            "status": _status_to_pod_state(service.get("status", "unknown")),
-            "cpu": f"{stats['cpu_percent'] / max(len(health['services']), 1):.0f}%",
-            "mem": f"{stats['memory_percent'] / max(len(health['services']), 1):.0f}%",
-            "restarts": 0,
-            "age": age,
-        }
-        for name, service in health.get("services", {}).items()
-    ]
+    # Перетворюємо об'єкти PodStatus у словники для JSON
+    pods = [pod.dict() for pod in pods_data]
 
     return {
         "status": health["status"],

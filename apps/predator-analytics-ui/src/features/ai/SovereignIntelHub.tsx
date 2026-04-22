@@ -175,7 +175,7 @@ export default function SovereignIntelHub() {
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className={cn(
                                                     "w-2 h-2 rounded-full shadow-[0_0_10px_currentColor]",
-                                                    t.stage === 'observation' ? 'text-sky-400 bg-sky-400' :
+                                                    t.stage === 'observation' ? 'text-rose-400 bg-rose-400' :
                                                     t.stage === 'analysis' ? 'text-yellow-400 bg-yellow-400' : 'text-emerald-400 bg-emerald-400'
                                                 )} />
                                                 <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">

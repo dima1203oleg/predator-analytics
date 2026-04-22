@@ -2,7 +2,7 @@ import type { SystemStatsResponse } from '@/services/api/system';
 
 type UnknownRecord = Record<string, unknown>;
 
-export type TrainingTone = 'emerald' | 'amber' | 'slate' | 'sky';
+export type TrainingTone = 'emerald' | 'amber' | 'slate' | 'rose';
 export type TrainingStatusKey = 'IDLE' | 'TRAINING' | 'COMPLETED' | 'ERROR';
 
 export interface TrainingMetricPoint {

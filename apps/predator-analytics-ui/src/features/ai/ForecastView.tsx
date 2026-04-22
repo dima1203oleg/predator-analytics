@@ -285,9 +285,9 @@ const ForecastView: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-xl flex items-start gap-3">
-                                    <AlertCircle className="text-amber-500 shrink-0" size={16} />
-                                    <p className="text-[10px] text-amber-200/70 leading-relaxed">
+                                <div className="p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl flex items-start gap-3">
+                                    <AlertCircle className="text-rose-500 shrink-0" size={16} />
+                                    <p className="text-[10px] text-rose-200/70 leading-relaxed">
                                         УВАГА: Результати базуються на імовірнісних моделях. Висока волатильність митних даних може впливати на точність.
                                     </p>
                                 </div>

@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { Activity, Cpu, HardDrive, Wifi, Thermometer, Server, Monitor, Layers } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Activity, Cpu, HardDrive, Wifi, Thermometer, Server, Monitor, Layers, Shield, Zap, Globe, Cpu as CpuIcon, Box } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 import { useInfraTelemetry } from '@/hooks/useAdminApi';
@@ -19,6 +20,8 @@ interface NodeMetric {
   net: string;       // rx/tx
   status: 'online' | 'offline' | 'degraded';
   uptime: string;
+  ip?: string;
+  kernel?: string;
 }
 
 interface ServiceStatus {
@@ -31,144 +34,182 @@ interface ServiceStatus {
 
 // ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
 
-// ─── Допоміжні UI-компоненти ──────────────────────────────────────────────────
-
 interface GaugeBarProps {
   value: number;
   max?: number;
   warnAt?: number;
   dangerAt?: number;
   unit?: string;
-  mono?: boolean;
+  label?: string;
 }
 
 const GaugeBar: React.FC<GaugeBarProps> = ({
-  value, max = 100, warnAt = 75, dangerAt = 90, unit = '%', mono = true,
+  value, max = 100, warnAt = 75, dangerAt = 90, unit = '%', label
 }) => {
   const pct = Math.min((value / max) * 100, 100);
-  const color =
-    pct >= dangerAt ? 'bg-red-500' :
-    pct >= warnAt   ? 'bg-amber-500' :
-                      'bg-rose-500';
+  const isDanger = pct >= dangerAt;
+  const isWarning = pct >= warnAt && !isDanger;
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-white/8 rounded-full overflow-hidden">
-        <div className={cn('h-full rounded-full transition-all duration-1000', color)} style={{ width: `${pct}%` }} />
+    <div className="flex flex-col gap-1 w-full">
+      <div className="flex justify-between items-center text-[8px] font-mono tracking-tighter">
+        <span className="text-white/30 uppercase">{label}</span>
+        <span className={cn(
+          "font-bold",
+          isDanger ? "text-rose-500" : isWarning ? "text-amber-400" : "text-white/60"
+        )}>{value}{unit}</span>
       </div>
-      <span className={cn('text-[10px] w-10 text-right shrink-0', mono && 'font-mono', pct >= dangerAt ? 'text-red-400' : pct >= warnAt ? 'text-amber-400' : 'text-white/55')}>
-        {value}{unit}
-      </span>
+      <div className="h-[3px] bg-white/[0.03] rounded-full overflow-hidden relative border border-white/[0.05]">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className={cn(
+            'h-full rounded-full relative z-10',
+            isDanger ? 'bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.6)]' : 
+            isWarning ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]' : 
+            'bg-rose-500/60 shadow-[0_0_8px_rgba(225,29,72,0.3)]'
+          )}
+        />
+        {/* Static segments */}
+        <div className="absolute inset-0 flex justify-between px-1 opacity-20 pointer-events-none">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <div key={i} className="w-[1px] h-full bg-white" />)}
+        </div>
+      </div>
     </div>
   );
 };
 
 const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => {
   const map = {
-    online:   { label: 'В МЕРЕЖІ', cls: 'text-rose-500 bg-rose-500/12 border-rose-500/20' },
-    offline:  { label: 'ПОЗА МЕРЕЖЕЮ', cls: 'text-red-500 bg-red-500/12 border-red-500/20' },
-    degraded: { label: 'ДЕГРАДАЦІЯ', cls: 'text-amber-500 bg-amber-500/12 border-amber-500/20' },
+    online:   { label: 'ACTIVE', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
+    offline:  { label: 'OFFLINE', cls: 'text-white/20 border-white/10 bg-white/5' },
+    degraded: { label: 'CRITICAL', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
   };
   const { label, cls } = map[status];
   return (
-    <span className={cn('text-[8px] font-mono font-semibold px-1.5 py-0.5 rounded-sm border tracking-wider', cls)}>
+    <div className={cn('text-[7px] font-black px-1.5 py-0.5 rounded-sm border tracking-[0.2em] flex items-center gap-1.5', cls)}>
+      <div className={cn("w-1 h-1 rounded-full", status === 'online' ? 'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.8)]' : 'bg-current')} />
       {label}
-    </span>
+    </div>
   );
 };
 
 // ─── Картка вузла ─────────────────────────────────────────────────────────────
 
 const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
-  <div
+  <motion.div
+    initial={{ opacity: 0, scale: 0.98 }}
+    animate={{ opacity: 1, scale: 1 }}
+    whileHover={{ y: -2 }}
     className={cn(
-      'p-3 rounded-sm border bg-[#0a0a0a] group hover:border-rose-500/30 transition-colors',
-      node.status === 'online'   ? 'border-white/8' :
-      node.status === 'degraded' ? 'border-amber-400/20' :
-                                   'border-red-400/15 opacity-60',
+      'p-4 rounded-sm border relative overflow-hidden group transition-all duration-300 bg-black/40 backdrop-blur-sm',
+      node.status === 'online'   ? 'border-white/[0.06] hover:border-rose-500/30' :
+      node.status === 'degraded' ? 'border-rose-500/20 shadow-[0_0_20px_rgba(225,29,72,0.05)]' :
+                                   'border-white/5 opacity-50 grayscale',
     )}
   >
-    <div className="flex items-start justify-between mb-3">
-      <div>
-        <div className="flex items-center gap-2 mb-0.5">
-          <Server className="w-3 h-3 text-white/30" />
-          <span className="text-[11px] font-mono font-semibold text-white/75">{node.node}</span>
+    {/* Background Pattern */}
+    <div className="absolute top-0 right-0 p-1 opacity-[0.03] pointer-events-none">
+      <CpuIcon size={48} />
+    </div>
+
+    <div className="flex items-start justify-between mb-4 relative z-10">
+      <div className="flex flex-col">
+        <div className="flex items-center gap-2 mb-1">
+          <Server size={12} className="text-rose-500/50" />
+          <span className="text-[12px] font-black tracking-wider text-white/90">{node.node}</span>
         </div>
-        <span className="text-[9px] text-white/30 ml-5">{node.role}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[8px] font-mono text-white/30 uppercase tracking-widest">{node.role}</span>
+          <div className="w-1 h-1 rounded-full bg-white/10" />
+          <span className="text-[8px] font-mono text-white/30">{node.ip || '192.168.1.10' + node.id.slice(-1)}</span>
+        </div>
       </div>
       <StatusBadge status={node.status} />
     </div>
 
     {node.status !== 'offline' && (
-      <div className="space-y-2">
-        <div>
-          <div className="flex justify-between mb-0.5">
-            <span className="text-[9px] text-white/30 flex items-center gap-1"><Cpu className="w-2.5 h-2.5" /> CPU</span>
-          </div>
-          <GaugeBar value={node.cpu} />
+      <div className="space-y-3 relative z-10">
+        <div className="grid grid-cols-2 gap-4">
+          <GaugeBar value={node.cpu} label="CPU Load" />
+          <GaugeBar value={node.ram} label="RAM Usage" />
         </div>
-        <div>
-          <div className="flex justify-between mb-0.5">
-            <span className="text-[9px] text-white/30 flex items-center gap-1"><HardDrive className="w-2.5 h-2.5" /> RAM</span>
-          </div>
-          <GaugeBar value={node.ram} />
-        </div>
+        
         {node.vram !== undefined && (
-          <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-[9px] text-white/30 flex items-center gap-1"><Layers className="w-2.5 h-2.5" /> VRAM</span>
-              <span className="text-[8px] font-mono text-amber-400/60">{node.vramGb} / 8 GB</span>
+          <GaugeBar value={node.vram} label="VRAM Allocation (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
+        )}
+
+        <div className="pt-3 border-t border-white/[0.03] flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <Thermometer size={10} className="text-rose-500/40" />
+              <span className={cn("text-[9px] font-mono font-bold", (node.temp || 0) > 75 ? "text-rose-500" : "text-white/50")}>
+                {node.temp}°C
+              </span>
             </div>
-            <GaugeBar value={node.vram} warnAt={70} dangerAt={90} />
+            <div className="flex items-center gap-1.5">
+              <Wifi size={10} className="text-rose-500/40" />
+              <span className="text-[9px] font-mono text-white/50">{node.net}</span>
+            </div>
           </div>
-        )}
-        {node.temp !== undefined && (
-          <div className="flex items-center gap-2 mt-1">
-            <Thermometer className="w-2.5 h-2.5 text-white/20" />
-            <span className="text-[10px] font-mono text-white/45">{node.temp}°C</span>
-            <Wifi className="w-2.5 h-2.5 text-white/20 ml-2" />
-            <span className="text-[9px] font-mono text-white/30">{node.net}</span>
+          <div className="text-[8px] font-mono text-white/20 uppercase">
+            UP: {node.uptime}
           </div>
-        )}
-        <div className="mt-1 text-[9px] font-mono text-white/25">
-          Uptime: {node.uptime}
         </div>
       </div>
     )}
-  </div>
+    
+    {/* Corner Ornament */}
+    <div className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-br from-transparent to-rose-500/[0.02] pointer-events-none" />
+  </motion.div>
 );
 
 // ─── Таблиця сервісів ─────────────────────────────────────────────────────────
 
 const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
-    key: 'name', label: 'Сервіс', width: '160px', mono: true,
-    render: (v) => <span className="text-white/65">{String(v)}</span>,
+    key: 'name', label: 'Service Endpoint', width: '220px', mono: true,
+    render: (v) => (
+      <div className="flex items-center gap-2">
+        <div className="w-1 h-1 rounded-full bg-rose-500/50" />
+        <span className="text-white/80 font-bold tracking-tight">{String(v)}</span>
+      </div>
+    ),
   },
   {
-    key: 'status', label: 'Статус', width: '80px',
+    key: 'status', label: 'Status', width: '120px',
     render: (v) => {
-      const color = v === 'ok' ? 'text-rose-500' : v === 'warn' ? 'text-amber-500' : 'text-red-500';
-      const label = v === 'ok' ? 'В ПОРЯДКУ' : v === 'warn' ? 'УВАГА' : 'КРИТИЧНО';
-      return <span className={cn('text-[10px] font-mono font-semibold', color)}>{label}</span>;
+      const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-rose-500';
+      const label = v === 'ok' ? 'HEALTHY' : v === 'warn' ? 'DEGRADED' : 'CRITICAL';
+      return (
+        <div className={cn('text-[9px] font-black tracking-widest flex items-center gap-2', color)}>
+          <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", v === 'ok' ? 'bg-emerald-500' : 'bg-current')} />
+          {label}
+        </div>
+      );
     },
   },
   {
-    key: 'latencyMs', label: 'Latency', width: '80px', mono: true, align: 'right',
+    key: 'latencyMs', label: 'Latency', width: '100px', mono: true, align: 'right',
     render: (v) => {
       const ms = Number(v);
-      const color = ms > 500 ? 'text-red-500' : ms > 200 ? 'text-amber-500' : 'text-rose-500/70';
-      return <span className={color}>{ms} ms</span>;
+      const color = ms > 500 ? 'text-rose-500' : ms > 200 ? 'text-amber-500' : 'text-emerald-500/70';
+      return <span className={cn("font-bold", color)}>{ms}ms</span>;
     },
   },
-  { key: 'version',   label: 'Версія',   width: '100px', mono: true },
-  { key: 'lastCheck', label: 'Перевірка',              mono: true },
+  { 
+    key: 'version', label: 'Build', width: '120px', mono: true,
+    render: (v) => <span className="text-white/30 text-[9px]">v{String(v)}</span>
+  },
+  { 
+    key: 'lastCheck', label: 'Last Pulse', mono: true,
+    render: (v) => <span className="text-white/10 text-[8px] italic">{String(v)}</span>
+  },
 ];
 
 const getServiceStatus = (row: ServiceStatus): RowStatus =>
   row.status === 'ok' ? 'ok' : row.status === 'warn' ? 'warning' : 'danger';
-
-// ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
 
 // ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
 
@@ -177,21 +218,32 @@ export const InfraTelemetryTab: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-3">
-        <Loader2 className="w-8 h-8 animate-spin text-rose-500/50" />
-        <div className="text-[10px] font-mono uppercase tracking-widest">Зчитування телеметрії...</div>
+      <div className="flex flex-col items-center justify-center h-[500px] text-white/40 space-y-6">
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
+          <Activity className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
+        </div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse">Зчитування телеметрії...</div>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-red-400/60 p-6 border border-red-500/10 bg-red-500/5 rounded-sm m-4">
-        <Activity className="w-10 h-10 mb-4 opacity-30" />
-        <div className="text-[12px] font-bold uppercase tracking-wider mb-2">Помилка з'єднання з API</div>
-        <div className="text-[10px] font-mono text-white/30 text-center max-w-xs">
-          Не вдалося отримати дані інфраструктури. Перевірте, чи запущено Mock API Server (порт 9080).
+      <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center">
+        <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-6 border border-rose-500/20">
+          <Shield size={32} className="text-rose-500/40" />
         </div>
+        <div className="text-[16px] font-black uppercase tracking-widest text-white/90 mb-2">Зв'язок розірвано</div>
+        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
+          Система не може отримати дані з вузлів управління. Перевірте статус API-шлюзу та автентифікацію.
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/10 transition-colors rounded-sm"
+        >
+          ПЕРЕПІДКЛЮЧИТИСЬ
+        </button>
       </div>
     );
   }
@@ -200,60 +252,82 @@ export const InfraTelemetryTab: React.FC = () => {
   const services = data.services || [];
 
   return (
-    <div className="p-4 space-y-4">
-      {/* Заголовок */}
-      <div className="flex items-center gap-2 pb-2 border-b border-white/6">
-        <Activity className="w-4 h-4 text-rose-500" />
-        <h2 className="text-[13px] font-semibold text-white/80 uppercase tracking-wider">
-          Телеметрія Кластера
-        </h2>
-        <div className="flex items-center gap-1 ml-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-          <span className="text-[9px] font-mono text-rose-500/60">ЖИВИЙ ПОТІК · оновлення 3с</span>
-        </div>
-        <div className="ml-auto flex gap-2">
-          <div className="text-[9px] font-mono text-white/25">
-            Вузлів: <span className="text-rose-500/70">
-              {nodes.filter(n => n.status === 'online').length}/{nodes.length}
-            </span>
+    <div className="p-8 space-y-10 max-w-[1600px] mx-auto">
+      {/* Header Section */}
+      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
+        <div className="flex items-center gap-3">
+          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
+            Телеметрія Кластера
+          </h2>
+          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
+            PROD_LEVEL_4
           </div>
         </div>
-      </div>
-
-      {/* Картки вузлів */}
-      <div>
-        <div className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em] mb-2">
-          Вузли інфраструктури
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          {nodes.map((node) => (
-            <NodeCard key={node.id} node={node} />
-          ))}
+        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest">
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>LIVE SYNC ACTIVE</span>
+          </div>
+          <span>•</span>
+          <span>REFRESH: 3000ms</span>
+          <span>•</span>
+          <span>NODE_ID: 0xPRED_60</span>
         </div>
       </div>
 
-      {/* Таблиця мікросервісів */}
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <Monitor className="w-3 h-3 text-white/25" />
-          <span className="text-[9px] font-semibold text-white/20 uppercase tracking-[0.2em]">
-            Мікросервіси
-          </span>
-          <span className="ml-auto text-[9px] font-mono text-white/20">
-            {services.filter(s => s.status === 'ok').length} / {services.length} OK
-          </span>
+      {/* Grid Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Active Nodes', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server },
+          { label: 'Total Services', value: services.length, icon: Box },
+          { label: 'System Uptime', value: '99.98%', icon: Shield },
+          { label: 'Network Load', value: '1.2 GB/s', icon: Zap },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-4 rounded-sm flex items-center justify-between group hover:border-white/10 transition-colors">
+            <div className="flex flex-col">
+              <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest mb-1">{stat.label}</span>
+              <span className="text-[18px] font-black text-white/90">{stat.value}</span>
+            </div>
+            <stat.icon size={20} className="text-rose-500/20 group-hover:text-rose-500/40 transition-colors" />
+          </div>
+        ))}
+      </div>
+
+      {/* Nodes Grid */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-[0.4em]">Вузли Інфраструктури</span>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/5 to-transparent" />
         </div>
-        <VirtualTable
-          rows={services}
-          columns={svcColumns}
-          rowHeight={28}
-          maxHeight={320}
-          getRowStatus={getServiceStatus}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <AnimatePresence mode="popLayout">
+            {nodes.map((node) => (
+              <NodeCard key={node.id} node={node} />
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Microservices Table */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+          <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-[0.4em]">Мікросервіси & Ендпоїнти</span>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/5 to-transparent" />
+        </div>
+        <div className="bg-black/20 border border-white/[0.05] rounded-sm overflow-hidden backdrop-blur-md">
+          <VirtualTable
+            rows={services}
+            columns={svcColumns}
+            rowHeight={40}
+            maxHeight={400}
+            getRowStatus={getServiceStatus}
+          />
+        </div>
       </div>
     </div>
   );
 };
-
 
 export default InfraTelemetryTab;

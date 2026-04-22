@@ -46,15 +46,15 @@ export function GoogleIntegralityCard({
            <Badge variant="cyber" className="bg-yellow-500/20 text-yellow-400 text-[8px]">{googleStatus.gemini.toUpperCase() === 'ACTIVE' ? 'АКТИВНИЙ' : googleStatus.gemini.toUpperCase()}</Badge>
         </div>
 
-        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-amber-500/20">
-           <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-rose-500/20">
+           <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400">
              <BarChart3 size={20} />
            </div>
            <div className="flex-1">
              <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
-             <div className="text-[8px] text-amber-400 font-mono">Аналіз трафіку та конверсії</div>
+             <div className="text-[8px] text-rose-400 font-mono">Аналіз трафіку та конверсії</div>
            </div>
-           <Badge variant="neon" className="bg-amber-500/20 text-amber-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
+           <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
         </div>
 
         <div className="pt-4 border-t border-white/10">

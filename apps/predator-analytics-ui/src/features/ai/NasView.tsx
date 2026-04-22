@@ -175,7 +175,7 @@ const NasView: React.FC = () => {
                 actions={
                     <button
                         onClick={() => setIsCreateOpen(true)}
-                        className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-xl shadow-amber-500/20 transition-all btn-3d"
+                        className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-xl shadow-rose-500/20 transition-all btn-3d"
                     >
                         <Plus size={18} /> Новий Турнір
                     </button>
@@ -201,14 +201,14 @@ const NasView: React.FC = () => {
                         {React.cloneElement(tab.icon as React.ReactElement, {
                             size: 16,
                             className: activeTab === tab.id ?
-                                (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-amber-400' : 'text-emerald-400')
+                                (tab.color === 'blue' ? 'text-blue-400' : tab.color === 'amber' ? 'text-rose-400' : 'text-emerald-400')
                                 : 'text-slate-600'
                         })}
                         <span className="uppercase tracking-widest whitespace-nowrap">{tab.label}</span>
                         {activeTab === tab.id && (
                             <motion.div
                                 layoutId="activeTabGlow"
-                                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full blur-[2px] ${tab.color === 'blue' ? 'bg-blue-500' : tab.color === 'amber' ? 'bg-amber-500' : 'bg-emerald-500'
+                                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full blur-[2px] ${tab.color === 'blue' ? 'bg-blue-500' : tab.color === 'amber' ? 'bg-rose-500' : 'bg-emerald-500'
                                     }`}
                             />
                         )}
