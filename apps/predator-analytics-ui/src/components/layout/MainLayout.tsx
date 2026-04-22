@@ -133,14 +133,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
 
-      {/* ── STATUS BAR (v58.2) ── */}
+      {/* ── STATUS BAR (v58.2-ELITE) ── */}
       <motion.div
-        initial={{ y: 100 }} animate={{ y: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-[60] h-9 border-t border-white/[0.07] flex items-center px-4 justify-between overflow-hidden"
-        style={{ background: 'rgba(2,6,18,0.92)', backdropFilter: 'blur(20px)' }}
+        initial={{ y: 100 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        className="fixed bottom-0 left-0 right-0 z-[60] h-9 flex items-center px-4 justify-between overflow-hidden"
+        style={{ 
+          background: 'rgba(2,6,18,0.85)', 
+          backdropFilter: 'blur(30px) saturate(150%)',
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.5)',
+          borderTop: '1px solid rgba(255,255,255,0.05)'
+        }}
       >
-        <div className="flex items-center gap-5 min-w-0 overflow-hidden">
-          <div className="flex items-center gap-1.5 shrink-0">
+        {/* Neon top edge */}
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent shadow-[0_0_8px_rgba(225,29,72,0.6)]" />
+
+        <div className="flex items-center gap-5 min-w-0 overflow-hidden relative z-10">
+          <div className="flex items-center gap-1.5 shrink-0 px-2 py-0.5 rounded bg-black/40 border border-white/5 shadow-inner">
             <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", isOffline ? "bg-amber-600 shadow-[0_0_6px_#d97706]" : "bg-yellow-500 shadow-[0_0_6px_#f59e0b]")} />
             <span className={cn("text-[8px] font-black uppercase tracking-[0.2em]", isOffline ? "text-amber-600/80" : "text-yellow-500/80")}>
               {isOffline ? 'СИСТЕМА_В_РЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
@@ -149,24 +157,28 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="h-3.5 w-px bg-white/10 shrink-0" />
           <SystemMetricsHUD />
           <div className="h-3.5 w-px bg-white/10 shrink-0" />
-          <div className="flex items-center gap-3 overflow-hidden min-w-0">
-            <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest shrink-0">OSINT:</span>
-            <div className="flex gap-6 animate-[marquee_55s_linear_infinite] whitespace-nowrap">
-              {["Аналіз митних декларацій (UA-EU)", "Індекс ризику ТОВ 'ЕНЕРДЖИ'", "Синхронізація з YouControl", "Виявлено нові зв'язки в секторі ВПК"].map((text, i) => (
-                <span key={i} className="text-[8px] font-medium text-slate-500 uppercase tracking-widest">◆ {text}</span>
+          <div className="flex items-center gap-3 overflow-hidden min-w-0 flex-1 relative">
+            <div className="absolute left-0 w-8 h-full bg-gradient-to-r from-[rgba(2,6,18,1)] to-transparent z-10" />
+            <span className="text-[8px] font-bold text-rose-500/70 uppercase tracking-widest shrink-0 z-20">OSINT:</span>
+            <div className="flex gap-6 animate-[marquee_40s_linear_infinite] whitespace-nowrap pl-4">
+              {["Аналіз митних декларацій (UA-EU)", "Індекс ризику ТОВ 'ЕНЕРДЖИ'", "Синхронізація з YouControl", "Виявлено нові зв'язки в секторі ВПК", "Моніторинг транзакцій завершено"].map((text, i) => (
+                <span key={i} className="text-[9px] font-mono text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-1 h-1 bg-rose-500/50 rounded-full" /> {text}
+                </span>
               ))}
             </div>
+            <div className="absolute right-0 w-12 h-full bg-gradient-to-l from-[rgba(2,6,18,1)] to-transparent z-10" />
           </div>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0 pl-4">
+        <div className="flex items-center gap-4 shrink-0 pl-4 relative z-10">
           <div className="flex items-center gap-3 pr-2">
              <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-1">КЛАСТЕР:</span>
              <div className="flex items-center gap-2">
                 {backendNodes.map(node => (
-                   <div key={node.id} className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-sm border", node.active ? "bg-amber-500/10 border-amber-500/30" : "opacity-30")}>
+                   <div key={node.id} className={cn("flex items-center gap-1.5 px-2 py-0.5 rounded-sm border transition-all duration-300", node.active ? "bg-amber-500/10 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]" : "opacity-30 border-white/5")}>
                       <div className={cn("w-1 h-1 rounded-full", node.status === 'online' ? "bg-emerald-500" : "bg-rose-500")} />
-                      <span className={cn("text-[7px] font-black uppercase", node.active && "text-amber-500")}>{node.name}</span>
+                      <span className={cn("text-[7px] font-black uppercase tracking-wider", node.active && "text-amber-500")}>{node.name}</span>
                    </div>
                 ))}
              </div>
@@ -176,19 +188,22 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           
           {/* 🧬 НОВІ ІНДИКАТОРИ ВУЗЛІВ */}
           <div className="flex items-center gap-4">
-             <div className="flex items-center gap-1.5" title="Active Core API Node">
+             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 border border-white/5" title="Active Core API Node">
                 <span className="text-[7px] font-black text-slate-600 uppercase">API:</span>
                 <span className="text-[9px] font-mono font-bold text-indigo-400 truncate max-w-[80px]">{new URL(API_BASE_URL).hostname}</span>
              </div>
-             <div className="flex items-center gap-1.5" title="Current Web Interface Host">
+             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 border border-white/5" title="Current Web Interface Host">
                 <span className="text-[7px] font-black text-slate-600 uppercase">WEB:</span>
                 <span className="text-[9px] font-mono font-bold text-cyan-400">{typeof window !== 'undefined' ? window.location.hostname : '...'}</span>
              </div>
           </div>
 
           <div className="h-3.5 w-px bg-white/10" />
-          <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/20">
-            PREDATOR <span className="text-rose-500/70">WRAITH</span> v58.2-WRAITH
+          <div className="flex items-center gap-2 px-2 py-0.5 rounded border border-rose-500/20 bg-rose-500/5">
+            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
+            <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/50">
+              PREDATOR <span className="text-rose-500 font-bold">WRAITH</span> <span className="text-white/30 ml-1">v58.2</span>
+            </div>
           </div>
         </div>
       </motion.div>

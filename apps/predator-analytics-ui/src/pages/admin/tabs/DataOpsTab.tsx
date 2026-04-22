@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Database, Upload, Factory, Layers, TrendingUp } from 'lucide-react';
+import { Database, Upload, Factory, Layers, TrendingUp, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useDataOpsStatus } from '@/hooks/useAdminApi';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────

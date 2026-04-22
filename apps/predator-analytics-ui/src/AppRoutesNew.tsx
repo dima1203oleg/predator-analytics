@@ -162,13 +162,15 @@ export const AppRoutesNew = () => {
             <Route path="/security"          element={<Navigate to="/admin/command?tab=security"   replace />} />
             <Route path="/deployment"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
             <Route path="/governance"        element={<Navigate to="/admin/command?tab=gitops"     replace />} />
-            <Route path="/system-factory"    element={<Navigate to="/admin/command?tab=dataops"    replace />} />
-            <Route path="/datasets"          element={<Navigate to="/admin/command?tab=dataops"    replace />} />
-            <Route path="/factory-studio"    element={<Navigate to="/admin/command?tab=dataops"    replace />} />
+            <Route path="/system-factory"    element={<Navigate to="/admin/command?tab=factory"    replace />} />
+            <Route path="/datasets"          element={<Navigate to="/admin/command?tab=datasets"    replace />} />
+            <Route path="/factory-studio"    element={<Navigate to="/admin/command?tab=factory"    replace />} />
+            <Route path="/knowledge"         element={<Navigate to="/admin/command?tab=knowledge"   replace />} />
+            <Route path="/scenarios"         element={<Navigate to="/admin/command?tab=scenarios"   replace />} />
             <Route path="/agents"            element={<Navigate to="/admin/command?tab=agents-ops" replace />} />
             <Route path="/components"        element={<Navigate to="/admin/command?tab=infra"      replace />} />
             <Route path="/settings"          element={<Navigate to="/admin/command?tab=settings"   replace />} />
-            <Route path="/admin/ai-control"  element={<Navigate to="/admin/command?tab=agents-ops" replace />} />
+            <Route path="/admin/ai-control"  element={<Navigate to="/admin/command?tab=models" replace />} />
 
             {/* Публічні маршрути доступні для адміна */}
             <Route path="/api-docs"          element={<ApiDocumentationView />} />

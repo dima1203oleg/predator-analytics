@@ -230,10 +230,10 @@ const Header: React.FC = () => {
             <SystemPulseIndicator />
             {/* Командний пошук */}
             <div
-              className="relative hidden sm:block"
+              className="relative hidden sm:block group"
               onClick={() => setIsPaletteOpen(true)}
             >
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-600" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500 group-hover:text-rose-400 transition-colors" />
               <input
                 type="search"
                 readOnly
@@ -241,18 +241,15 @@ const Header: React.FC = () => {
                 onFocus={() => setIsPaletteOpen(true)}
                 placeholder="Пошук модулів та дій..."
                 aria-label="Відкрити командний пошук"
-                className="h-9 w-52 lg:w-64 cursor-pointer rounded-xl border text-sm text-slate-500 outline-none transition-all placeholder:text-slate-600"
+                className="h-9 w-52 lg:w-64 cursor-pointer rounded-xl border border-white/5 text-sm text-slate-400 outline-none transition-all placeholder:text-slate-600 shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)] group-hover:border-white/20 group-hover:bg-white/[0.06] bg-white/[0.03]"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  borderColor: 'rgba(255,255,255,0.08)',
                   paddingLeft: '2.25rem',
                   paddingRight: '3.5rem',
                 }}
               />
               <div className="pointer-events-none absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
                 <kbd
-                  className="rounded border px-1 py-0.5 text-[8px] font-mono"
-                  style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.1)', color: '#64748b' }}
+                  className="rounded border border-white/10 px-1.5 py-0.5 text-[8px] font-mono bg-black/40 text-slate-500 group-hover:text-rose-400/80 group-hover:border-rose-500/30 transition-all"
                 >⌘K</kbd>
               </div>
             </div>
@@ -262,12 +259,12 @@ const Header: React.FC = () => {
               <button
                 title={isContextRailOpen ? 'Згорнути контекстну панель' : 'Відкрити контекстну панель'}
                 onClick={() => setIsContextRailOpen((current) => !current)}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
-                style={{
-                  background: isContextRailOpen ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.04)',
-                  borderColor: isContextRailOpen ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.08)',
-                  color: isContextRailOpen ? '#a5b4fc' : '#64748b',
-                }}
+                className={cn(
+                  "flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-300",
+                  isContextRailOpen 
+                    ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 shadow-[0_0_10px_rgba(99,102,241,0.2)]" 
+                    : "bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.06]"
+                )}
               >
                 {isContextRailOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
               </button>
@@ -276,17 +273,11 @@ const Header: React.FC = () => {
             {/* Сповіщення */}
             <button
               title="Сповіщення"
-              className="relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                borderColor: 'rgba(255,255,255,0.08)',
-                color: '#64748b',
-              }}
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-white/5 bg-white/[0.03] text-slate-500 hover:text-white hover:bg-white/[0.06] transition-all duration-300"
             >
               <Bell className="h-4 w-4" />
               <span
-                className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-400"
-                style={{ boxShadow: '0 0 6px rgba(244,63,94,0.8)' }}
+                className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]"
               />
             </button>
 
@@ -295,27 +286,23 @@ const Header: React.FC = () => {
               id="header-terminal-toggle"
               title={isTerminalOpen ? 'Закрити термінал' : 'Відкрити термінал'}
               onClick={() => setTerminalOpen(!isTerminalOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
-              style={{
-                background: isTerminalOpen ? 'rgba(244,63,94,0.1)' : 'rgba(255,255,255,0.04)',
-                borderColor: isTerminalOpen ? 'rgba(244,63,94,0.3)' : 'rgba(255,255,255,0.08)',
-                color: isTerminalOpen ? '#fb7185' : '#64748b',
-              }}
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-300",
+                isTerminalOpen 
+                  ? "bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_10px_rgba(225,29,72,0.2)]" 
+                  : "bg-white/[0.03] border-white/5 text-slate-500 hover:text-white hover:bg-white/[0.06]"
+              )}
             >
               <Terminal className="h-4 w-4" />
             </button>
 
             {/* Профіль та операційний режим */}
             <div className="hidden md:flex items-center gap-2.5">
-              <div className="h-7 w-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+              <div className="h-7 w-px bg-white/10" />
 
               {/* Профіль */}
               <div
-                className="flex items-center gap-2.5 rounded-xl border px-3 py-1.5 cursor-pointer transition-all"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  borderColor: 'rgba(255,255,255,0.08)',
-                }}
+                className="flex items-center gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-1.5 cursor-pointer hover:bg-white/[0.06] hover:border-white/10 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]"
               >
                 <div
                   className="flex h-6 w-6 items-center justify-center rounded-lg"

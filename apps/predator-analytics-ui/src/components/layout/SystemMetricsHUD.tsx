@@ -78,31 +78,35 @@ export const SystemMetricsHUD: React.FC = () => {
                 <div 
                     key={m.label} 
                     className={cn(
-                        "flex items-center gap-2 px-3 py-1 border transition-all relative overflow-hidden h-7 rounded-sm",
-                        m.bg || "bg-white/[0.01]",
-                        "border-white/[0.05] hover:border-white/20 select-none group"
+                        "flex items-center gap-2.5 px-3 py-1.5 transition-all relative overflow-hidden h-8 rounded-md group",
+                        m.bg || "bg-gradient-to-b from-white/[0.03] to-transparent",
+                        "border border-white/5 hover:border-white/20 select-none shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
+                        "hover:shadow-[0_0_12px_rgba(255,255,255,0.05)]"
                     )}
                 >
-                    <div className="flex items-center justify-center p-1 rounded-sm bg-black/40 border border-white/5 shadow-inner">
+                    {/* Hover light effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out" />
+                    
+                    <div className="flex items-center justify-center w-5 h-5 rounded-sm bg-black/60 border border-white/10 shadow-inner relative z-10">
                         <m.icon size={11} className={cn("shrink-0", m.color)} />
                     </div>
-                    <div className="flex flex-col min-w-[100px] leading-none">
-                        <div className="flex items-center justify-between gap-4">
-                            <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest">{m.label}</span>
-                            <span className={cn("text-[9px] font-mono font-black", m.color)}>{m.value}</span>
+                    <div className="flex flex-col min-w-[90px] leading-none relative z-10">
+                        <div className="flex items-center justify-between gap-3">
+                            <span className="text-[7px] font-black text-slate-500 uppercase tracking-[0.15em]">{m.label}</span>
+                            <span className={cn("text-[10px] font-mono font-black tracking-tight", m.color)}>{m.value}</span>
                         </div>
-                        <span className="text-[6px] font-bold text-slate-700 uppercase tracking-tighter mt-0.5 group-hover:text-slate-400 transition-colors">{m.sub}</span>
+                        <span className="text-[6px] font-bold text-slate-600 uppercase tracking-widest mt-1 group-hover:text-slate-400 transition-colors">{m.sub}</span>
                     </div>
                 </div>
             ))}
             
-            <div className="h-4 w-px bg-white/10 mx-2" />
+            <div className="h-5 w-px bg-white/10 mx-1" />
             
             {/* Sync Indicator */}
-            <div className="flex items-center gap-3">
-               <RefreshCw size={10} className="text-slate-800 animate-spin-slow" />
-               <span className="text-[7px] font-black text-slate-800 uppercase tracking-widest">
-                  SYNC_REFRESH: 3000ms
+            <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-md bg-white/[0.02] border border-white/5">
+               <RefreshCw size={11} className="text-slate-600 animate-[spin_4s_linear_infinite]" />
+               <span className="text-[7px] font-black text-slate-600 uppercase tracking-[0.2em]">
+                  SYNC: 3s
                </span>
             </div>
         </div>
