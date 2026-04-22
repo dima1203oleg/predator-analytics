@@ -20,6 +20,7 @@ import { ConstitutionalShield } from '../shared/ConstitutionalShield';
 import { useTheme } from '../../context/ThemeContext';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
+import { NeuralBackground } from '../ui/NeuralBackground';
 import { cn } from '@/utils/cn';
 import { API_BASE_URL } from '@/services/api/config';
 
@@ -62,12 +63,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       data-op-mode={mode}
       className="relative flex min-h-screen overflow-hidden bg-background text-foreground op-mode-transition"
     >
-      <div className="aura-bg" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.025] [background-image:linear-gradient(rgba(148,163,184,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.15)_1px,transparent_1px)] [background-size:50px_50px]" />
+      <NeuralBackground />
       <div className="op-scanline pointer-events-none absolute inset-0 z-[1]" />
       
-      <div className="op-data-streams opacity-20">
-        {[1,2,3,4,5,6].map(i => <div key={i} className="op-stream" />)}
+      <div className="op-data-streams opacity-10">
+        {[1,2,3,4].map(i => <div key={i} className="op-stream" />)}
       </div>
 
       {isMobileDrawerOpen && isMobile && (

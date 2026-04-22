@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Brain, Plus, Upload, Zap,
-  ChevronDown, Sparkles, Activity
+  ChevronDown, Sparkles, Activity, ShieldCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../utils/cn';
 import { toast } from './ToasterProvider';
 import { api } from '../../services/api';
 import { premiumLocales } from '../../locales/uk/premium';
+import { SovereignAudio } from '../../utils/sovereign-audio';
 
 interface QuickAction {
   id: string;
@@ -33,24 +34,25 @@ export const QuickActionsBar: React.FC = () => {
       id: 'search',
       icon: <Search size={18} />,
       label: locales.quickActions.search,
-      color: 'from-blue-500 to-cyan-500',
+      color: 'bg-black/60 border-rose-500/20 hover:border-rose-500/40 text-rose-500',
       path: '/search'
     },
     {
       id: 'upload',
       icon: <Upload size={18} />,
       label: locales.quickActions.upload,
-      color: 'from-emerald-500 to-teal-500',
+      color: 'bg-black/60 border-rose-500/20 hover:border-rose-500/40 text-rose-500',
       path: '/documents'
     },
     {
       id: 'analyze',
       icon: <Brain size={18} />,
       label: locales.quickActions.analyze,
-      color: 'from-purple-500 to-pink-500',
+      color: 'bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.1)]',
       onClick: async () => {
         setLoading('analyze');
         try {
+          SovereignAudio.playPulse();
           toast.info(locales.quickActions.toasts.analyzeInit, locales.quickActions.toasts.analyzePrep);
           toast.success(locales.quickActions.toasts.analyzeSuccess);
           navigate('/analytics');
@@ -65,10 +67,11 @@ export const QuickActionsBar: React.FC = () => {
       id: 'optimize',
       icon: <Zap size={18} />,
       label: locales.quickActions.optimize,
-      color: 'from-amber-500 to-orange-500',
+      color: 'bg-black/60 border-rose-500/20 hover:border-rose-500/40 text-rose-500',
       onClick: async () => {
         setLoading('optimize');
         try {
+          SovereignAudio.playImpact();
           await toast.promise(
             api.optimizer.trigger('user_request'),
             {
@@ -86,14 +89,15 @@ export const QuickActionsBar: React.FC = () => {
     },
     {
       id: 'ai',
-      icon: <Sparkles size={18} />,
-      label: locales.quickActions.ai,
-      color: 'from-indigo-500 to-violet-500',
+      icon: <ShieldCheck size={18} />,
+      label: 'S-CORE',
+      color: 'bg-black border-rose-500/50 text-white shimmer-wraith shadow-[0_0_20px_rgba(244,63,94,0.3)]',
       path: '/omniscience'
     }
   ];
 
   const handleAction = (action: QuickAction) => {
+    SovereignAudio.playPulse();
     if (action.onClick) {
       action.onClick();
     } else if (action.path) {
@@ -105,17 +109,18 @@ export const QuickActionsBar: React.FC = () => {
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-[20rem] right-6 z-[55]"
+      className="fixed bottom-[18rem] right-8 z-[55] flex flex-col items-end"
     >
       <AnimatePresence>
         {expanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="mb-4 bg-slate-900/95 border border-white/10 rounded-2xl p-3 backdrop-blur-xl shadow-2xl"
+            initial={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20, x: 20 }}
+            className="mb-6 bg-black/80 border border-rose-500/20 rounded-[2.5rem] p-4 backdrop-blur-3xl shadow-4xl relative overflow-hidden"
           >
-            <div className="flex flex-col gap-2">
+            <div className="absolute inset-0 cyber-scan-grid opacity-[0.05]" />
+            <div className="flex flex-col gap-3 relative z-10">
               {actions.map((action, i) => (
                 <motion.button
                   key={action.id}
@@ -126,20 +131,19 @@ export const QuickActionsBar: React.FC = () => {
                   disabled={loading === action.id}
                   title={action.label}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-xl transition-all group hover:scale-[1.02]',
-                    'bg-gradient-to-r border border-white/10 hover:border-white/20',
+                    'flex items-center gap-4 px-6 py-4 rounded-2xl transition-all group hover:scale-[1.02] border',
                     action.color,
                     loading === action.id && 'opacity-50 cursor-wait'
                   )}
                 >
-                  <div className="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
+                  <div className="p-2 bg-white/5 rounded-lg group-hover:scale-110 transition-transform">
                     {loading === action.id ? (
                       <Activity size={18} className="animate-pulse" />
                     ) : (
                       action.icon
                     )}
                   </div>
-                  <span className="text-sm font-bold text-white">{action.label}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] chromatic-elite">{action.label}</span>
                 </motion.button>
               ))}
             </div>
@@ -150,24 +154,29 @@ export const QuickActionsBar: React.FC = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setExpanded(!expanded)}
+        onClick={() => { SovereignAudio.playPulse(); setExpanded(!expanded); }}
         title={expanded ? locales.quickActions.collapse : locales.quickActions.expand}
         className={cn(
-          'w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all',
-          'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500',
-          'border border-white/20 hover:border-white/30',
-          'shadow-[0_0_20px_rgba(251,191,36,0.2)] hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]'
+          'w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-4xl transition-all relative overflow-hidden group',
+          'bg-black border-2 border-rose-500/30 hover:border-rose-500/60',
+          'shadow-[0_0_25px_rgba(244,63,94,0.2)]'
         )}
       >
+        <div className="absolute inset-0 bg-gradient-to-tr from-rose-900/20 via-transparent to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 glint-elite opacity-20 pointer-events-none" />
+        
         <motion.div
           animate={{ rotate: expanded ? 180 : 0 }}
           transition={{ type: 'spring', stiffness: 300 }}
+          className="relative z-10"
         >
-          {expanded ? <ChevronDown size={24} className="text-white" /> : <Plus size={24} className="text-white" />}
+          {expanded ? <ChevronDown size={28} className="text-rose-500" /> : <Plus size={28} className="text-rose-500" />}
         </motion.div>
       </motion.button>
     </motion.div>
   );
 };
+
+export default QuickActionsBar;
 
 export default QuickActionsBar;

@@ -35,21 +35,21 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
     // Mode-specific color mapping
     const getModeGradient = () => {
         switch (mode) {
-            case 'vigilance': return 'from-amber-900/10 via-transparent to-black';
-            case 'threat':    return 'from-rose-900/15 via-transparent to-black';
-            case 'stealth':   return 'from-emerald-900/10 via-transparent to-black';
-            case 'sovereign': return 'from-yellow-900/20 via-rose-950/20 to-black';
-            default:          return 'from-blue-900/10 via-transparent to-black';
+            case 'vigilance': return 'from-amber-900/20 via-transparent to-black';
+            case 'threat':    return 'from-rose-900/30 via-transparent to-black';
+            case 'stealth':   return 'from-emerald-900/20 via-transparent to-black';
+            case 'sovereign': return 'from-rose-950/40 via-[#1a0505] to-black';
+            default:          return 'from-blue-900/20 via-transparent to-black';
         }
     };
 
     const getModeGlow = () => {
         switch (mode) {
-            case 'vigilance': return 'bg-amber-600/5';
-            case 'threat':    return 'bg-rose-600/5';
-            case 'stealth':   return 'bg-emerald-600/5';
-            case 'sovereign': return 'bg-yellow-500/10';
-            default:          return 'bg-blue-600/5';
+            case 'vigilance': return 'bg-amber-600/10';
+            case 'threat':    return 'bg-rose-600/15';
+            case 'stealth':   return 'bg-emerald-600/10';
+            case 'sovereign': return 'bg-rose-500/20 shadow-[0_0_150px_rgba(244,63,94,0.1)]';
+            default:          return 'bg-blue-600/10';
         }
     };
 
@@ -93,11 +93,12 @@ export const AdvancedBackground: React.FC<AdvancedBackgroundProps> = ({
             <div className={cn("absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full blur-[160px] opacity-30 transition-colors duration-1000", getModeGlow())} />
 
             {/* Vignette & Gradients */}
-            <div className={cn("absolute inset-0 bg-gradient-to-t opacity-80 transition-all duration-1000", getModeGradient())} />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.85)_100%)]" />
+            <div className={cn("absolute inset-0 bg-gradient-to-t opacity-90 transition-all duration-1000", getModeGradient())} />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.95)_100%)]" />
             
-            {/* Scanline Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-[1] bg-[length:100%_2px,3px_100%]" />
+            {/* Elite Noise & Scanlines */}
+            <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-[1] bg-[length:100%_4px,4px_100%]" />
         </div>
     );
 };

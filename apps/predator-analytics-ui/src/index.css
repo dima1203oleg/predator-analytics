@@ -9,31 +9,78 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-    /* Predator Elite Tokens v57.3-ELITE */
+    /* Predator Elite Tokens v58.2-WRAITH */
     --background: 230 25% 2%;
     --foreground: 210 40% 98%;
     --primary: 348 100% 60%; /* Elite Rose */
     --primary-glow: rgba(244, 63, 94, 0.4);
     
-    --wraith-glass: rgba(8, 12, 22, 0.82);
-    --wraith-border: rgba(244, 63, 94, 0.15);
+    --wraith-glass: rgba(8, 12, 22, 0.88);
+    --wraith-border: rgba(244, 63, 94, 0.25);
     --wraith-accent: #f43f5e; /* Elite Rose */
+    --wraith-accent-deep: #9f1239;
     
-    --aura-gold: hsla(348, 100%, 60%, 0.12);
-    --aura-amber: hsla(340, 100%, 50%, 0.08);
+    --aura-gold: hsla(348, 100%, 60%, 0.18);
+    --aura-amber: hsla(340, 100%, 50%, 0.12);
+    
+    --glint-speed: 4s;
+    --scan-speed: 10s;
+    --glint-angle: 135deg;
+    --chromatic-offset: 1.5px;
+    --elite-glint: linear-gradient(var(--glint-angle), transparent 20%, rgba(244, 63, 94, 0.15) 50%, transparent 80%);
 }
 
 .glass-wraith {
     background: var(--wraith-glass);
-    backdrop-filter: blur(25px) saturate(160%);
+    backdrop-filter: blur(40px) saturate(200%);
     border: 1px solid var(--wraith-border);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-wraith::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: var(--elite-glint);
+    transform: skewX(-25deg);
+    transition: 0.75s;
+    pointer-events: none;
+}
+
+.glass-wraith:hover::before {
+    left: 150%;
+    transition: 0.75s;
 }
 
 .glass-wraith:hover {
     border-color: var(--wraith-accent);
-    box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+    box-shadow: 
+        0 0 60px rgba(244, 63, 94, 0.25),
+        inset 0 0 30px rgba(244, 63, 94, 0.05),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px) scale(1.01);
+}
+
+.glass-wraith::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(244, 63, 94, 0.05), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.glass-wraith:hover::after {
+    opacity: 1;
 }
 
 .aura-bg {
@@ -798,6 +845,100 @@ tbody tr:hover {
 }
 
 .relative-pulse {
+    position: relative;
+}
+
+/* Elite Redacted Effect */
+.redacted-elite {
+    background: #000;
+    color: transparent;
+    position: relative;
+    cursor: not-allowed;
+}
+
+.redacted-elite::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(244, 63, 94, 0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Cyber Glitch Effect */
+.text-glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.text-glitch::before,
+.text-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+}
+
+.text-glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.text-glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
+    animation: glitch-anim2 1s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(31px, 9999px, 94px, 0); }
+  20% { clip: rect(62px, 9999px, 42px, 0); }
+  40% { clip: rect(10px, 9999px, 86px, 0); }
+  60% { clip: rect(57px, 9999px, 92px, 0); }
+  80% { clip: rect(83px, 9999px, 14px, 0); }
+  100% { clip: rect(25px, 9999px, 5px, 0); }
+}
+
+@keyframes glitch-anim2 {
+  0% { clip: rect(65px, 9999px, 100px, 0); }
+  20% { clip: rect(30px, 9999px, 54px, 0); }
+  40% { clip: rect(15px, 9999px, 92px, 0); }
+  60% { clip: rect(82px, 9999px, 2px, 0); }
+  80% { clip: rect(43px, 9999px, 73px, 0); }
+  100% { clip: rect(10px, 9999px, 35px, 0); }
+}
+
+/* Wraith Shimmer */
+@keyframes wraith-shimmer {
+    0% { transform: translateX(-100%) skewX(-15deg); }
+    100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.shimmer-wraith {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer-wraith::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(244, 63, 94, 0.1),
+        transparent
+    );
+    animation: wraith-shimmer 3s infinite;
+}
     width: var(--pulse-size);
     height: var(--pulse-size);
 }

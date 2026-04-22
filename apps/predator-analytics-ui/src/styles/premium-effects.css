@@ -834,3 +834,85 @@
 .animate-scanline-fast {
   animation: scanline-fast 4s linear infinite;
 }
+
+/* ── ELITE GLINT EFFECT ── */
+@keyframes glint-sweep {
+  0% { transform: translateX(-200%) skewX(-25deg); }
+  100% { transform: translateX(300%) skewX(-25deg); }
+}
+
+.glint-elite {
+  position: relative;
+  overflow: hidden;
+}
+
+.glint-elite::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  animation: glint-sweep var(--glint-speed) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+/* ── CHROMATIC ABERRATION ── */
+.chromatic-elite {
+  text-shadow: 
+    var(--chromatic-offset) 0 rgba(244, 63, 94, 0.5),
+    calc(var(--chromatic-offset) * -1) 0 rgba(6, 182, 212, 0.5);
+  animation: chromatic-pulse 4s ease-in-out infinite;
+}
+
+@keyframes chromatic-pulse {
+  0%, 100% { text-shadow: var(--chromatic-offset) 0 rgba(244, 63, 94, 0.3), calc(var(--chromatic-offset) * -1) 0 rgba(6, 182, 212, 0.3); }
+  50% { text-shadow: calc(var(--chromatic-offset) * 1.5) 0 rgba(244, 63, 94, 0.6), calc(var(--chromatic-offset) * -1.5) 0 rgba(6, 182, 212, 0.6); }
+}
+
+/* ── CYBER SCAN GRID ── */
+.cyber-scan-grid {
+  background-image: 
+    linear-gradient(rgba(244, 63, 94, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 63, 94, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  position: relative;
+}
+
+.cyber-scan-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--wraith-accent), transparent);
+  animation: scan-line-move var(--scan-speed) linear infinite;
+  opacity: 0.5;
+  box-shadow: 0 0 15px var(--wraith-accent);
+}
+
+@keyframes scan-line-move {
+  0% { top: 0%; opacity: 0; }
+  5% { opacity: 0.5; }
+  95% { opacity: 0.5; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── TACTICAL FOCUS DOTS ── */
+.focus-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--wraith-accent);
+  border-radius: 50%;
+  position: absolute;
+  box-shadow: 0 0 8px var(--wraith-accent);
+}

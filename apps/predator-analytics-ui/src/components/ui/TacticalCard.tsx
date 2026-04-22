@@ -30,6 +30,8 @@ interface TacticalCardProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   noPadding?: boolean;
   children?: React.ReactNode;
   action?: React.ReactNode; // Backward compatibility for single custom action
+  elite?: boolean;
+  scanGrid?: boolean;
 }
 
 export const TacticalCard: React.FC<TacticalCardProps> = ({
@@ -47,6 +49,8 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
   glow = 'none',
   variant = 'cyber',
   noPadding = false,
+  elite = false,
+  scanGrid = false,
   ...rest
 }) => {
   const [isExpanded, setIsExpanded] = useState(!expandable);
@@ -105,9 +109,13 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`page-section ${sectionClass} ${noPadding ? 'p-0' : ''} ${className}`}
+      className={cn("page-section relative overflow-hidden transition-all duration-500", sectionClass, noPadding ? 'p-0' : '', elite && "hover:scale-[1.01] hover:shadow-2xl", className)}
       {...rest}
     >
+      {/* Background Effects */}
+      {scanGrid && <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />}
+      {elite && <div className="absolute -right-20 -top-20 w-64 h-64 bg-current opacity-[0.03] blur-[80px] rounded-full pointer-events-none" />}
+      
       {/* Header */}
       {(title || icon || status || action || expandable) && (
         <div
@@ -120,15 +128,15 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
             <div className="flex items-center gap-3">
               {icon && <div className={`text-${sectionColor}-400 shrink-0`}>{icon}</div>}
               <div>
-                <h2 className="section-title flex items-center gap-2">
+                <h2 className={cn("section-title flex items-center gap-2", elite && "glint-elite chromatic-elite")}>
                   {title}
                   {priority && (
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${priority === 'critical' ? 'border-crimson-600 text-crimson-400 bg-crimson-600/10' :
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded border font-black tracking-tighter ${priority === 'critical' ? 'border-crimson-600 text-crimson-400 bg-crimson-600/10 shadow-[0_0_10px_rgba(220,38,38,0.2)]' :
                       priority === 'high' ? 'border-rose-500 text-rose-400 bg-rose-500/10' :
                         priority === 'medium' ? 'border-rose-400/50 text-rose-300 bg-rose-400/5' :
                           'border-cyan-500 text-cyan-400 bg-cyan-500/10'
                       }`}>
-                      {priority}
+                      {priority.toUpperCase()}
                     </span>
                   )}
                 </h2>
