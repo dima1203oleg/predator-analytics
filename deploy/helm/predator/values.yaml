@@ -1,10 +1,6 @@
 # Default values for predator.
 # This is a YAML-formatted file.
 
-global:
-  domain: internal.predator.ua
-  tenantId: default
-  imagePullPolicy: IfNotPresent
 
 # Infrastructure
 postgresql:
@@ -246,6 +242,9 @@ monitoring:
 
 # Global defaults
 global:
+  domain: internal.predator.ua
+  tenantId: default
+  imagePullPolicy: IfNotPresent
   postgres:
     host: predator-postgresql
     port: 5432
