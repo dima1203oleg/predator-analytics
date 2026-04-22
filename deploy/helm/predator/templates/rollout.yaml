@@ -45,28 +45,10 @@ spec:
           resources:
             {{- toYaml .Values.coreApi.resources | nindent 12 }}
           env:
-            - name: DATABASE_URL
-              value: "postgresql+asyncpg://predator:{{ .Values.global.postgres.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgres.auth.database }}"
-            - name: REDIS_URL
-              value: "redis://{{ .Values.global.redis.host }}:6379/0"
-            - name: NEO4J_URI
-              value: "bolt://{{ .Values.global.neo4j.host }}:7687"
-            - name: NEO4J_USER
-              value: "neo4j"
-            - name: NEO4J_PASSWORD
-              value: "{{ .Values.neo4j.neo4j.password }}"
-            - name: LITELLM_GATEWAY_URL
-              value: {{ tpl .Values.coreApi.env.LITELLM_GATEWAY_URL . | quote }}
-            - name: ANTIGRAVITY_ENABLED
-              value: {{ tpl .Values.coreApi.env.ANTIGRAVITY_ENABLED . | quote }}
-            - name: ANTIGRAVITY_AGENT_MODEL
-              value: {{ tpl .Values.coreApi.env.ANTIGRAVITY_AGENT_MODEL . | quote }}
-            - name: SECRET_KEY
-              value: {{ tpl .Values.coreApi.env.SECRET_KEY . | quote }}
-            - name: ENV
-              value: {{ tpl .Values.coreApi.env.ENV . | quote }}
-            - name: DEBUG
-              value: {{ tpl .Values.coreApi.env.DEBUG . | quote }}
+            {{- range $key, $val := .Values.coreApi.env }}
+            - name: {{ $key }}
+              value: {{ tpl ($val | toString) $ | quote }}
+            {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

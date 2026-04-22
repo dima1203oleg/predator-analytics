@@ -6,9 +6,6 @@ version: 58.2.0
 appVersion: "58.2-WRAITH"
 
 dependencies:
-  - name: ingestion-worker
-    version: 55.1.0
-    repository: "file://../../services/ingestion-worker/charts/ingestion-worker"
   - name: postgresql
     version: 15.5.0
     repository: https://charts.bitnami.com/bitnami

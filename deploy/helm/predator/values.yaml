@@ -1,7 +1,3 @@
-# Default values for predator.
-# This is a YAML-formatted file.
-
-
 # Infrastructure
 postgresql:
   enabled: true
@@ -21,6 +17,33 @@ neo4j:
   volumes:
     data:
       mode: defaultStorageClass
+
+# Global defaults
+global:
+  domain: internal.predator.ua
+  tenantId: default
+  imagePullPolicy: IfNotPresent
+  secretKey: changeme-production-secret-key-32-chars
+  postgres:
+    host: predator-postgresql
+    port: 5432
+  redis:
+    host: predator-redis-master
+    port: 6379
+  neo4j:
+    host: predator-neo4j
+    port: 7687
+  opensearch:
+    host: opensearch-cluster-master
+    port: 9200
+  qdrant:
+    host: predator-qdrant
+    port: 6333
+  minio:
+    accessKey: minioadmin
+    secretKey: minioadmin
+  osint:
+    youcontrolApiKey: "YOUR_PRO_API_KEY_HERE"
 
 # Frontend (predator-analytics-ui)
 frontend:
@@ -93,7 +116,7 @@ coreApi:
     targetCPUUtilizationPercentage: 70
   env:
     ENV: "production"
-    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.postgresql.global.postgresql.auth.database }}"
     REDIS_URL: "redis://{{ .Values.global.redis.host }}:6379/0"
     NEO4J_URI: "bolt://{{ .Values.global.neo4j.host }}:7687"
     NEO4J_USER: "neo4j"
@@ -104,8 +127,8 @@ coreApi:
     LITELLM_GATEWAY_URL: "http://{{ include \"predator.fullname\" . }}-litellm:4000"
     ANTIGRAVITY_ENABLED: "true"
     ANTIGRAVITY_AGENT_MODEL: "qwen3:8b"
-    SECRET_KEY: "{{ .Values.global.secretKey | default \"changeme-production-secret-key-32-chars\" }}"
-    YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey | default \"mock\" }}"
+    SECRET_KEY: "{{ .Values.global.secretKey }}"
+    YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey }}"
     DEBUG: "false"
   livenessProbe:
     httpGet:
@@ -175,13 +198,13 @@ ingestionWorker:
     targetCPUUtilizationPercentage: 70
   env:
     KAFKA_BOOTSTRAP_SERVERS: "predator-v55-redpanda:9092"
-    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.global.postgresql.auth.database }}"
+    DATABASE_URL: "postgresql+asyncpg://predator:{{ .Values.postgresql.global.postgresql.auth.password }}@{{ .Values.global.postgres.host }}:5432/{{ .Values.postgresql.global.postgresql.auth.database }}"
     OPENSEARCH_URL: "http://{{ .Values.global.opensearch.host }}:9200"
     QDRANT_URL: "http://{{ .Values.global.qdrant.host }}:6333"
     MINIO_ENDPOINT: "predator-v55-minio:9000"
-    MINIO_ACCESS_KEY: "{{ .Values.global.minio.accessKey | default \"minioadmin\" }}"
-    MINIO_SECRET_KEY: "{{ .Values.global.minio.secretKey | default \"minioadmin\" }}"
-    YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey | default \"mock\" }}"
+    MINIO_ACCESS_KEY: "{{ .Values.global.minio.accessKey }}"
+    MINIO_SECRET_KEY: "{{ .Values.global.minio.secretKey }}"
+    YOUCONTROL_API_KEY: "{{ .Values.global.osint.youcontrolApiKey }}"
     DEBUG: "false"
   livenessProbe:
     exec:
@@ -222,6 +245,10 @@ security:
 # Monitoring
 monitoring:
   enabled: true
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
   serviceMonitor:
     enabled: true
     interval: 30s
@@ -239,44 +266,6 @@ monitoring:
             annotations:
               summary: "PREDATOR service is down"
               description: "PREDATOR {{ $labels.service }} has been down for more than 5 minutes."
-
-# Global defaults
-global:
-  domain: internal.predator.ua
-  tenantId: default
-  imagePullPolicy: IfNotPresent
-  postgres:
-    host: predator-postgresql
-    port: 5432
-    auth:
-      database: predator
-      username: predator
-      password: predator_db_secret
-  redis:
-    host: predator-redis-master
-    port: 6379
-  neo4j:
-    host: predator-neo4j
-    port: 7687
-  opensearch:
-    host: opensearch-cluster-master
-    port: 9200
-  qdrant:
-    host: predator-qdrant
-    port: 6333
-  minio:
-    accessKey: minioadmin
-    secretKey: minioadmin
-  secretKey: changeme-production-secret-key-32-chars
-  osint:
-    youcontrolApiKey: "YOUR_PRO_API_KEY_HERE"
-
-# Additional Monitoring
-monitoring:
-  prometheus:
-    enabled: true
-  grafana:
-    enabled: true
 
 # AI AGI Stack (Antigravity Core)
 litellm:

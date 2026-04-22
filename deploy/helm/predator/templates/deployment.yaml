@@ -64,7 +64,7 @@ metadata:
 spec:
   # Replicas managed by KEDA if enabled
   {{- if not .Values.ingestionWorker.keda.enabled }}
-  replicas: 1
+  replicas: {{ .Values.ingestionWorker.replicaCount | default 1 }}
   {{- end }}
   selector:
     matchLabels:
@@ -83,8 +83,14 @@ spec:
         - name: ingestion-worker
           image: "{{ .Values.ingestionWorker.image.repository }}:{{ .Values.ingestionWorker.image.tag }}"
           env:
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka-cluster-kafka-bootstrap.kafka:9092"
+            {{- range $key, $val := .Values.ingestionWorker.env }}
+            - name: {{ $key }}
+              value: {{ tpl ($val | toString) $ | quote }}
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.ingestionWorker.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.ingestionWorker.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ingestionWorker.resources | nindent 12 }}
           securityContext:
@@ -128,6 +134,10 @@ spec:
               containerPort: 3030
               protocol: TCP
           env:
+            {{- range $key, $val := .Values.frontend.env }}
+            - name: {{ $key }}
+              value: {{ tpl ($val | toString) $ | quote }}
+            {{- end }}
             - name: API_UPSTREAM
               value: "http://{{ include "predator.fullname" . }}-core-api:{{ .Values.coreApi.service.port }}"
           livenessProbe:
