@@ -9,6 +9,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 SERVERS=(
+  "predator-zrok|127.0.0.1|2222|dima|~/.ssh/id_ed25519_dev"
   "predator-ngrok|2.tcp.eu.ngrok.io|14677|dima|~/.ssh/id_ed25519_dev"
   "predator-server|194.177.1.240|6666|dima|~/.ssh/id_ed25519_dev"
   "predator-v4|194.177.1.240|6666|dima|~/.ssh/id_predator_v4"
@@ -133,6 +134,19 @@ if [ "${1:-}" = "--forever" ]; then
 fi
 
 echo -e "${YELLOW}🔍 ФАЗА 1: Пошук робочого SSH підключення${NC}"
+echo ""
+
+if command -v zrok >/dev/null 2>&1 || [ -f "$HOME/bin/zrok" ]; then
+  ZROK_BIN=$(command -v zrok || echo "$HOME/bin/zrok")
+  if ! pgrep -f "zrok access private predatorssh" > /dev/null; then
+    echo -n "  ├─ Запускаю zrok тунель (predatorssh) у фоні... "
+    "$ZROK_BIN" access private predatorssh --bind 127.0.0.1:2222 >/dev/null 2>&1 &
+    sleep 2 # чекаємо поки тунель підніметься
+    echo -e "${GREEN}✅${NC}"
+  else
+    echo -e "  ├─ zrok тунель (predatorssh) вже активний ${GREEN}✅${NC}"
+  fi
+fi
 echo ""
 
 CONNECTED_ALIAS=""
