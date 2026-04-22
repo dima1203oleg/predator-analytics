@@ -661,7 +661,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                             </div>
                             <div className="p-4 bg-black/40 border border-white/5 rounded-2xl text-center">
                                <p className="text-[8px] text-slate-500 font-bold uppercase mb-1">ТЕРМІНОВІСТЬ</p>
-                               <p className="text-[11px] text-white font-black italic uppercase italic">ЕКСТРЕННО</p>
+                               <p className="text-[11px] text-white font-black italic uppercase">ЕКСТРЕННО</p>
                             </div>
                          </div>
                       </section>
@@ -673,13 +673,13 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                          <div className="p-8 bg-black/80 border border-rose-500/10 rounded-[2.5rem] font-mono text-[10px] text-emerald-500/50 leading-relaxed uppercase overflow-hidden relative shadow-inner group">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-30 transition-opacity"><Cpu size={64} className="animate-pulse" /></div>
                             <div className="relative z-10 space-y-1">
-                               <p className="text-emerald-400">[{new Date().toLocaleTimeString()}] > INITIALIZING_GRAPH_TRAVERSAL...</p>
-                               <p className="text-emerald-500/80">> FETCHING_NEO4J_NODES: OK [42ms]</p>
-                               <p className="text-emerald-500/60">> RUNNING_WRAITH_SCORING_ALGO...</p>
-                               <p className="text-emerald-500/40">> ANOMALY_COEFFICIENT: 0.982</p>
-                               <p className="text-rose-500/60">> CRITICAL_MATCH_FOUND: [G-42_PATTERN]</p>
-                               <p className="text-emerald-500/40">> GENERATING_NATURAL_LANGUAGE_SUMMARY...</p>
-                               <p className="text-emerald-400/90">> STATUS: READY_FOR_SOVEREIGN_DECISION</p>
+                               <p className="text-emerald-400">[{new Date().toLocaleTimeString()}] &gt; INITIALIZING_GRAPH_TRAVERSAL...</p>
+                               <p className="text-emerald-500/80">&gt; FETCHING_NEO4J_NODES: OK [42ms]</p>
+                               <p className="text-emerald-500/60">&gt; RUNNING_WRAITH_SCORING_ALGO...</p>
+                               <p className="text-emerald-500/40">&gt; ANOMALY_COEFFICIENT: 0.982</p>
+                               <p className="text-rose-500/60">&gt; CRITICAL_MATCH_FOUND: [G-42_PATTERN]</p>
+                               <p className="text-emerald-500/40">&gt; GENERATING_NATURAL_LANGUAGE_SUMMARY...</p>
+                               <p className="text-emerald-400/90">&gt; STATUS: READY_FOR_SOVEREIGN_DECISION</p>
                                <motion.div 
                                  animate={{ opacity: [1, 0] }}
                                  transition={{ duration: 0.8, repeat: Infinity }}

@@ -1,0 +1,116 @@
+
+> predator-analytics-ui@56.5.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 1270 modules transformed.
+x Build failed in 11.70s
+error during build:
+[vite:esbuild] Transform failed with 11 errors:
+/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:252:8: ERROR: The symbol "improvementMode" has already been declared
+/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:252:8: ERROR: The symbol "setImprovementMode" has already been declared
+/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:253:8: ERROR: The symbol "setTechComponents" has already been declared
+/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:253:8: ERROR: The symbol "techComponents" has already been declared
+/Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:255:8: ERROR: The symbol "improvementStatus" has already been declared
+...
+file: /Users/Shared/Predator_60/apps/predator-analytics-ui/src/features/factory/SystemFactoryView.tsx:252:8
+
+The symbol "improvementMode" has already been declared
+250|  
+251|    // Improvements State
+252|    const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
+   |          ^
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+
+The symbol "setImprovementMode" has already been declared
+250|  
+251|    // Improvements State
+252|    const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
+   |          ^
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+
+The symbol "setTechComponents" has already been declared
+251|    // Improvements State
+252|    const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+   |          ^
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+
+The symbol "techComponents" has already been declared
+251|    // Improvements State
+252|    const [improvementMode, setImprovementMode] = useState<'tech' | 'analytic' | 'complex' | null>('complex');
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+   |          ^
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+
+The symbol "improvementStatus" has already been declared
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+   |          ^
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+257|  
+
+The symbol "setImprovementStatus" has already been declared
+253|    const [techComponents, setTechComponents] = useState<string[]>([]);
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+   |          ^
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+257|  
+
+The symbol "improvementProgress" has already been declared
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+   |          ^
+257|  
+258|    const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
+
+The symbol "setImprovementProgress" has already been declared
+254|    const [analyticComponents, setAnalyticComponents] = useState<string[]>([]);
+255|    const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'done'>('idle');
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+   |          ^
+257|  
+258|    const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
+
+The symbol "activeCycle" has already been declared
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+257|  
+258|    const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
+   |          ^
+259|  
+260|    const techOptions = [
+
+The symbol "setActiveCycle" has already been declared
+256|    const [improvementProgress, setImprovementProgress] = useState(0);
+257|  
+258|    const [activeCycle, setActiveCycle] = useState<'testing' | 'building' | 'deploying' | 'idle'>('idle');
+   |          ^
+259|  
+260|    const techOptions = [
+
+Expected "}" but found "==="
+818|                
+819|                return (
+820|                           {activeTab === 'improve' && (
+   |                                      ^
+821|                  <motion.div key="improve" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+822|                    
+
+    at failureErrorWithLog (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/esbuild/lib/main.js:1472:15)
+    at /Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/Users/Shared/Predator_60/apps/predator-analytics-ui/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:508:20)
+    at addChunk (node:internal/streams/readable:564:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:515:3)
+    at Readable.push (node:internal/streams/readable:395:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
