@@ -13,7 +13,7 @@ const PORT = 9080;
 let systemState = {
   infra: {
     nodes: [
-      { id: '1', node: 'nvidia-master', role: 'GPU Master',   cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, net: '↑ 1.4 MB/s ↓ 5.2 MB/s', status: 'online',   uptime: '12д 4г 21хв' },
+      { id: '1', node: 'nvidia-master', role: 'GPU Master',   cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, net: '↑ 1.4 MB/s ↓ 5.2 MB/s', status: 'online',   uptime: '12д 4г 21хв', ip: '192.168.0.199' },
       { id: '2', node: 'macbook-edge',  role: 'Edge Node',    cpu: 22, ram: 48, temp: 54,               net: '↑ 0.4 MB/s ↓ 1.1 MB/s', status: 'online',   uptime: '3г 14хв' },
       { id: '3', node: 'colab-mirror',  role: 'Cloud Mirror', cpu: 0,  ram: 0,                          net: '—',                       status: 'offline',  uptime: 'недоступний' },
     ],
@@ -29,7 +29,7 @@ let systemState = {
     activeNode: 'local-k3s',
     nodes: {
       'local-k3s':     { label: 'Local K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
-      'nvidia-server': { label: 'NVIDIA Server', ip: '10.0.0.5',     status: 'online',  load: 61 },
+      'nvidia-server': { label: 'NVIDIA Server', ip: '192.168.0.199',     status: 'online',  load: 61 },
       'colab-mirror':  { label: 'Colab Mirror',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
     },
     history: Array.from({ length: 42 }, (_, i) => ({

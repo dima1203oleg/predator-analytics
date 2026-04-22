@@ -1,19 +1,14 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: {{ include "predator.fullname" . }}-core-api
 spec:
   replicas: {{ .Values.coreApi.replicaCount }}
   strategy:
-    canary:
-      analysis:
-        templates:
-          - templateName: success-rate
-      steps:
-        - setWeight: 20
-        - pause: {duration: 5m}
-        - setWeight: 50
-        - pause: {duration: 5m}
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: core-api

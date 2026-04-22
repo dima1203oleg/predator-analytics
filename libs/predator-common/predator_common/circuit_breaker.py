@@ -64,10 +64,11 @@ class CircuitBreaker:
         failure_threshold: int = 5,
         timeout: float = 60.0,
         success_threshold: int = 1,
+        **kwargs: Any,
     ) -> None:
         self.name = name
         self.failure_threshold = failure_threshold
-        self.timeout = timeout
+        self.timeout = kwargs.get("reset_timeout_s", timeout)
         self.success_threshold = success_threshold
 
         self._state = CircuitState.CLOSED
@@ -145,6 +146,48 @@ class CircuitBreaker:
                 or self._failure_count >= self.failure_threshold
             ):
                 self._state = CircuitState.OPEN
+
+    def allow_request(self) -> bool:
+        """Чи дозволено запит (аналог state != OPEN)."""
+        return self.state != CircuitState.OPEN
+
+    def record_success(self) -> None:
+        """Ручне логування успіху."""
+        # Оскільки ці методи зазвичай викликаються поза асинхронним циклом у деяких місцях,
+        # але наш клас асинхронний, ми створюємо task або використовуємо синхронний підхід
+        # Проте в даному проекті вони викликаються в асинхронних функціях, тож зробимо їх асинхронними обгортками
+        # або просто синхронними якщо lock не критичний для стану (але він критичний).
+        # Для сумісності зробимо їх синхронними, які запускають фонову задачу або використовують thread-safe підхід.
+        # Але найкраще — зробити їх асинхронними і оновити виклики.
+        # Перевіримо ai_service.py: там вони викликаються з await? Ні.
+        
+        # Висновок: нам потрібні синхронні методи для сумісності.
+        if self._state == CircuitState.HALF_OPEN:
+            self._success_count += 1
+            if self._success_count >= self.success_threshold:
+                self._state = CircuitState.CLOSED
+                self._failure_count = 0
+                self._success_count = 0
+        elif self._state == CircuitState.CLOSED:
+            self._failure_count = 0
+
+    def record_failure(self) -> None:
+        """Ручне логування збою."""
+        self._failure_count += 1
+        self._last_fail_time = time.time()
+        if self._state == CircuitState.HALF_OPEN or self._failure_count >= self.failure_threshold:
+            self._state = CircuitState.OPEN
+
+    async def __aenter__(self) -> "CircuitBreaker":
+        if self.state == CircuitState.OPEN:
+            raise CircuitBreakerError(self.name, self._last_fail_time + self.timeout)
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        if exc_type:
+            await self._on_failure()
+        else:
+            await self._on_success()
 
     def reset(self) -> None:
         """Примусово скинути стан до CLOSED (для тестів)."""

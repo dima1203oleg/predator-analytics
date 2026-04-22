@@ -1,0 +1,14 @@
+aiokafka
+asyncpg
+sqlalchemy[asyncio]
+openpyxl
+pandas
+httpx
+orjson
+structlog
+pydantic
+pydantic-settings
+aiohttp
+chardet
+tenacity
+minio

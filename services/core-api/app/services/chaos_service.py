@@ -7,7 +7,7 @@ import random
 import asyncio
 from typing import Any
 from datetime import datetime, timedelta, UTC
-from app.core.cache import cache
+
 
 logger = logging.getLogger(__name__)
 

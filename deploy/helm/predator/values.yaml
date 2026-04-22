@@ -1,6 +1,9 @@
 # Infrastructure
 postgresql:
   enabled: true
+  image:
+    repository: postgres
+    tag: 16-alpine
   global:
     postgresql:
       auth:
@@ -10,6 +13,9 @@ postgresql:
 
 neo4j:
   enabled: true
+  image:
+    repository: neo4j
+    tag: 5.21.0-community
   neo4j:
     password: predator_graph_secret
     name: predator-graph
@@ -48,10 +54,10 @@ global:
 # Frontend (predator-analytics-ui)
 frontend:
   enabled: true
-  replicaCount: 2
+  replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-frontend
-    tag: v56.5-ELITE
+    repository: predator/frontend
+    tag: v58.2-WRAITH
     pullPolicy: IfNotPresent
   service:
     type: LoadBalancer
@@ -80,7 +86,7 @@ frontend:
       cpu: 100m
       memory: 128Mi
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
@@ -94,10 +100,10 @@ frontend:
 
 # Core API Service
 coreApi:
-  replicaCount: 2
+  replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-core-api
-    tag: v56.5-ELITE
+    repository: predator/core-api
+    tag: v58.2-WRAITH
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -110,7 +116,7 @@ coreApi:
       cpu: 250m
       memory: 256Mi
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 4
     targetCPUUtilizationPercentage: 70
@@ -147,8 +153,8 @@ coreApi:
 graphService:
   replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-graph-service
-    tag: v55.0.0
+    repository: predator/graph-service
+    tag: v58.2-WRAITH
   service:
     type: ClusterIP
     port: 8002
@@ -179,10 +185,10 @@ graphService:
 
 # Ingestion Worker
 ingestionWorker:
-  replicaCount: 2
+  replicaCount: 1
   image:
-    repository: ghcr.io/dima1203oleg/predator-ingestion-worker
-    tag: v56.5-ELITE
+    repository: predator/ingestion-worker
+    tag: v58.2-WRAITH
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -192,7 +198,7 @@ ingestionWorker:
       cpu: 200m
       memory: 256Mi
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 4
     targetCPUUtilizationPercentage: 70
@@ -230,7 +236,7 @@ security:
   mTLS:
     enabled: false
   networkPolicy:
-    enabled: true
+    enabled: false
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 1000
@@ -269,7 +275,7 @@ monitoring:
 
 # AI AGI Stack (Antigravity Core)
 litellm:
-  enabled: true
+  enabled: false
   replicaCount: 1
   image:
     repository: ghcr.io/berriai/litellm
@@ -298,7 +304,7 @@ litellm:
             api_base: "http://{{ .Release.Name }}-ollama:11434"
 
 ollama:
-  enabled: true
+  enabled: false
   image:
     repository: ollama/ollama
     tag: latest
@@ -307,10 +313,8 @@ ollama:
     port: 11434
   resources:
     limits:
-      nvidia.com/gpu: 1
       memory: 8Gi
     requests:
-      nvidia.com/gpu: 1
       memory: 4Gi
   persistence:
     enabled: true

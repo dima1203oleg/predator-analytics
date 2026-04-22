@@ -24,8 +24,8 @@ RUN pip install --prefix=/install /libs/predator-common
 
 # Worker залежності
 COPY services/ingestion-worker/pyproject.toml .
-RUN pip install --prefix=/install aiokafka asyncpg sqlalchemy[asyncio] \
-    openpyxl pandas httpx orjson structlog pydantic
+COPY services/ingestion-worker/requirements.txt .
+RUN pip install --prefix=/install -r requirements.txt
 
 # ============================================================
 # Stage 2: Runtime
