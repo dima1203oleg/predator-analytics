@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 import psutil
+import subprocess
 
 from app.config import get_settings
 from app.core.health import health_service
