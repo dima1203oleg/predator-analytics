@@ -131,13 +131,13 @@ export const AgentSwarmMap: React.FC<AgentSwarmMapProps> = ({ agents, onSelectAg
       
       {/* Overlay Status */}
       <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Autonomous_Swarm</h4>
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500/40">Автономний_Рій</h4>
         <div className="text-[12px] font-black text-rose-500 italic">NODE_MAP v58.2-WRAITH</div>
       </div>
 
       <div className="absolute bottom-6 right-6 pointer-events-none text-right">
-        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Load: {(agents.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)}GB_VRAM_POOL</div>
-        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Status: OK_P2P_SWARM_MESH</div>
+        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Навантаження: {(agents.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)}ГБ_VRAM_POOL</div>
+        <div className="text-[8px] font-mono text-rose-900/60 font-black uppercase tracking-widest">Статус: OK_P2P_SWARM_MESH</div>
       </div>
     </div>
   );

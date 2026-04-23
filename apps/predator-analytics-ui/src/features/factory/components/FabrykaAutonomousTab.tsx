@@ -367,11 +367,11 @@ export function FabrykaAutonomousTab() {
     let reconnectTimeout: NodeJS.Timeout;
 
     const connect = () => {
-      console.log(`📡 Connecting to Factory Observer: ${wsUrl}`);
+      console.log(`📡 Підключення до спостерігача Factory: ${wsUrl}`);
       socket = new WebSocket(wsUrl);
       
       socket.onopen = () => {
-        console.log('✅ Factory Observer Connected');
+        console.log('✅ Спостерігач Factory підключений');
         setIsStreaming(true);
       };
       
@@ -404,12 +404,12 @@ export function FabrykaAutonomousTab() {
             }
           }
         } catch (err) {
-          console.error('❌ Observer Decode Error:', err);
+          console.error('❌ Помилка декодування спостерігача:', err);
         }
       };
       
       socket.onclose = () => {
-        console.log('🛑 Factory WS Disconnected. Retrying in 5s...');
+        console.log('🛑 З\'єднання Factory WS втрачено. Спроба відновлення через 5с...');
         setIsStreaming(false);
         reconnectTimeout = setTimeout(connect, 5000);
       };
@@ -508,27 +508,27 @@ export function FabrykaAutonomousTab() {
           </div>
           {isCritical && (
             <Badge className="bg-rose-500 text-white animate-pulse border-none text-[8px] font-black italic">
-              VRAM_OVERLOAD_TRIGGER_ACTIVE
+              VRAM_ПЕРЕВАНТАЖЕННЯ_АКТИВНО
             </Badge>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-            <div className="text-[8px] font-black text-emerald-400 uppercase mb-2">Local LLM Partition</div>
+            <div className="text-[8px] font-black text-emerald-400 uppercase mb-2">Local LLM Розділ</div>
             <div className="text-xl font-black italic text-white">{localReserve} GB</div>
-            <div className="text-[8px] text-slate-500 mt-1">RESERVED FOR OLLAMA</div>
+            <div className="text-[8px] text-slate-500 mt-1">ЗАБРОНЬОВАНО ДЛЯ OLLAMA</div>
           </div>
           <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20">
             <div className="text-[8px] font-black text-rose-400 uppercase mb-2">Sovereign OS / UI</div>
             <div className="text-xl font-black italic text-white">{uiReserve} GB</div>
-            <div className="text-[8px] text-slate-500 mt-1">RESERVED FOR THREE.JS</div>
+            <div className="text-[8px] text-slate-500 mt-1">ЗАБРОНЬОВАНО ДЛЯ THREE.JS</div>
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between text-[10px] font-mono">
-            <span className="text-slate-500">Global Consumption</span>
+            <span className="text-slate-500">Глобальне споживання</span>
             <span className={isCritical ? 'text-rose-400' : 'text-emerald-400'}>{used.toFixed(2)} / {total.toFixed(2)} GB</span>
           </div>
           <div className="h-2 bg-white/5 rounded-full overflow-hidden relative">
@@ -544,7 +544,7 @@ export function FabrykaAutonomousTab() {
           </div>
           <div className="flex items-center justify-between text-[8px] text-slate-600 font-mono italic">
             <span>0.0 GB</span>
-            <span>7.6 GB (CLOUD_FAILOVER)</span>
+            <span>7.6 GB (FAILOVER_ХМАРИ)</span>
             <span>8.0 GB</span>
           </div>
         </div>
@@ -861,8 +861,8 @@ export function FabrykaAutonomousTab() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Active_Swarm_Load</div>
-                  <div className="text-xl font-black text-white italic">{(swarm.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)} GB VRAM</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Навантаження_Рою</div>
+                  <div className="text-xl font-black text-white italic">{(swarm.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)} ГБ VRAM</div>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
                   <Cpu size={18} className="text-rose-500" />
@@ -870,7 +870,7 @@ export function FabrykaAutonomousTab() {
               </div>
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-emerald-500/20 transition-colors">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Sandbox_Integrity</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Цілісність_Пісочниці</div>
                   <div className="text-xl font-black text-emerald-400 italic">SECURE_WORM</div>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition-transform">
@@ -879,8 +879,8 @@ export function FabrykaAutonomousTab() {
               </div>
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">OODA_Cycle_Rate</div>
-                  <div className="text-xl font-black text-rose-400 italic">4.2 OPS/SEC</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Швидкість_OODA</div>
+                  <div className="text-xl font-black text-rose-400 italic">4.2 ОП/СЕК</div>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
                   <Zap size={18} className="text-rose-500" />

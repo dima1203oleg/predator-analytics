@@ -28,16 +28,16 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
             <Brain size={16} className="text-rose-500" />
           </div>
           <div>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Live Reasoning Stream</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Потік міркувань у реальному часі</h3>
             <div className="text-[11px] font-black text-white uppercase italic">
-              {activeAgentId ? `Agent: ${activeAgentId}` : 'Очікування активності...'}
+              {activeAgentId ? `Агент: ${activeAgentId}` : 'Очікування активності...'}
             </div>
           </div>
         </div>
         {isStreaming && (
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-            <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Inference_Active</span>
+            <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest">Інференс_Активний</span>
           </div>
         )}
       </div>
@@ -103,9 +103,9 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
             <History size={10} />
             <span>Steps: {steps.length}</span>
           </div>
-          <div>Avg_Confidence: {(steps.reduce((acc, s) => acc + s.confidence, 0) / (steps.length || 1) * 100).toFixed(1)}%</div>
+          <div>Всер_Впевненість: {(steps.reduce((acc, s) => acc + s.confidence, 0) / (steps.length || 1) * 100).toFixed(1)}%</div>
         </div>
-        <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Protocol: WRAITH_COGNITION_v5.0</div>
+        <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Протокол: WRAITH_COGNITION_v5.0</div>
       </div>
     </div>
   );

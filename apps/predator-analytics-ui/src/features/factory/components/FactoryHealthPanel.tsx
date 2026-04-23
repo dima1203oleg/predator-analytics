@@ -21,7 +21,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
             <HeartPulse size={28} />
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНИЙ HEALTH CHECK</h3>
+            <h3 className="text-sm font-black uppercase tracking-widest text-white">СИСТЕМНА ДІАГНОСТИКА</h3>
             <p className="text-[10px] font-mono text-rose-400 uppercase">
               СЕРВІСІВ АКТИВНИХ: {healthChecks.filter(h => h.status === 'healthy').length}/{healthChecks.length} | ОНОВЛЕННЯ КОЖНІ 30 СЕК
             </p>
@@ -65,7 +65,9 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
                   {hc.latency == null ? 'Н/Д' : `${hc.latency}ms`}
                 </span>
                 <span className="text-slate-600">|</span>
-                <span className="text-slate-400 uppercase">{hc.status}</span>
+                <span className="text-slate-400 uppercase">
+                  {hc.status === 'healthy' ? 'ЗДОРОВИЙ' : hc.status === 'degraded' ? 'ДЕГРАДАЦІЯ' : 'ОФЛАЙН'}
+                </span>
               </div>
             </div>
           </motion.div>

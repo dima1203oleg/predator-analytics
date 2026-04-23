@@ -269,7 +269,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                <div className="text-[11px] font-black uppercase text-white truncate">Серверні Хаби</div>
                <div className="text-[8px] text-rose-400 font-mono mt-1">Внутрішні health телеметрії</div>
              </div>
-             <Badge variant="cyber" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">{healthChecks.length > 0 ? 'Active' : 'N/A'}</Badge>
+             <Badge variant="cyber" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">{healthChecks.length > 0 ? 'АКТИВНО' : 'Н/Д'}</Badge>
           </div>
 
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-rose-500/20">
@@ -280,7 +280,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                <div className="text-[11px] font-black uppercase text-white truncate">Cloud Connect</div>
                 <div className="text-[8px] text-rose-400 font-mono mt-1">Очікування контракту</div>
               </div>
-              <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">Offline</Badge>
+              <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">ОФЛАЙН</Badge>
            </div>
          </div>
        </TacticalCard>

@@ -42,20 +42,20 @@ export const FactoryIngestionPanel: React.FC<FactoryIngestionPanelProps> = ({
           <div className="bg-slate-900/50 border border-orange-500/20 p-4 rounded-xl flex items-center justify-between">
             <div>
               <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Пропускна здатність</div>
-              <div className="text-2xl text-orange-400 font-mono font-bold mt-1">{ingestionMetrics.rps} req/s</div>
+              <div className="text-2xl text-orange-400 font-mono font-bold mt-1">{ingestionMetrics.rps} зап/с</div>
             </div>
             <Activity className="text-orange-500/50" size={32} />
           </div>
           <div className="bg-slate-900/50 border border-emerald-500/20 p-4 rounded-xl flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Успішність (Success Rate)</div>
+              <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Успішність операцій</div>
               <div className="text-2xl text-emerald-400 font-mono font-bold mt-1">{ingestionMetrics.success}%</div>
             </div>
             <CheckCircle2 className="text-emerald-500/50" size={32} />
           </div>
           <div className="bg-slate-900/50 border border-rose-500/20 p-4 rounded-xl flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Ротація Проксі (Proxy)</span>
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Ротація Проксі-серверів</span>
               <div className="text-2xl text-rose-400 font-mono font-bold mt-1">{ingestionMetrics.proxies}</div>
             </div>
             <Network className="text-rose-500/50" size={32} />
