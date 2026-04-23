@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Radio, ArrowRightLeft, CheckCircle, AlertTriangle, XCircle, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';

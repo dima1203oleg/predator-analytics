@@ -170,15 +170,5 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
            <SystemClock />
         </div>
     </div>
-        
-        <AdminLicenseModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
-        <VoiceAssistant />
-        <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 z-50">
-           <AZRStatusHUD />
-        </div>
-        <div className="absolute right-10 bottom-[-15px] z-50">
-           <SystemClock />
-        </div>
-    </div>
-  );
+    );
 };

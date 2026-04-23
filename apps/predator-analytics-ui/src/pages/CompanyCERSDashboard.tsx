@@ -540,8 +540,8 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         </div>
                                         {displayShap.length > 0 ? (
                                             <RiskExplanationPanel 
-                                                explanation={Object.fromEntries(displayShap.map(s => [s.feature, s.impact]))} 
-                                                factors={displayShap.map(s => ({ name: s.feature, weight: s.impact, category: 'ai', detected: true }))}
+                                                explanation={Object.fromEntries(displayShap.map((s: any) => [s.feature, s.impact]))} 
+                                                factors={displayShap.map((s: any) => ({ name: s.feature, weight: s.impact, category: 'ai', detected: true }))}
                                             />
                                         ) : (
                                             <div className="h-full min-h-[300px] flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-slate-500 italic">
@@ -591,7 +591,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         </div>
                                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                                             <div className="lg:col-span-1 flex flex-col justify-center gap-4">
-                                                {displayRadar.map((r, i) => (
+                                                {displayRadar.map((r: any, i: number) => (
                                                     <div key={i} className="flex flex-col gap-1">
                                                         <div className="flex justify-between items-end">
                                                             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{r.subject}</span>

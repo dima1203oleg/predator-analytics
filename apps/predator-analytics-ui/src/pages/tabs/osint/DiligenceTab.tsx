@@ -43,9 +43,9 @@ const riskLevelTone: Record<string, string> = {
 };
 
 const MOCK_ENTITIES: RiskEntity[] = [
-    { edrpou: '00000001', ueid: 'comp_1', name: 'ТОВ "МЕРЕЖА-ЕНЕРГО"', risk_level: 'critical', risk_score: 94 },
-    { edrpou: '00000002', ueid: 'comp_2', name: 'ПП "ФОРВАРД ТРЕЙД"', risk_level: 'high', risk_score: 72 },
-    { edrpou: '00000003', ueid: 'comp_3', name: 'АТ "УКРГАЗІНВЕСТ"', risk_level: 'medium', risk_score: 48 },
+    { id: 'comp_1', edrpou: '00000001', ueid: 'comp_1', name: 'ТОВ "МЕРЕЖА-ЕНЕРГО"', riskLevel: 'critical', risk_level: 'critical', riskScore: 94, risk_score: 94, flags: [] },
+    { id: 'comp_2', edrpou: '00000002', ueid: 'comp_2', name: 'ПП "ФОРВАРД ТРЕЙД"', riskLevel: 'high', risk_level: 'high', riskScore: 72, risk_score: 72, flags: [] },
+    { id: 'comp_3', edrpou: '00000003', ueid: 'comp_3', name: 'АТ "УКРГАЗІНВЕСТ"', riskLevel: 'medium', risk_level: 'medium', riskScore: 48, risk_score: 48, flags: [] },
 ];
 
 const normalizeRiskLevel = (level?: string): RiskFilter => {

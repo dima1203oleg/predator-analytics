@@ -146,8 +146,14 @@ export interface UBONode {
 
 export interface BatchResultData {
   total: number;
+  total_processed?: number;
   distribution: Record<string, number>;
   scores: (AMLResult & { 
+    entity_id: string; 
+    entity_name: string; 
+    detected_factors: number;
+  })[];
+  results?: (AMLResult & { 
     entity_id: string; 
     entity_name: string; 
     detected_factors: number;
