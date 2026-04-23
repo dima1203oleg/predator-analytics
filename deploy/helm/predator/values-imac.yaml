@@ -1,0 +1,74 @@
+# iMac specific values (8GB RAM optimization)
+# Focus: Backend services only
+
+global:
+  domain: internal.predator.ua
+  imagePullPolicy: IfNotPresent
+
+frontend:
+  enabled: false
+  replicaCount: 0
+
+coreApi:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+graphService:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 400m
+      memory: 384Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+ingestionWorker:
+  enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+postgresql:
+  enabled: true
+  primary:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+neo4j:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+# Disable heavy AI components for now to save RAM on 8GB iMac
+litellm:
+  enabled: false
+
+ollama:
+  enabled: false
+
+monitoring:
+  enabled: false
