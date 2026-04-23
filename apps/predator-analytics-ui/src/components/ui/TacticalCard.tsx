@@ -1,6 +1,7 @@
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
 import { AlertCircle, ArrowDown, ArrowUp, CheckCircle, ChevronDown, Info, Minus } from 'lucide-react';
 import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface CardMetric {
   label: string;

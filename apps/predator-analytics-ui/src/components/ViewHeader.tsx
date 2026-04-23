@@ -2,6 +2,7 @@
 import React from 'react';
 import { ChevronRight, LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ViewHeaderProps {
   title: string | React.ReactNode;
