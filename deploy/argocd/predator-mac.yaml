@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: predator-frontend-mac
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/dima1203oleg/predator-analytics.git
+    targetRevision: HEAD
+    path: deploy/helm/predator
+    helm:
+      valueFiles:
+        - values.yaml
+        - values-mac-local.yaml
+  destination:
+    server: https://kubernetes.default.svc # Вважаємо, що ArgoCD стоїть на MacBook
+    namespace: predator-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
