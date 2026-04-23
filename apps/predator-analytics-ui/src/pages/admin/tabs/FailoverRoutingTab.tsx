@@ -107,12 +107,12 @@ export const FailoverRoutingTab: React.FC = () => {
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>Link Active</span>
+            <span>Канал активний</span>
           </div>
           <span>•</span>
-          <span>Redundancy: 3/3</span>
+          <span>Резервування: 3/3</span>
           <span>•</span>
-          <span>Policy: AUTOMATIC_PREEMPTIVE</span>
+          <span>Політика: АВТОМАТИЧНА_ПРЕВЕНТИВНА</span>
         </div>
       </div>
 
@@ -291,8 +291,5 @@ export const FailoverRoutingTab: React.FC = () => {
     </div>
   );
 };
-
-export default FailoverRoutingTab;
-
 
 export default FailoverRoutingTab;

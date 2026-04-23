@@ -217,12 +217,12 @@ const HypothesisEngineView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <Sparkles size={12} className="text-yellow-600 animate-pulse" />
                   <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
-                    SOVEREIGN HYPOTHESIS ENGINE · v58.2-WRAITH
+                    СУВЕРЕННЕ ЯДРО ГІПОТЕЗ · v58.2-WRAITH
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
-                  HYPOTHESIS{' '}
-                  <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] italic uppercase">ENGINE</span>
+                  ЯДРО{' '}
+                  <span className="text-yellow-500 drop-shadow-[0_0_30px_rgba(212,175,55,0.4)] italic uppercase">ГІПОТЕЗ</span>
                 </h1>
                 <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.4em] mt-3 flex items-center gap-4">
                   <Fingerprint size={16} className="text-yellow-500" /> АВТОГЕНЕРАЦІЯ СЛІДЧИХ ГІПОТЕЗ · TIER-1 ACCESS
@@ -232,8 +232,8 @@ const HypothesisEngineView: React.FC = () => {
           }
           breadcrumbs={['INTEL', 'AI', 'HYPOTHESIS_ENGINE']}
           badges={[
-            { label: 'CLASSIFIED_T1', color: 'gold', icon: <Lock size={10} /> },
-            { label: 'SOVEREIGN_CORE', color: 'primary', icon: <Cpu size={10} /> },
+            { label: 'ОБМЕЖЕНИЙ_Т1', color: 'gold', icon: <Lock size={10} /> },
+            { label: 'СУВЕРЕННЕ_ЯДРО', color: 'primary', icon: <Cpu size={10} /> },
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'gold', 
@@ -249,8 +249,8 @@ const HypothesisEngineView: React.FC = () => {
               color: isOffline ? 'warning' : 'success',
               animate: isOffline
             },
-            { label: 'EXPOSURE', value: '$184M', icon: <DollarSign />, color: 'danger' },
-            { label: 'COMPUTE', value: isOffline ? 'LOCAL' : 'CLOUD', icon: <Cpu />, color: isOffline ? 'warning' : 'primary' },
+            { label: 'РИЗИК_ВПЛИВУ', value: '$184M', icon: <DollarSign />, color: 'danger' },
+            { label: 'ОБЧИСЛЕННЯ', value: isOffline ? 'ЛОКАЛЬНІ' : 'ХМАРНІ', icon: <Cpu />, color: isOffline ? 'warning' : 'primary' },
           ]}
           actions={
             <div className="flex items-center gap-6">
@@ -259,13 +259,13 @@ const HypothesisEngineView: React.FC = () => {
                    <Cpu size={24} className="text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Compute node</p>
+                  <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Вузол обчислень</p>
                   <p className="text-xl font-black text-yellow-500 font-mono italic">{isOffline ? 'WRAITH_LOCAL' : 'PREDATOR_SIGINT'}</p>
                 </div>
               </div>
               <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4 italic font-bold">
                 <Download size={20} />
-                STRATEGIC_REPORT_WRAITH
+                СТРАТЕГІЧНИЙ_ЗВІТ_WRAITH
               </button>
             </div>
           }
@@ -274,10 +274,10 @@ const HypothesisEngineView: React.FC = () => {
         {/* ── МЕТРИКИ WRAITH ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '47',    sub: 'Active Vector Scan',       c: '#D4AF37' },
-            { l: 'CONFIRMATION_RATE',  v: '94.2%', sub: 'High Fidelity Match',     c: '#10b981' },
-            { l: 'TARGET_EXPOSURE',    v: '$184M', sub: 'Detected Capital Leak',   c: '#E11D48' },
-            { l: 'COMPUTE_SPEED',      v: '1.8ms', sub: 'Neural Mesh Performance', c: '#D4AF37' },
+            { l: 'ГІПОТЕЗ СФОРМОВАНО', v: '47',    sub: 'Активний векторний скан',       c: '#D4AF37' },
+            { l: 'ТОЧНІСТЬ_МАТЧИНГУ',  v: '94.2%', sub: 'Висока відповідність',     c: '#10b981' },
+            { l: 'ОБСЯГ_ВИЯВЛЕНЬ',     v: '$184M', sub: 'Виявлено витік капіталу',   c: '#E11D48' },
+            { l: 'ШВИДКІСТЬ_МЕШУ',      v: '1.8ms', sub: 'Продуктивність нейромережі', c: '#D4AF37' },
           ].map((m, i) => (
             <motion.div
               key={m.l}
@@ -299,7 +299,7 @@ const HypothesisEngineView: React.FC = () => {
           </div>
           <h2 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.6em] flex items-center gap-4 italic font-bold relative z-10">
             <Zap size={16} className="text-yellow-500 animate-pulse" />
-            INITIATE_PREDATIVE_SCAN_SEQUENCER
+            ІНІЦІАЛІЗАЦІЯ_ПОСЛІДОВНОСТІ_СКАНУВАННЯ
           </h2>
           <div className="flex flex-col md:flex-row gap-6 relative z-10">
             <div className="flex-1 flex items-center gap-6 border-2 border-white/5 bg-white/[0.02] px-10 py-6 rounded-3xl group hover:border-yellow-500/30 transition-all shadow-inner">
@@ -356,7 +356,7 @@ const HypothesisEngineView: React.FC = () => {
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{ duration: 0.7, repeat: Infinity }}
                   className="text-yellow-500 font-black"
-                >_PENDING_WRAITH_COMMAND</motion.span>
+                >_ОЧІКУВАННЯ_КОМАНДИ_WRAITH</motion.span>
               </div>
             )}
           </div>
@@ -441,15 +441,15 @@ const HypothesisEngineView: React.FC = () => {
 
                     <div className="grid grid-cols-3 gap-8 border-t border-white/5 pt-8">
                       <div>
-                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Confidence</p>
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Впевненість</p>
                         <p className="text-3xl font-black font-mono italic" style={{ color: sc.color }}>{hyp.confidence}%</p>
                       </div>
                       <div>
-                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Impact</p>
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Вплив</p>
                         <p className="text-2xl font-black text-white font-mono italic">{hyp.impactValue}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Source</p>
+                        <p className="text-[8px] text-slate-600 uppercase font-black tracking-widest mb-2">Джерело</p>
                         <p className="text-[10px] font-black text-yellow-600 font-mono italic">{hyp.aiModel.split('-')[1]}</p>
                       </div>
                     </div>
@@ -490,7 +490,7 @@ const HypothesisEngineView: React.FC = () => {
                         <p className="text-[56px] font-black font-mono leading-none tracking-tighter italic" style={{ color: STATUS_CFG[selected.status].color }}>
                           {selected.confidence}%
                         </p>
-                        <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.5em] mt-2">CERTAINTY_RATING</p>
+                        <p className="text-[10px] text-slate-600 uppercase font-black tracking-[0.5em] mt-2">РЕЙТИНГ_ВПЕВНЕННОСТІ</p>
                       </div>
                     </div>
                     
@@ -519,7 +519,7 @@ const HypothesisEngineView: React.FC = () => {
                       <div className="flex items-center gap-4">
                         <div className="p-3 bg-white/5 rounded-2xl"><Clock size={20} className="text-slate-500" /></div>
                         <div>
-                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Processing Time</p>
+                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Час обробки</p>
                            <p className="text-[13px] font-black text-white font-mono">{selected.processingTime}</p>
                         </div>
                       </div>
@@ -537,7 +537,7 @@ const HypothesisEngineView: React.FC = () => {
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic">
                       <FileText size={20} className="text-yellow-500" />
-                      PROOF_OF_HYPOTHESIS · {selected.evidence.length} STREAMS
+                      ДОКАЗОВА_БАЗА · {selected.evidence.length} ПОТОКІВ
                     </h3>
                     <div className="space-y-4">
                       {selected.evidence.map((ev, i) => (
@@ -597,11 +597,11 @@ const HypothesisEngineView: React.FC = () => {
                   <div className="grid grid-cols-2 gap-8 pt-6">
                     <button className="py-7 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all shadow-4xl rounded-3xl flex items-center justify-center gap-4 italic">
                       <Sparkles size={22} className="animate-pulse" />
-                      DEEP_SENSORY_SWEEP
+                      ГЛИБОКЕ_СЕНСОРНЕ_СКАНУВАННЯ
                     </button>
                     <button className="py-7 bg-black border-2 border-white/10 text-slate-500 text-[11px] font-black uppercase tracking-[0.4em] hover:text-white hover:border-yellow-500/40 transition-all rounded-3xl flex items-center justify-center gap-4 italic shadow-2xl">
                       <Download size={20} />
-                      EXPORT_CASE_DOCKET
+                      ЕКСПОРТ_МАТЕРІАЛІВ_СПРАВИ
                     </button>
                   </div>
                 </motion.div>
@@ -614,7 +614,7 @@ const HypothesisEngineView: React.FC = () => {
                      </div>
                   </div>
                   <p className="text-[14px] font-black text-slate-800 uppercase tracking-[.8em] italic">
-                    SELECT_ANALYTICAL_OBJECTIVE
+                    ОБЕРІТЬ_АНАЛІТИЧНУ_ЦІЛЬ
                   </p>
                 </div>
               )}

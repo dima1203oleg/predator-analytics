@@ -40,17 +40,17 @@ interface FactoryModule {
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
 const kafkaCols: VirtualColumn<KafkaTopic>[] = [
-  { key: 'name',       label: 'Topic',          mono: true },
-  { key: 'partitions', label: 'Part.', width: '55px',  mono: true, align: 'right' },
+  { key: 'name',       label: 'Топік',          mono: true },
+  { key: 'partitions', label: 'Парт.', width: '55px',  mono: true, align: 'right' },
   {
-    key: 'lag',        label: 'Lag',   width: '80px',  mono: true, align: 'right',
+    key: 'lag',        label: 'Лаг',   width: '80px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
       return <span className={n > 5000 ? 'text-red-500' : n > 500 ? 'text-amber-500' : 'text-rose-400/70'}>{n.toLocaleString()}</span>;
     },
   },
   { key: 'throughput', label: 'Трафік',  width: '90px', mono: true },
-  { key: 'consumers',  label: 'Cons.',   width: '55px', mono: true, align: 'right' },
+  { key: 'consumers',  label: 'Конс.',   width: '55px', mono: true, align: 'right' },
   {
     key: 'status',     label: 'Статус',  width: '70px',
     render: (v) => {
@@ -69,7 +69,7 @@ const datasetCols: VirtualColumn<DatasetRecord>[] = [
   { key: 'name',      label: 'Датасет',  mono: true },
   { key: 'type',      label: 'Тип',      width: '120px', mono: true, render: (v) => <span className="text-white/40">{String(v)}</span> },
   { key: 'records',   label: 'Записів',  width: '100px', mono: true, align: 'right', render: (v) => Number(v).toLocaleString() },
-  { key: 'sizeGb',    label: 'GB',       width: '60px',  mono: true, align: 'right' },
+  { key: 'sizeGb',    label: 'ГБ',       width: '60px',  mono: true, align: 'right' },
   { key: 'version',   label: 'Версія',   width: '70px',  mono: true },
   {
     key: 'status',    label: 'Статус',   width: '80px',
@@ -133,7 +133,7 @@ export const DataOpsTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center glass-wraith m-8 border border-rose-500/20 rounded-xl">
         <Database size={48} className="text-rose-500/40 mb-6" />
-        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">ПОМИЛКА DATAOPS</div>
+        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">ПОМИЛКА ОПЕРАЦІЙ З ДАНИМИ</div>
         <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
           Система не змогла отримати стан Kafka та датасетів. Перевірте з'єднання з контролером даних.
         </p>
@@ -155,31 +155,31 @@ export const DataOpsTab: React.FC = () => {
       <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
         <div className="flex items-center gap-3">
           <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            DataOps & Дата-потоки
+            Операції з даними & Дата-потоки
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            DATA_FABRIC_ACTIVE
+            ДАТА_ФАБРИКА_АКТИВНА
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>Kafka Online</span>
+            <span>KAFKA_В_МЕРЕЖІ</span>
           </div>
           <span>•</span>
-          <span>Throughput: 850 MB/s</span>
+          <span>ПРОПУСКНА_ЗДАТНІСТЬ: 850 МБ/с</span>
           <span>•</span>
-          <span>Warehouse: PREDATOR_LAKE</span>
+          <span>СХОВИЩЕ_ДАНИХ: PREDATOR_LAKE</span>
         </div>
       </div>
 
       {/* Метрики-шапка */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { label: 'TOPICS',   value: kafkaTopics.length, color: 'text-white/80', sub: 'ACTIVE_CHANNELS' },
-          { label: 'LAG TOTAL',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'BACKLOG_RECORDS' },
-          { label: 'ДАТАСЕТИ', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'SYNCED_READY' },
-          { label: 'МОДУЛІВ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/80', sub: 'ACTIVE_MODULES' },
+          { label: 'ТОПІКИ',   value: kafkaTopics.length, color: 'text-white/80', sub: 'АКТИВНІ_КАНАЛИ' },
+          { label: 'ЛАГ_УСЬОГО',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'ЗАПИСІВ_У_ЧЕРЗІ' },
+          { label: 'ДАТАСЕТИ', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'СИНХРОНІЗОВАНО' },
+          { label: 'МОДУЛІВ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/80', sub: 'АКТИВНІ_МОДУЛІ' },
         ].map((m, i) => (
           <motion.div 
             key={m.label}
@@ -264,15 +264,13 @@ export const DataOpsTab: React.FC = () => {
       <div className="flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
         <div className="flex items-center gap-3 px-4 py-2 bg-rose-500/5 border border-rose-500/10 rounded-lg">
            <TrendingUp className="w-4 h-4 text-rose-500" />
-           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">DATA_PIPELINE_STABLE</span>
+           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ДАТА_КОНВЕЄР_СТАБІЛЬНИЙ</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Data Management Layer v6.0 — ELITE_ANALYTICS</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Шар Управління Даними v6.0 — ЕЛІТНА_АНАЛІТИКА</span>
       </div>
     </div>
   );
 };
-
-export default DataOpsTab;
 
 export default DataOpsTab;

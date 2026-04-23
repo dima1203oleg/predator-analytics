@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Activity, Cpu, Zap, Shield, Database, 
   Layers, Boxes, Terminal, Box, Sparkles,
   BarChart3, BrainCircuit, Factory, HardDrive,
-  Network, AlertTriangle, RefreshCw
+  Network, AlertTriangle, RefreshCw, Atom
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NeuralCore } from '@/components/admin/visuals/NeuralCore';
@@ -81,15 +82,15 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
           <TacticalCard variant="holographic" title="ЯДРО ІНФРАСТРУКТУРИ" className="bg-black/40 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
             <div className="grid grid-cols-2 gap-3 mt-4">
-              <MiniStatus label="VRAM LOAD" value={`${metrics.vram.toFixed(1)} GB`} icon={Zap} />
-              <MiniStatus label="NEURAL CORE" value="34%" icon={Cpu} color="emerald" />
-              <MiniStatus label="NODE STATUS" value="ONLINE" icon={Shield} color="emerald" />
-              <MiniStatus label="LATENCY" value="12ms" icon={Activity} />
+              <MiniStatus label="НАВАНТАЖЕННЯ_VRAM" value={`${metrics.vram.toFixed(1)} GB`} icon={Zap} />
+              <MiniStatus label="НЕЙРОННЕ_ЯДРО" value="34%" icon={Cpu} color="emerald" />
+              <MiniStatus label="СТАТУС_ВУЗЛА" value="В_МЕРЕЖІ" icon={Shield} color="emerald" />
+              <MiniStatus label="ЗАТРИМКА" value="12ms" icon={Activity} />
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 space-y-4">
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-[8px] font-mono text-white/30">
-                  <span>SYSTEM STABILITY</span>
+                  <span>СТАБІЛЬНІСТЬ_СИСТЕМИ</span>
                   <span className="text-emerald-400 font-black tracking-widest">99.99%</span>
                 </div>
                 <div className="h-1 bg-white/5 rounded-full overflow-hidden">
@@ -117,7 +118,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-white group-hover:text-rose-400 transition-colors">АВТО-ФАБРИКА ШІ</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">OODA Cycle: Active</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Цикл_OODA: Активний</span>
                   </div>
                 </div>
                 <PulseIndicator />
@@ -134,7 +135,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-white group-hover:text-blue-400 transition-colors">FINE-TUNE ЦЕНТР</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">ML Training active</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">ML_Навчання_активне</span>
                   </div>
                 </div>
                 <div className="flex gap-0.5">
@@ -153,7 +154,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-white group-hover:text-emerald-400 transition-colors">СТУДІЯ ДАТАСЕТІВ</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Syncing: 4.2 TB</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Синхронізація: 4.2 TB</span>
                   </div>
                 </div>
                 <RefreshCw size={10} className="text-emerald-500/40 animate-spin-slow" />
@@ -165,7 +166,7 @@ export const SovereignCommandCenter: React.FC = () => {
             <div className="space-y-4 mt-4">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-[8px] font-mono text-white/30 uppercase tracking-[0.2em]">
-                  <span>OSINT_GLOBAL_SYNC</span>
+                  <span>ГЛОБАЛЬНА_СИНХРОНІЗАЦІЯ_OSINT</span>
                   <span className="text-rose-500 font-black">98.4%</span>
                 </div>
                 <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
@@ -176,11 +177,11 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center justify-between text-[8px] font-mono uppercase tracking-widest">
-                <span className="text-white/20">Total Volume</span>
+                <span className="text-white/20">Загальний_об'єм</span>
                 <span className="text-white/60 font-black">4.2 TB</span>
               </div>
               <div className="flex items-center justify-between text-[8px] font-mono uppercase tracking-widest">
-                <span className="text-white/20">Records Cached</span>
+                <span className="text-white/20">Записів_у_кеші</span>
                 <span className="text-white/60 font-black">12.8M</span>
               </div>
             </div>
@@ -194,19 +195,19 @@ export const SovereignCommandCenter: React.FC = () => {
             <div className="absolute top-0 left-0 right-0 p-8 flex items-start justify-between z-30 pointer-events-none">
               <div className="flex flex-col gap-2">
                 <h3 className="text-white font-black tracking-[0.4em] text-[14px] uppercase italic drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                  Sovereign Neural Core
+                  Суверенне Нейронне Ядро
                 </h3>
                 <div className="flex items-center gap-4">
-                  <div className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-sm tracking-[0.2em] shadow-[0_0_15px_rgba(225,29,72,0.6)]">ELITE ACCESS</div>
+                  <div className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-sm tracking-[0.2em] shadow-[0_0_15px_rgba(225,29,72,0.6)]">ЕЛІТНИЙ ДОСТУП</div>
                   <div className="flex items-center gap-3">
                     <PulseIndicator />
-                    <span className="text-rose-500 font-mono text-[9px] tracking-[0.3em] uppercase font-black animate-pulse">Syncronizing Reality</span>
+                    <span className="text-rose-500 font-mono text-[9px] tracking-[0.3em] uppercase font-black animate-pulse">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ</span>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1.5 opacity-60">
-                <span className="text-white/60 font-mono text-[9px] tracking-widest">BUFFER_HEALTH: 100%</span>
-                <span className="text-white/60 font-mono text-[9px] tracking-widest">CORE_TEMP: 42.4°C</span>
+                <span className="text-white/60 font-mono text-[9px] tracking-widest">ЗДОРОВ'Я_БУФЕРА: 100%</span>
+                <span className="text-white/60 font-mono text-[9px] tracking-widest">ТЕМП_ЯДРА: 42.4°C</span>
                 <div className="w-24 h-[1px] bg-gradient-to-l from-rose-500/40 to-transparent mt-1" />
               </div>
             </div>
@@ -230,37 +231,37 @@ export const SovereignCommandCenter: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] border border-rose-400/50"
               >
-                Force Recalibration
+                ПЕРЕКАЛІБРУВАТИ
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-3 bg-white/5 border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all"
               >
-                Switch Mode
+                ПЕРЕМКНУТИ_РЕЖИМ
               </motion.button>
             </div>
           </div>
 
           <div className="h-40 grid grid-cols-3 gap-6">
              <div className="bg-rose-500/5 border border-rose-500/10 p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-rose-500/30 transition-all group">
-                <span className="text-[8px] font-mono text-rose-500/60 uppercase tracking-[0.2em] font-black">Active Agents</span>
+                <span className="text-[8px] font-mono text-rose-500/60 uppercase tracking-[0.2em] font-black">Активні Агенти</span>
                 <div className="flex items-end justify-between">
                   <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{metrics.activeTasks}</span>
                   <Boxes size={24} className="text-rose-500/20 group-hover:text-rose-500/40 transition-colors" />
                 </div>
              </div>
              <div className="bg-white/[0.02] border border-white/[0.05] p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-white/10 transition-all group">
-                <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.2em] font-black">System Throughput</span>
+                <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.2em] font-black">Пропускна здатність</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{metrics.throughput.toFixed(0)} <small className="text-[10px] opacity-30 not-italic ml-1 tracking-tighter">req/s</small></span>
+                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{metrics.throughput.toFixed(0)} <small className="text-[10px] opacity-30 not-italic ml-1 tracking-tighter">зап/с</small></span>
                   <Network size={24} className="text-white/5 group-hover:text-white/10 transition-colors" />
                 </div>
              </div>
              <div className="bg-emerald-500/5 border border-emerald-500/10 p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-emerald-500/30 transition-all group">
-                <span className="text-[8px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black">Security Layer</span>
+                <span className="text-[8px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black">Рівень Безпеки</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] tracking-tighter">SECURED</span>
+                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] tracking-tighter">ЗАХИЩЕНО</span>
                   <Shield size={24} className="text-emerald-500/20 group-hover:text-emerald-500/40 transition-colors" />
                 </div>
              </div>
@@ -275,8 +276,8 @@ export const SovereignCommandCenter: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <BrainCircuit size={16} className="text-rose-500 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">FINE-TUNE ENGINE</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Active Optimization</span>
+                    <span className="text-[10px] font-black text-white">FINE-TUNE ДВИГУН</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Активна_оптимізація</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -291,13 +292,13 @@ export const SovereignCommandCenter: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <Database size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">DATASET STUDIO</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Global Sync Active</span>
+                    <span className="text-[10px] font-black text-white">СТУДІЯ ДАТАСЕТІВ</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Глобальна_синхронізація</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
                    <span className="text-[10px] font-black text-blue-500 italic font-mono">12.8M</span>
-                   <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest">RECORDS</span>
+                   <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest">ЗАПИСІВ</span>
                 </div>
               </div>
 
@@ -305,8 +306,8 @@ export const SovereignCommandCenter: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <Factory size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">AI FACTORY PROD</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">OODA Cycle Locked</span>
+                    <span className="text-[10px] font-black text-white">AI ФАБРИКА PROD</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Цикл_OODA_заблоковано</span>
                   </div>
                 </div>
                 <PulseIndicator color="emerald" />
@@ -325,7 +326,7 @@ export const SovereignCommandCenter: React.FC = () => {
                 { time: '14:20:45', msg: 'DATASET_RELOAD: COMPLETED', type: 'info' },
                 { time: '14:21:01', msg: 'OODA_PHASE: DECIDE', type: 'info' },
                 { time: '14:21:10', msg: 'THREAT_DETECTION: NO_THREATS', type: 'success' },
-                { time: '14:21:15', msg: 'SYSTEM_VERSION: v60.5-ELITE', type: 'info' },
+                { time: '14:21:15', msg: 'СИСТЕМНА_ВЕРСІЯ: v60.5-ELITE', type: 'info' },
               ].map((log, i) => (
                 <div key={i} className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity group/log">
                   <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/40 transition-colors">[{log.time}]</span>

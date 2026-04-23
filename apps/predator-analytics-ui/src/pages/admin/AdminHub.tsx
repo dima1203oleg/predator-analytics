@@ -93,38 +93,38 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
-  { id: 'command',      category: 'SYSTEM_CORE', label: 'Command Center', badge: 'SOVEREIGN', icon: Zap,           component: SovereignCommandCenter },
+  { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'SOVEREIGN', icon: Zap,           component: SovereignCommandCenter },
   { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'LIVE',     icon: Activity,      component: InfraTelemetryTab },
-  { id: 'failover',     category: 'SYSTEM_CORE', label: 'Failover',                        icon: Network,       component: FailoverRoutingTab },
+  { id: 'failover',     category: 'SYSTEM_CORE', label: 'Резервування',                    icon: Network,       component: FailoverRoutingTab },
   { id: 'gitops',       category: 'SYSTEM_CORE', label: 'GitOps CI',                       icon: GitMerge,      component: GitOpsPipelineTab  },
   { id: 'agents-ops',   category: 'SYSTEM_CORE', label: 'Агенти',                          icon: Cpu,           component: AgentsOpsTab       },
-  { id: 'security',     category: 'SYSTEM_CORE', label: 'Zero Trust',   badge: 'SEC',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
+  { id: 'security',     category: 'SYSTEM_CORE', label: 'Нульова довіра',   badge: 'SEC',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'DataOps',                         icon: Database,      component: DataOpsTab         },
   { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Chaos Ops',    badge: 'HAZARD',   icon: Zap,           component: ChaosControlHub    },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
-  { id: 'ai-control',   category: 'AI_LAB', label: 'AI Control',   badge: 'NEXUS',    icon: Zap,           component: AIControlPlane },
-  { id: 'ai-insights',  category: 'AI_LAB', label: 'AI Insights',  badge: 'DEEP',     icon: BrainCircuit,  component: AIInsightsHub },
+  { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'NEXUS',    icon: Zap,           component: AIControlPlane },
+  { id: 'ai-insights',  category: 'AI_LAB', label: 'Аналітика ШІ',  badge: 'DEEP',     icon: BrainCircuit,  component: AIInsightsHub },
   { id: 'ai-engines',   category: 'AI_LAB', label: 'Двигуни ШІ',   badge: 'CORE',     icon: Cpu,           component: EnginesView },
   { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM Провідник',                    icon: BookOpen,      component: LLMView },
   { id: 'factory',      category: 'AI_LAB', label: 'Завод ШІ',      badge: 'PROD',     icon: Factory,       component: SystemFactoryView  },
   { id: 'factory-studio', category: 'AI_LAB', label: 'Студія Заводу',  badge: 'DESIGN',   icon: Layers,        component: FactoryStudio },
   { id: 'auto-factory', category: 'AI_LAB', label: 'Авто-Фабрика',  badge: 'OODA',     icon: Sparkles,      component: AutoFactoryView },
-  { id: 'models',       category: 'AI_LAB', label: 'Fine-Tune',    badge: 'ML',       icon: BrainCircuit,  component: ModelTrainingView  },
+  { id: 'models',       category: 'AI_LAB', label: 'Донавчання',    badge: 'ML',       icon: BrainCircuit,  component: ModelTrainingView  },
   { id: 'datasets',     category: 'AI_LAB', label: 'Датасети',      badge: 'DATA',     icon: HardDrive,     component: DatasetsStudioView },
   { id: 'prompts',      category: 'AI_LAB', label: 'Промпти',                         icon: MessageSquare, component: SystemPromptsView },
   { id: 'nas',          category: 'AI_LAB', label: 'Нейромережі',  badge: 'NAS',      icon: Cpu,           component: NasView },
   { id: 'forecast',     category: 'AI_LAB', label: 'Прогнози',      badge: 'MATH',     icon: TrendingUp,    component: ForecastView },
-  { id: 'super-intel',  category: 'AI_LAB', label: 'SuperIntel',   badge: 'OMEGA',    icon: Zap,           component: SuperIntelligenceView },
+  { id: 'super-intel',  category: 'AI_LAB', label: 'СуперІнтелект',   badge: 'OMEGA',    icon: Zap,           component: SuperIntelligenceView },
 
   // ─── INTEL_OSINT ───────────────────────────────────────────────────────────
-  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'Intel Hub',    badge: 'ORACLE',   icon: Network,       component: SovereignIntelHub },
-  { id: 'nexus',        category: 'INTEL_OSINT', label: 'Nexus',        badge: 'PREDICT',  icon: Zap,           component: PredictiveNexusView },
+  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'Хаб Розвідки',    badge: 'ORACLE',   icon: Network,       component: SovereignIntelHub },
+  { id: 'nexus',        category: 'INTEL_OSINT', label: 'Нексус',        badge: 'PREDICT',  icon: Zap,           component: PredictiveNexusView },
   { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'Гіпотези',                        icon: BrainCircuit,  component: HypothesisEngineView },
   { id: 'knowledge',    category: 'INTEL_OSINT', label: 'Знання',                         icon: BookOpen,      component: KnowledgeEngineeringView },
   { id: 'scenarios',    category: 'INTEL_OSINT', label: 'Сценарії',     badge: 'SIM',      icon: Layers,        component: ScenarioModelingView },
   { id: 'intelligence', category: 'INTEL_OSINT', label: 'Розвідка',     badge: 'WRAITH',   icon: Eye,           component: CustomsIntelligenceView },
-  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Fin SIGINT',   badge: 'MONEY',    icon: BarChart3,     component: FinancialSigintView },
+  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Фін. SIGINT',   badge: 'MONEY',    icon: BarChart3,     component: FinancialSigintView },
   { id: 'due-diligence', category: 'INTEL_OSINT', label: 'Due Diligence', badge: 'KYC',       icon: ShieldCheck,   component: DueDiligenceView },
   { id: 'timeline',     category: 'INTEL_OSINT', label: 'Хронограф',    badge: 'HIST',      icon: Activity,      component: TimelineBuilderView },
   { id: 'supply-chain', category: 'INTEL_OSINT', label: 'Ланцюги Поставок', badge: 'LOGISTICS', icon: Box,        component: SupplyChainAnalyticsView },
@@ -137,7 +137,7 @@ const TABS: TabConfig[] = [
   { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'TRACK',    icon: Target,        component: EntityRadarView },
   { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'AGENT',    icon: TrendingUp,    component: EvolutionView },
   { id: 'osint',        category: 'INTEL_OSINT', label: 'OSINT Консоль', badge: 'SEARCH',   icon: Search,        component: SearchConsole },
-  { id: 'zrada',        category: 'INTEL_OSINT', label: 'Zrada Control', badge: 'ELITE',    icon: ShieldAlert,   component: ZradaControlView },
+  { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ELITE',    icon: ShieldAlert,   component: ZradaControlView },
   { id: 'aml',          category: 'INTEL_OSINT', label: 'AML Scoring',   badge: 'RISK',     icon: Activity,      component: AMLScoringView },
   { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'GLOBAL',   icon: Lock,          component: SanctionsScreening },
   { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'Соц. Розвідка', badge: 'SOCIAL',   icon: MessageSquare, component: ConversationIntelView },
@@ -282,9 +282,9 @@ const SystemStatusHeader: React.FC = () => {
                     "font-black tracking-[0.3em] text-[12px] italic",
                     isCritical ? "text-blue-400" : isHybrid ? "text-emerald-400" : "text-rose-400"
                   )}>
-                    {isCritical ? "CLOUD OVERRIDE" : isHybrid ? "HYBRID SOVEREIGN" : "LOCAL SOVEREIGN"}
+                    {isCritical ? "CLOUD OVERRIDE" : isHybrid ? "ГІБРИДНИЙ_СУВЕРЕН" : "ЛОКАЛЬНИЙ_СУВЕРЕН"}
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">VRAM: {vramUsed.toFixed(1)}GB / {vramTotal.toFixed(1)}GB • {isCritical ? 'EXTERNAL_CLUSTER' : 'LOCAL_NEURAL_NODE'}</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">VRAM: {vramUsed.toFixed(1)}GB / {vramTotal.toFixed(1)}GB • {isCritical ? 'ЗОВНІШНІЙ_КЛАСТЕР' : 'ЛОКАЛЬНИЙ_НЕЙРОВУЗОЛ'}</span>
                 </div>
               </div>
             </div>
@@ -296,8 +296,8 @@ const SystemStatusHeader: React.FC = () => {
               <div className="flex flex-col gap-2.5 min-w-[160px]">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col">
-                    <span className="text-white/20 text-[8px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-black italic">NEURAL_LOAD</span>
-                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">WEIGHT_SYMBOLS_ACTIVE</span>
+                    <span className="text-white/20 text-[8px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-black italic">НЕЙРОННЕ_НАВАНТАЖЕННЯ</span>
+                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">АКТИВНІ_ВАГИ</span>
                   </div>
                   <span className={cn("font-black text-[14px] tracking-tighter italic", cpuPercent > 80 ? "text-rose-500" : "text-white/90")}>
                     {cpuPercent.toFixed(1)}%
@@ -319,8 +319,8 @@ const SystemStatusHeader: React.FC = () => {
               <div className="flex flex-col gap-2.5 min-w-[160px]">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col">
-                    <span className="text-white/20 text-[8px] group-hover/stat:text-emerald-500 transition-colors tracking-widest font-black italic">ENTROPY_LEVEL</span>
-                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">SYNC_PHASE_LOCKED</span>
+                    <span className="text-white/20 text-[8px] group-hover/stat:text-emerald-500 transition-colors tracking-widest font-black italic">РІВЕНЬ_ЕНТРОПІЇ</span>
+                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">СИНХРОФАЗА_ЗАБЛОКОВАНА</span>
                   </div>
                   <span className="text-emerald-400 font-black text-[14px] tracking-tighter italic">{entropy.toFixed(3)}</span>
                 </div>
@@ -342,15 +342,15 @@ const SystemStatusHeader: React.FC = () => {
                 <Radio size={20} className="text-rose-500 animate-pulse" />
                 <div className="flex flex-col">
                   <span className="text-white font-black text-[16px] leading-none tracking-tighter italic">
-                    {agentsCount.toString().padStart(2, '0')} <span className="text-[9px] text-rose-500 not-italic ml-1 font-black">NODES</span>
+                    {agentsCount.toString().padStart(2, '0')} <span className="text-[9px] text-rose-500 not-italic ml-1 font-black">ВУЗЛІВ</span>
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 font-bold">LATENCY: {status?.services[0]?.latency_ms ?? 0}ms</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 font-bold">ЗАТРИМКА: {status?.services[0]?.latency_ms ?? 0}ms</span>
                 </div>
               </div>
             </div>
 
             <div className="flex flex-col border-l border-white/10 pl-12 h-12 justify-center group/threat">
-              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic group-hover/threat:text-rose-500 transition-colors">THREAT_LEVEL</span>
+              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic group-hover/threat:text-rose-500 transition-colors">РІВЕНЬ_ЗАГРОЗИ</span>
               <div className="flex items-center gap-5">
                 <div className="relative">
                   <ShieldAlert size={22} className={cn("transition-all duration-700", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_12px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
@@ -369,7 +369,7 @@ const SystemStatusHeader: React.FC = () => {
 
         <div className="flex items-center gap-12">
           <div className="flex flex-col items-end border-r border-white/10 pr-12 h-12 justify-center">
-            <span className="text-white/20 text-[8px] leading-none mb-2 tracking-[0.5em] font-black uppercase italic">SYSTEM_TIME_UTC</span>
+            <span className="text-white/20 text-[8px] leading-none mb-2 tracking-[0.5em] font-black uppercase italic">СИСТЕМНИЙ_ЧАС_UTC</span>
             <span className="text-white font-mono tracking-[0.4em] text-[16px] font-black italic glint-elite">
               {time.toLocaleTimeString('uk-UA', { hour12: false })}
               <span className="text-[10px] text-rose-500/40 ml-2 font-bold">[{time.getMilliseconds().toString().padStart(3, '0')}]</span>
@@ -390,7 +390,7 @@ const SystemStatusHeader: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-rose-500 font-black text-[15px] leading-none tracking-[0.25em] italic">SECURED</span>
+              <span className="text-rose-500 font-black text-[15px] leading-none tracking-[0.25em] italic">ЗАХИЩЕНО</span>
               <div className="flex items-center gap-3 mt-2.5">
                 <div className="flex gap-1">
                   {[1,2,3,4,5].map(i => <div key={i} className="w-[4px] h-[4px] bg-rose-500/60 rounded-full" />)}
@@ -448,7 +448,7 @@ const TabLoader: React.FC = () => (
           transition={{ duration: 2, repeat: Infinity }}
           className="text-[12px] font-mono font-black uppercase tracking-[0.5em] text-rose-500"
         >
-          Initializing Module
+          Ініціалізація модуля
         </motion.span>
         <div className="h-[2px] w-48 bg-white/5 relative overflow-hidden rounded-full">
           <motion.div 
@@ -462,12 +462,12 @@ const TabLoader: React.FC = () => (
 
       <div className="grid grid-cols-2 gap-x-12 gap-y-2 opacity-30 max-w-sm">
         {[
-          "NEURAL_CONNECT: ESTABLISHED",
-          "CORE_HANDSHAKE: SUCCESS",
-          "DECRYPT_LAYER: LEVEL_7",
-          "SOVEREIGN_AUTH: VERIFIED",
-          "VRAM_ALLOCATION: OPTIMIZED",
-          "UBO_MAP_SYNC: ACTIVE"
+          "НЕЙРОННИЙ_ЗВ'ЯЗОК: ВСТАНОВЛЕНО",
+          "РУКОСТИСКАННЯ_ЯДРА: УСПІШНО",
+          "ШАР_ДЕШИФРУВАННЯ: РІВЕНЬ_7",
+          "СУВЕРЕННА_АВТЕНТИФІКАЦІЯ: ПІДТВЕРДЖЕНО",
+          "РОЗПОДІЛ_VRAM: ОПТИМІЗОВАНО",
+          "СИНХРОНІЗАЦІЯ_МАПИ_UBO: АКТИВНО"
         ].map((text, i) => (
           <div key={i} className="flex items-center gap-2">
             <div className="w-1 h-1 bg-rose-500 rounded-full" />
@@ -570,12 +570,12 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
 
         <div className="ml-auto flex items-center gap-6 pr-4">
            <div className="flex flex-col items-end">
-              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Node Status</span>
-              <span className="text-emerald-500 text-[10px] font-black tracking-widest uppercase animate-pulse">Online</span>
+              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Статус вузла</span>
+              <span className="text-emerald-500 text-[10px] font-black tracking-widest uppercase animate-pulse">В мережі</span>
            </div>
            <div className="w-[1px] h-8 bg-white/5" />
            <div className="flex flex-col items-end">
-              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Signal Strength</span>
+              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Сила сигналу</span>
               <div className="flex gap-0.5 mt-1">
                  {[1,2,3,4,5].map(i => (
                     <div key={i} className={cn("w-1 h-2 rounded-full", i <= 4 ? "bg-rose-500/60 shadow-[0_0_5px_rgba(225,29,72,0.4)]" : "bg-white/5")} />
@@ -753,7 +753,7 @@ export const AdminHub: React.FC = () => {
               />
             ))}
           </div>
-          <span className="text-rose-500/60 font-black tracking-[0.3em]">SOVEREIGN_OS_READY</span>
+          <span className="text-rose-500/60 font-black tracking-[0.3em]">SOVEREIGN_OS_ГОТОВО</span>
           <span>PREDATOR_ANALYTICS_V60.0_ELITE</span>
         </div>
 

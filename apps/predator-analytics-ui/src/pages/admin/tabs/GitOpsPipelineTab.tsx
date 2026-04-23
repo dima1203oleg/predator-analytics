@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, CheckCircle, XCircle, Clock, GitBranch, Loader, Workflow } from 'lucide-react';
+import { Box, CheckCircle, XCircle, Clock, GitBranch, Loader, Workflow, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 import { useGitOpsStatus } from '@/hooks/useAdminApi';
-import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -43,7 +43,7 @@ interface ETLPipeline {
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
 const ciCols: VirtualColumn<CIRun>[] = [
-  { key: 'id',      label: 'Run',    width: '70px',  mono: true },
+  { key: 'id',      label: 'Запуск', width: '70px',  mono: true },
   {
     key: 'status',  label: 'Статус', width: '80px',
     render: (v) => {
@@ -146,18 +146,18 @@ export const GitOpsPipelineTab: React.FC = () => {
             GitOps & Пайплайни
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            AUTO_DEPLOY_ACTIVE
+            АВТОДЕПЛОЙ_АКТИВНИЙ
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>Synced</span>
+            <span>СИНХРОНІЗОВАНО</span>
           </div>
           <span>•</span>
-          <span>Revision: HEAD_ELITE</span>
+          <span>РЕВІЗІЯ: HEAD_ELITE</span>
           <span>•</span>
-          <span>Cluster: PREDATOR_MAIN</span>
+          <span>КЛАСТЕР: PREDATOR_MAIN</span>
         </div>
       </div>
 
@@ -242,8 +242,5 @@ export const GitOpsPipelineTab: React.FC = () => {
     </div>
   );
 };
-
-export default GitOpsPipelineTab;
-
 
 export default GitOpsPipelineTab;

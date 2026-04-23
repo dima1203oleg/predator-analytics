@@ -198,14 +198,14 @@ const NeuralGraph = ({ color }: { color: string }) => (
 
     <div className="relative h-full flex flex-col items-center justify-center">
        <Radar size={48} className="text-rose-500 animate-pulse mb-4" />
-       <p className="text-[9px] font-black uppercase tracking-[0.5em] text-rose-500/60 italic">NEURAL_MAPPING_ACTIVE</p>
+       <p className="text-[9px] font-black uppercase tracking-[0.5em] text-rose-500/60 italic">НЕЙРОННЕ_МАРШРУТУВАННЯ_АКТИВНЕ</p>
        <div className="absolute bottom-6 left-6 right-6 flex justify-between">
           <div className="space-y-1">
-             <p className="text-[7px] text-slate-500 font-bold uppercase tracking-widest">NODES_DISCOVERED</p>
+             <p className="text-[7px] text-slate-500 font-bold uppercase tracking-widest">ВУЗЛІВ_ВИЯВЛЕНО</p>
              <p className="text-[10px] text-white font-black font-mono">1,024</p>
           </div>
           <div className="space-y-1 text-right">
-             <p className="text-[7px] text-slate-500 font-bold uppercase tracking-widest">PATH_SYNERGY</p>
+             <p className="text-[7px] text-slate-500 font-bold uppercase tracking-widest">СИНЕРГІЯ_ШЛЯХУ</p>
              <p className="text-[10px] text-emerald-500 font-black font-mono">98.2%</p>
           </div>
        </div>
@@ -216,10 +216,10 @@ const NeuralGraph = ({ color }: { color: string }) => (
 // ── МАТРИЦЯ СТРАТЕГІЧНИХ РІШЕНЬ ──
 const StrategicDecisionMatrix = () => {
   const decisions = [
-    { label: 'БЛОКУВАННЯ', risk: 85, impact: 92, status: 'RECOMMENDED' },
-    { label: 'МОНІТОРИНГ', risk: 45, impact: 30, status: 'ACTIVE' },
-    { label: 'РОЗСЛІДУВАННЯ', risk: 65, impact: 75, status: 'PENDING' },
-    { label: 'АРХІВАЦІЯ', risk: 10, impact: 5, status: 'AVAILABLE' },
+    { label: 'БЛОКУВАННЯ', risk: 85, impact: 92, status: 'РЕКОМЕНДОВАНО' },
+    { label: 'МОНІТОРИНГ', risk: 45, impact: 30, status: 'АКТИВНО' },
+    { label: 'РОЗСЛІДУВАННЯ', risk: 65, impact: 75, status: 'ОЧІКУЄТЬСЯ' },
+    { label: 'АРХІВАЦІЯ', risk: 10, impact: 5, status: 'ДОСТУПНО' },
   ];
 
   return (
@@ -242,7 +242,7 @@ const StrategicDecisionMatrix = () => {
                 <span className="text-[10px] font-black text-slate-400 group-hover/item:text-white transition-colors uppercase tracking-widest">{dec.label}</span>
                 <span className={cn(
                   "text-[8px] font-black px-3 py-1 rounded-full border tracking-tighter",
-                  dec.status === 'RECOMMENDED' ? "text-rose-500 border-rose-500/40 bg-rose-500/10 shadow-[0_0_15px_rgba(225,29,72,0.2)]" : "text-slate-600 border-white/10"
+                  dec.status === 'РЕКОМЕНДОВАНО' ? "text-rose-500 border-rose-500/40 bg-rose-500/10 shadow-[0_0_15px_rgba(225,29,72,0.2)]" : "text-slate-600 border-white/10"
                 )}>
                   {dec.status}
                 </span>
@@ -281,8 +281,8 @@ const StrategicDecisionMatrix = () => {
           ))}
         </div>
         <div className="mt-8 flex justify-between items-center text-[8px] font-black font-mono text-slate-800 uppercase tracking-[0.4em] px-4 italic border-t border-white/5 pt-4">
-          <span className="flex items-center gap-2"><Zap size={10} className="text-rose-500" /> OPTIMAL_PATH_FOUND: TRUE</span>
-          <span>SYNERGY: 0.982</span>
+          <span className="flex items-center gap-2"><Zap size={10} className="text-rose-500" /> ОПТИМАЛЬНИЙ_ШЛЯХ_ЗНАЙДЕНО: TRUE</span>
+          <span>СИНЕРГІЯ: 0.982</span>
         </div>
       </div>
     </div>
@@ -364,7 +364,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           category: 'Фінансові злочини',
           createdAt: new Date().toISOString(),
           actionable: true,
-          actions: [{ label: 'FREEZE_INITIATED', type: 'primary' }, { label: 'ПЕРЕДАТИ_ДО_НАБУ', type: 'secondary' }],
+          actions: [{ label: 'ЗАМОРОЖЕНО', type: 'primary' }, { label: 'ПЕРЕДАТИ_ДО_НАБУ', type: 'secondary' }],
           saved: false
         }
       ]);
@@ -417,7 +417,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-            <span className="text-[8px] font-mono text-rose-500/50 uppercase tracking-widest">WRAITH_ACTIVE</span>
+            <span className="text-[8px] font-mono text-rose-500/50 uppercase tracking-widest">WRAITH_АКТИВНИЙ</span>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4">
@@ -440,7 +440,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                 <span className="text-[8px] font-black uppercase tracking-widest italic" style={{ color: TYPE_CONFIG[insight.type]?.color }}>
                   {TYPE_CONFIG[insight.type]?.label}
                 </span>
-                <span className="text-[8px] font-mono text-slate-500">{insight.confidence}% MATCH</span>
+                <span className="text-[8px] font-mono text-slate-500">{insight.confidence}% ЗБІГ</span>
               </div>
               <h4 className="text-[11px] font-bold text-slate-300 group-hover:text-white uppercase leading-snug line-clamp-2">
                 {insight.title}
@@ -517,7 +517,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                             </span>
                          </div>
                          <div className="hidden sm:block w-px h-3 bg-white/10" />
-                         <span className="hidden sm:inline text-[9px] font-mono text-slate-500 uppercase tracking-widest">{selectedInsight.confidence}% CONFIDENCE_SCORE</span>
+                         <span className="hidden sm:inline text-[9px] font-mono text-slate-500 uppercase tracking-widest">{selectedInsight.confidence}% РЕЙТИНГ_ДОВІРИ</span>
                       </div>
                       <h2 className="text-xl sm:text-4xl font-black text-white italic tracking-tighter uppercase chromatic-elite glint-elite">{selectedInsight.title}</h2>
                    </div>
@@ -589,10 +589,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                          </h4>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             {[
-                              { name: 'ТОВ "Метал-Трейд-Груп"', id: 'UEID: 40192837', type: 'СУБ\'ЄКТ', status: 'MONITORED' },
-                              { name: 'Port of Singapore Authority', id: 'LOC: SG_SIN', type: 'ЛОКАЦІЯ', status: 'VERIFIED' },
-                              { name: 'HSBC Global Settlement', id: 'BANK: HS_GLB', type: 'ФІНАНСИ', status: 'FLAGGED' },
-                              { name: 'Договір №45/2024-EX', id: 'DOC: CONTRACT', type: 'ДОКУМЕНТ', status: 'AUDITED' },
+                              { name: 'ТОВ "Метал-Трейд-Груп"', id: 'UEID: 40192837', type: 'СУБ\'ЄКТ', status: 'ПІД_КАНТРОЛЕМ' },
+                              { name: 'Port of Singapore Authority', id: 'LOC: SG_SIN', type: 'ЛОКАЦІЯ', status: 'ВЕРИФІКОВАНО' },
+                              { name: 'HSBC Global Settlement', id: 'BANK: HS_GLB', type: 'ФІНАНСИ', status: 'ПІДОЗРІЛО' },
+                              { name: 'Договір №45/2024-EX', id: 'DOC: CONTRACT', type: 'ДОКУМЕНТ', status: 'АУДИТОВАНО' },
                             ].map((entity, i) => (
                               <div key={i} className="p-6 bg-white/[0.02] border border-white/5 rounded-[1.8rem] flex items-center justify-between group hover:border-rose-500/30 transition-all cursor-pointer hover:bg-rose-500/[0.02]">
                                  <div className="flex items-center gap-4">
@@ -649,8 +649,8 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                                />
                             </div>
                             <div className="flex justify-between text-[7px] font-mono text-slate-700 uppercase tracking-[0.2em]">
-                               <span>LOWER_BOUND: 0.82</span>
-                               <span>UPPER_BOUND: 0.99</span>
+                               <span>НИЖНЯ_МЕЖА: 0.82</span>
+                               <span>ВЕРХНЯ_МЕЖА: 0.99</span>
                             </div>
                          </div>
  
@@ -673,13 +673,13 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                          <div className="p-8 bg-black/80 border border-rose-500/10 rounded-[2.5rem] font-mono text-[10px] text-emerald-500/50 leading-relaxed uppercase overflow-hidden relative shadow-inner group">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-30 transition-opacity"><Cpu size={64} className="animate-pulse" /></div>
                             <div className="relative z-10 space-y-1">
-                               <p className="text-emerald-400">[{new Date().toLocaleTimeString()}] &gt; INITIALIZING_GRAPH_TRAVERSAL...</p>
-                               <p className="text-emerald-500/80">&gt; FETCHING_NEO4J_NODES: OK [42ms]</p>
-                               <p className="text-emerald-500/60">&gt; RUNNING_WRAITH_SCORING_ALGO...</p>
-                               <p className="text-emerald-500/40">&gt; ANOMALY_COEFFICIENT: 0.982</p>
-                               <p className="text-rose-500/60">&gt; CRITICAL_MATCH_FOUND: [G-42_PATTERN]</p>
-                               <p className="text-emerald-500/40">&gt; GENERATING_NATURAL_LANGUAGE_SUMMARY...</p>
-                               <p className="text-emerald-400/90">&gt; STATUS: READY_FOR_SOVEREIGN_DECISION</p>
+                               <p className="text-emerald-400">[{new Date().toLocaleTimeString()}] &gt; ІНІЦІАЛІЗАЦІЯ_ОБХОДУ_ГРАФА...</p>
+                               <p className="text-emerald-500/80">&gt; ОТРИМАННЯ_ВУЗЛІВ_NEO4J: OK [42ms]</p>
+                               <p className="text-emerald-500/60">&gt; ЗАПУСК_АЛГОРИТМУ_СКОРИНГУ_WRAITH...</p>
+                               <p className="text-emerald-500/40">&gt; КОЕФІЦІЄНТ_АНОМАЛІЇ: 0.982</p>
+                               <p className="text-rose-500/60">&gt; КРИТИЧНИЙ_ЗБІГ_ЗНАЙДЕНО: [G-42_PATTERN]</p>
+                               <p className="text-emerald-500/40">&gt; ГЕНЕРАЦІЯ_АНАЛІТИЧНОГО_РЕЗЮМЕ...</p>
+                               <p className="text-emerald-400/90">&gt; СТАТУС: ГОТОВО_ДО_СУВЕРЕННОГО_РІШЕННЯ</p>
                                <motion.div 
                                  animate={{ opacity: [1, 0] }}
                                  transition={{ duration: 0.8, repeat: Infinity }}
@@ -765,7 +765,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               <div className="flex items-center gap-4 mb-3">
                 <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_#d4af37]" />
                 <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.8em] italic">
-                  SOVEREIGN INTEL NEXUS · CLASSIFIED · v57.5-ELITE
+                  СУВЕРЕННИЙ_ІНТЕЛЕКТ_NEXUS · ДЕРЖТАЄМНИЦЯ · v57.5-ELITE
                 </span>
                 <OracleVoice active={loading || refreshing} />
               </div>
@@ -807,10 +807,10 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
         {/* ── КЛЮЧОВІ МЕТРИКИ ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { label: 'СТРАТЕГІЧНИЙ ВПЛИВ',    value: '$2.4B',    sub: 'EFFECT_PROJECTION', icon: DollarSign, color: '#e11d48' },
-            { label: 'СИНЕРГІЯ МОДЕЛЕЙ',     value: '99.9%',    sub: 'HYPER_ALIGNMENT',   icon: Cpu,        color: '#9f1239' },
-            { label: 'СУВЕРЕННИЙ ГРАФ',     value: '1.4M',     sub: 'NODES_MAPPED',      icon: Network,    color: '#e11d48' },
-            { label: 'АВТОНОМНІСТЬ ЯДРА',    value: 'TIER-1',     sub: 'S-LEVEL_PROTOCOL',  icon: ShieldCheck, color: '#9f1239' },
+            { label: 'СТРАТЕГІЧНИЙ ВПЛИВ',    value: '$2.4B',    sub: 'ПРОЕКЦІЯ_ЕФЕКТУ', icon: DollarSign, color: '#e11d48' },
+            { label: 'СИНЕРГІЯ МОДЕЛЕЙ',     value: '99.9%',    sub: 'ГІПЕР_УЗГОДЖЕННЯ',   icon: Cpu,        color: '#9f1239' },
+            { label: 'СУВЕРЕННИЙ ГРАФ',     value: '1.4M',     sub: 'ВУЗЛІВ_КАРТОВАНО',      icon: Network,    color: '#e11d48' },
+            { label: 'АВТОНОМНІСТЬ ЯДРА',    value: 'TIER-1',     sub: 'S-РІВЕНЬ_ПРОТОКОЛУ',  icon: ShieldCheck, color: '#9f1239' },
           ].map((stat) => (
             <TacticalCard key={stat.label} variant="holographic" elite className="p-10 group overflow-hidden">
                <div className="absolute right-[-10%] bottom-[-10%] opacity-[0.03] group-hover:opacity-[0.1] group-hover:scale-110 transition-all duration-1000">
@@ -877,7 +877,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                       СИНТЕЗ_ДЕРЖАВНОГО_ВИСНОВКУ_ELITE...
                     </p>
                     <p className="text-[9px] font-mono text-slate-800 tracking-[0.5em] font-black uppercase">
-                      ANALYSIS_ITERATION: 0xF72A9
+                      ІТЕРАЦІЯ_АНАЛІЗУ: 0xF72A9
                     </p>
                   </div>
                 </div>
@@ -931,7 +931,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                              </span>
                              <div className="flex items-center gap-3 text-[10px] font-mono text-slate-600 font-bold uppercase tracking-widest">
                                <Radar size={14} className="text-rose-600" />
-                               CONFIDENCE: <span className="text-slate-300">{insight.confidence}%</span>
+                              РЕЙТИНГ_ДОВІРИ: <span className="text-slate-300">{insight.confidence}%</span>
                              </div>
                              <div className="flex items-center gap-3 text-[10px] font-mono text-slate-700 font-bold">
                                <Clock size={14} />
@@ -1033,11 +1033,11 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                   <CyberOrb size={100} color="#e11d48" />
                </div>
                <div className="text-center space-y-4">
-                  <p className="text-[10px] font-black text-rose-600/40 uppercase tracking-[1em]">PREDATOR_CORE</p>
+                  <p className="text-[10px] font-black text-rose-600/40 uppercase tracking-[1em]">ЯДРО_PREDATOR</p>
                   <h3 className="text-5xl font-black text-white italic tracking-tighter uppercase glint-elite chromatic-elite">СИНТЕЗ_WRAITH</h3>
                   <div className="flex items-center gap-3 px-6 py-2 bg-rose-500/5 border border-rose-500/20 rounded-full w-fit mx-auto mt-8">
                      <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
-                     <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest italic">A-STATUS: SUPREME</span>
+                     <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest italic">A-СТАТУС: НАЙВИЩИЙ</span>
                   </div>
                </div>
             </HoloContainer>
@@ -1046,13 +1046,13 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
             <TacticalCard variant="cyber" className="p-12 bg-black/60 border-rose-500/5 rounded-[4.5rem] shadow-3xl">
                <h4 className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.7em] mb-10 flex items-center gap-4 italic font-bold">
                  <Activity size={18} className="text-rose-500" />
-                 STAT_MONITOR_v57.5
+                 МОНІТОР_СТАТУСУ_v57.5
                </h4>
                <div className="space-y-8">
                  {[
-                   { label: 'SOVEREIGN_SCAN', status: 'ACTIVE', val: '99.9%', color: '#e11d48' },
-                   { label: 'NEURAL_DECODING', status: 'ULTRA', val: '1.4B/s', color: '#9f1239' },
-                   { label: 'HYPOTHESIS_GEN', status: 'ELITE', val: 'READY', color: '#e11d48' }
+                   { label: 'СУВЕРЕННЕ_СКАНУВАННЯ', status: 'АКТИВНО', val: '99.9%', color: '#e11d48' },
+                   { label: 'НЕЙРОННЕ_ДЕКОДУВАННЯ', status: 'УЛЬТРА', val: '1.4B/s', color: '#9f1239' },
+                   { label: 'ГЕНЕРАЦІЯ_ГІПОТЕЗ', status: 'ЕЛІТА', val: 'ГОТОВО', color: '#e11d48' }
                  ].map(sys => (
                    <div key={sys.label} className="border-b border-white/5 pb-6">
                       <div className="flex items-center justify-between mb-3">
@@ -1062,7 +1062,7 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                       <div className="w-full h-1.5 bg-white/5 overflow-hidden rounded-full">
                          <motion.div 
                            initial={{ width: 0 }}
-                           animate={{ width: sys.val === 'READY' ? '100%' : sys.val }}
+                           animate={{ width: sys.val === 'ГОТОВО' ? '100%' : sys.val }}
                            className="h-full bg-rose-500/60 shadow-[0_0_10px_rgba(225,29,72,0.4)]"
                          />
                       </div>
@@ -1095,9 +1095,9 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
                 <div className="mt-10 text-center relative z-10">
                    <div className="flex items-center gap-3 justify-center mb-2">
                       <div className="w-1 h-1 bg-rose-500 rounded-full animate-ping" />
-                      <p className="text-[11px] font-black text-rose-600/80 uppercase tracking-[1em] italic">SCAN_RADAR_ELITE</p>
+                      <p className="text-[11px] font-black text-rose-600/80 uppercase tracking-[1em] italic">РАДАР_СКАНУВАННЯ_ELITE</p>
                    </div>
-                   <p className="text-[8px] font-mono text-slate-700 uppercase tracking-widest">WRAITH_PROTOCOLS: ACTIVE</p>
+                   <p className="text-[8px] font-mono text-slate-700 uppercase tracking-widest">WRAITH_ПРОТОКОЛИ: АКТИВНО</p>
                 </div>
             </div>
 
@@ -1112,19 +1112,19 @@ const AIInsightsHub: React.FC<AIInsightsHubProps> = ({ isWidgetMode = false }) =
               <React.Fragment key={i}>
                 <div className="flex items-center gap-3">
                    <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse" />
-                   <span>CORE_STATUS: STABLE</span>
+                   <span>СТАТУС_ЯДРА: СТАБІЛЬНО</span>
                 </div>
                 <div className="flex items-center gap-3">
                    <Radar size={12} className="text-rose-400" />
-                   <span>INTEL_FLOW: 14.8 GB/S</span>
+                   <span>ПОТІК_ДАНИХ: 14.8 GB/S</span>
                 </div>
                 <div className="flex items-center gap-3">
                    <ShieldAlert size={12} className="text-rose-400" />
-                   <span>RISK_VECTORS: MONITORED</span>
+                   <span>ВЕКТОРИ_РИЗИКУ: МОНІТОРИНГ</span>
                 </div>
                 <div className="flex items-center gap-3">
                    <Fingerprint size={12} className="text-rose-400" />
-                   <span>AUTH_LAYER: SUPREME</span>
+                   <span>РІВЕНЬ_АВТЕНТИФІКАЦІЇ: НАЙВИЩИЙ</span>
                 </div>
               </React.Fragment>
             ))}

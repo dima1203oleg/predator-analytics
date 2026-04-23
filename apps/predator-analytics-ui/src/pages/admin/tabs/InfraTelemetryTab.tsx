@@ -82,9 +82,9 @@ const GaugeBar: React.FC<GaugeBarProps> = ({
 
 const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => {
   const map = {
-    online:   { label: 'ACTIVE', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
-    offline:  { label: 'OFFLINE', cls: 'text-white/20 border-white/10 bg-white/5' },
-    degraded: { label: 'CRITICAL', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
+    online:   { label: 'АКТИВНИЙ', cls: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' },
+    offline:  { label: 'ОФЛАЙН', cls: 'text-white/20 border-white/10 bg-white/5' },
+    degraded: { label: 'КРИТИЧНО', cls: 'text-rose-500 border-rose-500/20 bg-rose-500/5 animate-pulse' },
   };
   const { label, cls } = map[status];
   return (
@@ -139,13 +139,13 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
     {node.status !== 'offline' && (
       <div className="space-y-5 relative z-10">
         <div className="grid grid-cols-2 gap-5">
-          <GaugeBar value={node.cpu} label="NEURAL_COMPUTE" />
-          <GaugeBar value={node.ram} label="BUFFER_MEMORY" />
+          <GaugeBar value={node.cpu} label="НЕЙРОННІ_ОБЧИСЛЕННЯ" />
+          <GaugeBar value={node.ram} label="БУФЕРНА_ПАМ'ЯТЬ" />
         </div>
         
         {node.vram !== undefined && (
           <div className="pt-2">
-             <GaugeBar value={node.vram} label="QUANTUM_VRAM (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
+             <GaugeBar value={node.vram} label="КВАНТОВА_VRAM (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
           </div>
         )}
 
@@ -163,7 +163,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">UPTIME_SESSION</span>
+            <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">ЧАС_РОБОТИ_СЕСІЇ</span>
             <span className="text-[9px] font-mono text-white/40 italic font-bold">{node.uptime}</span>
           </div>
         </div>
@@ -179,7 +179,7 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
 
 const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
-    key: 'name', label: 'Service Endpoint', width: '220px', mono: true,
+    key: 'name', label: 'Ендпоїнт Сервісу', width: '220px', mono: true,
     render: (v) => (
       <div className="flex items-center gap-2">
         <div className="w-1 h-1 rounded-full bg-rose-500/50" />
@@ -188,10 +188,10 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     ),
   },
   {
-    key: 'status', label: 'Status', width: '120px',
+    key: 'status', label: 'Статус', width: '120px',
     render: (v) => {
       const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-rose-500';
-      const label = v === 'ok' ? 'HEALTHY' : v === 'warn' ? 'DEGRADED' : 'CRITICAL';
+      const label = v === 'ok' ? 'ЗДОРОВИЙ' : v === 'warn' ? 'ДЕГРАДАЦІЯ' : 'КРИТИЧНО';
       return (
         <div className={cn('text-[9px] font-black tracking-widest flex items-center gap-2', color)}>
           <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", v === 'ok' ? 'bg-emerald-500' : 'bg-current')} />
@@ -201,7 +201,7 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     },
   },
   {
-    key: 'latencyMs', label: 'Latency', width: '100px', mono: true, align: 'right',
+    key: 'latencyMs', label: 'Затримка', width: '100px', mono: true, align: 'right',
     render: (v) => {
       const ms = Number(v);
       const color = ms > 500 ? 'text-rose-500' : ms > 200 ? 'text-amber-500' : 'text-emerald-500/70';
@@ -209,11 +209,11 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     },
   },
   { 
-    key: 'version', label: 'Build', width: '120px', mono: true,
+    key: 'version', label: 'Збірка', width: '120px', mono: true,
     render: (v) => <span className="text-white/30 text-[9px]">v{String(v)}</span>
   },
   { 
-    key: 'lastCheck', label: 'Last Pulse', mono: true,
+    key: 'lastCheck', label: 'Останній Імпульс', mono: true,
     render: (v) => <span className="text-white/10 text-[8px] italic">{String(v)}</span>
   },
 ];
@@ -270,18 +270,18 @@ export const InfraTelemetryTab: React.FC = () => {
             Телеметрія Кластера
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            PROD_LEVEL_4
+            РІВЕНЬ_PROD_4
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>LIVE SYNC ACTIVE</span>
+            <span>АКТИВНА_СИНХРОНІЗАЦІЯ</span>
           </div>
           <span>•</span>
-          <span>REFRESH: 3000ms</span>
+          <span>ОНОВЛЕННЯ: 3000ms</span>
           <span>•</span>
-          <span>NODE_ID: 0xPRED_60</span>
+          <span>ВУЗОЛ: 0xPRED_60</span>
         </div>
       </div>
 
@@ -307,7 +307,7 @@ export const InfraTelemetryTab: React.FC = () => {
               <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em] font-black mb-2 italic">{stat.label}</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-[24px] font-black text-white italic drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{stat.value}</span>
-                {stat.color === 'emerald' && <span className="text-[8px] text-emerald-500 font-bold animate-pulse">LOCKED</span>}
+                {stat.color === 'emerald' && <span className="text-[8px] text-emerald-500 font-bold animate-pulse">БЛОКОВАНО</span>}
               </div>
             </div>
             
@@ -348,7 +348,7 @@ export const InfraTelemetryTab: React.FC = () => {
             <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МІКРОСЕРВІСИ & ЕНДПОЇНТИ</span>
             <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,1)]" />
-               <span className="text-[7px] font-mono text-rose-500/60 uppercase tracking-widest font-black">X-DATA_INTEGRITY_VERIFIED</span>
+               <span className="text-[7px] font-mono text-rose-500/60 uppercase tracking-widest font-black">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_ДАНИХ</span>
             </div>
           </div>
           <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />

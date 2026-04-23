@@ -228,7 +228,7 @@ const EngineListItem: React.FC<{ engine: typeof ENGINES[0]; isActive: boolean; o
             </div>
             <div className="flex-1 text-left">
                 <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{engine.shortName} ENGINE</span>
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">{engine.shortName} // ДВИГУН</span>
                     <span className="text-[9px] font-black tabular-nums" style={{ color: engine.color }}>{engine.score}%</span>
                 </div>
                 <div className="h-1 w-full bg-slate-950 rounded-full overflow-hidden">
@@ -385,10 +385,10 @@ const EnginesView: React.FC = () => {
                             </div>
                             <div>
                                 <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none italic skew-x-[-4deg]">
-                                    Engines <span className="text-purple-400">Matrix</span>
+                                    Матриця <span className="text-purple-400">Двигунів</span>
                                 </h1>
                                 <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.4em] mt-2">
-                                    COGNITIVE_KERNEL // МАРИЦЯ_АНАЛІТИЧНИХ_ДВИГУНІВ
+                                    COGNITIVE_KERNEL // МАТРИЦЯ_АНАЛІТИЧНИХ_ДВИГУНІВ
                                 </p>
                             </div>
                         </div>
@@ -396,7 +396,7 @@ const EnginesView: React.FC = () => {
                     breadcrumbs={['СИСТЕМА', 'ДВИГУНИ', selectedEngine.shortName]}
                     stats={[
                         { label: 'АКТИВНО', value: '6/6', icon: <Activity size={14} />, color: 'success' },
-                        { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+                        { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                         { label: 'АНОМАЛІЇ', value: ENGINES.reduce((s, e) => s + e.metrics.anomalies, 0).toString(), icon: <AlertTriangle size={14} />, color: 'danger', animate: true },
                         { label: 'ТОЧНІСТЬ', value: '94.8%', icon: <Target size={14} />, color: 'purple' },
                     ]}
@@ -435,7 +435,7 @@ const EnginesView: React.FC = () => {
 
                         <button className="w-full py-6 bg-purple-600/10 border border-purple-500/20 rounded-[32px] text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] hover:bg-purple-600/20 hover:text-white transition-all italic flex items-center justify-center gap-4 group">
                             <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-1000" />
-                            RECALIBRATE_ALL_ENGINES
+                            ПЕРЕКАЛІБРУВАТИ_ВСІ_ДВИГУНИ
                         </button>
                     </div>
 
@@ -479,7 +479,7 @@ const EnginesView: React.FC = () => {
                                             </div>
                                             <ReactECharts option={accuracyOption} style={{ height: '200px', width: '200px' }} />
                                         </div>
-                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-4">CONFIDENCE_INDEX: {selectedEngine.confidence}</p>
+                                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-4">ІНДЕКС_ВПЕВНЕНОСТІ: {selectedEngine.confidence}</p>
                                     </TacticalCard>
 
                                     {/* Sub-categories */}
@@ -532,7 +532,7 @@ const EnginesView: React.FC = () => {
                                                                 <Badge className="font-black text-[8px] border-none italic" style={{ backgroundColor: cfg.bg, color: cfg.color }}>
                                                                     {cfg.label}
                                                                 </Badge>
-                                                                <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">{sig.time} TOMY</span>
+                                                                <span className="text-[9px] font-mono text-slate-600 uppercase tracking-widest">{sig.time} ТОМУ</span>
                                                             </div>
                                                             <p className="text-xs font-bold text-slate-200 leading-relaxed italic">{sig.msg}</p>
                                                         </div>
@@ -559,16 +559,16 @@ const EnginesView: React.FC = () => {
                                 </div>
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1 italic">Cluster Health Monitor</h4>
+                                <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-1 italic">Монітор Стану Кластера</h4>
                                 <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest">Статус вузлів обробки та нейронних ваг.</p>
                             </div>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                             {[
-                                { label: 'SYNAPSE_LOAD', value: '42.8%', color: 'purple' },
-                                { label: 'GPU_TEMP', value: '64°C', color: 'amber' },
-                                { label: 'VRAM_USED', value: '18.2GB', color: 'sky' },
-                                { label: 'IO_SPEED', value: '4.2GB/s', color: 'emerald' },
+                                { label: 'НАВАНТАЖЕННЯ_СИНАПСІВ', value: '42.8%', color: 'purple' },
+                                { label: 'ТЕМПЕРАТУРА_GPU', value: '64°C', color: 'amber' },
+                                { label: 'ВИКОРИСТАННЯ_VRAM', value: '18.2GB', color: 'sky' },
+                                { label: 'ШВИДКІСТЬ_I/O', value: '4.2GB/s', color: 'emerald' },
                             ].map((s, i) => (
                                 <div key={i} className="flex flex-col">
                                     <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-1">{s.label}</span>
@@ -577,7 +577,7 @@ const EnginesView: React.FC = () => {
                             ))}
                         </div>
                         <button className="px-10 py-5 bg-white/5 border border-white/10 rounded-[28px] text-[10px] font-black text-white uppercase tracking-[0.3em] hover:bg-white/10 transition-all flex items-center gap-4 group italic">
-                            NODE_DIAGNOSTICS <Search size={18} className="group-hover:scale-110 transition-transform" />
+                            ДІАГНОСТИКА_ВУЗЛІВ <Search size={18} className="group-hover:scale-110 transition-transform" />
                         </button>
                     </div>
                 </div>

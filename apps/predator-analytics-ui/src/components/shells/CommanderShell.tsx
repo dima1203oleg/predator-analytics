@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown, Zap, Shield, Cpu, Activity, Settings,
   Eye, FileText, Database, Terminal, LogOut,
-  Maximize2, Minimize2, Bell, Share2, Plus, Sparkles
+  Maximize2, Minimize2, Bell, Share2, Plus, Sparkles,
+  Command, ChevronRight
 } from 'lucide-react';
 import { TabView } from '../../types';
 import { useUser } from '../../context/UserContext';
@@ -21,7 +21,6 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
   const { user } = useUser();
   const [isZenMode, setIsZenMode] = useState(false);
   const [pulseIntensity, setPulseIntensity] = useState(1);
-
   const [metrics, setMetrics] = useState({ cpu: 0, sync: 99.8, safety: 100 });
 
   // Neural pulse effect based on real System Intensity
@@ -32,244 +31,271 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
         if (data) {
           setMetrics({
             cpu: data.cpu_usage || 0,
-            sync: 99.8, // Stable for now
+            sync: 99.9,
             safety: 100
           });
           setPulseIntensity(0.5 + (data.cpu_usage / 100));
         }
       } catch (e) {
-         console.warn("Commander Shell metrics failed");
+         console.warn("Commander Shell metrics synchronization failed");
       }
     };
     fetchMetrics();
-    const interval = setInterval(fetchMetrics, 5000);
+    const interval = setInterval(fetchMetrics, 3000);
     return () => clearInterval(interval);
   }, []);
 
   const topNavItems = [
-    { id: TabView.OVERVIEW, label: 'Огляд', icon: <Activity size={20} />, color: 'text-amber-400' },
-    { id: TabView.OMNISCIENCE, label: 'Всевидяче Око', icon: <Eye size={20} />, color: 'text-purple-400' },
-    { id: TabView.SEARCH, label: 'Глибокий Пошук', icon: <Zap size={20} />, color: 'text-blue-400' },
-    { id: TabView.AGENTS, label: 'Управління Роєм', icon: <Sparkles size={20} />, color: 'text-emerald-400' },
+    { id: TabView.OVERVIEW, label: 'ОГЛЯД', icon: <Activity size={18} />, color: 'text-rose-500' },
+    { id: TabView.OMNISCIENCE, label: 'ВСЕВИДЯЧЕ ОКО', icon: <Eye size={18} />, color: 'text-purple-500' },
+    { id: TabView.SEARCH, label: 'ГЛИБОКИЙ ПОШУК', icon: <Zap size={18} />, color: 'text-rose-400' },
+    { id: TabView.AGENTS, label: 'УПРАВЛІННЯ РОЄМ', icon: <Sparkles size={18} />, color: 'text-emerald-500' },
+  ];
+
+  const sideNavItems = [
+    { id: TabView.DATABASES, icon: <Database size={24} />, label: 'ЦЕНТР ДАНИХ' },
+    { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'КОРТЕКС' },
+    { id: TabView.SECURITY, icon: <Shield size={24} />, label: 'БЕЗПЕКА' },
+    { id: TabView.SETTINGS, icon: <Settings size={24} />, label: 'НАЛАШТУВАННЯ' },
   ];
 
   return (
-    <div className="flex h-screen bg-[#030303] text-slate-100 font-sans selection:bg-amber-500/30">
-      {/* Background Neural Cortex Effect */}
-      <div className="fixed inset-0 pointer-events-none ">
-        {/* Deep Aura */}
+    <div className="flex h-screen bg-[#02040a] text-slate-100 font-sans selection:bg-rose-500/30 overflow-hidden">
+      {/* WRAITH Ambient Effects */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Crimson Aura */}
         <div
-          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(245,158,11,0.08),transparent_70%)]"
-          style={{ transition: 'opacity 2s ease-in-out', opacity: pulseIntensity * 0.5 }}
+          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(244,63,94,0.12),transparent_70%)]"
+          style={{ transition: 'opacity 3s ease-in-out', opacity: pulseIntensity * 0.4 }}
         />
+        
+        {/* Static Noise Overlay */}
+        <div className="absolute inset-0 opacity-[0.015] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-        {/* Floating Neural Nodes */}
+        {/* Neural Nodes (Crimson) */}
         <AnimatePresence>
-            {[...Array(20)].map((_, i) => (
+            {[...Array(15)].map((_, i) => (
                 <motion.div
                     key={i}
                     initial={{
                         x: Math.random() * 100 + '%',
                         y: Math.random() * 100 + '%',
                         opacity: 0,
-                        scale: 0.5
+                        scale: 0.2
                     }}
                     animate={{
                         x: [null, Math.random() * 100 + '%'],
                         y: [null, Math.random() * 100 + '%'],
-                        opacity: [0, 0.4, 0],
-                        scale: [0.5, 1.2, 0.5]
+                        opacity: [0, 0.3, 0],
+                        scale: [0.2, 0.8, 0.2]
                     }}
                     transition={{
-                        duration: 10 + Math.random() * 20,
+                        duration: 15 + Math.random() * 25,
                         repeat: Infinity,
                         ease: "linear"
                     }}
-                    className="absolute w-1 h-1 bg-amber-400 rounded-full blur-[2px] shadow-[0_0_10px_#f59e0b]"
+                    className="absolute w-1 h-1 bg-rose-500 rounded-full blur-[1px] shadow-[0_0_8px_#f43f5e]"
                 />
             ))}
         </AnimatePresence>
 
-        {/* Energy Lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]">
-            <defs>
-                <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity="0" />
-                    <stop offset="50%" stopColor="#f59e0b" stopOpacity="1" />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
-                </linearGradient>
-            </defs>
-            <motion.path
-                d="M -100 100 Q 400 300 1200 100"
-                stroke="url(#lineGrad)"
-                strokeWidth="2"
-                fill="transparent"
-                animate={{
-                    d: [
-                        "M -100 100 Q 400 300 1200 100",
-                        "M -100 300 Q 600 100 1200 400",
-                        "M -100 100 Q 400 300 1200 100"
-                    ]
-                }}
-                transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            />
-        </svg>
-
-        <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
+        <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
       </div>
 
-      {/* COMMANDER NAVIGATION - TOP FLOATING BAR */}
-      <nav className="fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-[95%] lg:w-auto overflow-x-auto no-scrollbar justify-center">
-        {topNavItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onTabChange(item.id)}
-            className={`
-              relative flex items-center gap-2 lg:gap-3 px-3 lg:px-5 py-2 lg:py-2.5 rounded-xl transition-all group flex-shrink-0
-              ${activeTab === item.id
-                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                : 'text-slate-500 hover:text-white hover:bg-white/5'
-              }
-            `}
-          >
-            <span className={activeTab === item.id ? item.color : 'text-current transition-colors'}>
-              {item.icon}
-            </span>
-            <span className="text-[10px] lg:text-xs font-black uppercase tracking-widest">{item.label}</span>
-            {activeTab === item.id && (
-              <motion.div
-                layoutId="commander-nav-glow"
-                className="absolute inset-0 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.2)] pointer-events-none"
-              />
-            )}
-          </button>
-        ))}
-        <div className="w-[1px] h-8 bg-white/10 mx-2 hidden lg:block" />
-        <button
-          onClick={onLogout}
-          className="p-2.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all hidden lg:block"
-          title="Завершити термінал"
-        >
-          <LogOut size={20} />
-        </button>
+      {/* TOP COMMANDER HUD */}
+      <nav className="fixed top-0 left-0 right-0 z-50 h-20 bg-black/60 backdrop-blur-3xl border-b border-white/5 flex items-center justify-between px-8">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3 group cursor-pointer">
+            <div className="relative">
+              <div className="absolute inset-0 bg-rose-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
+              <div className="relative p-2 bg-rose-950/30 border border-rose-500/30 rounded-xl">
+                <Crown className="w-6 h-6 text-rose-500" />
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-black tracking-[0.3em] text-white">PREDATOR</div>
+              <div className="text-[9px] font-bold text-rose-500/80 tracking-widest uppercase">V58.2 WRAITH ELITE</div>
+            </div>
+          </div>
+
+          <div className="h-8 w-[1px] bg-white/10" />
+
+          <div className="flex items-center gap-2">
+            {topNavItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onTabChange(item.id)}
+                className={`
+                  relative flex items-center gap-3 px-6 py-2.5 rounded-xl transition-all group
+                  ${activeTab === item.id
+                    ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                  }
+                `}
+              >
+                <span className={activeTab === item.id ? item.color : 'text-current transition-colors'}>
+                  {item.icon}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+                {activeTab === item.id && (
+                  <motion.div
+                    layoutId="top-nav-indicator"
+                    className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-rose-500 shadow-[0_0_15px_#f43f5e]"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="hidden xl:flex flex-col items-end">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-emerald-500">UPLINK STABLE</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            </div>
+            <span className="text-[9px] font-mono text-slate-500">NODE: 192.168.0.199</span>
+          </div>
+
+          <div className="h-8 w-[1px] bg-white/10" />
+
+          <div className="flex items-center gap-4">
+            <button className="relative p-2.5 text-slate-400 hover:text-white transition-colors">
+              <Bell size={20} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-black" />
+            </button>
+            <button 
+              onClick={onLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 rounded-xl transition-all group"
+            >
+              <LogOut size={16} className="group-hover:translate-x-1 transition-transform" />
+              <span className="text-[10px] font-black">ВИХІД</span>
+            </button>
+          </div>
+        </div>
       </nav>
 
-      {/* LEFT QUICK CONSOLE */}
+      {/* SIDEBAR NAVIGATION */}
       {!isZenMode && (
-        <aside className="fixed left-6 top-1/2 -translate-y-1/2 z-40 flex-col gap-4 hidden lg:flex">
-          {[
-            { id: TabView.DATABASES, icon: <Database size={24} />, label: 'Центр Даних' },
-            { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'Кортекс' },
-            { id: TabView.SECURITY, icon: <Shield size={24} />, label: 'Захист' },
-            { id: TabView.SETTINGS, icon: <Settings size={24} />, label: 'Налаштування' },
-          ].map((item) => (
+        <aside className="fixed left-0 top-20 bottom-0 w-24 bg-black/40 backdrop-blur-2xl border-r border-white/5 flex flex-col items-center py-10 gap-6 z-40">
+          {sideNavItems.map((item) => (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={`
                 group relative w-14 h-14 flex items-center justify-center rounded-2xl border transition-all
                 ${activeTab === item.id
-                  ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.4)]'
-                  : 'bg-black/40 text-slate-500 border-white/10 hover:border-amber-500/50 hover:text-amber-400'
+                  ? 'bg-rose-500 text-black border-rose-400 shadow-[0_0_25px_rgba(244,63,94,0.4)]'
+                  : 'bg-black/40 text-slate-500 border-white/10 hover:border-rose-500/50 hover:text-rose-400'
                 }
               `}
             >
               {item.icon}
-              <span className="absolute left-full ml-4 px-3 py-1 bg-black border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-rose-950 border border-rose-500/30 rounded-lg text-[9px] font-black text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none tracking-widest whitespace-nowrap z-50">
                 {item.label}
-              </span>
+              </div>
             </button>
           ))}
-        </aside>
-      )}
-
-      {/* RIGHT SYSTEM STATUS */}
-      {!isZenMode && (
-        <aside className="fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col gap-6 w-64 p-6 bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl hidden lg:flex">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">СТАТУС CEREBRO</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
-            </div>
-
-            <div className="space-y-3">
-              {[
-                { label: 'Нейромережа', value: metrics.cpu, color: 'text-amber-400', glow: 'shadow-amber-500/20' },
-                { label: 'Синхронізація', value: metrics.sync, color: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
-                { label: 'Рівень Захисту', value: metrics.safety, color: 'text-blue-400', glow: 'shadow-blue-500/20' },
-              ].map(stat => (
-                <div key={stat.label} className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold">
-                    <span className="text-slate-400">{stat.label}</span>
-                    <span className={stat.color}>{stat.value}{stat.label.includes('Синхр') ? '%' : ''}</span>
-                  </div>
-                  <div className="h-1 bg-white/5 rounded-full ">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${stat.value}%` }}
-                      className={`h-full bg-current ${stat.color} shadow-lg ${stat.glow}`}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-white/5">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-black font-black shadow-lg">
-                {user?.name.charAt(0)}
-              </div>
-              <div>
-                <div className="text-xs font-black uppercase text-white truncate w-32">{user?.name}</div>
-                <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">МАЙСТЕР ПРОФІЛЬ</div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-colors text-slate-400 hover:text-white flex items-center justify-center">
-                <Bell size={16} />
-              </button>
-              <button className="p-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-colors text-slate-400 hover:text-white flex items-center justify-center">
-                <Share2 size={16} />
-              </button>
-            </div>
+          
+          <div className="mt-auto flex flex-col items-center gap-4 pb-8">
+            <button
+              onClick={() => setIsZenMode(!isZenMode)}
+              className="p-3 text-slate-500 hover:text-rose-500 transition-colors"
+              title="Режим концентрації"
+            >
+              {isZenMode ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+            </button>
           </div>
         </aside>
       )}
 
-      {/* Main Experience Canvas */}
+      {/* MAIN CONTENT AREA */}
       <main className={`
-        flex-1 flex flex-col transition-all duration-700 min-w-0
-        ${isZenMode ? 'p-0' : 'p-4 pt-20 lg:p-12 lg:pl-32 lg:pr-80'}
+        flex-1 relative z-10 transition-all duration-500 ease-in-out
+        ${isZenMode ? 'ml-0' : 'ml-24'} mt-20 overflow-hidden flex
       `}>
-        <div className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth">
+        {/* Dynamic Viewport */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, scale: 1.05, filter: 'blur(20px)' }}
-              transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="min-h-full"
+              initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -10, filter: 'blur(8px)' }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="p-8 pb-24"
             >
-              <div className="p-8 pb-32 relative z-10">
-                {children}
-              </div>
+              {children}
             </motion.div>
           </AnimatePresence>
-
-          {/* Zen Toggle Button */}
-          <button
-            onClick={() => setIsZenMode(!isZenMode)}
-            className="fixed bottom-6 right-6 w-12 h-12 flex items-center justify-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl text-slate-500 hover:text-amber-400 transition-all z-50 hover:scale-110 active:scale-95"
-          >
-            {isZenMode ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
-          </button>
         </div>
+
+        {/* SYSTEM ANALYTICS DRAWER (Right Side) */}
+        {!isZenMode && (
+          <aside className="w-80 bg-black/40 backdrop-blur-3xl border-l border-white/5 flex flex-col p-6 gap-8 overflow-y-auto hidden 2xl:flex">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">ТЕЛЕМЕТРІЯ СИСТЕМИ</span>
+                <Activity size={14} className="text-rose-500 animate-pulse" />
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'ЯДРО AI', value: metrics.cpu, color: 'bg-rose-500', text: 'text-rose-500' },
+                  { label: 'СИНХРОНІЗАЦІЯ ДАНИХ', value: metrics.sync, color: 'bg-emerald-500', text: 'text-emerald-500' },
+                  { label: 'МАТРИЦЯ БЕЗПЕКИ', value: metrics.safety, color: 'bg-rose-400', text: 'text-rose-400' },
+                ].map(stat => (
+                  <div key={stat.label} className="space-y-2">
+                    <div className="flex justify-between text-[9px] font-black tracking-widest uppercase">
+                      <span className="text-slate-500">{stat.label}</span>
+                      <span className={stat.text}>{stat.value}%</span>
+                    </div>
+                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${stat.value}%` }}
+                        className={`h-full ${stat.color} shadow-[0_0_10px_currentColor]`}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 bg-rose-500/5 border border-rose-500/10 rounded-2xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-rose-500 flex items-center justify-center text-black font-black text-sm shadow-lg shadow-rose-500/20">
+                  {user?.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="text-xs font-black text-white uppercase tracking-wider">{user?.name}</div>
+                  <div className="text-[9px] font-bold text-rose-500/80 uppercase tracking-tighter">OPERATOR ELITE</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-[9px] text-slate-500 font-mono">
+                <Shield size={10} />
+                <span>LEVEL 5 ACCESS GRANTED</span>
+              </div>
+            </div>
+
+            <div className="mt-auto space-y-4">
+               <div className="p-3 bg-white/5 rounded-xl border border-white/5 space-y-2">
+                  <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">ПОТОЧНИЙ ВУЗОЛ</div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-white">NVIDIA_QUADRO_V1</span>
+                    <span className="text-[10px] text-emerald-500 uppercase font-bold">ONLINE</span>
+                  </div>
+               </div>
+            </div>
+          </aside>
+        )}
       </main>
 
-      {/* TOP DECORATIVE HUD LINE */}
-      <div className="fixed top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-500/20 to-transparent z-[60]" />
+      {/* SCANLINE EFFECT */}
+      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-scanline animate-scanline" />
+      
+      {/* VIGNETTE */}
+      <div className="fixed inset-0 pointer-events-none z-[90] shadow-[inset_0_0_150px_rgba(0,0,0,0.8)]" />
     </div>
   );
 };

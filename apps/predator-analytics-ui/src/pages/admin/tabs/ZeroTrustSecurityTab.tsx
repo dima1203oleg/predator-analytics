@@ -38,7 +38,7 @@ const sessionCols: VirtualColumn<Session>[] = [
     },
   },
   { key: 'ip',           label: 'IP',           width: '110px',  mono: true },
-  { key: 'userAgent',    label: 'User-Agent',   width: '160px',  mono: true, render: (v) => <span className="text-white/30">{String(v)}</span> },
+  { key: 'userAgent',    label: 'Клієнт (UA)',  width: '160px',  mono: true, render: (v) => <span className="text-white/30">{String(v)}</span> },
   { key: 'lastActivity', label: 'Активність',   width: '100px',  mono: true },
   { key: 'expiresIn',    label: 'Закінчується', width: '90px',   mono: true, align: 'right' },
 ];
@@ -57,7 +57,7 @@ const auditCols: VirtualColumn<AuditEntry>[] = [
       return <span className={cn('text-[10px] font-mono font-bold', map[s] ?? 'text-white/40')}>{s}</span>;
     },
   },
-  { key: 'endpoint',  label: 'Endpoint',             mono: true, render: (v) => <span className="text-white/45">{String(v)}</span> },
+  { key: 'endpoint',  label: 'Ендпоїнт',             mono: true, render: (v) => <span className="text-white/45">{String(v)}</span> },
   {
     key: 'status',    label: 'HTTP',     width: '60px', mono: true, align: 'right',
     render: (v) => {
@@ -82,7 +82,7 @@ const getAuditStatus = (row: AuditEntry): RowStatus =>
 const keyCols: VirtualColumn<ApiKey>[] = [
   { key: 'name',      label: 'Назва',     width: '160px', mono: true },
   { key: 'owner',     label: 'Власник',   width: '160px', mono: true, render: (v) => <span className="text-white/45">{String(v)}</span> },
-  { key: 'scopes',    label: 'Scope',                     mono: true, render: (v) => <span className="text-white/30 text-[9px]">{String(v)}</span> },
+  { key: 'scopes',    label: 'Область',                     mono: true, render: (v) => <span className="text-white/30 text-[9px]">{String(v)}</span> },
   { key: 'lastUsed',  label: 'Остання дія', width: '90px', mono: true },
   { key: 'expiresAt', label: 'Дійсний до', width: '90px', mono: true },
   {
@@ -128,18 +128,18 @@ export const ZeroTrustSecurityTab: React.FC = () => {
             Zero Trust & Безпека
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            SEC_GUARD_ACTIVE
+            ЗАХИСТ_АКТИВНИЙ
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>Enforced</span>
+            <span>ЗАСТОСОВАНО</span>
           </div>
           <span>•</span>
-          <span>IAM: REALTIME_SYNC</span>
+          <span>IAM: СИНХРОНІЗАЦІЯ_В_РЕАЛЬНОМУ_ЧАСІ</span>
           <span>•</span>
-          <span>WORM: ON</span>
+          <span>WORM: УВІМК</span>
         </div>
       </div>
 
@@ -194,7 +194,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                 <Shield className="absolute inset-0 m-auto w-6 h-6 text-rose-500 animate-pulse" />
              </div>
              <div className="text-[10px] font-mono text-rose-500/60 uppercase tracking-[0.4em] animate-pulse italic">
-               SEC_SCAN_ACTIVE...
+               БЕЗПЕКОВЕ_СКАНУВАННЯ_АКТИВНЕ...
              </div>
           </div>
         )}
@@ -241,10 +241,10 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           {section === 'mtls' && (
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { name: 'ingestion-worker', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '12s ago', traffic: '24 GB' },
-                { name: 'graph-service', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '5s ago', traffic: '182 GB' },
-                { name: 'api-gateway', status: 'VERIFIED', expiry: '2027-04-21', lastSeen: '0s ago', traffic: '1.2 TB' },
-                { name: 'admin-sentinel', status: 'PENDING', expiry: '2026-12-01', lastSeen: '1h ago', traffic: '0 B' },
+                { name: 'ingestion-worker', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '12с тому', traffic: '24 GB' },
+                { name: 'graph-service', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '5с тому', traffic: '182 GB' },
+                { name: 'api-gateway', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '0с тому', traffic: '1.2 TB' },
+                { name: 'admin-sentinel', status: 'ОЧІКУЄТЬСЯ', expiry: '2026-12-01', lastSeen: '1г тому', traffic: '0 B' },
               ].map((node, i) => (
                 <motion.div 
                   key={node.name}
@@ -261,7 +261,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                     </div>
                     <span className={cn(
                       "text-[9px] px-3 py-1 rounded-lg font-black tracking-widest italic border transition-all",
-                      node.status === 'VERIFIED' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
+                      node.status === 'ВЕРИФІКОВАНО' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
                     )}>{node.status}</span>
                   </div>
                   <div className="mt-6 flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest relative z-10">
@@ -272,12 +272,12 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                     <motion.div 
                       className="h-full bg-rose-500/40"
                       initial={{ width: 0 }}
-                      animate={{ width: node.status === 'VERIFIED' ? '100%' : '30%' }}
+                      animate={{ width: node.status === 'ВЕРИФІКОВАНО' ? '100%' : '30%' }}
                       transition={{ duration: 1.5, ease: 'circOut' }}
                     />
                   </div>
                   <div className="mt-3 flex justify-end relative z-10">
-                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">LAST_SEEN: {node.lastSeen}</span>
+                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">ОСТАННЯ_АКТИВНІСТЬ: {node.lastSeen}</span>
                   </div>
                 </motion.div>
               ))}
@@ -290,10 +290,10 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       <div className="flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
         <div className="flex items-center gap-3 px-4 py-2 bg-rose-500/5 border border-rose-500/10 rounded-lg">
            <AlertCircle className="w-4 h-4 text-rose-500" />
-           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">WORM_PROTECTION_ENABLED</span>
+           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ЗАХИСТ_WORM_УВІМКНЕНО</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Zero Trust Core v5.1 — ELITE_ENFORCER</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v5.1 — ELITE_ENFORCER</span>
       </div>
     </div>
   );

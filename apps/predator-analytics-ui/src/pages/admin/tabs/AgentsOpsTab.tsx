@@ -140,18 +140,18 @@ export const AgentsOpsTab: React.FC = () => {
             Оркестрація Агентів
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            SWARM_CONTROL_L5
+            КОНТРОЛЬ_РОЮ_L5
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>Swarm Health: 100%</span>
+            <span>Здоров'я рою: 100%</span>
           </div>
           <span>•</span>
-          <span>Population: {agents.length} Nodes</span>
+          <span>Популяція: {agents.length} Вузлів</span>
           <span>•</span>
-          <span>Sync: REAL_TIME</span>
+          <span>Синхронізація: РЕАЛЬНИЙ_ЧАС</span>
         </div>
       </div>
 
@@ -161,8 +161,8 @@ export const AgentsOpsTab: React.FC = () => {
           { label: 'ЖИВИХ', value: stats.alive, sub: 'АКТИВНІ', color: 'text-rose-500' },
           { label: 'МЕРТВИХ', value: stats.dead, sub: 'ПОЗА МЕРЕЖЕЮ', color: 'text-rose-900' },
           { label: 'ПРОСТІЙ', value: stats.idle, sub: 'ОЧІКУВАННЯ', color: 'text-white/40' },
-          { label: 'СЕР. CPU', value: `${stats.avgCpu}%`, sub: 'LOAD_AVG', color: 'text-white/80' },
-          { label: 'ЧЕРГА', value: agents.reduce((s, a) => s + (a.queueDepth || 0), 0).toLocaleString(), sub: 'TASKS_TOTAL', color: 'text-rose-500' },
+          { label: 'СЕР. CPU', value: `${stats.avgCpu}%`, sub: 'СЕР_НАВАНТАЖЕННЯ', color: 'text-white/80' },
+          { label: 'ЧЕРГА', value: agents.reduce((s, a) => s + (a.queueDepth || 0), 0).toLocaleString(), sub: 'ЗАГАЛОМ_ЗАВДАНЬ', color: 'text-rose-500' },
         ].map((metric, i) => (
           <motion.div 
             key={i}
@@ -190,7 +190,7 @@ export const AgentsOpsTab: React.FC = () => {
             <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ ШІ-ВУЗЛІВ (AGENT_MATRIX)</span>
             <div className="flex items-center gap-2">
                <Bot size={10} className="text-rose-500/40 animate-pulse" />
-               <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">NEURAL_REGISTRY_SYNCED</span>
+               <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">НЕЙРОННИЙ_РЕЄСТР_СИНХРОНІЗОВАНО</span>
             </div>
           </div>
           <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
@@ -210,8 +210,5 @@ export const AgentsOpsTab: React.FC = () => {
     </div>
   );
 };
-
-export default AgentsOpsTab;
-
 
 export default AgentsOpsTab;
