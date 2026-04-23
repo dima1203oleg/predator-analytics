@@ -1,0 +1,43 @@
+# Local MacBook configuration for Frontend-only deployment
+# Backend is hosted on remote iMac (192.168.0.199)
+
+global:
+  domain: local.predator.ua
+
+frontend:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: NodePort
+    port: 3030
+  env:
+    VITE_API_URL: "http://192.168.0.199:8000/api/v1"
+    VITE_V45_API_URL: "http://192.168.0.199:8000/api/v45"
+    VITE_WS_URL: "ws://192.168.0.199:8000/ws"
+    VITE_MODE: "remote"
+    VITE_ENV: "production"
+
+# Disable all backend/infra services locally
+postgresql:
+  enabled: false
+
+neo4j:
+  enabled: false
+
+coreApi:
+  replicaCount: 0
+
+graphService:
+  replicaCount: 0
+
+ingestionWorker:
+  replicaCount: 0
+
+litellm:
+  enabled: false
+
+ollama:
+  enabled: false
+
+monitoring:
+  enabled: false

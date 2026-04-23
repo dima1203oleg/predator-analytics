@@ -64,7 +64,7 @@ metadata:
 spec:
   # Replicas managed by KEDA if enabled
   {{- if not .Values.ingestionWorker.keda.enabled }}
-  replicas: {{ .Values.ingestionWorker.replicaCount | default 1 }}
+  replicas: {{ .Values.ingestionWorker.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
