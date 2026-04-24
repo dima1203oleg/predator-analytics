@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial, Sphere, MeshDistortMaterial, Float } from '@react-three/drei';
+import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
 /**

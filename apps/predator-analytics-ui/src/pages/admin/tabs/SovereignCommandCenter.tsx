@@ -66,7 +66,7 @@ export const SovereignCommandCenter: React.FC = () => {
   }, []);
 
   const goToTab = (tabId: string) => {
-    navigate(`/admin?tab=${tabId}`);
+    navigate(`/admin/command?tab=${tabId}`);
   };
 
   return (
