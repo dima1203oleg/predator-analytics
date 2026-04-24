@@ -17,7 +17,7 @@ class ChaosRequest(BaseModel):
 @router.post("/trigger", summary="Запуск/зупинка хаос-експерименту")
 async def trigger_chaos(
     request: ChaosRequest,
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Активувати або деактивувати хаос-ефект."""
     ChaosService.set_experiment(request.experiment_name, request.active)
@@ -25,7 +25,7 @@ async def trigger_chaos(
 
 @router.get("/status", summary="Статус хаос-експериментів")
 async def get_chaos_status(
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Переглянути статус усіх експериментів."""
     return ChaosService.get_status()

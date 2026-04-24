@@ -10,7 +10,23 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
-from app.database import get_db, Base
+from app.database import get_db
+from app.models.orm import Base
+
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.dialects.postgresql import UUID, JSONB, INET
+
+@compiles(UUID, 'sqlite')
+def compile_uuid(element, compiler, **kw):
+    return "VARCHAR(36)"
+
+@compiles(JSONB, 'sqlite')
+def compile_jsonb(element, compiler, **kw):
+    return "JSON"
+
+@compiles(INET, 'sqlite')
+def compile_inet(element, compiler, **kw):
+    return "VARCHAR(45)"
 
 
 # Test database URL (in-memory SQLite for testing)

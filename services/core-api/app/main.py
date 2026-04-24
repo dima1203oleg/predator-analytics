@@ -201,12 +201,12 @@ cors_origins = add_cors_middleware(app)
 logger.info(f"CORS enabled for origins: {cors_origins}")
 
 # Інструментація OpenTelemetry (TZ v5.0 §8 — активовано умовно)
-if settings.ENABLE_TRACING:
+if get_settings().ENABLE_TRACING:
     try:
         from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
         FastAPIInstrumentor().instrument_app(app)
         logger.info("OpenTelemetry tracing активовано", extra={
-            "endpoint": settings.OTEL_EXPORTER_OTLP_ENDPOINT
+            "endpoint": get_settings().OTEL_EXPORTER_OTLP_ENDPOINT
         })
     except ImportError:
         logger.warning("OpenTelemetry пакети не встановлені, tracing вимкнено")

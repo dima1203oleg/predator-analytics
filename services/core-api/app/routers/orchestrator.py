@@ -18,7 +18,7 @@ class ScaleRequest(BaseModel):
 
 @router.get("/pods", response_model=List[PodStatus])
 async def list_pods(
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN, Permission.ANALYST]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Отримати список усіх керованих подів."""
     return await orchestrator_service.get_pods()
@@ -26,7 +26,7 @@ async def list_pods(
 @router.post("/pods/{pod_id}/restart")
 async def restart_pod(
     pod_id: str,
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Перезапустити вказаний под."""
     success = await orchestrator_service.restart_pod(pod_id)
@@ -38,7 +38,7 @@ async def restart_pod(
 async def scale_pod(
     pod_id: str,
     request: ScaleRequest,
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Змінити кількість реплік пода (масштабування)."""
     success = await orchestrator_service.scale_pod(pod_id, request.delta)
@@ -49,7 +49,7 @@ async def scale_pod(
 @router.post("/pods/{pod_id}/scale-down")
 async def scale_down_pod(
     pod_id: str,
-    _ = Depends(PermissionChecker([Permission.SYSTEM_ADMIN]))
+    _ = Depends(PermissionChecker([Permission.MANAGE_USERS]))
 ):
     """Зменшити кількість реплік на 1."""
     success = await orchestrator_service.scale_pod(pod_id, -1)

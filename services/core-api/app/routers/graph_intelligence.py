@@ -14,7 +14,7 @@ async def get_ultimate_beneficiary(
     ueid: str,
     max_depth: int = 5,
     threshold: float = 25.0,
-    _ = Depends(PermissionChecker([Permission.ANALYST_READ]))
+    _ = Depends(PermissionChecker([Permission.RUN_GRAPH]))
 ):
     """Визначає фізичну особу, яка стоїть за ланцюжком володіння компанією."""
     neo4j = Neo4jService()

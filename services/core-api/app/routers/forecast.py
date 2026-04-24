@@ -16,7 +16,7 @@ class ForecastRequest(BaseModel):
 @router.post("/demand", summary="Отримати прогноз попиту")
 async def get_demand_forecast(
     request: ForecastRequest,
-    _ = Depends(PermissionChecker([Permission.ANALYTICS_READ]))
+    _ = Depends(PermissionChecker([Permission.RUN_ANALYTICS]))
 ):
     """Генерує ML-прогноз для вказаного товару."""
     try:
@@ -30,7 +30,7 @@ async def get_demand_forecast(
 
 @router.get("/models", summary="Доступні моделі прогнозування")
 async def get_models(
-    _ = Depends(PermissionChecker([Permission.ANALYTICS_READ]))
+    _ = Depends(PermissionChecker([Permission.RUN_ANALYTICS]))
 ):
     """Повертає список доступних алгоритмів."""
     models = await ForecastService.get_available_models()
