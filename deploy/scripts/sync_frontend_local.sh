@@ -23,34 +23,26 @@ echo "📦 Current frontend image tag: $CURRENT_TAG"
 
 # Build Docker image locally (or use pre-built from GHCR)
 echo "🏗️  Building frontend Docker image..."
-cd "$PROJECT_ROOT/apps/predator-analytics-ui"
+cd "$PROJECT_ROOT"
 
-# Build image with local tag
-docker build -t predator-analytics-ui:local .
+# Build image with local tag using root context (HR-05)
+docker build -t predator-analytics-ui:local -f apps/predator-analytics-ui/Dockerfile .
 
 # Load image into k3d cluster
 echo "📥 Loading image into k3d cluster..."
 k3d image import predator-analytics-ui:local -c predator-local
 
-# Update Helm values to use local image
-echo "🔧 Updating Helm values for local image..."
-TEMP_VALUES=$(mktemp)
-cp "$DEPLOY_DIR/helm/predator/values.yaml" "$TEMP_VALUES"
-
-# Оновити фронтенд-образ на локальний незалежно від поточного значення
-sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+repository:).*|\\1 predator-analytics-ui|' "$TEMP_VALUES"
-sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+tag:).*|\\1 local|' "$TEMP_VALUES"
-sed -i.bak -E '/^frontend:/,/^[^ ]/ s|^([[:space:]]+pullPolicy:).*|\\1 IfNotPresent|' "$TEMP_VALUES"
-
-# Apply Helm chart with updated values
+# Apply Helm chart with local image overrides
 echo "🚀 Deploying frontend with Helm..."
 helm upgrade --install predator "$DEPLOY_DIR/helm/predator" \
-  -n predator \
-  -f "$TEMP_VALUES" \
+  -n predator-analytics \
+  --set frontend.image.repository=predator-analytics-ui \
+  --set frontend.image.tag=local \
+  --set frontend.image.pullPolicy=IfNotPresent \
   --wait \
   --timeout 5m
 
-# Cleanup
+# Cleanup (no temp files needed now)
 rm -f "$TEMP_VALUES" "$TEMP_VALUES.bak"
 
 # Wait for deployment to be ready

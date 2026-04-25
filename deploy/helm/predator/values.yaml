@@ -10,6 +10,10 @@ postgresql:
         database: predator
         username: predator
         password: predator_db_secret
+  primary:
+    containerSecurityContext:
+      enabled: true
+      readOnlyRootFilesystem: false
 
 neo4j:
   enabled: true
@@ -74,6 +78,10 @@ frontend:
         paths:
           - path: /
             pathType: Prefix
+      - host: "api.{{ .Values.global.domain }}"
+        paths:
+          - path: /
+            pathType: Prefix
     tls:
       - secretName: predator-tls
         hosts:
@@ -91,7 +99,7 @@ frontend:
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
   env:
-    VITE_API_URL: "https://api.{{ .Values.global.domain }}/api/v1"
+    VITE_API_URL: "https://api.{{ .Values.global.domain }}:8443/api/v1"
     NODE_ENV: "production"
   persistence:
     enabled: false
