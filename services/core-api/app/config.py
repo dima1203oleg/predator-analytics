@@ -130,7 +130,7 @@ class Settings(BaseSettings):
     MLFLOW_TRACKING_URL: str = "http://mlflow-internal.predator.svc:5000"
 
     # Modular Services
-    GRAPH_SERVICE_URL: str = "http://localhost:9030"
+    GRAPH_SERVICE_URL: str = "http://localhost:8001"
     INGESTION_SERVICE_URL: str = "http://localhost:9100"
     OSINT_SERVICE_URL: str = "http://localhost:9200"
     WORKER_CPU_URL: str = "http://localhost:9300"

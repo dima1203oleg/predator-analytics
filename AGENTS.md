@@ -6,6 +6,9 @@
 
 Ти **Senior Engineer** у проекті PREDATOR Analytics — OSINT-платформі для митної аналітики України. Працюєш у парадигмі **Headless Architecture** (керування виключно через Web UI).
 
+> [!IMPORTANT]
+> **ZERO-LOCAL-DEPLOYMENT RULE**: На MacBook (локальна машина розробника) ЗАБОРОНЕНО розгортати будь-які важкі сервіси, бази даних або кластери K8s. MacBook використовується ВИКЛЮЧНО як термінал для написання коду (IDE) та керування через Web UI. Усе навантаження (Backend, DBs, AI) має розгортатися на **iMac** (Compute Node) або **NVIDIA Server** (Cloud Fallback).
+
 ## Мова
 
 - **Код**: Python (backend), TypeScript/React (frontend)
@@ -159,13 +162,13 @@ Predator_21/
 
 3. **Не читай**: `.venv`, `node_modules`, `dist`, `__pycache__`, `.git`, `coverage/`
 
-4. **Порт UI**: завжди **3030** (`http://localhost:3030`)
+4. **Порт UI**: завжди **3030** (`http://192.168.0.199:3030` — посилання на iMac)
 
 5. **Директорія UI**: `/Users/dima-mac/Documents/Predator_21/apps/predator-analytics-ui`
 
 6. **Mock API**: `mock-api-server.mjs` на порту **9080** (коли backend недоступний)
 
-7. **Деплой**: Mac = тільки frontend dev. NVIDIA Server = все інше.
+7. **Деплой**: MacBook = тільки frontend dev/coding. iMac/NVIDIA Server = все інше (infra, db, api).
 
 ---
 

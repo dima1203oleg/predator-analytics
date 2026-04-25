@@ -2,8 +2,8 @@ apiVersion: v2
 name: predator
 description: PREDATOR Analytics v58.2 WRAITH Full Stack Chart
 type: application
-version: 58.2.0
-appVersion: "58.2-WRAITH"
+version: 60.5.0
+appVersion: "60.5-ELITE"
 
 dependencies:
   - name: postgresql
@@ -14,4 +14,16 @@ dependencies:
     version: 5.21.0
     repository: https://helm.neo4j.com/neo4j
     condition: neo4j.enabled
+  - name: clickhouse
+    version: 0.1.0
+    repository: https://clickhouse.github.io/charts
+    condition: clickhouse.enabled
+  - name: opensearch
+    version: 2.16.0
+    repository: https://opensearch-project.github.io/helm-charts
+    condition: opensearch.enabled
+  - name: qdrant
+    version: 0.1.0
+    repository: https://qdrant.github.io/helm-charts
+    condition: qdrant.enabled
 

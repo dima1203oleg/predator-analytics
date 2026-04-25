@@ -46,6 +46,29 @@ services:
           cpus: '2'
 
   # ============================================================
+  # 2.1. Graph Service (Neo4j Algos)
+  # ============================================================
+  graph-service:
+    build:
+      context: ../
+      dockerfile: services/graph-service/Dockerfile
+    ports:
+      - "8001:8002"
+    env_file:
+      - ../.env
+    restart: always
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    networks:
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1'
+
+  # ============================================================
   # 3. Ingestion Worker
   # ============================================================
   ingestion-worker:
@@ -150,6 +173,106 @@ services:
       - neo4jplugins:/plugins
     networks:
       - predator_net
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "${NEO4J_PASSWORD:-predator_neo4j}", "RETURN 1"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  # ============================================================
+  # 5. Advanced Analytics & Storage
+  # ============================================================
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - chdata:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - predator_net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  opensearch:
+    image: opensearchproject/opensearch:2.12.0
+    environment:
+      - cluster.name=predator-search
+      - node.name=predator-os1
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+    ports:
+      - "9200:9200"
+    volumes:
+      - osdata:/usr/share/opensearch/data
+    networks:
+      - predator_net
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:9200/_cluster/health?local=true"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.8.0
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrantdata:/qdrant/storage
+    networks:
+      - predator_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-predator_password}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    networks:
+      - predator_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/config.yaml:/app/config.yaml
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    env_file:
+      - ../.env
+    networks:
+      - predator_net
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
 
 networks:
   predator_net:
@@ -160,3 +283,7 @@ volumes:
   redisdata:
   neo4jdata:
   neo4jplugins:
+  chdata:
+  osdata:
+  qdrantdata:
+  miniodata:
