@@ -290,7 +290,7 @@ const IntelligencePage: React.FC = () => {
                                                    </div>
                                                </div>
                                                <div className="absolute top-4 right-4 text-[8px] font-mono text-[#f43f5e] bg-black/80 px-2 py-1 rounded border border-[#f43f5e]/20 uppercase">
-                                                   LOC: 50.4501, 30.5234
+                                                   ЛОК: 50.4501, 30.5234
                                                </div>
                                            </div>
                                        </div>

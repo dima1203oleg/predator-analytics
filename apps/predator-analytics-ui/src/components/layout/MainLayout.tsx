@@ -190,7 +190,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-4">
              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 border border-white/5" title="Active Core API Node">
                 <span className="text-[7px] font-black text-slate-600 uppercase">API:</span>
-                <span className="text-[9px] font-mono font-bold text-indigo-400 truncate max-w-[80px]">{new URL(API_BASE_URL).hostname}</span>
+                <span className="text-[9px] font-mono font-bold text-indigo-400 truncate max-w-[80px]">
+                  {API_BASE_URL.startsWith('http') ? new URL(API_BASE_URL).hostname : 'LOCAL'}
+                </span>
              </div>
              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/40 border border-white/5" title="Current Web Interface Host">
                 <span className="text-[7px] font-black text-slate-600 uppercase">WEB:</span>

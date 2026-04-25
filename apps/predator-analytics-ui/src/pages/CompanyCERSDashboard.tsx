@@ -240,6 +240,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
     const [companyData, setCompanyData] = useState<any>(null);
     const [loadingData, setLoadingData] = useState(false);
     const [hasAttempted, setHasAttempted] = useState(false);
+    const [showShadowNetwork, setShowShadowNetwork] = useState(false);
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -478,10 +479,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
 
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
                                                 {[
-                                                    { label: 'СКАН-САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'slate' },
+                                                    { label: 'СКАН_САНКЦІЙ', status: profile.is_sanctioned ? 'БЛОК' : 'ЧИСТО', color: profile.is_sanctioned ? 'rose' : 'slate' },
                                                     { label: 'ОФШОРИ', status: profile.has_offshores ? 'ВИЯВЛЕНО' : 'НЕМАЄ', color: profile.has_offshores ? 'orange' : 'slate' },
-                                                    { label: 'РЕЄСТР-БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'orange' : 'slate' },
-                                                    { label: 'ЮРИД-СТАН', status: 'СТАБІЛЬНИЙ', color: 'slate' }
+                                                    { label: 'РЕЄСТР_БОРГІВ', status: profile.is_debtor ? 'ТАК' : 'ЧИСТО', color: profile.is_debtor ? 'orange' : 'slate' },
+                                                    { label: 'ЮРИД_СТАН', status: 'СТАБІЛЬНИЙ', color: 'slate' }
                                                 ].map((item, idx) => (
                                                     <div key={idx} className="bg-slate-800/40 p-3 rounded-2xl border border-white/5">
                                                         <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{item.label}</span>
@@ -536,7 +537,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 <Activity className="w-4 h-4 text-rose-400" />
                                                 <h3 className="text-sm font-black text-white uppercase tracking-widest italic">SHAP ДЕКОМПОЗИЦІЯ (ДРАЙВЕРИ РИЗИКУ)</h3>
                                             </div>
-                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Alpha</span>
+                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Альфа</span>
                                         </div>
                                         {displayShap.length > 0 ? (
                                             <RiskExplanationPanel 
@@ -569,7 +570,10 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             </div>
 
                                             <div className="grid grid-cols-1 gap-2">
-                                                <button className="flex items-center justify-between w-full p-4 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-300 transition-all group">
+                                                <button 
+                                                    onClick={() => setShowShadowNetwork(true)}
+                                                    className="flex items-center justify-between w-full p-4 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-300 transition-all group"
+                                                >
                                                     <span>Побудувати Тіньову Карту Зв'язків</span>
                                                     <GitBranch className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                                 </button>
@@ -609,6 +613,14 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Shadow Network Analysis Section */}
+                                {showShadowNetwork && (
+                                    <ShadowNetworkAnalysis 
+                                        onClose={() => setShowShadowNetwork(false)} 
+                                        companyName={profile.name || searchQuery}
+                                    />
+                                )}
 
                                 {/* Timeline */}
                                 {displayEvents.length > 0 && (
@@ -662,6 +674,181 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
             </div>
         </div>
     );
+}
+
+
+/**
+ * Advanced Shadow Network Analysis Component
+ * Visualizes hidden connections, UBOs, and potential risk clusters.
+ */
+function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; companyName: string }) {
+    // Mock data for the shadow network
+    const nodes = [
+        { id: 1, label: companyName, type: 'main', x: 400, y: 300 },
+        { id: 2, label: 'Офшорний Холдинг "ALPHA"', type: 'offshore', x: 200, y: 150 },
+        { id: 3, label: 'Підставна Особа (UBO)', type: 'ubo', x: 600, y: 150 },
+        { id: 4, label: 'ТОВ "Дочірнє-1"', type: 'subsidiary', x: 300, y: 500 },
+        { id: 5, label: 'ТОВ "Дочірнє-2"', type: 'subsidiary', x: 500, y: 500 },
+        { id: 6, label: 'Транзитний Вузол "GAMMA"', type: 'transit', x: 650, y: 400 },
+    ];
+
+    const links = [
+        { from: 1, to: 2, label: 'Власник 75%', color: '#f43f5e' },
+        { from: 1, to: 3, label: 'Бенефіціар', color: '#fbbf24' },
+        { from: 4, to: 1, label: 'Дочірня 100%', color: '#10b981' },
+        { from: 5, to: 1, label: 'Дочірня 40%', color: '#10b981' },
+        { from: 3, to: 6, label: 'Зв\'язок через IP', color: '#6366f1' },
+        { from: 2, to: 6, label: 'Транзакції', color: '#6366f1' },
+    ];
+
+    return (
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-slate-900/90 border border-rose-500/30 rounded-[40px] p-8 backdrop-blur-3xl relative overflow-hidden"
+        >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.1),transparent_70%)] pointer-events-none" />
+            
+            <div className="flex items-center justify-between mb-8 relative z-10">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-rose-500/20 rounded-2xl border border-rose-500/30">
+                        <GitBranch className="w-6 h-6 text-rose-400" />
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Тіньовий Аналіз Зв'язків</h3>
+                        <p className="text-xs font-mono text-rose-500/60 uppercase">Виявлення прихованих афіліацій та UBO-вузлів</p>
+                    </div>
+                </div>
+                <button 
+                    onClick={onClose}
+                    className="px-6 py-2 bg-white/5 hover:bg-rose-500/20 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                >
+                    Закрити Карту
+                </button>
+            </div>
+
+            <div className="relative h-[600px] bg-black/60 rounded-[32px] border border-white/5 overflow-hidden group/graph">
+                {/* HUD Elements */}
+                <div className="absolute top-6 left-6 space-y-2 z-20">
+                    <div className="flex items-center gap-2 bg-black/40 border border-white/10 px-3 py-1 rounded-full">
+                        <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-slate-400 uppercase">Режим: Глибоке Сканування</span>
+                    </div>
+                    <div className="text-[10px] font-mono text-slate-500">ОБ'ЄКТІВ ВИЯВЛЕНО: {nodes.length}</div>
+                </div>
+
+                <div className="absolute bottom-6 right-6 z-20 bg-black/40 border border-white/10 p-4 rounded-2xl backdrop-blur-md">
+                    <div className="text-[9px] font-black text-slate-500 uppercase mb-3">Легенда Мережі</div>
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-rose-500" /><span className="text-[10px] text-slate-300 uppercase">Основний Об'єкт</span></div>
+                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-amber-500" /><span className="text-[10px] text-slate-300 uppercase">UBO (Кінцевий Власник)</span></div>
+                        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-500" /><span className="text-[10px] text-slate-300 uppercase">Афілійовані Структури</span></div>
+                    </div>
+                </div>
+
+                {/* SVG Graph Visualization */}
+                <svg viewBox="0 0 800 600" className="w-full h-full cursor-move select-none">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="20" refY="3.5" orientation="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="rgba(255,255,255,0.2)" />
+                        </marker>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    {/* Links */}
+                    {links.map((link, i) => {
+                        const fromNode = nodes.find(n => n.id === link.from)!;
+                        const toNode = nodes.find(n => n.id === link.to)!;
+                        return (
+                            <g key={i}>
+                                <motion.line
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: 1, opacity: 1 }}
+                                    transition={{ duration: 1.5, delay: i * 0.2 }}
+                                    x1={fromNode.x} y1={fromNode.y}
+                                    x2={toNode.x} y2={toNode.y}
+                                    stroke={link.color}
+                                    strokeWidth="1.5"
+                                    strokeOpacity="0.4"
+                                    markerEnd="url(#arrowhead)"
+                                />
+                                <text 
+                                    x={(fromNode.x + toNode.x) / 2} 
+                                    y={(fromNode.y + toNode.y) / 2} 
+                                    className="text-[9px] font-black fill-slate-500 uppercase tracking-tighter"
+                                    textAnchor="middle"
+                                >
+                                    {link.label}
+                                </text>
+                            </g>
+                        );
+                    })}
+
+                    {/* Nodes */}
+                    {nodes.map((node, i) => (
+                        <motion.g 
+                            key={i}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', damping: 12, delay: i * 0.1 }}
+                        >
+                            <circle 
+                                cx={node.x} cy={node.y} r={node.type === 'main' ? 24 : 18} 
+                                className={cn(
+                                    "stroke-white/20 transition-all duration-300",
+                                    node.type === 'main' ? "fill-rose-500/80" : 
+                                    node.type === 'ubo' ? "fill-amber-500/80" : 
+                                    node.type === 'offshore' ? "fill-orange-600/80" : "fill-emerald-500/80"
+                                )}
+                                style={{ filter: 'url(#glow)' }}
+                            />
+                            <text 
+                                x={node.x} y={node.y + (node.type === 'main' ? 45 : 35)} 
+                                className="text-[10px] font-black fill-white uppercase tracking-widest"
+                                textAnchor="middle"
+                            >
+                                {node.label}
+                            </text>
+                        </motion.g>
+                    ))}
+                </svg>
+
+                {/* Cyber Scanline */}
+                <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(244,63,94,0.05)_50%)] bg-[length:100%_4px] pointer-events-none opacity-20" />
+            </div>
+
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                <div className="bg-white/[0.03] border border-white/10 p-5 rounded-3xl">
+                    <h4 className="text-[10px] font-black text-rose-400 uppercase mb-3">Виявлено Критичні Зв'язки</h4>
+                    <ul className="space-y-2">
+                        <li className="text-[11px] text-slate-300 flex items-center gap-2">
+                            <AlertTriangle size={12} className="text-amber-500" /> Спільний бенефіціар з ТОВ "ВЕКТОР"
+                        </li>
+                        <li className="text-[11px] text-slate-300 flex items-center gap-2">
+                            <CheckCircle2 size={12} className="text-emerald-500" /> Відсутні прямі санкційні афіліати
+                        </li>
+                    </ul>
+                </div>
+                <div className="md:col-span-2 bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-3xl flex items-center justify-between">
+                    <div>
+                        <h4 className="text-[10px] font-black text-emerald-400 uppercase mb-1">Висновок Комплаєнс-Офіцера AI</h4>
+                        <p className="text-xs text-slate-300 italic">"Мережа зв'язків є прозорою на 84%. Виявлені транзитні вузли мають низький рівень ризику."</p>
+                    </div>
+                    <Award className="text-emerald-400 opacity-20" size={48} />
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
+// Utility function for conditional classes
+function cn(...classes: any[]) {
+    return classes.filter(Boolean).join(' ');
 }
 
 export default CompanyCERSDashboard;

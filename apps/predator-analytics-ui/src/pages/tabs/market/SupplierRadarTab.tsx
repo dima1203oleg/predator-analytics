@@ -26,7 +26,7 @@ const ReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "bg-red-500/10 border-red-500/20 text-red-500 animate-pulse"
     )}>
       {isHigh ? <CheckCircle size={10} /> : isMid ? <AlertCircle size={10} /> : <Siren size={10} />}
-      {score}% {isHigh ? 'TRUSTED' : isMid ? 'VALID' : 'RISKY'}
+      {score}% {isHigh ? 'НАДІЙНО' : isMid ? 'ВЕРІФІКОВАНО' : 'РИЗИКОВАНО'}
     </div>
   );
 };
@@ -115,7 +115,7 @@ export const SupplierRadarTab: React.FC = () => {
 
                 <div className="pt-6 border-t border-white/5 flex justify-between items-end">
                    <div>
-                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1">Competitiveness</p>
+                      <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1">КОНКУРЕНТОСПРОМОЖНІСТЬ</p>
                       <p className="text-2xl font-black text-emerald-500 italic font-mono leading-none">{s.competitiveness}%</p>
                    </div>
                    <div className="flex flex-wrap justify-end gap-1 max-w-[150px]">
@@ -136,10 +136,10 @@ export const SupplierRadarTab: React.FC = () => {
                   >
                      <div className="grid grid-cols-2 gap-3">
                         <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
-                           <ExternalLink size={14} /> Profile
+                           <ExternalLink size={14} /> Профіль
                         </button>
                         <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-white transition-all">
-                           <Mail size={14} /> Contact
+                           <Mail size={14} /> Контакт
                         </button>
                      </div>
                      <button className="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-black rounded-xl text-[10px] font-black uppercase tracking-widest italic shadow-xl transition-all">

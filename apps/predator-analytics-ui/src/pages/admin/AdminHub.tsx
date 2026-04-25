@@ -77,10 +77,11 @@ const MarketOverviewTab        = lazy(() => import('@/features/market/components
 const DueDiligenceView         = lazy(() => import('@/features/diligence/DueDiligence'));
 const TimelineBuilderView     = lazy(() => import('@/features/investigation/TimelineBuilderView'));
 const ClientsHubView           = lazy(() => import('@/features/clients/ClientsHubView'));
+const ExecutiveBrief           = lazy(() => import('@/components/dashboard/ExecutiveBrief').then(m => ({ default: m.ExecutiveBrief })));
 
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
-type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'PLATFORM';
+type TabCategory = 'SYSTEM_CORE' | 'AI_LAB' | 'INTEL_OSINT' | 'BUSINESS_INTEL' | 'PLATFORM';
 
 interface TabConfig {
   id: string;
@@ -92,6 +93,9 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
+  // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
+  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'Ранковий звіт', badge: 'CEO',      icon: TrendingUp,    component: ExecutiveBrief },
+
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
   { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'SOVEREIGN', icon: Zap,           component: SovereignCommandCenter },
   { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'LIVE',     icon: Activity,      component: InfraTelemetryTab },
@@ -136,7 +140,7 @@ const TABS: TabConfig[] = [
   { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'Мапа UBO',     badge: 'ENTITIES', icon: Share2,        component: UBOMapView },
   { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'TRACK',    icon: Target,        component: EntityRadarView },
   { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'AGENT',    icon: TrendingUp,    component: EvolutionView },
-  { id: 'osint',        category: 'INTEL_OSINT', label: 'OSINT Консоль', badge: 'SEARCH',   icon: Search,        component: SearchConsole },
+  { id: 'osint',        category: 'INTEL_OSINT', label: 'OSINT Консоль', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
   { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ELITE',    icon: ShieldAlert,   component: ZradaControlView },
   { id: 'aml',          category: 'INTEL_OSINT', label: 'AML Scoring',   badge: 'RISK',     icon: Activity,      component: AMLScoringView },
   { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'GLOBAL',   icon: Lock,          component: SanctionsScreening },
@@ -153,7 +157,7 @@ const TABS: TabConfig[] = [
   { id: 'logs',         category: 'PLATFORM', label: 'Системні Логи',    badge: 'RAW',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
 ];
 
-const DEFAULT_TAB = 'command';
+const DEFAULT_TAB = 'brief';
 
 // ─── HeartbeatLine Component ──────────────────────────────────────────────────
 
@@ -282,9 +286,9 @@ const SystemStatusHeader: React.FC = () => {
                     "font-black tracking-[0.3em] text-[12px] italic",
                     isCritical ? "text-blue-400" : isHybrid ? "text-emerald-400" : "text-rose-400"
                   )}>
-                    {isCritical ? "CLOUD OVERRIDE" : isHybrid ? "ГІБРИДНИЙ_СУВЕРЕН" : "ЛОКАЛЬНИЙ_СУВЕРЕН"}
+                    {isCritical ? "ХМАРНЕ_ПЕРЕКЛЮЧЕННЯ" : isHybrid ? "ГІБРИДНИЙ_СУВЕРЕН" : "ЛОКАЛЬНИЙ_СУВЕРЕН"}
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">VRAM: {vramUsed.toFixed(1)}GB / {vramTotal.toFixed(1)}GB • {isCritical ? 'ЗОВНІШНІЙ_КЛАСТЕР' : 'ЛОКАЛЬНИЙ_НЕЙРОВУЗОЛ'}</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">ВІДЕОПАМ'ЯТЬ: {vramUsed.toFixed(1)}ГБ / {vramTotal.toFixed(1)}ГБ • {isCritical ? 'ЗОВНІШНІЙ_КЛАСТЕР' : 'ЛОКАЛЬНИЙ_НЕЙРОВУЗОЛ'}</span>
                 </div>
               </div>
             </div>
@@ -358,9 +362,9 @@ const SystemStatusHeader: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className={cn("font-black text-[16px] tracking-tighter italic leading-none", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
-                    {threatLevel.toFixed(0)}% <span className="text-[9px] opacity-40 ml-1 not-italic">RISK</span>
+                    {threatLevel.toFixed(0)}% <span className="text-[9px] opacity-40 ml-1 not-italic">РИЗИК</span>
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 uppercase font-bold">{threatLevel > 70 ? 'CRITICAL_ALERT' : 'OPERATIONAL_SAFE'}</span>
+                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 uppercase font-bold">{threatLevel > 70 ? 'КРИТИЧНА_ЗАГРОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
                 </div>
               </div>
             </div>
@@ -497,6 +501,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   );
 
   const CATEGORIES: { id: TabCategory; label: string; subLabel: string; icon: any; color: string }[] = [
+    { id: 'BUSINESS_INTEL', label: 'Бізнес-Аналітика', subLabel: 'Ранковий звіт & KPI', icon: TrendingUp, color: 'emerald' },
     { id: 'SYSTEM_CORE', label: 'Ядро Системи', subLabel: 'Інфраструктура & Моніторинг', icon: Shield, color: 'rose' },
     { id: 'AI_LAB',      label: 'AI Лабораторія', subLabel: 'Навчання & Автозавод', icon: BrainCircuit, color: 'rose' },
     { id: 'INTEL_OSINT', label: 'Розвідка & OSINT', subLabel: 'Глобальний Аналіз', icon: Eye, color: 'rose' },

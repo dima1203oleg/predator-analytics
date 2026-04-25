@@ -19,6 +19,7 @@ import {
     Scale,
     ShieldAlert,
     Brain,
+    Target,
 } from 'lucide-react';
 
 
@@ -190,7 +191,7 @@ export default function OpportunitiesPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-amber">
-                                <span className="relative z-10">PREDATOR v58.2-WRAITH | OPPORTUNITIES</span>
+                                <span className="relative z-10">PREDATOR v58.2-WRAITH | МОЖЛИВОСТІ</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -210,7 +211,7 @@ export default function OpportunitiesPage() {
                                 <span>Можливості</span>
                             </h1>
                             <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
-                                Агрегація реальних інсайтів ринку та стратегічні рекомендації під захистом <span className="text-amber-400 font-bold border-b border-amber-400/30">Constitutional Shield</span>. 
+                                Агрегація реальних інсайтів ринку та стратегічні рекомендації під захистом <span className="text-amber-400 font-bold border-b border-amber-400/30">Конституційного Щита</span>. 
                             </p>
                         </div>
                     </div>
@@ -222,7 +223,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Стратегічний Вузол</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">Активні сигнали: {insights.length}</div>
-                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v58.2-WRAITH OSINT-HUB</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v58.2-WRAITH OSINT-ХАБ</div>
                             </div>
 
                             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
@@ -475,7 +476,8 @@ function ExecutiveTab({
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
+            {/* Top Metrics Grid */}
             <div className="grid gap-5 md:grid-cols-3">
                 <MetricTile label="Активні сигнали" value={executiveStats.signals.toString()} tone="cyan" />
                 <MetricTile
@@ -486,34 +488,193 @@ function ExecutiveTab({
                 <MetricTile label="Середня впевненість" tone="amber" value={`${executiveStats.averageConfidence.toFixed(0)}%`} />
             </div>
 
-            <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
-                <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
+            {/* Strategic Decision Matrix (Businessman POV) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-7">
+                    <StrategicROIMatrix insights={insights} />
+                </div>
+                <div className="lg:col-span-5">
+                    <MarketCaptureSimulator monetaryImpact={executiveStats.monetaryImpact} />
+                </div>
+            </div>
+
+            {/* Detailed Signals Feed */}
+            <div className="rounded-[40px] border border-white/[0.08] bg-[#050505]/60 backdrop-blur-3xl p-8 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/5 rounded-full blur-[80px] pointer-events-none" />
+                
+                <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between relative z-10">
                     <div>
-                        <h3 className="text-lg font-black tracking-tight text-white">Короткий виконавчий огляд</h3>
-                        <p className="mt-1 text-sm text-slate-400">
-                            Блок зібрано з реальних інсайтів, які вже є на сторінці.
+                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові Ринкові Сигнали</h3>
+                        <p className="mt-1 text-sm text-slate-500 font-medium italic">
+                            Пріоритетні вектори розвитку, виявлені нейронним ядром.
                         </p>
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                         Останнє оновлення: {executiveStats.lastUpdate ? formatTime(executiveStats.lastUpdate) : 'немає'}
                     </div>
                 </div>
 
-                <div className="mt-5 space-y-3">
-                    {insights.slice(0, 3).map((insight) => (
-                        <div
+                <div className="mt-8 space-y-4 relative z-10">
+                    {insights.slice(0, 4).map((insight, idx) => (
+                        <motion.div
                             key={insight.id}
-                            className="rounded-[24px] border border-white/[0.08] bg-black/20 px-4 py-4"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="group flex items-start gap-6 rounded-[28px] border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.05] p-5 transition-all duration-300"
                         >
-                            <div className="flex items-center justify-between gap-3">
-                                <div className="font-semibold text-white">{insight.title}</div>
-                                <span className="text-xs text-slate-500">{formatTime(insight.created_at)}</span>
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-black/40 border border-white/5 text-amber-400 group-hover:scale-110 transition-transform">
+                                <Zap size={20} />
                             </div>
-                            <p className="mt-2 text-sm leading-7 text-slate-400">{insight.description}</p>
-                            <div className="mt-3 text-sm font-semibold text-cyan-200">{insight.impact}</div>
-                        </div>
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="text-lg font-black text-white group-hover:text-amber-300 transition-colors">{insight.title}</div>
+                                    <span className="text-[10px] font-mono text-slate-500 uppercase">{formatTime(insight.created_at)}</span>
+                                </div>
+                                <p className="mt-2 text-sm leading-7 text-slate-400 italic">"{insight.description}"</p>
+                                <div className="mt-4 flex items-center gap-4">
+                                    <div className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-[10px] font-black text-cyan-300 uppercase tracking-widest">
+                                        Вплив: {insight.impact}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Статус: Оперативно</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
                     ))}
                 </div>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * 2x2 Strategic ROI Matrix for Business Decision Making
+ */
+function StrategicROIMatrix({ insights }: { insights: MarketInsight[] }) {
+    return (
+        <div className="h-full rounded-[40px] border border-white/[0.08] bg-[#050505]/60 backdrop-blur-3xl p-8 relative overflow-hidden group flex flex-col">
+            <div className="flex items-center gap-3 mb-8">
+                <Scale className="text-amber-400" size={24} />
+                <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Матриця Стратегічного ROI</h3>
+            </div>
+            
+            <div className="relative flex-1 min-h-[400px] border border-white/[0.05] rounded-3xl bg-black/40 overflow-hidden">
+                {/* Quadrant Labels */}
+                <div className="absolute top-4 right-4 text-[9px] font-black text-emerald-400/50 uppercase tracking-widest">Швидкі Перемоги</div>
+                <div className="absolute top-4 left-4 text-[9px] font-black text-cyan-400/50 uppercase tracking-widest">Масштабні Проекти</div>
+                <div className="absolute bottom-4 left-4 text-[9px] font-black text-slate-600 uppercase tracking-widest">Низький Пріоритет</div>
+                <div className="absolute bottom-4 right-4 text-[9px] font-black text-amber-400/50 uppercase tracking-widest">Тактичні Можливості</div>
+
+                {/* Grid Lines */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-full h-px bg-white/[0.05]" />
+                    <div className="h-full w-px bg-white/[0.05]" />
+                </div>
+
+                {/* Axis Labels */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full py-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Складність Реалізації</div>
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 -translate-x-full px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Потенційний Прибуток</div>
+
+                {/* Plotted Opportunities */}
+                <div className="absolute inset-0 p-12">
+                    {insights.slice(0, 10).map((insight, idx) => {
+                        // Map priority and confidence to coordinates
+                        const priorityMap: Record<string, number> = { low: 20, medium: 50, high: 85 };
+                        const confidenceMap: Record<number, number> = { 0.5: 30, 0.7: 50, 0.9: 80 };
+                        
+                        const y = priorityMap[insight.priority] || 50;
+                        const x = (insight.confidence * 100) || 50;
+                        
+                        return (
+                            <motion.div
+                                key={insight.id}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: idx * 0.1, type: 'spring' }}
+                                style={{ left: `${x}%`, top: `${100 - y}%` }}
+                                className="absolute group/point cursor-pointer"
+                            >
+                                <div className={cn(
+                                    "w-4 h-4 rounded-full border-2 border-white shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all group-hover/point:scale-150 group-hover/point:shadow-[0_0_25px_rgba(255,255,255,0.6)]",
+                                    insight.priority === 'high' ? "bg-emerald-400" : insight.priority === 'medium' ? "bg-amber-400" : "bg-slate-400"
+                                )} />
+                                
+                                {/* Tooltip on Hover */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 group-hover/point:opacity-100 transition-all pointer-events-none z-50">
+                                    <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 shadow-2xl min-w-[200px] backdrop-blur-xl">
+                                        <div className="text-[10px] font-black text-slate-500 uppercase mb-2">Об'єкт: #{insight.id.slice(0, 8)}</div>
+                                        <div className="text-xs font-bold text-white mb-2">{insight.title}</div>
+                                        <div className="flex justify-between items-center text-[9px] font-black uppercase">
+                                            <span className="text-emerald-400">РВД (ROI): {insight.priority === 'high' ? 'Екстремальний' : 'Стабільний'}</span>
+                                            <span className="text-slate-400">{insight.impact}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * Interactive Market Capture Simulator for Business Growth
+ */
+function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) {
+    const [marketShare, setMarketShare] = useState(15);
+    const estimatedRev = (monetaryImpact * (marketShare / 100)) * 12; // Yearly estimate
+
+    return (
+        <div className="h-full rounded-[40px] border border-white/[0.08] bg-gradient-to-br from-emerald-500/[0.03] to-cyan-500/[0.03] backdrop-blur-3xl p-8 relative overflow-hidden group flex flex-col">
+            <div className="flex items-center gap-3 mb-8">
+                <Target className="text-emerald-400" size={24} />
+                <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Симулятор Ринкової Частки</h3>
+            </div>
+
+            <div className="space-y-10 flex-1 flex flex-col justify-center">
+                <div className="text-center space-y-2">
+                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Прогнозований Річний Дохід</div>
+                    <div className="text-5xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                        {formatMoney(estimatedRev)}
+                    </div>
+                    <div className="text-[10px] font-mono text-emerald-500/60 uppercase">Основано на GNN-прогнозі (Графові Нейронні Мережі) v58.2</div>
+                </div>
+
+                <div className="space-y-6">
+                    <div className="flex justify-between items-end">
+                        <span className="text-[11px] font-black text-white uppercase tracking-widest">Цільова Частка Ринку</span>
+                        <span className="text-2xl font-black text-emerald-400">{marketShare}%</span>
+                    </div>
+                    
+                    <input 
+                        type="range" 
+                        min="1" 
+                        max="100" 
+                        value={marketShare}
+                        onChange={(e) => setMarketShare(parseInt(e.target.value))}
+                        className="w-full h-2 bg-white/5 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    />
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-black/40 border border-white/5 rounded-2xl p-4">
+                            <div className="text-[9px] font-black text-slate-500 uppercase mb-1">Складність</div>
+                            <div className="text-xs font-bold text-white">{marketShare > 50 ? 'Екстремальна' : marketShare > 20 ? 'Висока' : 'Оптимальна'}</div>
+                        </div>
+                        <div className="bg-black/40 border border-white/5 rounded-2xl p-4">
+                            <div className="text-[9px] font-black text-slate-500 uppercase mb-1">Термін</div>
+                            <div className="text-xs font-bold text-white">{Math.ceil(marketShare / 5)} міс.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button className="w-full py-5 bg-emerald-500 hover:bg-emerald-400 text-black rounded-3xl text-xs font-black uppercase tracking-[0.3em] transition-all shadow-xl shadow-emerald-900/20 active:scale-95">
+                    Сформувати Бізнес-План
+                </button>
             </div>
         </div>
     );

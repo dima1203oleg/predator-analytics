@@ -30,14 +30,12 @@ const getSourceLabel = (): string => {
 /** Людиночитана мітка активного вузла для відображення в UI */
 const getNodeSource = (): string => {
     if (API_BASE_URL.includes('zrok.io')) {
-        // У кожній зміні API_BASE_URL в config.ts ми можемо імпортувати актуальні константи
-        // Проте для хука безпечніше перевіряти за входженням підрядка, якщо ми не хочемо циклічних імпортів
-        if (API_BASE_URL.includes('mirror')) return 'COLAB_MIRROR';
-        return 'NVIDIA_VIA_ZROK';
+        if (API_BASE_URL.includes('mirror')) return 'COLAB_ДЗЕРКАЛО';
+        return 'NVIDIA_ЧЕРЕЗ_ZROK';
     }
-    if (API_BASE_URL.includes('194.177.1'))   return 'NVIDIA_DIRECT';
-    if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('9080')) return 'SOVEREIGN_MOCK';
-    return 'UNKNOWN';
+    if (API_BASE_URL.includes('194.177.1'))   return 'NVIDIA_ПРЯМИЙ';
+    if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('9080')) return 'СУВЕРЕННИЙ_МОК';
+    return 'НЕВІДОМО';
 };
 
 const readOfflineState = (): boolean => {
@@ -107,7 +105,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     // v3.0 Headless State
     const [llmTriStateMode, setLlmTriStateMode] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>('HYBRID');
     const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
-    const [llmLayerName, setLlmLayerName] = useState('LEVEL 1: CLOUD POOL');
+    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: ХМАРНИЙ ПУЛ');
     const [vramMetrics, setVramMetrics] = useState<BackendStatusSnapshot['vramMetrics']>({
         total: 8.0,
         localReserve: 5.5,
@@ -171,7 +169,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         sourceLabel:   getSourceLabel(),
         sourceType:    currentApiUrl.startsWith('http://localhost') || currentApiUrl.includes('9080') ? 'local' : 'remote',
         statusLabel:   isOffline
-            ? 'Вузол недоступний (Auto-Healing активний)'
+            ? 'Вузол недоступний (Авто-відновлення)'
             : 'З\'єднання стабільне',
         status:       isOffline ? 'offline' : 'online',
         isOnline:     !isOffline,

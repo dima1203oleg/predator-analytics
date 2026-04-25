@@ -21,7 +21,9 @@ import {
     TrendingUp,
     Zap,
     ShieldCheck,
-    AlertTriangle
+    AlertTriangle,
+    BarChart3,
+    Activity
 } from 'lucide-react';
 
 
@@ -272,7 +274,7 @@ export default function ForecastPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-red">
-                                <span className="relative z-10 text-white font-black italic">PREDATOR v58.2-WRAITH | ML-FORECASTING</span>
+                                <span className="relative z-10 text-white font-black italic">PREDATOR v58.2-WRAITH | ML-ПРОГНОЗУВАННЯ</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -292,7 +294,7 @@ export default function ForecastPage() {
                                 <span>ПРОГНОСТИЧНЕ <span className="text-red-600 font-display">ЯДРО</span></span>
                             </h1>
                             <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
-                                Керуйте товарним кодом та ML-моделями під захистом <span className="text-red-500 font-bold border-b border-red-500/30">Constitutional Shield</span>. Всі сценарії базуються на верифікованих ринкових даних.
+                                Керуйте товарним кодом та ML-моделями під захистом <span className="text-red-500 font-bold border-b border-red-500/30">Конституційного Щита</span>. Всі сценарії базуються на верифікованих ринкових даних.
                             </p>
                         </div>
                     </div>
@@ -537,7 +539,7 @@ function DemandForecastTab({
                                     : 'border-amber-400/20 bg-amber-500/10 text-amber-200',
                             )}
                         >
-                            {forecast.source === 'real' ? 'Verified_Core' : 'Synthetic_Node'}
+                            {forecast.source === 'real' ? 'ВЕРИФІКОВАНЕ_ЯДРО' : 'СИНТЕТИЧНИЙ_ВУЗОЛ'}
                         </span>
                     </div>
                 </div>
@@ -554,7 +556,7 @@ function DemandForecastTab({
                         <AlertCircle className="h-6 w-6 shrink-0" />
                     </div>
                     <div>
-                        <h4 className="text-lg font-black text-white italic uppercase tracking-widest">Sovereign AI Interpretation</h4>
+                        <h4 className="text-lg font-black text-white italic uppercase tracking-widest">Суверенна AI-Інтерпретація</h4>
                         <p className="mt-2 text-sm leading-7 text-slate-300 italic">{forecast.interpretation_uk}</p>
                     </div>
                 </div>

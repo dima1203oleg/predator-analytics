@@ -38,9 +38,9 @@ export const VramSentinel: React.FC = () => {
   const limit = 8.0;
   const statusColor = vram.total > 7.6 ? 'crimson' : vram.total > 7.0 ? 'rose' : 'emerald';
   const modeLabel = {
-    SOVEREIGN: { text: 'SOVEREIGN (Red)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
-    HYBRID: { text: 'HYBRID (Green)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-    CLOUD: { text: 'CLOUD (Blue)', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+    SOVEREIGN: { text: 'СУВЕРЕННИЙ (Червоний)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    HYBRID: { text: 'ГІБРИДНИЙ (Зелений)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    CLOUD: { text: 'ХМАРНИЙ (Синій)', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
   }[vram.mode];
 
   return (
@@ -62,7 +62,7 @@ export const VramSentinel: React.FC = () => {
             <Cpu size={20} className={vram.total > 7.6 ? 'animate-pulse' : ''} />
           </div>
           <div>
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">VRAM_GUARD_SYSTEM</h4>
+            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">СИСТЕМА_ЗАХИСТУ_VRAM</h4>
             <div className="flex items-center gap-2">
               <span className={cn("text-xs font-black uppercase tracking-widest", modeLabel.color)}>
                 {modeLabel.text}
@@ -102,7 +102,7 @@ export const VramSentinel: React.FC = () => {
         {/* Detailed Breakdown */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 group-hover:bg-white/[0.04] transition-colors">
-            <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">WebGL / UI / OS</span>
+            <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">WebGL / UI / ОС</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white font-mono">{vram.ui.toFixed(1)}</span>
               <span className="text-[8px] text-slate-500 font-black">GB</span>
@@ -115,7 +115,7 @@ export const VramSentinel: React.FC = () => {
             </div>
           </div>
           <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 group-hover:bg-white/[0.04] transition-colors">
-            <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Local LLM (Ollama)</span>
+            <span className="block text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Локальний LLM (Ollama)</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white font-mono">{vram.llm.toFixed(1)}</span>
               <span className="text-[8px] text-slate-500 font-black">GB</span>
@@ -142,7 +142,7 @@ export const VramSentinel: React.FC = () => {
                 <Cloud size={16} />
               </div>
               <div className="flex-1">
-                <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest leading-tight">CLOUD_OVERRIDE_ENABLED</p>
+                <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest leading-tight">ХМАРНИЙ_ОБХІД_УВІМКНЕНО</p>
                 <p className="text-[8px] text-blue-400 font-black leading-tight mt-1">Використання Gemini Pro 1.5 для збереження VRAM</p>
               </div>
               <Zap size={14} className="text-blue-500 animate-pulse" />
@@ -154,11 +154,11 @@ export const VramSentinel: React.FC = () => {
       <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldCheck size={12} className="text-emerald-500" />
-          <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">System Stability Guaranteed</span>
+          <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Стабільність системи гарантована</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[8px] font-black text-slate-300 font-mono italic">SYNCED</span>
+          <span className="text-[8px] font-black text-slate-300 font-mono italic">СИНХРОНІЗОВАНО</span>
         </div>
       </div>
     </motion.div>
