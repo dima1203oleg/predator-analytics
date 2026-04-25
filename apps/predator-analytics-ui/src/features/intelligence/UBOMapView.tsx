@@ -179,12 +179,12 @@ const UBONodeCard: React.FC<{ node: UBONode; depth?: number }> = ({ node, depth 
               </span>
               {node.pep && (
                 <span className="text-[8px] font-black bg-yellow-500 text-black px-3 py-1 uppercase tracking-widest rounded-lg">
-                  PEP_LEAD
+                  PEP_ЛІД
                 </span>
               )}
               {node.type === 'offshore' && (
                 <span className="text-[8px] font-black bg-amber-600 text-white px-3 py-1 uppercase tracking-widest rounded-lg shadow-lg shadow-amber-900/40">
-                  OFFSHORE_NODE
+                  ОФШОРНИЙ_ВУЗОЛ
                 </span>
               )}
             </div>
@@ -303,9 +303,9 @@ const UBOMapView: React.FC = () => {
   }, [fetchUboData]);
 
   const views: Array<{ id: ActiveView; label: string; icon: React.ElementType; badge?: string }> = [
-    { id: 'ubo-tree',       label: 'UBO_STRUCTURE',       icon: Network,      badge: 'ENHANCED' },
-    { id: 'pep-tracker',    label: 'PEP_INTEL',           icon: Fingerprint,  badge: 'LIVE' },
-    { id: 'shadow-director', label: 'SHADOW_DETECTOR',     icon: Eye,          badge: 'AI_CORE' },
+    { id: 'ubo-tree',       label: 'СТРУКТУРА_ВЛАСНОСТІ',       icon: Network,      badge: 'ПОКРАЩЕНО' },
+    { id: 'pep-tracker',    label: 'PEP_РОЗВІДКА',           icon: Fingerprint,  badge: 'LIVE' },
+    { id: 'shadow-director', label: 'ТІНЬОВИЙ_ДИРЕКТОР',     icon: Eye,          badge: 'AI_ЯДРО' },
   ];
 
   if (isLoading) {
@@ -378,10 +378,10 @@ const UBOMapView: React.FC = () => {
               </div>
             </div>
           }
-          breadcrumbs={['INTEL', 'GOVERNANCE', 'UBO_NEXUS']}
+          breadcrumbs={['ІНТЕЛЕКТ', 'УПРАВЛІННЯ', 'UBO_ВУЗОЛ']}
           badges={[
-            { label: 'CLASSIFIED_T1', color: 'primary', icon: <Lock size={10} /> },
-            { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Star size={10} /> },
+            { label: 'СЕКРЕТНО_T1', color: 'primary', icon: <Lock size={10} /> },
+            { label: 'СУВЕРЕННИЙ_ПРИВИД', color: 'gold', icon: <Star size={10} /> },
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'success', 
@@ -393,7 +393,7 @@ const UBOMapView: React.FC = () => {
             { label: 'PEP_DETECTION', value: '02_LEADS', icon: <Fingerprint />, color: 'warning' },
             { label: 'OFFSHORE_NODES', value: '03_UNITS', icon: <Globe />, color: 'danger' },
             { 
-              label: isOffline ? 'FAILOVER_SYNC' : 'RISK_SCORE', 
+              label: isOffline ? 'АВАРІЙНА_СИНХРОНІЗАЦІЯ' : 'ПОКАЗНИК_РИЗИКУ', 
               value: isOffline ? `${Math.floor(healingProgress)}%` : '94.8%', 
               icon: isOffline ? <Activity /> : <Target />, 
               color: isOffline ? 'warning' : 'danger',

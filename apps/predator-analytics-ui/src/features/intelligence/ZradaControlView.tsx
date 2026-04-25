@@ -32,7 +32,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { useEffect } from 'react';
 
 type BetrayalRisk = 'Підтверджено' | 'Висока підозра' | 'Моніторинг' | 'Очищено';
-type EvidenceType = 'telegram' | 'tender' | 'phone' | 'social' | 'contract' | 'audio' | 'video' | 'geolocation' | 'crypto';
+type EvidenceType = 'telegram' | 'тендер' | 'телефон' | 'соцмережі' | 'контракт' | 'аудіо' | 'відео' | 'геолокація' | 'крипто';
 
 interface BetrayalSubject {
   id: string;
@@ -107,11 +107,11 @@ export default function ZradaControlView() {
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
-          service: 'InternalIntegrity',
-          message: 'Активовано автономний режим детекції (ZRADA_NODES). Можливе обмеження глибини OSINT-пошуку.',
+          service: 'ВнутрішняДоброчесність',
+          message: 'Активовано автономний режим детекції (ВУЗЛИ_ЗРАДИ). Можливе обмеження глибини OSINT-пошуку.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
-          code: 'ZRADA_NODES'
+          code: 'ВУЗЛИ_ЗРАДИ'
         }
       }));
     }
@@ -158,7 +158,7 @@ export default function ZradaControlView() {
                   <div className="space-y-2">
                      <div className="flex items-center gap-4">
                         <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                          INTEGRITY_WATCH // CONTOUR_ZRADA
+                          МОНІТОРИНГ_ДОБРОЧЕСНОСТІ // КОНТУР_ЗРАДА
                         </span>
                         <div className="h-px w-12 bg-rose-500/20" />
                         <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
@@ -169,16 +169,16 @@ export default function ZradaControlView() {
                   </div>
                </div>
              }
-             breadcrumbs={['INTEL', 'INTEGRITY', 'ZRADA_SCREEN']}
+             breadcrumbs={['ІНТЕЛЕКТ', 'ДОБРОЧЕСНІСТЬ', 'ЕКРАН_ЗРАДИ']}
              badges={[
-               { label: 'CLASSIFIED_S2', color: 'danger', icon: <Lock size={10} /> },
-               { label: 'SENTINEL_SHIELD', color: 'primary', icon: <ShieldCheck size={10} /> },
+               { label: 'СЕКРЕТНО_S2', color: 'danger', icon: <Lock size={10} /> },
+               { label: 'ВАРТОВИЙ_ЩИТ', color: 'primary', icon: <ShieldCheck size={10} /> },
              ]}
              stats={[
                { label: 'ПІД_НАГЛЯДОМ', value: String(stats.total), icon: <Users size={14} />, color: 'primary' },
-               { label: 'CONFIRMED_ZRADA', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
+               { label: 'ПІДТВЕРДЖЕНА_ЗРАДА', value: String(stats.confirmed), icon: <Skull size={14} />, color: 'danger', animate: true },
                { label: 'СЕРЕДНІЙ_РИЗИК', value: '84%', icon: <AlertTriangle size={14} />, color: 'warning' },
-               { label: 'INTEGRITY_INDEX', value: '0.912', icon: <Fingerprint />, color: 'success' },
+               { label: 'ІНДЕКС_ДОБРОЧЕСНОСТІ', value: '0.912', icon: <Fingerprint />, color: 'success' },
              ]}
              actions={
                <div className="flex gap-4">

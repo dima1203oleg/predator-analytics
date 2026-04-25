@@ -162,13 +162,13 @@ export default function SearchConsole() {
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-3">
                                         <span className="badge-v2 bg-yellow-600/10 border border-yellow-600/20 text-yellow-500 px-3 py-1 text-[10px] font-black tracking-[0.3em] uppercase italic">
-                                          SYNAPTIC_DISCOVERY // OMNISCIENCE_v58.2
+                                          СИНАПТИЧНИЙ_ПОШУК // ВСЕВІДЕННЯ_v58.2
                                         </span>
                                         <div className="h-px w-10 bg-yellow-600/20" />
                                         <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
-                                        SYNAPTIC <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">DISCOVERY</span>
+                                        СИНАПТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">ПОШУК</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic mt-2 opacity-80 leading-none">
                                         ЯДРО СЕМАНТИЧНОГО ПОШУКУ ТА КВАНТОВОГО АНАЛІЗУ ДАНИХ
@@ -179,7 +179,7 @@ export default function SearchConsole() {
                         stats={[
                             { label: 'ІНДЕКС_ІСТИНИ', value: '99.9%', color: 'success', icon: <Fingerprint size={14} />, animate: true },
                             { label: 'ЛАТЕНТНІСТЬ', value: searchTime ? `${searchTime}мс` : '0мс', color: 'primary', icon: <Zap size={14} /> },
-                            { label: 'СТАН_МАТРИЦІ', value: 'ONLINE', color: 'success', icon: <Radio size={14} /> }
+                            { label: 'СТАН_МАТРИЦІ', value: 'АКТИВНО', color: 'success', icon: <Radio size={14} /> }
                         ]}
                         actions={
                             <div className="flex gap-4">
@@ -246,7 +246,7 @@ export default function SearchConsole() {
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ_ПОШУК', icon: Sparkles, color: '#6366f1' },
                                 { id: 'rerank', label: 'НЕЙРО_РЕРЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
-                                { id: 'chat', label: 'NEXUS_CO_PILOT', icon: MessageSquare, color: '#f59e0b', premium: true },
+                                { id: 'chat', label: 'NEXUS_КО_ПІЛОТ', icon: MessageSquare, color: '#f59e0b', premium: true },
                                 { id: 'truth', label: 'ТІЛЬКИ_ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
                                 <motion.button
@@ -325,7 +325,7 @@ export default function SearchConsole() {
                                                             </div>
                                                             <div className="text-right">
                                                                 <div className="text-4xl font-mono font-black text-yellow-500 italic tracking-tighter drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]">{(result.score * 100).toFixed(1)}%</div>
-                                                                <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mt-1">AI_RATING_SCORE</div>
+                                                                <div className="text-[9px] font-black text-slate-700 uppercase tracking-widest italic mt-1">AI_РЕЙТИНГ_ІСТИННОСТІ</div>
                                                             </div>
                                                         </div>
 
@@ -359,7 +359,7 @@ export default function SearchConsole() {
                             <div className="flex flex-col items-center justify-center py-40 gap-10 bg-slate-950/40 border-2 border-dashed border-white/[0.03] rounded-[4rem] text-center shadow-inner">
                                 <HelpCircle size={80} className="text-slate-800 animate-pulse" />
                                 <div>
-                                    <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_EMPTY_SET</h3>
+                                    <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_ПУСТИЙ_НАБІР</h3>
                                     <p className="text-slate-800 mt-3 italic font-black text-xs tracking-widest uppercase">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО_В_ЦЬОМУ_СЕКТОРІ_МАТРИЦІ</p>
                                 </div>
                             </div>

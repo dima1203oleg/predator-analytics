@@ -873,7 +873,7 @@ export const SearchView = () => {
                             {!isPremium && (
                                 <div className="flex items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.25em] text-amber-300">
                                     <Lock className="h-4 w-4" />
-                                    Доступ до бенефіціарів обмежено
+                                    ДОСТУП_ОБМЕЖЕНО
                                 </div>
                             )}
                         </div>
@@ -903,7 +903,7 @@ export const SearchView = () => {
                         <div className="relative">
                             <SearchIcon className="mx-auto mb-6 h-20 w-20 text-slate-700" />
                             <h3 className="mb-4 text-3xl font-black uppercase tracking-tight text-slate-300">
-                                {searchError || 'Збігів не знайдено'}
+                                {searchError || 'ЗБІГІВ_НЕ_ВИЯВЛЕНО'}
                             </h3>
                             <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-500">
                                 {searchError
