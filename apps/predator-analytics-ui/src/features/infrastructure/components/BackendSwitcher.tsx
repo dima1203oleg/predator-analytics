@@ -62,7 +62,7 @@ export function BackendSwitcher() {
             className="absolute top-full right-0 mt-2 w-80 bg-slate-950 border border-white/10 rounded-xl backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden"
           >
             <div className="p-3 border-b border-white/5 bg-white/5 flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-500">Node_Control_Center</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-500">ЦЕНТР_УПРАВЛІННЯ_ВУЗЛАМИ</span>
               <div className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 text-[8px] font-black uppercase">v58.2-WRAITH</div>
             </div>
             

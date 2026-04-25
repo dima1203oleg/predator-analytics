@@ -33,12 +33,12 @@ import { DataQualityDashboard } from '@/components/quality/DataQualityDashboard'
 const KNOWLEDGE_TABS = [
   { id: 'workflow', label: 'Воркфлоу FSM', icon: Workflow, description: 'Машина станів та оркестрація' },
   { id: 'quality', label: 'Якість Даних', icon: Shield, description: 'DQ Engine та валідація' },
-  { id: 'entities', label: 'Entity Resolution', icon: Users, description: 'Дедуплікація та матчинг' },
+  { id: 'entities', label: 'Вирішення Сутностей', icon: Users, description: 'Дедуплікація та матчинг' },
   { id: 'versioning', label: 'Версіонування', icon: GitBranch, description: 'Версії даних та репроцесинг' },
   { id: 'observability', label: 'Обсервабіліті', icon: Activity, description: 'Метрики та здоров’я пайплайнів' },
   { id: 'rules', label: 'Машина Правил', icon: Scale, description: 'Бізнес-правила та політики' },
   { id: 'explain', label: 'Пояснюваність', icon: FileText, description: 'Аудит та обґрунтування рішень' },
-  { id: 'human', label: 'Human Review', icon: UserCheck, description: 'Черга ручної перевірки (HITL)' },
+  { id: 'human', label: 'Ручна Перевірка', icon: UserCheck, description: 'Черга ручної перевірки (HITL)' },
   { id: 'costs', label: 'Контроль Витрат', icon: DollarSign, description: 'Бюджети та ліміти' },
 ];
 

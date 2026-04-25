@@ -13,9 +13,9 @@ const PORT = 9080;
 let systemState = {
   infra: {
     nodes: [
-      { id: '1', node: 'nvidia-master', role: 'GPU Master',   cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, net: '↑ 1.4 MB/s ↓ 5.2 MB/s', status: 'online',   uptime: '12д 4г 21хв', ip: '192.168.0.199' },
-      { id: '2', node: 'macbook-edge',  role: 'Edge Node',    cpu: 22, ram: 48, temp: 54,               net: '↑ 0.4 MB/s ↓ 1.1 MB/s', status: 'online',   uptime: '3г 14хв' },
-      { id: '3', node: 'colab-mirror',  role: 'Cloud Mirror', cpu: 0,  ram: 0,                          net: '—',                       status: 'offline',  uptime: 'недоступний' },
+      { id: '1', node: 'nvidia-master', role: 'МАЙСТЕР_ВУЗОЛ_GPU',   cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, net: '↑ 1.4 МБ/с ↓ 5.2 МБ/с', status: 'online',   uptime: '12д 4г 21хв', ip: '192.168.0.199' },
+      { id: '2', node: 'macbook-edge',  role: 'КРАЙОВИЙ_ВУЗОЛ',    cpu: 22, ram: 48, temp: 54,               net: '↑ 0.4 МБ/с ↓ 1.1 МБ/с', status: 'online',   uptime: '3г 14хв' },
+      { id: '3', node: 'colab-mirror',  role: 'ХМАРНЕ_ДЗЕРКАЛО', cpu: 0,  ram: 0,                          net: '—',                       status: 'offline',  uptime: 'недоступний' },
     ],
     services: [
       { name: 'core-api',         status: 'ok',   latencyMs: 12,  version: 'v1.4.2', lastCheck: 'зараз' },
@@ -28,9 +28,9 @@ let systemState = {
     activeMode: 'SOVEREIGN',
     activeNode: 'local-k3s',
     nodes: {
-      'local-k3s':     { label: 'Local K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
-      'nvidia-server': { label: 'NVIDIA Server', ip: '192.168.0.199',     status: 'online',  load: 61 },
-      'colab-mirror':  { label: 'Colab Mirror',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
+      'local-k3s':     { label: 'Локальний K3s',     ip: '192.168.1.10', status: 'online',  load: 34 },
+      'nvidia-server': { label: 'Сервер NVIDIA', ip: '192.168.0.199',     status: 'online',  load: 61 },
+      'colab-mirror':  { label: 'Дзеркало Colab',  ip: 'zrok-tunnel',  status: 'offline', load: 0  },
     },
     history: Array.from({ length: 42 }, (_, i) => ({
       id: String(i + 1),
@@ -52,8 +52,8 @@ let systemState = {
     },
     list: Array.from({ length: 64 }, (_, i) => ({
       id: `agent-${String(i + 1).padStart(3, '0')}`,
-      name: `${['Ingestion', 'Analyze', 'Crawler', 'Scorer'][i % 4]}-${String(i + 1).padStart(3, '0')}`,
-      type: ['Ingestion', 'Analyze', 'Crawler', 'Scorer'][i % 4],
+      name: `${['Інгестія', 'Аналіз', 'Краулер', 'Скоринг'][i % 4]}-${String(i + 1).padStart(3, '0')}`,
+      type: ['Інгестія', 'Аналіз', 'Краулер', 'Скоринг'][i % 4],
       status: ['alive', 'alive', 'idle', 'dead'][i % 4],
       cpu: Math.floor(Math.random() * 50),
       ram: Math.floor(Math.random() * 40),
@@ -66,9 +66,9 @@ let systemState = {
   },
   gitops: {
     argoApps: [
-      { name: 'core-api',          namespace: 'predator',  syncStatus: 'Synced',    healthStatus: 'Healthy',     revision: 'a1b2c3d', lastSync: '2 хв тому' },
-      { name: 'graph-service',     namespace: 'predator',  syncStatus: 'Synced',    healthStatus: 'Healthy',     revision: 'd4e5f6g', lastSync: '2 хв тому' },
-      { name: 'ingestion-worker',  namespace: 'predator',  syncStatus: 'OutOfSync', healthStatus: 'Degraded',    revision: 'h7i8j9k', lastSync: '15 хв тому' },
+      { name: 'core-api',          namespace: 'predator',  syncStatus: 'СИНХРОНІЗОВАНО',    healthStatus: 'ЗДОРОВИЙ',     revision: 'a1b2c3d', lastSync: '2 хв тому' },
+      { name: 'graph-service',     namespace: 'predator',  syncStatus: 'СИНХРОНІЗОВАНО',    healthStatus: 'ЗДОРОВИЙ',     revision: 'd4e5f6g', lastSync: '2 хв тому' },
+      { name: 'ingestion-worker',  namespace: 'predator',  syncStatus: 'НЕ_СИНХРОННО', healthStatus: 'ДЕГРАДАЦІЯ',    revision: 'h7i8j9k', lastSync: '15 хв тому' },
     ],
     ciRuns: Array.from({ length: 15 }, (_, i) => ({
       id: `run-${1000 + i}`,
@@ -85,16 +85,16 @@ let systemState = {
   },
   dataops: {
     kafkaTopics: [
-      { name: 'customs.raw.xml',       partitions: 8,  lag: 1204, throughput: '2.4 MB/s',  consumers: 3, status: 'warn' },
-      { name: 'entities.enriched',     partitions: 4,  lag: 0,    throughput: '0.8 MB/s',  consumers: 2, status: 'ok' },
-      { name: 'sanctions.feed',        partitions: 2,  lag: 0,    throughput: '0.1 MB/s',  consumers: 1, status: 'ok' },
-      { name: 'graph.relationships',   partitions: 6,  lag: 0,    throughput: '1.1 MB/s',  consumers: 2, status: 'ok' },
+      { name: 'customs.raw.xml',       partitions: 8,  lag: 1204, throughput: '2.4 МБ/с',  consumers: 3, status: 'warn' },
+      { name: 'entities.enriched',     partitions: 4,  lag: 0,    throughput: '0.8 МБ/с',  consumers: 2, status: 'ok' },
+      { name: 'sanctions.feed',        partitions: 2,  lag: 0,    throughput: '0.1 МБ/с',  consumers: 1, status: 'ok' },
+      { name: 'graph.relationships',   partitions: 6,  lag: 0,    throughput: '1.1 МБ/с',  consumers: 2, status: 'ok' },
     ],
     datasets: [
-      { id: '1', name: 'customs-ner-v4', type: 'NER', records: 1240000, sizeGb: 4.2, version: '4.0.1', status: 'ready', updatedAt: '2026-04-18' }
+      { id: '1', name: 'customs-ner-v4', type: 'Розпізнавання сутностей (NER)', records: 1240000, sizeGb: 4.2, version: '4.0.1', status: 'ready', updatedAt: '2026-04-18' }
     ],
     factoryModules: [
-      { id: '1', name: 'customs-etl-adapter', template: 'ETL::XmlIngestion', status: 'deployed', createdBy: 'admin', createdAt: '2026-04-15' }
+      { id: '1', name: 'customs-etl-adapter', template: 'ETL::ПотоковаІнгестія', status: 'deployed', createdBy: 'admin', createdAt: '2026-04-15' }
     ]
   },
   security: {
@@ -105,7 +105,7 @@ let systemState = {
     sessions: Array.from({ length: 12 }, (_, i) => ({
       id:           `sess-${i + 1}`,
       user:         ['admin@predator', 'analyst.dmytro@corp', 'viewer.test@corp', 'analyst.olena@corp'][i % 4],
-      role:         ['admin', 'client_premium', 'client_basic', 'client_premium'][i % 4],
+      role:         ['адмін', 'клієнт_преміум', 'клієнт_базовий', 'клієнт_преміум'][i % 4],
       ip:           `10.0.${Math.floor(i / 4)}.${(i % 4) * 10 + 1}`,
       userAgent:    ['Chrome/124 macOS', 'Firefox/125 Ubuntu', 'Chrome/124 Win10'][i % 3],
       lastActivity: `${i * 2 + 1}хв тому`,
@@ -113,37 +113,37 @@ let systemState = {
       expiresIn:    `${60 - i * 2}хв`,
     })),
     keys: [
-      { id: '1', name: 'ingestion-service',   owner: 'system',             scopes: 'read:customs,write:kafka',  lastUsed: '1хв тому',   expiresAt: '2026-12-31', status: 'active' },
-      { id: '2', name: 'graph-service-key',   owner: 'system',             scopes: 'read:neo4j,write:neo4j',    lastUsed: '2хв тому',   expiresAt: '2026-12-31', status: 'active' },
-      { id: '3', name: 'external-partner-01', owner: 'partner@abc.com',    scopes: 'read:entities',             lastUsed: '3д тому',    expiresAt: '2025-06-30', status: 'expired' },
-      { id: '4', name: 'revoked-test',      owner: 'old-service',        scopes: 'write:*',                   lastUsed: '30д тому',   expiresAt: 'n/a',        status: 'revoked' },
+      { id: '1', name: 'сервіс-інгестії',   owner: 'система',             scopes: 'read:customs,write:kafka',  lastUsed: '1хв тому',   expiresAt: '2026-12-31', status: 'active' },
+      { id: '2', name: 'ключ-графа',   owner: 'система',             scopes: 'read:neo4j,write:neo4j',    lastUsed: '2хв тому',   expiresAt: '2026-12-31', status: 'active' },
+      { id: '3', name: 'зовнішній-партнер-01', owner: 'partner@abc.com',    scopes: 'read:entities',             lastUsed: '3д тому',    expiresAt: '2025-06-30', status: 'expired' },
+      { id: '4', name: 'відкликаний-тест',      owner: 'old-service',        scopes: 'write:*',                   lastUsed: '30д тому',   expiresAt: 'n/a',        status: 'revoked' },
     ]
   },
   system: {
     status: {
       status: 'ok',
       healthy: true,
-      overall_status: 'HEALTHY',
+      overall_status: 'ЗДОРОВИЙ',
       version: 'v56.5-ELITE',
-      environment: 'production',
-      uptime: '12d 4h 21m',
+      environment: 'продакшн',
+      uptime: '12д 4г 21хв',
       last_sync: new Date().toISOString(),
       services: [
-        { name: 'API Gateway', status: 'ok', label: 'API', latency_ms: 12 },
-        { name: 'Kafka Cluster', status: 'ok', label: 'KAFKA', latency_ms: 5 },
-        { name: 'Neo4j DB', status: 'ok', label: 'NEO4J', latency_ms: 24 },
-        { name: 'Redis Cache', status: 'ok', label: 'REDIS', latency_ms: 2 },
-        { name: 'Ollama Node', status: 'ok', label: 'OLLAMA', latency_ms: 890 },
+        { name: 'API Шлюз', status: 'ok', label: 'API', latency_ms: 12 },
+        { name: 'Кластер Kafka', status: 'ok', label: 'KAFKA', latency_ms: 5 },
+        { name: 'БД Neo4j', status: 'ok', label: 'NEO4J', latency_ms: 24 },
+        { name: 'Кеш Redis', status: 'ok', label: 'REDIS', latency_ms: 2 },
+        { name: 'Вузол Ollama', status: 'ok', label: 'OLLAMA', latency_ms: 890 },
       ],
       summary: { total: 5, healthy: 5, degraded: 0, failed: 0 },
       metrics: { api_qps: 124, active_users: 12 },
       timestamp: new Date().toISOString(),
     },
     engines: [
-      { id: 'qwen3-coder', status: 'optimal', score: 98, throughput: 1240, latency: 450, load: 32, trend: 'stable', tone: 'emerald' },
-      { id: 'nemotron-30b', status: 'optimal', score: 94, throughput: 850, latency: 1200, load: 55, trend: 'improving', tone: 'emerald' },
-      { id: 'vision-mini', status: 'calibrating', score: 88, throughput: 120, latency: 2400, load: 12, trend: 'testing', tone: 'amber' },
-      { id: 'search-rag', status: 'optimal', score: 91, throughput: 3400, latency: 120, load: 18, trend: 'stable', tone: 'emerald' },
+      { id: 'qwen3-coder', status: 'оптимально', score: 98, throughput: 1240, latency: 450, load: 32, trend: 'стабільно', tone: 'emerald' },
+      { id: 'nemotron-30b', status: 'оптимально', score: 94, throughput: 850, latency: 1200, load: 55, trend: 'покращується', tone: 'emerald' },
+      { id: 'vision-mini', status: 'калібрування', score: 88, throughput: 120, latency: 2400, load: 12, trend: 'тестування', tone: 'amber' },
+      { id: 'search-rag', status: 'оптимально', score: 91, throughput: 3400, latency: 120, load: 18, trend: 'стабільно', tone: 'emerald' },
     ],
     logs: [
       { id: 'l1', level: 'info', service: 'core-api', message: 'Систему моніторингу активовано', timestamp: new Date().toISOString() },
@@ -291,19 +291,25 @@ const server = http.createServer((req, res) => {
   }
 
   if (path === '/api/v1/system/stats' && req.method === 'GET') {
-    const memoryTotal = 32768; // 32GB
+    const memoryTotal = 32 * 1024 * 1024 * 1024; // 32GB in bytes
+    const memoryUsed = memoryTotal * (0.45 + Math.random() * 0.05);
     const vramTotal = 8192;   // 8GB
     return sendJSON(res, {
       cpu_percent: 15 + Math.random() * 20,
-      memory_percent: 45 + Math.random() * 5,
+      memory_percent: (memoryUsed / memoryTotal) * 100,
       memory_total: memoryTotal,
-      memory_used: memoryTotal * 0.45,
+      memory_used: memoryUsed,
+      memory_available: memoryTotal - memoryUsed,
+      disk_percent: 12 + Math.random() * 2,
+      disk_total: 2 * 1024 * 1024 * 1024 * 1024, // 2TB
+      disk_used: 0.24 * 1024 * 1024 * 1024 * 1024,
+      disk_free: 1.76 * 1024 * 1024 * 1024 * 1024,
       gpu_available: true,
       gpu_name: 'NVIDIA RTX 4090 (Mock)',
       gpu_temp: 65 + Math.random() * 5,
       gpu_utilization: 30 + Math.random() * 10,
-      gpu_mem_total: vramTotal,
-      gpu_mem_used: 4200 + Math.random() * 500,
+      gpu_mem_total: 8 * 1024 * 1024 * 1024,
+      gpu_mem_used: 4.2 * 1024 * 1024 * 1024 + Math.random() * 500 * 1024 * 1024,
       uptime_seconds: 1044000,
       timestamp: new Date().toISOString()
     });
@@ -331,6 +337,16 @@ const server = http.createServer((req, res) => {
 
   if (path === '/api/v1/alerts' && req.method === 'GET') {
     return sendJSON(res, { items: systemState.dashboard.alerts });
+  }
+
+  if (path === '/api/v1/factory/stats' && req.method === 'GET') {
+    return sendJSON(res, {
+      active_agents: 42,
+      total_tasks: 1250,
+      success_rate: 98.5,
+      avg_latency_ms: 120,
+      vram_usage_gb: 4.2
+    });
   }
 
   // 404

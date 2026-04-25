@@ -103,7 +103,10 @@ const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
     .replace('Database', 'СХОВИЩЕ_ДАНИХ')
     .replace('Edge API', 'КРАЙОВИЙ_ШЛЮЗ_API')
     .replace('Worker', 'ВОРКЕР_ОБРОБКИ')
-    .replace('AI Engine', 'ЯДРО_ШІ');
+    .replace('AI Engine', 'ЯДРО_ШІ')
+    .replace('GPU Master', 'МАЙСТЕР_ВУЗОЛ_GPU')
+    .replace('Edge Node', 'КРАЙОВИЙ_ВУЗОЛ')
+    .replace('Cloud Mirror', 'ХМАРНЕ_ДЗЕРКАЛО');
 
   return (
     <motion.div
@@ -300,7 +303,7 @@ export const InfraTelemetryTab: React.FC = () => {
           { label: 'АКТИВНІ_АКТИВИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'rose' },
           { label: 'ЯДРО_ЕКОСИСТЕМИ', value: services.length, icon: Box, color: 'sky' },
           { label: 'АПТАЙМ_СИСТЕМИ', value: '99.99%', icon: Shield, color: 'emerald' },
-          { label: 'ПРОПУСКНА_ЗДАТНІСТЬ', value: '1.2 GB/s', icon: Zap, color: 'amber' },
+          { label: 'ПРОПУСКНА_ЗДАТНІСТЬ', value: '1.2 ГБ/с', icon: Zap, color: 'amber' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 

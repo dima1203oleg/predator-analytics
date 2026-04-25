@@ -1,5 +1,5 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v58.2-WRAITH
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v60.0-ELITE
  * Екран авторизації глобальної розвідувальної платформи.
  * Атмосфера: суверенітет, абсолютний контроль, міць WRAITH.
  */
@@ -202,7 +202,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] animate-pulse" />
                             <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]">
-                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v58.2_WRAITH
+                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v60.0_ELITE
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
@@ -288,11 +288,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             <div className="absolute right-0 top-20 bottom-20 w-52 z-10 pointer-events-none flex flex-col justify-between py-4 pr-5 items-end text-right">
                 <div className="space-y-3">
                     {[
-                        { label: 'CRYSTALS-KYBER-1024', status: 'АКТИВНО', color: 'text-rose-500', icon: Shield },
+                        { label: 'КРИСТАЛИ-КІБЕР-1024', status: 'АКТИВНО', color: 'text-rose-500', icon: Shield },
                         { label: 'ДАРКНЕТ / ONION СКАН', status: 'АКТИВНО', color: 'text-rose-500', icon: Radar },
                         { label: 'СУПУТН. ЗВ\'ЯЗОК [47]', status: 'ОНЛАЙН', color: 'text-rose-500', icon: Satellite },
                         { label: 'SWIFT/SEPA ПЕРЕХВАТ', status: 'АКТИВНО', color: 'text-rose-500', icon: Radio },
-                        { label: 'INTERPOL RED NOTICE', status: 'АКТИВНО', color: 'text-rose-500', icon: Crosshair },
+                        { label: 'ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ', status: 'АКТИВНО', color: 'text-rose-500', icon: Crosshair },
                         { label: 'БІОМЕТРІЯ / СІТКІВКА', status: 'ОЧІКУЄ', color: 'text-rose-600', icon: Fingerprint },
                     ].map((sys, i) => (
                         <motion.div
@@ -415,12 +415,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 <div className="flex items-center justify-center gap-6">
                                     <div className="h-[1.5px] w-24 bg-gradient-to-r from-transparent via-rose-600 to-transparent opacity-60" />
                                 <h2 className="text-[13px] font-black tracking-[0.7em] text-rose-500 uppercase bg-rose-950/20 px-8 py-2 border border-rose-700/30 skew-x-[-15deg]">
-                                        SOVEREIGN INTELLIGENCE ASSET
+                                        СУВЕРЕННИЙ_АКТИВ_РОЗВІДКИ
                                     </h2>
                                     <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-rose-600 to-transparent opacity-60" />
                                 </div>
                                 <p className="text-[10px] text-rose-600 font-black tracking-[0.55em] uppercase italic group-hover:text-rose-400 transition-colors">
-                                    WRAITH GLOBAL CONTROL TERMINAL v58.2-WRAITH · TIER-1 CLASSIFIED
+                                    ГЛОБАЛЬНИЙ_ТЕРМІНАЛ_УПРАВЛІННЯ_WRAITH v60.0-ELITE · ТІР-1_СЕКРЕТНО
                                 </p>
                             </div>
 
@@ -492,14 +492,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         {scanProgress}%
                                     </motion.div>
                                     <div className="text-[10px] font-black text-rose-500 tracking-[0.4em] uppercase bg-rose-950/20 px-3 py-1 border border-rose-700/30">
-                                        BIOMETRIC_SYNC
+                                        БІОМЕТРИЧНА_СИНХРОНІЗАЦІЯ
                                     </div>
                                     <motion.div
                                         animate={{ opacity: [0.4, 1, 0.4] }}
                                         transition={{ duration: 1.2, repeat: Infinity }}
                                         className="text-[8px] text-slate-400 tracking-[0.25em] font-bold"
                                     >
-                                        DECODING SOVEREIGN_HASH...
+                                        ДЕКОДУВАННЯ_СУВЕРЕННОГО_ХЕШУ...
                                     </motion.div>
                                 </div>
                             </div>
@@ -514,8 +514,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     />
                                 </div>
                                 <div className="flex justify-between text-[8px] text-rose-600/60 font-black tracking-widest uppercase">
-                                    <span>AUTHENTICATION</span>
-                                    <span>READY_TO_COMMAND</span>
+                                    <span>АВТЕНТИФІКАЦІЯ</span>
+                                    <span>ГОТОВИЙ_ДО_УПРАВЛІННЯ</span>
                                 </div>
                             </div>
                         </motion.div>
@@ -536,7 +536,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             >
                                 <div className="text-[10px] text-rose-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-rose-600/30">
                                     <Shield size={14} className="text-rose-600" />
-                                    ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v58.2-WRAITH]
+                                    ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v60.0-ELITE]
                                     <Shield size={14} className="text-rose-600" />
                                 </div>
                                 <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">
@@ -552,8 +552,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         label: 'КОМАНДНИК СУВЕРЕНІТЕТУ',
                                         desc: 'Абсолютний контроль екосистеми. Тір-1 доступ до всіх стратегічних вузлів та AI Oracle.',
                                         icon: ShieldAlert,
-                                        level: 'TOP-SECRET ELITE',
-                                        clearance: 'SOVEREIGN',
+                                        level: 'ЦІЛКОМ_ТАЄМНО_ЕЛІТА',
+                                        clearance: 'СУВЕРЕННИЙ',
                                         borderColor: 'border-rose-500/40 hover:border-rose-400 shadow-[0_0_50px_rgba(225,29,72,0.05)]',
                                         glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.2)]',
                                         accentColor: 'text-rose-400',
@@ -565,8 +565,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         label: 'СТАРШИЙ СТРАТЕГ',
                                         desc: 'Глибока OSINT-розвідка, закриті фінансові потоки UA_SWIFT, AI-прогнозування.',
                                         icon: Activity,
-                                        level: 'CLASSIFIED PLUS',
-                                        clearance: 'ELITE-IV',
+                                        level: 'СЕКРЕТНО_ПЛЮС',
+                                        clearance: 'ЕЛІТА-IV',
                                         borderColor: 'border-rose-500/30 hover:border-rose-400/60 shadow-[0_0_50px_rgba(225,29,72,0.03)]',
                                         glowColor: 'hover:shadow-[0_0_60px_rgba(225,29,72,0.15)]',
                                         accentColor: 'text-rose-400',
@@ -578,8 +578,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                         label: 'ОПЕРАТИВНИЙ ОФІЦЕР',
                                         desc: 'Моніторинг митних коридорів, базовий аудит та оперативна підтримка інгестії.',
                                         icon: Terminal,
-                                        level: 'SECRET',
-                                        clearance: 'ELITE-III',
+                                        level: 'СЕКРЕТНО',
+                                        clearance: 'ЕЛІТА-III',
                                         borderColor: 'border-slate-700/40 hover:border-slate-500/60',
                                         glowColor: 'hover:shadow-[0_0_40px_rgba(100,116,139,0.15)]',
                                         accentColor: 'text-slate-200',
@@ -678,13 +678,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — FREEZE INITIATED
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
-                                [УВАГА] INTERPOL RED NOTICE: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — MONITORING
+                                [УВАГА] ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ
                             </span>
                             <span className="text-[9px] text-slate-400 font-bold tracking-widest">
-                                [СУПУТНИК] SENTINEL-47 ОНЛАЙН · {(dataProcessedPb / 100).toFixed(1)} GB/С · ІНТЕРЦЕПЦІЯ АКТИВНА
+                                [СУПУТНИК] СЕНТИНЕЛЬ-47 ОНЛАЙН · {(dataProcessedPb / 100).toFixed(1)} ГБ/с · ІНТЕРЦЕПЦІЯ АКТИВНА
                             </span>
                             <span className="text-[9px] text-yellow-700 font-bold tracking-widest">
-                                [AI HUNTER] ЦІЛЬ ПІДТВЕРДЖЕНА: MATCH 99.97% — ПАКЕТ ПЕРЕДАНО ДО SBU/NABU — CASE #PRD-28847
+                                [ШІ ХАНТЕР] ЦІЛЬ ПІДТВЕРДЖЕНА: СПІВПАДІННЯ 99.97% — ПАКЕТ ПЕРЕДАНО ДО SBU/NABU — СПРАВА #PRD-28847
                             </span>
                             <span className="text-[9px] text-amber-600 font-bold tracking-widest">
                                 [СПРБА ДОСТУПУ] НЕСАНКЦІОНОВАНА АВТОРИЗАЦІЯ З IP 185.12.92.X — ЗАБЛОКОВАНО — ORIGIN: TOR_EXIT
@@ -692,7 +692,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </motion.div>
                     </div>
                     <div className="px-6 text-[10px] font-black text-yellow-600 tracking-[0.4em] italic underline decoration-yellow-600/40">
-                        PREDATOR v58.2-WRAITH
+                        PREDATOR v60.0-ELITE
                     </div>
                 </div>
                 <div className="h-[3px] bg-yellow-600 shadow-[0_0_15px_rgba(212,175,55,0.8)]" />

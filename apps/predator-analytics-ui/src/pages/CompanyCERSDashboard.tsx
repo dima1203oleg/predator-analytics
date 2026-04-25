@@ -444,6 +444,60 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                 className="p-6 space-y-6 max-w-[1600px] mx-auto"
                                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                             >
+                                {/* Strategic Summary Header */}
+                                <motion.div 
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    className="mb-10 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-transparent border border-rose-500/20 p-8 rounded-[2rem] relative overflow-hidden backdrop-blur-xl"
+                                >
+                                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                                        <TrendingUp size={120} className="text-rose-500" />
+                                    </div>
+                                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-4 gap-8 items-center">
+                                        <div className="lg:col-span-3">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <span className="bg-rose-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em]">Ексклюзивний Аналіз</span>
+                                                <span className="text-slate-500 text-[10px] font-mono uppercase tracking-widest">ID: {profile.edrpou || profile.id}</span>
+                                            </div>
+                                            <h2 className="text-4xl font-black text-white mb-4 tracking-tight uppercase italic line-clamp-1">
+                                                {profile.name || 'АНАЛІЗ ОБ\'ЄКТА...'}
+                                            </h2>
+                                            <div className="flex flex-wrap gap-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-rose-500/20 rounded-xl text-rose-500"><ShieldCheck size={20} /></div>
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Статус Комплаєнс</p>
+                                                        <p className="text-sm font-bold text-slate-200">ПІДВИЩЕНИЙ МОНІТОРИНГ</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-amber-500/20 rounded-xl text-amber-500"><Zap size={20} /></div>
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Прогнозний ROI</p>
+                                                        <p className="text-sm font-bold text-slate-200">8.4x (24 міс.)</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-emerald-500/20 rounded-xl text-emerald-500"><Banknote size={20} /></div>
+                                                    <div>
+                                                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Ліквідний Поріг</p>
+                                                        <p className="text-sm font-bold text-slate-200">₴48.2M</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-md">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest text-center">Вердикт AI ПРЕДАТОР</p>
+                                            <div className="text-center">
+                                                <span className={`text-4xl font-black ${cersGradeColor} drop-shadow-[0_0_15px_rgba(244,63,94,0.5)] tracking-tighter`}>
+                                                    {companyData?.grade || 'B+'}
+                                                </span>
+                                                <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зона ризику.<br/>Рекомендовано: Умови акредитиву.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+
                                 {/* Top Row: Company Profile & Grade */}
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
                                     {/* Company Identity Card */}
@@ -698,15 +752,15 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
     // Mock data for the shadow network
     const nodes = [
         { id: 1, label: companyName, type: 'main', x: 400, y: 300 },
-        { id: 2, label: 'Офшорний Холдинг "ALPHA"', type: 'offshore', x: 200, y: 150 },
-        { id: 3, label: 'Підставна Особа (UBO)', type: 'ubo', x: 600, y: 150 },
-        { id: 4, label: 'ТОВ "Дочірнє-1"', type: 'subsidiary', x: 300, y: 500 },
-        { id: 5, label: 'ТОВ "Дочірнє-2"', type: 'subsidiary', x: 500, y: 500 },
-        { id: 6, label: 'Транзитний Вузол "GAMMA"', type: 'transit', x: 650, y: 400 },
+        { id: 2, label: 'KRAKEN ASSETS LTD (BVI)', type: 'offshore', x: 200, y: 150 },
+        { id: 3, label: 'ПЕТРЕНКО О.В. (UBO)', type: 'ubo', x: 600, y: 150 },
+        { id: 4, label: 'ТОВ "ЦЕНТР-ЛОГІСТИК"', type: 'subsidiary', x: 300, y: 500 },
+        { id: 5, label: 'НК "МАГІСТРАЛЬ"', type: 'subsidiary', x: 500, y: 500 },
+        { id: 6, label: 'ВУЗОЛ_ТРАНЗИТ_ДЕЛЬТА', type: 'transit', x: 650, y: 400 },
     ];
 
     const links = [
-        { from: 1, to: 2, label: 'Власник 75%', color: '#f43f5e' },
+        { from: 1, to: 2, label: 'Власник 100%', color: '#f43f5e' },
         { from: 1, to: 3, label: 'Бенефіціар', color: '#fbbf24' },
         { from: 4, to: 1, label: 'Дочірня 100%', color: '#10b981' },
         { from: 5, to: 1, label: 'Дочірня 40%', color: '#10b981' },

@@ -73,10 +73,10 @@ interface BackendNodeInternal {
 }
 
 const ALL_NODES: BackendNodeInternal[] = [
-    { id: NODE_IDS.NVIDIA, name: 'NVIDIA_MASTER',   url: NVIDIA_DIRECT_URL, active: false, status: 'checking' },
-    { id: NODE_IDS.ZROK,   name: 'NVIDIA_VIA_ZROK', url: NVIDIA_ZROK_URL,   active: false, status: 'checking' },
-    { id: NODE_IDS.COLAB,  name: 'COLAB_MIRROR',    url: NVIDIA_COLAB_URL,  active: false, status: 'checking' },
-    { id: NODE_IDS.MOCK,   name: 'SOVEREIGN_MOCK',  url: MOCK_URL,          active: false, status: 'checking' },
+    { id: NODE_IDS.NVIDIA, name: 'МАЙСТЕР_ВУЗОЛ_NVIDIA', url: NVIDIA_DIRECT_URL, active: false, status: 'checking' },
+    { id: NODE_IDS.ZROK,   name: 'NVIDIA_ЧЕРЕЗ_ZROK',   url: NVIDIA_ZROK_URL,   active: false, status: 'checking' },
+    { id: NODE_IDS.COLAB,  name: 'ДЗЕРКАЛО_COLAB',    url: NVIDIA_COLAB_URL,  active: false, status: 'checking' },
+    { id: NODE_IDS.MOCK,   name: 'СУВЕРЕННИЙ_МОК',  url: MOCK_URL,          active: false, status: 'checking' },
 ];
 
 const getGlobalWindow = () => window as Window & {

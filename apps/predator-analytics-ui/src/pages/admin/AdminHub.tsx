@@ -8,7 +8,7 @@ import {
   TrendingUp, BarChart3, Fingerprint, Target, Search,
   Lock, MessageSquare, Anchor, FileText, Share2, AlertTriangle,
   ZapOff, Terminal, Sparkles, Radio, Shield, Zap as ZapIcon,
-  Atom, Box, Boxes
+  Atom, Box, Boxes, PieChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -28,6 +28,7 @@ const AgentsOpsTab       = lazy(() => import('./tabs/AgentsOpsTab'));
 const ZeroTrustSecTab    = lazy(() => import('./tabs/ZeroTrustSecurityTab'));
 const DataOpsTab         = lazy(() => import('./tabs/DataOpsTab'));
 const ChaosControlHub    = lazy(() => import('./ChaosControlHub'));
+const ResourceGuardTab   = lazy(() => import('./tabs/ResourceGuardTab'));
 
 // AI Lab
 const AIControlPlane        = lazy(() => import('@/features/ai/AIControlPlane'));
@@ -78,6 +79,9 @@ const DueDiligenceView         = lazy(() => import('@/features/diligence/DueDili
 const TimelineBuilderView     = lazy(() => import('@/features/investigation/TimelineBuilderView'));
 const ClientsHubView           = lazy(() => import('@/features/clients/ClientsHubView'));
 const ExecutiveBrief           = lazy(() => import('@/components/dashboard/ExecutiveBrief').then(m => ({ default: m.ExecutiveBrief })));
+const PortfolioRiskView        = lazy(() => import('@/features/dashboard/PortfolioRiskView'));
+const MATargetScannerView      = lazy(() => import('@/features/intelligence/MATargetScannerView'));
+const MarketEntryView          = lazy(() => import('@/features/intelligence/MarketEntryView'));
 
 // ─── Конфіг вкладок ───────────────────────────────────────────────────────────
 
@@ -95,66 +99,71 @@ interface TabConfig {
 const TABS: TabConfig[] = [
   // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
   { id: 'brief',        category: 'BUSINESS_INTEL', label: 'Ранковий звіт', badge: 'CEO',      icon: TrendingUp,    component: ExecutiveBrief },
+  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'Ризики портфеля', badge: 'FIN',    icon: PieChart,      component: PortfolioRiskView },
+  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'Сканер M&A',     badge: 'DEAL',   icon: Target,        component: MATargetScannerView },
+  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'Аналіз ринку',    badge: 'EXPANSION', icon: Globe,        component: MarketEntryView },
+  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'Аудит ROI',      badge: 'MONEY',    icon: BarChart3,     component: FinancialDashboard },
 
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
-  { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'SOVEREIGN', icon: Zap,           component: SovereignCommandCenter },
-  { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'LIVE',     icon: Activity,      component: InfraTelemetryTab },
+  { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'СУВЕРЕН', icon: Zap,           component: SovereignCommandCenter },
+  { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'ЖИВИЙ',     icon: Activity,      component: InfraTelemetryTab },
   { id: 'failover',     category: 'SYSTEM_CORE', label: 'Резервування',                    icon: Network,       component: FailoverRoutingTab },
   { id: 'gitops',       category: 'SYSTEM_CORE', label: 'GitOps CI',                       icon: GitMerge,      component: GitOpsPipelineTab  },
   { id: 'agents-ops',   category: 'SYSTEM_CORE', label: 'Агенти',                          icon: Cpu,           component: AgentsOpsTab       },
-  { id: 'security',     category: 'SYSTEM_CORE', label: 'Нульова довіра',   badge: 'SEC',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
+  { id: 'security',     category: 'SYSTEM_CORE', label: 'Нульова довіра',   badge: 'БЕЗПЕКА',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'DataOps',                         icon: Database,      component: DataOpsTab         },
-  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Chaos Ops',    badge: 'HAZARD',   icon: Zap,           component: ChaosControlHub    },
+  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Chaos Ops',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
+  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'Захист ресурсів', badge: 'VRAM',       icon: Shield,        component: ResourceGuardTab   },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
-  { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'NEXUS',    icon: Zap,           component: AIControlPlane },
-  { id: 'ai-insights',  category: 'AI_LAB', label: 'Аналітика ШІ',  badge: 'DEEP',     icon: BrainCircuit,  component: AIInsightsHub },
-  { id: 'ai-engines',   category: 'AI_LAB', label: 'Двигуни ШІ',   badge: 'CORE',     icon: Cpu,           component: EnginesView },
+  { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
+  { id: 'ai-insights',  category: 'AI_LAB', label: 'Аналітика ШІ',  badge: 'ГЛИБИНА',     icon: BrainCircuit,  component: AIInsightsHub },
+  { id: 'ai-engines',   category: 'AI_LAB', label: 'Двигуни ШІ',   badge: 'ЯДРО',     icon: Cpu,           component: EnginesView },
   { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM Провідник',                    icon: BookOpen,      component: LLMView },
-  { id: 'factory',      category: 'AI_LAB', label: 'Завод ШІ',      badge: 'PROD',     icon: Factory,       component: SystemFactoryView  },
-  { id: 'factory-studio', category: 'AI_LAB', label: 'Студія Заводу',  badge: 'DESIGN',   icon: Layers,        component: FactoryStudio },
+  { id: 'factory',      category: 'AI_LAB', label: 'Завод ШІ',      badge: 'ПРОД',     icon: Factory,       component: SystemFactoryView  },
+  { id: 'factory-studio', category: 'AI_LAB', label: 'Студія Заводу',  badge: 'ДИЗАЙН',   icon: Layers,        component: FactoryStudio },
   { id: 'auto-factory', category: 'AI_LAB', label: 'Авто-Фабрика',  badge: 'OODA',     icon: Sparkles,      component: AutoFactoryView },
   { id: 'models',       category: 'AI_LAB', label: 'Донавчання',    badge: 'ML',       icon: BrainCircuit,  component: ModelTrainingView  },
-  { id: 'datasets',     category: 'AI_LAB', label: 'Датасети',      badge: 'DATA',     icon: HardDrive,     component: DatasetsStudioView },
+  { id: 'datasets',     category: 'AI_LAB', label: 'Датасети',      badge: 'ДАНІ',     icon: HardDrive,     component: DatasetsStudioView },
   { id: 'prompts',      category: 'AI_LAB', label: 'Промпти',                         icon: MessageSquare, component: SystemPromptsView },
   { id: 'nas',          category: 'AI_LAB', label: 'Нейромережі',  badge: 'NAS',      icon: Cpu,           component: NasView },
-  { id: 'forecast',     category: 'AI_LAB', label: 'Прогнози',      badge: 'MATH',     icon: TrendingUp,    component: ForecastView },
-  { id: 'super-intel',  category: 'AI_LAB', label: 'СуперІнтелект',   badge: 'OMEGA',    icon: Zap,           component: SuperIntelligenceView },
+  { id: 'forecast',     category: 'AI_LAB', label: 'Прогнози',      badge: 'МАТЕМ',     icon: TrendingUp,    component: ForecastView },
+  { id: 'super-intel',  category: 'AI_LAB', label: 'СуперІнтелект',   badge: 'ОМЕГА',    icon: Zap,           component: SuperIntelligenceView },
 
   // ─── INTEL_OSINT ───────────────────────────────────────────────────────────
-  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'Хаб Розвідки',    badge: 'ORACLE',   icon: Network,       component: SovereignIntelHub },
-  { id: 'nexus',        category: 'INTEL_OSINT', label: 'Нексус',        badge: 'PREDICT',  icon: Zap,           component: PredictiveNexusView },
+  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'Хаб Розвідки',    badge: 'ОРАКУЛ',   icon: Network,       component: SovereignIntelHub },
+  { id: 'nexus',        category: 'INTEL_OSINT', label: 'Нексус',        badge: 'ПРОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
   { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'Гіпотези',                        icon: BrainCircuit,  component: HypothesisEngineView },
   { id: 'knowledge',    category: 'INTEL_OSINT', label: 'Знання',                         icon: BookOpen,      component: KnowledgeEngineeringView },
-  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'Сценарії',     badge: 'SIM',      icon: Layers,        component: ScenarioModelingView },
-  { id: 'intelligence', category: 'INTEL_OSINT', label: 'Розвідка',     badge: 'WRAITH',   icon: Eye,           component: CustomsIntelligenceView },
-  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Фін. SIGINT',   badge: 'MONEY',    icon: BarChart3,     component: FinancialSigintView },
+  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'Сценарії',     badge: 'СИМ',      icon: Layers,        component: ScenarioModelingView },
+  { id: 'intelligence', category: 'INTEL_OSINT', label: 'Розвідка',     badge: 'ПРИВИД',   icon: Eye,           component: CustomsIntelligenceView },
+  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Фін. SIGINT',   badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialSigintView },
   { id: 'due-diligence', category: 'INTEL_OSINT', label: 'Due Diligence', badge: 'KYC',       icon: ShieldCheck,   component: DueDiligenceView },
-  { id: 'timeline',     category: 'INTEL_OSINT', label: 'Хронограф',    badge: 'HIST',      icon: Activity,      component: TimelineBuilderView },
-  { id: 'supply-chain', category: 'INTEL_OSINT', label: 'Ланцюги Поставок', badge: 'LOGISTICS', icon: Box,        component: SupplyChainAnalyticsView },
-  { id: 'entity-resolver', category: 'INTEL_OSINT', label: 'Резолвер Сутностей', badge: 'MATCH', icon: Fingerprint, component: EntityResolverView },
+  { id: 'timeline',     category: 'INTEL_OSINT', label: 'Хронограф',    badge: 'ІСТОРІЯ',      icon: Activity,      component: TimelineBuilderView },
+  { id: 'supply-chain', category: 'INTEL_OSINT', label: 'Ланцюги Поставок', badge: 'ЛОГІСТИКА', icon: Box,        component: SupplyChainAnalyticsView },
+  { id: 'entity-resolver', category: 'INTEL_OSINT', label: 'Резолвер Сутностей', badge: 'СПІВПАДІННЯ', icon: Fingerprint, component: EntityResolverView },
   { id: 'clients',      category: 'INTEL_OSINT', label: 'Хаб Клієнтів', badge: 'CRM',       icon: Globe,         component: ClientsHubView },
-  { id: 'fin-dashboard', category: 'INTEL_OSINT', label: 'Фінансовий Дашборд', badge: 'TREASURY', icon: BarChart3, component: FinancialDashboard },
-  { id: 'market-intel', category: 'INTEL_OSINT', label: 'Аналіз Ринку',  badge: 'MARKET',   icon: Globe,         component: MarketOverviewTab },
-  { id: 'geo-radar',    category: 'INTEL_OSINT', label: 'Гео-Радар',    badge: 'GLOBE',    icon: Globe,         component: GeopoliticalRadarView },
-  { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'Мапа UBO',     badge: 'ENTITIES', icon: Share2,        component: UBOMapView },
-  { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'TRACK',    icon: Target,        component: EntityRadarView },
-  { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'AGENT',    icon: TrendingUp,    component: EvolutionView },
+  { id: 'fin-dashboard', category: 'INTEL_OSINT', label: 'Фінансовий Дашборд', badge: 'СКАРБНИЦЯ', icon: BarChart3, component: FinancialDashboard },
+  { id: 'market-intel', category: 'INTEL_OSINT', label: 'Аналіз Ринку',  badge: 'РИНОК',   icon: Globe,         component: MarketOverviewTab },
+  { id: 'geo-radar',    category: 'INTEL_OSINT', label: 'Гео-Радар',    badge: 'ГЛОБУС',    icon: Globe,         component: GeopoliticalRadarView },
+  { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'Мапа UBO',     badge: 'СУТНОСТІ', icon: Share2,        component: UBOMapView },
+  { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'ТРЕК',    icon: Target,        component: EntityRadarView },
+  { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
   { id: 'osint',        category: 'INTEL_OSINT', label: 'OSINT Консоль', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
-  { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ELITE',    icon: ShieldAlert,   component: ZradaControlView },
-  { id: 'aml',          category: 'INTEL_OSINT', label: 'AML Scoring',   badge: 'RISK',     icon: Activity,      component: AMLScoringView },
-  { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'GLOBAL',   icon: Lock,          component: SanctionsScreening },
-  { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'Соц. Розвідка', badge: 'SOCIAL',   icon: MessageSquare, component: ConversationIntelView },
-  { id: 'maritime',     category: 'INTEL_OSINT', label: 'Морський Трек', badge: 'VESSEL',   icon: Anchor,        component: MaritimeView },
+  { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
+  { id: 'aml',          category: 'INTEL_OSINT', label: 'AML Scoring',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
+  { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
+  { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'Соц. Розвідка', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
+  { id: 'maritime',     category: 'INTEL_OSINT', label: 'Морський Трек', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
   { id: 'tenders',      category: 'INTEL_OSINT', label: 'Тендери',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
-  { id: 'registries',   category: 'INTEL_OSINT', label: 'Реєстри',      badge: 'DB',       icon: Database,      component: RegistriesView },
-  { id: 'open-data',    category: 'INTEL_OSINT', label: 'Відкриті Дані', badge: 'GOV',      icon: Globe,         component: DataGovView },
+  { id: 'registries',   category: 'INTEL_OSINT', label: 'Реєстри',      badge: 'БД',       icon: Database,      component: RegistriesView },
+  { id: 'open-data',    category: 'INTEL_OSINT', label: 'Відкриті Дані', badge: 'ДЕРЖ',      icon: Globe,         component: DataGovView },
   
   // ─── PLATFORM ──────────────────────────────────────────────────────────────
   { id: 'settings',     category: 'PLATFORM', label: 'Налаштування',                    icon: Settings,      component: SettingsView },
-  { id: 'alerts-system', category: 'PLATFORM', label: 'Системні Сповіщення', badge: 'LOG', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
-  { id: 'decisions',    category: 'PLATFORM', label: 'Журнал Рішень',    badge: 'AUDIT',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
-  { id: 'logs',         category: 'PLATFORM', label: 'Системні Логи',    badge: 'RAW',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
+  { id: 'alerts-system', category: 'PLATFORM', label: 'Системні Сповіщення', badge: 'ЛОГ', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
+  { id: 'decisions',    category: 'PLATFORM', label: 'Журнал Рішень',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
+  { id: 'logs',         category: 'PLATFORM', label: 'Системні Логи',    badge: 'СИРІ',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
 ];
 
 const DEFAULT_TAB = 'brief';
@@ -203,8 +212,8 @@ const SystemStatusHeader: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const vramUsed = stats?.gpu_mem_used ?? 0;
-  const vramTotal = stats?.gpu_mem_total || 8.0;
+  const vramUsed = (stats?.gpu_mem_used ?? 0) / (1024 ** 3);
+  const vramTotal = (stats?.gpu_mem_total || (8 * 1024 ** 3)) / (1024 ** 3);
   const cpuPercent = stats?.cpu_percent ?? 0;
   const agentsCount = agentsData?.stats.total ?? 0;
   const healthyCount = status?.summary.healthy ?? 0;
@@ -708,15 +717,15 @@ export const AdminHub: React.FC = () => {
         <div className="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-rose-500 animate-pulse" />
-            <span>GEO_LOC: 50.4501° N, 30.5234° E</span>
+            <span>ГЕО_ЛОКАЦІЯ: 50.4501° N, 30.5234° E</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-blue-500 animate-pulse" />
-            <span>NODE_TRK: 0x9F431B95-ELITE</span>
+            <span>ВІДСТЕЖЕННЯ_ВУЗЛА: 0x9F431B95-ELITE</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-emerald-500 animate-pulse" />
-            <span>KERN_STB: WRAITH_v58.2_STABLE</span>
+            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v58.2_STABLE</span>
           </div>
           <div className="mt-2 flex gap-1">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -731,17 +740,17 @@ export const AdminHub: React.FC = () => {
         </div>
         
         <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest text-right">
-          <span>LATENCY_SYNC: 0.0014ms</span>
-          <span>UPSTREAM_BW: 14.8 GB/s</span>
-          <span>DOWNSTREAM_BW: 8.2 GB/s</span>
+          <span>СИНХРОНІЗАЦІЯ_ЗАТРИМКИ: 0.0014ms</span>
+          <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/с</span>
+          <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/с</span>
           <div className="mt-2 w-32 h-[1px] bg-gradient-to-l from-rose-500/50 to-transparent" />
           <span className="text-[6px] opacity-20">CIPHER: CHACHA20-POLY1305</span>
         </div>
 
         <div className="absolute bottom-4 left-4 flex flex-col gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest">
-          <span>BUFF_SIZE: 16384KB</span>
-          <span>PKT_DROP_RATE: 0.0000%</span>
-          <span>CRYPTO_STRENGTH: 512-BIT</span>
+          <span>РОЗМІР_БУФЕРА: 16384КБ</span>
+          <span>ВТРАТА_ПАКЕТІВ: 0.0000%</span>
+          <span>КРИПТО_МІЦНІСТЬ: 512-БІТ</span>
           <div className="flex gap-1 mt-1">
             {[1,2,3,4,5,6].map(i => <div key={i} className="w-2 h-[2px] bg-rose-500/20" />)}
           </div>

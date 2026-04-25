@@ -18,7 +18,11 @@ import {
     ClipboardList,
     ShieldCheck,
     GitBranch,
+    Copy,
+    Download,
+    Eye
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { Badge } from '@/components/ui/badge';

@@ -187,11 +187,18 @@ const IntelligencePage: React.FC = () => {
                              {activeTab !== 'АВТОНОМІЯ' ? (
                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                      <IntelligenceNode
-                                        title="МОНІТОРИНГ_ОФШОРІВ"
-                                        status="АКТИВНО"
-                                        progress={84}
+                                        title="СТРАТЕГІЧНИЙ_КАПІТАЛ"
+                                        status="АНАЛІЗ"
+                                        progress={88}
                                         icon={<Globe size={24} />}
                                         color="rose"
+                                     />
+                                     <IntelligenceNode
+                                        title="ROI_РОЗВІДКИ (x6.2)"
+                                        status="МАКСИМУМ"
+                                        progress={95}
+                                        icon={<TrendingUp size={24} />}
+                                        color="crimson"
                                      />
                                      <IntelligenceNode
                                         title="КОНКУРЕНТНИЙ_ПУЛЬС"
@@ -208,21 +215,14 @@ const IntelligencePage: React.FC = () => {
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="ГЕОПОЛІТИЧНИЙ_РЕЗОНАНС"
-                                        status="СКАНИНГ"
-                                        progress={45}
-                                        icon={<Terminal size={24} />}
-                                        color="rose"
-                                     />
-                                     <IntelligenceNode
-                                        title="КРИПТО_ПОТОКИ"
-                                        status="ЗАШИФРОВАНО"
+                                        title="КРИПТО_ПОТОКИ_SWIFT"
+                                        status="МОНІТОРИНГ"
                                         progress={68}
                                         icon={<Lock size={24} />}
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="НЕЙРО_ПРОГНОЗ"
+                                        title="НЕЙРО_ПРОГНОЗ_РИНКУ"
                                         status="НАВЧАННЯ"
                                         progress={77}
                                         icon={<Sparkles size={24} />}
@@ -358,24 +358,36 @@ const IntelligencePage: React.FC = () => {
                                      </div>
                                  </div>
 
-                                 <div className="space-y-6 max-h-[300px] overflow-y-auto no-scrollbar pr-4 italic">
+                                 <div className="space-y-6 max-h-[450px] overflow-y-auto no-scrollbar pr-4 italic">
                                      {alerts && alerts.length > 0 ? (
-                                         alerts.slice(0, 10).map((alert: any, i: number) => (
-                                             <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-2 hover:border-red-600 transition-colors">
-                                                 <span className="text-[9px] font-mono text-slate-600 shrink-0">
+                                         alerts.slice(0, 15).map((alert: any, i: number) => (
+                                             <div key={i} className="flex gap-6 border-l border-red-600/30 pl-6 py-3 hover:bg-white/[0.02] transition-all rounded-r-2xl group/item">
+                                                 <span className="text-[9px] font-mono text-red-600/60 shrink-0 mt-1">
                                                      {new Date(alert.timestamp || Date.now()).toLocaleTimeString('uk-UA')}
                                                  </span>
-                                                 <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tighter">
-                                                     {alert.message || alert.type} {alert.company ? `(Вузол: ${alert.company})` : ''} - РИЗИК: {alert.severity === 'critical' ? '1.0' : '0.6'}
-                                                 </p>
+                                                 <div>
+                                                     <p className="text-[10px] font-black text-slate-200 leading-relaxed uppercase tracking-widest group-hover/item:text-white transition-colors">
+                                                         {alert.message || alert.type} 
+                                                         {alert.company && <span className="text-red-500 ml-2">[{alert.company}]</span>}
+                                                     </p>
+                                                     <div className="flex items-center gap-3 mt-2">
+                                                         <span className={cn(
+                                                             "text-[8px] font-mono px-2 py-0.5 rounded border uppercase",
+                                                             alert.severity === 'critical' ? "text-red-500 border-red-500/20 bg-red-500/5" : "text-slate-500 border-white/5 bg-white/5"
+                                                         )}>
+                                                             РИЗИК_{alert.severity === 'critical' ? '1.0' : '0.4'}
+                                                         </span>
+                                                         <span className="text-[8px] font-mono text-slate-700 uppercase">ВЕРИФІКОВАНО_AI</span>
+                                                     </div>
+                                                 </div>
                                              </div>
                                          ))
                                      ) : (
-                                         [...Array(6)].map((_, i) => (
-                                             <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-2 hover:border-red-600 transition-colors">
+                                         [...Array(8)].map((_, i) => (
+                                             <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-4 opacity-40">
                                                  <span className="text-[9px] font-mono text-slate-600 shrink-0">0{i}:24:14</span>
-                                                 <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tighter">
-                                                     СИСТЕМА AGENT_0{i+1} В ОЧІКУВАННІ НОВИХ ПАТЕРНІВ.
+                                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                                     СИНХРОНІЗАЦІЯ ПОТОКУ... ВУЗОЛ_0{i+1}
                                                  </p>
                                              </div>
                                          ))

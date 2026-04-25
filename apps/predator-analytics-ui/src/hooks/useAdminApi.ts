@@ -142,3 +142,33 @@ export function useSecurityKeys() {
     staleTime: 60000,
   });
 }
+
+// ─── Generic Hook ────────────────────────────────────────────────────────────
+
+/**
+ * useAdminApi — Універсальний хук для доступу до адмін-панелі.
+ * Дозволяє використовувати один інтерфейс для різних типів даних.
+ */
+export function useAdminApi(key: keyof typeof ADMIN_KEYS): any {
+  const map: Record<keyof typeof ADMIN_KEYS, () => any> = {
+    telemetry: useInfraTelemetry,
+    failover: useFailoverStatus,
+    agents: useAgentsStats,
+    gitops: useGitOpsStatus,
+    dataops: useDataOpsStatus,
+    audit: useAuditLogs,
+    sessions: useSecuritySessions,
+    keys: useSecurityKeys,
+    systemStatus: useSystemStatus,
+    systemStats: useSystemStats,
+    aiEngines: useAIEngines,
+    systemLogs: useSystemLogs,
+  };
+
+  const hook = map[key];
+  if (!hook) {
+    throw new Error(`[PREDATOR] Unknown useAdminApi key: ${key}`);
+  }
+
+  return hook();
+}

@@ -79,6 +79,75 @@ export const MarketOverviewTab: React.FC = () => {
     fetchData();
   }, []);
 
+  const MOCK_TIMELINE = [
+    { month: 'Січ', import: 850, export: 420 },
+    { month: 'Лют', import: 920, export: 380 },
+    { month: 'Бер', import: 1100, export: 450 },
+    { month: 'Кві', import: 980, export: 520 },
+    { month: 'Тра', import: 1250, export: 480 },
+    { month: 'Чер', import: 1400, export: 510 },
+    { month: 'Лип', import: 1320, export: 590 },
+  ];
+
+  const chartOption = useMemo(() => ({
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: '#0a0a0a',
+      borderColor: 'rgba(225, 29, 72, 0.3)',
+      textStyle: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
+      axisPointer: { type: 'cross', label: { backgroundColor: '#e11d48' } }
+    },
+    grid: { left: '3%', right: '4%', bottom: '3%', top: '5%', containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: MOCK_TIMELINE.map(t => t.month),
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+      axisLabel: { color: '#475569', fontSize: 10, fontWeight: 'bold' }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.02)', type: 'dashed' } },
+      axisLabel: { color: '#475569', fontSize: 10 }
+    },
+    series: [
+      {
+        name: 'Імпорт',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { width: 4, color: '#e11d48', shadowBlur: 10, shadowColor: 'rgba(225, 29, 72, 0.4)' },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(225, 29, 72, 0.2)' },
+              { offset: 1, color: 'rgba(225, 29, 72, 0)' }
+            ]
+          }
+        },
+        data: MOCK_TIMELINE.map(t => t.import)
+      },
+      {
+        name: 'Експорт',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        lineStyle: { width: 3, color: '#475569', type: 'dashed' },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(71, 85, 105, 0.1)' },
+              { offset: 1, color: 'rgba(71, 85, 105, 0)' }
+            ]
+          }
+        },
+        data: MOCK_TIMELINE.map(t => t.export)
+      }
+    ]
+  }), [MOCK_TIMELINE]);
+
   const stats = data?.overview?.stats || MOCK_MARKET_OVERVIEW.overview.stats;
   const topProducts = data?.overview?.top_products || MOCK_MARKET_OVERVIEW.overview.top_products;
 
@@ -140,10 +209,11 @@ export const MarketOverviewTab: React.FC = () => {
                </div>
             </div>
           </div>
-          <div className="h-80 w-full bg-black/20 rounded-2xl flex items-center justify-center border border-white/5 italic text-slate-600 text-sm">
-            [ГРАФІК ДИНАМІКИ ВІЗУАЛІЗУЄТЬСЯ ЧЕРЕЗ ECHARTS]
+          <div className="h-80 w-full bg-black/20 rounded-2xl overflow-hidden border border-white/5">
+            <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
           </div>
         </div>
+
 
         <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/5 space-y-6">
           <h3 className="text-lg font-black text-white uppercase italic border-b border-white/5 pb-4">Топ категорії</h3>
