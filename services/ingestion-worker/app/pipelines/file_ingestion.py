@@ -22,6 +22,7 @@ from app.normalizers.company import CompanyNormalizer
 from app.sinks.neo4j_sink import Neo4jSink
 from app.sinks.opensearch_sink import OpenSearchSink
 from app.sinks.postgres_sink import PostgresSink
+from app.sinks.clickhouse_sink import ClickHouseSink
 from app.validators.declaration import DeclarationValidator, Severity
 from predator_common.logging import get_logger
 
@@ -124,6 +125,7 @@ class FileIngestionPipeline:
         self.postgres_sink = PostgresSink()
         self.neo4j_sink = Neo4jSink()
         self.opensearch_sink = OpenSearchSink()
+        self.clickhouse_sink = ClickHouseSink()
 
         # MinIO
         self.minio = get_minio_service()
@@ -380,6 +382,7 @@ class FileIngestionPipeline:
             self._store_postgres(batch),
             self._store_neo4j(batch),
             self._store_opensearch(batch),
+            self._store_clickhouse(batch),
             return_exceptions=True,
         )
 
@@ -420,6 +423,15 @@ class FileIngestionPipeline:
             await self.opensearch_sink.bulk_index(batch, self.tenant_id)
         except Exception as e:
             logger.error(f"Failed to store in OpenSearch: {e}")
+
+    async def _store_clickhouse(self, batch: list[dict[str, Any]]) -> None:
+        """Зберігає батч у ClickHouse для аналітики."""
+        try:
+            # ClickHouse sink працює синхронно через clickhouse-connect, 
+            # тому загортаємо в thread або використовуємо як є (для воркера ок)
+            await self.clickhouse_sink.insert_declarations(batch)
+        except Exception as e:
+            logger.error(f"Failed to store in ClickHouse: {e}")
 
     async def _save_quarantine(self) -> None:
         """Зберігає карантинні записи."""

@@ -125,7 +125,7 @@ export const DataOpsTab: React.FC = () => {
           <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
           <Database className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">Аналіз дата-потоків...</div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">ІНТЕРОПЕРАБЕЛЬНІСТЬ_ДАНИХ_В_ПРОЦЕСІ...</div>
       </div>
     );
   }
@@ -134,9 +134,9 @@ export const DataOpsTab: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center glass-wraith m-8 border border-rose-500/20 rounded-xl">
         <Database size={48} className="text-rose-500/40 mb-6" />
-        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">ПОМИЛКА ОПЕРАЦІЙ З ДАНИМИ</div>
+        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">КРИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄРА</div>
         <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
-          Система не змогла отримати стан Kafka та датасетів. Перевірте з'єднання з контролером даних.
+          Система не змогла отримати стан вузлів обробки. Перевірте з'єднання з контролером даних PREDATOR_LAKE.
         </p>
       </div>
     );
@@ -145,9 +145,9 @@ export const DataOpsTab: React.FC = () => {
   const { kafkaTopics, datasets, factoryModules } = data;
 
   const tabs = [
-    { id: 'kafka'    as const, label: `KAFKA`,     count: kafkaTopics.length,    icon: Upload },
-    { id: 'datasets' as const, label: `ДАТАСЕТИ`,  count: datasets.length,       icon: Layers },
-    { id: 'factory'  as const, label: `ФАБРИКА`,   count: factoryModules.length, icon: Factory },
+    { id: 'kafka'    as const, label: `ШИНА_ПОДІЙ`,   count: kafkaTopics.length,    icon: Upload },
+    { id: 'datasets' as const, label: `СХОВИЩА_БД`,    count: datasets.length,       icon: Layers },
+    { id: 'factory'  as const, label: `ДАТА_ФАБРИКА`, count: factoryModules.length, icon: Factory },
   ];
 
   return (
@@ -156,31 +156,31 @@ export const DataOpsTab: React.FC = () => {
       <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
         <div className="flex items-center gap-3">
           <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Операції з даними & Дата-потоки
+            Управління Даними & Потокова Аналітика
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            ДАТА_ФАБРИКА_АКТИВНА
+            ІНДУСТРІАЛЬНИЙ_РІВЕНЬ_V6
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>KAFKA_В_МЕРЕЖІ</span>
+            <span>СИСТЕМА_ТРАНСПОРТУ_АКТИВНА</span>
           </div>
           <span>•</span>
-          <span>ПРОПУСКНА_ЗДАТНІСТЬ: 850 МБ/с</span>
+          <span>ШВИДКІСТЬ_ПОТОКУ: 850 МБ/с</span>
           <span>•</span>
-          <span>СХОВИЩЕ_ДАНИХ: PREDATOR_LAKE</span>
+          <span>АРХІТЕКТУРА: PREDATOR_DATA_LAKE</span>
         </div>
       </div>
 
       {/* Метрики-шапка */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { label: 'ТОПІКИ',   value: kafkaTopics.length, color: 'text-white/80', sub: 'АКТИВНІ_КАНАЛИ' },
-          { label: 'ЛАГ_УСЬОГО',value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'ЗАПИСІВ_У_ЧЕРЗІ' },
-          { label: 'ДАТАСЕТИ', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'СИНХРОНІЗОВАНО' },
-          { label: 'МОДУЛІВ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/80', sub: 'АКТИВНІ_МОДУЛІ' },
+          { label: 'КАНАЛИ_ПОДІЙ', value: kafkaTopics.length, color: 'text-white/80', sub: 'АКТИВНІ_ТОПІКИ' },
+          { label: 'ЧЕРГА_ОБРОБКИ', value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'ЗАПИСІВ_У_ЧЕРЗІ' },
+          { label: 'РЕПОЗИТОРІЇ', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-500', sub: 'ВЕРИФІКОВАНІ_ДАТАСЕТИ' },
+          { label: 'МОДУЛІВ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/80', sub: 'АКТИВНІ_ПРОЦЕСИ' },
         ].map((m, i) => (
           <motion.div 
             key={m.label}
@@ -226,7 +226,7 @@ export const DataOpsTab: React.FC = () => {
                    <div className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', active ? 'text-white' : 'text-white/40 group-hover:text-white/60')}>
                      {t.label}
                    </div>
-                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} об'єктів</div>
+                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} ОБ'ЄКТІВ</div>
                 </div>
                 {active && (
                    <motion.div 
@@ -268,7 +268,7 @@ export const DataOpsTab: React.FC = () => {
            <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ДАТА_КОНВЕЄР_СТАБІЛЬНИЙ</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Шар Управління Даними v6.0 — ЕЛІТНА_АНАЛІТИКА</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Управління Даними v6.0 — ЕЛІТНИЙ_РІВЕНЬ</span>
       </div>
     </div>
   );

@@ -126,6 +126,28 @@ services:
     restart: unless-stopped
     networks: [predator-network]
     profiles: ["local", "server"]
+ 
+   clickhouse:
+     image: clickhouse/clickhouse-server:latest
+     container_name: predator_clickhouse
+     ports:
+       - "8123:8123"
+       - "9000:9000"
+     volumes:
+       - clickhouse_data:/var/lib/clickhouse
+       - ./db/clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+     healthcheck:
+       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "localhost:8123/ping"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
+     deploy:
+       resources:
+         limits:
+           memory: 8G
+     restart: unless-stopped
+     networks: [predator-network]
+     profiles: ["local", "server"]
 
   redpanda:
     image: redpandadata/redpanda:v24.2.19
@@ -246,12 +268,18 @@ services:
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
       - MINIO_SECURE=false
       - MINIO_BUCKET_INGESTION=raw-uploads
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=9000
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=
     depends_on:
       redpanda:
         condition: service_healthy
       postgres:
         condition: service_healthy
       minio:
+        condition: service_healthy
+      clickhouse:
         condition: service_healthy
     deploy:
       resources:
@@ -289,6 +317,8 @@ services:
       - KAFKA_BROKERS=redpanda:9092
       - MCP_ROUTER_URL=http://mcp-router:8080/v1/query
       - GRAPH_SERVICE_URL=http://graph-service:8000
+       - CLICKHOUSE_HOST=clickhouse
+       - CLICKHOUSE_PORT=8123
     depends_on:
       postgres:
         condition: service_healthy
@@ -623,6 +653,7 @@ volumes:
   opensearch_data:
   minio_data:
   redpanda_data:
+   clickhouse_data:
   ollama_data:
   orchestrator_logs:
   prometheus_data:

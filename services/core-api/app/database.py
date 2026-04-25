@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+import clickhouse_connect
+from clickhouse_connect.driver.client import Client
 
 from app.config import get_settings
 
@@ -71,3 +73,14 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             yield session
         finally:
             await session.close()
+
+
+def get_clickhouse_client() -> Client:
+    """Отримати синхронний клієнт ClickHouse для аналітики."""
+    return clickhouse_connect.get_client(
+        host=settings.CLICKHOUSE_HOST,
+        port=settings.CLICKHOUSE_PORT,
+        username=settings.CLICKHOUSE_USER,
+        password=settings.CLICKHOUSE_PASSWORD,
+        database=settings.CLICKHOUSE_DATABASE
+    )

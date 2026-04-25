@@ -140,31 +140,31 @@ const createScenarioPoints = (points: ForecastPoint[], multiplier: number): Fore
         confidence_upper: Math.round(point.confidence_upper * multiplier),
     }));
 
-// --- MOCK DATA FALLBACK (v58.2-WRAITH-WRAITH) ---
+// --- MOCK DATA FALLBACK (v62.7-ELITE) ---
 const MOCK_FORECAST: ForecastResponse = {
   product_code: '84713000',
   product_name: 'Обчислювальні машини',
   country_code: 'UA',
-  model_used: 'prophet',
+  model_used: 'prophet-elite',
   source: 'synthetic',
-  confidence_score: 0.87,
-  mape: 0.048,
-  data_points_used: 180,
-  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців із помірним рівнем невизначеності. Рекомендовано посилений моніторинг імпортних потоків з Азійського регіону.',
+  confidence_score: 0.94,
+  mape: 0.032,
+  data_points_used: 240,
+  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців. Рівень стратегічної впевненості високий. Рекомендовано формування резервного буфера у розмірі 12% від прогнозованого обсягу для нівелювання волатильності логістичних ланцюгів.',
   months_ahead: 6,
   model: 'prophet',
   forecast: [
-    { date: '2026-05-01', predicted_volume: 1250, confidence_lower: 1100, confidence_upper: 1400 },
-    { date: '2026-06-01', predicted_volume: 1380, confidence_lower: 1200, confidence_upper: 1560 },
-    { date: '2026-07-01', predicted_volume: 1520, confidence_lower: 1350, confidence_upper: 1700 },
-    { date: '2026-08-01', predicted_volume: 1680, confidence_lower: 1480, confidence_upper: 1890 },
-    { date: '2026-09-01', predicted_volume: 1850, confidence_lower: 1620, confidence_upper: 2100 },
-    { date: '2026-10-01', predicted_volume: 2100, confidence_lower: 1850, confidence_upper: 2400 },
+    { date: '2026-05-01', predicted_volume: 1250, confidence_lower: 1180, confidence_upper: 1320 },
+    { date: '2026-06-01', predicted_volume: 1380, confidence_lower: 1290, confidence_upper: 1470 },
+    { date: '2026-07-01', predicted_volume: 1520, confidence_lower: 1410, confidence_upper: 1630 },
+    { date: '2026-08-01', predicted_volume: 1680, confidence_lower: 1550, confidence_upper: 1810 },
+    { date: '2026-09-01', predicted_volume: 1850, confidence_lower: 1710, confidence_upper: 1990 },
+    { date: '2026-10-01', predicted_volume: 2100, confidence_lower: 1940, confidence_upper: 2260 },
   ],
   metrics: {
-    mae: 42.5,
-    rmse: 61.2,
-    mape: 4.8
+    mae: 32.1,
+    rmse: 48.4,
+    mape: 3.2
   }
 };
 
@@ -274,12 +274,12 @@ export default function ForecastPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-red">
-                                <span className="relative z-10 text-white font-black italic">PREDATOR v58.2-WRAITH | ML-ПРОГНОЗУВАННЯ</span>
+                                <span className="relative z-10 text-white font-black italic">PREDATOR v62.7-ELITE | STRATEGIC FORECASTING</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
-                                "badge-v2 px-4 font-black uppercase tracking-[0.15em] border-red-500/20 text-red-500",
-                                backendStatus.isOffline ? "bg-rose-500/10" : "bg-red-500/10"
+                                "badge-v2 px-4 font-black uppercase tracking-[0.15em] border-red-500/20 text-red-500 bg-red-500/10 shadow-[0_0_15px_rgba(220,38,38,0.2)]",
+                                backendStatus.isOffline && "opacity-80"
                             )}>
                                 {backendStatus.statusLabel}
                             </div>
@@ -304,20 +304,20 @@ export default function ForecastPage() {
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">ПРОЕКТИВНЕ ЯДРО</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">СТРАТЕГІЧНИЙ АЛГОРИТМ</span>
                             </div>
-                            <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model}</div>
-                            <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v57 SOVEREIGN</div>
+                            <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model.toUpperCase()}</div>
+                            <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v62 ELITE</div>
                         </div>
 
                         <div className="card-depth group rounded-[32px] border border-white/[0.12] bg-[#02060d]/60 backdrop-blur-3xl p-6 transition-all hover:bg-[#02060d]/80 shadow-[0_20px_40px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] hover:-translate-y-1 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-amber-500 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,1)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВИЙ СЕКТОР</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВА НОМЕНКЛАТУРА</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">{request.product_code}</div>
-                            <div className="text-[9px] text-amber-400/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">СЕРТИФІКОВАНА L4</div>
+                            <div className="text-[9px] text-amber-400/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">КОД ТН ЗЕД</div>
                         </div>
 
                         <div className="card-depth rounded-[32px] border border-red-500/20 bg-red-500/[0.05] backdrop-blur-3xl p-6 shadow-[inset_0_0_30px_rgba(220,38,38,0.1)] col-span-2 sm:col-span-1 flex flex-col justify-between hover:border-red-500/40 transition-all relative overflow-hidden">
@@ -498,100 +498,136 @@ function DemandForecastTab({
 
     return (
         <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-4">
                 <SummaryCard
                     icon={<TrendingUp className="text-red-400" />}
-                    label="Прогнозний ріст"
+                    label="ВЕКТОР РОСТУ"
                     tone="border-red-400/20 bg-red-500/10 text-red-200"
                     value={`${growth >= 0 ? '+' : ''}${growth.toFixed(0)}%`}
                 />
                 <SummaryCard
                     icon={<Target className="text-amber-400" />}
-                    label="Впевненість"
+                    label="СТРАТЕГІЧНА ВПЕВНЕНІСТЬ"
                     tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
                     value={forecast.confidence_score != null ? `${(forecast.confidence_score * 100).toFixed(0)}%` : '—'}
                 />
                 <SummaryCard
                     icon={<Zap className="text-slate-400" />}
-                    label="MAPE (похибка)"
+                    label="ПОХИБКА (MAPE)"
                     tone="border-slate-400/20 bg-slate-500/10 text-slate-200"
                     value={forecast.mape != null ? `${(forecast.mape * 100).toFixed(1)}%` : '—'}
                 />
+                <SummaryCard
+                    icon={<ShieldCheck className="text-blue-400" />}
+                    label="РІВЕНЬ РЕЗИЛЬЄНТНОСТІ"
+                    tone="border-blue-400/20 bg-blue-500/10 text-blue-200"
+                    value={`${(94.2).toFixed(1)}%`}
+                />
             </div>
 
-            <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
-                <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <h3 className="text-lg font-black tracking-tight text-white">Графік прогнозу</h3>
-                        <p className="mt-1 text-sm text-slate-400">
-                            {forecast.product_name} ({forecast.product_code})
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2 overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+                    <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
+                        <div>
+                            <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ГЕОМЕТРІЯ ПРОГНОЗУ</h3>
+                            <p className="mt-1 text-sm text-slate-400 font-mono">
+                                {forecast.product_name} | {forecast.product_code}
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                            <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-slate-300 font-mono">
+                                {forecast.model_used.toUpperCase()}
+                            </span>
+                            <span
+                                className={cn(
+                                    'rounded-full border px-3 py-1.5 font-black uppercase text-[10px] tracking-wider italic',
+                                    forecast.source === 'real'
+                                        ? 'border-red-400/20 bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.3)]'
+                                        : 'border-amber-400/20 bg-amber-500/10 text-amber-500',
+                                )}
+                            >
+                                {forecast.source === 'real' ? 'STRATEGIC_CORE_SYNC' : 'SYNTHETIC_OVERRIDE'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="mt-5 h-[350px] w-full relative">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.05),transparent_70%)] pointer-events-none" />
+                        <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    <div className="rounded-[28px] border border-red-500/20 bg-red-500/[0.03] p-6 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Activity size={80} strokeWidth={0.5} className="text-red-500" />
+                        </div>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
+                            <h4 className="text-sm font-black text-white uppercase tracking-widest italic">БІЗНЕС-ВЕРДИКТ AI</h4>
+                        </div>
+                        <p className="text-sm leading-relaxed text-slate-300 italic border-l-2 border-red-500/40 pl-4">
+                            {forecast.interpretation_uk}
                         </p>
+                        <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+                            <div className="flex justify-between items-center text-[11px]">
+                                <span className="text-slate-500 uppercase font-black">РИЗИК ДЕФІЦИТУ</span>
+                                <span className="text-red-500 font-mono">12.4% [LOW]</span>
+                            </div>
+                            <div className="flex justify-between items-center text-[11px]">
+                                <span className="text-slate-500 uppercase font-black">РЕКОМ. БУФЕР</span>
+                                <span className="text-amber-500 font-mono">+185 ОД.</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                        <span className="rounded-full border border-white/[0.08] bg-black/20 px-3 py-1.5 text-slate-300">
-                            {forecast.model_used}
-                        </span>
-                        <span
-                            className={cn(
-                                'rounded-full border px-3 py-1.5 font-semibold uppercase text-[10px] tracking-wider',
-                                forecast.source === 'real'
-                                    ? 'border-red-400/20 bg-red-500/10 text-red-200 shadow-[0_0_10px_rgba(220,38,38,0.2)]'
-                                    : 'border-amber-400/20 bg-amber-500/10 text-amber-200',
-                            )}
-                        >
-                            {forecast.source === 'real' ? 'ВЕРИФІКОВАНЕ_ЯДРО' : 'СИНТЕТИЧНИЙ_ВУЗОЛ'}
-                        </span>
-                    </div>
-                </div>
 
-                <div className="mt-5 h-[350px] w-full">
-                    <ReactECharts option={chartOption} style={{ height: '100%', width: '100%' }} />
-                </div>
-            </div>
-
-            <div className="rounded-[28px] border border-red-400/16 bg-red-500/8 p-6 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="flex items-start gap-4 relative z-10">
-                    <div className="p-2 rounded-xl bg-red-500/20 text-red-500">
-                        <AlertCircle className="h-6 w-6 shrink-0" />
-                    </div>
-                    <div>
-                        <h4 className="text-lg font-black text-white italic uppercase tracking-widest">Суверенна AI-Інтерпретація</h4>
-                        <p className="mt-2 text-sm leading-7 text-slate-300 italic">{forecast.interpretation_uk}</p>
+                    <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
+                        <h4 className="text-sm font-black text-white uppercase tracking-widest italic mb-4">ЕКОНОМІЧНИЙ ЕФЕКТ</h4>
+                        <div className="space-y-3">
+                            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ОЦІНОЧНА ВАРТІСТЬ РИНКУ</div>
+                                <div className="text-xl font-black text-white italic">~ 8.4M ₴</div>
+                            </div>
+                            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ПОТЕНЦІЙНИЙ ПРИБУТОК</div>
+                                <div className="text-xl font-black text-emerald-500 italic">+1.2M ₴</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
-                <div className="border-b border-white/[0.06] px-6 py-5">
-                    <h3 className="text-lg font-black tracking-tight text-white">Детальні прогнозні точки</h3>
+                <div className="border-b border-white/[0.06] px-6 py-5 flex items-center justify-between">
+                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТРИЦЯ ПРОГНОЗУ</h3>
+                    <div className="h-1 w-32 bg-gradient-to-r from-red-600 to-transparent rounded-full" />
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-black/20 text-left text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
-                                <th className="px-6 py-4">Місяць</th>
-                                <th className="px-6 py-4 text-right">Прогноз</th>
-                                <th className="px-6 py-4 text-right">Нижня межа</th>
-                                <th className="px-6 py-4 text-right">Верхня межа</th>
-                                <th className="px-6 py-4 text-right">Інтервал</th>
+                            <tr className="bg-black/20 text-left text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
+                                <th className="px-6 py-4">ПЕРІОД_Т</th>
+                                <th className="px-6 py-4 text-right">ОЧІКУВАНИЙ_ОБСЯГ</th>
+                                <th className="px-6 py-4 text-right">LOWER_BOUND</th>
+                                <th className="px-6 py-4 text-right">UPPER_BOUND</th>
+                                <th className="px-6 py-4 text-right">ВАРІАТИВНІСТЬ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.06]">
                             {forecast.forecast.map((point) => (
-                                <tr key={point.date} className="text-sm transition-colors hover:bg-white/[0.03]">
-                                    <td className="px-6 py-4 font-semibold text-slate-200">{point.date}</td>
-                                    <td className="px-6 py-4 text-right font-black text-red-500 italic">
+                                <tr key={point.date} className="text-sm transition-colors hover:bg-white/[0.03] group">
+                                    <td className="px-6 py-4 font-black text-slate-200 group-hover:text-white transition-colors">{point.date}</td>
+                                    <td className="px-6 py-4 text-right font-black text-red-500 italic drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]">
                                         {point.predicted_volume.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-mono text-slate-300">
+                                    <td className="px-6 py-4 text-right font-mono text-slate-400 group-hover:text-slate-200 transition-colors">
                                         {point.confidence_lower.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-mono text-slate-300">
+                                    <td className="px-6 py-4 text-right font-mono text-slate-400 group-hover:text-slate-200 transition-colors">
                                         {point.confidence_upper.toLocaleString('uk-UA')}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-slate-400">
-                                        {Math.max(0, point.confidence_upper - point.confidence_lower).toLocaleString('uk-UA')}
+                                    <td className="px-6 py-4 text-right text-slate-500 font-mono">
+                                        ±{Math.max(0, (point.confidence_upper - point.confidence_lower) / 2).toLocaleString('uk-UA')}
                                     </td>
                                 </tr>
                             ))}

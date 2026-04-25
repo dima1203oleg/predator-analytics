@@ -1,9 +1,9 @@
 /**
- * 🕸️ PREDATOR Cognitive Graph Analytics | v58.2-WRAITH
+ * 🕸️ PREDATOR Cognitive Graph Analytics | v62.7-ELITE
  * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
- * Sovereign Power Design System · Gold/Rose Palette · Tier-1 Access
+ * Sovereign Elite Design System · Crimson-Noir Palette · Tier-1 Strategic Access
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -105,17 +105,18 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                 </div>
 
                 <div className="space-y-6">
-                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-[#D4AF37] pl-4">
-                        СЕМАНТИЧНИЙ ПРОФІЛЬ
+                    <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-red-600 pl-4">
+                        СТРАТЕГІЧНИЙ ПРОФІЛЬ
                     </h4>
-                    <pre className="p-8 bg-black/60 border border-white/5 rounded-[2.5rem] text-[12px] text-[#D4AF37] font-mono italic leading-relaxed whitespace-pre-wrap">
+                    <pre className="p-8 bg-black/60 border border-white/5 rounded-[2.5rem] text-[12px] text-red-500 font-mono italic leading-relaxed whitespace-pre-wrap shadow-[inset_0_0_20px_rgba(220,38,38,0.05)]">
                         {`{
-  "industry": "Maritime Defense",
-  "sanctions_check": "CLEAR",
-  "last_audit": "2026-02-14",
-  "anomaly_score": 0.0024,
-  "nexus_role": "CENTRAL_HUB",
-  "cognitive_flags": ["HIGH_LIQUIDITY", "OODA_SPEED_MAX"]
+  "industry": "Strategic Maritime Infrastructure",
+  "sanctions_check": "VERIFIED_CLEAR",
+  "last_audit": "2026-04-20",
+  "anomaly_score": 0.0012,
+  "nexus_role": "STRATEGIC_HUB",
+  "shadow_risk": "MINIMAL",
+  "cognitive_flags": ["ULTRA_STABILITY", "OODA_MAX_SYNC"]
 }`}
                     </pre>
                 </div>
@@ -128,7 +129,7 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                         {[1, 2, 3].map(i => (
                             <div key={i} className="group p-5 bg-white/[0.02] border border-white/5 rounded-[2rem] flex items-center justify-between hover:bg-white/5 transition-all">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-500 group-hover:text-[#D4AF37] transition-colors">
+                                    <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-500 group-hover:text-red-500 transition-colors">
                                         <Share2 size={16} />
                                     </div>
                                     <div>
@@ -136,7 +137,7 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
                                         <p className="text-[8px] font-mono text-slate-600 uppercase tracking-widest">ЧЕРЕЗ: УЧАСНИК</p>
                                     </div>
                                 </div>
-                                <div className="text-xs font-mono font-black text-[#D4AF37]">92%</div>
+                                <div className="text-xs font-mono font-black text-red-500">92%</div>
                             </div>
                         ))}
                     </div>
@@ -203,19 +204,19 @@ const GraphAnalyticsPage: React.FC = () => {
                         title={
                             <div className="flex items-center gap-8">
                                 <div className="relative group">
-                                    <div className="absolute inset-0 bg-[#D4AF37]/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
-                                    <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-[#D4AF37]/40">
-                                        <Network size={36} className="text-[#D4AF37] drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] rounded-full scale-150 animate-pulse opacity-40" />
+                                    <div className="relative p-6 bg-slate-900 border border-white/10 rounded-[2rem] shadow-2xl transition-all group-hover:scale-105 group-hover:border-red-600/40">
+                                        <Network size={36} className="text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
                                     </div>
                                 </div>
                                 <div>
                                     <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-2deg]">
-                                        COGNITIVE <span className="text-[#D4AF37]">GRAPH</span>
+                                        COGNITIVE <span className="text-red-600">GRAPH</span>
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
-                                        <div className="h-0.5 w-12 bg-[#D4AF37]/50" />
-                                        <span className="text-[10px] font-mono font-black text-[#D4AF37]/80 uppercase tracking-[0.5em] animate-pulse">
-                                            NEURAL_TOPOLOGY_ANALYZER // v58.2-WRAITH
+                                        <div className="h-0.5 w-12 bg-red-600/50" />
+                                        <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] animate-pulse">
+                                            NEURAL_TOPOLOGY_ANALYZER // v62.7-ELITE
                                         </span>
                                     </div>
                                 </div>
@@ -223,11 +224,11 @@ const GraphAnalyticsPage: React.FC = () => {
                         }
                         stats={[
                             { label: 'ВУЗЛІВ ОПРАЦЬОВАНО', value: '1.2M+', color: 'primary', icon: <Database size={14} />, animate: true },
-                            { label: 'ІНДЕКС КЛАСТЕРИЗАЦІЇ', value: '0.884', color: 'success', icon: <Share2 size={14} /> },
+                            { label: 'КРИТИЧНІСТЬ МЕРЕЖІ', value: '0.92', color: 'success', icon: <Share2 size={14} /> },
                             { label: 'NODE_SOURCE', value: nodeSource, color: isOffline ? 'warning' : 'success', icon: <Cpu size={14} /> },
-                            { label: 'OODA LOOP', value: '12ms', color: 'warning', icon: <Zap size={14} />, animate: true }
+                            { label: 'LATENCY (OODA)', value: '8ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТРИЦЯ', 'АНАЛІЗ_ТОПОЛОГІЇ']}
+                        breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТРИЦЯ', 'STRATEGIC_OSINT']}
                     />
 
                     <div className="grid grid-cols-12 gap-10">
@@ -248,7 +249,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                                 onClick={() => { setActiveAlgorithm(alg as any); toggleLoading(); }}
                                                 className={cn(
                                                     "px-8 py-3 rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.2em] transition-all",
-                                                    activeAlgorithm === alg ? "bg-[#D4AF37] text-slate-950 shadow-xl" : "text-slate-500 hover:text-slate-200"
+                                                    activeAlgorithm === alg ? "bg-red-600 text-white shadow-[0_0_20px_rgba(220,38,38,0.4)]" : "text-slate-500 hover:text-slate-200"
                                                 )}
                                              >
                                                 {alg}
@@ -335,19 +336,9 @@ const GraphAnalyticsPage: React.FC = () => {
                                                          <div className="absolute inset-0 bg-white/5 blur-3xl opacity-0 group-hover/sat:opacity-100 transition-opacity" />
                                                          <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl group-hover:border-white/30">
                                                              <sat.icon size={28} className={sat.color} />
-                                                             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">{sat.label}</div>
-                                                         </div>
-                                                     </div>
-                                                 </motion.div>
-                                             ))}
-                                         </div>
-                                     )}
-                                </div>
-                                
-                                {/* Bottom Legend HUD */}
-                                <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5">
+                                                             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-                                 <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5 shadow-2xl">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -355,8 +346,15 @@ const GraphAnalyticsPage: React.FC = () => {
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ОСОБИ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-[#D4AF37]/50 shadow-[0_0_10px_rgba(212,175,55,0.3)]" />
+                                        <div className="w-3 h-3 rounded-full bg-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]" />
+                                        <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">CRITICAL_THREAT</span>
+                                    </div>
+                                </div>
+>ТРАНЗАКЦІЇ</span>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
@@ -374,12 +372,12 @@ const GraphAnalyticsPage: React.FC = () => {
                                 <HoloContainer className="p-10 h-[450px] relative overflow-hidden group">
                                      <div className="flex items-center justify-between mb-8">
                                          <div className="flex items-center gap-4">
-                                             <div className="p-3 bg-indigo-500/20 rounded-xl">
-                                                 <Activity size={20} className="text-indigo-400" />
+                                             <div className="p-3 bg-red-600/20 rounded-xl">
+                                                 <Activity size={20} className="text-red-500" />
                                              </div>
-                                             <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">АНАЛІЗ_ПОТОКІВ_v5</h3>
+                                             <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">СТРАТЕГІЧНИЙ_АНАЛІЗ_v62</h3>
                                          </div>
-                                         <Badge className="bg-[#D4AF37] text-black px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic">LIVE_DECODER</Badge>
+                                         <Badge className="bg-red-600 text-white px-4 rounded-lg uppercase tracking-widest text-[9px] font-black italic shadow-[0_0_10px_rgba(220,38,38,0.5)]">ELITE_ANALYZER</Badge>
                                      </div>
                                      
                                      <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4">
@@ -435,40 +433,43 @@ const GraphAnalyticsPage: React.FC = () => {
 
                         {/* Sidebar Analytics */}
                         <div className="col-span-12 xl:col-span-3 space-y-10">
-                             <HoloContainer className="p-10 bg-[#030712]/90 border-white/10 rounded-[3rem] shadow-2xl">
+                             <HoloContainer className="p-10 bg-[#030712]/90 border-white/10 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                                 <div className="absolute top-0 right-0 p-4 opacity-5">
+                                     <Fingerprint size={120} className="text-red-600" />
+                                 </div>
                                  <div className="flex items-center gap-5 mb-10 border-b border-white/5 pb-8">
-                                     <div className="p-4 bg-indigo-500/10 rounded-2xl">
-                                         <Target size={24} className="text-indigo-400" />
+                                     <div className="p-4 bg-red-600/10 rounded-2xl">
+                                         <Target size={24} className="text-red-500" />
                                      </div>
                                      <div>
                                          <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ТОП КЛАСТЕРИ</h4>
-                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ЗА ІНДЕКСОМ РИЗИКУ</p>
+                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ЗА ІНДЕКСОМ ВРАЗЛИВОСТІ</p>
                                      </div>
                                  </div>
 
                                  <div className="space-y-6">
                                      {[
-                                         { name: 'Офшорна Груп-А', risk: 0.98, impact: 'HIGH', label: 'L5' },
-                                         { name: 'ВПК Постачання', risk: 0.65, impact: 'MED', label: 'L2' },
+                                         { name: 'Транзит-Груп-Еліта', risk: 0.98, impact: 'HIGH', label: 'L5' },
+                                         { name: 'Офшорні Кореляції', risk: 0.85, impact: 'HIGH', label: 'SHADOW' },
                                          { name: 'Крит-Імпорт-UA', risk: 0.12, impact: 'LOW', label: 'CORE' },
-                                         { name: 'Енерго-Вектор', risk: 0.44, impact: 'MED', label: 'L3' }
+                                         { name: 'ВПК Постачання', risk: 0.44, impact: 'MED', label: 'L3' }
                                      ].map(cluster => (
                                          <div key={cluster.name} className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/5 transition-all group/cl">
                                              <div className="flex justify-between items-start mb-4">
                                                   <div className="flex items-center gap-4">
-                                                      <div className="p-3 bg-slate-900 rounded-xl group-hover/cl:text-indigo-400 transition-colors">
+                                                      <div className="p-3 bg-slate-900 rounded-xl group-hover/cl:text-red-500 transition-colors">
                                                           <Workflow size={14} />
                                                       </div>
                                                       <span className="text-[10px] font-black text-white uppercase italic">{cluster.name}</span>
                                                   </div>
                                                   <Badge className={cn(
-                                                      "text-[8px] border-none px-3 py-1 font-black",
-                                                      cluster.impact === 'HIGH' ? "bg-rose-500 text-black" : "bg-white/10 text-slate-400"
+                                                      "text-[8px] border-none px-3 py-1 font-black shadow-sm",
+                                                      cluster.impact === 'HIGH' ? "bg-red-600 text-white" : "bg-white/10 text-slate-400"
                                                   )}>{cluster.impact}</Badge>
                                              </div>
                                              <div className="flex items-center justify-between">
                                                   <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mr-4 border border-white/5">
-                                                      <div className={cn("h-full", cluster.risk > 0.8 ? "bg-rose-500" : "bg-indigo-500")} style={{ width: `${cluster.risk * 100}%` }} />
+                                                      <div className={cn("h-full", cluster.risk > 0.8 ? "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-red-400")} style={{ width: `${cluster.risk * 100}%` }} />
                                                   </div>
                                                   <span className="text-xs font-mono font-black text-white italic">{cluster.label}</span>
                                              </div>

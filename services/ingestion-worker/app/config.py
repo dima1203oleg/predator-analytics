@@ -21,6 +21,12 @@ class WorkerSettings(BaseSettings):
 
     KAFKA_BOOTSTRAP_SERVERS: str = "predator-redpanda:9092"
 
+    # ClickHouse Analytics
+    CLICKHOUSE_HOST: str = "localhost"
+    CLICKHOUSE_PORT: int = 9000
+    CLICKHOUSE_USER: str = "default"
+    CLICKHOUSE_PASSWORD: str = ""
+
     # OSINT Sources
     DATA_GOV_UA_API_KEY: str = ""
     YOUCONTROL_API_KEY: str = ""

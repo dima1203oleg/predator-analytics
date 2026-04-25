@@ -19,6 +19,7 @@ from app.services.anomaly_detection import (
     AnomalyDetectionService,
     TimeSeriesPoint,
 )
+from app.services.analytics_service import AnalyticsService
 
 router = APIRouter(prefix="/analytics", tags=["аналітика ризиків"])
 
@@ -415,13 +416,16 @@ async def get_anomaly_trends(
     _ = Depends(PermissionChecker([Permission.RUN_ANALYTICS])),
 ):
     """Отримати тренди виявлених аномалій за період."""
+    service = AnalyticsService()
+    trends = service.get_anomaly_trends(str(tenant_id), period_days)
+    
     return {
         "period_days": period_days,
         "trends": {
-            "total_anomalies": 0,
-            "by_type": {},
+            "total_anomalies": sum(t["count"] for t in trends["daily_counts"]),
+            "by_type": {}, # Можна розширити в AnalyticsService
             "by_severity": {},
-            "daily_counts": [],
+            "daily_counts": trends["daily_counts"],
         },
         "comparison": {
             "vs_previous_period": 0,

@@ -12,3 +12,4 @@ aiohttp
 chardet
 tenacity
 minio
+clickhouse-connect

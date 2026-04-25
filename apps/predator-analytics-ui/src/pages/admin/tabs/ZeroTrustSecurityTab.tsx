@@ -126,7 +126,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
         <div className="flex items-center gap-3">
           <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Zero Trust & Безпека
+            Периметр Zero Trust & Кіберзахист
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
             ЗАХИСТ_АКТИВНИЙ
@@ -135,12 +135,12 @@ export const ZeroTrustSecurityTab: React.FC = () => {
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>ЗАСТОСОВАНО</span>
+            <span>ПЕРИМЕТР_ЗАСТОСОВАНО</span>
           </div>
           <span>•</span>
-          <span>IAM: СИНХРОНІЗАЦІЯ_В_РЕАЛЬНОМУ_ЧАСІ</span>
+          <span>ІДЕНТИФІКАЦІЯ: МОНІТОРИНГ_В_РЕАЛЬНОМУ_ЧАСІ</span>
           <span>•</span>
-          <span>WORM: УВІМК</span>
+          <span>WORM_LOGS: УВІМК</span>
         </div>
       </div>
 
@@ -172,7 +172,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                    <div className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', active ? 'text-white' : 'text-white/40 group-hover:text-white/60')}>
                      {t.label}
                    </div>
-                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} об'єктів</div>
+                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} ОБ'ЄКТІВ</div>
                 </div>
                 {active && (
                    <motion.div 
@@ -195,7 +195,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                 <Shield className="absolute inset-0 m-auto w-6 h-6 text-rose-500 animate-pulse" />
              </div>
              <div className="text-[10px] font-mono text-rose-500/60 uppercase tracking-[0.4em] animate-pulse italic">
-               БЕЗПЕКОВЕ_СКАНУВАННЯ_АКТИВНЕ...
+               СИНАПТИЧНИЙ_ЗАХИСТ_В_ПРОЦЕСІ...
              </div>
           </div>
         )}
@@ -248,17 +248,17 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                 { name: 'admin-sentinel', status: 'ОЧІКУЄТЬСЯ', expiry: '2026-12-01', lastSeen: '1г тому', traffic: '0 B' },
               ].map((node, i) => (
                 <motion.div 
-                  key={node.name}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-rose-500/20 transition-all group relative overflow-hidden"
+                   key={node.name}
+                   initial={{ opacity: 0, scale: 0.98 }}
+                   animate={{ opacity: 1, scale: 1 }}
+                   transition={{ delay: i * 0.1 }}
+                   className="p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-rose-500/20 transition-all group relative overflow-hidden"
                 >
                   <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
                   <div className="flex justify-between items-center relative z-10">
                     <div className="flex flex-col gap-1">
                        <span className="text-[14px] font-black italic text-white/80 group-hover:text-white transition-colors uppercase tracking-widest">{node.name}</span>
-                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Node ID: {node.name.slice(0, 4)}_{i}99</span>
+                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Вузол ID: {node.name.slice(0, 4)}_{i}99</span>
                     </div>
                     <span className={cn(
                       "text-[9px] px-3 py-1 rounded-lg font-black tracking-widest italic border transition-all",
@@ -266,15 +266,15 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                     )}>{node.status}</span>
                   </div>
                   <div className="mt-6 flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest relative z-10">
-                    <span>Сертифікат до: <span className="text-white/50">{node.expiry}</span></span>
-                    <span>Потік: <span className="text-white/50">{node.traffic}</span></span>
+                    <span>Дійсний до: <span className="text-white/50">{node.expiry}</span></span>
+                    <span>Трафік: <span className="text-white/50">{node.traffic}</span></span>
                   </div>
                   <div className="mt-4 h-[1px] w-full bg-white/5 relative z-10">
                     <motion.div 
-                      className="h-full bg-rose-500/40"
-                      initial={{ width: 0 }}
-                      animate={{ width: node.status === 'ВЕРИФІКОВАНО' ? '100%' : '30%' }}
-                      transition={{ duration: 1.5, ease: 'circOut' }}
+                       className="h-full bg-rose-500/40"
+                       initial={{ width: 0 }}
+                       animate={{ width: node.status === 'ВЕРИФІКОВАНО' ? '100%' : '30%' }}
+                       transition={{ duration: 1.5, ease: 'circOut' }}
                     />
                   </div>
                   <div className="mt-3 flex justify-end relative z-10">
@@ -294,7 +294,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
            <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ЗАХИСТ_WORM_УВІМКНЕНО</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v5.1 — ELITE_ENFORCER</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v5.1 — ЕЛІТНИЙ_ВАРТОВИЙ</span>
       </div>
     </div>
   );

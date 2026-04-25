@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.dependencies import get_tenant_id
 from predator_common.models import Alert, Anomaly, Company, Declaration, RiskScore
+from app.services.analytics_service import AnalyticsService
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -32,15 +33,19 @@ async def get_dashboard_overview(
     # 3. Аномалії
     anomalies_count = await db.scalar(select(func.count()).select_from(Anomaly)) or 0
 
-    # 4. Формуємо структуру DashboardOverview згідно з UI v56.1.4
+    # 4. Аналітика з ClickHouse (OLAP)
+    analytics_service = AnalyticsService()
+    ch_stats = analytics_service.get_dashboard_stats(str(tenant_id))
+
+    # 5. Формуємо структуру DashboardOverview згідно з UI v56.1.4
     return {
         "summary": {
-            "total_declarations": declarations_count,
-            "total_value_usd": 1250000000.50, # Mock
+            "total_declarations": ch_stats.get("total_count", declarations_count),
+            "total_value_usd": ch_stats.get("total_value_usd", 1250000000.50),
             "high_risk_count": high_risk_count,
             "medium_risk_count": medium_risk_count,
-            "import_count": 89000,
-            "export_count": declarations_count - 89000 if declarations_count > 89000 else 15000,
+            "import_count": ch_stats.get("import_count", 0),
+            "export_count": ch_stats.get("export_count", 0),
             "graph_nodes": 12450,
             "graph_edges": 45600,
             "search_documents": 1420000,
@@ -112,16 +117,16 @@ async def get_dashboard_overview(
                 "load": 45
             }
         },
-        "categories": {
+        "categories": ch_stats.get("categories", {
             "8502": {"count": 452, "value": 12450000, "avgRisk": 42},
             "8504": {"count": 89, "value": 5600000, "avgRisk": 12},
             "2710": {"count": 1204, "value": 890000000, "avgRisk": 65}
-        },
-        "countries": {
+        }),
+        "countries": ch_stats.get("countries", {
             "CN": {"count": 4500, "value": 450000000},
             "DE": {"count": 1200, "value": 120000000},
             "PL": {"count": 890, "value": 45000000}
-        },
+        }),
         "customs_offices": {
             "UA100000": {"count": 45000, "value": 450000000, "highRisk": 12},
             "UA500000": {"count": 22000, "value": 220000000, "highRisk": 8}

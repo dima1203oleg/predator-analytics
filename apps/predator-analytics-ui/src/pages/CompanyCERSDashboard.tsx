@@ -48,16 +48,16 @@ const getGradeConfig = (value?: string) => {
 
     switch (riskLevel) {
         case 'critical':
-            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50' };
+            return { grade: 'D', color: 'text-rose-500', ringColor: 'stroke-rose-500', glow: 'shadow-rose-500/50', label: 'КРИТИЧНИЙ' };
         case 'high':
-            return { grade: 'C', color: 'text-rose-600', ringColor: 'stroke-rose-600', glow: 'shadow-rose-600/50' };
+            return { grade: 'C', color: 'text-rose-600', ringColor: 'stroke-rose-600', glow: 'shadow-rose-600/50', label: 'ВИСОКИЙ' };
         case 'elevated':
         case 'medium':
-            return { grade: 'B-', color: 'text-orange-500', ringColor: 'stroke-orange-500', glow: 'shadow-orange-500/50' };
+            return { grade: 'B-', color: 'text-orange-500', ringColor: 'stroke-orange-500', glow: 'shadow-orange-500/50', label: 'ПІДВИЩЕНИЙ' };
         case 'watchlist':
-            return { grade: 'B', color: 'text-amber-500', ringColor: 'stroke-amber-500', glow: 'shadow-amber-500/50' };
+            return { grade: 'B', color: 'text-amber-500', ringColor: 'stroke-amber-500', glow: 'shadow-amber-500/50', label: 'СЕРЕДНІЙ' };
         default:
-            return { grade: 'A', color: 'text-rose-400', ringColor: 'stroke-rose-400', glow: 'shadow-rose-400/50' };
+            return { grade: 'A', color: 'text-rose-400', ringColor: 'stroke-rose-400', glow: 'shadow-rose-400/50', label: 'СТАБІЛЬНИЙ' };
     }
 };
 
@@ -271,14 +271,14 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                     setCompanyData({
                         profile,
                         radar: [
-                            { subject: 'Інституційний', A: scoreData.institutional || 0, fullMark: 100 },
-                            { subject: 'Структурний', A: scoreData.structural || 0, fullMark: 100 },
-                            { subject: 'Поведінковий', A: scoreData.behavioral || 0, fullMark: 100 },
-                            { subject: 'Впливовий', A: scoreData.influence || 0, fullMark: 100 },
-                            { subject: 'Предиктивний', A: scoreData.predictive || 0, fullMark: 100 },
+                            { subject: 'ІНСТИТУЦІЙНИЙ_ВЕКТОР', A: scoreData.institutional || 0, fullMark: 100 },
+                            { subject: 'СТРУКТУРНА_АРХІТЕКТУРА', A: scoreData.structural || 0, fullMark: 100 },
+                            { subject: 'ПОВЕДІНКОВИЙ_ПАТЕРН', A: scoreData.behavioral || 0, fullMark: 100 },
+                            { subject: 'ІНДЕКС_ВПЛИВУ', A: scoreData.influence || 0, fullMark: 100 },
+                            { subject: 'ПРОГНОЗНА_ДИНАМІКА', A: scoreData.predictive || 0, fullMark: 100 },
                         ],
                         shap: Array.isArray(scoreData.shap_values) ? scoreData.shap_values.map((s: any) => ({
-                            feature: s.feature_name,
+                            feature: s.feature_name.replace(/_/g, ' ').toUpperCase(),
                             impact: s.shap_value,
                             type: s.shap_value > 0 ? 'positive' : 'negative'
                         })).sort((a: any, b: any) => Math.abs(a.impact) - Math.abs(b.impact)) : [],
@@ -326,19 +326,19 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
             )}
 
             {!isTab && (
-                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40 backdrop-blur-xl z-20 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-t-2 border-t-rose-600/30">
                     <div className="flex items-center gap-4">
-                        <div className="p-2 bg-rose-500/10 rounded-lg border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-                            <ShieldAlert className="w-6 h-6 text-rose-400" />
+                        <div className="p-2 bg-rose-500/10 rounded-sm border border-rose-500/20 shadow-[0_0_20px_rgba(244,63,94,0.3)] animate-pulse">
+                            <ShieldAlert className="w-6 h-6 text-rose-500" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-black tracking-widest text-white uppercase italic">
-                                CERS <span className="text-rose-500">ТАКТИЧНИЙ</span> HUD
+                            <h1 className="text-xl font-black tracking-[0.2em] text-white uppercase italic leading-none">
+                                CERS <span className="text-rose-600">НЕЙРО_ЦЕНТР</span> v62.7
                             </h1>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-[10px] font-mono text-rose-500/60 uppercase tracking-tighter">Sovereign Аналітика v58.2</span>
-                                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                                <span className="text-[10px] font-mono text-slate-500 uppercase">Статус: Оперативний</span>
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[9px] font-mono text-rose-500/60 uppercase tracking-widest font-black italic">ПРЕДАТОР_ЕЛІТ_ПРОТОКОЛ</span>
+                                <span className="w-1 h-1 bg-slate-700 rounded-full animate-pulse"></span>
+                                <span className="text-[9px] font-mono text-slate-500 uppercase font-black italic">РЕЖИМ: БЕЗПЕРЕРВНИЙ_АНАЛІЗ</span>
                             </div>
                         </div>
                     </div>
@@ -421,21 +421,22 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                     <AnimatePresence mode="wait">
                         {loadingData ? (
                             <motion.div 
-                                className="h-full flex flex-col items-center justify-center p-20"
+                                className="h-full flex flex-col items-center justify-center p-20 relative overflow-hidden"
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             >
-                                <div className="relative w-32 h-32">
-                                    <div className="absolute inset-0 border-2 border-rose-500/20 rounded-full"></div>
-                                    <div className="absolute inset-0 border-t-2 border-rose-500 rounded-full animate-spin"></div>
-                                    <div className="absolute inset-4 border-2 border-orange-500/20 rounded-full"></div>
-                                    <div className="absolute inset-4 border-b-2 border-orange-500 rounded-full animate-spin-reverse"></div>
-                                    <ShieldAlert className="absolute inset-0 m-auto w-10 h-10 text-rose-500 animate-pulse" />
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(225,29,72,0.05),transparent_50%)]" />
+                                <div className="relative w-40 h-40">
+                                    <div className="absolute inset-0 border-2 border-rose-600/10 rounded-full scale-110"></div>
+                                    <div className="absolute inset-0 border-t-2 border-rose-600 rounded-full animate-spin"></div>
+                                    <div className="absolute inset-4 border-2 border-rose-600/20 rounded-full"></div>
+                                    <div className="absolute inset-4 border-b-2 border-rose-600 rounded-full animate-spin-reverse"></div>
+                                    <ShieldAlert className="absolute inset-0 m-auto w-12 h-12 text-rose-600 animate-pulse" />
                                 </div>
-                                <h2 className="mt-8 text-xl font-black italic tracking-widest text-white uppercase animate-pulse">
-                                    Ініціалізація <span className="text-rose-500">WRAITH</span> Сканера
+                                <h2 className="mt-8 text-2xl font-black italic tracking-[0.5em] text-white uppercase animate-pulse">
+                                    ІНІЦІАЛІЗАЦІЯ <span className="text-rose-600">СКАНЕРА_ПРИВИД</span>
                                 </h2>
-                                <p className="mt-2 text-slate-500 font-mono text-xs uppercase tracking-widest">
-                                    Декомпозиція SHAP-векторів та нейронний скоринг...
+                                <p className="mt-4 text-slate-500 font-mono text-[10px] uppercase tracking-[0.3em] font-black italic">
+                                    ДЕКОМПОЗИЦІЯ_ВЕКТОРІВ_SHAP | НЕЙРОННИЙ_РЕЗОНАНС...
                                 </p>
                             </motion.div>
                         ) : companyData ? (
@@ -494,8 +495,11 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                     </div>
 
                                     {/* CERS Score Radial Card */}
-                                    <div className="xl:col-span-4 bg-slate-900/60 border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center relative group">
+                                    <div className="xl:col-span-4 bg-slate-900/60 border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center relative group overflow-hidden border-r-2 border-r-rose-600">
                                         <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 via-transparent to-rose-600/5 opacity-50" />
+                                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                                            <Target className="w-24 h-24 text-rose-600" />
+                                        </div>
                                         
                                         <div className="relative w-48 h-48 mb-6">
                                             <svg className="w-full h-full transform -rotate-90">
@@ -507,109 +511,118 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                     strokeDasharray="540"
                                                     strokeDashoffset={540 - (score / 100) * 540}
                                                     strokeLinecap="round"
-                                                    style={{ filter: 'drop-shadow(0 0 12px currentColor)' }}
+                                                    style={{ filter: 'drop-shadow(0 0 15px currentColor)' }}
                                                 />
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-2xl`}>
+                                                <span className={`text-6xl font-black ${cersGradeColor} drop-shadow-[0_0_20px_rgba(225,29,72,0.6)] italic tracking-tighter`}>
                                                     {companyData?.grade || 'Н/Д'}
                                                 </span>
-                                                <span className="text-xs font-mono text-slate-400 mt-2 uppercase tracking-widest">Оцінка: {score}/100</span>
+                                                <span className="text-[10px] font-mono text-slate-400 mt-2 uppercase tracking-[0.2em] font-black italic">ЯДРО_СКОРИНГУ: {score}/100</span>
                                             </div>
                                         </div>
                                         
-                                        <div className="text-center w-full">
-                                            <div className="px-6 py-2 bg-slate-950/80 rounded-2xl border border-white/5 inline-block">
-                                                <span className={`text-xs font-black uppercase tracking-widest ${cersGradeColor}`}>
-                                                    РІВЕНЬ РИЗИКУ: {profile.risk_level || 'Н/Д'}
+                                        <div className="text-center w-full relative z-10">
+                                            <div className="px-6 py-2 bg-rose-600/10 rounded-sm border border-rose-600/30 inline-block shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                                                <span className={`text-[10px] font-black uppercase tracking-[0.3em] italic ${cersGradeColor}`}>
+                                                    СТАТУС_РИЗИКУ: {getGradeConfig((profile as any).risk_level).label}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* AI Intelligence & Analysis Rows */}
+                                {/* Row 2: Vector Analysis & Strategic Summary */}
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                                    {/* SHAP Decomposition */}
-                                    <div className="xl:col-span-7 bg-slate-900/60 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <div className="flex items-center gap-2">
-                                                <Activity className="w-4 h-4 text-rose-400" />
-                                                <h3 className="text-sm font-black text-white uppercase tracking-widest italic">SHAP ДЕКОМПОЗИЦІЯ (ДРАЙВЕРИ РИЗИКУ)</h3>
+                                    {/* SHAP & Radar Details */}
+                                    <div className="xl:col-span-8 bg-slate-900/40 border border-white/10 rounded-3xl p-6 backdrop-blur-md relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-600/30 to-transparent" />
+                                        <div className="flex items-center justify-between mb-8">
+                                            <div className="flex items-center gap-3">
+                                                <Target className="w-5 h-5 text-rose-500" />
+                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">ВЕКТОРНИЙ_АНАЛІЗ_РИЗИКУ</h3>
                                             </div>
-                                            <span className="text-[10px] font-mono text-slate-500 uppercase">Векторний Аналіз Альфа</span>
-                                        </div>
-                                        {displayShap.length > 0 ? (
-                                            <RiskExplanationPanel 
-                                                explanation={Object.fromEntries(displayShap.map((s: any) => [s.feature, s.impact]))} 
-                                                factors={displayShap.map((s: any) => ({ name: s.feature, weight: s.impact, category: 'ai', detected: true }))}
-                                            />
-                                        ) : (
-                                            <div className="h-full min-h-[300px] flex items-center justify-center border border-dashed border-white/10 rounded-2xl text-slate-500 italic">
-                                                Дані декомпозиції відсутні для цього вузла
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* AI Summary Panel */}
-                                    <div className="xl:col-span-5 flex flex-col gap-6">
-                                        <div className="flex-1 bg-gradient-to-br from-[#0A111F] to-[#040811] border border-rose-500/20 rounded-3xl p-6 shadow-2xl shadow-rose-900/10 relative overflow-hidden flex flex-col">
-                                            <div className="absolute top-0 right-0 p-8 opacity-10">
-                                                <Zap className="w-32 h-32 text-rose-500" />
-                                            </div>
-                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-400/50 to-transparent" />
-                                            
-                                            <h3 className="text-sm font-black text-rose-400 mb-4 flex items-center gap-2 uppercase tracking-widest italic">
-                                                <Target className="w-4 h-4" /> AI КОНСІЛІУМ (РЕЗЮМЕ)
-                                            </h3>
-                                            
-                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 mb-6">
-                                                <p className="text-sm text-slate-300 leading-relaxed italic">
-                                                    " {profile.ai_summary || "Аналіз OSINT-вузлів вказує на стабільний фінансовий стан при низькому рівні структурних загроз. Рекомендовано плановий моніторинг діяльності."} "
-                                                </p>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 gap-2">
-                                                <button 
-                                                    onClick={() => setShowShadowNetwork(true)}
-                                                    className="flex items-center justify-between w-full p-4 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-300 transition-all group"
-                                                >
-                                                    <span>Побудувати Тіньову Карту Зв'язків</span>
-                                                    <GitBranch className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                                                </button>
-                                                <button className="flex items-center justify-between w-full p-4 bg-slate-800/40 hover:bg-slate-800/60 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white transition-all group">
-                                                    <span>Експортувати Повний Звіт (PDF)</span>
-                                                    <FileText className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-all" />
-                                                </button>
+                                            <div className="flex items-center gap-2 px-3 py-1 bg-rose-600/10 border border-rose-600/30 rounded-sm">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                                                <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest italic">NEURAL_READY</span>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Bottom Row: 5-Layer Radar & Timeline */}
-                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-                                    <div className="xl:col-span-12 bg-slate-900/60 border border-white/10 rounded-3xl p-6">
-                                        <div className="flex items-center gap-2 mb-8">
-                                            <Boxes className="w-4 h-4 text-rose-400" />
-                                            <h3 className="text-sm font-black text-white uppercase tracking-widest italic">5-ШАРОВА СТРУКТУРНА ОЦІНКА CERS</h3>
-                                        </div>
-                                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                                            <div className="lg:col-span-1 flex flex-col justify-center gap-4">
-                                                {displayRadar.map((r: any, i: number) => (
-                                                    <div key={i} className="flex flex-col gap-1">
-                                                        <div className="flex justify-between items-end">
-                                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{r.subject}</span>
-                                                            <span className="text-xs font-mono text-rose-400">{r.A}%</span>
-                                                        </div>
-                                                        <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                                                            <div className="h-full bg-rose-500/50" style={{ width: `${r.A}%` }} />
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div className="lg:col-span-3 min-h-[350px]">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[400px]">
+                                            <div className="relative">
+                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ГЕОМЕТРІЯ_ПРОФІЛЮ</div>
                                                 <CERSRadarECharts data={displayRadar} />
                                             </div>
+                                            <div className="relative">
+                                                <div className="absolute -top-4 left-0 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">ДЕТЕРМІНАНТИ_ВПЛИВУ_SHAP</div>
+                                                <SHAPChart data={displayShap} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Strategic Business Summary */}
+                                    <div className="xl:col-span-4 bg-slate-950/80 border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between border-l-2 border-l-rose-600">
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(225,29,72,0.05),transparent_50%)]" />
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-6">
+                                                <Award className="w-5 h-5 text-rose-600" />
+                                                <h3 className="text-sm font-black tracking-[0.2em] uppercase italic text-white">СТРАТЕГІЧНИЙ_ROI_РИЗИКУ</h3>
+                                            </div>
+                                            <div className="space-y-6">
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase italic">
+                                                        <span>Ефективність Захисту</span>
+                                                        <span className="text-rose-500">92.4%</span>
+                                                    </div>
+                                                    <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
+                                                        <div className="h-full bg-rose-600 w-[92.4%] shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <p className="text-xs text-slate-400 leading-relaxed italic">
+                                                        Виявлений рівень ризику <span className="text-rose-500 font-bold">{getGradeConfig((profile as any).risk_level).label}</span> вимагає 
+                                                        негайного задіювання протоколу <span className="text-white font-bold">"ТІНЬОВИЙ_ШЛЮЗ"</span> для мінімізації втрат капіталу.
+                                                    </p>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4 pt-4">
+                                                    <div className="bg-slate-900/60 p-3 rounded-sm border border-white/5">
+                                                        <span className="block text-[8px] font-black text-slate-500 uppercase mb-1">Потенційні Втрати</span>
+                                                        <span className="text-lg font-black text-rose-500 tracking-tighter italic">~ 4.2M ₴</span>
+                                                    </div>
+                                                    <div className="bg-slate-900/60 p-3 rounded-sm border border-white/5">
+                                                        <span className="block text-[8px] font-black text-slate-500 uppercase mb-1">Індекс Довіри AI</span>
+                                                        <span className="text-lg font-black text-emerald-500 tracking-tighter italic">HIGH</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button className="mt-8 w-full py-4 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_40px_rgba(225,29,72,0.5)] active:scale-[0.98]">
+                                            ЗГЕНЕРУВАТИ_ВИКОНАВЧИЙ_ЗВІТ
+                                        </button>
+                                    </div>
+                                </div>
+                                </div>
+
+                                {/* Row 3: Shadow Network Overview */}
+                                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                                    <div className="xl:col-span-12 bg-slate-900/60 border border-white/10 rounded-3xl p-8 relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(244,63,94,0.02)_50%,transparent_75%)] bg-[length:200%_200%] animate-shimmer pointer-events-none" />
+                                        <div className="flex items-center justify-between mb-10">
+                                            <div className="flex items-center gap-4">
+                                                <div className="p-3 bg-rose-600/10 rounded-sm border border-rose-600/20 shadow-[0_0_20px_rgba(225,29,72,0.2)]">
+                                                    <Share2 className="w-6 h-6 text-rose-600" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-xl font-black tracking-[0.2em] uppercase italic text-white">ТІНЬОВА_ГЕОМЕТРІЯ_ЗВ’ЯЗКІВ</h3>
+                                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 italic">ВІЗУАЛІЗАЦІЯ_НЕЙРОННОЇ_МЕРЕЖІ_ВПЛИВУ_v7.4</p>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => setShowShadowNetwork(true)}
+                                                className="px-8 py-3 bg-rose-600/10 hover:bg-rose-600/20 border border-rose-600/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.3em] italic rounded-sm transition-all"
+                                            >
+                                                РОЗГОРНУТИ_ПОВНУ_КАРТУ
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

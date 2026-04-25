@@ -48,9 +48,10 @@
 
 ### Інфраструктура
 
-- PostgreSQL 16 | Neo4j 5 (APOC + GDS) | OpenSearch 2.12 | Qdrant 1.8
-- Kafka (Confluent 7.6) | Redis 7 | MinIO | LiteLLM + Ollama
-- Prometheus + Grafana + Loki | Kubernetes (k3s) + Helm | ArgoCD | GitHub Actions
+- PostgreSQL 16 (+ TimescaleDB) | ClickHouse (Latest OLAP) | Neo4j 5 (APOC + GDS)
+- OpenSearch 2.12 | Qdrant 1.8 | Redis 7 | MinIO | Kafka (Confluent 7.6)
+- LiteLLM + Ollama | Prometheus + Grafana + Loki | Kubernetes (k3s) + Helm
+- ArgoCD | GitHub Actions
 
 ## Sovereign Headless Architecture (v3.0)
 
@@ -89,7 +90,25 @@ HR-13  Формат коміту: feat|fix|chore|docs(scope): опис
 HR-14  Залежності без оновлень > 1 року: ЗАБОРОНЕНО
 HR-15  Зовнішні SaaS (Sentry, GA, etc): ЗАБОРОНЕНО
 HR-16  WORM таблиці (audit_log, decision_artifacts): UPDATE/DELETE = ERROR
+HR-17  ClickHouse: Єдине джерело для важкої аналітики та агрегацій (>100k записів)
+HR-18  PostgreSQL: Тільки транзакції та метадані (SSOT)
+HR-19  OpenSearch: Тільки повнотекстовий пошук, заборонено використовувати як Primary DB
+HR-20  Qdrant: Тільки векторна пам'ять (embeddings)
 ```
+
+---
+
+## System Memory Contract (v4.0)
+
+Кожна база даних має свою жорстку роль. Порушення контракту = архітектурний борг.
+
+1.  **PostgreSQL (SSOT)**: "Хранитель Істини". Метадані, користувачі, фінансові реєстри.
+2.  **ClickHouse (OLAP)**: "Аналітичний Мозок". Агрегації, історичні дані, великі масиви (100M+).
+3.  **OpenSearch (Search)**: "Текстова Розвідка". Keyword/Hybrid пошук по документах.
+4.  **Qdrant (Vector)**: "AI Пам'ять". Вектори для RAG та семантичного пошуку.
+5.  **Neo4j (Graph)**: "Детектор Зв'язків". Схеми власності, фрод-ланцюжки, multi-hop аналіз.
+6.  **Redis (Cache)**: "Швидка Пам'ять". Короткострокові дані, черги, сесії.
+7.  **MinIO (S3)**: "Фізичне Сховище". Всі файли, скани, PDF.
 
 ---
 

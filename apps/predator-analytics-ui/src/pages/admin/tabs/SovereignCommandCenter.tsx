@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   Activity, Cpu, Zap, Shield, Database, 
   Layers, Boxes, Terminal, Box, Sparkles,
   BarChart3, BrainCircuit, Factory, HardDrive,
-  Network, AlertTriangle, RefreshCw, Atom
+  Network, AlertTriangle, RefreshCw, Atom,
+  Target, Eye, Lock, Globe
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NeuralCore } from '@/components/admin/visuals/NeuralCore';
@@ -13,20 +14,20 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useSystemStatus, useSystemStats, useAIEngines } from '@/hooks/useAdminApi';
 
 /**
- * 🦅 Sovereign Command Center | v60.0-ELITE
- * Головний пульт управління системою PREDATOR.
+ * 🦅 Sovereign Command Center | v62.7-ELITE
+ * СТРАТЕГІЧНИЙ_КУПОЛ_УПРАВЛІННЯ: Головний пульт PREDATOR.
  * Консолідація телеметрії, ШІ-заводу та інфраструктурного ядра.
  */
 
 // ─── Допоміжні компоненти ──────────────────────────────────────────────────────
 
 const MiniStatus: React.FC<{ label: string; value: string; color?: string; icon: any }> = ({ label, value, color = 'rose', icon: Icon }) => (
-  <div className="flex flex-col gap-1 p-3 bg-white/[0.02] border border-white/[0.05] rounded-sm group hover:border-white/10 transition-all">
+  <div className="flex flex-col gap-1 p-3 bg-white/[0.02] border border-white/[0.05] rounded-sm group hover:border-white/10 transition-all shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]">
     <div className="flex items-center justify-between">
-      <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest">{label}</span>
+      <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest leading-none">{label}</span>
       <Icon size={10} className={cn("transition-colors", `text-${color}-500/40`)} />
     </div>
-    <span className="text-[14px] font-black text-white/90">{value}</span>
+    <span className="text-[14px] font-black text-white/90 font-mono tracking-tighter">{value}</span>
   </div>
 );
 
@@ -70,28 +71,31 @@ export const SovereignCommandCenter: React.FC = () => {
   };
 
   return (
-    <div className="p-6 h-full flex flex-col gap-6 overflow-hidden bg-[#050202] relative">
+    <div className="p-6 h-full flex flex-col gap-6 overflow-hidden bg-[#020101] relative select-none">
       {/* Background Ornaments */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-rose-500/[0.02] blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-blue-500/[0.02] blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-rose-500/[0.03] blur-[150px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-blue-600/[0.03] blur-[150px] pointer-events-none animate-pulse" />
+      
+      {/* HUD Scanline Effect */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] z-50 pointer-events-none bg-[length:100%_4px,3px_100%]" />
 
       {/* Main Grid */}
       <div className="grid grid-cols-12 gap-6 h-full relative z-10">
         
         {/* Left Sidebar: Infrastructure & AI Lab Pulse */}
         <div className="col-span-3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
-          <TacticalCard variant="holographic" title="ЯДРО ІНФРАСТРУКТУРИ" className="bg-black/40 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <TacticalCard variant="holographic" title="ЯДРО_ІНФРАСТРУКТУРИ" className="bg-black/40 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.8)] border-l-2 border-l-rose-600">
             <div className="grid grid-cols-2 gap-3 mt-4">
-              <MiniStatus label="НАВАНТАЖЕННЯ_VRAM" value={`${metrics.vram.toFixed(1)} GB`} icon={Zap} />
-              <MiniStatus label="НЕЙРОННЕ_ЯДРО" value="34%" icon={Cpu} color="emerald" />
-              <MiniStatus label="СТАТУС_ВУЗЛА" value="В_МЕРЕЖІ" icon={Shield} color="emerald" />
-              <MiniStatus label="ЗАТРИМКА" value="12ms" icon={Activity} />
+              <MiniStatus label="ТИСК_VRAM" value={`${metrics.vram.toFixed(1)} GB`} icon={Zap} />
+              <MiniStatus label="ШІ_КВАНТ" value="34.2%" icon={Cpu} color="blue" />
+              <MiniStatus label="ВУЗОЛ_IMAC" value="ONLINE" icon={Globe} color="emerald" />
+              <MiniStatus label="РІВЕНЬ_RTT" value="12.4ms" icon={Activity} />
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 space-y-4">
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-[8px] font-mono text-white/30">
-                  <span>СТАБІЛЬНІСТЬ_СИСТЕМИ</span>
-                  <span className="text-emerald-400 font-black tracking-widest">99.99%</span>
+                  <span className="tracking-[0.2em]">СТАБІЛЬНІСТЬ_ЦЕНТРУ</span>
+                  <span className="text-emerald-400 font-black tracking-widest italic">99.99%</span>
                 </div>
                 <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                   <motion.div 
@@ -105,7 +109,7 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
           </TacticalCard>
 
-          <TacticalCard variant="holographic" title="ОПЕРАЦІЙНІ ЛАБОРАТОРІЇ" className="bg-black/40 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <TacticalCard variant="holographic" title="ОПЕРАЦІЙНІ_МАГІСТРАЛІ" className="bg-black/40 border-white/5">
             <div className="space-y-3 mt-4">
               <motion.div 
                 whileHover={{ scale: 1.02, x: 4 }}
@@ -117,8 +121,8 @@ export const SovereignCommandCenter: React.FC = () => {
                     <Factory size={14} className="text-rose-500" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white group-hover:text-rose-400 transition-colors">АВТО-ФАБРИКА ШІ</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Цикл_OODA: Активний</span>
+                    <span className="text-[10px] font-black text-white group-hover:text-rose-400 transition-colors uppercase italic tracking-tighter">ШІ_ЗАВОД_PREDATOR</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter italic">СТАТУС: ЦИКЛ_БЕЗПЕРЕРВНИЙ</span>
                   </div>
                 </div>
                 <PulseIndicator />
@@ -134,8 +138,8 @@ export const SovereignCommandCenter: React.FC = () => {
                     <BrainCircuit size={14} className="text-blue-500" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white group-hover:text-blue-400 transition-colors">FINE-TUNE ЦЕНТР</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">ML_Навчання_активне</span>
+                    <span className="text-[10px] font-black text-white group-hover:text-blue-400 transition-colors uppercase italic tracking-tighter">НЕЙРОННИЙ_ПОЛІГОН</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter italic">НАВЧАННЯ: ЕТАП_ВЕРТИКАЛЬ</span>
                   </div>
                 </div>
                 <div className="flex gap-0.5">
@@ -153,8 +157,8 @@ export const SovereignCommandCenter: React.FC = () => {
                     <Database size={14} className="text-emerald-500" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white group-hover:text-emerald-400 transition-colors">СТУДІЯ ДАТАСЕТІВ</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Синхронізація: 4.2 TB</span>
+                    <span className="text-[10px] font-black text-white group-hover:text-emerald-400 transition-colors uppercase italic tracking-tighter">АРХІВ_OSINT_ДАТА</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter italic">РЕЄСТР: 4.2 TB [АКТУАЛЬНО]</span>
                   </div>
                 </div>
                 <RefreshCw size={10} className="text-emerald-500/40 animate-spin-slow" />
@@ -162,11 +166,11 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
           </TacticalCard>
 
-          <TacticalCard variant="holographic" title="ДАТАСЕТИ: СИНХРОНІЗАЦІЯ" className="bg-black/40 border-white/5">
+          <TacticalCard variant="holographic" title="РЕГРЕСІЯ_ДАННИХ" className="bg-black/40 border-white/5 border-b-2 border-b-blue-600">
             <div className="space-y-4 mt-4">
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between text-[8px] font-mono text-white/30 uppercase tracking-[0.2em]">
-                  <span>ГЛОБАЛЬНА_СИНХРОНІЗАЦІЯ_OSINT</span>
+                  <span>ГЛОБАЛЬНА_СИНХРОНІЗАЦІЯ_ЯДРА</span>
                   <span className="text-rose-500 font-black">98.4%</span>
                 </div>
                 <div className="h-[2px] bg-white/5 rounded-full overflow-hidden">
@@ -176,13 +180,15 @@ export const SovereignCommandCenter: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[8px] font-mono uppercase tracking-widest">
-                <span className="text-white/20">Загальний_об'єм</span>
-                <span className="text-white/60 font-black">4.2 TB</span>
-              </div>
-              <div className="flex items-center justify-between text-[8px] font-mono uppercase tracking-widest">
-                <span className="text-white/20">Записів_у_кеші</span>
-                <span className="text-white/60 font-black">12.8M</span>
+              <div className="grid grid-cols-2 gap-2 font-mono text-[8px] uppercase tracking-tighter italic">
+                <div className="bg-black/60 p-2 border border-white/5 rounded flex flex-col gap-1">
+                  <span className="text-white/20">ОБ'ЄМ_КЕШУ:</span>
+                  <span className="text-white/80 font-black">12.8M РЕЄСТРІВ</span>
+                </div>
+                <div className="bg-black/60 p-2 border border-white/5 rounded flex flex-col gap-1">
+                  <span className="text-white/20">АКТИВНІСТЬ:</span>
+                  <span className="text-emerald-400 font-black">ПІКОВА</span>
+                </div>
               </div>
             </div>
           </TacticalCard>
@@ -190,79 +196,100 @@ export const SovereignCommandCenter: React.FC = () => {
 
         {/* Center: 3D Neural Core & Global Command */}
         <div className="col-span-6 flex flex-col gap-6">
-          <div className="flex-1 bg-black/40 border border-white/5 rounded-sm relative overflow-hidden group shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]">
+          <div className="flex-1 bg-[#030303] border border-white/5 rounded-sm relative overflow-hidden group shadow-[0_0_100px_rgba(0,0,0,1),inset_0_0_50px_rgba(0,0,0,0.8)] border-t-2 border-t-rose-600/50">
             {/* Visualizer Header */}
             <div className="absolute top-0 left-0 right-0 p-8 flex items-start justify-between z-30 pointer-events-none">
               <div className="flex flex-col gap-2">
-                <h3 className="text-white font-black tracking-[0.4em] text-[14px] uppercase italic drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                  Суверенне Нейронне Ядро
+                <h3 className="text-white font-black tracking-[0.5em] text-[16px] uppercase italic drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                  СУВЕРЕННЕ_НЕЙРОННЕ_ЯДРО
                 </h3>
                 <div className="flex items-center gap-4">
-                  <div className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-sm tracking-[0.2em] shadow-[0_0_15px_rgba(225,29,72,0.6)]">ЕЛІТНИЙ ДОСТУП</div>
+                  <div className="px-4 py-1 bg-rose-600 text-white text-[9px] font-black rounded-sm tracking-[0.3em] shadow-[0_0_20px_rgba(225,29,72,0.8)] border border-rose-400/30">PREDATOR_ELITE</div>
                   <div className="flex items-center gap-3">
                     <PulseIndicator />
-                    <span className="text-rose-500 font-mono text-[9px] tracking-[0.3em] uppercase font-black animate-pulse">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ</span>
+                    <span className="text-rose-500 font-mono text-[9px] tracking-[0.4em] uppercase font-black animate-pulse">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-1.5 opacity-60">
-                <span className="text-white/60 font-mono text-[9px] tracking-widest">ЗДОРОВ'Я_БУФЕРА: 100%</span>
-                <span className="text-white/60 font-mono text-[9px] tracking-widest">ТЕМП_ЯДРА: 42.4°C</span>
-                <div className="w-24 h-[1px] bg-gradient-to-l from-rose-500/40 to-transparent mt-1" />
+              <div className="flex flex-col items-end gap-1.5 opacity-80 bg-black/40 p-3 border border-white/5 backdrop-blur-md rounded-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-white/40 font-mono text-[8px] tracking-widest uppercase">ЗДОРОВ'Я_БУФЕРА</span>
+                  <span className="text-emerald-400 font-mono text-[8px] font-black">100%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-white/40 font-mono text-[8px] tracking-widest uppercase">ТЕМП_ЯДРА</span>
+                  <span className="text-rose-500 font-mono text-[8px] font-black">42.4°C</span>
+                </div>
+                <div className="w-32 h-[1px] bg-gradient-to-l from-rose-600 to-transparent mt-1" />
               </div>
             </div>
 
             {/* The 3D Core */}
-            <div className="absolute inset-0 z-10 opacity-80 group-hover:opacity-100 transition-opacity duration-1000">
+            <div className="absolute inset-0 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-1000 scale-110 group-hover:scale-100 transition-transform duration-[2000ms]">
               <NeuralCore />
             </div>
 
             {/* Tactical Overlays */}
-            <div className="absolute inset-0 pointer-events-none z-20">
-               <div className="absolute top-1/2 left-8 -translate-y-1/2 w-[1px] h-32 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-               <div className="absolute top-1/2 right-8 -translate-y-1/2 w-[1px] h-32 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-               <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-64 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+               {/* Animated HUD Elements */}
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/[0.03] rounded-full"
+               />
+               <motion.div 
+                 animate={{ rotate: -360 }}
+                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-dashed border-white/[0.05] rounded-full"
+               />
+               
+               <div className="absolute top-1/2 left-12 -translate-y-1/2 w-[1px] h-64 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+               <div className="absolute top-1/2 right-12 -translate-y-1/2 w-[1px] h-64 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+               <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-96 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             </div>
 
             {/* Interaction Buttons (Visual Only) */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-6">
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex items-center gap-8">
               <motion.button 
-                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(225,29,72,0.4)' }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(225,29,72,0.6)' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-rose-500 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all shadow-[0_0_30px_rgba(225,29,72,0.3)] border border-rose-400/50"
+                className="px-10 py-4 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-sm transition-all shadow-[0_0_50px_rgba(225,29,72,0.4)] border border-rose-400/50 italic"
               >
-                ПЕРЕКАЛІБРУВАТИ
+                ПЕРЕКАЛІБРУВАТИ_ЯДРО
               </motion.button>
               <motion.button 
-                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-white/5 border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all"
+                className="px-10 py-4 bg-white/5 border border-white/10 text-white/70 text-[11px] font-black uppercase tracking-[0.4em] rounded-sm transition-all italic backdrop-blur-xl"
               >
-                ПЕРЕМКНУТИ_РЕЖИМ
+                АВАРІЙНИЙ_ШЛЮЗ
               </motion.button>
             </div>
           </div>
 
-          <div className="h-40 grid grid-cols-3 gap-6">
-             <div className="bg-rose-500/5 border border-rose-500/10 p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-rose-500/30 transition-all group">
-                <span className="text-[8px] font-mono text-rose-500/60 uppercase tracking-[0.2em] font-black">Активні Агенти</span>
+          <div className="h-44 grid grid-cols-3 gap-6">
+             <div className="bg-rose-600/5 border border-rose-600/20 p-6 rounded-sm flex flex-col justify-between shadow-2xl hover:border-rose-500/40 transition-all group relative overflow-hidden border-t-2 border-t-rose-600">
+                <div className="absolute top-0 right-0 p-2">
+                  <Target size={12} className="text-rose-600 opacity-20 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <span className="text-[9px] font-mono text-rose-500 font-black uppercase tracking-[0.3em] italic">АКТИВНІ_НЕЙРО-АГЕНТИ</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{metrics.activeTasks}</span>
-                  <Boxes size={24} className="text-rose-500/20 group-hover:text-rose-500/40 transition-colors" />
+                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(225,29,72,0.4)]">{metrics.activeTasks}</span>
+                  <Boxes size={28} className="text-rose-600/20 group-hover:text-rose-600 group-hover:scale-110 transition-all" />
                 </div>
              </div>
-             <div className="bg-white/[0.02] border border-white/[0.05] p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-white/10 transition-all group">
-                <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.2em] font-black">Пропускна здатність</span>
+             <div className="bg-blue-600/5 border border-blue-600/20 p-6 rounded-sm flex flex-col justify-between shadow-2xl hover:border-blue-500/40 transition-all group border-t-2 border-t-blue-600">
+                <span className="text-[9px] font-mono text-blue-500 font-black uppercase tracking-[0.3em] italic">ПРОПУСКНА_ЗДАТНІСТЬ</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{metrics.throughput.toFixed(0)} <small className="text-[10px] opacity-30 not-italic ml-1 tracking-tighter">зап/с</small></span>
-                  <Network size={24} className="text-white/5 group-hover:text-white/10 transition-colors" />
+                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(59,130,246,0.4)]">{metrics.throughput.toFixed(0)} <small className="text-[12px] opacity-30 not-italic ml-1 tracking-widest uppercase">req/s</small></span>
+                  <Network size={28} className="text-blue-600/20 group-hover:text-blue-600 group-hover:scale-110 transition-all" />
                 </div>
              </div>
-             <div className="bg-emerald-500/5 border border-emerald-500/10 p-5 rounded-sm flex flex-col justify-between shadow-lg hover:border-emerald-500/30 transition-all group">
-                <span className="text-[8px] font-mono text-emerald-500/60 uppercase tracking-[0.2em] font-black">Рівень Безпеки</span>
+             <div className="bg-emerald-600/5 border border-emerald-600/20 p-6 rounded-sm flex flex-col justify-between shadow-2xl hover:border-emerald-500/40 transition-all group border-t-2 border-t-emerald-600">
+                <span className="text-[9px] font-mono text-emerald-500 font-black uppercase tracking-[0.3em] italic">СТАТУС_БЕЗПЕКИ</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-3xl font-black text-white italic drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] tracking-tighter">ЗАХИЩЕНО</span>
-                  <Shield size={24} className="text-emerald-500/20 group-hover:text-emerald-500/40 transition-colors" />
+                  <span className="text-3xl font-black text-emerald-400 italic tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.4)] uppercase">ГЕРМЕТИЧНО</span>
+                  <Lock size={28} className="text-emerald-600/20 group-hover:text-emerald-600 group-hover:scale-110 transition-all" />
                 </div>
              </div>
           </div>
@@ -270,44 +297,44 @@ export const SovereignCommandCenter: React.FC = () => {
 
         {/* Right Sidebar: Real-time Command Log & Alerts */}
         <div className="col-span-3 flex flex-col gap-6">
-          <TacticalCard variant="holographic" title="СТРАТЕГІЧНИЙ РЕЗЕРВ" className="bg-black/40 border-rose-500/10 shadow-[0_0_50px_rgba(225,29,72,0.05)]">
+          <TacticalCard variant="holographic" title="СТРАТЕГІЧНИЙ_РЕЗЕРВ" className="bg-black/40 border-rose-600/10 shadow-[0_0_50px_rgba(225,29,72,0.1)] border-r-2 border-r-rose-600">
             <div className="grid grid-cols-1 gap-4 mt-4">
-              <div className="flex items-center justify-between p-3 bg-rose-500/5 border border-rose-500/10 rounded-sm cursor-pointer hover:bg-rose-500/10 transition-all group">
+              <div className="flex items-center justify-between p-3 bg-rose-600/5 border border-rose-600/10 rounded-sm cursor-pointer hover:bg-rose-600/20 transition-all group">
                 <div className="flex items-center gap-3">
-                  <BrainCircuit size={16} className="text-rose-500 group-hover:scale-110 transition-transform" />
+                  <BrainCircuit size={16} className="text-rose-600 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">FINE-TUNE ДВИГУН</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Активна_оптимізація</span>
+                    <span className="text-[10px] font-black text-white italic tracking-tighter uppercase">ДВИГУН_ОПТИМІЗАЦІЇ</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">ШІ_ОПЕРАТОР: ГІБРИД</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
                    <span className="text-[10px] font-black text-rose-500">92%</span>
                    <div className="w-12 h-[2px] bg-white/5 rounded-full mt-1 overflow-hidden">
-                      <motion.div animate={{ width: '92%' }} className="h-full bg-rose-500 shadow-[0_0_5px_rgba(225,29,72,0.8)]" />
+                      <motion.div animate={{ width: '92%' }} className="h-full bg-rose-600 shadow-[0_0_10px_rgba(225,29,72,1)]" />
                    </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-blue-500/5 border border-blue-500/10 rounded-sm cursor-pointer hover:bg-blue-500/10 transition-all group">
+              <div className="flex items-center justify-between p-3 bg-blue-600/5 border border-blue-600/10 rounded-sm cursor-pointer hover:bg-blue-600/20 transition-all group">
                 <div className="flex items-center gap-3">
                   <Database size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">СТУДІЯ ДАТАСЕТІВ</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Глобальна_синхронізація</span>
+                    <span className="text-[10px] font-black text-white italic tracking-tighter uppercase">БАЗА_НЕЙРО-ВІДБИТКІВ</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter italic">СИНХРОНІЗАЦІЯ_ГЛОБАЛ</span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
                    <span className="text-[10px] font-black text-blue-500 italic font-mono">12.8M</span>
-                   <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest">ЗАПИСІВ</span>
+                   <span className="text-[6px] font-mono text-white/20 uppercase tracking-widest">РЕЄСТРІВ</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-emerald-500/5 border border-emerald-500/10 rounded-sm cursor-pointer hover:bg-emerald-500/10 transition-all group">
+              <div className="flex items-center justify-between p-3 bg-emerald-600/5 border border-emerald-600/10 rounded-sm cursor-pointer hover:bg-emerald-600/20 transition-all group">
                 <div className="flex items-center gap-3">
-                  <Factory size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                  <Shield size={16} className="text-emerald-500 group-hover:scale-110 transition-transform" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white">AI ФАБРИКА PROD</span>
-                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter">Цикл_OODA_заблоковано</span>
+                    <span className="text-[10px] font-black text-white italic tracking-tighter uppercase">ZERO_TRUST_ПЕРИМЕТР</span>
+                    <span className="text-[7px] font-mono text-white/30 uppercase tracking-tighter italic">СТАТУС: МОНОЛІТ</span>
                   </div>
                 </div>
                 <PulseIndicator color="emerald" />
@@ -315,31 +342,32 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
           </TacticalCard>
 
-          <TacticalCard variant="holographic" title="ОПЕРАЦІЙНИЙ ЖУРНАЛ" className="flex-1 bg-black/40 border-white/5 flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          <TacticalCard variant="holographic" title="ОПЕРАЦІЙНИЙ_ЖУРНАЛ" className="flex-1 bg-black/40 border-white/5 flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] border-b-2 border-b-white/10">
             <div className="flex-1 overflow-y-auto mt-4 pr-2 custom-scrollbar space-y-3 font-mono text-[9px]">
               {[
-                { time: '14:20:01', msg: 'CORE_HANDSHAKE: OK', type: 'info' },
-                { time: '14:20:05', msg: 'VRAM_ALLOCATION: OPTIMIZED', type: 'info' },
-                { time: '14:20:12', msg: 'FACTORY_AUTO_UPDATE: IN_PROGRESS', type: 'info' },
-                { time: '14:20:20', msg: 'MODEL_TRAINING: EPOCH_42_COMPLETE', type: 'success' },
-                { time: '14:20:32', msg: 'NEURAL_LINK: STABLE', type: 'success' },
-                { time: '14:20:45', msg: 'DATASET_RELOAD: COMPLETED', type: 'info' },
-                { time: '14:21:01', msg: 'OODA_PHASE: DECIDE', type: 'info' },
-                { time: '14:21:10', msg: 'THREAT_DETECTION: NO_THREATS', type: 'success' },
-                { time: '14:21:15', msg: 'СИСТЕМНА_ВЕРСІЯ: v60.5-ELITE', type: 'info' },
+                { time: '14:20:01', msg: 'CORE_HANDSHAKE: ВСТАНОВЛЕНО', type: 'info' },
+                { time: '14:20:05', msg: 'VRAM_ALLOCATION: ОПТИМІЗОВАНО', type: 'info' },
+                { time: '14:20:12', msg: 'ЗАВОД_АВТО_ОНОВЛЕННЯ: У_ПРОЦЕСІ', type: 'info' },
+                { time: '14:20:20', msg: 'НАВЧАННЯ_МОДЕЛІ: ЕПОХА_42_УСПІШНО', type: 'success' },
+                { time: '14:20:32', msg: 'НЕЙРО_ЗВ\'ЯЗОК: СТАБІЛЬНО', type: 'success' },
+                { time: '14:20:45', msg: 'ПЕРЕЗАВАНТАЖЕННЯ_ДАТАСЕТІВ: ЗАВЕРШЕНО', type: 'info' },
+                { time: '14:21:01', msg: 'ЦИКЛ_OODA: ПРИЙНЯТТЯ_РІШЕННЯ', type: 'info' },
+                { time: '14:21:10', msg: 'ДЕТЕКЦІЯ_ЗАГРОЗ: ВІДСУТНІ', type: 'success' },
+                { time: '14:21:15', msg: 'ВЕРСІЯ_СИСТЕМИ: v62.7-ELITE', type: 'info' },
               ].map((log, i) => (
-                <div key={i} className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity group/log">
-                  <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/40 transition-colors">[{log.time}]</span>
+                <div key={i} className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity group/log border-l border-white/5 pl-2 hover:border-rose-600 transition-all duration-300">
+                  <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/60 transition-colors">[{log.time}]</span>
                   <span className={cn(
-                    log.type === 'success' ? 'text-emerald-500' : 'text-white/70'
+                    "tracking-tighter italic",
+                    log.type === 'success' ? 'text-emerald-500 font-black' : 'text-white/70 font-bold'
                   )}>{log.msg}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-white/5">
-              <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-sm group/input cursor-text">
-                <Terminal size={12} className="text-white/30 group-hover:text-rose-500 transition-colors" />
-                <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest animate-pulse">СИСТЕМА ГОТОВА ДО КОМАНД_</span>
+            <div className="mt-4 pt-4 border-t border-white/5 relative">
+              <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-sm group/input cursor-text hover:bg-white/10 transition-all shadow-[inset_0_0_15px_rgba(255,255,255,0.05)]">
+                <Terminal size={12} className="text-white/30 group-hover:text-rose-600 transition-colors" />
+                <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em] animate-pulse font-black italic">ЯДРО_ГОТОВЕ_ДО_ДИРЕКТИВ_</span>
               </div>
             </div>
           </TacticalCard>

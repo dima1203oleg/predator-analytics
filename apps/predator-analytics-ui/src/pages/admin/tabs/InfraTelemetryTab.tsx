@@ -97,98 +97,107 @@ const StatusBadge: React.FC<{ status: NodeMetric['status'] }> = ({ status }) => 
 
 // ─── Картка вузла ─────────────────────────────────────────────────────────────
 
-const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -4, scale: 1.02 }}
-    className={cn(
-      'p-5 rounded-xl border relative overflow-hidden group transition-all duration-500 glass-wraith backdrop-blur-xl',
-      node.status === 'online'   ? 'border-white/10 hover:border-rose-500/50 shadow-2xl hover:shadow-rose-500/10' :
-      node.status === 'degraded' ? 'border-rose-500/30 shadow-[0_0_30px_rgba(225,29,72,0.15)] bg-rose-500/5' :
-                                   'border-white/5 opacity-40 grayscale bg-black/20',
-    )}
-  >
-    {/* Background Pattern & HUD Grids */}
-    <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
-    <div className="absolute top-0 right-0 p-3 opacity-[0.05] pointer-events-none group-hover:opacity-[0.15] transition-opacity duration-700">
-      <CpuIcon size={64} className="text-rose-500" />
-    </div>
+const NodeCard: React.FC<{ node: NodeMetric }> = ({ node }) => {
+  const localizedRole = node.role
+    .replace('Compute Node', 'ОБЧИСЛЮВАЛЬНИЙ_ВУЗОЛ')
+    .replace('Database', 'СХОВИЩЕ_ДАНИХ')
+    .replace('Edge API', 'КРАЙОВИЙ_ШЛЮЗ_API')
+    .replace('Worker', 'ВОРКЕР_ОБРОБКИ')
+    .replace('AI Engine', 'ЯДРО_ШІ');
 
-    {/* Corner Accents */}
-    <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/5 group-hover:border-rose-500/30 transition-colors" />
-    <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/5 group-hover:border-rose-500/30 transition-colors" />
-
-    <div className="flex items-start justify-between mb-6 relative z-10">
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-rose-500/10 rounded-lg group-hover:bg-rose-500/20 transition-colors shadow-inner">
-            <Server size={14} className="text-rose-500" />
-          </div>
-          <span className="text-[14px] font-black tracking-[0.1em] text-white/90 group-hover:text-white transition-colors italic uppercase">{node.node}</span>
-        </div>
-        <div className="flex items-center gap-3 pl-1">
-          <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em] font-black italic">{node.role}</span>
-          <div className="w-1 h-1 rounded-full bg-rose-500/30" />
-          <span className="text-[9px] font-mono text-white/40 group-hover:text-rose-500/60 transition-colors">{node.ip || '192.168.1.' + (100 + parseInt(node.id.slice(-2)))}</span>
-        </div>
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      className={cn(
+        'p-5 rounded-xl border relative overflow-hidden group transition-all duration-500 glass-wraith backdrop-blur-xl',
+        node.status === 'online'   ? 'border-white/10 hover:border-rose-500/50 shadow-2xl hover:shadow-rose-500/10' :
+        node.status === 'degraded' ? 'border-rose-500/30 shadow-[0_0_30px_rgba(225,29,72,0.15)] bg-rose-500/5' :
+                                     'border-white/5 opacity-40 grayscale bg-black/20',
+      )}
+    >
+      {/* Background Pattern & HUD Grids */}
+      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
+      <div className="absolute top-0 right-0 p-3 opacity-[0.05] pointer-events-none group-hover:opacity-[0.15] transition-opacity duration-700">
+        <CpuIcon size={64} className="text-rose-500" />
       </div>
-      <StatusBadge status={node.status} />
-    </div>
 
-    {node.status !== 'offline' && (
-      <div className="space-y-5 relative z-10">
-        <div className="grid grid-cols-2 gap-5">
-          <GaugeBar value={node.cpu} label="НЕЙРОННІ_ОБЧИСЛЕННЯ" />
-          <GaugeBar value={node.ram} label="БУФЕРНА_ПАМ'ЯТЬ" />
-        </div>
-        
-        {node.vram !== undefined && (
-          <div className="pt-2">
-             <GaugeBar value={node.vram} label="КВАНТОВА_VRAM (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
-          </div>
-        )}
+      {/* Corner Accents */}
+      <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/5 group-hover:border-rose-500/30 transition-colors" />
+      <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/5 group-hover:border-rose-500/30 transition-colors" />
 
-        <div className="pt-5 mt-2 border-t border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2 group/stat-icon">
-              <Thermometer size={12} className="text-rose-500/40 group-hover/stat-icon:text-rose-500 transition-colors" />
-              <span className={cn("text-[10px] font-mono font-black italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 animate-pulse" : "text-white/60")}>
-                {node.temp}°C
-              </span>
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-rose-500/10 rounded-lg group-hover:bg-rose-500/20 transition-colors shadow-inner">
+              <Server size={14} className="text-rose-500" />
             </div>
-            <div className="flex items-center gap-2 group/stat-icon">
-              <Wifi size={12} className="text-sky-500/40 group-hover/stat-icon:text-sky-500 transition-colors" />
-              <span className="text-[10px] font-mono text-white/60 font-black italic tracking-tighter">{node.net}</span>
-            </div>
+            <span className="text-[14px] font-black tracking-[0.1em] text-white/90 group-hover:text-white transition-colors italic uppercase">{node.node}</span>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">ЧАС_РОБОТИ_СЕСІЇ</span>
-            <span className="text-[9px] font-mono text-white/40 italic font-bold">{node.uptime}</span>
+          <div className="flex items-center gap-3 pl-1">
+            <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.3em] font-black italic">{localizedRole}</span>
+            <div className="w-1 h-1 rounded-full bg-rose-500/30" />
+            <span className="text-[9px] font-mono text-white/40 group-hover:text-rose-500/60 transition-colors">{node.ip || '192.168.1.' + (100 + parseInt(node.id.slice(-2)))}</span>
           </div>
         </div>
+        <StatusBadge status={node.status} />
       </div>
-    )}
-    
-    {/* Interactive Glow */}
-    <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-rose-500/5 blur-[60px] group-hover:bg-rose-500/10 transition-all duration-1000 rounded-full" />
-  </motion.div>
-);
+
+      {node.status !== 'offline' && (
+        <div className="space-y-5 relative z-10">
+          <div className="grid grid-cols-2 gap-5">
+            <GaugeBar value={node.cpu} label="НЕЙРОННІ_ОБЧИСЛЕННЯ" />
+            <GaugeBar value={node.ram} label="БУФЕРНА_ПАМ'ЯТЬ" />
+          </div>
+          
+          {node.vram !== undefined && (
+            <div className="pt-2">
+               <GaugeBar value={node.vram} label="КВАНТОВА_VRAM (NVIDIA)" warnAt={70} dangerAt={90} unit="%" />
+            </div>
+          )}
+
+          <div className="pt-5 mt-2 border-t border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div className="flex items-center gap-2 group/stat-icon">
+                <Thermometer size={12} className="text-rose-500/40 group-hover/stat-icon:text-rose-500 transition-colors" />
+                <span className={cn("text-[10px] font-mono font-black italic tracking-tighter", (node.temp || 0) > 75 ? "text-rose-500 animate-pulse" : "text-white/60")}>
+                  {node.temp}°C
+                </span>
+              </div>
+              <div className="flex items-center gap-2 group/stat-icon">
+                <Wifi size={12} className="text-sky-500/40 group-hover/stat-icon:text-sky-500 transition-colors" />
+                <span className="text-[10px] font-mono text-white/60 font-black italic tracking-tighter">{node.net.replace('rx', 'ВХ').replace('tx', 'ВИХ')}</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black">ЧАС_РОБОТИ_СЕСІЇ</span>
+              <span className="text-[9px] font-mono text-white/40 italic font-bold">{node.uptime}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Interactive Glow */}
+      <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-rose-500/5 blur-[60px] group-hover:bg-rose-500/10 transition-all duration-1000 rounded-full" />
+    </motion.div>
+  );
+};
 
 // ─── Таблиця сервісів ─────────────────────────────────────────────────────────
 
 const svcColumns: VirtualColumn<ServiceStatus>[] = [
   {
-    key: 'name', label: 'Ендпоїнт Сервісу', width: '220px', mono: true,
+    key: 'name', label: 'РЕЄСТР_ЦЕНТРАЛЬНИХ_СЕРВІСІВ', width: '220px', mono: true,
     render: (v) => (
       <div className="flex items-center gap-2">
         <div className="w-1 h-1 rounded-full bg-rose-500/50" />
-        <span className="text-white/80 font-bold tracking-tight">{String(v)}</span>
+        <span className="text-white/80 font-bold tracking-tight uppercase italic">{String(v)}</span>
       </div>
     ),
   },
   {
-    key: 'status', label: 'Статус', width: '120px',
+    key: 'status', label: 'СТАН_ЯДРА', width: '120px',
     render: (v) => {
       const color = v === 'ok' ? 'text-emerald-500' : v === 'warn' ? 'text-amber-500' : 'text-rose-500';
       const label = v === 'ok' ? 'ЗДОРОВИЙ' : v === 'warn' ? 'ДЕГРАДАЦІЯ' : 'КРИТИЧНО';
@@ -201,20 +210,20 @@ const svcColumns: VirtualColumn<ServiceStatus>[] = [
     },
   },
   {
-    key: 'latencyMs', label: 'Затримка', width: '100px', mono: true, align: 'right',
+    key: 'latencyMs', label: 'ЛАТЕНТНІСТЬ', width: '100px', mono: true, align: 'right',
     render: (v) => {
       const ms = Number(v);
       const color = ms > 500 ? 'text-rose-500' : ms > 200 ? 'text-amber-500' : 'text-emerald-500/70';
-      return <span className={cn("font-bold", color)}>{ms}ms</span>;
+      return <span className={cn("font-bold", color)}>{ms}мс</span>;
     },
   },
   { 
-    key: 'version', label: 'Збірка', width: '120px', mono: true,
+    key: 'version', label: 'ВЕРСІЯ_АРТЕФАКТУ', width: '120px', mono: true,
     render: (v) => <span className="text-white/30 text-[9px]">v{String(v)}</span>
   },
   { 
-    key: 'lastCheck', label: 'Останній Імпульс', mono: true,
-    render: (v) => <span className="text-white/10 text-[8px] italic">{String(v)}</span>
+    key: 'lastCheck', label: 'ОСТАННІЙ_ІМПУЛЬС', mono: true,
+    render: (v) => <span className="text-white/10 text-[8px] italic uppercase">{String(v)}</span>
   },
 ];
 
@@ -233,7 +242,7 @@ export const InfraTelemetryTab: React.FC = () => {
           <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
           <Activity className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse">Зчитування телеметрії...</div>
+        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">ЗЧИТУВАННЯ_ТЕЛЕМЕТРІЇ_СИСТЕМИ...</div>
       </div>
     );
   }
@@ -244,15 +253,15 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-6 border border-rose-500/20">
           <Shield size={32} className="text-rose-500/40" />
         </div>
-        <div className="text-[16px] font-black uppercase tracking-widest text-white/90 mb-2">Зв'язок розірвано</div>
-        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed">
-          Система не може отримати дані з вузлів управління. Перевірте статус API-шлюзу та автентифікацію.
+        <div className="text-[16px] font-black uppercase tracking-widest text-white/90 mb-2">КРИТИЧНИЙ_ЗРИВ_ТЕЛЕМЕТРІЇ</div>
+        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed italic">
+          СИСТЕМА_ВТРАТИЛА_ЗВ'ЯЗОК_З_ВУЗЛАМИ_УПРАВЛІННЯ. ПЕРЕВІРТЕ_СТАТУС_API_ШЛЮЗУ_ТА_АВТЕНТИФІКАЦІЮ_MTLS.
         </p>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/10 transition-colors rounded-sm"
+          className="px-6 py-2 border border-rose-500/30 text-rose-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-rose-500/10 transition-all duration-500 rounded-sm italic"
         >
-          ПЕРЕПІДКЛЮЧИТИСЬ
+          ПЕРЕПІДКЛЮЧИТИСЬ_ДО_ЯДРА
         </button>
       </div>
     );
@@ -267,31 +276,31 @@ export const InfraTelemetryTab: React.FC = () => {
       <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
         <div className="flex items-center gap-3">
           <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Телеметрія Кластера
+            Моніторинг Глобальної Інфраструктури
           </h2>
-          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            РІВЕНЬ_PROD_4
+          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter uppercase italic">
+            ІНДУСТРІАЛЬНИЙ_СТАН_V6
           </div>
         </div>
-        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest">
+        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>АКТИВНА_СИНХРОНІЗАЦІЯ</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+            <span>АКТИВНА_СИНХРОНІЗАЦІЯ_ПОТОКУ</span>
           </div>
           <span>•</span>
-          <span>ОНОВЛЕННЯ: 3000ms</span>
+          <span>ІНТЕРВАЛ: 3000мс</span>
           <span>•</span>
-          <span>ВУЗОЛ: 0xPRED_60</span>
+          <span>ВУЗОЛ_МАЙСТЕР: 0xPRED_60_ELITE</span>
         </div>
       </div>
 
       {/* Grid Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'АКТИВНІ ВУЗЛИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'rose' },
-          { label: 'МІКРОСЕРВІСИ', value: services.length, icon: Box, color: 'sky' },
-          { label: 'СИСТЕМНИЙ АПТАЙМ', value: '99.98%', icon: Shield, color: 'emerald' },
-          { label: 'МЕРЕЖЕВИЙ ТРАФІК', value: '1.2 GB/s', icon: Zap, color: 'amber' },
+          { label: 'АКТИВНІ_АКТИВИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'rose' },
+          { label: 'ЯДРО_ЕКОСИСТЕМИ', value: services.length, icon: Box, color: 'sky' },
+          { label: 'АПТАЙМ_СИСТЕМИ', value: '99.99%', icon: Shield, color: 'emerald' },
+          { label: 'ПРОПУСКНА_ЗДАТНІСТЬ', value: '1.2 GB/s', icon: Zap, color: 'amber' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 
@@ -307,7 +316,7 @@ export const InfraTelemetryTab: React.FC = () => {
               <span className="text-[8px] font-mono text-white/30 uppercase tracking-[0.3em] font-black mb-2 italic">{stat.label}</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-[24px] font-black text-white italic drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">{stat.value}</span>
-                {stat.color === 'emerald' && <span className="text-[8px] text-emerald-500 font-bold animate-pulse">БЛОКОВАНО</span>}
+                {stat.color === 'emerald' && <span className="text-[8px] text-emerald-500 font-bold animate-pulse">ГАРАНТОВАНО</span>}
               </div>
             </div>
             
@@ -328,7 +337,7 @@ export const InfraTelemetryTab: React.FC = () => {
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-          <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-[0.4em]">Вузли Інфраструктури</span>
+          <span className="text-[10px] font-mono font-black text-white/20 uppercase tracking-[0.4em] italic">ФЛОТ_ОБЧИСЛЮВАЛЬНИХ_ВУЗЛІВ_PREDATOR</span>
           <div className="h-px flex-1 bg-gradient-to-l from-transparent via-white/5 to-transparent" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -345,10 +354,10 @@ export const InfraTelemetryTab: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           <div className="flex flex-col items-center gap-1">
-            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МІКРОСЕРВІСИ & ЕНДПОЇНТИ</span>
+            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЯДРО_ЕКОСИСТЕМИ & ЕНДПОЇНТИ</span>
             <div className="flex items-center gap-2">
                <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,1)]" />
-               <span className="text-[7px] font-mono text-rose-500/60 uppercase tracking-widest font-black">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_ДАНИХ</span>
+               <span className="text-[7px] font-mono text-rose-500/60 uppercase tracking-widest font-black">ВЕРИФІКОВАНО_ЦІЛІСНІСТЬ_АРХІТЕКТУРИ</span>
             </div>
           </div>
           <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />
