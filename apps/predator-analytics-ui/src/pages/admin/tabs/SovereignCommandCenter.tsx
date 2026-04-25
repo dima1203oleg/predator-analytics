@@ -15,7 +15,7 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useSystemStatus, useSystemStats, useAIEngines } from '@/hooks/useAdminApi';
 
 /**
- * 🦅 Sovereign Command Center | v63.0-ELITE
+ * 🦅 Sovereign Command Center | v60.5-ELITE
  * СТРАТЕГІЧНИЙ_КУПОЛ_УПРАВЛІННЯ: Головний пульт PREDATOR.
  * Версія для Бізнес-Еліти: Фокус на ризиках, капіталізації та ШІ-ефективності.
  */
@@ -93,8 +93,8 @@ export const SovereignCommandCenter: React.FC = () => {
             <div className="grid grid-cols-2 gap-3 mt-4">
               <MiniStatus label="ТИСК_VRAM" value={`${metrics.vram.toFixed(1)} ГБ`} icon={Zap} />
               <MiniStatus label="ШІ_КВАНТ" value="34.2%" icon={Cpu} color="blue" />
-              <MiniStatus label="ВУЗОЛ_IMAC" value="ONLINE" icon={Globe} color="emerald" />
-              <MiniStatus label="РІВЕНЬ_RTT" value="12.4ms" icon={Activity} />
+              <MiniStatus label="ВУЗОЛ_IMAC" value="В_МЕРЕЖІ" icon={Globe} color="emerald" />
+              <MiniStatus label="РІВЕНЬ_RTT" value="12.4 мс" icon={Activity} />
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 space-y-4">
               <div className="flex flex-col gap-2">
@@ -133,7 +133,7 @@ export const SovereignCommandCenter: React.FC = () => {
                     <DollarSign size={12} className="text-emerald-500" />
                   </div>
                   <div className="flex items-end gap-2">
-                    <span className="text-2xl font-black text-white italic tracking-tighter">${metrics.estimatedSavings.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-white italic tracking-tighter">₴{metrics.estimatedSavings.toLocaleString()}</span>
                     <span className="text-[8px] text-white/20 font-mono mb-1">ЩОМІСЯЧНО</span>
                   </div>
                </div>
@@ -145,7 +145,7 @@ export const SovereignCommandCenter: React.FC = () => {
                   </div>
                   <div className="p-3 bg-white/5 border border-white/5 rounded-sm flex flex-col gap-1">
                      <span className="text-[7px] text-white/20 uppercase font-black">ВАРТІСТЬ_ЗАПИТУ</span>
-                     <span className="text-xs font-black text-rose-500 italic">$0.0004</span>
+                     <span className="text-xs font-black text-rose-500 italic">₴0.0004</span>
                   </div>
                </div>
             </div>

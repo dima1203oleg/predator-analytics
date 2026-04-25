@@ -98,22 +98,22 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
-  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'Ранковий звіт', badge: 'CEO',      icon: TrendingUp,    component: ExecutiveBrief },
-  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'Ризики портфеля', badge: 'FIN',    icon: PieChart,      component: PortfolioRiskView },
-  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'Сканер M&A',     badge: 'DEAL',   icon: Target,        component: MATargetScannerView },
-  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'Аналіз ринку',    badge: 'EXPANSION', icon: Globe,        component: MarketEntryView },
-  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'Аудит ROI',      badge: 'MONEY',    icon: BarChart3,     component: FinancialDashboard },
+  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'Ранковий звіт', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
+  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'Ризики портфеля', badge: 'ФІН',    icon: PieChart,      component: PortfolioRiskView },
+  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'Сканер M&A',     badge: 'УГОДА',   icon: Target,        component: MATargetScannerView },
+  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'Аналіз ринку',    badge: 'ЕКСПАНСІЯ', icon: Globe,        component: MarketEntryView },
+  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'Аудит ROI',      badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialDashboard },
 
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
   { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'СУВЕРЕН', icon: Zap,           component: SovereignCommandCenter },
   { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'ЖИВИЙ',     icon: Activity,      component: InfraTelemetryTab },
   { id: 'failover',     category: 'SYSTEM_CORE', label: 'Резервування',                    icon: Network,       component: FailoverRoutingTab },
-  { id: 'gitops',       category: 'SYSTEM_CORE', label: 'GitOps CI',                       icon: GitMerge,      component: GitOpsPipelineTab  },
+  { id: 'gitops',       category: 'SYSTEM_CORE', label: 'Конвеєр GitOps',                 icon: GitMerge,      component: GitOpsPipelineTab  },
   { id: 'agents-ops',   category: 'SYSTEM_CORE', label: 'Агенти',                          icon: Cpu,           component: AgentsOpsTab       },
   { id: 'security',     category: 'SYSTEM_CORE', label: 'Нульова довіра',   badge: 'БЕЗПЕКА',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
-  { id: 'dataops',      category: 'SYSTEM_CORE', label: 'DataOps',                         icon: Database,      component: DataOpsTab         },
-  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Chaos Ops',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
-  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'Захист ресурсів', badge: 'VRAM',       icon: Shield,        component: ResourceGuardTab   },
+  { id: 'dataops',      category: 'SYSTEM_CORE', label: 'Центр DataOps',                   icon: Database,      component: DataOpsTab         },
+  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Операції Хаосу',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
+  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'Захист ресурсів', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
   { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
@@ -122,11 +122,11 @@ const TABS: TabConfig[] = [
   { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM Провідник',                    icon: BookOpen,      component: LLMView },
   { id: 'factory',      category: 'AI_LAB', label: 'Завод ШІ',      badge: 'ПРОД',     icon: Factory,       component: SystemFactoryView  },
   { id: 'factory-studio', category: 'AI_LAB', label: 'Студія Заводу',  badge: 'ДИЗАЙН',   icon: Layers,        component: FactoryStudio },
-  { id: 'auto-factory', category: 'AI_LAB', label: 'Авто-Фабрика',  badge: 'OODA',     icon: Sparkles,      component: AutoFactoryView },
-  { id: 'models',       category: 'AI_LAB', label: 'Донавчання',    badge: 'ML',       icon: BrainCircuit,  component: ModelTrainingView  },
+  { id: 'auto-factory', category: 'AI_LAB', label: 'Авто-Фабрика',  badge: 'ПСВД',     icon: Sparkles,      component: AutoFactoryView },
+  { id: 'models',       category: 'AI_LAB', label: 'Донавчання',    badge: 'МН',       icon: BrainCircuit,  component: ModelTrainingView  },
   { id: 'datasets',     category: 'AI_LAB', label: 'Датасети',      badge: 'ДАНІ',     icon: HardDrive,     component: DatasetsStudioView },
   { id: 'prompts',      category: 'AI_LAB', label: 'Промпти',                         icon: MessageSquare, component: SystemPromptsView },
-  { id: 'nas',          category: 'AI_LAB', label: 'Нейромережі',  badge: 'NAS',      icon: Cpu,           component: NasView },
+  { id: 'nas',          category: 'AI_LAB', label: 'Нейромережі',  badge: 'НПС',      icon: Cpu,           component: NasView },
   { id: 'forecast',     category: 'AI_LAB', label: 'Прогнози',      badge: 'МАТЕМ',     icon: TrendingUp,    component: ForecastView },
   { id: 'super-intel',  category: 'AI_LAB', label: 'СуперІнтелект',   badge: 'ОМЕГА',    icon: Zap,           component: SuperIntelligenceView },
 
@@ -138,7 +138,7 @@ const TABS: TabConfig[] = [
   { id: 'scenarios',    category: 'INTEL_OSINT', label: 'Сценарії',     badge: 'СИМ',      icon: Layers,        component: ScenarioModelingView },
   { id: 'intelligence', category: 'INTEL_OSINT', label: 'Розвідка',     badge: 'ПРИВИД',   icon: Eye,           component: CustomsIntelligenceView },
   { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Фін. SIGINT',   badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialSigintView },
-  { id: 'due-diligence', category: 'INTEL_OSINT', label: 'Due Diligence', badge: 'KYC',       icon: ShieldCheck,   component: DueDiligenceView },
+  { id: 'due-diligence', category: 'INTEL_OSINT', label: 'Належна Обачність', badge: 'ЗК',       icon: ShieldCheck,   component: DueDiligenceView },
   { id: 'timeline',     category: 'INTEL_OSINT', label: 'Хронограф',    badge: 'ІСТОРІЯ',      icon: Activity,      component: TimelineBuilderView },
   { id: 'supply-chain', category: 'INTEL_OSINT', label: 'Ланцюги Поставок', badge: 'ЛОГІСТИКА', icon: Box,        component: SupplyChainAnalyticsView },
   { id: 'entity-resolver', category: 'INTEL_OSINT', label: 'Резолвер Сутностей', badge: 'СПІВПАДІННЯ', icon: Fingerprint, component: EntityResolverView },
@@ -149,9 +149,9 @@ const TABS: TabConfig[] = [
   { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'Мапа UBO',     badge: 'СУТНОСТІ', icon: Share2,        component: UBOMapView },
   { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'ТРЕК',    icon: Target,        component: EntityRadarView },
   { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
-  { id: 'osint',        category: 'INTEL_OSINT', label: 'OSINT Консоль', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
+  { id: 'osint',        category: 'INTEL_OSINT', label: 'Консоль ОСІНТ', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
   { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
-  { id: 'aml',          category: 'INTEL_OSINT', label: 'AML Scoring',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
+  { id: 'aml',          category: 'INTEL_OSINT', label: 'Скоринг АМЛ',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
   { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
   { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'Соц. Розвідка', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
   { id: 'maritime',     category: 'INTEL_OSINT', label: 'Морський Трек', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
@@ -725,7 +725,7 @@ export const AdminHub: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-emerald-500 animate-pulse" />
-            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v58.2_STABLE</span>
+            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v60.0_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-2 flex gap-1">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -744,7 +744,7 @@ export const AdminHub: React.FC = () => {
           <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/с</span>
           <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/с</span>
           <div className="mt-2 w-32 h-[1px] bg-gradient-to-l from-rose-500/50 to-transparent" />
-          <span className="text-[6px] opacity-20">CIPHER: CHACHA20-POLY1305</span>
+          <span className="text-[6px] opacity-20">ШИФР: CHACHA20-POLY1305</span>
         </div>
 
         <div className="absolute bottom-4 left-4 flex flex-col gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest">

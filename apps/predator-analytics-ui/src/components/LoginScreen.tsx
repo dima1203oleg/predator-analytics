@@ -669,13 +669,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 [ТРИВОГА] ПЕРЕХОПЛЕННЯ ШИФРОВАНИХ ТРАНЗАКЦІЙ У СЕКТОРІ GAMMA-4 — АНАЛІЗ АКТИВНИЙ
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
-                                [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕРЕЖУ $47M ЧЕРЕЗ SHELL-КОМПАНІЇ У BVI — DE-ANONYMIZING...
+                                [КРИТИЧНО] ВИЯВЛЕНО ОФШОРНУ МЕРЕЖУ $47M ЧЕРЕЗ SHELL-КОМПАНІЇ У BVI — ДЕАННІМІЗАЦІЯ...
                             </span>
                             <span className="text-[9px] text-rose-400 font-bold tracking-widest">
-                                [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: KYIV-CORE-03 · POLYGON-7)
+                                [OK] СИНХРОНІЗАЦІЯ З СЕРВЕРАМИ МИТНИЦІ ПІДТВЕРДЖЕНА (NODE: КИЇВ-ЯДРО-03 · ПОЛІГОН-7)
                             </span>
                             <span className="text-[9px] text-rose-500 font-bold tracking-widest">
-                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — FREEZE INITIATED
+                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІАРА ВИЯВЛЕНО — $12.4M НЕОДЕКЛАРОВАНИХ АКТИВІВ — ЗАМОРОЖЕННЯ ІНІЦІЙОВАНО
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
                                 [УВАГА] ЧЕРВОНА_КАРТКА_ІНТЕРПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТОРИНГ

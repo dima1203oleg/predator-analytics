@@ -35,7 +35,8 @@ const sessionCols: VirtualColumn<Session>[] = [
     render: (v) => {
       const s = String(v);
       const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
-      return <span className={cn('text-[10px] font-mono', color)}>{s}</span>;
+      const label = s === 'admin' ? 'АДМІНІСТРАТОР' : s === 'client_premium' ? 'КЛІЄНТ_ПРЕМІУМ' : s.toUpperCase();
+      return <span className={cn('text-[10px] font-mono font-bold', color)}>{label}</span>;
     },
   },
   { key: 'ip',           label: 'IP',           width: '110px',  mono: true },
@@ -68,7 +69,7 @@ const auditCols: VirtualColumn<AuditEntry>[] = [
     },
   },
   {
-    key: 'latencyMs', label: 'ms',       width: '60px', mono: true, align: 'right',
+    key: 'latencyMs', label: 'мс',       width: '60px', mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
       return <span className={n > 300 ? 'text-amber-400' : 'text-white/40'}>{n}</span>;
@@ -242,10 +243,10 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           {section === 'mtls' && (
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { name: 'ingestion-worker', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '12с тому', traffic: '24 GB' },
-                { name: 'graph-service', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '5с тому', traffic: '182 GB' },
-                { name: 'api-gateway', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '0с тому', traffic: '1.2 TB' },
-                { name: 'admin-sentinel', status: 'ОЧІКУЄТЬСЯ', expiry: '2026-12-01', lastSeen: '1г тому', traffic: '0 B' },
+                { name: 'ВОРКЕР_ІНГЕСТІЇ', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '12с тому', traffic: '24 ГБ' },
+                { name: 'ГРАФ_СЕРВІС', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '5с тому', traffic: '182 ГБ' },
+                { name: 'API_ШЛЮЗ', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '0с тому', traffic: '1.2 ТБ' },
+                { name: 'АДМІН_ВАРТОВИЙ', status: 'ОЧІКУЄТЬСЯ', expiry: '2026-12-01', lastSeen: '1г тому', traffic: '0 Б' },
               ].map((node, i) => (
                 <motion.div 
                    key={node.name}

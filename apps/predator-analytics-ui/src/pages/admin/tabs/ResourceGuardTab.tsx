@@ -11,7 +11,7 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useSystemStats, useInfraTelemetry, useFailoverStatus, useToggleFailover } from '@/hooks/useAdminApi';
 
 /**
- * 🦅 Resource Guard (VRAM/CPU Guard) | v60.0-ELITE
+ * 🦅 Resource Guard (VRAM/CPU Guard) | v60.5-ELITE
  * СТРАТЕГІЧНИЙ_ЗАХИСТ_РЕСУРСІВ: Управління навантаженням та VRAM.
  */
 
@@ -130,9 +130,9 @@ export const ResourceGuardTab: React.FC = () => {
               <span>СТАТУС_ЗАХИСТУ: {isCloudOverride ? 'АКТИВНИЙ_CLOUD_OVERRIDE' : 'НОРМАЛЬНИЙ'}</span>
             </div>
             <span>•</span>
-            <span>ЛІМІТ_VRAM: {VRAM_TOTAL_LIMIT}GB</span>
+            <span>ЛІМІТ_VRAM: {VRAM_TOTAL_LIMIT} ГБ</span>
             <span>•</span>
-            <span>ВЕРСІЯ: v60.0-ELITE</span>
+            <span>ВЕРСІЯ: v60.5-ELITE</span>
           </div>
         </div>
         
@@ -187,7 +187,7 @@ export const ResourceGuardTab: React.FC = () => {
                        <div className="flex flex-col">
                           <span className="text-[9px] font-black text-rose-500 uppercase tracking-tighter">CLOUD_OVERRIDE_TRIGGERED</span>
                           <p className="text-[8px] text-rose-200/60 font-mono leading-tight uppercase italic">
-                            Навантаження перевищує {CLOUD_OVERRIDE_THRESHOLD}GB. Автоматичне перемикання на хмарні потужності.
+                            Навантаження перевищує {CLOUD_OVERRIDE_THRESHOLD} ГБ. Автоматичне перемикання на хмарні потужності.
                           </p>
                        </div>
                     </div>
@@ -226,7 +226,7 @@ export const ResourceGuardTab: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">СТАТУС_ВУЗЛА</span>
-                        <span className="text-[10px] font-black text-emerald-500 uppercase">ONLINE</span>
+                        <span className="text-[10px] font-black text-emerald-500 uppercase">В_МЕРЕЖІ</span>
                      </div>
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">ЗАВАНТАЖЕННЯ</span>
@@ -264,11 +264,11 @@ export const ResourceGuardTab: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">ЗВ'ЯЗОК_RTT</span>
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-tighter">12.4ms</span>
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-tighter">12.4 мс</span>
                      </div>
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">VRAM_IMAC</span>
-                        <span className="text-[10px] font-black text-white italic">8.0 GB</span>
+                        <span className="text-[10px] font-black text-white italic">8.0 ГБ</span>
                      </div>
                   </div>
 
@@ -295,10 +295,10 @@ export const ResourceGuardTab: React.FC = () => {
           <TacticalCard variant="holographic" title="АКТИВНІ_ПРОЦЕСИ_ТА_ОФЛОАД_МАРШРУТИ" className="flex-1">
              <div className="mt-4 space-y-4 h-[300px] overflow-y-auto custom-scrollbar pr-2">
                 {[
-                  { name: 'Core API (Backend)', type: 'SVC', load: 'High', vram: '1.2GB', location: failover?.activeNode },
-                  { name: 'Ingestion Worker', type: 'WRK', load: 'Med', vram: '0.4GB', location: failover?.activeNode },
-                  { name: 'Graph Service (Neo4j)', type: 'DB', load: 'Med', vram: '1.8GB', location: failover?.activeNode },
-                  { name: 'DeepSeek LLM (Coder)', type: 'AI', load: 'Extreme', vram: '4.2GB', location: 'LOCAL' },
+                  { name: 'Core API (Backend)', type: 'SVC', load: 'Високе', vram: '1.2 ГБ', location: failover?.activeNode },
+                  { name: 'Ingestion Worker', type: 'WRK', load: 'Середнє', vram: '0.4 ГБ', location: failover?.activeNode },
+                  { name: 'Graph Service (Neo4j)', type: 'DB', load: 'Середнє', vram: '1.8 ГБ', location: failover?.activeNode },
+                  { name: 'DeepSeek LLM (Coder)', type: 'AI', load: 'Екстремальне', vram: '4.2 ГБ', location: 'LOCAL' },
                 ].map((proc, i) => (
                   <div key={i} className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-sm group hover:border-white/10 transition-all border-l-2 border-l-rose-500/30">
                     <div className="flex items-center gap-4">

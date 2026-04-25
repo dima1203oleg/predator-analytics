@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GeometricRaptor } from './Logo';
 
 /**
- * 🦅 PREDATOR Analytics // BOOT SEQUENCE v57.8-ELITE «Sovereign Power»
+ * 🦅 PREDATOR Analytics // BOOT SEQUENCE v60.0-ELITE «Sovereign Power»
  * =================================================================
  * Преміальна, страхітлива візуалізація ініціалізації аналітичного ядра.
  * Bloomberg / Palantir Aesthetic | Deep Cosmic Atmospheric Audio
@@ -225,7 +225,7 @@ const RAW_SOURCES = [
 export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [phase, setPhase] = useState(0);
   const [bootLogs, setBootLogs] = useState<string[]>([]);
-  const [targetLabel, setTargetLabel] = useState("INITIALIZING...");
+  const [targetLabel, setTargetLabel] = useState("ІНІЦІАЛІЗАЦІЯ...");
   const [sourceText, setSourceText] = useState("");
   const [matchLine, setMatchLine] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -243,12 +243,12 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
     >
       <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden backdrop-blur-3xl">
         <div className="absolute top-0 right-0 p-8">
-           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">PROPRIETARY_PROTOCOL_57.8</div>
+           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
         </div>
         
         <div className="flex flex-col gap-20">
           <div className="space-y-6">
-             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60">Sovereign Authorization Layer</div>
+             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60">Рівень_Суверенної_Авторизації</div>
              <h2 className="text-white text-7xl font-light tracking-[0.2em] uppercase leading-tight">
                Правовий <span className="text-[#D4AF37] font-medium">Суверенітет</span>
              </h2>
@@ -300,11 +300,11 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
   // System Log Stream
   useEffect(() => {
     const logs = [
-      "BOOT: INITIALIZING ELITE_SYSCALLS",
-      "CORE: ATTACHING NEURAL_SYNAPSE_v57",
-      "SIGINT: SCANNING GLOBAL_RESERVES [KYIV_SYNC]",
-      "AUTH: OMEGA_CLEARANCE_ESTABLISHED",
-      "STATUS: PREDATOR_AWAKENING [SOVEREIGN_MODE]",
+      "BOOT: ЗАВАНТАЖЕННЯ_ЕЛІТНИХ_СИСТЕМНИХ_ВИКЛИКІВ",
+      "CORE: ПРИЄДНАННЯ_НЕЙРОННИХ_СИНАПСІВ_v60",
+      "SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_РЕЗЕРВІВ [КИЇВ_СИНХРО]",
+      "AUTH: ВСТАНОВЛЕНО_ДОПУСК_ОМЕГА",
+      "STATUS: ПРОБУДЖЕННЯ_ПРЕДАТОРА [СУВЕРЕННИЙ_РЕЖИМ]",
     ];
     let i = 0;
     const interval = setInterval(() => {
@@ -436,12 +436,12 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
              PREDATOR <span className="text-[#D4AF37]">ELITE</span>
            </div>
            <div className="h-[1px] w-96 bg-gradient-to-r from-[#D4AF37] to-transparent shadow-[0_0_10px_#D4AF37]" />
-           <div className="text-white/30 text-[10px] tracking-[1em] uppercase font-bold">Absolute Intelligence Cluster // v57.8</div>
+           <div className="text-white/30 text-[10px] tracking-[1em] uppercase font-bold">Кластер_Абсолютного_Інтелекту // v60.0</div>
         </div>
         
         <div className="absolute top-16 right-16 flex flex-col items-end gap-2 z-50 opacity-40 text-right">
-           <div className="text-[#D4AF37] font-black text-xs tracking-[1em] uppercase">ACCESS: SUPREME_SOVEREIGN</div>
-           <div className="text-white/20 font-mono text-[9px] uppercase tracking-widest italic">NEURAL_SHIELD_ACTIVE // 2048-Q Encryption</div>
+           <div className="text-[#D4AF37] font-black text-xs tracking-[1em] uppercase">ДОСТУП: ВЕРХОВНИЙ_СУВЕРЕН</div>
+           <div className="text-white/20 font-mono text-[9px] uppercase tracking-widest italic">НЕЙРОННИЙ_ЩИТ_АКТИВНИЙ // 2048-Q Шифрування</div>
         </div>
 
         <button 
@@ -463,7 +463,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
           animate={{ opacity: 1, x: 0 }}
           className="border-l border-[#D4AF37]/20 pl-10 space-y-6"
         >
-          <div className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.6em] mb-12 italic opacity-40">System_Initialization_Log:</div>
+          <div className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.6em] mb-12 italic opacity-40">Журнал_Ініціалізації_Системи:</div>
           <div className="space-y-4">
             {bootLogs.map((log, i) => (
               <div key={i} className="text-[9px] font-mono text-white/20 tracking-[0.4em] flex items-center gap-5">
@@ -508,7 +508,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
               />
             </h1>
             <p className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-20 italic">
-               The World is Data. We are the Predators.
+               Світ — це дані. Ми — Предатори.
             </p>
           </motion.div>
         )}
@@ -528,7 +528,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
                 <div className="text-center bg-black/80 p-32 backdrop-blur-3xl border border-[#D4AF37]/20 shadow-[0_0_200px_rgba(0,0,0,1)] relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
                    <div className="text-[11px] text-[#D4AF37] font-black tracking-[2em] uppercase mb-12 opacity-40 italic">
-                     Neural_Core_Synchronization
+                     Синхронізація_Нейронного_Ядра
                    </div>
                    <div className="text-white text-7xl font-light tracking-[0.4em] uppercase mb-10 h-24 flex items-center justify-center">
                       <motion.span
@@ -537,7 +537,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
                       >{targetLabel}</motion.span>
                    </div>
                    <div className="text-[#D4AF37]/30 text-[10px] tracking-[1em] font-mono uppercase italic border-t border-white/5 pt-8">
-                      LOAD: 3.42% // CLUSTER: READY
+                      ЗАВАНТАЖЕННЯ: 3.42% // КЛАСТЕР: ГОТОВИЙ
                    </div>
                 </div>
              </div>
@@ -547,7 +547,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
         {phase === 2 && (
           <div className="w-full max-w-[85vw] flex flex-col items-center gap-24 relative z-10 px-24">
             <div className="text-[#D4AF37] text-sm tracking-[3em] uppercase font-black opacity-30 pb-12 border-b border-[#D4AF37]/10 w-full text-center italic">
-               Global_Extraction_Protocols
+               Глобальні_Протоколи_Вилучення
             </div>
             
             <div className="w-full grid grid-cols-2 gap-32">
@@ -557,7 +557,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
                 className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
               >
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
-                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ RAW_SIGINT_STREAM ] </div>
+                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ПОТІК_RAW_SIGINT ] </div>
                 <div className="text-white font-mono text-2xl leading-normal h-80 overflow-hidden break-all tracking-tight opacity-60 italic">
                   {sourceText}
                   <motion.span 
@@ -575,7 +575,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
                 className="p-20 bg-black/70 border border-[#D4AF37]/10 flex flex-col gap-12 relative overflow-hidden backdrop-blur-2xl"
               >
                 <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
-                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ VERIFIED_INTEL ] </div>
+                <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ВЕРИФІКОВАНІ_ДАНІ ] </div>
                 <div className="text-white font-mono text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
                   {["АНАЛІЗ ТРАНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТОРИНГ КОРДОНІВ: АКТИВНО", "ПОШУК АНОМАЛІЙ: 0.042ms", "РИЗИК-ПРОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
                     <motion.div 
@@ -615,7 +615,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
               </h2>
             </div>
             <div className="mt-20 text-[#D4AF37] text-[11px] font-black tracking-[4em] uppercase opacity-40 animate-pulse italic ml-[4em]">
-               Sovereignty Protocol Engaged
+               Протокол_Суверенітету_Активовано
             </div>
           </motion.div>
         )}
@@ -624,16 +624,16 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
       {/* GLOBAL FOOTER SYNC TICKER */}
       <div className="absolute bottom-0 w-full bg-black border-t border-[#D4AF37]/10 h-16 flex items-center overflow-hidden z-[70] px-20 shadow-[0_-30px_60px_rgba(0,0,0,0.8)]">
         <div className="bg-[#050505] text-[#D4AF37] font-black px-10 h-full flex items-center tracking-[0.6em] text-[11px] border-r border-[#D4AF37]/30 skew-x-[-20deg] mr-16 shadow-[10px_0_30px_rgba(0,0,0,0.8)]">
-           KYIV_CENTRAL_CORE
+           ЦЕНТРАЛЬНЕ_ЯДРО_КИЇВ
         </div>
         <div className="flex animate-ticker whitespace-nowrap gap-32 text-white/20 font-mono text-[10px] tracking-[0.6em] items-center italic">
           {[...Array(5)].map((_, i) => (
             <React.Fragment key={i}>
-              <span className="text-[#D4AF37]/80">KYIV_NODE_H100: SYNCED</span>
+              <span className="text-[#D4AF37]/80">КИЇВ_ВУЗОЛ_H100: СИНХРОНІЗОВАНО</span>
               <span>GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...</span>
-              <span className="text-white/40">NEURAL_LOAD: 3.48%</span>
-              <span className="text-[#D4AF37]/80">MARKET_MANIPULATION_DETECTED</span>
-              <span>LATENCY: 0.000042ms</span>
+              <span className="text-white/40">НЕЙРОННЕ_НАВАНТАЖЕННЯ: 3.48%</span>
+              <span className="text-[#D4AF37]/80">ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_РИНКОМ</span>
+              <span>ЗАТРИМКА: 0.000042ms</span>
             </React.Fragment>
           ))}
         </div>
