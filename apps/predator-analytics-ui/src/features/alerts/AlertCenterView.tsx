@@ -215,7 +215,7 @@ function AlertCard({ alert, onAck }: { alert: Alert; onAck: (id: string) => void
                   className="flex items-center gap-1.5 px-2 py-1 rounded text-[10px] text-white/50 border border-white/10 hover:text-white/80 hover:border-white/20 transition-colors"
                 >
                   <CheckCheck className="w-3 h-3" />
-                  ACK
+                  ПРИЙНЯТИ (ACK)
                 </button>
               )}
             </div>
@@ -266,7 +266,7 @@ export const AlertCenterView: React.FC = () => {
             )}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Alert Center</h1>
+            <h1 className="text-xl font-bold text-white tracking-tight">Центр Сповіщень (Alert Center)</h1>
             <div className="flex items-center gap-3 mt-0.5">
               {criticalCount > 0 && (
                 <div className="flex items-center gap-1.5">

@@ -46,7 +46,7 @@ export function BackendSwitcher() {
         </div>
         
         <div className="flex flex-col items-start mr-2">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 leading-none mb-1">Active Node</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 leading-none mb-1">Активний Вузол</span>
           <span className="text-xs font-black tracking-tight whitespace-nowrap uppercase">{activeNode?.name || 'Sovereign Core'}</span>
         </div>
         

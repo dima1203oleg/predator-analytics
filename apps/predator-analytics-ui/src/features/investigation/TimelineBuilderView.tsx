@@ -287,7 +287,7 @@ export const TimelineBuilderView: React.FC = () => {
             <History className="w-5 h-5 text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Timeline Builder</h1>
+            <h1 className="text-xl font-bold text-white tracking-tight">Реконструктор Хронології (Timeline Builder)</h1>
             <p className="text-xs text-white/40 mt-0.5">Хронологічна реконструкція подій · CASE-2025-089</p>
           </div>
         </div>

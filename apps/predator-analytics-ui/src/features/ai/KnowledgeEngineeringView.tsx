@@ -107,8 +107,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
         return (
           <ExplainabilityPanel
             entityId="comp-123"
-            entityName="TOV ROMASHKA"
-            decision="High Risk"
+            entityName="ТОВ РОМАШКА"
+            decision="Високий Ризик"
             riskScore={78}
           />
         );
@@ -116,18 +116,18 @@ export const KnowledgeEngineeringView: React.FC = () => {
       case 'workflow':
         return (
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Pipeline State Machine</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Машина Станів Пайплайну</h3>
             <div className="grid grid-cols-6 gap-2">
-              {['CREATED', 'SOURCE_CHECKED', 'INGESTED', 'PARSED', 'VALIDATED',
-                'TRANSFORMED', 'ENTITIES_RESOLVED', 'LOADED', 'GRAPH_BUILT',
-                'INDEXED', 'VECTORIZED', 'READY'].map((state, i) => (
+              {['СТВОРЕНО', 'ДЖЕРЕЛО_ПЕРЕВІРЕНО', 'ІНГЕСТІЯ', 'ПАРСИНГ', 'ВАЛІДАЦІЯ',
+                'ТРАНСФОРМАЦІЯ', 'ОБ’ЄКТИ_ВИРІШЕНІ', 'ЗАВАНТАЖЕНО', 'ГРАФ_ПОБУДОВАНО',
+                'ІНДЕКСОВАНО', 'ВЕКТОРОВАНО', 'ГОТОВО'].map((state, i) => (
                   <motion.div
                     key={state}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${state === 'READY' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50' :
-                      state === 'VALIDATED' ? 'bg-rose-900/40 text-rose-300 border border-rose-500/30' :
+                    className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${state === 'ГОТОВО' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50' :
+                      state === 'ВАЛІДАЦІЯ' ? 'bg-rose-900/40 text-rose-300 border border-rose-500/30' :
                         'bg-slate-800 text-slate-400 border border-slate-700'
                       }`}
                   >
@@ -137,8 +137,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
             </div>
             <div className="mt-6 p-4 bg-slate-800/50 rounded-xl">
               <p className="text-slate-400 text-sm">
-                FSM manages state transitions. Parallel stages allowed.
-                Rollback supported on FAILED.
+                FSM керує переходами станів. Дозволені паралельні етапи.
+                Підтримка відкату при ПОМИЛЦІ.
               </p>
             </div>
           </div>
@@ -149,7 +149,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
             <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2">
               <Users className="text-rose-500" />
-              Entity Resolution Engine
+              Двигун Вирішення Сутностей (Entity Resolution)
             </h3>
 
             <div className="space-y-6">
@@ -157,7 +157,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
               <div className="bg-slate-800/50 rounded-2xl p-8 border border-white/5 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-6">
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 uppercase font-black block mb-1 tracking-widest">Confidence Score</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-black block mb-1 tracking-widest">Рейтинг Довіри</span>
                     <span className="text-4xl font-black text-rose-500">94.2%</span>
                   </div>
                 </div>
@@ -168,8 +168,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <h4 className="text-xl font-bold text-white uppercase tracking-tight">ТОВ "РОМАШКА ІНВЕСТ"</h4>
                     <p className="text-xs text-slate-500 mt-2 font-mono">ЄДРПОУ: 12345678</p>
                     <div className="mt-4 flex gap-2">
-                      <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 text-[9px] font-bold border border-rose-500/20 uppercase">Trade Data Active</span>
-                      <span className="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[9px] font-bold border border-yellow-500/20 uppercase">Registry Verified</span>
+                      <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 text-[9px] font-bold border border-rose-500/20 uppercase">ТОРГОВІ ДАНІ АКТИВНІ</span>
+                      <span className="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[9px] font-bold border border-yellow-500/20 uppercase">РЕЄСТР ВЕРИФІКОВАНО</span>
                     </div>
                   </div>
 
@@ -185,7 +185,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <h4 className="text-xl font-bold text-white uppercase tracking-tight">ROMASHKA INVESTMENT LLC</h4>
                     <p className="text-xs text-slate-500 mt-2 font-mono">LEI: 549300V55...</p>
                     <div className="mt-4 flex gap-2">
-                      <span className="px-2 py-0.5 rounded bg-rose-900/20 text-rose-300 text-[9px] font-bold border border-rose-500/20 uppercase">OSINT Profile Match</span>
+                      <span className="px-2 py-0.5 rounded bg-rose-900/20 text-rose-300 text-[9px] font-bold border border-rose-500/20 uppercase">OSINT ПРОФІЛЬ ЗБІГАЄТЬСЯ</span>
                     </div>
                   </div>
                 </div>
@@ -219,8 +219,8 @@ export const KnowledgeEngineeringView: React.FC = () => {
               </div>
 
               <div className="flex justify-end gap-3">
-                <button className="px-6 py-2 bg-slate-800 text-slate-400 rounded-xl font-bold text-sm hover:text-white transition-colors uppercase tracking-widest">Mark as Non-Match</button>
-                <button className="px-6 py-2 bg-gradient-to-r from-rose-600 to-rose-400 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-500/20 uppercase tracking-widest">Merge Entities</button>
+                <button className="px-6 py-2 bg-slate-800 text-slate-400 rounded-xl font-bold text-sm hover:text-white transition-colors uppercase tracking-widest">Немає Збігу</button>
+                <button className="px-6 py-2 bg-gradient-to-r from-rose-600 to-rose-400 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-500/20 uppercase tracking-widest">Об'єднати Сутності</button>
               </div>
             </div>
           </div>
@@ -229,7 +229,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
       case 'rules':
         return (
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Rules Engine</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Машина Правил (Rules Engine)</h3>
             <div className="space-y-3">
               {loading ? (
                 Array(4).fill(0).map((_, i) => <div key={i} className="h-16 bg-slate-800 animate-pulse rounded-xl" />)
@@ -250,7 +250,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                       onClick={() => toggleRule(rule.id)}
                       className={`relative w-12 h-6 rounded-full transition-colors ${rule.enabled ? 'bg-rose-500' : 'bg-slate-600'
                         }`}
-                      aria-label={`Toggle ${rule.name}`}
+                      aria-label={`Перемкнути ${rule.name}`}
                     >
                       <motion.div
                         animate={{ x: rule.enabled ? 24 : 0 }}
@@ -267,7 +267,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
       case 'costs':
         return (
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Cost & Load Governor</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Контроль Витрат та Навантаження</h3>
             <div className="grid grid-cols-2 gap-4">
               {loading ? (
                 Array(4).fill(0).map((_, i) => <div key={i} className="h-24 bg-slate-800 animate-pulse rounded-xl" />)
@@ -286,7 +286,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                       />
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
-                      Limit: ${item.limit}/day
+                      Ліміт: ${item.limit}/день
                     </p>
                   </div>
                 ))
@@ -299,7 +299,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
         return (
           <div className="bg-slate-900/90 border border-slate-700/50 rounded-2xl p-6 text-center">
             <Settings size={48} className="mx-auto text-slate-600 mb-4" />
-            <p className="text-slate-400">Section in development</p>
+            <p className="text-slate-400">Розділ у розробці</p>
           </div>
         );
     }
@@ -309,14 +309,14 @@ export const KnowledgeEngineeringView: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
       {/* Header */}
       <ViewHeader
-        title="Knowledge Engineering"
+        title="Інженерія Знань"
         subtitle="9 критичних рівнів формування знань економічного інтелекту"
         icon={<Zap size={20} className="text-white" />}
         breadcrumbs={['ШІ', 'ІНЖЕНЕРІЯ ЗНАНЬ']}
         stats={[
-          { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
-          { label: 'LAYER', value: KNOWLEDGE_TABS.find(t => t.id === activeTab)?.label || '...', icon: <Database size={14} />, color: 'primary' },
-          { label: 'RULES', value: rules.length.toString(), icon: <Scale size={14} />, color: 'success' },
+          { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'РІВЕНЬ', value: KNOWLEDGE_TABS.find(t => t.id === activeTab)?.label || '...', icon: <Database size={14} />, color: 'primary' },
+          { label: 'ПРАВИЛА', value: rules.length.toString(), icon: <Scale size={14} />, color: 'success' },
         ]}
       />
 

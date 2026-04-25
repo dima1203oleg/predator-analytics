@@ -41,10 +41,10 @@ const SystemPromptsView = () => {
   }, [isOffline]);
 
   const promptCategories = [
-    { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Active', count: 12 },
-    { id: 'analysis', label: 'Глибока Аналітика', icon: Search, status: 'Active', count: 8 },
-    { id: 'decision', label: 'Прийняття Рішень', icon: Shield, status: 'Beta', count: 5 },
-    { id: 'factory', label: 'Системні Промпти Заводу', icon: Zap, status: 'Critical', count: 32 },
+    { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Активно', count: 12 },
+    { id: 'analysis', label: 'Глибока Аналітика', icon: Search, status: 'Активно', count: 8 },
+    { id: 'decision', label: 'Прийняття Рішень', icon: Shield, status: 'Бета', count: 5 },
+    { id: 'factory', label: 'Системні Промпти Заводу', icon: Zap, status: 'Критично', count: 32 },
   ];
 
   const prompts = [
@@ -56,17 +56,17 @@ const SystemPromptsView = () => {
 
   return (
     <div className="min-h-screen bg-[#010714] text-slate-200 font-sans pb-20">
-      <AdvancedBackground />
+      <AdvancedBackground mode="sovereign" />
       
       <ViewHeader 
-        title="СИСТЕМНІ ПРОМПТИ ШІ"
+        title="СИСТЕМНІ ПРОМПТІ ШІ"
         subtitle="Керування інструкціями для нейромереж та системної логіки PREDATOR"
         icon={<Terminal size={24} className="text-rose-400" />}
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ПРОМПТИ']}
         stats={[
-          { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
-          { label: 'ENGINE', value: 'V5 LIVE', icon: <Zap size={14} />, color: 'primary' },
-          { label: 'STATUS', value: isOffline ? 'AUTONOMOUS' : 'SYNCED', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
+          { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+          { label: 'ДВИГУН', value: 'V5 LIVE', icon: <Zap size={14} />, color: 'primary' },
+          { label: 'СТАТУС', value: isOffline ? 'АВТОНОМНО' : 'СИНХРОНІЗОВАНО', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
         ]}
       />
 
@@ -81,7 +81,7 @@ const SystemPromptsView = () => {
                        <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20 group-hover:scale-110 transition-transform">
                           <cat.icon size={18} />
                        </div>
-                       <Badge variant={cat.status === 'Critical' ? 'destructive' : 'secondary'} className="text-[8px] font-black">
+                       <Badge variant={cat.status === 'Критично' ? 'destructive' : 'secondary'} className="text-[8px] font-black">
                           {cat.status}
                        </Badge>
                     </div>
@@ -98,7 +98,7 @@ const SystemPromptsView = () => {
                  <Shield className="text-rose-500 h-5 w-5" />
                  <span className="text-[10px] font-black text-white uppercase tracking-widest italic leading-none">CORTEX SECURITY OK</span>
               </div>
-              <p className="text-[11px] text-slate-500 uppercase tracking-tighter sm:font-mono italic">Усі системні промпти проходять через Firewall на наявність Leak-ин'єкцій.</p>
+              <p className="text-[11px] text-slate-500 uppercase tracking-tighter sm:font-mono italic">Усі системні промпти проходять через Firewall на наявність Leak-ін'єкцій.</p>
            </TacticalCard>
         </div>
 
@@ -135,7 +135,7 @@ const SystemPromptsView = () => {
                     </Badge>
                  </div>
                  <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                    <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic">UPDATE: {new Date(p.lastUpdate).toLocaleTimeString('uk-UA')}</span>
+                    <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic">ОНОВЛЕНО: {new Date(p.lastUpdate).toLocaleTimeString('uk-UA')}</span>
                     <button className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">РЕДАГУВАТИ <Copy size={10} className="inline ml-1 opacity-50" /></button>
                  </div>
               </motion.div>
@@ -153,7 +153,7 @@ const SystemPromptsView = () => {
                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
                     </div>
                     <div className="w-px h-6 bg-white/10 mx-2" />
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">EDITOR: {selectedPrompt || "CHOOSE_PROMPT"}</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">РЕДАКТОР: {selectedPrompt || "ОБЕРІТЬ_ПРОМПТ"}</span>
                  </div>
                  <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-white hover:bg-white/5">
@@ -168,12 +168,12 @@ const SystemPromptsView = () => {
               <div className="flex-1 p-8 font-mono text-[13px] leading-relaxed text-slate-400 overflow-y-auto custom-scrollbar">
                  {selectedPrompt ? (
                     <div className="space-y-4">
-                       <p className="text-emerald-400/60 break-all leading-tight">{"/* SYSTEM_CONTEXT_INITIALIZATION */"}</p>
-                       <p><span className="text-rose-500">ROLE:</span> Senior Strategic Analyst covering Customs Ukraine Infrastructure.</p>
-                       <p><span className="text-rose-500">MISSION:</span> Identify high-risk entities and corruption-related anomalies in real-time streams.</p>
-                       <p><span className="text-rose-500">CONSTRAINTS:</span> 1. Neutral analytical tone. 2. Legal compliance strict checking. 3. Zero hallucination policy.</p>
+                       <p className="text-emerald-400/60 break-all leading-tight">{"/* ІНІЦІАЛІЗАЦІЯ_СИСТЕМНОГО_КОНТЕКСТУ */"}</p>
+                       <p><span className="text-rose-500">РОЛЬ:</span> Старший стратегічний аналітик митної інфраструктури України.</p>
+                       <p><span className="text-rose-500">МІСІЯ:</span> Виявлення суб'єктів високого ризику та корупційних аномалій у реальному часі.</p>
+                       <p><span className="text-rose-500">ОБМЕЖЕННЯ:</span> 1. Нейтральний аналітичний тон. 2. Сувора перевірка правової відповідності. 3. Політика нульових галюцинацій.</p>
                        <div className="w-full h-px bg-white/10 my-4" />
-                       <p><span className="text-yellow-400">INSTRUCTION_SET:</span> Analyze 'HS_CODE' against historical seasonal deviations of +/- 15%. If 'IMPORT_VALUE' exceeds median for 'COUNTRY_OF_ORIGIN' by 300%, flag as 'CRITICAL_RISK'.</p>
+                       <p><span className="text-yellow-400">НАБІР_ІНСТРУКЦІЙ:</span> Аналізувати 'HS_CODE' на предмет історичних сезонних відхилень +/- 15%. Якщо 'IMPORT_VALUE' перевищує медіану для 'COUNTRY_OF_ORIGIN' на 300%, позначити як 'КРИТИЧНИЙ_РИЗИК'.</p>
                        <p className="animate-pulse opacity-40">|</p>
                     </div>
                  ) : (
@@ -187,10 +187,10 @@ const SystemPromptsView = () => {
               <div className="p-6 bg-white/5 border-t border-white/5 flex items-center justify-between">
                  <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic group hover:text-yellow-300 cursor-help">
-                       <RefreshCw size={12} className="group-hover:rotate-180 transition-transform duration-700" /> SYMBOLS: 1024
+                       <RefreshCw size={12} className="group-hover:rotate-180 transition-transform duration-700" /> СИМВОЛІВ: 1024
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
-                       TOKEN_COST: $0.002
+                       ВАРТІСТЬ_ТОКЕНІВ: $0.002
                     </div>
                  </div>
                  <Button className="bg-rose-600 hover:bg-rose-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic">

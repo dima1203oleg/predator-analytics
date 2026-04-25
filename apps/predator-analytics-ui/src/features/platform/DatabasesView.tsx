@@ -259,7 +259,7 @@ const DatabasesView: React.FC = () => {
                         ЯДРО <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-amber-500 to-red-700">СУВЕРЕНИТЕТУ</span>
                     </h1>
                     <p className="text-slate-400 font-medium max-w-2xl leading-relaxed text-sm lg:text-base italic">
-                        Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків під захистом <span className="text-red-500 font-bold">Constitutional Shield</span>.
+                        Централізований шлюз до всіх рівнів зберігання даних. Від реляційних транзакцій до графових топологій та високочастотних векторних пошуків під захистом <span className="text-red-500 font-bold">Конституційного Щита (Constitutional Shield)</span>.
                     </p>
                 </div>
 

@@ -171,7 +171,7 @@ const HypothesisEngineView: React.FC = () => {
       '> Крос-верифікація між моделями...',
       '> Ранжування гіпотез за confidence score...',
       '─────────────────────────────────────',
-      '> ✓ НОВА ГІПОТЕЗА СФОРМОВАНА · Confidence: 79%',
+      '> ✓ НОВА ГІПОТЕЗА СФОРМОВАНА · Впевненість: 79%',
     ];
 
     for (let i = 0; i < steps.length; i++) {
@@ -512,7 +512,7 @@ const HypothesisEngineView: React.FC = () => {
                       <div className="flex items-center gap-4">
                         <div className="p-3 bg-white/5 rounded-2xl"><Cpu size={20} className="text-yellow-500" /></div>
                         <div>
-                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Compute Node</p>
+                           <p className="text-[9px] text-slate-700 font-black uppercase mb-1">Вузол Обчислень</p>
                            <p className="text-[13px] font-black text-white font-mono">{selected.aiModel}</p>
                         </div>
                       </div>

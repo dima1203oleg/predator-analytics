@@ -29,7 +29,7 @@ export function GoogleIntegralityCard({
              <Cloud size={20} />
            </div>
            <div className="flex-1">
-             <div className="text-[11px] font-black uppercase text-white">Google Workspace</div>
+             <div className="text-[11px] font-black uppercase text-white">Google Робочий Простір (Workspace)</div>
              <div className="text-[8px] text-emerald-500 font-mono">Синхронізація: Drive, Docs, Sheets</div>
            </div>
            <Badge variant="cyber" className="bg-emerald-500/20 text-emerald-400 text-[8px]">{googleStatus.drive.toUpperCase() === 'CONNECTED' ? 'ПІДКЛЮЧЕНО' : googleStatus.drive.toUpperCase()}</Badge>
@@ -51,7 +51,7 @@ export function GoogleIntegralityCard({
              <BarChart3 size={20} />
            </div>
            <div className="flex-1">
-             <div className="text-[11px] font-black uppercase text-white">Google Analytics</div>
+             <div className="text-[11px] font-black uppercase text-white">Google Аналітика</div>
              <div className="text-[8px] text-rose-400 font-mono">Аналіз трафіку та конверсії</div>
            </div>
            <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>

@@ -244,7 +244,7 @@ export default function ModelTrainingView() {
                                         </h1>
                                         <div className="flex items-center gap-3 text-[9px] font-mono font-black tracking-[0.4em] text-white/20 uppercase mt-1">
                                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
-                                            Active Neural Synchronization [X-GRID]
+                                            Активна Нейронна Синхронізація [X-GRID]
                                         </div>
                                     </div>
                                 </div>
@@ -302,7 +302,7 @@ export default function ModelTrainingView() {
                         
                         {/* Left Column: Active Session & Controls */}
                         <div className="col-span-12 xl:col-span-4 space-y-8">
-                            <TacticalCard variant="holographic" title="ACTIVE_SESSION_DATA" className="bg-black/40 border-white/5 shadow-2xl relative overflow-hidden">
+                            <TacticalCard variant="holographic" title="ДАНІ_АКТИВНОЇ_СЕСІЇ" className="bg-black/40 border-white/5 shadow-2xl relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                                     <Binary size={120} />
                                 </div>
@@ -364,7 +364,7 @@ export default function ModelTrainingView() {
                                             )}
                                         >
                                             {starting ? <Loader2 className="animate-spin mr-3" size={18} /> : <Play className="mr-3" size={16} fill="currentColor" />}
-                                            INIT_TRAINING
+                                            ІНІЦІАЛІЗУВАТИ_НАВЧАННЯ
                                         </Button>
                                         <Button 
                                             onClick={() => loadData()}
@@ -373,13 +373,13 @@ export default function ModelTrainingView() {
                                             className="h-14 rounded-sm bg-white/5 border-white/10 hover:border-white/30 text-white/60 hover:text-white font-black tracking-[0.3em] uppercase text-[11px]"
                                         >
                                             <RefreshCw className={cn("mr-3", refreshing && "animate-spin")} size={16} />
-                                            SYNC_ENGINE
+                                            СИНХРОНІЗУВАТИ_ЯДРО
                                         </Button>
                                     </div>
                                 </div>
                             </TacticalCard>
 
-                            <TacticalCard variant="holographic" title="RESOURCE_CONSUMPTION" className="bg-black/40 border-white/5">
+                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_РЕСУРСІВ" className="bg-black/40 border-white/5">
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     {[
                                         { label: 'CPU_POWER', value: snapshot.resources.cpuLabel, icon: Activity },
@@ -401,7 +401,7 @@ export default function ModelTrainingView() {
 
                         {/* Middle Column: Visualization & History */}
                         <div className="col-span-12 xl:col-span-5 space-y-8">
-                            <TacticalCard variant="cyber" title="NEURAL_ACCURACY_STREAM" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
+                            <TacticalCard variant="cyber" title="ПОТІК_НЕЙРОННОЇ_ТОЧНОСТІ" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
                                 <div className="flex-1 min-h-0 mt-8">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <AreaChart data={snapshot.metrics}>
@@ -443,9 +443,9 @@ export default function ModelTrainingView() {
                                 <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,1)]" />
-                                        <span>LIVE_TELEMETRY_PHASE_SYNC</span>
+                                        <span>ЖИВА_ТЕЛЕМЕТРІЯ_СИНХРОНІЗАЦІЯ_ФАЗИ</span>
                                     </div>
-                                    <span>SAMPLES: {snapshot.metrics.length} CYCLES</span>
+                                    <span>ЗРАЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
                                 </div>
                             </TacticalCard>
 
@@ -453,7 +453,7 @@ export default function ModelTrainingView() {
                                 <div className="flex items-center justify-between px-2">
                                     <h3 className="text-[12px] font-black text-white/40 tracking-[0.3em] uppercase italic flex items-center gap-3">
                                         <HistoryIcon size={14} className="text-rose-500" />
-                                        Training_History
+                                        Історія_Навчання (History)
                                     </h3>
                                     <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">ARCHIVE_L7</span>
                                 </div>
@@ -475,7 +475,7 @@ export default function ModelTrainingView() {
 
                         {/* Right Column: Terminal Logs */}
                         <div className="col-span-12 xl:col-span-3">
-                            <TacticalCard variant="holographic" title="NEURAL_LOGS_STREAM" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
+                            <TacticalCard variant="holographic" title="ПОТІК_НЕЙРОННИХ_ЛОГІВ" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
                                 <div className="flex-1 overflow-auto p-4 font-mono text-[9px] space-y-3 custom-scrollbar">
                                     {snapshot.logs.length > 0 ? (
                                         snapshot.logs.map((log, i) => (
@@ -499,7 +499,7 @@ export default function ModelTrainingView() {
                                     ) : (
                                         <div className="h-full flex flex-col items-center justify-center opacity-20 gap-4 text-center">
                                             <Terminal size={40} className="animate-pulse" />
-                                            <span className="uppercase tracking-[0.3em] font-black">Waiting for stream...</span>
+                                            <span className="uppercase tracking-[0.3em] font-black">Очікування потоку...</span>
                                         </div>
                                     )}
                                     <div ref={logsEndRef} />

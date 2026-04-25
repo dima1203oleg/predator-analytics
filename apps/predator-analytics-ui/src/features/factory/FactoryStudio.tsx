@@ -144,8 +144,8 @@ export default function FactoryStudio() {
           {/* Header */}
           <div className="p-6 border-b border-white/10 bg-black/40 backdrop-blur-xl">
             <ViewHeader
-              title="Factory Studio"
-              subtitle="Knowledge Map, Patterns & Model Training"
+              title="Студія Фабрики"
+              subtitle="Карта Знань, Патерни та Тренування Моделей"
               icon={Zap}
             />
           </div>
@@ -167,7 +167,7 @@ export default function FactoryStudio() {
                   {tab === 'overview'
                     ? '📊 Огляд'
                     : tab === 'knowledge-map'
-                    ? '🕸️ Knowledge Map'
+                    ? '🕸️ Карта Знань'
                     : tab === 'patterns'
                     ? '⭐ Золоті Патерни'
                     : tab === 'training'
@@ -308,7 +308,7 @@ export default function FactoryStudio() {
 
                  {/* Chart */}
                  <div className="bg-white/5 border border-white/10 rounded-lg p-6">
-                    <h4 className="text-sm font-bold text-slate-300 mb-4">Епохи Тренування (Metrics)</h4>
+                    <h4 className="text-sm font-bold text-slate-300 mb-4">Епохи Тренування (Метрики)</h4>
                     {trainingStats.length > 0 ? (
                       <TrainingChart data={trainingStats} />
                     ) : (
@@ -328,7 +328,7 @@ export default function FactoryStudio() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-xs text-slate-400 uppercase font-bold">
-                          Run ID
+                          ID Запуску
                         </label>
                         <input
                           type="text"
@@ -351,11 +351,11 @@ export default function FactoryStudio() {
                           }
                           className="w-full mt-2 bg-slate-900 border border-slate-700 rounded px-3 py-2 text-white text-sm"
                         >
-                          <option value="backend">Backend</option>
-                          <option value="web_ui">Web UI</option>
+                          <option value="backend">Бекенд</option>
+                          <option value="web_ui">Веб Інтерфейс</option>
                           <option value="api">API</option>
-                          <option value="analytics">Analytics</option>
-                          <option value="core">Core</option>
+                          <option value="analytics">Аналітика</option>
+                          <option value="core">Ядро</option>
                         </select>
                       </div>
                     </div>
@@ -366,7 +366,11 @@ export default function FactoryStudio() {
                         <div key={metric}>
                           <div className="flex items-center justify-between">
                             <label className="text-xs text-slate-400 uppercase font-bold">
-                              {metric.replace(/_/g, ' ')}
+                              {metric === 'coverage' ? 'Покриття' : 
+                               metric === 'pass_rate' ? 'Рівень Проходження' :
+                               metric === 'performance' ? 'Продуктивність' :
+                               metric === 'chaos_resilience' ? 'Стійкість до Хаосу' :
+                               'Бізнес KPI'}
                             </label>
                             <span className="text-sm text-yellow-400 font-bold">
                               {(testForm as any)[metric]}%

@@ -118,7 +118,7 @@ export default function DatasetsPage() {
                 <Badge variant="outline" className="border-emerald-500/30 text-emerald-400">AI READY</Badge>
             </motion.div>
           <h1 className="text-4xl font-black tracking-tight text-white uppercase">
-            Data <span className="text-blue-500">Center</span>
+            Центр <span className="text-blue-500">Даних</span>
           </h1>
           <p className="text-slate-400 max-w-xl">
             Центральний хаб управління даними. Завантажуйте сирі дані, верифікуйте структуру та готуйте їх для навчання AI моделей.
@@ -142,7 +142,7 @@ export default function DatasetsPage() {
               { label: "Всього Датасетів", value: 12, icon: Database, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
               { label: "Активні Канали", value: 8, icon: Activity, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
               { label: "AI Тренування", value: 3, icon: Brain, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
-              { label: "Data Quality", value: 94, icon: CheckCircle2, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", unit: "%" }
+              { label: "Якість Даних", value: 94, icon: CheckCircle2, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", unit: "%" }
           ].map((stat, i) => (
               <motion.div
                   key={stat.label}
@@ -191,7 +191,7 @@ export default function DatasetsPage() {
                     <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500 py-6">ID / Назва</TableHead>
                     <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">DNA Структура</TableHead>
                     <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500 text-center">Об'єм</TableHead>
-                    <TableHead className="text-center text-xs uppercase font-black tracking-widest text-slate-500">Вектор. Стат.</TableHead>
+                    <TableHead className="text-center text-xs uppercase font-black tracking-widest text-slate-500">Статус</TableHead>
                     <TableHead className="text-center text-xs uppercase font-black tracking-widest text-slate-500">Авто-Тренування</TableHead>
                     <TableHead className="text-center text-xs uppercase font-black tracking-widest text-slate-500">Дії</TableHead>
                     </TableRow>
@@ -234,17 +234,17 @@ export default function DatasetsPage() {
                                     <div
                                         className="h-full bg-blue-500 dynamic-width-bar shadow-[0_0_10px_#3b82f6] transition-all duration-1000"
                                         style={{ ['--w' as any]: `${dataset.composition.text}%` }}
-                                        title={`Text: ${dataset.composition.text}%`}
+                                        title={`Текст: ${dataset.composition.text}%`}
                                     />
                                     <div
                                         className="h-full bg-emerald-500 dynamic-width-bar shadow-[0_0_10px_#10b981] transition-all duration-1000"
                                         style={{ ['--w' as any]: `${dataset.composition.numbers}%` }}
-                                        title={`Numbers: ${dataset.composition.numbers}%`}
+                                        title={`Числа: ${dataset.composition.numbers}%`}
                                     />
                                     <div
                                         className="h-full bg-purple-500 dynamic-width-bar shadow-[0_0_10px_#a855f7] transition-all duration-1000"
                                         style={{ ['--w' as any]: `${dataset.composition.dates}%` }}
-                                        title={`Dates: ${dataset.composition.dates}%`}
+                                        title={`Дати: ${dataset.composition.dates}%`}
                                     />
                                 </div>
                                 <div className="flex flex-col items-center">
@@ -263,16 +263,17 @@ export default function DatasetsPage() {
                                 dataset.status === 'processing' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30 animate-pulse' :
                                 'bg-slate-800 text-slate-400 border border-white/5'
                             }>
-                                {dataset.status.toUpperCase()}
+                                {dataset.status === 'active' ? 'АКТИВНИЙ' : 
+                                 dataset.status === 'processing' ? 'ОБРОБКА' : 'ОЧІКУВАННЯ'}
                             </Badge>
                         </TableCell>
                         <TableCell className="text-center">
-                            <Switch checked={dataset.isTraining} onCheckedChange={() => {}} title="Auto-Train" aria-label="Toggle Auto-Train" />
+                            <Switch checked={dataset.isTraining} onCheckedChange={() => {}} title="Авто-Тренування" aria-label="Перемкнути Авто-Тренування" />
                         </TableCell>
                         <TableCell className="text-center">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white hover:bg-white/5 rounded-xl" title="More Actions" aria-label="More Actions">
+                            <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white hover:bg-white/5 rounded-xl" title="Більше Дій" aria-label="Більше Дій">
                                 <MoreHorizontal className="h-5 w-5" />
                             </Button>
                             </DropdownMenuTrigger>

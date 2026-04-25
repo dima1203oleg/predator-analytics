@@ -277,7 +277,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                <Cloud size={24} />
              </div>
              <div className="flex-1 min-w-0">
-               <div className="text-[11px] font-black uppercase text-white truncate">Cloud Connect</div>
+               <div className="text-[11px] font-black uppercase text-white truncate">Хмарне Сполучення (Cloud Connect)</div>
                 <div className="text-[8px] text-rose-400 font-mono mt-1">Очікування контракту</div>
               </div>
               <Badge variant="neon" className="bg-rose-500/20 text-rose-400 text-[8px] shrink-0">ОФЛАЙН</Badge>

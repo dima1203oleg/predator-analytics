@@ -270,10 +270,10 @@ const EvolutionView: React.FC = () => {
                                                     </h4>
                                                     <div className="space-y-6 pt-4 italic">
                                                         {[
-                                                            { label: 'ALGORITHMIC SPEED', val: '+24%', color: '#D4AF37', icon: Zap },
-                                                            { label: 'NEURAL PRECISION', val: '99.92%', color: '#D4AF37', icon: Target },
-                                                            { label: 'SECURITY ENTROPY', val: '0.0001', color: '#F59E0B', icon: ShieldCheck },
-                                                            { label: 'RESOURCE SYNERGY', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
+                                                            { label: 'АЛГОРИТМІЧНА ШВИДКІСТЬ', val: '+24%', color: '#D4AF37', icon: Zap },
+                                                            { label: 'НЕЙРОННА ТОЧНІСТЬ', val: '99.92%', color: '#D4AF37', icon: Target },
+                                                            { label: 'ЕНТРОПІЯ БЕЗПЕКИ', val: '0.0001', color: '#F59E0B', icon: ShieldCheck },
+                                                            { label: 'СИНЕРГІЯ РЕСУРСІВ', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
                                                         ].map(m => (
                                                             <div key={m.label} className="flex items-center justify-between p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] group/metric hover:border-white/10 transition-all shadow-inset">
                                                                 <div className="flex items-center gap-5">

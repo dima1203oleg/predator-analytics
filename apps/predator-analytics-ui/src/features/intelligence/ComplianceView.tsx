@@ -113,7 +113,7 @@ export const ComplianceView = () => {
                             <div className="space-y-4">
                                 <div className="flex items-center gap-6">
                                     <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        COMPLIANCE_WATCH // {isOffline ? 'OFFLINE_COMPLIANCE' : 'AUDIT_TRIAL_v58'}
+                                        COMPLIANCE_WATCH // {isOffline ? 'АВТОНОМНИЙ_КОМПЛАЄНС' : 'ЖУРНАЛ_АУДИТУ_v58'}
                                     </span>
                                     <div className="h-px w-12 bg-emerald-500/20" />
                                     <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
@@ -126,8 +126,8 @@ export const ComplianceView = () => {
                     }
                     breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_WRAITH']}
                     badges={[
-                        { label: 'IMMUTABLE_LOGS', color: 'success', icon: <Lock size={10} /> },
-                        { label: 'SOVEREIGN_SYSTEM', color: 'primary', icon: <CheckCircle size={10} /> },
+                        { label: 'НЕЗМІННІ_ЛОГИ', color: 'success', icon: <Lock size={10} /> },
+                        { label: 'СУВЕРЕННА_СИСТЕМА', color: 'primary', icon: <CheckCircle size={10} /> },
                     ]}
                     stats={[
                         { label: 'РІВЕНЬ_ДОВІРИ', value: '100.0%', icon: <CheckCircle size={16} />, color: 'success' },
@@ -156,16 +156,16 @@ export const ComplianceView = () => {
 
                             <div className="space-y-2">
                                 <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
-                                    <span>Immutable Logs</span>
-                                    <span className="text-emerald-400">ACTIVE</span>
+                                    <span>Незмінні Логи (Immutable)</span>
+                                    <span className="text-emerald-400">АКТИВНО</span>
                                 </div>
                                 <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
-                                    <span>Access Control (RBAC)</span>
-                                    <span className="text-emerald-400">ENFORCED</span>
+                                    <span>Керування Доступом (RBAC)</span>
+                                    <span className="text-emerald-400">ЗАСТОСОВАНО</span>
                                 </div>
                                 <div className="flex justify-between text-xs text-slate-300 uppercase font-bold tracking-wider">
-                                    <span>Data Encryption (AES-256)</span>
-                                    <span className="text-emerald-400">ENABLED</span>
+                                    <span>Шифрування Даних (AES-256)</span>
+                                    <span className="text-emerald-400">УВІМКНЕНО</span>
                                 </div>
                             </div>
                         </div>

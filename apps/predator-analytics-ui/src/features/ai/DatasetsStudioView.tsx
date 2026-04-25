@@ -40,9 +40,9 @@ const DatasetsStudioView = () => {
   }, [isOffline]);
 
   const stats = [
-    { label: 'TOTAL_VOLUME', value: '4.2 TB', icon: <Database size={14} />, color: 'primary' },
-    { label: 'RECORD_COUNT', value: '1.8B+', icon: <Table size={14} />, color: 'success' },
-    { label: 'DATA_INTEGRITY', value: '98.4%', icon: <ShieldCheck size={14} />, color: 'warning' }
+    { label: 'ЗАГАЛЬНИЙ_ОБСЯГ', value: '4.2 TB', icon: <Database size={14} />, color: 'primary' },
+    { label: 'КІЛЬКІСТЬ_ЗАПИСІВ', value: '1.8B+', icon: <Table size={14} />, color: 'success' },
+    { label: 'ЦІЛІСНІСТЬ_ДАНИХ', value: '98.4%', icon: <ShieldCheck size={14} />, color: 'warning' }
   ];
 
   const datasets = [
@@ -75,21 +75,21 @@ const DatasetsStudioView = () => {
                   </div>
                   <div className="flex flex-col">
                     <h1 className="text-4xl font-black tracking-[0.2em] uppercase italic text-white/90">
-                      Datasets <span className="text-rose-500">Studio</span>
+                      СТУДІЯ <span className="text-rose-500">ДАТАСЕТІВ</span>
                     </h1>
                     <div className="flex items-center gap-3 text-[9px] font-mono font-black tracking-[0.4em] text-white/20 uppercase mt-1">
                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
-                      Global Data Repository [OSINT_GRID]
+                      ГЛОБАЛЬНИЙ РЕПОЗИТОРІЙ ДАНИХ [OSINT_GRID]
                     </div>
                   </div>
                 </div>
               </div>
             )}
             stats={[
-              { label: 'NODE_SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'danger' : 'success' },
-              { label: 'SYNC_STATE', value: isOffline ? 'OFFLINE' : 'STABLE', icon: <RefreshCw size={14} />, color: isOffline ? 'warning' : 'success' }
+              { label: 'ДЖЕРЕЛО_ВУЗЛА', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'danger' : 'success' },
+              { label: 'СТАН_СИНХРОНІЗАЦІЇ', value: isOffline ? 'АВТОНОМНО' : 'СТАБІЛЬНО', icon: <RefreshCw size={14} />, color: isOffline ? 'warning' : 'success' }
             ]}
-            breadcrumbs={['PREDATOR', 'DATA_FACTORY', 'DATASETS']}
+            breadcrumbs={['PREDATOR', 'ФАБРИКА_ДАНИХ', 'ДАТАСЕТИ']}
           />
 
           {/* Global Summary Stats */}
@@ -112,13 +112,13 @@ const DatasetsStudioView = () => {
           <div className="grid grid-cols-12 gap-8">
             {/* Sidebar Navigation */}
             <div className="col-span-12 lg:col-span-3 space-y-4">
-              <TacticalCard variant="holographic" title="STUDIO_MODULES" className="bg-black/40 border-white/5">
+              <TacticalCard variant="holographic" title="МОДУЛІ_СТУДІЇ" className="bg-black/40 border-white/5">
                 <div className="space-y-2 mt-4">
                   {[
-                    { id: 'sources', label: 'Data Sources', icon: Server, desc: 'External API & DB feeds' },
-                    { id: 'cleaning', label: 'ETL Pipelines', icon: RefreshCw, desc: 'Sanitize & Normalize' },
-                    { id: 'annotation', label: 'Annotation', icon: AlertTriangle, desc: 'Labeling & Tagging' },
-                    { id: 'quality', label: 'Quality Audit', icon: ShieldCheck, desc: 'Integrity validation' },
+                    { id: 'sources', label: 'Джерела Даних', icon: Server, desc: 'Зовнішні API та DB канали' },
+                    { id: 'cleaning', label: 'Конвеєри ETL', icon: RefreshCw, desc: 'Очистка та Нормалізація' },
+                    { id: 'annotation', label: 'Анотація', icon: AlertTriangle, desc: 'Маркування та Тегування' },
+                    { id: 'quality', label: 'Аудит Якості', icon: ShieldCheck, desc: 'Валідація цілісності' },
                   ].map(tab => (
                     <button
                       key={tab.id}
@@ -148,15 +148,15 @@ const DatasetsStudioView = () => {
 
                 <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
                    <Button variant="outline" className="w-full h-12 rounded-sm border-dashed border-white/10 text-white/40 hover:text-rose-500 hover:border-rose-500/30 font-black tracking-widest text-[10px] uppercase italic">
-                      <Plus size={14} className="mr-2" /> CREATE_NEW_DATASET
+                      <Plus size={14} className="mr-2" /> СТВОРИТИ_НОВИЙ_ДАТАСЕТ
                    </Button>
                    <Button variant="outline" className="w-full h-12 rounded-sm border-white/5 bg-white/[0.02] text-white/20 hover:text-white font-black tracking-widest text-[10px] uppercase italic">
-                      <Download size={14} className="mr-2" /> EXPORT_GLOBAL_INDEX
+                      <Download size={14} className="mr-2" /> ЕКСПОРТ_ГЛОБАЛЬНОГО_ІНДЕКСУ
                    </Button>
                 </div>
               </TacticalCard>
 
-              <TacticalCard variant="holographic" title="STORAGE_HEALTH" className="bg-black/40 border-white/5">
+              <TacticalCard variant="holographic" title="ЗДОРОВ'Я_СХОВИЩА" className="bg-black/40 border-white/5">
                 <div className="mt-4 space-y-4">
                    <div className="flex justify-between text-[8px] font-mono font-black text-white/20 tracking-widest uppercase">
                       <span>NVMe_POOL_X1</span>
@@ -165,7 +165,7 @@ const DatasetsStudioView = () => {
                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                       <div className="h-full bg-rose-500 w-[84%] shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
                    </div>
-                   <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | LATENCY: 0.12ms</p>
+                   <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | ЗАТРИМКА: 0.12ms</p>
                 </div>
               </TacticalCard>
             </div>
@@ -181,10 +181,10 @@ const DatasetsStudioView = () => {
                     <div className="flex flex-col gap-1">
                       <h3 className="text-[14px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-3 italic">
                          <Box size={18} className="text-rose-500" /> 
-                         {activeTab === 'sources' && 'ACTIVE_DATA_FEEDS'}
-                         {activeTab === 'cleaning' && 'ETL_CLEANING_CONVEYOR'}
-                         {activeTab === 'annotation' && 'NEURAL_ANNOTATION_MANAGER'}
-                         {activeTab === 'quality' && 'DATA_QUALITY_ANALYTICS'}
+                         {activeTab === 'sources' && 'АКТИВНІ_ПОТОКИ_ДАНИХ'}
+                         {activeTab === 'cleaning' && 'КОНВЕЄР_ОЧИСТКИ_ETL'}
+                         {activeTab === 'annotation' && 'МЕНЕДЖЕР_НЕЙРОННОЇ_АНОТАЦІЇ'}
+                         {activeTab === 'quality' && 'АНАЛІТИКА_ЯКОСТІ_ДАНИХ'}
                       </h3>
                       <div className="h-0.5 w-24 bg-rose-500/40" />
                     </div>
@@ -194,7 +194,7 @@ const DatasetsStudioView = () => {
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20 group-hover:text-rose-500 transition-colors" />
                           <input 
                             type="text" 
-                            placeholder="SEARCH_REPOSITORY..." 
+                            placeholder="ПОШУК_ПО_РЕПОЗИТОРІЮ..." 
                             className="bg-black/60 border border-white/10 rounded-sm pl-10 pr-4 py-2 text-[10px] text-white/80 outline-none focus:border-rose-500/50 transition-all w-64 font-mono tracking-widest placeholder:text-white/10"
                           />
                        </div>
@@ -208,11 +208,11 @@ const DatasetsStudioView = () => {
                     <table className="w-full text-left border-collapse">
                        <thead>
                           <tr className="border-b border-white/5">
-                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">UUID_DATASET</th>
-                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">FEED_SOURCE</th>
-                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">ALLOC_SIZE</th>
-                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">INTEGRITY</th>
-                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">STATUS</th>
+                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">UUID_ДАТАСЕТУ</th>
+                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">ДЖЕРЕЛО_ПОТОКУ</th>
+                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">ВИДІЛЕНИЙ_ОБСЯГ</th>
+                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">ЦІЛІСНІСТЬ</th>
+                             <th className="pb-4 text-[9px] font-black text-white/20 uppercase tracking-[0.2em] italic">СТАТУС</th>
                              <th className="pb-4 text-right"></th>
                           </tr>
                        </thead>
@@ -290,15 +290,15 @@ const DatasetsStudioView = () => {
                       <RefreshCw className="animate-spin-slow h-8 w-8" />
                     </div>
                     <div>
-                      <h4 className="text-[18px] font-black text-white uppercase tracking-[0.2em] mb-2 italic">Neural_Link Ready</h4>
+                      <h4 className="text-[18px] font-black text-white uppercase tracking-[0.2em] mb-2 italic">Neural_Link ГОТОВИЙ</h4>
                       <p className="text-[11px] text-white/30 uppercase tracking-[0.1em] font-mono leading-relaxed max-w-lg">
-                        Select an optimized dataset to initiate advanced fine-tuning cycles. Synchronize with the MIRROR_VRAM ML cluster for maximum accuracy.
+                        Оберіть оптимізований датасет для запуску розширених циклів навчання. Синхронізуйте з кластером MIRROR_VRAM для максимальної точності.
                       </p>
                     </div>
                  </div>
                  
                  <Button className="h-14 bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase tracking-[0.3em] rounded-sm px-12 shadow-[0_0_30px_rgba(225,29,72,0.3)] hover:shadow-[0_0_50px_rgba(225,29,72,0.5)] transition-all duration-500 border-none relative z-10">
-                   INITIATE_TRAINING_CYCLE
+                   ЗАПУСТИТИ_ЦИКЛ_НАВЧАННЯ
                  </Button>
               </motion.div>
             </div>

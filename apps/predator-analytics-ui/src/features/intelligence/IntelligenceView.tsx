@@ -138,7 +138,7 @@ const IntelligenceView: React.FC = () => {
                             { label: 'SOVEREIGN_FORCE', color: 'danger', icon: <Shield size={10} /> }
                         ]}
                         stats={[
-                            { label: 'COGNITIVE_LOAD', value: '72%', color: 'primary', icon: <Activity size={14} />, animate: true },
+                            { label: 'КОГНІТИВНЕ НАВАНТАЖЕННЯ', value: '72%', color: 'primary', icon: <Activity size={14} />, animate: true },
                             { 
                                 label: isOffline ? 'MIRROR_RECOVERY' : 'NODE_SOURCE', 
                                 value: isOffline ? `${Math.floor(healingProgress)}%` : nodeSource, 
@@ -146,7 +146,7 @@ const IntelligenceView: React.FC = () => {
                                 icon: isOffline ? <Activity size={14} /> : <Cpu size={14} />,
                                 animate: isOffline
                             },
-                            { label: 'OODA LOOP', value: '8ms', color: 'success', icon: <Zap size={14} /> }
+                            { label: 'OODA ЦИКЛ', value: '8ms', color: 'success', icon: <Zap size={14} /> }
                         ]}
                         breadcrumbs={['STRATEGY', 'NEXUS', 'RECON_HUB']}
                         actions={
@@ -249,10 +249,10 @@ const IntelligenceView: React.FC = () => {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-12 pt-10 border-t border-white/[0.04]">
                                     {[
-                                        { label: 'SYNAPSE_DELAY', value: '4.2ms', sub: 'OPTIMIZED', c: 'text-[#D4AF37]' },
-                                        { label: 'ENTROPY_IDX', value: '0.084', sub: 'STABLE', c: 'text-[#D4AF37]' },
-                                        { label: 'INTEL_RELIANCE', value: 'SURPLUS', sub: 'WRAITH-01', c: 'text-[#D4AF37]' },
-                                        { label: 'ACTIVE_AGENTS', value: '14/14', sub: 'DEPLOYED', c: 'text-[#D4AF37]' },
+                                        { label: 'ЗАТРИМКА_СИНАПСІВ', value: '4.2ms', sub: 'ОПТИМІЗОВАНО', c: 'text-[#D4AF37]' },
+                                        { label: 'ІНДЕКС_ЕНТРОПІЇ', value: '0.084', sub: 'СТАБІЛЬНО', c: 'text-[#D4AF37]' },
+                                        { label: 'ДОВІРА_РОЗВІДКИ', value: 'SURPLUS', sub: 'WRAITH-01', c: 'text-[#D4AF37]' },
+                                        { label: 'АКТИВНІ_АГЕНТИ', value: '14/14', sub: 'РОЗГОРНУТО', c: 'text-[#D4AF37]' },
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
                                             <p className="text-[9px] text-slate-700 uppercase tracking-widest mb-1">{s.label}</p>

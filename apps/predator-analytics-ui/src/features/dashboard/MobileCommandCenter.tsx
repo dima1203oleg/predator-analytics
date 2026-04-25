@@ -115,7 +115,7 @@ const MobileCommandCenter: React.FC = () => {
 
         {/* Welcome Banner */}
         <section>
-          <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Daily Briefing</h2>
+          <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] mb-4">Щоденний Брифінг (Daily Briefing)</h2>
           <TacticalCard variant="holographic" className="p-8 group overflow-hidden">
             <div className="absolute top-0 right-0 p-6 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-1000">
               <Globe size={120} className="text-blue-500" />
@@ -147,8 +147,8 @@ const MobileCommandCenter: React.FC = () => {
         {/* Quick Actions Matrix */}
         <section>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Tactical Matrix</h2>
-            <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest underline underline-offset-4">Config</button>
+            <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Тактична Матриця (Tactical Matrix)</h2>
+            <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest underline underline-offset-4">Конфіг</button>
           </div>
           <div className="grid grid-cols-4 gap-4 p-4 bg-slate-900/60 border border-white/5 rounded-[32px] panel-3d">
             {[
@@ -182,7 +182,7 @@ const MobileCommandCenter: React.FC = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em]">Neural Intelligence</span>
+                  <span className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.2em]">Нейронний Інтелект (Neural Intelligence)</span>
                   <Sparkles size={12} className="text-yellow-400 animate-spin-slow" />
                 </div>
                 <h4 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Цінова аномалія</h4>
@@ -197,8 +197,8 @@ const MobileCommandCenter: React.FC = () => {
         {/* Recent Activity List */}
         <section className="pb-10">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Live Stream</h2>
-            <button className="text-[10px] font-black text-slate-600 uppercase tracking-widest">History</button>
+            <h2 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em]">Прямий Ефір (Live Stream)</h2>
+            <button className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Історія</button>
           </div>
           <div className="space-y-4">
             {[
@@ -282,7 +282,7 @@ const MobileCommandCenter: React.FC = () => {
               className="fixed top-0 right-0 bottom-0 w-[85%] bg-slate-900 border-l border-white/10 z-[201] p-10 shadow-2xl flex flex-col"
             >
               <div className="flex items-center justify-between mb-12">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">System Menu</h2>
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Системне Меню</h2>
                 <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/5 border border-white/10 rounded-2xl">
                   <X size={24} className="text-slate-400" />
                 </button>
@@ -319,7 +319,7 @@ const MobileCommandCenter: React.FC = () => {
                   <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white font-black shadow-[0_0_20px_rgba(59,130,246,0.5)]">D</div>
                   <div>
                     <div className="text-sm font-black text-white">Димитрій</div>
-                    <div className="text-[10px] font-black text-slate-500 uppercase">Sovereign Admin</div>
+                    <div className="text-[10px] font-black text-slate-500 uppercase">Суверенний Адмін</div>
                   </div>
                 </div>
                 <button className="p-3 bg-white/5 border border-white/10 rounded-2xl text-amber-500">

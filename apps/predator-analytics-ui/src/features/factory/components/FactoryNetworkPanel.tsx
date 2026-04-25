@@ -71,7 +71,7 @@ export const FactoryNetworkPanel: React.FC<FactoryNetworkPanelProps> = ({
                 <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
                   <Zap size={20} />
                 </div>
-                <span className="text-[10px] font-black uppercase text-emerald-400 tracking-widest">Redis Cache</span>
+                <span className="text-[10px] font-black uppercase text-emerald-400 tracking-widest">Кеш Redis</span>
               </div>
             </div>
           </div>

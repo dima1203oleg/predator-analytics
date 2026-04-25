@@ -179,7 +179,7 @@ const ParsersView: React.FC = () => {
                                     Data <span className="text-emerald-400">Nexus</span>
                                 </h1>
                                 <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.4em] mt-2 italic">
-                                    INGESTION_HUB // ЦЕНТР_ІНДЕСАЦІЇ_ДАНИХ
+                                    ЦЕНТР_ІНДЕСАЦІЇ_ДАНИХ // INGESTION_HUB
                                 </p>
                             </div>
                         </div>
@@ -214,7 +214,7 @@ const ParsersView: React.FC = () => {
 
                 <div className="flex justify-between items-center px-4">
                     <h2 className="text-xl font-black text-white uppercase tracking-tighter italic flex items-center gap-4">
-                        <Network className="text-emerald-400" size={20} /> CONNECTORS_CONTROL_PANEL
+                        <Network className="text-emerald-400" size={20} /> ПАНЕЛЬ_КЕРУВАННЯ_КОНЕКТОРАМИ
                     </h2>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -222,7 +222,7 @@ const ParsersView: React.FC = () => {
                         onClick={() => setIsModalOpen(true)}
                         className="px-10 py-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-[28px] text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_20px_50px_-15px_rgba(16,185,129,0.5)] border border-white/20 transition-all flex items-center gap-4 group italic"
                     >
-                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> REGISTER_NEW_SOURCE
+                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗАРЕЄСТРУВАТИ_НОВЕ_ДЖЕРЕЛО
                     </motion.button>
                 </div>
 
@@ -240,12 +240,12 @@ const ParsersView: React.FC = () => {
                         <div className="w-16 h-16 rounded-full bg-slate-950 border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
                             <Plus size={32} />
                         </div>
-                        <span className="font-black text-[10px] uppercase tracking-[0.5em] italic">ADD_DATA_NODE</span>
+                        <span className="font-black text-[10px] uppercase tracking-[0.5em] italic">ДОДАТИ_ВУЗОЛ_ДАНИХ</span>
                     </button>
                 </div>
 
                 {/* ETL Status Panel */}
-                <TacticalCard variant="holographic" title="Pipeline Health Index" className="p-10 bg-slate-950/40 border-white/5 rounded-[60px] panel-3d shadow-2xl">
+                <TacticalCard variant="holographic" title="Індекс Здоров'я Пайплайну (Pipeline Health)" className="p-10 bg-slate-950/40 border-white/5 rounded-[60px] panel-3d shadow-2xl">
                     <div className="flex flex-col lg:flex-row gap-12 items-center">
                         <div className="w-full lg:w-1/3 relative flex items-center justify-center">
                             <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full scale-150 animate-pulse" />
@@ -263,7 +263,7 @@ const ParsersView: React.FC = () => {
                                 <div key={i} className="p-6 bg-slate-900/60 border border-white/5 rounded-3xl flex flex-col gap-2 group hover:border-emerald-500/40 transition-all">
                                     <div className="flex justify-between items-center">
                                         <s.icon size={16} className="text-emerald-400 group-hover:scale-125 transition-transform" />
-                                        <Badge className="bg-emerald-500/20 text-emerald-400 text-[8px] font-black border-none italic">OPTIMAL</Badge>
+                                        <Badge className="bg-emerald-500/20 text-emerald-400 text-[8px] font-black border-none italic">ОПТИМАЛЬНО</Badge>
                                     </div>
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider mt-2">{s.label}</p>
                                     <p className="text-2xl font-black text-white italic tabular-nums">{s.value}</p>
@@ -272,7 +272,7 @@ const ParsersView: React.FC = () => {
                         </div>
                         <div className="w-full lg:w-auto">
                             <button className="w-full lg:w-auto px-10 py-6 bg-white/5 border border-white/10 rounded-[30px] text-[10px] font-black text-white uppercase tracking-[0.4em] hover:bg-white/10 transition-all flex items-center justify-center gap-4 group italic">
-                                VIEW_SYSTEM_LOGS <Terminal size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                ПЕРЕГЛЯНУТИ_СИСТЕМНІ_ЛОГИ <Terminal size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
                         </div>
                     </div>

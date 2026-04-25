@@ -84,16 +84,16 @@ const topPages: TopPage[] = [
 ];
 
 const segments: UserSegment[] = [
-  { name: 'Business', count: 1456, percentage: 45, color: 'cyan' },
-  { name: 'Government', count: 823, percentage: 25, color: 'purple' },
-  { name: 'Premium', count: 567, percentage: 17, color: 'amber' },
-  { name: 'Free', count: 421, percentage: 13, color: 'slate' },
+  { name: 'Бізнес', count: 1456, percentage: 45, color: 'cyan' },
+  { name: 'Державний', count: 823, percentage: 25, color: 'purple' },
+  { name: 'Преміум', count: 567, percentage: 17, color: 'amber' },
+  { name: 'Безкоштовний', count: 421, percentage: 13, color: 'slate' },
 ];
 
 const deviceData = [
-  { device: 'Desktop', percentage: 68, icon: Monitor, color: 'cyan' },
-  { device: 'Mobile', percentage: 28, icon: Smartphone, color: 'purple' },
-  { device: 'Tablet', percentage: 4, icon: Monitor, color: 'amber' },
+  { device: 'Десктоп', percentage: 68, icon: Monitor, color: 'cyan' },
+  { device: 'Мобільний', percentage: 28, icon: Smartphone, color: 'purple' },
+  { device: 'Планшет', percentage: 4, icon: Monitor, color: 'amber' },
 ];
 
 const hourlyActivity: ActivityHour[] = Array.from({ length: 24 }, (_, hour) => ({
@@ -181,7 +181,7 @@ const UserAnalyticsDashboard: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-3">
               <Users className="text-cyan-400" />
-              User Analytics
+              Аналітика Користувачів (User Analytics)
               <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
                 <Crown size={14} />
                 Admin
@@ -322,8 +322,8 @@ const UserAnalyticsDashboard: React.FC = () => {
             <div className="mt-6 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-white">Conversion Rate</p>
-                  <p className="text-xs text-amber-400">Free → Paid</p>
+                  <p className="font-bold text-white">Коефіцієнт Конверсії</p>
+                  <p className="text-xs text-amber-400">Безкоштовно → Платно</p>
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-black text-amber-400">4.2%</p>
@@ -343,7 +343,7 @@ const UserAnalyticsDashboard: React.FC = () => {
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping" />
               </div>
               <div>
-                <p className="font-bold text-white">Real-time користувачі</p>
+                <p className="font-bold text-white">Користувачі в реальному часі</p>
                 <p className="text-xs text-slate-500">Останнє оновлення: щойно</p>
               </div>
             </div>

@@ -109,7 +109,7 @@ const typeConfig = {
   crm: { color: 'cyan', label: 'CRM' },
   api: { color: 'emerald', label: 'API' },
   webhook: { color: 'amber', label: 'Webhook' },
-  database: { color: 'blue', label: 'Database' }
+  database: { color: 'blue', label: 'База даних' }
 };
 
 const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => void }> = ({ integration, onConnect }) => {
@@ -172,7 +172,7 @@ const IntegrationCard: React.FC<{ integration: Integration; onConnect: () => voi
               }`}
           >
             {integration.status === 'connected' ? 'Налаштувати' :
-              integration.isPremium ? 'Upgrade' : 'Підключити'}
+              integration.isPremium ? 'Оновити' : 'Підключити'}
           </button>
         </div>
       </div>
@@ -278,10 +278,10 @@ const IntegrationHub: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black text-white flex items-center gap-3">
               <Plug className="text-cyan-400" />
-              Integration Hub
+              Центр Інтеграцій
               <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
                 <Crown size={14} />
-                Premium
+                Преміум
               </span>
             </h1>
             <p className="text-slate-500 mt-1">
@@ -428,13 +428,13 @@ const IntegrationHub: React.FC = () => {
                 <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl">
                   <Key className="text-cyan-400" size={20} />
                   <div className="flex-1">
-                    <p className="font-bold text-white text-sm">Production Key</p>
+                    <p className="font-bold text-white text-sm">Виробничий ключ (Production)</p>
                     <code className="text-xs text-slate-500">pk_live_••••••••••••••••</code>
                   </div>
                   <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
                   </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Regenerate">
+                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Регенерувати">
                     <RefreshCw size={16} />
                   </button>
                 </div>
@@ -442,13 +442,13 @@ const IntegrationHub: React.FC = () => {
                 <div className="flex items-center gap-4 p-4 bg-slate-800/50 rounded-xl">
                   <Key className="text-amber-400" size={20} />
                   <div className="flex-1">
-                    <p className="font-bold text-white text-sm">Test Key</p>
+                    <p className="font-bold text-white text-sm">Тестовий Ключ (Test)</p>
                     <code className="text-xs text-slate-500">pk_test_••••••••••••••••</code>
                   </div>
                   <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Копіювати">
                     <Copy size={16} />
                   </button>
-                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Regenerate">
+                  <button className="p-2 rounded-lg bg-slate-700 text-slate-400 hover:text-white" title="Регенерувати">
                     <RefreshCw size={16} />
                   </button>
                 </div>

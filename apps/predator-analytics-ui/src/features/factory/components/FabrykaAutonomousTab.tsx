@@ -7,8 +7,8 @@
  *   - VRAM Scheduler HUD (GTX 1080, 8GB)
  *   - Fitness / KPI Engine (оцінка кожного коміту)
  *   - Risk Engine (LOW / MEDIUM / HIGH)
- *   - Feature Flags
- *   - Chaos Engineering
+ *   - Прапорці Функцій (Feature Flags)
+ *   - Хаос-інженерія (Chaos Engineering)
  *
  * © 2026 PREDATOR Analytics — HR-04 (100% українська мова)
  */
@@ -220,11 +220,11 @@ const getProviderColors = (provider: LlmCascadeEntry['provider']) => {
 };
 
 const getRoleLabel = (role: LlmCascadeEntry['role']) => {
-  if (role === 'lead_architect') return 'Lead Architect (Cloud)';
-  if (role === 'surgical_coder') return 'Surgical Coder (Local)';
-  if (role === 'fallback_local') return 'Logic Specialist (Local)';
-  if (role === 'primary') return 'Cloud Core';
-  return 'Utility Layer';
+  if (role === 'lead_architect') return 'Головний Архітектор (Хмара)';
+  if (role === 'surgical_coder') return 'Хірургічний Кодер (Локально)';
+  if (role === 'fallback_local') return 'Логічний Спеціаліст (Локально)';
+  if (role === 'primary') return 'Хмарне Ядро';
+  return 'Шар Утиліт';
 };
 
 const getRiskActionLabel = (action: RiskEvent['action']) => {
@@ -503,7 +503,7 @@ export function FabrykaAutonomousTab() {
       <div className="bg-black/40 rounded-[28px] border border-white/5 p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-black text-white uppercase tracking-widest">VRAM Guardian v3.0</h3>
+            <h3 className="text-sm font-black text-white uppercase tracking-widest">Вартовий VRAM (VRAM Guardian) v3.0</h3>
             <p className="text-[9px] text-slate-500 font-mono uppercase">GTX 1080 · 8GB GDDR5X</p>
           </div>
           {isCritical && (
@@ -580,14 +580,14 @@ export function FabrykaAutonomousTab() {
                 FABRYKA v2.0 — Поточний режим
               </div>
               <div className={cn('text-2xl font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-rose-400')}>
-                {isAutonomous ? 'AUTONOMOUS' : 'API MODE'}
+                {isAutonomous ? 'AUTONOMOUS (АВТОНОМНО)' : 'API РЕЖИМ'}
               </div>
               <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-tighter">
                 {llmTriStateMode === 'SOVEREIGN' 
-                  ? 'Sovereign Mode (Nemotron 30B MoE) · 100% Local · Air-Gapped' 
+                  ? 'Суверенний Режим (Nemotron 30B MoE) · 100% Локально · Air-Gapped' 
                   : llmTriStateMode === 'HYBRID'
-                    ? 'Hybrid Intelligence · Local Edge + Cloud Pool Balanced'
-                    : 'Cloud Override (GLM-5.1 + Azure) · Extreme Speed · VRAM Freed'}
+                    ? 'Гібридний Інтелект · Баланс Local Edge + Cloud Pool'
+                    : 'Хмарний Override (GLM-5.1 + Azure) · Екстремальна Швидкість · VRAM Звільнено'}
               </div>
             </div>
           </div>
@@ -595,7 +595,7 @@ export function FabrykaAutonomousTab() {
           {/* Правий блок — перемикач */}
           <div className="flex items-center gap-4">
             <span className={cn('text-sm font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-slate-400')}>
-              LOCAL
+              ЛОКАЛЬНО
             </span>
             <button
               type="button"
@@ -673,7 +673,7 @@ export function FabrykaAutonomousTab() {
               )}
             >
               {isCoderSwitching && coderSource !== 'ollama' ? <Loader2 size={12} className="animate-spin" /> : <WifiOff size={12} />}
-              Ollama · Local
+              Ollama · Локально
             </button>
             <div className="text-slate-600 text-[11px] font-black">/</div>
             <button
@@ -688,7 +688,7 @@ export function FabrykaAutonomousTab() {
               )}
             >
               {isCoderSwitching && coderSource !== 'api' ? <Loader2 size={12} className="animate-spin" /> : <Wifi size={12} />}
-              API · Cloud
+              API · Хмара
             </button>
           </div>
         </div>
@@ -821,11 +821,11 @@ export function FabrykaAutonomousTab() {
       <div className="flex flex-wrap gap-2">
         {([
           { id: 'mode', label: 'LLM Каскад', icon: BrainCircuit },
-          { id: 'vram', label: 'VRAM Scheduler', icon: Cpu },
-          { id: 'fitness', label: 'Fitness Engine', icon: Activity },
-          { id: 'risk', label: 'Risk Engine', icon: Shield },
-          { id: 'flags', label: 'Feature Flags', icon: Sliders },
-          { id: 'chaos', label: 'Chaos Engineering', icon: Flame },
+          { id: 'vram', label: 'Планувальник VRAM', icon: Cpu },
+          { id: 'fitness', label: 'Двигун Фітнесу (Fitness)', icon: Activity },
+          { id: 'risk', label: 'Двигун Ризиків (Risk)', icon: Shield },
+          { id: 'flags', label: 'Прапорці функцій', icon: Sliders },
+          { id: 'chaos', label: 'Хаос-інженерія', icon: Flame },
         ] as const).map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -1154,7 +1154,7 @@ export function FabrykaAutonomousTab() {
             <div className="rounded-[28px] border border-white/8 bg-slate-950/60 overflow-hidden">
               <div className="flex items-center gap-3 border-b border-white/5 bg-black/30 px-5 py-3.5">
                 <Sliders size={14} className="text-slate-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Feature Flags</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Прапорці функцій (Feature Flags)</span>
                 <Badge className="border border-rose-500/25 bg-rose-500/10 px-2 py-0.5 text-[10px] font-black text-rose-300">
                   {flags.filter((f) => f.enabled).length} активні
                 </Badge>

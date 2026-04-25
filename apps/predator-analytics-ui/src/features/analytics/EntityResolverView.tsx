@@ -276,7 +276,7 @@ export const EntityResolverView: React.FC = () => {
             <Fingerprint className="w-5 h-5 text-rose-400" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Entity Resolver</h1>
+            <h1 className="text-xl font-bold text-white tracking-tight">Детектор Дублікатів (Entity Resolver)</h1>
             <p className="text-xs text-white/40 mt-0.5">
               Де-дублікація записів · Confidence-based злиття
             </p>
