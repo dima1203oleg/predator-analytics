@@ -194,24 +194,19 @@ sudo systemctl reload nginx
 # Тепер доступ: http://194.177.1.240 (без порту)
 ```
 
-#### Варіант B: Cloudflare Tunnel (безкоштовно)
+#### Варіант B: Ngrok Tunnel (Рекомендовано для v61.0)
 
 ```bash
-# Встановлення cloudflared
-wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-sudo dpkg -i cloudflared-linux-amd64.deb
+# Встановлення ngrok (якщо немає)
+curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt update && sudo apt install ngrok
 
 # Авторизація
-cloudflared tunnel login
+ngrok config add-authtoken <your-token>
 
-# Створення тунелю
-cloudflared tunnel create predator-analytics
-
-# Налаштування
-cloudflared tunnel route dns predator-analytics predator.yourdomain.com
-
-# Запуск
-cloudflared tunnel run predator-analytics --url http://localhost:8092
+# Запуск тунелю
+ngrok http 8092
 ```
 
 ---
@@ -301,7 +296,7 @@ ngrok http 8092
 
 **Для постійного публічного доступу:**
 - Налаштуйте Nginx reverse proxy (порт 80/443)
-- Або використовуйте Cloudflare Tunnel (безкоштовно)
+- Або використовуйте Ngrok Tunnel (рекомендовано для v61.0)
 
 ---
 
