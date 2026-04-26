@@ -25,6 +25,7 @@ import { Progress } from '@/components/ui/progress';
 import { factoryApi, monitoringApi, systemApi, apiClient, api } from '@/services/api';
 import { AntigravityAgiTab } from './components/AntigravityAgiTab';
 import { FabrykaAutonomousTab } from './components/FabrykaAutonomousTab';
+import { GeminiCloudAssist } from './components/GeminiCloudAssist';
 import { EvolutionAgentPanel } from './components/EvolutionAgentPanel';
 import { FactoryImprovementPanel } from './components/FactoryImprovementPanel';
 import { FactoryK8sClusterPanel } from './components/FactoryK8sClusterPanel';
@@ -76,7 +77,7 @@ export default function SystemFactoryView() {
     coverage: null,
     security: null,
   });
-  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health' | 'antigravity' | 'autonomous' | 'evolution'>('autonomous');
+  const [activeTab, setActiveTab] = useState<'cicd' | 'k8s' | 'network' | 'improve' | 'ingestion' | 'bugfix' | 'infinite' | 'health' | 'antigravity' | 'autonomous' | 'evolution' | 'cloud_assist'>('cloud_assist');
 
   // Improvement states
   const [improvementStatus, setImprovementStatus] = useState<'idle' | 'running' | 'success' | 'error' | 'done'>('idle');
@@ -730,6 +731,7 @@ export default function SystemFactoryView() {
     { id: 'bugfix',      label: 'Автофікс',           icon: Bug,           color: 'rose',    glow: 'rgba(244,63,94,0.4)'  },
     { id: 'health',      label: 'Health Check',       icon: HeartPulse,    color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
     { id: 'antigravity', label: 'Antigravity AGI',    icon: BrainCircuit,  color: 'rose',    glow: 'rgba(244,63,94,0.6)' },
+    { id: 'cloud_assist', label: 'Cloud Assist',       icon: Cloud,         color: 'emerald', glow: 'rgba(59,130,246,0.6)' },
     { id: 'k8s',         label: 'Kubernetes',         icon: Layers,        color: 'rose',    glow: 'rgba(244,63,94,0.4)'  },
     { id: 'cicd',        label: 'CI/CD Pipeline',     icon: GitBranch,     color: 'emerald', glow: 'rgba(16,185,129,0.4)' },
     { id: 'ingestion',   label: 'Інгестія',           icon: Scan,          color: 'rose',    glow: 'rgba(244,63,94,0.4)' },
@@ -943,6 +945,12 @@ export default function SystemFactoryView() {
                   })) || []}
                   registryStats={registryStats}
                 />
+              </motion.div>
+            )}
+
+            {activeTab === 'cloud_assist' && (
+              <motion.div key="cloud_assist" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
+                <GeminiCloudAssist />
               </motion.div>
             )}
 
