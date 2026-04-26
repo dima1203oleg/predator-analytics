@@ -5,6 +5,7 @@ import { Zap, Shield, AlertTriangle, Layers, Server, Activity, CheckCircle2 } fr
 import { TacticalCard } from '../ui/TacticalCard';
 import { HoloContainer } from '../HoloContainer';
 import { api } from '../../services/api';
+import { API_BASE_URL } from '../../services/api/config';
 
 interface CortexNode {
     id: string;
@@ -37,7 +38,7 @@ export const CortexVisualizer: React.FC = () => {
 
                 // For now, if the API isn't fully wired or cors issues, we might mock or try direct fetch
                 // Assuming the endpoint I added works:
-                const res = await fetch('http://localhost:9080/api/v1/som/cortex-map');
+                const res = await fetch(`${API_BASE_URL}/som/cortex-map`);
                 if (!res.ok) throw new Error("Failed to fetch Cortex Map");
                 const json = await res.json();
                 setData(json);

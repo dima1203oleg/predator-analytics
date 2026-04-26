@@ -331,9 +331,9 @@ const NetworkMapPage: React.FC = () => {
                                         <HoloContainer className="p-8 bg-black/40 rounded-[2.5rem] border-white/5">
                                             <FinancialFlowPanel 
                                                flows={[
-                                                   { from: selectedNode.label, to: 'CYPRUS_HOLDING', amount: 12500000, currency: 'USD', date: '2026-04-12', risk_score: 0.85 },
-                                                   { from: 'EXT_SOURCE_PANAMA', to: selectedNode.label, amount: 480000, currency: 'EUR', date: '2026-04-15', risk_score: 0.42 },
-                                                   { from: selectedNode.label, to: 'LOCAL_VENDOR_X', amount: 2100000, currency: 'UAH', date: '2026-04-18', risk_score: 0.15 },
+                                                   { source: selectedNode.label, target: 'CYPRUS_HOLDING', value: 12500000 },
+                                                   { source: 'EXT_SOURCE_PANAMA', target: selectedNode.label, value: 480000 },
+                                                   { source: selectedNode.label, target: 'LOCAL_VENDOR_X', value: 2100000 },
                                                ]} 
                                             />
                                         </HoloContainer>

@@ -19,7 +19,10 @@ import {
     Boxes,
     FileText,
     Share2,
-    Download
+    Download,
+    TrendingUp,
+    ShieldCheck,
+    Banknote
 } from 'lucide-react';
 import { diligenceApi } from '@/features/diligence/api/diligence';
 import { VramSentinel } from '@/components/intelligence/VramSentinel';

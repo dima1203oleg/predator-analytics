@@ -119,7 +119,7 @@ export const SupplierRadarTab: React.FC = () => {
                       <p className="text-2xl font-black text-emerald-500 italic font-mono leading-none">{s.competitiveness}%</p>
                    </div>
                    <div className="flex flex-wrap justify-end gap-1 max-w-[150px]">
-                      {s.products.map(p => (
+                      {s.products.map((p: string) => (
                         <span key={p} className="px-2 py-0.5 bg-white/5 rounded text-[8px] font-bold text-slate-400 uppercase">{p}</span>
                       ))}
                    </div>

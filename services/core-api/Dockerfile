@@ -1,4 +1,4 @@
-# PREDATOR Core API — Multi-stage Dockerfile v58.2-WRAITH
+# PREDATOR Core API — Multi-stage Dockerfile v61.0-ELITE
 # HR-05: Multi-stage build, non-root user (USER predator)
 # HR-01: Python 3.12 ONLY
 
@@ -62,7 +62,7 @@ USER predator
 
 ENV PYTHONPATH="/app:/libs/predator-common" \
     PYTHONUNBUFFERED=1 \
-    APP_VERSION="58.2-WRAITH"
+    APP_VERSION="61.0-ELITE"
 
 # Kubernetes probes
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \

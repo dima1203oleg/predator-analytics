@@ -335,7 +335,7 @@ export default function MarketPage() {
         value: `$${(amount * 0.75).toLocaleString('uk-UA')}`,
         detail: 'Очікуваний прибуток за 1-й квартал',
         icon: TrendingUp,
-        tone: 'rose'
+        tone: 'danger'
       },
       {
         id: 'efficiency',
@@ -343,7 +343,7 @@ export default function MarketPage() {
         value: '+34%',
         detail: 'Оптимізація митних платежів',
         icon: Scale,
-        tone: 'rose'
+        tone: 'danger'
       },
       {
         id: 'time-advantage',
@@ -351,7 +351,7 @@ export default function MarketPage() {
         value: '21 день',
         detail: 'Випередження закриття квот',
         icon: Activity,
-        tone: 'rose'
+        tone: 'danger'
       }
     ]);
     setIsValueScreenOpen(true);
@@ -450,6 +450,7 @@ export default function MarketPage() {
         ...(marketHHI > 2500 ? [createRisk('m-hhi', 'ВИСОКА КОНЦЕНТРАЦІЯ', 'Ринок схильний до монополізації.', 'warning')] : []),
       ],
       sourcePath: '/market',
+      documents: [],
     }),
     [activeTabLabel, backendStatus.sourceLabel, loadingOverview, marketHHI, normalizedOverview.cards, overviewError]
   );

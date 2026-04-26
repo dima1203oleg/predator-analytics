@@ -13,14 +13,14 @@ interface ViewHeaderProps {
     label: string;
     value: string;
     icon?: React.ReactNode;
-    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'secondary' | 'cyan' | 'gold' | 'rose' | 'amber' | 'emerald';
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'error' | 'primary' | 'purple' | 'secondary' | 'cyan' | 'gold' | 'rose' | 'amber' | 'emerald' | 'crimson';
     animate?: boolean;
   }[];
   actions?: React.ReactNode;
   badges?: {
     label: string;
     icon?: React.ReactNode;
-    color?: 'default' | 'success' | 'warning' | 'danger' | 'primary' | 'purple' | 'cyan' | 'secondary' | 'emerald' | 'amber' | 'rose' | 'gold';
+    color?: 'default' | 'success' | 'warning' | 'danger' | 'error' | 'primary' | 'purple' | 'cyan' | 'secondary' | 'emerald' | 'amber' | 'rose' | 'gold' | 'crimson';
   }[];
   className?: string;
 }

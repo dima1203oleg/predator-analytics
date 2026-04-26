@@ -2,7 +2,7 @@
 set -e
 
 CLUSTER_NAME="predator-local"
-VERSION="v56.5-ELITE"
+VERSION="v61.0-ELITE"
 REGISTRY="ghcr.io/dima1203oleg"
 
 echo "📥 Pulling infrastructure images..."

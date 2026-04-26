@@ -19,14 +19,14 @@ export const NODE_IDS = {
     MOCK:      'mock',      // Sandbox
 } as const;
 
-const NODE_URLS = {
+const NODE_URLS: Record<string, string> = {
     [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
     [NODE_IDS.MOCK]:      '/api/v1',
 };
 
-const NODE_NAMES = {
+const NODE_NAMES: Record<string, string> = {
     [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_IMAC',
     [NODE_IDS.HYBRID]:    'HYBRID_MASTER_NVIDIA',
     [NODE_IDS.CLOUD]:     'CLOUD_MIRROR_COLAB',
@@ -45,22 +45,22 @@ const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as a
 // ─── Визначення Активного Вузла ──────────────────────────────────────────────
 
 const resolveInitialUrl = (): string => {
-    if (typeof window === 'undefined') return NODE_URLS.HYBRID;
+    if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.HYBRID];
 
     // 1. Ручний вибір користувача (пріоритет #1)
     const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
-    if (savedNode && NODE_URLS[savedNode as keyof typeof NODE_URLS]) {
-        return NODE_URLS[savedNode as keyof typeof NODE_URLS];
+    if (savedNode && NODE_URLS[savedNode]) {
+        return NODE_URLS[savedNode];
     }
 
     // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
     
     // 3. Авто-вибір для розробки (MacBook -> iMac)
-    if (metaEnv.DEV) return NODE_URLS.SOVEREIGN;
+    if (metaEnv.DEV) return NODE_URLS[NODE_IDS.SOVEREIGN];
 
     // 4. Default
-    return NODE_URLS.HYBRID;
+    return NODE_URLS[NODE_IDS.HYBRID];
 };
 
 export let API_BASE_URL = resolveInitialUrl();
@@ -71,9 +71,9 @@ export const OPENSEARCH_API_URL = API_BASE_URL.replace(/:8000\/api\/v1|:9080\/ap
 
 /** Визначає ID вузла за URL */
 const resolveNodeId = (url: string): string => {
-    if (url === NODE_URLS.SOVEREIGN) return NODE_IDS.SOVEREIGN;
-    if (url === NODE_URLS.HYBRID)    return NODE_IDS.HYBRID;
-    if (url === NODE_URLS.CLOUD)     return NODE_IDS.CLOUD;
+    if (url === NODE_URLS[NODE_IDS.SOVEREIGN]) return NODE_IDS.SOVEREIGN;
+    if (url === NODE_URLS[NODE_IDS.HYBRID])    return NODE_IDS.HYBRID;
+    if (url === NODE_URLS[NODE_IDS.CLOUD])     return NODE_IDS.CLOUD;
     return NODE_IDS.MOCK;
 };
 
@@ -111,7 +111,7 @@ const initGlobalState = () => {
 // ─── Публічні Методи Управління ──────────────────────────────────────────────
 
 export const switchToNode = (nodeId: string) => {
-    const targetUrl = NODE_URLS[nodeId as keyof typeof NODE_URLS];
+    const targetUrl = NODE_URLS[nodeId];
     if (!targetUrl) return;
 
     localStorage.setItem('PREDATOR_ACTIVE_NODE', nodeId);

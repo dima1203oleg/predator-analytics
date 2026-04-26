@@ -1,4 +1,4 @@
-# PREDATOR Ingestion Worker — Multi-stage Dockerfile v58.2-WRAITH
+# PREDATOR Ingestion Worker — Multi-stage Dockerfile v61.0-ELITE
 # HR-05: Multi-stage build, non-root user (USER predator)
 # HR-01: Python 3.12 ONLY
 
@@ -50,7 +50,7 @@ USER predator
 
 ENV PYTHONPATH="/app:/libs/predator-common" \
     PYTHONUNBUFFERED=1 \
-    APP_VERSION="58.2-WRAITH"
+    APP_VERSION="61.0-ELITE"
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1

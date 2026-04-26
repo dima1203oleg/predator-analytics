@@ -120,6 +120,18 @@ export interface TransactionFlow {
   source: string;
   target: string;
   value: number;
+  /** Альтернативне ім'я джерела (зворотна сумісність) */
+  from?: string;
+  /** Альтернативне ім'я цілі (зворотна сумісність) */
+  to?: string;
+  /** Сума транзакції (зворотна сумісність з amount) */
+  amount?: number;
+  /** Валюта транзакції */
+  currency?: string;
+  /** Дата транзакції */
+  date?: string;
+  /** Оцінка ризику (0-1) */
+  risk_score?: number;
 }
 
 export interface FinancialSigintResult {
