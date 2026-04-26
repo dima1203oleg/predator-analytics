@@ -14,7 +14,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { isSidebarOpenAtom, shellCommandPaletteOpenAtom, sidebarSearchAtom } from '../../store/atoms';
+import { isSidebarOpenAtom, shellCommandPaletteOpenAtom, sidebarSearchAtom, colabPanelOpenAtom } from '../../store/atoms';
 import { useUser } from '../../context/UserContext';
 import { Logo } from '../Logo';
 import {
@@ -206,6 +206,7 @@ export const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useAtom(isSidebarOpenAtom);
   const [search, setSearch] = useAtom(sidebarSearchAtom);
   const [, setIsPaletteOpen] = useAtom(shellCommandPaletteOpenAtom);
+  const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
   const [workspaceMode, setWorkspaceMode] = useState<NavWorkspaceMode>('all');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(getInitialCollapsed);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -467,6 +468,10 @@ export const Sidebar: React.FC = () => {
                   onClick={() => {
                     if (action.kind === 'focus-search') {
                       focusSearch();
+                      return;
+                    }
+                    if (action.kind === 'colab') {
+                      setIsColabOpen(true);
                       return;
                     }
                     if (action.mode) {

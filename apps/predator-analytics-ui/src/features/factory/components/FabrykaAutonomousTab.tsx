@@ -104,15 +104,7 @@ const INITIAL_VRAM: VramMetrics = {
   active_models: ['deepseek-coder:6.7b-Q4'],
 };
 
-const INITIAL_FITNESS: FitnessMetrics = {
-  backend: { latency_p95_ms: 87, latency_threshold_ms: 120, error_rate_percent: 0.18 },
-  frontend: { fps: 57, memory_mb: 892, memory_limit_mb: 1200 },
-  llm: { tokens_per_sec: 34, baseline_tps: 28, hallucination_score: 0.04, hallucination_threshold: 0.15 },
-  infra: { cpu_load_percent: 54, vram_used_percent: 62 },
-  score: 1.47,
-  threshold: 1.2,
-  passed: true,
-};
+const INITIAL_FITNESS: FitnessMetrics | null = null;
 
 const CHAOS_SCENARIOS: ChaosScenario[] = [
   { id: 'kill_pod', name: 'Вбити под', description: 'Примусово завершити один із системних подів K8s', severity: 'high', duration_sec: 30 },
@@ -121,18 +113,9 @@ const CHAOS_SCENARIOS: ChaosScenario[] = [
   { id: 'gpu_overload', name: 'Перевантаження GPU', description: 'Запустити стрес-тест VRAM + inference одночасно', severity: 'high', duration_sec: 20 },
 ];
 
-const INITIAL_FEATURE_FLAGS: FeatureFlag[] = [
-  { id: 'new_ui', name: 'Новий інтерфейс (v2)', description: 'Оновлений дизайн головного дашборду', enabled: false, rollout_percent: 20, storage: 'local' },
-  { id: 'ai_copilot', name: 'AI Копілот', description: 'Вбудований чат-асистент у всіх модулях', enabled: true, rollout_percent: 100, storage: 'local' },
-  { id: 'chaos_mode', name: 'Chaos Engineering', description: 'Дозволити запуск хаос-сценаріїв з UI', enabled: false, rollout_percent: 0, storage: 'local' },
-  { id: 'evolution_agent', name: 'EvolutionAgent', description: 'Мета-агент аналізу тренд та деградацій', enabled: true, rollout_percent: 100, storage: 'local' },
-  { id: 'avro_contracts', name: 'Avro Data Contracts', description: 'Версіонування подій через Avro-реєстр', enabled: false, rollout_percent: 5, storage: 'postgresql' },
-];
+const INITIAL_FEATURE_FLAGS: FeatureFlag[] = [];
 
-const INITIAL_RISK_EVENTS: RiskEvent[] = [
-  { id: 'EVT-001', commit_hash: 'a3f4b21', level: 'LOW', reason: 'CSS-зміна без впливу на логіку', action: 'auto_merge', timestamp: new Date(Date.now() - 120000).toISOString(), resolved: true },
-  { id: 'EVT-002', commit_hash: 'b9c1d45', level: 'MEDIUM', reason: 'Нова залежність без аудиту', action: 'canary', timestamp: new Date(Date.now() - 60000).toISOString(), resolved: false },
-];
+const INITIAL_RISK_EVENTS: RiskEvent[] = [];
 
 // ─── Режим Кодера ──────────────────────────────────────────────────────────────
 
@@ -151,31 +134,11 @@ interface CoderModel {
   context_k: number;
 }
 
-const INITIAL_SWARM: SwarmAgent[] = [
-  { id: 'agent-planner', name: 'Master Planner', role: 'PLANNER', status: 'THINKING', vram_usage_gb: 1.2, last_activity: new Date().toISOString() },
-  { id: 'agent-coder', name: 'Surgical Coder', role: 'CODER', status: 'EXECUTING', vram_usage_gb: 3.5, active_task: 'fix(aml): optimize score calculation', last_activity: new Date().toISOString() },
-  { id: 'agent-qa', name: 'QA Sentry', role: 'QA_BVR', status: 'IDLE', vram_usage_gb: 0.8, last_activity: new Date().toISOString() },
-  { id: 'agent-osint', name: 'OSINT Harvester', role: 'OSINT_HARVESTER', status: 'WAITING_FOR_UPSTREAM', vram_usage_gb: 0.5, last_activity: new Date().toISOString() },
-];
+const INITIAL_SWARM: SwarmAgent[] = [];
 
-const INITIAL_SANDBOX: SandboxSession = {
-  id: 'sandbox-v5-prod',
-  status: 'ACTIVE',
-  runtime: 'python3.12',
-  logs: [
-    '[SYSTEM] Provisioning E2B sandbox...',
-    '[SYSTEM] Installing dependencies: uv, fastpagi, sqlalchemy',
-    '[SANDBOX] Running tests for aml_scoring.py',
-    '[SANDBOX] Coverage: 98.4%',
-    '[SYSTEM] WORM_GUARD: Write protection active on audit_log',
-  ],
-  vram_guard_active: true,
-};
+const INITIAL_SANDBOX: SandboxSession | null = null;
 
-const INITIAL_STEPS: ReasoningStep[] = [
-  { id: 'step-1', agent_id: 'agent-planner', timestamp: new Date(Date.now() - 30000).toISOString(), thought: 'Аналізую вхідне ТЗ для AML модуля. Необхідно впровадити Tri-State Routing.', confidence: 0.98 },
-  { id: 'step-2', agent_id: 'agent-planner', timestamp: new Date(Date.now() - 15000).toISOString(), thought: 'Визначаю необхідні моделі: Phi-4 для планування, Qwen3 для кодування. Перевіряю доступну VRAM...', action: 'Start Coding Task', confidence: 0.95 },
-];
+const INITIAL_STEPS: ReasoningStep[] = [];
 
 const CODER_MODELS: CoderModel[] = [
   // ── Ollama (NVIDIA Server, GTX 1080) ──
@@ -335,7 +298,7 @@ const KpiBar = ({ label, value, max, unit, ok }: { label: string; value: number;
 export function FabrykaAutonomousTab() {
   const [llmMode, setLlmMode] = useState<LlmModeState>(INITIAL_LLM_MODE);
   const [vram, setVram] = useState<VramMetrics>(INITIAL_VRAM);
-  const [fitness] = useState<FitnessMetrics>(INITIAL_FITNESS);
+  const [fitness] = useState<FitnessMetrics | null>(INITIAL_FITNESS);
   const [riskEvents, setRiskEvents] = useState<RiskEvent[]>(INITIAL_RISK_EVENTS);
   const [flags, setFlags] = useState<FeatureFlag[]>(INITIAL_FEATURE_FLAGS);
   const [chaosLog, setChaosLog] = useState<ChaosLogEntry[]>([]);
@@ -354,7 +317,7 @@ export function FabrykaAutonomousTab() {
 
   // ── Стан v5.0 (Swarm & Reasoning) ──
   const [swarm, setSwarm] = useState<SwarmAgent[]>(INITIAL_SWARM);
-  const [sandbox, setSandbox] = useState<SandboxSession>(INITIAL_SANDBOX);
+  const [sandbox, setSandbox] = useState<SandboxSession | null>(INITIAL_SANDBOX);
   const [steps, setSteps] = useState<ReasoningStep[]>(INITIAL_STEPS);
   const [isStreaming, setIsStreaming] = useState(true);
   // ── WebSocket Live Observation (Observer Mode v5.0) ────────────────────────
@@ -474,17 +437,27 @@ export function FabrykaAutonomousTab() {
       scenario: scenarioId,
       started_at: new Date().toISOString(),
       status: 'running',
-      outcome: `Ініційовано сценарій «${scenario.name}»...`,
+      outcome: `Виклик API: Launch Chaos [${scenarioId}]...`,
     }, ...prev.slice(0, 9)]);
 
-    await new Promise((r) => setTimeout(r, scenario.duration_sec * 60)); // 1:60 ratio для UI
-
-    setChaosLog((prev) => prev.map((e) =>
-      e.id === entryId
-        ? { ...e, status: 'completed', outcome: `Сценарій «${scenario.name}» завершено. Система відновлена за ${scenario.duration_sec}с.` }
-        : e,
-    ));
-    setRunningChaos(null);
+    try {
+      // Виклик реального API замість симуляції
+      await factoryApi.launchChaos(scenarioId);
+      
+      setChaosLog((prev) => prev.map((e) =>
+        e.id === entryId
+          ? { ...e, status: 'completed', outcome: `Сценарій «${scenario.name}» успішно ініційовано на кластері.` }
+          : e,
+      ));
+    } catch (err: any) {
+      setChaosLog((prev) => prev.map((e) =>
+        e.id === entryId
+          ? { ...e, status: 'failed', outcome: `Помилка запуску: ${err.message || 'Unknown error'}` }
+          : e,
+      ));
+    } finally {
+      setRunningChaos(null);
+    }
   }, [runningChaos]);
 
   // ── Risk approve ──
@@ -1001,66 +974,75 @@ export function FabrykaAutonomousTab() {
         {/* ── Fitness Engine ── */}
         {activeSection === 'fitness' && (
           <motion.div key="fitness" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            {/* Score Banner */}
-            <div className={cn(
-              'rounded-[28px] border p-5 text-center relative overflow-hidden',
-              fitness.passed ? 'border-emerald-500/30 bg-emerald-950/20' : 'border-rose-500/30 bg-rose-950/20',
-            )}>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/2 to-transparent pointer-events-none" />
-              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Fitness Score · Поточний коміт</div>
-              <div className={cn('text-5xl font-black', fitness.passed ? 'text-emerald-400' : 'text-rose-400')}>
-                {fitness.score.toFixed(2)}
-              </div>
-              <div className="text-[10px] font-mono text-slate-500 mt-1">
-                Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ ПРИЙНЯТО' : '❌ ВІДХИЛЕНО'}
-              </div>
-              <div className="mt-3 text-[10px] text-slate-600 font-mono">
-                score = (perf_gain × 2 + stability_gain) / (cpu_cost + vram_cost + latency_cost)
-              </div>
-            </div>
-
-            {/* 4 колонки KPI */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-              {/* Backend */}
-              <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Network size={14} className="text-rose-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Backend</span>
+            {fitness ? (
+              <>
+                {/* Score Banner */}
+                <div className={cn(
+                  'rounded-[28px] border p-5 text-center relative overflow-hidden',
+                  fitness.passed ? 'border-emerald-500/30 bg-emerald-950/20' : 'border-rose-500/30 bg-rose-950/20',
+                )}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/2 to-transparent pointer-events-none" />
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">Fitness Score · Поточний коміт</div>
+                  <div className={cn('text-5xl font-black', fitness.passed ? 'text-emerald-400' : 'text-rose-400')}>
+                    {fitness.score.toFixed(2)}
+                  </div>
+                  <div className="text-[10px] font-mono text-slate-500 mt-1">
+                    Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ ПРИЙНЯТО' : '❌ ВІДХИЛЕНО'}
+                  </div>
+                  <div className="mt-3 text-[10px] text-slate-600 font-mono">
+                    score = (perf_gain × 2 + stability_gain) / (cpu_cost + vram_cost + latency_cost)
+                  </div>
                 </div>
-                <KpiBar label="Latency P95" value={fitness.backend.latency_p95_ms} max={fitness.backend.latency_threshold_ms} unit="ms" ok={fitness.backend.latency_p95_ms < fitness.backend.latency_threshold_ms} />
-                <KpiBar label="Error Rate" value={fitness.backend.error_rate_percent} max={0.5} unit="%" ok={fitness.backend.error_rate_percent < 0.5} />
-              </div>
 
-              {/* Frontend */}
-              <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Monitor size={14} className="text-rose-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Frontend</span>
-                </div>
-                <KpiBar label="FPS" value={fitness.frontend.fps} max={60} unit="" ok={fitness.frontend.fps >= 50} />
-                <KpiBar label="Memory" value={fitness.frontend.memory_mb} max={fitness.frontend.memory_limit_mb} unit="MB" ok={fitness.frontend.memory_mb < fitness.frontend.memory_limit_mb} />
-              </div>
+                {/* 4 колонки KPI */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                  {/* Backend */}
+                  <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Network size={14} className="text-rose-400" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Backend</span>
+                    </div>
+                    <KpiBar label="Latency P95" value={fitness.backend.latency_p95_ms} max={fitness.backend.latency_threshold_ms} unit="ms" ok={fitness.backend.latency_p95_ms < fitness.backend.latency_threshold_ms} />
+                    <KpiBar label="Error Rate" value={fitness.backend.error_rate_percent} max={0.5} unit="%" ok={fitness.backend.error_rate_percent < 0.5} />
+                  </div>
 
-              {/* LLM */}
-              <div className="rounded-[24px] border border-[#D4AF37]/20 bg-black/30 p-5 space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <BrainCircuit size={14} className="text-[#D4AF37]" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">LLM</span>
-                </div>
-                <KpiBar label="Tokens/sec" value={fitness.llm.tokens_per_sec} max={fitness.llm.baseline_tps * 2} unit="" ok={fitness.llm.tokens_per_sec > fitness.llm.baseline_tps} />
-                <KpiBar label="Hallucination" value={Math.round(fitness.llm.hallucination_score * 100)} max={Math.round(fitness.llm.hallucination_threshold * 100)} unit="%" ok={fitness.llm.hallucination_score < fitness.llm.hallucination_threshold} />
-              </div>
+                  {/* Frontend */}
+                  <div className="rounded-[24px] border border-rose-500/20 bg-black/30 p-5 space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Monitor size={14} className="text-rose-400" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">Frontend</span>
+                    </div>
+                    <KpiBar label="FPS" value={fitness.frontend.fps} max={60} unit="" ok={fitness.frontend.fps >= 50} />
+                    <KpiBar label="Memory" value={fitness.frontend.memory_mb} max={fitness.frontend.memory_limit_mb} unit="MB" ok={fitness.frontend.memory_mb < fitness.frontend.memory_limit_mb} />
+                  </div>
 
-              {/* Infra */}
-              <div className="rounded-[24px] border border-emerald-500/20 bg-black/30 p-5 space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Layers size={14} className="text-emerald-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Infra</span>
+                  {/* LLM */}
+                  <div className="rounded-[24px] border border-[#D4AF37]/20 bg-black/30 p-5 space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BrainCircuit size={14} className="text-[#D4AF37]" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-[#D4AF37]">LLM</span>
+                    </div>
+                    <KpiBar label="Tokens/sec" value={fitness.llm.tokens_per_sec} max={fitness.llm.baseline_tps * 2} unit="" ok={fitness.llm.tokens_per_sec > fitness.llm.baseline_tps} />
+                    <KpiBar label="Hallucination" value={Math.round(fitness.llm.hallucination_score * 100)} max={Math.round(fitness.llm.hallucination_threshold * 100)} unit="%" ok={fitness.llm.hallucination_score < fitness.llm.hallucination_threshold} />
+                  </div>
+
+                  {/* Infra */}
+                  <div className="rounded-[24px] border border-emerald-500/20 bg-black/30 p-5 space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Layers size={14} className="text-emerald-400" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Infra</span>
+                    </div>
+                    <KpiBar label="CPU Load" value={fitness.infra.cpu_load_percent} max={80} unit="%" ok={fitness.infra.cpu_load_percent < 80} />
+                    <KpiBar label="VRAM" value={fitness.infra.vram_used_percent} max={100} unit="%" ok={fitness.infra.vram_used_percent < 85} />
+                  </div>
                 </div>
-                <KpiBar label="CPU Load" value={fitness.infra.cpu_load_percent} max={80} unit="%" ok={fitness.infra.cpu_load_percent < 80} />
-                <KpiBar label="VRAM" value={fitness.infra.vram_used_percent} max={100} unit="%" ok={fitness.infra.vram_used_percent < 85} />
+              </>
+            ) : (
+              <div className="h-64 bg-black/40 rounded-[32px] border border-white/5 flex flex-col items-center justify-center text-slate-600">
+                <Activity size={32} className="mb-2 opacity-20" />
+                <div className="text-[10px] font-black uppercase tracking-widest">Дані Fitness відсутні (Чекаємо на стрім)</div>
               </div>
-            </div>
+            )}
           </motion.div>
         )}
 
@@ -1102,46 +1084,53 @@ export function FabrykaAutonomousTab() {
                 <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Останні події ризику</span>
               </div>
               <div className="p-3 space-y-2 max-h-[280px] overflow-y-auto">
-                {riskEvents.map((evt) => {
-                  const c = getRiskColors(evt.level);
-                  const RIcon = getRiskIcon(evt.level);
-                  return (
-                    <div key={evt.id} className={cn(
-                      'flex items-start justify-between gap-4 rounded-[18px] border p-4 transition-all',
-                      evt.resolved ? 'border-white/5 bg-black/20 opacity-50' : cn(c.border, c.bg),
-                    )}>
-                      <div className="flex items-start gap-3">
-                        <RIcon size={16} className={cn(c.text, 'mt-0.5 shrink-0')} />
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={cn('text-[10px] font-black uppercase', c.text)}>{evt.level}</span>
-                            <span className="text-[10px] font-mono text-slate-500">{evt.commit_hash}</span>
-                            <span className="text-[10px] text-slate-600">· {getRiskActionLabel(evt.action)}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-300">{evt.reason}</div>
-                          <div className="text-[9px] text-slate-600 font-mono mt-0.5">
-                            {new Date(evt.timestamp).toLocaleString('uk-UA')}
+                {riskEvents?.length > 0 ? (
+                  riskEvents.map((evt) => {
+                    const c = getRiskColors(evt.level);
+                    const RIcon = getRiskIcon(evt.level);
+                    return (
+                      <div key={evt.id} className={cn(
+                        'flex items-start justify-between gap-4 rounded-[18px] border p-4 transition-all',
+                        evt.resolved ? 'border-white/5 bg-black/20 opacity-50' : cn(c.border, c.bg),
+                      )}>
+                        <div className="flex items-start gap-3">
+                          <RIcon size={16} className={cn(c.text, 'mt-0.5 shrink-0')} />
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={cn('text-[10px] font-black uppercase', c.text)}>{evt.level}</span>
+                              <span className="text-[10px] font-mono text-slate-500">{evt.commit_hash}</span>
+                              <span className="text-[10px] text-slate-600">· {getRiskActionLabel(evt.action)}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-300">{evt.reason}</div>
+                            <div className="text-[9px] text-slate-600 font-mono mt-0.5">
+                              {new Date(evt.timestamp).toLocaleString('uk-UA')}
+                            </div>
                           </div>
                         </div>
+                        {!evt.resolved && (
+                          <button
+                            type="button"
+                            onClick={() => handleResolveRisk(evt.id)}
+                            className="shrink-0 flex items-center gap-1.5 border border-white/10 bg-white/5 rounded-lg px-2.5 py-1.5 text-[9px] font-black uppercase text-slate-400 hover:text-white transition"
+                          >
+                            <UserCheck size={11} />
+                            Підтвердити
+                          </button>
+                        )}
+                        {evt.resolved && (
+                          <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
+                        )}
                       </div>
-                      {!evt.resolved && (
-                        <button
-                          type="button"
-                          onClick={() => handleResolveRisk(evt.id)}
-                          className="shrink-0 flex items-center gap-1.5 border border-white/10 bg-white/5 rounded-lg px-2.5 py-1.5 text-[9px] font-black uppercase text-slate-400 hover:text-white transition"
-                        >
-                          <UserCheck size={11} />
-                          Підтвердити
-                        </button>
-                      )}
-                      {evt.resolved && (
-                        <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
-                      )}
+                    );
+                  })
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-900/50 flex items-center justify-center mb-3 border border-white/5">
+                      <Shield size={20} className="text-slate-600" />
                     </div>
-                  );
-                })}
-                {riskEvents.length === 0 && (
-                  <div className="text-center text-slate-600 text-[11px] py-8">Подій ризику не знайдено</div>
+                    <div className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Подій не виявлено</div>
+                    <div className="text-[10px] text-slate-600 max-w-[200px]">Система Risk Engine наразі не зафіксувала жодних аномалій або критичних ризиків.</div>
+                  </div>
                 )}
               </div>
             </div>

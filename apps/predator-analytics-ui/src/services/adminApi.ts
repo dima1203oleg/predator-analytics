@@ -194,6 +194,12 @@ export const adminApi = {
     getEngines: async (): Promise<SystemEngine[]> => {
       return (await apiClient.get<SystemEngine[]>('/system/engines')).data;
     },
+    getNodes: async (): Promise<any[]> => {
+      return (await apiClient.get<any[]>('/system/nodes')).data;
+    },
+    getInfrastructure: async (): Promise<any> => {
+      return (await apiClient.get<any>('/system/infrastructure')).data;
+    },
     getLogs: async (): Promise<{ logs: any[] }> => {
       return (await apiClient.get<{ logs: any[] }>('/system/logs/stream')).data;
     },

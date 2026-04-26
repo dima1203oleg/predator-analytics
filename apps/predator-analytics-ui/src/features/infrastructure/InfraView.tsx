@@ -87,47 +87,14 @@ export default function InfraView() {
     }
   }, [isFullyAutomated, activeIncidents]);
 
-  // Simple OODA Cycle Simulation
+  // OODA Cycle Control
   React.useEffect(() => {
     if (!infrastructure?.components) return;
-
-    const issues = Object.entries(infrastructure.components)
-      .filter(([_, comp]) => (comp as any).status !== 'UP')
-      .map(([key, comp], idx) => {
-        const c = comp as any;
-        const agent = agents[idx % agents.length] || { id: 'agent-01', name: 'PREDATOR_CORE', type: 'SYSTEM' };
-        
-        return {
-          id: `inc-${key}-${Date.now()}`,
-          timestamp: new Date().toLocaleTimeString(),
-          status: oodaStatus,
-          component: key.toUpperCase(),
-          finding: c.status === 'DOWN' ? 'Вузол не відповідає на запити.' : 'Спостерігається висока затримка (>50ms).',
-          action_plan: c.status === 'DOWN' ? ['Перезапуск контейнера сервісу', 'Перевірка лімітів ресурсів', 'Сповіщення команди SRE'] : ['Оптимізація запитів', 'Очищення буферів'],
-          automated: true,
-          human_approval_required: !isFullyAutomated && idx === 0 && oodaStatus === 'DECIDING', 
-          assigned_agent: {
-            id: agent.id,
-            name: (agent as any).name,
-            type: (agent as any).type || 'WATCHER'
-          }
-        };
-      });
-
-    setActiveIncidents(issues as any);
     
-    if (issues.length > 0) {
-      const cycle = ['OBSERVING', 'ORIENTING', 'DECIDING', 'ACTING'];
-      let idx = 0;
-      const interval = setInterval(() => {
-        setOodaStatus(cycle[idx] as OODAStatus);
-        idx = (idx + 1) % cycle.length;
-      }, 5000);
-      return () => clearInterval(interval);
-    } else {
-      setOodaStatus('OBSERVING');
-    }
-  }, [infrastructure, agents, oodaStatus, isFullyAutomated]);
+    // Truth Protocol: Видалено локальну симуляцію інцидентів.
+    // Тільки реальні дані з бекенду (якщо будуть додані в API).
+    setOodaStatus('OBSERVING');
+  }, [infrastructure]);
 
   const isLoading = isInfraLoading || isNodesLoading;
   const error = infraError;

@@ -120,7 +120,7 @@ const MarketEntryView: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'score' | 'growth' | 'size'>('score');
   const [filterRec, setFilterRec] = useState<'all' | 'strong-buy' | 'buy' | 'hold'>('all');
-  const [markets, setMarkets] = useState<MarketEntry[]>(MARKETS);
+  const [markets, setMarkets] = useState<MarketEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -132,12 +132,16 @@ const MarketEntryView: React.FC = () => {
     setError(null);
     try {
       const result = await intelligence.getMarketOpportunities('UA_MARKET_SIGINT');
-      if (result && Array.isArray(result)) {
+      if (result && Array.isArray(result) && result.length > 0) {
         setMarkets(result);
+      } else {
+        setMarkets([]);
+        setError('Геополітичні вектори відсутні в поточному сегменті.');
       }
     } catch (err) {
       console.error('[MarketEntry] Error fetching opportunities', err);
-      setError('Критична десинхронізація OPPORTUNITY_NODES.');
+      setError('Критична десинхронізація OPPORTUNITY_NODES. Вузол недоступний.');
+      setMarkets([]);
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'MarketEntry',
@@ -186,7 +190,7 @@ const MarketEntryView: React.FC = () => {
       return 0;
     });
 
-  const selected = sorted.find(m => m.id === selectedId) || sorted[0];
+  const selected = sorted.find(m => m.id === selectedId) || (sorted.length > 0 ? sorted[0] : null);
 
   React.useEffect(() => {
     if (sorted.length > 0 && !selectedId) {
@@ -194,7 +198,8 @@ const MarketEntryView: React.FC = () => {
     }
   }, [sorted, selectedId]);
 
-  if (!selected) return null;
+  // Handle No Data Case for the whole view
+  const noData = !isLoading && markets.length === 0;
 
   const radarData = [
     { subject: 'Регуляторика',   value: selected.regulatory },
@@ -315,6 +320,36 @@ const MarketEntryView: React.FC = () => {
             </div>
 
             <div className="space-y-6">
+              {isLoading && (
+                <div className="p-12 border-2 border-white/5 bg-black/40 rounded-[3.5rem] flex flex-col items-center gap-6">
+                   <RefreshCcw className="text-rose-500 animate-spin" size={48} />
+                   <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">Синхронізація геополітичних векторів...</span>
+                </div>
+              )}
+
+              {error && !isLoading && (
+                <div className="p-12 border-2 border-rose-500/20 bg-rose-500/5 rounded-[3.5rem] flex flex-col items-center gap-6 text-center">
+                   <AlertTriangle size={48} className="text-rose-500 animate-pulse" />
+                   <div className="space-y-2">
+                     <p className="text-white font-black uppercase italic tracking-widest">{error}</p>
+                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.3em]">Truth Protocol: Відображення мок-даних заблоковано.</p>
+                   </div>
+                   <button 
+                     onClick={() => fetchOpportunities()}
+                     className="px-8 py-3 bg-rose-500/10 border border-rose-500/40 text-rose-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-500 hover:text-black transition-all"
+                   >
+                     RETRY_SYNC
+                   </button>
+                </div>
+              )}
+
+              {!isLoading && !error && sorted.length === 0 && (
+                <div className="p-12 border-2 border-white/5 bg-black/40 rounded-[3.5rem] flex flex-col items-center gap-6 text-center opacity-40">
+                   <Satellite size={48} className="text-slate-600" />
+                   <p className="text-slate-400 font-black uppercase italic tracking-widest">Об'єктів за вказаними фільтрами не знайдено.</p>
+                </div>
+              )}
+
               {sorted.map((mkt, i) => {
                 const rc = RECOMMENDATION_CFG[mkt.recommendation];
                 const RIcon = rc.icon;
@@ -384,6 +419,7 @@ const MarketEntryView: React.FC = () => {
           {/* Деталі ринку WRAITH */}
           <div className="lg:col-span-7">
             <AnimatePresence mode="wait">
+              {selected ? (
               <motion.div
                 key={selected.id}
                 initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -565,6 +601,12 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
               </motion.div>
+              ) : (
+                <div className="h-[600px] flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20 border-2 border-dashed border-white/10 rounded-[4rem]">
+                   <Globe size={120} className="text-slate-600 mb-10 animate-pulse" />
+                   <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ВЕКТОР ДЛЯ АНАЛІЗУ</p>
+                </div>
+              )}
             </AnimatePresence>
           </div>
         </div>

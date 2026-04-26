@@ -15,8 +15,15 @@ export const optimizerApi = {
     },
     run: async () => {
         return (await v45Client.post('/optimizer/run')).data;
+    },
+    getTemplates: async () => {
+        return (await v45Client.get('/optimizer/templates')).data?.templates || [];
+    },
+    getTemplate: async (id: string) => {
+        return (await v45Client.get(`/optimizer/templates/${id}`)).data;
     }
 };
+
 
 export const intelligenceApi = {
     getAiInsights: async () => {

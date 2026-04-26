@@ -16,6 +16,8 @@ import { CyberGrid } from '@/components/CyberGrid';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 
+import { useDataOpsStatus } from '@/hooks/useAdminApi';
+
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -80,15 +82,8 @@ export default function SystemFactoryView() {
   const [analyticComponents, setAnalyticComponents] = useState<string[]>(['knowledge', 'datasets']);
   const [activeCycle, setActiveCycle] = useState<'idle' | 'building' | 'testing' | 'deploying' | 'analyzing'>('idle');
 
-  // ═══ Ingestion State ═══
-  const [ingestionMetrics] = useState({ rps: '4,102', success: 99.98, proxies: '782/800' });
-  const [ingestionFeed] = useState<Array<{ id: string; source: string; entity: string; latency: string; time: string }>>([
-    { id: 'INJ-0xA1F3', source: 'EDR Registry', entity: 'ТОВ "УКРПРОМ"', latency: '142ms', time: '14:32:01' },
-    { id: 'INJ-0xB2C4', source: 'Court Decisions', entity: 'Справа №914/1234', latency: '89ms', time: '14:32:03' },
-    { id: 'INJ-0xC3D5', source: 'Customs DB', entity: 'Декларація MD-2024-0012', latency: '215ms', time: '14:32:05' },
-    { id: 'INJ-0xD4E6', source: 'SANCTIONS', entity: 'SDN Entity Check', latency: '67ms', time: '14:32:07' },
-    { id: 'INJ-0xE5F7', source: 'OpenData API', entity: 'Бенефіціар ЄДРПОУ 12345678', latency: '178ms', time: '14:32:09' },
-  ]);
+  // ═══ Ingestion State (REAL) ═══
+  const { data: dataOps } = useDataOpsStatus();
 
   type BugSeverity = RiskLevelValue;
   type BugStatus = 'detected' | 'fixing' | 'fixed';
@@ -932,8 +927,18 @@ export default function SystemFactoryView() {
             {activeTab === 'ingestion' && (
               <motion.div key="ingestion" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
                 <FactoryIngestionPanel
-                  ingestionMetrics={ingestionMetrics}
-                  ingestionFeed={ingestionFeed}
+                  ingestionMetrics={{
+                    rps: dataOps ? dataOps.kafkaTopics.reduce((acc, t) => acc + (parseFloat(t.throughput) || 0), 0).toFixed(1) : '0',
+                    success: 100,
+                    proxies: dataOps ? `${dataOps.kafkaTopics.reduce((acc, t) => acc + t.consumers, 0)}/∞` : '0/0'
+                  }}
+                  ingestionFeed={dataOps?.kafkaTopics.map(t => ({
+                    id: t.name,
+                    source: 'Kafka Topic',
+                    entity: `${t.partitions} partitions`,
+                    latency: `${t.lag} lag`,
+                    time: new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
+                  })) || []}
                   registryStats={registryStats}
                 />
               </motion.div>

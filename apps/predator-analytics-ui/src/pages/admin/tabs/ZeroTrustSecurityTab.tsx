@@ -109,17 +109,19 @@ export const ZeroTrustSecurityTab: React.FC = () => {
   const { data: sessionsData, isLoading: isSessionsLoading } = useSecuritySessions();
   const { data: auditData, isLoading: isAuditLoading } = useAuditLogs();
   const { data: keysData, isLoading: isKeysLoading } = useSecurityKeys();
+  const { data: systemStatus, isLoading: isStatusLoading } = useSystemStatus();
 
   const tabs = [
     { id: 'sessions', label: `СЕСІЇ`, count: sessionsData?.length || 0, icon: Users, loading: isSessionsLoading },
     { id: 'audit',    label: `АУДИТ`,  count: auditData?.length || 0,   icon: FileText, loading: isAuditLoading },
     { id: 'keys',     label: `КЛЮЧІ`,  count: keysData?.length || 0,   icon: Key, loading: isKeysLoading },
-    { id: 'mtls',     label: `MTLS`,   count: 4,                        icon: Shield, loading: false },
+    { id: 'mtls',     label: `MTLS`,   count: systemStatus?.services?.length || 0, icon: Shield, loading: isStatusLoading },
   ] as const;
 
   const isLoading = (section === 'sessions' && isSessionsLoading) || 
                     (section === 'audit' && isAuditLoading) || 
-                    (section === 'keys' && isKeysLoading);
+                    (section === 'keys' && isKeysLoading) ||
+                    (section === 'mtls' && isStatusLoading);
 
   return (
     <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
@@ -242,14 +244,9 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           )}
           {section === 'mtls' && (
             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { name: 'ВОРКЕР_ІНГЕСТІЇ', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '12с тому', traffic: '24 ГБ' },
-                { name: 'ГРАФ_СЕРВІС', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '5с тому', traffic: '182 ГБ' },
-                { name: 'API_ШЛЮЗ', status: 'ВЕРИФІКОВАНО', expiry: '2027-04-21', lastSeen: '0с тому', traffic: '1.2 ТБ' },
-                { name: 'АДМІН_ВАРТОВИЙ', status: 'ОЧІКУЄТЬСЯ', expiry: '2026-12-01', lastSeen: '1г тому', traffic: '0 Б' },
-              ].map((node, i) => (
+              {(systemStatus?.services || []).map((service, i) => (
                 <motion.div 
-                   key={node.name}
+                   key={service.name}
                    initial={{ opacity: 0, scale: 0.98 }}
                    animate={{ opacity: 1, scale: 1 }}
                    transition={{ delay: i * 0.1 }}
@@ -258,31 +255,37 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
                   <div className="flex justify-between items-center relative z-10">
                     <div className="flex flex-col gap-1">
-                       <span className="text-[14px] font-black italic text-white/80 group-hover:text-white transition-colors uppercase tracking-widest">{node.name}</span>
-                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Вузол ID: {node.name.slice(0, 4)}_{i}99</span>
+                       <span className="text-[14px] font-black italic text-white/80 group-hover:text-white transition-colors uppercase tracking-widest">{service.label}</span>
+                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Сервіс ID: {service.name}</span>
                     </div>
                     <span className={cn(
                       "text-[9px] px-3 py-1 rounded-lg font-black tracking-widest italic border transition-all",
-                      node.status === 'ВЕРИФІКОВАНО' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
-                    )}>{node.status}</span>
+                      service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
+                    )}>{service.status === 'ok' ? 'ВЕРИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}</span>
                   </div>
                   <div className="mt-6 flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest relative z-10">
-                    <span>Дійсний до: <span className="text-white/50">{node.expiry}</span></span>
-                    <span>Трафік: <span className="text-white/50">{node.traffic}</span></span>
+                    <span>Затримка: <span className="text-white/50">{service.latency_ms}мс</span></span>
+                    <span>Режим: <span className="text-white/50">mTLS 1.3</span></span>
                   </div>
                   <div className="mt-4 h-[1px] w-full bg-white/5 relative z-10">
                     <motion.div 
                        className="h-full bg-rose-500/40"
                        initial={{ width: 0 }}
-                       animate={{ width: node.status === 'ВЕРИФІКОВАНО' ? '100%' : '30%' }}
+                       animate={{ width: service.status === 'ok' ? '100%' : '30%' }}
                        transition={{ duration: 1.5, ease: 'circOut' }}
                     />
                   </div>
                   <div className="mt-3 flex justify-end relative z-10">
-                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">ОСТАННЯ_АКТИВНІСТЬ: {node.lastSeen}</span>
+                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">СТАТУС_ВУЗЛА: {service.status.toUpperCase()}</span>
                   </div>
                 </motion.div>
               ))}
+              {!isStatusLoading && (!systemStatus?.services || systemStatus.services.length === 0) && (
+                <div className="col-span-full py-20 flex flex-col items-center justify-center text-white/20 gap-4">
+                  <Shield className="w-12 h-12 stroke-1 opacity-20" />
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em]">mTLS вузли не виявлені</span>
+                </div>
+              )}
             </div>
           )}
         </motion.div>

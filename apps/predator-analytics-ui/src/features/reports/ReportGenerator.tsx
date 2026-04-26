@@ -1,49 +1,22 @@
-/**
- * 📄 Report Generator
- *
- * Генератор звітів PDF/Excel
- * Автоматизовані шаблони, планування
- */
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText,
-  Download,
-  Mail,
-  Calendar,
-  Clock,
-  Plus,
-  Settings,
-  Play,
-  Pause,
-  Trash2,
-  Copy,
-  Edit3,
-  Eye,
-  ChevronRight,
-  Crown,
-  Sparkles,
-  FileSpreadsheet,
-  File,
-  CheckCircle,
-  XCircle,
-  Loader,
-  Filter,
-  Search,
-  BarChart3,
-  PieChart,
-  TrendingUp,
-  Building2,
-  Package,
-  DollarSign,
-  Shield,
-  Globe
+  FileText, Download, Mail, Calendar, Clock, Plus, Settings, Play, Pause,
+  Trash2, Copy, Edit3, Eye, ChevronRight, Crown, Sparkles, FileSpreadsheet,
+  File, CheckCircle, XCircle, Loader, Filter, Search, BarChart3, PieChart,
+  TrendingUp, Building2, Package, DollarSign, Shield, Globe, Zap, Layers,
+  RefreshCw, FileDown, Clock4, ShieldCheck, Share2
 } from 'lucide-react';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { TacticalCard } from '@/components/ui/TacticalCard';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// ========================
-// Types
-// ========================
+// ─── ТИПИ ───────────────────────────────────────────────────────────────────
 
 type ReportType = 'pdf' | 'excel' | 'csv';
 type ReportStatus = 'ready' | 'generating' | 'scheduled' | 'error';
@@ -71,283 +44,273 @@ interface GeneratedReport {
   frequency?: ReportFrequency;
 }
 
-// ========================
-// Mock Data
-// ========================
+// ─── КОНФІГУРАЦІЯ ────────────────────────────────────────────────────────────
 
-const templates: ReportTemplate[] = [
-  { id: '1', name: 'Імпортна аналітика', description: 'Детальний звіт про імпортні операції', category: 'Імпорт', icon: Package, color: 'cyan', isPremium: false },
-  { id: '2', name: 'Аналіз конкурентів', description: 'Порівняльний аналіз конкурентів', category: 'Конкуренти', icon: Building2, color: 'purple', isPremium: false },
-  { id: '3', name: 'Фінансовий звіт', description: 'Обсяги та вартість імпорту/експорту', category: 'Фінанси', icon: DollarSign, color: 'emerald', isPremium: false },
-  { id: '4', name: 'Ризик-аудит', description: 'Аудит ризиків та підозрілих операцій', category: 'Ризики', icon: Shield, color: 'amber', isPremium: true },
-  { id: '5', name: 'Географічний звіт', description: 'Аналіз по країнах та регіонах', category: 'Географія', icon: Globe, color: 'blue', isPremium: false },
-  { id: '6', name: 'Тренди ринку', description: 'Прогнози та тренди ринку', category: 'Аналітика', icon: TrendingUp, color: 'amber', isPremium: true },
-];
-
-const reports: GeneratedReport[] = [
-  { id: '1', name: 'Імпорт_Січень_2026.pdf', template: 'Імпортна аналітика', type: 'pdf', status: 'ready', size: '2.4 MB', createdAt: '2026-02-03T04:30:00' },
-  { id: '2', name: 'Конкуренти_Q1.xlsx', template: 'Аналіз конкурентів', type: 'excel', status: 'ready', size: '1.8 MB', createdAt: '2026-02-02T18:00:00' },
-  { id: '3', name: 'Ризики_Лютий.pdf', template: 'Ризик-аудит', type: 'pdf', status: 'generating', createdAt: '2026-02-03T04:45:00' },
-  { id: '4', name: 'Щоденний_звіт.pdf', template: 'Імпортна аналітика', type: 'pdf', status: 'scheduled', scheduledAt: '2026-02-04T09:00:00', frequency: 'daily', createdAt: '2026-02-01T10:00:00' },
-];
-
-// ========================
-// Components
-// ========================
-
-const typeConfig = {
-  pdf: { icon: FileText, color: 'amber', label: 'PDF' },
-  excel: { icon: FileSpreadsheet, color: 'emerald', label: 'Excel' },
-  csv: { icon: File, color: 'amber', label: 'CSV' }
+const TYPE_CFG = {
+  pdf:   { icon: FileText,        color: '#f59e0b', label: 'PDF' },
+  excel: { icon: FileSpreadsheet, color: '#10b981', label: 'EXCEL' },
+  csv:   { icon: File,            color: '#f59e0b', label: 'CSV' }
 };
 
-const statusConfig = {
-  ready: { icon: CheckCircle, color: 'emerald', label: 'Готовий' },
-  generating: { icon: Loader, color: 'cyan', label: 'Генерується...', animate: true },
-  scheduled: { icon: Calendar, color: 'purple', label: 'Заплановано' },
-  error: { icon: XCircle, color: 'amber', label: 'Помилка' }
+const STATUS_CFG = {
+  ready:      { icon: CheckCircle,  color: '#10b981', label: 'ГОТОВИЙ',     bg: 'bg-emerald-500/10' },
+  generating: { icon: RefreshCw,   color: '#0ea5e9', label: 'ГЕНЕРУЄТЬСЯ', bg: 'bg-sky-500/10', animate: true },
+  scheduled:  { icon: Calendar,    color: '#8b5cf6', label: 'ЗАПЛАНОВАНО', bg: 'bg-purple-500/10' },
+  error:      { icon: XCircle,     color: '#f43f5e', label: 'ПОМИЛКА',     bg: 'bg-rose-500/10' }
 };
+
+// ─── КОМПОНЕНТИ ──────────────────────────────────────────────────────────────
 
 const TemplateCard: React.FC<{ template: ReportTemplate; onSelect: () => void }> = ({ template, onSelect }) => {
   const Icon = template.icon;
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.02, y: -5 }}
       whileTap={{ scale: 0.98 }}
       onClick={onSelect}
-      className={`
-        p-4 rounded-xl border cursor-pointer transition-all
-        ${template.isPremium ? 'border-amber-500/30 bg-amber-500/5' : 'border-white/5 bg-slate-900/60 hover:border-white/10'}
-      `}
-    >
-      {template.isPremium && (
-        <div className="flex items-center gap-1 mb-2">
-          <Crown size={12} className="text-amber-400" />
-          <span className="text-[10px] font-bold text-amber-400">PREMIUM</span>
-        </div>
+      className={cn(
+        "group relative p-8 rounded-[2.5rem] border-2 cursor-pointer transition-all duration-500 overflow-hidden",
+        template.isPremium 
+          ? "bg-gradient-to-br from-amber-500/[0.07] to-transparent border-amber-500/20 shadow-[0_20px_50px_-10px_rgba(245,158,11,0.1)]" 
+          : "bg-black/40 border-white/5 hover:border-white/10"
       )}
-
-      <div className={`p-3 rounded-xl bg-${template.color}-500/20 inline-block mb-3`}>
-        <Icon className={`text-${template.color}-400`} size={24} />
+    >
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-30 transition-opacity">
+        <Icon size={120} style={{ color: template.color }} />
       </div>
 
-      <h4 className="font-bold text-white mb-1">{template.name}</h4>
-      <p className="text-xs text-slate-500 mb-3">{template.description}</p>
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-8">
+          <div className={cn("p-5 rounded-3xl border shadow-2xl transition-transform group-hover:rotate-12 duration-500", 
+            template.isPremium ? "bg-amber-500 border-amber-400 text-black" : "bg-white/5 border-white/5 text-slate-400")}>
+            <Icon size={32} />
+          </div>
+          {template.isPremium && (
+            <div className="flex items-center gap-2 px-4 py-1.5 bg-amber-500/20 border border-amber-500/30 rounded-full">
+              <Crown size={12} className="text-amber-500" />
+              <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.2em]">ELITE</span>
+            </div>
+          )}
+        </div>
 
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-slate-500">{template.category}</span>
-        <ChevronRight className="text-slate-500" size={16} />
+        <h4 className="text-2xl font-black text-white mb-2 uppercase italic tracking-tighter">{template.name}</h4>
+        <p className="text-xs text-slate-500 font-medium leading-relaxed mb-8 uppercase italic tracking-widest">{template.description}</p>
+
+        <div className="flex items-center justify-between pt-6 border-t border-white/5">
+          <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] italic">{template.category}</span>
+          <div className="p-2 rounded-xl bg-white/5 text-slate-500 group-hover:text-amber-500 transition-colors">
+            <ChevronRight size={18} />
+          </div>
+        </div>
       </div>
     </motion.div>
   );
 };
 
 const ReportRow: React.FC<{ report: GeneratedReport }> = ({ report }) => {
-  const type = typeConfig[report.type];
-  const status = statusConfig[report.status];
+  const type = TYPE_CFG[report.type];
+  const status = STATUS_CFG[report.status];
   const TypeIcon = type.icon;
   const StatusIcon = status.icon;
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-slate-900/60 border border-white/5 rounded-xl hover:border-white/10 transition-colors">
-      <div className={`p-2 rounded-lg bg-${type.color}-500/20`}>
-        <TypeIcon className={`text-${type.color}-400`} size={20} />
+    <motion.div 
+       initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+       className="flex items-center gap-8 p-6 bg-black/40 border-2 border-white/5 rounded-[2rem] hover:border-amber-500/20 transition-all duration-500 group"
+    >
+      <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-amber-500 shadow-xl group-hover:scale-110 transition-transform">
+        <TypeIcon size={24} />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <h4 className="font-bold text-white text-sm truncate">{report.name}</h4>
-        <p className="text-xs text-slate-500">{report.template}</p>
+      <div className="flex-1 min-w-0 space-y-1">
+        <h4 className="text-lg font-black text-white truncate uppercase italic tracking-tighter">{report.name}</h4>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{report.template}</span>
+          <div className="w-1 h-1 bg-slate-800 rounded-full" />
+          <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">{report.size || '---'}</span>
+        </div>
       </div>
 
-      <div className={`flex items-center gap-1 px-2 py-1 rounded-lg bg-${status.color}-500/20`}>
-        <StatusIcon
-          size={14}
-          className={`text-${status.color}-400 ${'animate' in status && status.animate ? 'animate-spin' : ''}`}
-        />
-        <span className={`text-xs font-bold text-${status.color}-400`}>{status.label}</span>
+      <div className={cn("flex items-center gap-3 px-6 py-2.5 rounded-2xl border text-[10px] font-black uppercase tracking-widest italic", status.bg, "border-white/5")} style={{ color: status.color }}>
+        <StatusIcon size={14} className={status.animate ? "animate-spin" : ""} />
+        {status.label}
       </div>
 
-      <div className="text-right text-xs text-slate-500">
-        {report.status === 'scheduled' ? (
-          <div>
-            <p>Наступний: {new Date(report.scheduledAt!).toLocaleDateString('uk')}</p>
-            <p className="text-purple-400">{report.frequency === 'daily' ? 'Щодня' : report.frequency === 'weekly' ? 'Щотижня' : 'Щомісяця'}</p>
-          </div>
-        ) : (
-          <>
-            <p>{new Date(report.createdAt).toLocaleDateString('uk')}</p>
-            {report.size && <p>{report.size}</p>}
-          </>
-        )}
+      <div className="w-32 text-right">
+        <p className="text-[10px] font-black text-slate-500 uppercase italic tracking-tighter">
+          {new Date(report.createdAt).toLocaleDateString('uk')}
+        </p>
+        <p className="text-[9px] font-black text-slate-700 uppercase italic tracking-widest">
+          {new Date(report.createdAt).toLocaleTimeString('uk', { hour: '2-digit', minute: '2-digit' })}
+        </p>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         {report.status === 'ready' && (
-          <button className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors" title="Завантажити">
-            <Download size={16} />
+          <button className="p-4 rounded-2xl bg-amber-500 text-black hover:brightness-110 transition-all shadow-xl" title="Завантажити">
+            <Download size={20} />
           </button>
         )}
-        <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition-colors" title="Переглянути">
-          <Eye size={16} />
+        <button className="p-4 rounded-2xl bg-white/5 text-slate-500 hover:text-white transition-all border border-white/5" title="Переглянути">
+          <Eye size={20} />
         </button>
-        {report.status === 'scheduled' && (
-          <button className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-amber-400 transition-colors" title="Скасувати">
-            <Pause size={16} />
-          </button>
-        )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-// ========================
-// Main Component
-// ========================
+// ─── ГОЛОВНИЙ КОМПОНЕНТ ──────────────────────────────────────────────────────
 
 const ReportGenerator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'templates' | 'reports' | 'scheduled'>('templates');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFormat, setSelectedFormat] = useState<ReportType>('pdf');
+  const { isOffline, nodeSource } = useBackendStatus();
 
-  const filteredReports = useMemo(() => {
-    if (activeTab === 'scheduled') {
-      return reports.filter(r => r.status === 'scheduled');
-    }
-    return reports.filter(r => r.status !== 'scheduled');
-  }, [activeTab]);
+  const templates: ReportTemplate[] = [
+    { id: '1', name: 'ІМПОРТНА АНАЛІТИКА', description: 'ДЕТАЛЬНИЙ ЗВІТ ПРО ІМПОРТНІ ОПЕРАЦІЇ', category: 'ІМПОРТ', icon: Package, color: '#f59e0b', isPremium: false },
+    { id: '2', name: 'АНАЛІЗ КОНКУРЕНТІВ', description: 'ПОРІВНЯЛЬНИЙ АНАЛІЗ РИНКОВИХ ЧАСТОК', category: 'КОНКУРЕНТИ', icon: Building2, color: '#8b5cf6', isPremium: false },
+    { id: '3', name: 'ФІНАНСОВИЙ МОНІТОРИНГ', description: 'ОБСЯГИ ТА ВАРТІСТЬ ОПЕРАЦІЙ', category: 'ФІНАНСИ', icon: DollarSign, color: '#10b981', isPremium: false },
+    { id: '4', name: 'РИЗИК-АУДИТ ELITE', description: 'АУДИТ ПІДОЗРІЛИХ ТРАНЗАКЦІЙ ТА РИЗИКІВ', category: 'РИЗИКИ', icon: Shield, color: '#f43f5e', isPremium: true },
+    { id: '5', name: 'ГЕО-КАРТОГРАФІЯ', description: 'АНАЛІЗ ЛАНЦЮЖКІВ ПОСТАЧАНЬ ПО КРАЇНАХ', category: 'ГЕОГРАФІЯ', icon: Globe, color: '#3b82f6', isPremium: false },
+    { id: '6', name: 'AI ТРЕНД-ПРОГНОЗ', description: 'ПЕРЕДИКТИВНА АНАЛІТИКА ТА ТРЕНДИ', category: 'АНАЛІТИКА', icon: TrendingUp, color: '#f59e0b', isPremium: true },
+  ];
 
-  const stats = useMemo(() => ({
-    total: reports.length,
-    ready: reports.filter(r => r.status === 'ready').length,
-    scheduled: reports.filter(r => r.status === 'scheduled').length,
-    generating: reports.filter(r => r.status === 'generating').length
-  }), []);
+  const reports: GeneratedReport[] = [
+    { id: '1', name: 'ІМПОРТ_СІЧЕНЬ_2026.PDF', template: 'ІМПОРТНА АНАЛІТИКА', type: 'pdf', status: 'ready', size: '2.4 MB', createdAt: '2026-02-03T04:30:00' },
+    { id: '2', name: 'КОНКУРЕНТИ_Q1_FIXED.XLSX', template: 'АНАЛІЗ КОНКУРЕНТІВ', type: 'excel', status: 'ready', size: '1.8 MB', createdAt: '2026-02-02T18:00:00' },
+    { id: '3', name: 'РИЗИКИ_ЛЮТИЙ_AUDIT.PDF', template: 'РИЗИК-АУДИТ ELITE', type: 'pdf', status: 'generating', createdAt: '2026-02-03T04:45:00' },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px]" />
-      </div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020202] text-slate-200 font-sans pb-40 relative overflow-hidden">
+        <AdvancedBackground mode="sovereign" />
+        <CyberGrid color="rgba(245, 158, 11, 0.03)" />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-black text-white flex items-center gap-3">
-              <FileText className="text-amber-400" />
-              Report Generator
-              <span className="ml-2 px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full flex items-center gap-1">
-                <Crown size={14} />
-                Premium
-              </span>
-            </h1>
-            <p className="text-slate-500 mt-1">
-              Генерація та планування звітів
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold text-sm">
-              <Plus size={16} />
-              Новий звіт
-            </button>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Всього звітів', value: stats.total, icon: FileText, color: 'slate' },
-            { label: 'Готові', value: stats.ready, icon: CheckCircle, color: 'emerald' },
-            { label: 'Заплановано', value: stats.scheduled, icon: Calendar, color: 'purple' },
-            { label: 'Генеруються', value: stats.generating, icon: Loader, color: 'cyan' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-slate-900/60 border border-white/5 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <stat.icon className={`text-${stat.color}-400`} size={18} />
-                <span className="text-2xl font-black text-white">{stat.value}</span>
+        <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12 pt-12">
+          
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-10">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-amber-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border-2 border-amber-500/40 rounded-[3rem] shadow-4xl transform rotate-1 group-hover:rotate-0 transition-all duration-700">
+                    <FileDown size={54} className="text-amber-500 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-6">
+                    <span className="bg-amber-500/10 border border-amber-500/20 text-amber-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                      ELITE_GENERATOR · v60.5
+                    </span>
+                    <div className="h-px w-16 bg-amber-500/20" />
+                    <span className="text-[10px] font-black text-amber-900 font-mono tracking-widest uppercase italic">AUTOMATED</span>
+                  </div>
+                  <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                    ГЕНЕРАТОР <span className="text-amber-500 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗВІТІВ</span>
+                  </h1>
+                </div>
               </div>
-              <p className="text-xs text-slate-500">{stat.label}</p>
-            </div>
-          ))}
-        </div>
+            }
+            breadcrumbs={['ПРЕДАТОР', 'АНАЛІТИКА', 'ГЕНЕРАТОР_ЗВІТІВ']}
+            stats={[
+              { label: 'ВУЗОЛ', value: nodeSource, icon: <Database />, color: 'gold' },
+              { label: 'ШАБЛОНИ', value: '12_АКТИВНО', icon: <Layers />, color: 'primary' },
+              { label: 'ЧЕРГА', value: '0_ЗАВДАНЬ', icon: <Clock4 />, color: 'success' },
+            ]}
+            actions={
+              <button className="px-14 py-6 bg-gradient-to-r from-amber-600 to-orange-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+                 <Plus size={22} /> НОВИЙ_ШАБЛОН_v60
+              </button>
+            }
+          />
 
-        {/* Tabs */}
-        <div className="flex items-center gap-4 mb-6">
-          {[
-            { id: 'templates', label: 'Шаблони', icon: File },
-            { id: 'reports', label: 'Мої звіти', icon: FileText },
-            { id: 'scheduled', label: 'Заплановані', icon: Calendar },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-                activeTab === tab.id ? 'bg-amber-500/20 text-amber-400' : 'text-slate-500 hover:text-white'
-              }`}
-            >
-              <tab.icon size={16} />
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content */}
-        {activeTab === 'templates' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {templates.map((template) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                onSelect={() => console.log('Select template:', template.id)}
-              />
+          {/* TABS WRAITH/GOLD */}
+          <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
+            {[
+              { id: 'templates', label: 'ШАБЛОНИ_ЗВІТІВ', icon: Layers },
+              { id: 'reports', label: 'МОЇ_АРХІВИ', icon: Database },
+              { id: 'scheduled', label: 'АВТО_ПЛАНУВАННЯ', icon: Clock4 },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={cn(
+                  "flex items-center gap-4 px-10 py-5 rounded-[2rem] font-black text-[11px] uppercase tracking-widest transition-all duration-500 italic",
+                  activeTab === tab.id 
+                    ? "bg-amber-500 text-black shadow-2xl scale-105" 
+                    : "text-slate-600 hover:text-white hover:bg-white/5"
+                )}
+              >
+                <tab.icon size={18} />
+                {tab.label}
+              </button>
             ))}
           </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredReports.length > 0 ? (
-              filteredReports.map((report) => (
-                <ReportRow key={report.id} report={report} />
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <FileText className="text-slate-700 mx-auto mb-4" size={48} />
-                <p className="text-slate-500">Немає звітів</p>
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Quick Export */}
-        <div className="mt-8 p-6 bg-slate-900/40 border border-white/5 rounded-xl">
-          <h3 className="font-bold text-white mb-4">Швидкий експорт</h3>
-          <div className="flex items-center gap-4">
-            <div className="flex gap-2">
-              {Object.entries(typeConfig).map(([key, config]) => (
-                <button
-                  key={key}
-                  onClick={() => setSelectedFormat(key as ReportType)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-colors ${
-                    selectedFormat === key ? `bg-${config.color}-500/20 text-${config.color}-400` : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  <config.icon size={16} />
-                  {config.label}
+          {/* CONTENT */}
+          <div className="relative min-h-[600px]">
+             <AnimatePresence mode="wait">
+               {activeTab === 'templates' ? (
+                 <motion.div 
+                   key="templates" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
+                 >
+                   {templates.map((template) => (
+                     <TemplateCard key={template.id} template={template} onSelect={() => {}} />
+                   ))}
+                 </motion.div>
+               ) : (
+                 <motion.div 
+                   key="reports" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                   className="space-y-6"
+                 >
+                   {reports.map((report) => (
+                     <ReportRow key={report.id} report={report} />
+                   ))}
+                 </motion.div>
+               )}
+             </AnimatePresence>
+          </div>
+
+          {/* QUICK EXPORT GOLD */}
+          <div className="p-10 bg-gradient-to-r from-amber-500/[0.03] to-transparent border-2 border-amber-500/10 rounded-[4rem] flex flex-col md:flex-row items-center justify-between gap-12">
+             <div className="flex items-center gap-8">
+                <div className="p-6 bg-amber-500/20 rounded-[2.5rem] text-amber-500">
+                   <Zap size={32} />
+                </div>
+                <div className="space-y-2">
+                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">ШВИДКИЙ_ЕКСПОРТ_v60</h3>
+                   <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МИТТЄВА_ГЕНЕРАЦІЯ_БЕЗ_ШАБЛОНУ</p>
+                </div>
+             </div>
+
+             <div className="flex flex-wrap gap-4 bg-black border-2 border-white/5 p-3 rounded-[2.5rem]">
+                {Object.entries(TYPE_CFG).map(([key, config]) => (
+                  <button key={key} className="flex items-center gap-4 px-8 py-4 bg-white/5 hover:bg-amber-500/20 text-slate-400 hover:text-amber-500 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all italic">
+                    <config.icon size={16} />
+                    {config.label}
+                  </button>
+                ))}
+                <div className="w-px h-10 bg-white/5 my-auto mx-2" />
+                <button className="px-10 py-4 bg-amber-500 text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:brightness-110 transition-all italic">
+                   ЕКСПОРТУВАТИ_ВСЕ
                 </button>
-              ))}
-            </div>
-            <div className="flex-1" />
-            <button className="flex items-center gap-2 px-6 py-2 bg-emerald-500/20 text-emerald-400 rounded-xl font-bold text-sm">
-              <Download size={16} />
-              Експортувати все
-            </button>
+             </div>
           </div>
         </div>
+
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(245,158,11,0.3); }
+        `}} />
       </div>
-    </div>
+    </PageTransition>
+  );
+};
+
+export default ReportGenerator;
   );
 };
 

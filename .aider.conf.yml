@@ -18,13 +18,12 @@ weak-model: ultra-router-chat
 # Налаштування поведінки
 auto-commits: false
 dirty-commits: true
-stream: true
-pretty: true
+stream: false
+pretty: false
 
 # Git
 git: true
 gitignore: true
-Ю≥
-#ззжж.
-.юю.ю.ююдю ч ь Мова для коментарів та git-повідомлень
+# Мова для коментарів та git-повідомлень
 # (відповідно до HR-03: ТІЛЬКИ українська)
+message-language: uk

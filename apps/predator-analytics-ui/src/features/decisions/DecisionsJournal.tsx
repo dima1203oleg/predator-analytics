@@ -1,29 +1,23 @@
-/**
- * DecisionsJournal — WORM-журнал прийнятих рішень.
- * Записи незмінні після фіксації (audit_log-сумісний).
- * Фаза 3 реструктуризації v59.0-NEXUS.
- */
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  Filter,
-  Hash,
-  Lock,
-  Search,
-  Shield,
-  TrendingUp,
-  User,
-  XCircle,
-  AlertTriangle,
-  Download,
-  ChevronDown,
-  ChevronRight,
+  BookOpen, CheckCircle2, Clock, Filter, Hash, Lock, Search,
+  Shield, TrendingUp, User, XCircle, AlertTriangle, Download,
+  ChevronDown, ChevronRight, Zap, Target, ShieldAlert, Fingerprint,
+  Activity, Database, Share2, Eye, Layout, RefreshCw, Layers
 } from 'lucide-react';
+import { ViewHeader } from '@/components/ViewHeader';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { TacticalCard } from '@/components/ui/TacticalCard';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/utils/cn';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// ─── Типи ────────────────────────────────────────────────────────────────────
+import { decisions as decisionsApi } from '@/services/dataService';
+
+// ─── ТИПИ ───────────────────────────────────────────────────────────────────
 
 type DecisionStatus = 'APPROVED' | 'REJECTED' | 'PENDING' | 'ESCALATED';
 type DecisionCategory = 'KYC' | 'AML' | 'RISK' | 'COMPLIANCE' | 'OPERATIONAL';
@@ -32,7 +26,7 @@ interface Decision {
   id: string;
   caseId?: string;
   subject: string;
-  subjectType: 'company' | 'person' | 'transaction';
+  subjectType: 'company' | 'person' | 'transaction' | 'generic';
   category: DecisionCategory;
   status: DecisionStatus;
   analyst: string;
@@ -41,373 +35,331 @@ interface Decision {
   summary: string;
   rationale: string;
   tags: string[];
-  immutable: true; // WORM — завжди true
+  immutable: true;
 }
 
-// ─── Тестові дані ─────────────────────────────────────────────────────────────
+// ─── КОНФІГУРАЦІЯ ────────────────────────────────────────────────────────────
 
-const MOCK_DECISIONS: Decision[] = [
-  {
-    id: 'DEC-2025-00341',
-    caseId: 'CASE-2025-089',
-    subject: 'ТОВ "АГРО-ПРАЙМ"',
-    subjectType: 'company',
-    category: 'KYC',
-    status: 'APPROVED',
-    analyst: 'Іванов О.В.',
-    timestamp: '2025-04-19T14:32:00Z',
-    riskScore: 28,
-    summary: 'KYC-верифікація пройдена. Реальний бенефіціар встановлений.',
-    rationale: 'Перевірено структуру власності по 4 юрисдикціям. UBO — Петренко М.О. (62%). Санкційних ризиків не виявлено.',
-    tags: ['ubo', 'ukraine', 'agriculture', 'low-risk'],
-    immutable: true,
-  },
-  {
-    id: 'DEC-2025-00342',
-    caseId: 'CASE-2025-091',
-    subject: 'РАХУНОК UA213206490000026007233566001',
-    subjectType: 'transaction',
-    category: 'AML',
-    status: 'REJECTED',
-    analyst: 'Коваль Т.І.',
-    timestamp: '2025-04-19T16:05:00Z',
-    riskScore: 87,
-    summary: 'Транзакція заблокована. Виявлено ознаки структурування.',
-    rationale: '18 переказів по ~14,900 UAH протягом 72 годин. Класична схема structuring. Передано до фінмон.',
-    tags: ['structuring', 'aml', 'blocked', 'finmon'],
-    immutable: true,
-  },
-  {
-    id: 'DEC-2025-00343',
-    subject: 'Марченко Роман Григорович',
-    subjectType: 'person',
-    category: 'RISK',
-    status: 'ESCALATED',
-    analyst: 'Сидоренко Н.Р.',
-    timestamp: '2025-04-20T09:15:00Z',
-    riskScore: 72,
-    summary: 'Кейс ескальовано. Виявлено PEP-зв\'язки 2-го рівня.',
-    rationale: 'Досліджувана особа є партнером у бізнесі з чиновником міністерства. Потребує підтвердження керівника відділу.',
-    tags: ['pep', 'escalated', 'politics', 'high-risk'],
-    immutable: true,
-  },
-  {
-    id: 'DEC-2025-00344',
-    caseId: 'CASE-2025-094',
-    subject: 'BRAVEX TRADING LTD (BVI)',
-    subjectType: 'company',
-    category: 'COMPLIANCE',
-    status: 'PENDING',
-    analyst: 'Мельник О.С.',
-    timestamp: '2025-04-20T11:42:00Z',
-    riskScore: 55,
-    summary: 'Очікується відповідь юридичного відділу по BVI-структурі.',
-    rationale: 'Компанія зареєстрована на BVI. Запит про підтвердження реального бенефіціара відправлено 18.04.',
-    tags: ['offshore', 'bvi', 'pending', 'legal'],
-    immutable: true,
-  },
-  {
-    id: 'DEC-2025-00345',
-    subject: 'ФОП Гнатюк В.М.',
-    subjectType: 'person',
-    category: 'OPERATIONAL',
-    status: 'APPROVED',
-    analyst: 'Бойко А.І.',
-    timestamp: '2025-04-20T12:00:00Z',
-    riskScore: 15,
-    summary: 'Контрагент верифікований. Онбординг завершено.',
-    rationale: 'Стандартний KYB-процес. Платник ЄСВ, без боргів. Ризик мінімальний.',
-    tags: ['kyb', 'fop', 'low-risk', 'approved'],
-    immutable: true,
-  },
-];
-
-// ─── Константи стилів ─────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<DecisionStatus, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
-  APPROVED: { label: 'Схвалено', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', icon: CheckCircle2 },
-  REJECTED: { label: 'Відхилено', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20', icon: XCircle },
-  PENDING: { label: 'Очікування', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', icon: Clock },
-  ESCALATED: { label: 'Ескальовано', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20', icon: AlertTriangle },
+const STATUS_CFG: Record<DecisionStatus, { label: string; color: string; bg: string; border: string; icon: any }> = {
+  APPROVED:  { label: 'СХВАЛЕНО',    color: '#10b981', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: CheckCircle2 },
+  REJECTED:  { label: 'ВІДХИЛЕНО',   color: '#f43f5e', bg: 'bg-rose-500/10',    border: 'border-rose-500/20',    icon: XCircle },
+  PENDING:   { label: 'ОЧІКУВАННЯ',  color: '#f59e0b', bg: 'bg-amber-500/10',   border: 'border-amber-500/20',   icon: Clock },
+  ESCALATED: { label: 'ЕСКАЛЬОВАНО', color: '#fb923c', bg: 'bg-orange-500/10',  border: 'border-orange-500/20',  icon: AlertTriangle },
 };
 
-const CATEGORY_CONFIG: Record<DecisionCategory, { label: string; color: string }> = {
-  KYC: { label: 'KYC', color: 'text-sky-400 bg-sky-500/10 border-sky-500/20' },
-  AML: { label: 'AML', color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
-  RISK: { label: 'Ризик', color: 'text-orange-400 bg-orange-500/10 border-orange-500/20' },
-  COMPLIANCE: { label: 'Комплаєнс', color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' },
-  OPERATIONAL: { label: 'Операційне', color: 'text-slate-400 bg-slate-500/10 border-slate-500/20' },
+const CATEGORY_CFG: Record<DecisionCategory, { label: string; color: string; icon: any }> = {
+  KYC:         { label: 'KYC',        color: '#0ea5e9', icon: User },
+  AML:         { label: 'AML',        color: '#f43f5e', icon: ShieldAlert },
+  RISK:        { label: 'РИЗИК',      color: '#f59e0b', icon: Activity },
+  COMPLIANCE:  { label: 'КОМПЛАЄНС',  color: '#8b5cf6', icon: Shield },
+  OPERATIONAL: { label: 'ОПЕРАЦІЙНЕ', color: '#64748b', icon: Layers },
 };
 
-// ─── Компонент Risk Score ─────────────────────────────────────────────────────
+// ─── КОМПОНЕНТ РЯДКА ─────────────────────────────────────────────────────────
 
-function RiskScore({ score }: { score: number }) {
-  const color = score < 30 ? 'text-emerald-400' : score < 60 ? 'text-amber-400' : 'text-rose-400';
-  const bg = score < 30 ? 'bg-emerald-500' : score < 60 ? 'bg-amber-500' : 'bg-rose-500';
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full ${bg}`} style={{ width: `${score}%` }} />
-      </div>
-      <span className={`text-xs font-mono font-bold ${color}`}>{score}</span>
-    </div>
-  );
-}
-
-// ─── Рядок рішення ────────────────────────────────────────────────────────────
-
-function DecisionRow({ decision }: { decision: Decision }) {
-  const [expanded, setExpanded] = useState(false);
-  const status = STATUS_CONFIG[decision.status];
-  const category = CATEGORY_CONFIG[decision.category];
+const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const status = STATUS_CFG[decision.status] || STATUS_CFG.PENDING;
+  const category = CATEGORY_CFG[decision.category] || CATEGORY_CFG.OPERATIONAL;
   const StatusIcon = status.icon;
+  const CategoryIcon = category.icon;
 
   const date = new Date(decision.timestamp);
   const dateStr = date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const timeStr = date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="border border-white/[0.06] rounded-lg overflow-hidden transition-all duration-200 hover:border-white/[0.12]">
-      {/* Заголовок рядка */}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+      className={cn(
+        "group relative border-2 rounded-[2rem] overflow-hidden transition-all duration-500",
+        isExpanded ? "bg-black border-rose-500/30 shadow-4xl" : "bg-black/40 border-white/5 hover:border-white/10"
+      )}
+    >
       <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-4 p-4 text-left hover:bg-white/[0.02] transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center gap-8 p-8 text-left"
       >
         <div className="flex-shrink-0">
-          {expanded ? (
-            <ChevronDown className="w-4 h-4 text-white/40" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-white/40" />
-          )}
+          <div className={cn("p-4 rounded-2xl border transition-all", isExpanded ? "bg-rose-500 text-black" : "bg-white/5 text-slate-500")}>
+            {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+          </div>
         </div>
 
-        {/* ID */}
-        <div className="w-36 flex-shrink-0">
-          <div className="flex items-center gap-1.5">
-            <Hash className="w-3 h-3 text-white/30" />
-            <span className="text-xs font-mono text-white/60">{decision.id}</span>
+        {/* ID & CASE */}
+        <div className="w-48 flex-shrink-0 space-y-1">
+          <div className="flex items-center gap-2">
+            <Hash size={14} className="text-rose-500/40" />
+            <span className="text-[11px] font-black font-mono text-white/60 tracking-tighter truncate">{decision.id}</span>
           </div>
           {decision.caseId && (
-            <div className="text-[10px] text-sky-400/60 font-mono mt-0.5">{decision.caseId}</div>
+            <div className="text-[9px] font-black text-rose-400/40 font-mono tracking-widest uppercase italic truncate">{decision.caseId}</div>
           )}
         </div>
 
-        {/* Суб'єкт */}
+        {/* SUBJECT */}
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium text-white/90 truncate">{decision.subject}</div>
-          <div className="text-xs text-white/40 mt-0.5">{decision.summary}</div>
+          <div className="text-xl font-black text-white italic tracking-tighter uppercase truncate">{decision.subject}</div>
+          <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1 italic truncate">{decision.summary}</div>
         </div>
 
-        {/* Категорія */}
-        <div className="flex-shrink-0 w-28">
-          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${category.color}`}>
-            {category.label}
-          </span>
-        </div>
-
-        {/* Ризик */}
-        <div className="flex-shrink-0 w-28">
-          <RiskScore score={decision.riskScore} />
-        </div>
-
-        {/* Статус */}
-        <div className="flex-shrink-0 w-32">
-          <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium border ${status.color}`}>
-            <StatusIcon className="w-3 h-3" />
-            {status.label}
-          </span>
-        </div>
-
-        {/* Аналітик */}
-        <div className="flex-shrink-0 w-32 text-right">
-          <div className="flex items-center justify-end gap-1.5">
-            <User className="w-3 h-3 text-white/30" />
-            <span className="text-xs text-white/50">{decision.analyst}</span>
+        {/* CATEGORY */}
+        <div className="flex-shrink-0 w-36">
+          <div className="flex items-center gap-3 px-4 py-2 bg-black border border-white/5 rounded-xl">
+            <CategoryIcon size={14} style={{ color: category.color }} />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: category.color }}>{category.label}</span>
           </div>
-          <div className="text-[10px] text-white/30 font-mono mt-0.5">{dateStr} {timeStr}</div>
         </div>
 
-        {/* WORM lock */}
-        <div className="flex-shrink-0 ml-2">
-          <Lock className="w-3.5 h-3.5 text-white/20" title="WORM-захищений запис" />
+        {/* RISK SCORE */}
+        <div className="flex-shrink-0 w-40">
+           <div className="flex items-center gap-4">
+              <div className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
+                 <div 
+                    className={cn("h-full rounded-full transition-all duration-1000", decision.riskScore > 70 ? "bg-rose-500" : decision.riskScore > 40 ? "bg-amber-500" : "bg-emerald-500")}
+                    style={{ width: `${decision.riskScore}%` }}
+                 />
+              </div>
+              <span className="text-sm font-black font-mono text-white italic">{decision.riskScore}</span>
+           </div>
+        </div>
+
+        {/* STATUS */}
+        <div className="flex-shrink-0 w-44">
+          <div className={cn("flex items-center gap-3 px-5 py-2.5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic", status.bg, status.border)} style={{ color: status.color }}>
+            <StatusIcon size={14} />
+            {status.label}
+          </div>
+        </div>
+
+        {/* LOCK */}
+        <div className="flex-shrink-0 ml-4 opacity-20 group-hover:opacity-100 transition-opacity">
+          <Lock size={18} className="text-rose-500" />
         </div>
       </button>
 
-      {/* Розгорнутий вміст */}
-      {expanded && (
-        <div className="px-4 pb-4 pt-0 border-t border-white/[0.06] bg-white/[0.01]">
-          <div className="ml-8 mt-4 space-y-3">
-            <div>
-              <div className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mb-1.5">
-                Обґрунтування рішення
-              </div>
-              <p className="text-sm text-white/70 leading-relaxed">{decision.rationale}</p>
-            </div>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            className="border-t border-white/5 bg-gradient-to-b from-rose-500/[0.02] to-transparent"
+          >
+            <div className="p-10 ml-20 space-y-8">
+               <div className="grid grid-cols-2 gap-12">
+                  <div className="space-y-4">
+                     <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">ОБҐРУНТУВАННЯ_РІШЕННЯ // RATIONALE</h4>
+                     <p className="text-sm text-slate-400 font-medium leading-relaxed uppercase border-l-2 border-rose-500/20 pl-6 italic">
+                        {decision.rationale}
+                     </p>
+                  </div>
+                  <div className="space-y-4">
+                     <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-[0.5em] italic">МЕТАДАНІ_ВУЗЛА // NODE_INFO</h4>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 bg-white/5 rounded-2xl space-y-1">
+                           <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">АНАЛІТИК</p>
+                           <p className="text-xs font-black text-white italic uppercase">{decision.analyst}</p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-2xl space-y-1">
+                           <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ЧАС_ФІКСАЦІЇ</p>
+                           <p className="text-xs font-black text-white italic uppercase">{dateStr} {timeStr}</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              {decision.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-0.5 rounded text-[10px] font-mono text-white/40 bg-white/[0.04] border border-white/[0.06]"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
+               <div className="flex flex-wrap gap-3">
+                  {decision.tags.map(tag => (
+                    <Badge key={tag} variant="secondary" className="bg-rose-500/5 text-rose-400 border-rose-500/20 text-[9px] font-black px-3 py-1 italic uppercase tracking-tighter">
+                       #{tag}
+                    </Badge>
+                  ))}
+               </div>
 
-            <div className="flex items-center gap-2 text-[10px] text-white/25 mt-2">
-              <Lock className="w-3 h-3" />
-              <span>Запис захищений WORM-протоколом. Зміни неможливі після фіксації.</span>
+               <div className="flex items-center gap-3 p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
+                  <Fingerprint size={16} className="text-rose-500" />
+                  <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest italic">
+                     ЗАПИС ЗАХИЩЕНИЙ WORM-ПРОТОКОЛОМ. ВНЕСЕННЯ ЗМІН АБО ВИДАЛЕННЯ НЕМОЖЛИВЕ (HR-16).
+                  </p>
+               </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
-}
+};
 
-// ─── Головний компонент ───────────────────────────────────────────────────────
+// ─── ГОЛОВНИЙ КОМПОНЕНТ ──────────────────────────────────────────────────────
 
 export const DecisionsJournal: React.FC = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<DecisionStatus | 'ALL'>('ALL');
   const [categoryFilter, setCategoryFilter] = useState<DecisionCategory | 'ALL'>('ALL');
+  const [isLoading, setIsLoading] = useState(false);
+  const [decisions, setDecisions] = useState<Decision[]>([]);
+  const { isOffline, nodeSource } = useBackendStatus();
+
+  useEffect(() => {
+     const fetchDecisions = async () => {
+        setIsLoading(true);
+        try {
+           const data = await decisionsApi.getDecisions(100);
+           const mapped: Decision[] = data.map((item: any) => ({
+              id: item.decision_id.substring(0, 13).toUpperCase(),
+              caseId: item.trace_id,
+              subject: item.output_payload?.subject || 'НЕВИЗНАЧЕНО',
+              subjectType: item.output_payload?.subject_type || 'generic',
+              category: (item.decision_type || 'RISK').toUpperCase() as DecisionCategory,
+              status: (item.output_payload?.status || 'PENDING').toUpperCase() as DecisionStatus,
+              analyst: 'AI_AGENT_SM', // Поки що за замовчуванням
+              timestamp: item.created_at,
+              riskScore: Math.round(item.confidence_score * 100),
+              summary: item.explanation?.summary || 'Аналітичний висновок сформовано ядром.',
+              rationale: item.explanation?.rationale || 'Обґрунтування вказано в payload артефакту.',
+              tags: item.output_payload?.tags || ['worm', 'nexus'],
+              immutable: true,
+           }));
+           setDecisions(mapped);
+        } catch (err) {
+           console.error('Failed to load decisions', err);
+        } finally {
+           setIsLoading(false);
+        }
+     };
+     fetchDecisions();
+  }, [isOffline]);
 
   const filtered = useMemo(() => {
-    return MOCK_DECISIONS.filter((d) => {
-      const matchSearch =
-        !search ||
-        d.subject.toLowerCase().includes(search.toLowerCase()) ||
-        d.id.toLowerCase().includes(search.toLowerCase()) ||
-        d.summary.toLowerCase().includes(search.toLowerCase());
-
+    return decisions.filter((d) => {
+      const matchSearch = !search || d.subject.toLowerCase().includes(search.toLowerCase()) || d.id.toLowerCase().includes(search.toLowerCase());
       const matchStatus = statusFilter === 'ALL' || d.status === statusFilter;
       const matchCategory = categoryFilter === 'ALL' || d.category === categoryFilter;
-
       return matchSearch && matchStatus && matchCategory;
     });
-  }, [search, statusFilter, categoryFilter]);
-
-  const stats = useMemo(() => ({
-    total: MOCK_DECISIONS.length,
-    approved: MOCK_DECISIONS.filter((d) => d.status === 'APPROVED').length,
-    rejected: MOCK_DECISIONS.filter((d) => d.status === 'REJECTED').length,
-    pending: MOCK_DECISIONS.filter((d) => d.status === 'PENDING').length,
-    escalated: MOCK_DECISIONS.filter((d) => d.status === 'ESCALATED').length,
-  }), []);
+  }, [search, statusFilter, categoryFilter, decisions]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white p-6 space-y-6">
-      {/* Заголовок */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-sky-400" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">Журнал Рішень</h1>
-              <div className="flex items-center gap-2 mt-0.5">
-                <div className="flex items-center gap-1.5">
-                  <Lock className="w-3 h-3 text-white/30" />
-                  <span className="text-[10px] font-mono text-white/30 uppercase tracking-wider">
-                    WORM-захищено · Аудит-сумісний
-                  </span>
+    <PageTransition>
+      <div className="min-h-screen bg-[#020202] text-slate-200 font-sans pb-40 relative overflow-hidden">
+        <AdvancedBackground mode="sovereign" />
+        <CyberGrid color="rgba(244, 63, 94, 0.03)" />
+        <div className="absolute inset-x-0 top-0 h-[600px] bg-[radial-gradient(circle_at_50%_0%,rgba(244,63,94,0.05),transparent_70%)] pointer-events-none" />
+
+        <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12 pt-12">
+          
+          <ViewHeader
+            title={
+              <div className="flex items-center gap-12">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-rose-500/20 blur-[80px] rounded-full scale-150 animate-pulse" />
+                  <div className="relative p-7 bg-black border-2 border-rose-500/40 rounded-[3rem] shadow-4xl transform -rotate-2 hover:rotate-0 transition-all duration-700">
+                    <BookOpen size={54} className="text-rose-500 drop-shadow-[0_0_20px_rgba(244,63,94,0.4)]" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-6">
+                    <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
+                      WORM · AUDIT_TRAIL · v59.0-NEXUS
+                    </span>
+                    <div className="h-px w-16 bg-rose-500/20" />
+                    <span className="text-[10px] font-black text-rose-900 font-mono tracking-widest uppercase italic shadow-sm">CLASSIFIED</span>
+                  </div>
+                  <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
+                    DECISION <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">JOURNAL</span>
+                  </h1>
                 </div>
               </div>
+            }
+            breadcrumbs={['ПРЕДАТОР', 'АУДИТ', 'ЖУРНАЛ_РІШЕНЬ']}
+            stats={[
+              { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Database />, color: isOffline ? 'warning' : 'gold' },
+              { label: 'WORM_LOCK', value: 'АКТИВНО', icon: <Lock />, color: 'primary' },
+              { label: 'АКТИВИ', value: decisions.length.toString(), icon: <Target />, color: 'success' },
+            ]}
+            actions={
+              <button className="px-14 py-6 bg-rose-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
+                 <Download size={22} /> ЕКСПОРТ_АУДИТУ_v58
+              </button>
+            }
+          />
+
+          {/* ФІЛЬТРИ WRAITH */}
+          <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
+            <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-rose-500/40 transition-all">
+              <Search size={22} className="text-slate-700 group-hover:text-rose-500 transition-colors" />
+              <input
+                value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="ФІЛЬТР_ПОШУКУ_ID_СУБ'ЄКТ..."
+                className="bg-transparent text-[12px] text-white outline-none placeholder:text-slate-800 font-mono w-64 font-black uppercase italic"
+              />
+            </div>
+            
+            <div className="flex gap-3 bg-black border-2 border-white/5 p-2 rounded-2xl">
+               <select 
+                  value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)}
+                  className="bg-transparent text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 py-2 outline-none cursor-pointer hover:text-white"
+               >
+                  <option value="ALL">УСІ_СТАТУСИ</option>
+                  <option value="APPROVED">СХВАЛЕНО</option>
+                  <option value="REJECTED">ВІДХИЛЕНО</option>
+                  <option value="PENDING">ОЧІКУВАННЯ</option>
+                  <option value="ESCALATED">ЕСКАЛЬОВАНО</option>
+               </select>
+               <div className="w-px h-8 bg-white/5 my-auto" />
+               <select 
+                  value={categoryFilter} onChange={e => setCategoryFilter(e.target.value as any)}
+                  className="bg-transparent text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 py-2 outline-none cursor-pointer hover:text-white"
+               >
+                  <option value="ALL">УСІ_КАТЕГОРІЇ</option>
+                  <option value="KYC">KYC</option>
+                  <option value="AML">AML</option>
+                  <option value="RISK">РИЗИК</option>
+               </select>
+            </div>
+
+            <div className="px-8 text-[11px] font-black text-rose-500 italic font-mono tracking-widest">
+               {filtered.length} // {decisions.length}_OBJECTS
             </div>
           </div>
-        </div>
 
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-white/50 hover:text-white/70 hover:border-white/20 transition-colors">
-          <Download className="w-3.5 h-3.5" />
-          Експорт CSV
-        </button>
-      </div>
+          {/* СПИСОК РІШЕНЬ */}
+          <div className="space-y-6 relative min-h-[600px]">
+            {isLoading ? (
+               <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[3rem] z-20">
+                  <div className="flex flex-col items-center gap-6">
+                     <RefreshCw className="text-rose-500 animate-spin" size={64} />
+                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">СИНХРОНІЗАЦІЯ_WORM_МАТРИЦІ...</span>
+                  </div>
+               </div>
+            ) : null}
 
-      {/* Статистика */}
-      <div className="grid grid-cols-5 gap-3">
-        {[
-          { label: 'Всього', value: stats.total, color: 'text-white/70' },
-          { label: 'Схвалено', value: stats.approved, color: 'text-emerald-400' },
-          { label: 'Відхилено', value: stats.rejected, color: 'text-rose-400' },
-          { label: 'Очікування', value: stats.pending, color: 'text-amber-400' },
-          { label: 'Ескальовано', value: stats.escalated, color: 'text-orange-400' },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3 text-center">
-            <div className={`text-2xl font-bold font-mono ${color}`}>{value}</div>
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mt-1">{label}</div>
+            {filtered.length === 0 && !isLoading ? (
+               <div className="py-40 flex flex-col items-center justify-center gap-8 opacity-20 border-2 border-dashed border-white/5 rounded-[4rem]">
+                  <Shield size={100} className="text-slate-600" />
+                  <p className="text-2xl font-black text-slate-500 uppercase tracking-[0.8em] italic">ЗАПИСІВ_НЕ_ВИЯВЛЕНО</p>
+               </div>
+            ) : (
+               filtered.map(d => <DecisionRow key={d.id} decision={d} />)
+            )}
           </div>
-        ))}
-      </div>
 
-      {/* Фільтри */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Пошук за суб'єктом або ID..."
-            className="w-full pl-9 pr-4 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-white/80 placeholder:text-white/25 focus:outline-none focus:border-sky-500/40 transition-colors"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-white/30" />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as DecisionStatus | 'ALL')}
-            className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-white/70 focus:outline-none focus:border-sky-500/40 transition-colors cursor-pointer"
-          >
-            <option value="ALL">Всі статуси</option>
-            {Object.entries(STATUS_CONFIG).map(([key, { label }]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
-
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value as DecisionCategory | 'ALL')}
-            className="px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-white/70 focus:outline-none focus:border-sky-500/40 transition-colors cursor-pointer"
-          >
-            <option value="ALL">Всі категорії</option>
-            {Object.entries(CATEGORY_CONFIG).map(([key, { label }]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="ml-auto text-xs text-white/30 font-mono">
-          {filtered.length} / {MOCK_DECISIONS.length} записів
-        </div>
-      </div>
-
-      {/* Список рішень */}
-      <div className="space-y-2">
-        {filtered.length === 0 ? (
-          <div className="text-center py-16 text-white/30">
-            <Shield className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Немає рішень за вибраними фільтрами</p>
+          {/* FOOTER WRAITH */}
+          <div className="p-8 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3rem] flex items-center gap-8">
+             <div className="p-5 bg-rose-500/20 rounded-[2rem] text-rose-500 shadow-2xl">
+                <ShieldAlert size={32} />
+             </div>
+             <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">
+                Всі записи в цьому журналі захищені протоколом WORM (Write Once Read Many). Видалення, редагування або приховування записів технічно заблоковано на рівні ядра PostgreSQL тригерами (HR-16). 
+                Це забезпечує 100% цілісність аудит-логу для регуляторів (НБУ, FATF).
+             </p>
           </div>
-        ) : (
-          filtered.map((decision) => (
-            <DecisionRow key={decision.id} decision={decision} />
-          ))
-        )}
-      </div>
+        </div>
 
-      {/* Інформаційна плашка */}
-      <div className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]">
-        <TrendingUp className="w-4 h-4 text-white/20 flex-shrink-0" />
-        <p className="text-[11px] text-white/25">
-          Всі записи захищені WORM-протоколом. Видалення та редагування заборонені (HR-16).
-          Журнал сумісний з вимогами FATF та NBU щодо фінансового моніторингу.
-        </p>
+        <style dangerouslySetInnerHTML={{ __html: `
+            .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(244,63,94,0.3); }
+        `}} />
       </div>
-    </div>
+    </PageTransition>
   );
 };
 

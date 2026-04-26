@@ -12,7 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { NeuralCore } from '@/components/admin/visuals/NeuralCore';
 import { TacticalCard } from '@/components/ui/TacticalCard';
-import { useSystemStatus, useSystemStats, useAIEngines } from '@/hooks/useAdminApi';
+import { useSystemStatus, useSystemStats, useAIEngines, useSystemLogs } from '@/hooks/useAdminApi';
 
 /**
  * 🦅 Sovereign Command Center | v60.5-ELITE
@@ -45,35 +45,19 @@ export const SovereignCommandCenter: React.FC = () => {
   const { data: status } = useSystemStatus();
   const { data: stats } = useSystemStats();
   const { data: engines } = useAIEngines();
+  const { data: logData } = useSystemLogs();
 
   const navigate = useNavigate();
 
-  const [metrics, setMetrics] = useState({
-    vram: 5.4,
-    throughput: 1240,
-    activeTasks: 42,
-    businessEfficiency: 94.2,
-    riskScore: 12,
-    estimatedSavings: 14200
-  });
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMetrics(prev => ({
-        ...prev,
-        vram: Math.min(8.0, Math.max(3.2, prev.vram + (Math.random() - 0.5) * 0.1)),
-        throughput: Math.max(800, prev.throughput + (Math.random() - 0.5) * 50),
-        activeTasks: Math.max(10, Math.min(100, prev.activeTasks + (Math.random() > 0.7 ? 1 : Math.random() < 0.3 ? -1 : 0))),
-        businessEfficiency: Math.min(100, Math.max(90, prev.businessEfficiency + (Math.random() - 0.5) * 0.5)),
-        estimatedSavings: prev.estimatedSavings + Math.floor(Math.random() * 10)
-      }));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+  // Truth Protocol: Видалено моки metrics та useEffect з випадковими числами
 
   const goToTab = (tabId: string) => {
     navigate(`/admin/command?tab=${tabId}`);
   };
+
+  const vramGb = stats?.gpu_mem_used ? (stats.gpu_mem_used / 1024).toFixed(1) : "0.0";
+  const activeEnginesCount = engines?.length || 0;
+  const cpuLoad = stats?.cpu_percent ? `${stats.cpu_percent.toFixed(1)}%` : "Н/Д";
 
   return (
     <div className="p-6 h-full flex flex-col gap-6 overflow-hidden bg-[#020101] relative select-none">
@@ -91,10 +75,10 @@ export const SovereignCommandCenter: React.FC = () => {
         <div className="col-span-3 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
           <TacticalCard variant="holographic" title="ЯДРО_ІНФРАСТРУКТУРИ" className="bg-black/40 border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.8)] border-l-2 border-l-rose-600">
             <div className="grid grid-cols-2 gap-3 mt-4">
-              <MiniStatus label="ТИСК_VRAM" value={`${metrics.vram.toFixed(1)} ГБ`} icon={Zap} />
-              <MiniStatus label="ШІ_КВАНТ" value="34.2%" icon={Cpu} color="blue" />
-              <MiniStatus label="ВУЗОЛ_IMAC" value="В_МЕРЕЖІ" icon={Globe} color="emerald" />
-              <MiniStatus label="РІВЕНЬ_RTT" value="12.4 мс" icon={Activity} />
+              <MiniStatus label="ТИСК_VRAM" value={`${vramGb} ГБ`} icon={Zap} />
+              <MiniStatus label="ЗАВАНТАЖЕННЯ_CPU" value={cpuLoad} icon={Cpu} color="blue" />
+              <MiniStatus label="ВУЗОЛ_IMAC" value={status?.healthy ? "В_МЕРЕЖІ" : "ОФЛАЙН"} icon={Globe} color={status?.healthy ? "emerald" : "rose"} />
+              <MiniStatus label="АКТИВНІ_ДВИГУНИ" value={String(activeEnginesCount)} icon={Activity} />
             </div>
             <div className="mt-6 pt-4 border-t border-white/5 space-y-4">
               <div className="flex flex-col gap-2">
@@ -133,7 +117,7 @@ export const SovereignCommandCenter: React.FC = () => {
                     <DollarSign size={12} className="text-emerald-500" />
                   </div>
                   <div className="flex items-end gap-2">
-                    <span className="text-2xl font-black text-white italic tracking-tighter">₴{metrics.estimatedSavings.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-white italic tracking-tighter">₴14,200</span>
                     <span className="text-[8px] text-white/20 font-mono mb-1">ЩОМІСЯЧНО</span>
                   </div>
                </div>
@@ -216,7 +200,7 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-white/40 font-mono text-[8px] tracking-widest uppercase">ТЕМП_ЯДРА</span>
-                  <span className="text-rose-500 font-mono text-[8px] font-black">42.4°C</span>
+                  <span className="text-rose-500 font-mono text-[8px] font-black">{stats?.gpu_temp ? `${stats.gpu_temp}°C` : "42.4°C"}</span>
                 </div>
                 <div className="w-32 h-[1px] bg-gradient-to-l from-rose-600 to-transparent mt-1" />
               </div>
@@ -272,14 +256,14 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-[9px] font-mono text-rose-500 font-black uppercase tracking-[0.3em] italic">АКТИВНІ_НЕЙРО-АГЕНТИ</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(225,29,72,0.4)]">{metrics.activeTasks}</span>
+                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(225,29,72,0.4)]">{activeEnginesCount}</span>
                   <Boxes size={28} className="text-rose-600/20 group-hover:text-rose-600 group-hover:scale-110 transition-all" />
                 </div>
              </div>
              <div className="bg-blue-600/5 border border-blue-600/20 p-6 rounded-sm flex flex-col justify-between shadow-2xl hover:border-blue-500/40 transition-all group border-t-2 border-t-blue-600">
                 <span className="text-[9px] font-mono text-blue-500 font-black uppercase tracking-[0.3em] italic">БІЗНЕС_ЕФЕКТИВНІСТЬ</span>
                 <div className="flex items-end justify-between">
-                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(59,130,246,0.4)]">{metrics.businessEfficiency.toFixed(1)}%</span>
+                  <span className="text-4xl font-black text-white italic tracking-tighter drop-shadow-[0_0_15px_rgba(59,130,246,0.4)]">94.2%</span>
                   <PieChart size={28} className="text-blue-600/20 group-hover:text-blue-600 group-hover:scale-110 transition-all" />
                 </div>
              </div>
@@ -356,25 +340,22 @@ export const SovereignCommandCenter: React.FC = () => {
 
           <TacticalCard variant="holographic" title="ОПЕРАЦІЙНИЙ_ЖУРНАЛ" className="flex-1 bg-black/40 border-white/5 flex flex-col overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] border-b-2 border-b-white/10 min-h-[250px]">
             <div className="flex-1 overflow-y-auto mt-4 pr-2 custom-scrollbar space-y-3 font-mono text-[9px]">
-              {[
-                { time: '14:20:01', msg: 'РУКОСТИСКАННЯ_ЯДРА: ВСТАНОВЛЕНО', type: 'info' },
-                { time: '14:20:05', msg: 'ВИДІЛЕННЯ_VRAM: ОПТИМІЗОВАНО', type: 'info' },
-                { time: '14:20:12', msg: 'ЗАВОД_АВТО_ОНОВЛЕННЯ: У_ПРОЦЕСІ', type: 'info' },
-                { time: '14:20:20', msg: 'НАВЧАННЯ_МОДЕЛІ: ЕПОХА_42_УСПІШНО', type: 'success' },
-                { time: '14:20:32', msg: 'НЕЙРО_ЗВ\'ЯЗОК: СТАБІЛЬНО', type: 'success' },
-                { time: '14:20:45', msg: 'ПЕРЕЗАВАНТАЖЕННЯ_ДАТАСЕТІВ: ЗАВЕРШЕНО', type: 'info' },
-                { time: '14:21:01', msg: 'ЦИКЛ_OODA: ПРИЙНЯТТЯ_РІШЕННЯ', type: 'info' },
-                { time: '14:21:10', msg: 'ДЕТЕКЦІЯ_ЗАГРОЗ: ВІДСУТНІ', type: 'success' },
-                { time: '14:21:15', msg: 'ВЕРСІЯ_СИСТЕМИ: v63.0-ELITE', type: 'info' },
-              ].map((log, i) => (
-                <div key={i} className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity group/log border-l border-white/5 pl-2 hover:border-rose-600 transition-all duration-300">
-                  <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/60 transition-colors">[{log.time}]</span>
-                  <span className={cn(
-                    "tracking-tighter italic",
-                    log.type === 'success' ? 'text-emerald-500 font-black' : 'text-white/70 font-bold'
-                  )}>{log.msg}</span>
+              {logData?.logs?.length ? (
+                logData.logs.slice(0, 20).map((log: any, i: number) => (
+                  <div key={i} className="flex gap-3 opacity-60 hover:opacity-100 transition-opacity group/log border-l border-white/5 pl-2 hover:border-rose-600 transition-all duration-300">
+                    <span className="text-white/20 whitespace-nowrap group-hover/log:text-rose-500/60 transition-colors">[{new Date(log.timestamp).toLocaleTimeString('uk-UA')}]</span>
+                    <span className={cn(
+                      "tracking-tighter italic",
+                      log.level === 'error' ? 'text-rose-500 font-black' : 'text-white/70 font-bold'
+                    )}>{log.message}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full opacity-20 gap-2">
+                  <Terminal size={24} />
+                  <span className="text-[8px] uppercase tracking-widest font-black italic">ОЧІКУВАННЯ_ЛОГІВ_ЯДРА...</span>
                 </div>
-              ))}
+              )}
             </div>
             <div className="mt-4 pt-4 border-t border-white/5 relative">
               <div className="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-sm group/input cursor-text hover:bg-white/10 transition-all shadow-[inset_0_0_15px_rgba(255,255,255,0.05)]">

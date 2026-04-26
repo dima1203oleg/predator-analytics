@@ -12,6 +12,8 @@ import {
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { cn } from '@/utils/cn';
 import { API_BASE_URL } from '@/services/api/config';
+import { useAtom } from 'jotai';
+import { colabPanelOpenAtom } from '@/store/atoms';
 
 export const InfrastructureFailoverBanner: React.FC = () => {
   const status = useBackendStatus();
@@ -19,6 +21,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
   
   const [isVisible, setIsVisible] = React.useState(true);
   const [lastMode, setLastMode] = React.useState(llmTriStateMode);
+  const [, setIsColabOpen] = useAtom(colabPanelOpenAtom);
 
   // Автоматичне приховування через 5 секунд
   React.useEffect(() => {
@@ -75,9 +78,11 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         initial={{ y: -100, x: '-50%', opacity: 0 }}
         animate={{ y: 0, x: '-50%', opacity: 1 }}
         exit={{ y: -100, x: '-50%', opacity: 0 }}
+        onClick={() => isMirror && setIsColabOpen(true)}
         className={cn(
           "fixed top-6 left-1/2 z-[100] px-8 py-4 rounded-[3rem] border-2 flex items-center gap-8 shadow-4xl backdrop-blur-3xl transition-all duration-700 group",
-          mode.bg, mode.border
+          mode.bg, mode.border,
+          isMirror && "cursor-pointer hover:scale-105 active:scale-95"
         )}
       >
         {/* Кнопка закриття */}

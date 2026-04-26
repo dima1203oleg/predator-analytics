@@ -38,6 +38,7 @@ import {
   User,
   Users,
   Zap,
+  Cloud,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -109,7 +110,7 @@ export interface NavGlobalAction {
   label: string;
   description: string;
   icon: LucideIcon;
-  kind: 'focus-search' | 'mode' | 'link';
+  kind: 'focus-search' | 'mode' | 'link' | 'colab';
   mode?: NavWorkspaceMode;
   path?: string;
 }
@@ -293,6 +294,13 @@ export const globalNavigationActions: NavGlobalAction[] = [
     icon: Bot,
     kind: 'link',
     path: '/agents',
+  },
+  {
+    id: 'colab',
+    label: 'Colab Mirror',
+    description: 'Управління хмарним дзеркалом',
+    icon: Cloud,
+    kind: 'colab',
   },
 ];
 

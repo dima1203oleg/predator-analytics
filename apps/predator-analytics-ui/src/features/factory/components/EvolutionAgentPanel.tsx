@@ -42,53 +42,11 @@ import type {
 
 // ─── Mock початкові дані ─────────────────────────────────────────────────────
 
-const MOCK_TRENDS: EvolutionTrend[] = [
-  { component: 'core-api', direction: 'improving', delta_percent: +8.4, last_checked: new Date(Date.now() - 180000).toISOString() },
-  { component: 'graph-service', direction: 'stable', delta_percent: +0.2, last_checked: new Date(Date.now() - 240000).toISOString() },
-  { component: 'ingestion-worker', direction: 'degrading', delta_percent: -12.1, last_checked: new Date(Date.now() - 300000).toISOString() },
-  { component: 'analytics-ui', direction: 'improving', delta_percent: +5.7, last_checked: new Date(Date.now() - 360000).toISOString() },
-  { component: 'llm-gateway', direction: 'degrading', delta_percent: -6.3, last_checked: new Date(Date.now() - 420000).toISOString() },
-  { component: 'redis-cache', direction: 'stable', delta_percent: +1.1, last_checked: new Date(Date.now() - 480000).toISOString() },
-];
+const MOCK_TRENDS: EvolutionTrend[] = [];
 
-const MOCK_PROPOSALS: RefactorProposal[] = [
-  {
-    id: 'REF-001',
-    component: 'ingestion-worker',
-    description: 'Застаріла черга обробки: замінити синхронний цикл на паралельний батчинг через asyncio.gather(). Очікуване прискорення: +40% throughput.',
-    priority: 'high',
-    created_at: new Date(Date.now() - 300000).toISOString(),
-    status: 'pending',
-  },
-  {
-    id: 'REF-002',
-    component: 'llm-gateway',
-    description: 'LiteLLM proxy перенавантажений токен-валідацією. Перевести JWT-перевірку на middleware-рівень FastAPI. Збереження -15ms latency/запит.',
-    priority: 'high',
-    created_at: new Date(Date.now() - 240000).toISOString(),
-    status: 'pending',
-  },
-  {
-    id: 'REF-003',
-    component: 'analytics-ui',
-    description: 'Re-render cascade у TanStack Table при оновленні даних. Додати memo() та useMemo() для рядків таблиці. Прогнозований FPS gain: +12.',
-    priority: 'medium',
-    created_at: new Date(Date.now() - 180000).toISOString(),
-    status: 'accepted',
-  },
-];
+const MOCK_PROPOSALS: RefactorProposal[] = [];
 
-const EVOLUTION_BOOT_LOGS = [
-  '[EVOLUTION] Агент EvolutionCore v1.0 ініціалізовано',
-  '[EVOLUTION] Підключення до Qdrant vector store... OK',
-  '[EVOLUTION] Підключення до PostgreSQL pattern DB... OK',
-  '[ANALYSIS] Завантаження 90-денної телеметрії сервісів...',
-  '[ANALYSIS] Побудова базового профілю ефективності...',
-  '[ANALYSIS] Обчислення delta для всіх компонентів...',
-  '[DETECTION] Знайдено 2 деградуючих компоненти: ingestion-worker, llm-gateway',
-  '[PROPOSALS] Згенеровано 3 пропозиції рефакторингу',
-  '[EVOLUTION] Аналіз завершено. Наступний запуск: через 6 годин.',
-];
+const EVOLUTION_BOOT_LOGS: string[] = [];
 
 // ─── Утиліти ─────────────────────────────────────────────────────────────────
 
@@ -182,19 +140,11 @@ export function EvolutionAgentPanel() {
     setAgentState((prev) => ({ ...prev, is_running: true, logs: [] }));
     setLogIdx(0);
 
-    // Симуляція потокових логів
-    for (let i = 0; i < EVOLUTION_BOOT_LOGS.length; i++) {
-      await new Promise((r) => setTimeout(r, 400 + Math.random() * 300));
-      const ts = new Date().toLocaleTimeString('uk-UA');
-      setAgentState((prev) => ({
-        ...prev,
-        logs: [...prev.logs, `[${ts}] ${EVOLUTION_BOOT_LOGS[i]}`],
-      }));
-    }
-
-    // Фінал
+    // EvolutionAgent поки не підключений до бекенду
+    const ts = new Date().toLocaleTimeString('uk-UA');
     setAgentState((prev) => ({
       ...prev,
+      logs: [`[${ts}] 📡 EvolutionAgent: Чекаю підключення до Meta-Analysis API...`],
       is_running: false,
       last_analysis: new Date().toISOString(),
     }));

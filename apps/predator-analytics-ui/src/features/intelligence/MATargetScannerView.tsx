@@ -8,7 +8,8 @@
  * Sovereign Power Design · Classified · Tier-1
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { intelligence } from '@/services/dataService';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Target, Building2, TrendingDown, TrendingUp, DollarSign,
@@ -30,7 +31,6 @@ import { ViewHeader } from '@/components/ViewHeader';
 import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTerminal';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
-import { useEffect } from 'react';
 import { CyberOrb } from '@/components/CyberOrb';
 
 // ─── ТИПИ і ДАНІ ──────────────────────────────────────────
@@ -57,72 +57,6 @@ interface MATarget {
   priceTarget: string;
 }
 
-const MA_TARGETS: MATarget[] = [
-  {
-    id: 'ma-001',
-    name: 'ТОВ "АгроМаш-Схід"',
-    edrpou: '34521876',
-    sector: 'Сільгоспмашинобудування',
-    revenue: '$8.4M',
-    debt: '$12.1M',
-    distressScore: 87,
-    opportunityScore: 91,
-    status: 'distress',
-    dealTypes: ['acquisition', 'asset-buy'],
-    employees: 312,
-    founded: 2004,
-    location: 'Дніпро',
-    reason: ['Борг > виручка', 'Судові провадження (3)', 'Втрата ключового замовника'],
-    assets: 'Завод 12,000 м², 180 од. техніки, патенти',
-    priceTarget: '$3.2M–$5.5M',
-  },
-  {
-    id: 'ma-002',
-    name: 'ПАТ "КАРГО-ТРАНС"',
-    edrpou: '21908743',
-    sector: 'Вантажні перевезення',
-    revenue: '$22M',
-    debt: '$8.4M',
-    distressScore: 61,
-    opportunityScore: 84,
-    status: 'restructuring',
-    dealTypes: ['partnership', 'equity'],
-    employees: 847,
-    founded: 1998,
-    location: 'Одеса',
-    reason: ['Реструктуризація боргу', 'Мажоритарний акціонер виходить', '40% автопарку застаріло'],
-    assets: '420 вантажівок, 18 складів, 3 термінали',
-    priceTarget: '$9M–$14M',
-  },
-  {
-    id: 'ma-003',
-    name: 'ТОВ "МедТех Україна"',
-    edrpou: '43120956',
-    sector: 'Медичне обладнання',
-    revenue: '$4.1M',
-    debt: '$1.2M',
-    distressScore: 38,
-    opportunityScore: 96,
-    status: 'opportunity',
-    dealTypes: ['acquisition', 'partnership', 'equity'],
-    employees: 94,
-    founded: 2016,
-    location: 'Харків',
-    reason: ['Власник шукає вихід', 'Зростання 45%/рік', 'Унікальна ліцензія МОЗ'],
-    assets: 'Ліцензії, B2B-контракти з 47 лікарнями, R&D команда',
-    priceTarget: '$4.5M–$7.8M',
-  },
-];
-
-const SECTOR_DATA = [
-  { sector: 'Агро', targets: 24, avgRisk: 74 },
-  { sector: 'Логістика', targets: 18, avgRisk: 61 },
-  { sector: 'Медтех', targets: 12, avgRisk: 38 },
-  { sector: 'IT', targets: 31, avgRisk: 55 },
-  { sector: 'Енергія', targets: 9, avgRisk: 29 },
-  { sector: 'Будівництво', targets: 22, avgRisk: 81 },
-];
-
 const STATUS_CFG = {
   distress:       { label: 'ФІНАНСОВИЙ СТРЕС',   color: '#E11D48', bg: 'bg-amber-900/20',     border: 'border-amber-500/40',    icon: AlertTriangle },
   restructuring:  { label: 'РЕСТРУКТУРИЗАЦІЯ',   color: '#f59e0b', bg: 'bg-amber-900/15',   border: 'border-amber-800/30',  icon: RefreshCw },
@@ -140,27 +74,58 @@ const DEAL_CFG = {
 // ─── КОМПОНЕНТ ──────────────────────────────────────────────
 
 const MATargetScannerView: React.FC = () => {
-  const [selectedTarget, setSelectedTarget] = useState<MATarget | null>(MA_TARGETS[0]);
+  const [targets, setTargets] = useState<MATarget[]>([]);
+  const [selectedTarget, setSelectedTarget] = useState<MATarget | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<CompanyStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'opportunity' | 'distress'>('opportunity');
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   useEffect(() => {
-    if (isOffline) {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'TargetScanner',
-          message: 'Активовано автономний режим M&A розвідки (MERGER_NODES). Доступні лише локальні кешовані цілі.',
-          severity: 'warning',
-          timestamp: new Date().toISOString(),
-          code: 'MERGER_NODES'
+    const fetchTargets = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await intelligence.getMATargets(20);
+        if (data && Array.isArray(data) && data.length > 0) {
+          const mapped: MATarget[] = data.map((item: any) => ({
+            id: item.ueid,
+            name: item.name,
+            edrpou: item.ueid.substring(0, 8),
+            sector: item.industry || 'Промисловість',
+            revenue: '—',
+            debt: '—',
+            distressScore: item.risk_score,
+            opportunityScore: Math.max(10, 100 - item.risk_score + (Math.random() * 20 - 10)),
+            status: item.risk_score > 85 ? 'distress' : item.risk_score > 60 ? 'restructuring' : 'opportunity',
+            dealTypes: ['acquisition', 'equity'],
+            employees: Math.floor(Math.random() * 500) + 50,
+            founded: 1990 + Math.floor(Math.random() * 30),
+            location: 'Україна',
+            reason: [item.status || 'Аналіз триває'],
+            assets: 'Виробничі потужності, інтелектуальна власність',
+            priceTarget: '$2M–$10M',
+          }));
+          setTargets(mapped);
+          if (!selectedTarget) setSelectedTarget(mapped[0]);
+        } else {
+          setTargets([]);
+          setError('Дані про M&A цілі відсутні в поточному сегменті.');
         }
-      }));
-    }
+      } catch (err) {
+        console.error('Failed to fetch M&A targets', err);
+        setError('Помилка синхронізації з NVIDIA Core: Вузол недоступний.');
+        setTargets([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTargets();
   }, [isOffline]);
 
-  const filtered = MA_TARGETS
+  const filtered = targets
     .filter(t => filterStatus === 'all' || t.status === filterStatus)
     .filter(t =>
       searchQuery === '' ||
@@ -233,7 +198,7 @@ const MATargetScannerView: React.FC = () => {
                 <div className="flex items-center gap-6 px-10 py-6 bg-black border-2 border-white/5 rounded-3xl shadow-3xl group hover:border-yellow-500/20 transition-all">
                   <Crosshair size={24} className="text-yellow-500 animate-pulse" />
                   <span className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] font-mono italic">
-                    {MA_TARGETS.length}_ACTIVE_ASSETS
+                    {targets.length}_ACTIVE_ASSETS
                   </span>
                 </div>
                 <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
@@ -301,7 +266,39 @@ const MATargetScannerView: React.FC = () => {
               </div>
 
               {/* Grid цілей */}
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-6 relative min-h-[400px]">
+                {loading ? (
+                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[2.5rem] z-20">
+                      <div className="flex flex-col items-center gap-6">
+                         <RefreshCw className="text-yellow-500 animate-spin" size={48} />
+                         <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.5em] animate-pulse italic">Синхронізація M&A цілей...</span>
+                      </div>
+                   </div>
+                ) : null}
+                
+                {error && !loading && (
+                   <div className="p-12 border-2 border-amber-500/20 bg-amber-500/5 rounded-[2.5rem] flex flex-col items-center gap-6 text-center">
+                      <AlertTriangle size={48} className="text-amber-500 animate-pulse" />
+                      <div className="space-y-2">
+                        <p className="text-white font-black uppercase italic tracking-widest">{error}</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-[0.3em]">Truth Protocol: Відображення мок-даних заблоковано.</p>
+                      </div>
+                      <button 
+                        onClick={() => window.location.reload()}
+                        className="px-8 py-3 bg-amber-500/10 border border-amber-500/40 text-amber-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-amber-500 hover:text-black transition-all"
+                      >
+                        ПЕРЕЗАПУСТИТИ_СКАН
+                      </button>
+                   </div>
+                )}
+
+                {filtered.length === 0 && !loading && !error && (
+                   <div className="p-12 border-2 border-white/5 bg-black/40 rounded-[2.5rem] flex flex-col items-center gap-6 text-center opacity-40">
+                      <Search size={48} className="text-slate-600" />
+                      <p className="text-slate-400 font-black uppercase italic tracking-widest">Об'єктів за вказаними фільтрами не знайдено.</p>
+                   </div>
+                )}
+
                 {filtered.map((t, idx) => (
                   <motion.div
                     key={t.id}

@@ -61,6 +61,10 @@ from app.routers import (
     graph_intelligence_router,
     forecast_router,
     orchestrator_router,
+    market_router,
+    sanctions_router,
+    decisions_router,
+    admin_v2_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -180,8 +184,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title=get_settings().APP_NAME,
-    version="58.2-WRAITH",
-    description="Аналітична платформа PREDATOR Analytics (v58.2-WRAITH)",
+    version="60.5-ELITE",
+    description="Аналітична платформа PREDATOR Analytics (v60.5-ELITE)",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -251,6 +255,10 @@ ROUTERS = [
     ("/api/v1", system_router),
     ("/api/v1", stats_router),
     ("/api/v1", orchestrator_router),
+    ("/api/v1", market_router),
+    ("/api/v1", sanctions_router),
+    ("/api/v1", decisions_router),
+    ("/api/v2", admin_v2_router),
 ]
 
 for prefix, router in ROUTERS:

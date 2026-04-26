@@ -4,11 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Канонічна конфігурація PREDATOR Core API (v56.5-ELITE)."""
+    """Канонічна конфігурація PREDATOR Core API (v60.5-ELITE)."""
 
     # Основні
     APP_NAME: str = "PREDATOR Analytics Core API"
-    APP_VERSION: str = "58.2-WRAITH"
+    APP_VERSION: str = "60.5-ELITE"
     DEBUG: bool = False
     ENV: str = "development"
     TESTING: bool = False

@@ -1,6 +1,6 @@
 apiVersion: v2
 name: predator
-description: PREDATOR Analytics v58.2 WRAITH Full Stack Chart
+description: PREDATOR Analytics v60.5-ELITE Full Stack Chart
 type: application
 version: 60.5.0
 appVersion: "60.5-ELITE"

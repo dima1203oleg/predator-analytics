@@ -4,7 +4,7 @@ import {
   Zap, Cpu, Shield, AlertTriangle, 
   ArrowRightLeft, HardDrive, Layout, 
   Settings, Loader2, Gauge, Activity,
-  Server, Globe
+  Server, Globe, Monitor
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -77,10 +77,13 @@ const GuardMeter: React.FC<{
 
 // ─── ResourceGuardTab ────────────────────────────────────────────────────────
 
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export const ResourceGuardTab: React.FC = () => {
   const { data: stats, isLoading: statsLoading } = useSystemStats();
   const { data: infra, isLoading: infraLoading } = useInfraTelemetry();
   const { data: failover, isLoading: failoverLoading } = useFailoverStatus();
+  const { llmTriStateMode, nodeSource } = useBackendStatus();
   const toggleFailover = useToggleFailover();
 
   // Константи згідно AGENTS.md (HR-11/HR-12-ish)
@@ -132,7 +135,7 @@ export const ResourceGuardTab: React.FC = () => {
             <span>•</span>
             <span>ЛІМІТ_VRAM: {VRAM_TOTAL_LIMIT} ГБ</span>
             <span>•</span>
-            <span>ВЕРСІЯ: v60.5-ELITE</span>
+            <span>ВЕРСІЯ: v61.0-ELITE</span>
           </div>
         </div>
         
@@ -142,9 +145,11 @@ export const ResourceGuardTab: React.FC = () => {
             <div className="flex items-center gap-2">
               <div className={cn(
                 "w-1.5 h-1.5 rounded-full shadow-[0_0_10px]",
-                failover?.activeMode === 'CLOUD' ? 'bg-blue-500 shadow-blue-500' : 'bg-rose-500 shadow-rose-500'
+                llmTriStateMode === 'SOVEREIGN' ? 'bg-rose-500 shadow-rose-500' : 
+                llmTriStateMode === 'HYBRID' ? 'bg-emerald-500 shadow-emerald-500' :
+                'bg-sky-500 shadow-sky-500'
               )} />
-              <span className="text-xs font-black text-white italic">{failover?.activeMode || 'SOVEREIGN'}</span>
+              <span className="text-xs font-black text-white italic uppercase tracking-wider">{llmTriStateMode}</span>
             </div>
           </div>
         </div>
@@ -201,7 +206,7 @@ export const ResourceGuardTab: React.FC = () => {
               <GuardMeter label="SYSTEM_CPU_LOAD" value={stats?.cpu_percent ?? 0} total={100} unit="%" color="blue" />
               <div className="mt-6 p-4 bg-blue-600/5 border border-blue-600/10 rounded-sm">
                 <p className="text-[8px] text-blue-300/40 font-mono leading-relaxed uppercase italic font-black">
-                  Порада: Якщо CPU > 90%, рекомендується зупинити локальні воркери інгестії для вивільнення ресурсів IDE.
+                  Порада: MacBook використовується тільки як IDE. Весь бекенд має працювати на Sovereign Node (iMac).
                 </p>
               </div>
             </div>
@@ -211,81 +216,85 @@ export const ResourceGuardTab: React.FC = () => {
         {/* Center: Deployment Control & Nodes */}
         <div className="col-span-8 flex flex-col gap-8">
           <div className="grid grid-cols-2 gap-6">
-            <TacticalCard variant="holographic" title="ВУЗОЛ_MACBOOK (LOCAL)" className="bg-rose-900/5 border-rose-500/10">
+            <TacticalCard variant="holographic" title="HYBRID_MASTER_NVIDIA" className="bg-emerald-900/5 border-emerald-500/10">
                <div className="mt-4 space-y-4">
                   <div className="flex items-center justify-between">
                      <div className="flex flex-col">
-                        <span className="text-[12px] font-black text-white italic tracking-tighter uppercase">ПРІОРИТЕТ: РОЗРОБКА</span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest italic">Цільовий стан: Low Latency</span>
+                        <span className="text-[12px] font-black text-white italic tracking-tighter uppercase">ПРІОРИТЕТ: ГЛОБАЛЬНИЙ_МАЙСТЕР</span>
+                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest italic">Цільовий стан: High Availability</span>
                      </div>
                      <div className="p-2 bg-emerald-500/10 rounded-sm">
-                        <Activity size={14} className="text-emerald-500" />
+                        <Globe size={14} className="text-emerald-500" />
                      </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">СТАТУС_ВУЗЛА</span>
-                        <span className="text-[10px] font-black text-emerald-500 uppercase">В_МЕРЕЖІ</span>
+                        <span className="text-[10px] font-black text-emerald-500 uppercase">АКТИВНИЙ</span>
                      </div>
                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
-                        <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">ЗАВАНТАЖЕННЯ</span>
-                        <span className="text-[10px] font-black text-white italic">{(stats?.cpu_percent ?? 0).toFixed(0)}%</span>
+                        <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">IP_АДРЕСА</span>
+                        <span className="text-[10px] font-black text-white italic">194.177.1.240</span>
                      </div>
                   </div>
 
                   <button 
-                    disabled={failover?.activeNode === 'LOCAL'}
-                    onClick={() => handleOffload('LOCAL')}
+                    disabled={llmTriStateMode === 'HYBRID'}
+                    onClick={() => handleOffload('hybrid')}
                     className={cn(
                       "w-full py-3 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all border italic",
-                      failover?.activeNode === 'LOCAL' 
-                        ? "bg-rose-500/20 border-rose-500/40 text-rose-500 cursor-default"
-                        : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:border-white/20 hover:text-white"
+                      llmTriStateMode === 'HYBRID' 
+                        ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-500 cursor-default"
+                        : "bg-white/5 border-white/10 text-white/40 hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-white"
                     )}
                   >
-                    {failover?.activeNode === 'LOCAL' ? 'ПОТОЧНИЙ_МАСТЕР' : 'ПЕРЕЙТИ_НА_ЛОКАЛ'}
+                    {llmTriStateMode === 'HYBRID' ? 'ПОТОЧНИЙ_МАСТЕР' : 'ПЕРЕЙТИ_НА_HYBRID'}
                   </button>
                </div>
             </TacticalCard>
 
-            <TacticalCard variant="holographic" title="ВУЗОЛ_IMAC (REMOTE_OFFLOAD)" className="bg-blue-900/5 border-blue-500/10">
+            <TacticalCard variant="holographic" title="SOVEREIGN_NODE_IMAC" className="bg-rose-900/5 border-rose-500/10">
                <div className="mt-4 space-y-4">
                   <div className="flex items-center justify-between">
                      <div className="flex flex-col">
-                        <span className="text-[12px] font-black text-white italic tracking-tighter uppercase">ПРІОРИТЕТ: ОБЧИСЛЕННЯ</span>
-                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest italic">Цільовий стан: High Performance</span>
+                        <span className="text-[12px] font-black text-white italic tracking-tighter uppercase">ПРІОРИТЕТ: СУВЕРЕННИЙ_ОФЛОАД</span>
+                        <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest italic">Цільовий стан: Local Power</span>
                      </div>
-                     <div className="p-2 bg-blue-500/10 rounded-sm">
-                        <HardDrive size={14} className="text-blue-500" />
+                     <div className="p-2 bg-rose-500/10 rounded-sm">
+                        <Server size={14} className="text-rose-500" />
                      </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                     <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
-                        <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">ЗВ'ЯЗОК_RTT</span>
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-tighter">12.4 мс</span>
-                     </div>
-                     <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
+                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
+                        <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">ЗВ'ЯЗОК_LAN</span>
+                        <span className="text-[10px] font-black text-rose-400 uppercase tracking-tighter">
+                          192.168.0.199
+                        </span>
+                      </div>
+                      <div className="p-3 bg-white/5 border border-white/5 rounded-sm">
                         <span className="text-[7px] text-white/20 uppercase font-black tracking-widest block mb-1">VRAM_IMAC</span>
-                        <span className="text-[10px] font-black text-white italic">8.0 ГБ</span>
-                     </div>
+                        <span className="text-[10px] font-black text-white italic">
+                          8.0 ГБ
+                        </span>
+                      </div>
                   </div>
 
                   <button 
-                    disabled={toggleFailover.isPending || failover?.activeNode === 'IMAC'}
-                    onClick={() => handleOffload('IMAC')}
+                    disabled={toggleFailover.isPending || llmTriStateMode === 'SOVEREIGN'}
+                    onClick={() => handleOffload('sovereign')}
                     className={cn(
                       "w-full py-3 text-[10px] font-black uppercase tracking-[0.3em] rounded-sm transition-all border italic shadow-lg",
-                      failover?.activeNode === 'IMAC'
-                        ? "bg-blue-600/20 border-blue-500/40 text-blue-400 cursor-default"
-                        : "bg-blue-600 text-white border-blue-400/50 hover:bg-blue-500 shadow-blue-500/20"
+                      llmTriStateMode === 'SOVEREIGN'
+                        ? "bg-rose-600/20 border-rose-500/40 text-rose-400 cursor-default"
+                        : "bg-rose-600 text-white border-rose-400/50 hover:bg-rose-500 shadow-rose-500/20"
                     )}
                   >
                     {toggleFailover.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                     ) : (
-                      failover?.activeNode === 'IMAC' ? 'АКТИВНИЙ_ОФЛОАД' : 'ВИКЛИКАТИ_ОФЛОАД_НА_IMAC'
+                      llmTriStateMode === 'SOVEREIGN' ? 'АКТИВНИЙ_СУВЕРЕН' : 'АКТИВУВАТИ_СУВЕРЕННИЙ_РЕЖИМ'
                     )}
                   </button>
                </div>
@@ -294,23 +303,22 @@ export const ResourceGuardTab: React.FC = () => {
 
           <TacticalCard variant="holographic" title="АКТИВНІ_ПРОЦЕСИ_ТА_ОФЛОАД_МАРШРУТИ" className="flex-1">
              <div className="mt-4 space-y-4 h-[300px] overflow-y-auto custom-scrollbar pr-2">
-                {[
-                  { name: 'Core API (Backend)', type: 'SVC', load: 'Високе', vram: '1.2 ГБ', location: failover?.activeNode },
-                  { name: 'Ingestion Worker', type: 'WRK', load: 'Середнє', vram: '0.4 ГБ', location: failover?.activeNode },
-                  { name: 'Graph Service (Neo4j)', type: 'DB', load: 'Середнє', vram: '1.8 ГБ', location: failover?.activeNode },
-                  { name: 'DeepSeek LLM (Coder)', type: 'AI', load: 'Екстремальне', vram: '4.2 ГБ', location: 'LOCAL' },
-                ].map((proc, i) => (
+                {(infra?.nodes.flatMap(node => node.pods || []) || [
+                  { name: 'Core API (Backend)', type: 'SVC', load: 'Високе', vram: '1.2 ГБ', status: 'Running' },
+                  { name: 'Ingestion Worker', type: 'WRK', load: 'Середнє', vram: '0.4 ГБ', status: 'Running' },
+                  { name: 'Graph Service (Neo4j)', type: 'DB', load: 'Середнє', vram: '1.8 ГБ', status: 'Running' },
+                ]).map((proc, i) => (
                   <div key={i} className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-sm group hover:border-white/10 transition-all border-l-2 border-l-rose-500/30">
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center font-mono text-[8px] font-black text-white/40">
-                        {proc.type}
+                      <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center font-mono text-[8px] font-black text-white/40 uppercase">
+                        {proc.type || 'SVC'}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[11px] font-black text-white italic tracking-tighter uppercase">{proc.name}</span>
                         <div className="flex items-center gap-3">
-                          <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest italic">Навантаження: <span className="text-rose-500/60 font-black">{proc.load}</span></span>
+                          <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest italic">Статус: <span className={cn("font-black", proc.status === 'Running' ? "text-emerald-500/60" : "text-rose-500/60")}>{proc.status}</span></span>
                           <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest italic">•</span>
-                          <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest italic">VRAM: {proc.vram}</span>
+                          <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest italic">VRAM: {proc.vram || 'Н/Д'}</span>
                         </div>
                       </div>
                     </div>
@@ -319,8 +327,8 @@ export const ResourceGuardTab: React.FC = () => {
                        <div className="flex flex-col items-end">
                           <span className="text-[7px] text-white/10 uppercase font-black tracking-widest mb-1">ЛОКАЦІЯ</span>
                           <div className="flex items-center gap-2">
-                             {proc.location === 'LOCAL' ? <Monitor size={10} className="text-rose-500" /> : <Globe size={10} className="text-blue-500" />}
-                             <span className={cn("text-[9px] font-black italic", proc.location === 'LOCAL' ? "text-rose-500" : "text-blue-400")}>{proc.location}</span>
+                             {failover?.activeNode === 'local-k3s' ? <Monitor size={10} className="text-rose-500" /> : <Globe size={10} className="text-blue-500" />}
+                             <span className={cn("text-[9px] font-black italic", failover?.activeNode === 'local-k3s' ? "text-rose-500" : "text-blue-400")}>{failover?.activeNode}</span>
                           </div>
                        </div>
                        <button className="p-2 bg-white/5 border border-white/10 rounded-sm hover:bg-rose-500/20 hover:border-rose-500/40 transition-all group/btn">

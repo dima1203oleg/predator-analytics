@@ -34,3 +34,7 @@ export const navRecentAtom = atomWithStorage<string[]>(NAV_RECENT_STORAGE_KEY, [
 export const shellCommandPaletteOpenAtom = atom<boolean>(false);
 export const shellContextRailOpenAtom = atom<boolean>(true);
 export const shellContextRailPayloadAtom = atom<ContextRailPayload | null>(null);
+
+// Colab State
+export const colabPanelOpenAtom = atom<boolean>(false);
+export const colabNodeDataAtom = atom<any>(null);

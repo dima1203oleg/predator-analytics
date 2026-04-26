@@ -13,10 +13,61 @@ const PORT = 9080;
 let systemState = {
   infra: {
     nodes: [
-      { id: '1', node: 'nvidia-master', role: 'МАЙСТЕР_ВУЗОЛ_GPU',   cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, net: '↑ 1.4 МБ/с ↓ 5.2 МБ/с', status: 'online',   uptime: '12д 4г 21хв', ip: '192.168.0.199' },
-      { id: '2', node: 'macbook-edge',  role: 'КРАЙОВИЙ_ВУЗОЛ',    cpu: 22, ram: 48, temp: 54,               net: '↑ 0.4 МБ/с ↓ 1.1 МБ/с', status: 'online',   uptime: '3г 14хв' },
-      { id: '3', node: 'colab-mirror',  role: 'ХМАРНЕ_ДЗЕРКАЛО', cpu: 0,  ram: 0,                          net: '—',                       status: 'offline',  uptime: 'недоступний' },
+      { 
+        id: 'nvidia', 
+        node: 'nvidia-master', 
+        role: 'МАЙСТЕР_ВУЗОЛ_GPU',   
+        cpu: 45, ram: 62, vram: 55, vramGb: 4.4, temp: 68, 
+        net: '↑ 1.4 МБ/с ↓ 5.2 МБ/с', 
+        status: 'online',   
+        uptime: '12д 4г 21хв', 
+        ip: '192.168.0.199' 
+      },
+      { 
+        id: 'macbook', 
+        node: 'macbook-edge',  
+        role: 'КРАЙОВИЙ_ВУЗОЛ',    
+        cpu: 22, ram: 48, temp: 54,               
+        net: '↑ 0.4 МБ/с ↓ 1.1 МБ/с', 
+        status: 'online',   
+        uptime: '3г 14хв' 
+      },
+      { 
+        id: 'colab', 
+        node: 'colab-mirror',  
+        role: 'ХМАРНЕ_ДЗЕРКАЛО', 
+        cpu: 12, ram: 34,                          
+        net: '↑ 2.1 МБ/с ↓ 8.4 МБ/с', 
+        status: 'online',  
+        uptime: '4г 12хв',
+        extended: {
+          zrok_url: 'https://predator-mirror.share.zrok.io',
+          zrok_id: '1eeje4um7yvA',
+          databases: {
+            postgres: 'running',
+            clickhouse: 'running',
+            neo4j: 'running',
+            redis: 'running',
+            opensearch: 'running',
+            qdrant: 'running',
+            minio: 'running'
+          },
+          last_sync: new Date().toISOString()
+        }
+      },
     ],
+    infrastructure: {
+      components: {
+        postgresql: { status: 'UP', latency: '12ms', version: '16.2', role: 'SSOT' },
+        clickhouse: { status: 'UP', latency: '45ms', version: '24.3', role: 'OLAP' },
+        neo4j: { status: 'UP', latency: '28ms', version: '5.17', role: 'GRAPH' },
+        redis: { status: 'UP', latency: '2ms', version: '7.2', role: 'CACHE' },
+        opensearch: { status: 'UP', latency: '34ms', version: '2.12', role: 'SEARCH' },
+        qdrant: { status: 'UP', latency: '18ms', version: '1.8', role: 'VECTOR' },
+        minio: { status: 'UP', latency: '5ms', version: 'latest', role: 'S3' },
+        kafka: { status: 'WARN', latency: '341ms', version: '7.6', role: 'STREAM' },
+      }
+    },
     services: [
       { name: 'core-api',         status: 'ok',   latencyMs: 12,  version: 'v1.4.2', lastCheck: 'зараз' },
       { name: 'graph-service',    status: 'ok',   latencyMs: 28,  version: 'v1.2.0', lastCheck: 'зараз' },
@@ -347,6 +398,16 @@ const server = http.createServer((req, res) => {
       avg_latency_ms: 120,
       vram_usage_gb: 4.2
     });
+  }
+
+  // 9. System Nodes (v58.2-WRAITH)
+  if (path === '/api/v1/system/nodes' && req.method === 'GET') {
+    return sendJSON(res, systemState.infra.nodes);
+  }
+
+  // 10. System Infrastructure (v58.2-WRAITH)
+  if (path === '/api/v1/system/infrastructure' && req.method === 'GET') {
+    return sendJSON(res, systemState.infra.infrastructure);
   }
 
   // 404

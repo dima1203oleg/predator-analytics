@@ -3,7 +3,7 @@ import { Activity, Cpu, HardDrive, Wifi, Thermometer, Server, Monitor, Layers, S
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
-import { useInfraTelemetry } from '@/hooks/useAdminApi';
+import { useInfraTelemetry, useSystemStatus } from '@/hooks/useAdminApi';
 import { Loader2 } from 'lucide-react';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
@@ -235,8 +235,24 @@ const getServiceStatus = (row: ServiceStatus): RowStatus =>
 
 // ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
 
+// ─── Вкладка Телеметрія Кластера ─────────────────────────────────────────────
+
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
 export const InfraTelemetryTab: React.FC = () => {
   const { data, isLoading, isError } = useInfraTelemetry();
+  const { data: systemStatus } = useSystemStatus();
+  const { llmTriStateMode, nodeSource } = useBackendStatus();
+
+  const nodes = data?.nodes || [];
+  const services = data?.services || [];
+
+  const totalThroughput = nodes.reduce((acc, n) => {
+    const parts = n.net.split('/');
+    const rx = parseFloat(parts[0]) || 0;
+    const tx = parseFloat(parts[1]) || 0;
+    return acc + rx + tx;
+  }, 0);
 
   if (isLoading) {
     return (
@@ -270,30 +286,54 @@ export const InfraTelemetryTab: React.FC = () => {
     );
   }
 
-  const nodes = data.nodes || [];
-  const services = data.services || [];
-
   return (
     <div className="p-8 space-y-10 max-w-[1600px] mx-auto">
-      {/* Header Section */}
-      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
-        <div className="flex items-center gap-3">
-          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Моніторинг Глобальної Інфраструктури
-          </h2>
-          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter uppercase italic">
-            ІНДУСТРІАЛЬНИЙ_СТАН_V6
+      {/* Tri-State Routing Header */}
+      <div className="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center">
+        <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
+          <div className="flex items-center gap-3">
+            <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
+              Моніторинг Глобальної Інфраструктури
+            </h2>
+            <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter uppercase italic">
+              ІНДУСТРІАЛЬНИЙ_СТАН_V6
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+              <span>АКТИВНА_СИНХРОНІЗАЦІЯ_ПОТОКУ</span>
+            </div>
+            <span>•</span>
+            <span>ІНТЕРВАЛ: 3000мс</span>
+            <span>•</span>
+            <span>ВУЗОЛ_МАЙСТЕР: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_60_ELITE'}</span>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
-          <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>АКТИВНА_СИНХРОНІЗАЦІЯ_ПОТОКУ</span>
-          </div>
-          <span>•</span>
-          <span>ІНТЕРВАЛ: 3000мс</span>
-          <span>•</span>
-          <span>ВУЗОЛ_МАЙСТЕР: 0xPRED_60_ELITE</span>
+
+        {/* Routing Indicator Badge */}
+        <div className="flex items-center gap-4 bg-black/40 backdrop-blur-md p-3 rounded-lg border border-white/5 shadow-inner">
+           <div className="flex flex-col items-end">
+              <span className="text-[7px] font-mono text-white/20 uppercase tracking-[0.4em] font-black">СТРАТЕГІЯ_МАРШРУТИЗАЦІЇ</span>
+              <span className="text-[10px] font-black text-white/60 italic uppercase tracking-wider">{nodeSource}</span>
+           </div>
+           <div className="h-8 w-px bg-white/10 mx-2" />
+           <div className={cn(
+             "px-4 py-2 rounded border flex items-center gap-3 transition-all duration-700",
+             llmTriStateMode === 'SOVEREIGN' ? "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.2)]" :
+             llmTriStateMode === 'HYBRID' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]" :
+             "bg-sky-500/10 border-sky-500/30 text-sky-500 shadow-[0_0_20px_rgba(14,165,233,0.2)]"
+           )}>
+             <Globe size={16} className={cn("animate-spin-slow", llmTriStateMode === 'SOVEREIGN' ? "text-rose-500" : llmTriStateMode === 'HYBRID' ? "text-emerald-500" : "text-sky-500")} />
+             <div className="flex flex-col">
+                <span className="text-[12px] font-black tracking-[0.2em] italic">{llmTriStateMode}</span>
+                <span className="text-[7px] font-mono uppercase tracking-widest opacity-60">
+                   {llmTriStateMode === 'SOVEREIGN' ? 'АВТОНОМНИЙ_СУВЕРЕНІТЕТ' : 
+                    llmTriStateMode === 'HYBRID' ? 'ГІБРИДНА_ЕФЕКТИВНІСТЬ' : 
+                    'ХМАРНЕ_ПРИСКОРЕННЯ'}
+                </span>
+             </div>
+           </div>
         </div>
       </div>
 
@@ -302,8 +342,8 @@ export const InfraTelemetryTab: React.FC = () => {
         {[
           { label: 'АКТИВНІ_АКТИВИ', value: `${nodes.filter(n => n.status === 'online').length}/${nodes.length}`, icon: Server, color: 'rose' },
           { label: 'ЯДРО_ЕКОСИСТЕМИ', value: services.length, icon: Box, color: 'sky' },
-          { label: 'АПТАЙМ_СИСТЕМИ', value: '99.99%', icon: Shield, color: 'emerald' },
-          { label: 'ПРОПУСКНА_ЗДАТНІСТЬ', value: '1.2 ГБ/с', icon: Zap, color: 'amber' },
+          { label: 'ЧАС_БЕЗПЕРЕРВНОЇ_РОБОТИ', value: systemStatus?.uptime || 'Н/Д', icon: Shield, color: 'emerald' },
+          { label: 'ПРОПУСКНА_ЗДАТНІСТЬ', value: `${totalThroughput.toFixed(1)} МБ/с`, icon: Zap, color: 'amber' },
         ].map((stat, i) => (
           <motion.div 
             key={i} 

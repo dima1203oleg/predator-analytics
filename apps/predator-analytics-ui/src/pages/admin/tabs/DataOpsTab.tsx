@@ -168,7 +168,11 @@ export const DataOpsTab: React.FC = () => {
             <span>СИСТЕМА_ТРАНСПОРТУ_АКТИВНА</span>
           </div>
           <span>•</span>
-          <span>ШВИДКІСТЬ_ПОТОКУ: 850 МБ/с</span>
+          <span>ШВИДКІСТЬ_ПОТОКУ: {kafkaTopics.reduce((s, t) => {
+            const val = parseFloat(t.throughput) || 0;
+            const unit = t.throughput.toUpperCase().includes('GB') ? 1024 : t.throughput.toUpperCase().includes('KB') ? 1/1024 : 1;
+            return s + (val * unit);
+          }, 0).toFixed(1)} МБ/с</span>
           <span>•</span>
           <span>АРХІТЕКТУРА: PREDATOR_DATA_LAKE</span>
         </div>

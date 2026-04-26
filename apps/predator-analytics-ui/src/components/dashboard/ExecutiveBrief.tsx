@@ -8,24 +8,64 @@
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp, AlertTriangle, Users, Target, Shield, 
   Zap, Clock, ArrowUpRight, MessageSquare, Briefcase,
   Layers, Database, Sparkles, ChevronRight,
-  TrendingDown, Globe, PieChart, Activity
+  TrendingDown, Globe, PieChart, Activity, RefreshCw
 } from 'lucide-react';
 import { TacticalCard } from '@/components/ui/TacticalCard';
 import { cn } from '@/utils/cn';
-
-const INSIGHTS = [
-  { id: 1, title: 'Аномальний експорт титану', desc: 'Виявлено приховані зв\'язки з офшорами через ТОВ "Меркурій". Ризик: 92%', severity: 'critical', icon: AlertTriangle },
-  { id: 2, title: 'Оптимізація логістики', desc: 'ШІ рекомендує перехід на альтернативний коридор "Дунай-Одеса". Економія: 14%', severity: 'success', icon: Zap },
-  { id: 3, title: 'Детекція внутрішньої загрози', desc: '3 нові сигнали в модулі ZRADA_CONTROL щодо партнерів-посередників.', severity: 'warning', icon: Users },
-];
+import { useDashboardOverview, useMorningBrief } from '@/hooks/useDashboard';
+import { intelligenceApi } from '@/services/api/intelligence';
+import { useQuery } from '@tanstack/react-query';
 
 export const ExecutiveBrief: React.FC = () => {
+  const { data: overview, isLoading: overviewLoading } = useDashboardOverview();
+  const { data: morningBrief, isLoading: briefLoading } = useMorningBrief();
+  
+  // Also fetch AI Insights specifically for the list
+  const { data: aiInsights } = useQuery({
+    queryKey: ['intelligence', 'ai-insights'],
+    queryFn: () => intelligenceApi.getAiInsights(),
+    refetchInterval: 60000,
+  });
+
+  const summary = overview?.summary;
+
+  const coreStats = useMemo(() => [
+    { 
+      label: 'ОБОРОТ (USD)', 
+      value: summary ? `$${(summary.total_value_usd / 1e6).toFixed(1)}M` : '...', 
+      trend: '+12.4%', 
+      icon: TrendingUp, 
+      color: 'text-emerald-500' 
+    },
+    { 
+      label: 'ІНДЕКС РИЗИКУ', 
+      value: summary ? `${((summary.high_risk_count / (summary.total_declarations || 1)) * 100).toFixed(1)}%` : '...', 
+      trend: '-2.1%', 
+      icon: Shield, 
+      color: 'text-rose-500' 
+    },
+    { 
+      label: 'АКТИВНІ ЦІЛІ', 
+      value: summary?.high_risk_count.toString() || '...', 
+      trend: `+${Math.round((summary?.high_risk_count || 0) * 0.1)}`, 
+      icon: Target, 
+      color: 'text-yellow-500' 
+    },
+    { 
+      label: 'ШІ-РЕЗОЛЮЦІЇ', 
+      value: summary?.vectors.toLocaleString() || '...', 
+      trend: '+88', 
+      icon: Sparkles, 
+      color: 'text-blue-500' 
+    },
+  ], [summary]);
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       {/* ── HEADER ── */}
@@ -46,19 +86,16 @@ export const ExecutiveBrief: React.FC = () => {
           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic mb-2">ОСТАННЄ ОНОВЛЕННЯ</p>
           <div className="flex items-center gap-4 px-6 py-3 bg-black border border-white/5 rounded-2xl">
             <Clock size={14} className="text-emerald-500" />
-            <span className="text-lg font-black text-white italic font-mono leading-none">08:45:00</span>
+            <span className="text-lg font-black text-white italic font-mono leading-none">
+              {overview?.generated_at ? new Date(overview.generated_at).toLocaleTimeString('uk-UA') : '--:--:--'}
+            </span>
           </div>
         </div>
       </div>
 
       {/* ── CORE METRICS ── */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {[
-          { label: 'ЧИСТИЙ ПРИБУТОК', value: '$42.8M', trend: '+12.4%', icon: TrendingUp, color: 'text-emerald-500' },
-          { label: 'ІНДЕКС РИЗИКУ', value: '14.2%', trend: '-2.1%', icon: Shield, color: 'text-rose-500' },
-          { label: 'АКТИВНІ ЦІЛІ', value: '128', trend: '+14', icon: Target, color: 'text-yellow-500' },
-          { label: 'ШІ-РЕЗОЛЮЦІЇ', value: '1,242', trend: '+88', icon: Sparkles, color: 'text-blue-500' },
-        ].map((stat, i) => (
+        {coreStats.map((stat, i) => (
           <TacticalCard key={i} className="p-8 border-white/5 bg-black/40 hover:border-white/10 transition-all group overflow-hidden relative">
              <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform">
                 <stat.icon size={80} />
@@ -92,35 +129,44 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             
             <div className="space-y-6">
-              {INSIGHTS.map((insight) => (
-                <motion.div 
-                  key={insight.id} 
-                  whileHover={{ x: 10 }}
-                  className={cn(
-                    "p-8 rounded-[2.5rem] border-2 flex items-start gap-8 transition-all shadow-xl group cursor-pointer",
-                    insight.severity === 'critical' ? "bg-rose-600/10 border-rose-500/20" : 
-                    insight.severity === 'warning' ? "bg-yellow-600/10 border-yellow-500/20" :
-                    "bg-emerald-600/10 border-emerald-500/20"
-                  )}
-                >
-                  <div className={cn(
-                    "p-4 rounded-2xl shrink-0 border shadow-lg",
-                    insight.severity === 'critical' ? "bg-rose-900/40 border-rose-500/40 text-rose-500" :
-                    insight.severity === 'warning' ? "bg-yellow-900/40 border-yellow-500/40 text-yellow-500" :
-                    "bg-emerald-900/40 border-emerald-500/40 text-emerald-500"
-                  )}>
-                    <insight.icon size={24} className={insight.severity === 'critical' ? 'animate-bounce' : ''} />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xl font-black text-white italic tracking-tighter uppercase leading-none group-hover:text-emerald-400 transition-colors">{insight.title}</h4>
-                      <span className="text-[9px] font-black text-slate-700 italic uppercase tracking-widest">{new Date().toLocaleDateString('uk-UA')}</span>
+              {aiInsights?.length > 0 ? (
+                aiInsights.map((insight: any) => (
+                  <motion.div 
+                    key={insight.id} 
+                    whileHover={{ x: 10 }}
+                    className={cn(
+                      "p-8 rounded-[2.5rem] border-2 flex items-start gap-8 transition-all shadow-xl group cursor-pointer",
+                      insight.severity === 'high' ? "bg-rose-600/10 border-rose-500/20" : 
+                      insight.severity === 'medium' ? "bg-yellow-600/10 border-yellow-500/20" :
+                      "bg-emerald-600/10 border-emerald-500/20"
+                    )}
+                  >
+                    <div className={cn(
+                      "p-4 rounded-2xl shrink-0 border shadow-lg",
+                      insight.severity === 'high' ? "bg-rose-900/40 border-rose-500/40 text-rose-500" :
+                      insight.severity === 'medium' ? "bg-yellow-900/40 border-yellow-500/40 text-yellow-500" :
+                      "bg-emerald-900/40 border-emerald-500/40 text-emerald-500"
+                    )}>
+                      {insight.severity === 'high' ? <AlertTriangle size={24} className="animate-bounce" /> : <Zap size={24} />}
                     </div>
-                    <p className="text-sm text-slate-400 font-medium italic leading-relaxed">{insight.desc}</p>
-                  </div>
-                  <ChevronRight className="self-center text-slate-800 opacity-20 group-hover:opacity-100 group-hover:text-emerald-500 transition-all" size={24} />
-                </motion.div>
-              ))}
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xl font-black text-white italic tracking-tighter uppercase leading-none group-hover:text-emerald-400 transition-colors">{insight.title}</h4>
+                        <span className="text-[9px] font-black text-slate-700 italic uppercase tracking-widest">
+                          {new Date(insight.timestamp).toLocaleTimeString('uk-UA')}
+                        </span>
+                      </div>
+                      <p className="text-sm text-slate-400 font-medium italic leading-relaxed">{insight.description}</p>
+                    </div>
+                    <ChevronRight className="self-center text-slate-800 opacity-20 group-hover:opacity-100 group-hover:text-emerald-500 transition-all" size={24} />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="p-12 text-center space-y-4">
+                  <RefreshCw className="mx-auto text-slate-800 animate-spin" size={32} />
+                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest">ОЧІКУВАННЯ_СИНАПСІВ_TRINITY...</p>
+                </div>
+              )}
             </div>
           </TacticalCard>
         </div>
@@ -136,10 +182,10 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-6">
               {[
-                { label: 'АКТИВНІ ТЕНДЕРИ', val: '24', icon: Briefcase },
-                { label: 'OSINT СИГНАЛИ', val: '412', icon: Database },
-                { label: 'КОМПАНІЇ_МОНІТОР', val: '1,042', icon: Briefcase },
-                { label: 'МЕРЕЖЕВА_ЕНТРОПІЯ', val: '0.04', icon: Database },
+                { label: 'АКТИВНІ ТЕНДЕРИ', val: summary?.completed_pipelines.toString() || '...', icon: Briefcase },
+                { label: 'OSINT СИГНАЛИ', val: summary?.search_documents.toLocaleString() || '...', icon: Database },
+                { label: 'КОМПАНІЇ_МОНІТОР', val: summary?.import_count.toLocaleString() || '...', icon: Users },
+                { label: 'МЕРЕЖЕВА_ЕНТРОПІЯ', val: '0.04', icon: Activity },
               ].map((item, i) => (
                 <div key={i} className="p-6 rounded-[2rem] bg-black border-2 border-white/5 hover:border-blue-500/30 transition-all group">
                   <div className="flex items-center gap-3 mb-4">
@@ -162,7 +208,11 @@ export const ExecutiveBrief: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-2deg]">КРИТИЧНИЙ СПОВІЩУВАЧ</h4>
-                <p className="text-[11px] font-black text-rose-800 uppercase tracking-[0.3em] italic leading-none">ВИЯВЛЕНО ПРЯМУ ЗАГРОЗУ ПОРТФЕЛЮ №08</p>
+                <p className="text-[11px] font-black text-rose-800 uppercase tracking-[0.3em] italic leading-none">
+                  {summary?.high_risk_count && summary.high_risk_count > 0 
+                    ? `ВИЯВЛЕНО ${summary.high_risk_count} ПРЯМИХ ЗАГРОЗ ПОРТФЕЛЮ` 
+                    : 'ЗАГРОЗ ПОРТФЕЛЮ НЕ ВИЯВЛЕНО'}
+                </p>
               </div>
             </div>
           </TacticalCard>

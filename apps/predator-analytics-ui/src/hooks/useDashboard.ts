@@ -5,11 +5,13 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi, type DashboardOverview, type DashboardAlert } from '../services/api/dashboard';
+import { intelligenceApi } from '../services/api/intelligence';
 
 const DASHBOARD_KEYS = {
   overview: ['dashboard', 'overview'] as const,
   alerts:   ['dashboard', 'alerts'] as const,
   sentinel: ['system', 'sentinel'] as const,
+  morningBrief: ['intelligence', 'morningBrief'] as const,
 };
 
 /**
@@ -35,6 +37,18 @@ export function useDashboardAlerts(limit: number = 10) {
     queryFn: () => dashboardApi.getAlerts(limit),
     refetchInterval: 10000,
     staleTime: 5000,
+  });
+}
+
+/**
+ * Хук для отримання ранкового звіту (Morning Brief).
+ */
+export function useMorningBrief() {
+  return useQuery({
+    queryKey: DASHBOARD_KEYS.morningBrief,
+    queryFn: () => intelligenceApi.getMorningNewspaper(),
+    refetchInterval: 60000 * 5, // Every 5 mins
+    staleTime: 60000,
   });
 }
 

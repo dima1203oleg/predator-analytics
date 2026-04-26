@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Power
 } from 'lucide-react';
+import { useSystemStatus } from '@/hooks/useAdminApi';
+import { cn } from '@/lib/utils';
 
 interface Experiment {
   active: boolean;
@@ -61,8 +63,12 @@ const ChaosControlHub: React.FC = () => {
     { id: 'agent_timeout', name: 'Дрейф Агента', desc: 'Блокує виконання задач AGI-агентами', icon: <Skull /> },
   ];
 
+  const { data: systemStatus } = useSystemStatus();
+  const avgLatency = systemStatus?.services[0]?.latency_ms || 0;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {/* ... header remains ... */}
       <div className="p-6 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-black text-rose-500 uppercase tracking-tighter italic flex items-center gap-3">
@@ -80,6 +86,7 @@ const ChaosControlHub: React.FC = () => {
         </button>
       </div>
 
+      {/* ... experiment cards remain ... */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {experimentConfigs.map((cfg) => {
           const isActive = experiments[cfg.id]?.active;
@@ -134,9 +141,9 @@ const ChaosControlHub: React.FC = () => {
             <ShieldCheck size={20} /> Метрики Стійкості
           </div>
           <div className="space-y-6">
-             <MetricRow label="Час відгуку API (P95)" value="452ms" target="< 2.0s" status="success" />
-             <MetricRow label="Рівень помилок" value="0.02%" target="< 1.0%" status="success" />
-             <MetricRow label="Стан Запобіжника" value="ЗАКРИТО" target="HEALTHY" status="success" />
+             <MetricRow label="Час відгуку API (P95)" value={`${avgLatency}ms`} target="< 2.0s" status={avgLatency < 2000 ? "success" : "danger"} />
+             <MetricRow label="Рівень помилок" value={systemStatus?.overall_status === 'optimal' ? '0.00%' : 'Н/Д'} target="< 1.0%" status={systemStatus?.overall_status === 'optimal' ? "success" : "warning"} />
+             <MetricRow label="Стан Запобіжника" value={systemStatus?.healthy ? "ЗАКРИТО" : "ВІДКРИТО"} target="HEALTHY" status={systemStatus?.healthy ? "success" : "danger"} />
           </div>
         </div>
 

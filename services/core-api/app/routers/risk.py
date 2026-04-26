@@ -82,21 +82,35 @@ async def get_risk_scores(
         raise HTTPException(status_code=400, detail="Не вказано entities")
 
     # Звертаємося до бази для отримання компаній та їхніх останніх риск-скорів
-    companies_query = select(Company).where(
+    companies_query = select(
+        Company.ueid,
+        Company.name
+    ).where(
         Company.tenant_id == tenant_id,
         Company.ueid.in_(ueids)
     )
     companies_result = await db.execute(companies_query)
-    companies = {c.ueid: c for c in companies_result.scalars().all()}
+    companies = {c.ueid: c for c in companies_result.all()}
 
-    scores_query = select(RiskScore).where(
+    scores_query = select(
+        RiskScore.entity_ueid,
+        RiskScore.cers,
+        RiskScore.cers_confidence,
+        RiskScore.behavioral_score,
+        RiskScore.institutional_score,
+        RiskScore.influence_score,
+        RiskScore.structural_score,
+        RiskScore.predictive_score,
+        RiskScore.explanation,
+        RiskScore.flags
+    ).where(
         RiskScore.tenant_id == tenant_id,
         RiskScore.entity_ueid.in_(ueids)
     ).order_by(RiskScore.entity_ueid, RiskScore.score_date.desc())
 
     # Спрощений вибір останнього скору для кожної компанії
     scores_result = await db.execute(scores_query)
-    scores_list = scores_result.scalars().all()
+    scores_list = scores_result.all()
 
     latest_scores = {}
     for s in scores_list:

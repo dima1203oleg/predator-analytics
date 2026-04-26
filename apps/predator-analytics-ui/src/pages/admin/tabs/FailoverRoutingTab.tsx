@@ -113,7 +113,7 @@ export const FailoverRoutingTab: React.FC = () => {
             <span>МЕРЕЖЕВИЙ_КАНАЛ_АКТИВНИЙ</span>
           </div>
           <span>•</span>
-          <span>РЕЗЕРВУВАННЯ: 3/3</span>
+          <span>РЕЗЕРВУВАННЯ: {Object.values(nodes).filter(n => n.status === 'online').length}/{Object.keys(nodes).length}</span>
           <span>•</span>
           <span>ПОЛІТИКА: АВТОМАТИЧНА_ПРЕВЕНТИВНА</span>
         </div>

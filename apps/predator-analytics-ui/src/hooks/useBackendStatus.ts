@@ -1,6 +1,7 @@
 /**
- * 🔍 useBackendStatus | PREDATOR v58.2-WRAITH
+ * 🔍 useBackendStatus | PREDATOR v61.0-ELITE
  * Хук для відстеження стану вузлів інфраструктури в реальному часі.
+ * Підтримує Sovereign Headless Architecture (Tri-State Routing).
  */
 import { useEffect, useMemo, useState } from 'react';
 import { API_BASE_URL, IS_TRUTH_ONLY_MODE, NODE_IDS } from '@/services/api/config';
@@ -11,6 +12,7 @@ export interface BackendNode {
     url: string;
     active: boolean;
     status: 'online' | 'offline' | 'checking';
+    mode?: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' | 'MOCK';
 }
 
 // ─── Допоміжні функції ───────────────────────────────────────────────────────
@@ -29,12 +31,13 @@ const getSourceLabel = (): string => {
 
 /** Людиночитана мітка активного вузла для відображення в UI */
 const getNodeSource = (): string => {
+    if (API_BASE_URL.includes('192.168.0.199'))   return 'SOVEREIGN_IMAC';
+    if (API_BASE_URL.includes('194.177.1'))       return 'HYBRID_NVIDIA';
     if (API_BASE_URL.includes('zrok.io')) {
-        if (API_BASE_URL.includes('mirror')) return 'COLAB_ДЗЕРКАЛО';
-        return 'NVIDIA_ЧЕРЕЗ_ZROK';
+        if (API_BASE_URL.includes('mirror'))      return 'CLOUD_COLAB_MIRROR';
+        return 'REMOTE_ZROK_GATEWAY';
     }
-    if (API_BASE_URL.includes('194.177.1'))   return 'NVIDIA_ПРЯМИЙ';
-    if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('9080')) return 'СУВЕРЕННИЙ_МОК';
+    if (API_BASE_URL.includes('localhost') || API_BASE_URL.includes('9080')) return 'LOCAL_MOCK_SANDBOX';
     return 'НЕВІДОМО';
 };
 
@@ -85,12 +88,9 @@ export interface BackendStatusSnapshot {
     nodes: BackendNode[];
     /** Прогрес автовідновлення (0-100) */
     healingProgress: number;
-    /** Чи активний ZROK failover */
+    /** Чи активний failover (будь-який не-Sovereign вузол) */
     activeFailover: boolean;
-    /**
-     * Мітка активного вузла для відображення в тактичних компонентах.
-     * Можливі значення: 'NVIDIA_VIA_ZROK' | 'NVIDIA_DIRECT' | 'SOVEREIGN_MOCK' | 'UNKNOWN'
-     */
+    /** Мітка активного вузла для відображення в тактичних компонентах */
     nodeSource: string;
 }
 
@@ -103,9 +103,13 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     const [currentApiUrl, setCurrentApiUrl] = useState(API_BASE_URL);
     
     // v3.0 Headless State
-    const [llmTriStateMode, setLlmTriStateMode] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>('HYBRID');
+    const activeNode = useMemo(() => nodes.find(n => n.active), [nodes]);
+    
+    const [llmTriStateMode, setLlmTriStateMode] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>(
+        activeNode?.mode || 'HYBRID'
+    );
     const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
-    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: ХМАРНИЙ ПУЛ');
+    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: АВТОНОМНИЙ ПУЛ');
     const [vramMetrics, setVramMetrics] = useState<BackendStatusSnapshot['vramMetrics']>({
         total: 8.0,
         localReserve: 5.5,
@@ -115,7 +119,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     });
 
     const activeFailover = useMemo(
-        () => nodes.some(n => n.id === NODE_IDS.ZROK && n.active),
+        () => nodes.some(n => n.id !== NODE_IDS.SOVEREIGN && n.active),
         [nodes],
     );
 
@@ -125,13 +129,24 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
             setCurrentApiUrl(API_BASE_URL);
             
             if (e?.detail) {
-                if (e.detail.nodes) setNodes(e.detail.nodes);
+                if (e.detail.nodes) {
+                    setNodes(e.detail.nodes);
+                    const active = e.detail.nodes.find((n: any) => n.active);
+                    if (active && active.mode) {
+                        setLlmTriStateMode(active.mode);
+                    }
+                }
                 if (e.detail.llmTriStateMode) setLlmTriStateMode(e.detail.llmTriStateMode);
                 if (e.detail.llmLevel) setLlmLevel(e.detail.llmLevel);
                 if (e.detail.llmLayerName) setLlmLayerName(e.detail.llmLayerName);
                 if (e.detail.vramMetrics) setVramMetrics(e.detail.vramMetrics);
             } else {
-                setNodes(readNodes());
+                const currentNodes = readNodes();
+                setNodes(currentNodes);
+                const active = currentNodes.find(n => n.active);
+                if (active && active.mode) {
+                    setLlmTriStateMode(active.mode);
+                }
             }
         };
 

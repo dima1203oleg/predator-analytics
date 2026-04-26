@@ -17,6 +17,7 @@ const ADMIN_KEYS = {
   keys: ['admin', 'security', 'keys'] as const,
   systemStatus: ['admin', 'system', 'status'] as const,
   systemStats: ['admin', 'system', 'stats'] as const,
+  systemNodes: ['admin', 'system', 'nodes'] as const,
   aiEngines: ['admin', 'system', 'engines'] as const,
   systemLogs: ['admin', 'system', 'logs'] as const,
 };
@@ -52,6 +53,14 @@ export function useSystemLogs() {
     queryKey: ADMIN_KEYS.systemLogs,
     queryFn: () => adminApi.system.getLogs(),
     refetchInterval: 8000,
+  });
+}
+
+export function useSystemNodes() {
+  return useQuery({
+    queryKey: ADMIN_KEYS.systemNodes,
+    queryFn: () => adminApi.system.getNodes(),
+    refetchInterval: 5000,
   });
 }
 
@@ -161,6 +170,7 @@ export function useAdminApi(key: keyof typeof ADMIN_KEYS): any {
     keys: useSecurityKeys,
     systemStatus: useSystemStatus,
     systemStats: useSystemStats,
+    systemNodes: useSystemNodes,
     aiEngines: useAIEngines,
     systemLogs: useSystemLogs,
   };

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Zap, Save, RefreshCw, Layers, Copy, Search,
-  Terminal, Shield, Play, Lock, FileCode, Server
+  Terminal, Shield, Play, Lock, FileCode, Server,
+  AlertCircle, CheckCircle2
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -11,48 +12,48 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
 import { useBackendStatus } from '@/hooks/useBackendStatus';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { optimizerApi } from '@/services/api/intelligence';
 
 const SystemPromptsView = () => {
   const { isOffline, nodeSource } = useBackendStatus();
-  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  // Fetch all templates
+  const { data: templates, isLoading: listLoading, refetch } = useQuery({
+    queryKey: ['optimizer', 'templates'],
+    queryFn: () => optimizerApi.getTemplates(),
+    refetchInterval: 60000,
+  });
+
+  // Fetch selected template details
+  const { data: selectedTemplate, isLoading: detailsLoading } = useQuery({
+    queryKey: ['optimizer', 'template', selectedId],
+    queryFn: () => selectedId ? optimizerApi.getTemplate(selectedId) : null,
+    enabled: !!selectedId,
+  });
 
   useEffect(() => {
     if (isOffline) {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'Prompt_Engine',
-          message: 'ЯДРО ПРОМПТІВ ПЕРЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії v2.4.1.',
+          message: 'ЯДРО ПРОМПТІВ ПЕРЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'PROMPT_OFFLINE'
         }
       }));
-    } else {
-      window.dispatchEvent(new CustomEvent('predator-error', {
-        detail: {
-          service: 'Prompt_Engine',
-          message: 'БАЗА ПРОМПТІВ СИНХРОНІЗОВАНА (PROMPT_SUCCESS). Доступ до SOTA-інструкцій NVIDIA GRID.',
-          severity: 'info',
-          timestamp: new Date().toISOString(),
-          code: 'PROMPT_SUCCESS'
-        }
-      }));
     }
   }, [isOffline]);
 
-  const promptCategories = [
-    { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Активно', count: 12 },
-    { id: 'analysis', label: 'Глибока Аналітика', icon: Search, status: 'Активно', count: 8 },
+  const promptCategories = useMemo(() => [
+    { id: 'extraction', label: 'Екстракція Даних', icon: Layers, status: 'Активно', count: templates?.length || 0 },
+    { id: 'analysis', label: 'Глибока Аналітика', icon: Search, status: 'Активно', count: Math.round((templates?.length || 0) * 0.4) },
     { id: 'decision', label: 'Прийняття Рішень', icon: Shield, status: 'Бета', count: 5 },
     { id: 'factory', label: 'Системні Промпти Заводу', icon: Zap, status: 'Критично', count: 32 },
-  ];
-
-  const prompts = [
-    { id: 'PR-101', name: 'PREDATOR_V56.5_OODA_REASONING', category: 'factory', version: 'v2.4.1', status: 'АКТИВНО', lastUpdate: '2026-03-20T12:00:00Z' },
-    { id: 'PR-102', name: 'ANTI_FRAUD_HEURISTICS_SCAN', category: 'analysis', version: 'v1.8.0', status: 'БЕТА', lastUpdate: '2026-03-21T09:30:00Z' },
-    { id: 'PR-103', name: 'CUSTOMS_CODE_LEGAL_ENTITY_EXTRACT', category: 'extraction', version: 'v4.0.0', status: 'АКТИВНО', lastUpdate: '2026-03-22T14:15:00Z' },
-    { id: 'PR-104', name: 'CRITICAL_RISK_SCORE_EXPLAINABILITY', category: 'decision', version: 'v1.0.2', status: 'АКТИВНО', lastUpdate: '2026-03-23T10:00:00Z' },
-  ];
+  ], [templates]);
 
   return (
     <div className="min-h-screen bg-[#010714] text-slate-200 font-sans pb-20">
@@ -65,7 +66,7 @@ const SystemPromptsView = () => {
         breadcrumbs={['ПРЕДАТОР', 'ЗАВОД', 'ПРОМПТИ']}
         stats={[
           { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
-          { label: 'ДВИГУН', value: 'V5 LIVE', icon: <Zap size={14} />, color: 'primary' },
+          { label: 'ШАБЛОНИ', value: templates?.length?.toString() || '...', icon: <Zap size={14} />, color: 'primary' },
           { label: 'СТАТУС', value: isOffline ? 'АВТОНОМНО' : 'СИНХРОНІЗОВАНО', icon: <Lock size={14} />, color: isOffline ? 'warning' : 'success' }
         ]}
       />
@@ -106,43 +107,48 @@ const SystemPromptsView = () => {
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
               <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИРЕКТИВИ_v58.2-WRAITH</h3>
-              <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-rose-400">
-                 <RefreshCw size={14} />
+              <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-rose-400" onClick={() => refetch()}>
+                 <RefreshCw size={14} className={listLoading ? 'animate-spin' : ''} />
               </Button>
            </div>
            
-           {prompts.map(p => (
-              <motion.div
-                key={p.id}
-                whileHover={{ x: 8 }}
-                onClick={() => setSelectedPrompt(p.id)}
-                className={cn(
-                   "p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-4",
-                   selectedPrompt === p.id 
-                     ? "bg-rose-500/10 border-rose-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]" 
-                     : "bg-slate-900/40 border-white/5 hover:border-white/10"
-                )}
-              >
-                 <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
-                       <span className="text-[13px] font-black text-white group-hover:text-rose-400 transition-colors tracking-tight italic">{p.name}</span>
-                       <span className="text-[9px] font-mono text-slate-600 flex items-center gap-2">
-                          <FileCode size={10} /> {p.id} | {p.version}
-                       </span>
+           <div className="space-y-4 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+              {templates?.map((p: any) => (
+                 <motion.div
+                   key={p.id}
+                   whileHover={{ x: 8 }}
+                   onClick={() => setSelectedId(p.id)}
+                   className={cn(
+                      "p-5 rounded-2xl border transition-all cursor-pointer group flex flex-col gap-4",
+                      selectedId === p.id 
+                        ? "bg-rose-500/10 border-rose-500/40 shadow-[0_0_20px_rgba(245,158,11,0.15)]" 
+                        : "bg-slate-900/40 border-white/5 hover:border-white/10"
+                   )}
+                 >
+                    <div className="flex items-center justify-between">
+                       <div className="flex flex-col">
+                          <span className="text-[13px] font-black text-white group-hover:text-rose-400 transition-colors tracking-tight italic">{p.name}</span>
+                          <span className="text-[9px] font-mono text-slate-600 flex items-center gap-2">
+                             <FileCode size={10} /> {p.id.substring(0, 8)}... | {p.is_optimized ? 'OPTIMIZED' : 'DRAFT'}
+                          </span>
+                       </div>
+                       <Badge variant={p.is_optimized ? 'success' : 'secondary'} className="text-[8px] font-black uppercase">
+                          {p.is_optimized ? 'АКТИВНО' : 'ЧЕРНЕТКА'}
+                       </Badge>
                     </div>
-                    <Badge variant={p.status === 'АКТИВНО' ? 'success' : 'warning'} className="text-[8px] font-black">
-                       {p.status}
-                    </Badge>
-                 </div>
-                 <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                    <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic">ОНОВЛЕНО: {new Date(p.lastUpdate).toLocaleTimeString('uk-UA')}</span>
-                    <button className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">РЕДАГУВАТИ <Copy size={10} className="inline ml-1 opacity-50" /></button>
-                 </div>
-              </motion.div>
-           ))}
+                    <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                       <span className="text-[9px] text-slate-700 font-mono tracking-tighter italic uppercase">СКОР: {p.score || 'Н/Д'}</span>
+                       <button className="text-[9px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">РЕДАГУВАТИ <Copy size={10} className="inline ml-1 opacity-50" /></button>
+                    </div>
+                 </motion.div>
+              ))}
+              {listLoading && Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-24 bg-white/5 animate-pulse rounded-2xl border border-white/5" />
+              ))}
+           </div>
         </div>
 
-        {/* Right Column: Code Editor Placeholder */}
+        {/* Right Column: Code Editor */}
         <div className="lg:col-span-5 space-y-8">
            <TacticalCard variant="holographic" className="p-0 overflow-hidden flex flex-col bg-black/60 border-white/10 min-h-[600px]">
               <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-b border-white/5">
@@ -153,7 +159,9 @@ const SystemPromptsView = () => {
                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
                     </div>
                     <div className="w-px h-6 bg-white/10 mx-2" />
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">РЕДАКТОР: {selectedPrompt || "ОБЕРІТЬ_ПРОМПТ"}</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">
+                      РЕДАКТОР: {selectedTemplate?.name || "ОБЕРІТЬ_ПРОМПТ"}
+                    </span>
                  </div>
                  <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-white hover:bg-white/5">
@@ -165,16 +173,43 @@ const SystemPromptsView = () => {
                  </div>
               </div>
               
-              <div className="flex-1 p-8 font-mono text-[13px] leading-relaxed text-slate-400 overflow-y-auto custom-scrollbar">
-                 {selectedPrompt ? (
-                    <div className="space-y-4">
-                       <p className="text-emerald-400/60 break-all leading-tight">{"/* ІНІЦІАЛІЗАЦІЯ_СИСТЕМНОГО_КОНТЕКСТУ */"}</p>
-                       <p><span className="text-rose-500">РОЛЬ:</span> Старший стратегічний аналітик митної інфраструктури України.</p>
-                       <p><span className="text-rose-500">МІСІЯ:</span> Виявлення суб'єктів високого ризику та корупційних аномалій у реальному часі.</p>
-                       <p><span className="text-rose-500">ОБМЕЖЕННЯ:</span> 1. Нейтральний аналітичний тон. 2. Сувора перевірка правової відповідності. 3. Політика нульових галюцинацій.</p>
-                       <div className="w-full h-px bg-white/10 my-4" />
-                       <p><span className="text-yellow-400">НАБІР_ІНСТРУКЦІЙ:</span> Аналізувати 'HS_CODE' на предмет історичних сезонних відхилень +/- 15%. Якщо 'IMPORT_VALUE' перевищує медіану для 'COUNTRY_OF_ORIGIN' на 300%, позначити як 'КРИТИЧНИЙ_РИЗИК'.</p>
-                       <p className="animate-pulse opacity-40">|</p>
+              <div className="flex-1 p-8 font-mono text-[13px] leading-relaxed text-slate-400 overflow-y-auto custom-scrollbar bg-[#020617]/50">
+                 {detailsLoading ? (
+                    <div className="h-full flex items-center justify-center">
+                       <RefreshCw className="animate-spin text-rose-500/40" size={32} />
+                    </div>
+                 ) : selectedTemplate ? (
+                    <div className="space-y-6">
+                       <div className="space-y-2">
+                          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ШАБЛОН // СИСТЕМНА ІНСТРУКЦІЯ</p>
+                          <div className="p-4 bg-black/40 border border-white/5 rounded-xl text-slate-300 whitespace-pre-wrap leading-loose italic">
+                            {selectedTemplate.template}
+                          </div>
+                       </div>
+                       
+                       {selectedTemplate.optimized_template && (
+                          <div className="space-y-2">
+                             <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
+                               <Zap size={10} /> ОПТИМІЗОВАНА ВЕРСІЯ (DSPy)
+                             </p>
+                             <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl text-emerald-400/80 whitespace-pre-wrap leading-loose italic">
+                               {selectedTemplate.optimized_template}
+                             </div>
+                          </div>
+                       )}
+
+                       {selectedTemplate.variables?.length > 0 && (
+                          <div className="space-y-2">
+                             <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">АРГУМЕНТИ // ЗМІННІ</p>
+                             <div className="flex flex-wrap gap-2">
+                                {selectedTemplate.variables.map((v: string) => (
+                                   <code key={v} className="px-2 py-1 bg-white/5 rounded border border-white/10 text-rose-400 text-[10px]">
+                                      {v}
+                                   </code>
+                                ))}
+                             </div>
+                          </div>
+                       )}
                     </div>
                  ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-30 select-none">
@@ -186,14 +221,17 @@ const SystemPromptsView = () => {
               
               <div className="p-6 bg-white/5 border-t border-white/5 flex items-center justify-between">
                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic group hover:text-yellow-300 cursor-help">
-                       <RefreshCw size={12} className="group-hover:rotate-180 transition-transform duration-700" /> СИМВОЛІВ: 1024
+                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+                       СКОР: {selectedTemplate?.score || 'Н/Д'}
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
-                       ВАРТІСТЬ_ТОКЕНІВ: $0.002
+                       ПРИКЛАДИ: {selectedTemplate?.examples?.length || 0}
                     </div>
                  </div>
-                 <Button className="bg-rose-600 hover:bg-rose-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic">
+                 <Button 
+                    className="bg-rose-600 hover:bg-rose-500 text-black font-black text-[10px] uppercase tracking-[0.3em] rounded-xl px-12 italic"
+                    disabled={!selectedTemplate}
+                  >
                     <Play size={12} className="mr-2" /> ТЕСТ_ІНФЕРЕНСУ
                  </Button>
               </div>

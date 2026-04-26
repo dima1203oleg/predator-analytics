@@ -136,7 +136,7 @@ export const AgentsOpsTab: React.FC = () => {
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
           <div className="flex items-center gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>ЗДОРОВ'Я_РОЮ: 100%</span>
+            <span>ЗДОРОВ'Я_РОЮ: {stats.total > 0 ? Math.round((stats.alive / stats.total) * 100) : 0}%</span>
           </div>
           <span>•</span>
           <span>ПОПУЛЯЦІЯ: {agents.length} НЕРВОВИХ_ВУЗЛІВ</span>

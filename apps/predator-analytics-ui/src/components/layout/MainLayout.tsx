@@ -23,6 +23,9 @@ import { InfrastructureFailoverBanner } from '../InfrastructureFailoverBanner';
 import { NeuralBackground } from '../ui/NeuralBackground';
 import { cn } from '@/utils/cn';
 import { API_BASE_URL } from '@/services/api/config';
+import { colabPanelOpenAtom, colabNodeDataAtom } from '../../store/atoms';
+import { ColabDetailedPanel } from '@/features/infrastructure/components/ColabDetailedPanel';
+import { useSystemNodes } from '@/hooks/useAdminApi';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -42,6 +45,17 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const shellV2Enabled = isShellV2Enabled();
   const location = useLocation();
   const { mode } = useTheme();
+
+  const [isColabOpen, setIsColabOpen] = useAtom(colabPanelOpenAtom);
+  const [colabNodeData, setColabNodeData] = useAtom(colabNodeDataAtom);
+  const { data: systemNodes } = useSystemNodes();
+
+  useEffect(() => {
+    if (isColabOpen && !colabNodeData && systemNodes) {
+      const node = systemNodes.find((n: any) => n.id === 'colab');
+      if (node) setColabNodeData(node);
+    }
+  }, [isColabOpen, colabNodeData, systemNodes, setColabNodeData]);
 
   useEffect(() => {
     if (isMobile) {
@@ -132,6 +146,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <ChatBot />
       {shellV2Enabled && <ShellCommandPalette />}
       <ConstitutionalShield />
+
+      <ColabDetailedPanel 
+        isOpen={isColabOpen} 
+        onClose={() => setIsColabOpen(false)} 
+        node={colabNodeData}
+      />
 
       {/* ── STATUS BAR (v58.2-ELITE) ── */}
       <motion.div

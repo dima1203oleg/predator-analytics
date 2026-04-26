@@ -23,6 +23,7 @@
 - warroom.py — War Room
 - osint_ua.py — OSINT Ukraine (DataGov, Prozorro)
 - ml_studio.py — ML Studio & Training Center
+- sanctions.py — Санкційний скринінг
 """
 
 # Експортуємо всі роутери для зручності імпорту
@@ -61,7 +62,11 @@ from .warroom import router as warroom_router
 from .admin_chaos import router as admin_chaos_router
 from .graph_intelligence import router as graph_intelligence_router
 from .forecast import router as forecast_router
+from .admin_v2 import router as admin_v2_router
 from .orchestrator import router as orchestrator_router
+from .market import router as market_router
+from .sanctions import router as sanctions_router
+from .decisions import router as decisions_router
 
 __all__ = [
     "alerts_router",
@@ -97,7 +102,11 @@ __all__ = [
     "agents_router",
     "warroom_router",
     "admin_chaos_router",
+    "admin_v2_router",
     "graph_intelligence_router",
     "forecast_router",
     "orchestrator_router",
+    "market_router",
+    "sanctions_router",
+    "decisions_router",
 ]

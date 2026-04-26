@@ -219,8 +219,8 @@ const SystemStatusHeader: React.FC = () => {
   const healthyCount = status?.summary.healthy ?? 0;
   const totalServices = status?.summary.total ?? 1;
   
-  const threatLevel = status?.overall_status === 'optimal' ? 12 : 45;
-  const entropy = (stats?.memory_percent ?? 42) / 100;
+  const threatLevel = status ? Math.min(100, (status.summary.failed * 25) + (status.summary.degraded * 10) + 5) : 5;
+  const entropy = (stats?.memory_percent ?? 0) / 100;
 
   const isCritical = vramUsed > (vramTotal * 0.95);
   const isHybrid = vramUsed > (vramTotal * 0.75) && !isCritical;
@@ -268,7 +268,7 @@ const SystemStatusHeader: React.FC = () => {
                 </div>
                 <span className="flex items-center gap-4 text-white font-black tracking-[0.4em] text-[15px] italic glint-elite chromatic-elite">
                    <Atom size={20} className="animate-spin-slow text-rose-500" style={{ animationDuration: '15s' }} />
-                   PREDATOR <span className="text-rose-500">v60.0-ELITE</span>
+                   PREDATOR <span className="text-rose-500">v60.5-ELITE</span>
                 </span>
               </div>
             </div>
@@ -500,6 +500,7 @@ interface TabNavProps {
 }
 
 const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
+  const { data: status } = useSystemStatus();
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
@@ -585,15 +586,27 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
         <div className="ml-auto flex items-center gap-6 pr-4">
            <div className="flex flex-col items-end">
               <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Статус вузла</span>
-              <span className="text-emerald-500 text-[10px] font-black tracking-widest uppercase animate-pulse">В мережі</span>
+              <span className={cn(
+                "text-[10px] font-black tracking-widest uppercase animate-pulse",
+                status?.overall_status === 'optimal' ? "text-emerald-500" : "text-rose-500"
+              )}>
+                {status?.overall_status === 'optimal' ? 'В мережі' : 'Нестабільно'}
+              </span>
            </div>
            <div className="w-[1px] h-8 bg-white/5" />
            <div className="flex flex-col items-end">
               <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Сила сигналу</span>
               <div className="flex gap-0.5 mt-1">
-                 {[1,2,3,4,5].map(i => (
-                    <div key={i} className={cn("w-1 h-2 rounded-full", i <= 4 ? "bg-rose-500/60 shadow-[0_0_5px_rgba(225,29,72,0.4)]" : "bg-white/5")} />
-                 ))}
+                 {[1,2,3,4,5].map(i => {
+                    const isHealthy = status?.overall_status === 'optimal';
+                    const threshold = isHealthy ? 4 : 2;
+                    return (
+                       <div key={i} className={cn(
+                         "w-1 h-2 rounded-full", 
+                         i <= threshold ? (isHealthy ? "bg-emerald-500/60 shadow-[0_0_5px_rgba(16,185,129,0.4)]" : "bg-rose-500/60 shadow-[0_0_5px_rgba(225,29,72,0.4)]") : "bg-white/5"
+                       )} />
+                    );
+                 })}
               </div>
            </div>
         </div>
@@ -725,7 +738,7 @@ export const AdminHub: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-emerald-500 animate-pulse" />
-            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v60.0_ELITE_СТАБІЛЬНО</span>
+            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v60.5_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-2 flex gap-1">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -768,7 +781,7 @@ export const AdminHub: React.FC = () => {
             ))}
           </div>
           <span className="text-rose-500/60 font-black tracking-[0.3em]">SOVEREIGN_OS_ГОТОВО</span>
-          <span>PREDATOR_ANALYTICS_V60.0_ELITE</span>
+          <span>PREDATOR_ANALYTICS_V60.5_ELITE</span>
         </div>
 
         <div className="relative z-10 h-full">

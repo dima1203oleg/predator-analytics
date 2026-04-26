@@ -113,3 +113,41 @@ async def get_morning_briefing(
         "engine": "Trinity SM-EXTENDED v55",
         "metrics": stats
     }
+
+
+@router.get("/ma-targets", summary="Сканер M&A цілей")
+async def get_ma_targets(
+    limit: int = 20,
+    tenant_id: str = Depends(get_tenant_id),
+    db: AsyncSession = Depends(get_db),
+    _ = Depends(PermissionChecker([Permission.READ_INTEL]))
+):
+    """Повертає список компаній-цілей для M&A (стресові активи або стратегічні цілі)."""
+    # HR-07: Тільки конкретні колонки
+    stmt = (
+        select(
+            Company.ueid,
+            Company.name,
+            Company.industry,
+            Company.cers_score,
+            Company.status
+        )
+        .where(Company.tenant_id == tenant_id)
+        .where(Company.cers_score >= 60)
+        .order_by(Company.cers_score.desc())
+        .limit(limit)
+    )
+
+    result = await db.execute(stmt)
+    targets = result.all()
+
+    return [
+        {
+            "ueid": r.ueid,
+            "name": r.name,
+            "industry": r.industry,
+            "risk_score": r.cers_score or 0,
+            "status": r.status,
+            "opportunity_type": "Distressed Asset" if (r.cers_score or 0) > 85 else "Strategic Target"
+        } for r in targets
+    ]
