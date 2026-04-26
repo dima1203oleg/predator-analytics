@@ -1,11 +1,11 @@
-"""Chaos Service — PREDATOR Analytics v56.5-ELITE.
+"""Chaos Service — PREDATOR Analytics v60.5-ELITE.
 
 Симуляція керованої деградації системи (Resilience Testing).
 """
 import logging
 import random
 import asyncio
-from typing import Any
+from typing import Any, Optional
 from datetime import datetime, timedelta, UTC
 
 
@@ -45,7 +45,7 @@ class ChaosService:
         return exp["active"]
 
     @classmethod
-    async def apply_chaos(cls):
+    async def apply_chaos(cls) -> Optional[dict[str, Any]]:
         """Застосування активних ефектів хаосу."""
         # 1. Симуляція затримки БД (Latency)
         if cls._is_active("db_latency"):
@@ -56,7 +56,7 @@ class ChaosService:
         # 2. Симуляція відмови кешу (Redis Down simulation)
         if cls._is_active("cache_failure"):
             logger.info("Chaos: Simulating Cache Failure")
-            return False
+            return {"error": "Cache connection lost", "chaos": True}
 
         # 3. Симуляція випадкових 500 помилок
         if cls._is_active("random_errors"):
@@ -75,6 +75,13 @@ class ChaosService:
             delay = random.uniform(10.0, 30.0)
             logger.info(f"Chaos: Agent task delayed by {delay:.2f}s")
             await asyncio.sleep(delay)
+
+        # 6. Симуляція перегріву (Overheat)
+        if cls._is_active("overheat_simulation"):
+            logger.warning("Chaos: System Overheat Detected (Simulation)")
+            return {"status": "overheat", "vram_throttle": True}
+        
+        return None
 
     @classmethod
     def get_status(cls) -> dict[str, Any]:

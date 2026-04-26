@@ -298,7 +298,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
            <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ЗАХИСТ_WORM_УВІМКНЕНО</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v5.1 — ЕЛІТНИЙ_ВАРТОВИЙ</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v60.5 — ЕЛІТНИЙ_ВАРТОВИЙ</span>
       </div>
     </div>
   );

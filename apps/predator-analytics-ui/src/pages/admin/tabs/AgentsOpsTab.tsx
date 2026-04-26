@@ -177,7 +177,7 @@ export const AgentsOpsTab: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           <div className="flex flex-col items-center gap-1">
-            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ ШІ-ВУЗЛІВ (AGENT_MATRIX_V6)</span>
+            <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">МАТРИЦЯ ШІ-ВУЗЛІВ (AGENT_MATRIX_V60.5)</span>
             <div className="flex items-center gap-2">
                <Bot size={10} className="text-rose-500/40 animate-pulse" />
                <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black italic">НЕЙРОННИЙ_РЕЄСТР_СИНХРОНІЗОВАНО_ELITE</span>

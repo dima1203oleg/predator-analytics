@@ -277,7 +277,7 @@ export const FailoverRoutingTab: React.FC = () => {
             <span className="text-[12px] font-mono font-black text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЖУРНАЛ_РОТАЦІЙ_МАРШРУТІВ (WORM_LOCK)</span>
             <div className="flex items-center gap-2">
                <RefreshCw size={10} className="text-rose-500/40 animate-spin-slow" />
-               <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black italic">AUDIT_TRAIL_ACTIVE_V6</span>
+               <span className="text-[7px] font-mono text-white/20 uppercase tracking-widest font-black italic">AUDIT_TRAIL_ACTIVE_V60.5</span>
             </div>
           </div>
           <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-white/10 to-transparent" />

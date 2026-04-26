@@ -304,7 +304,7 @@ export const globalNavigationActions: NavGlobalAction[] = [
   },
 ];
 
-// ─── Навігаційна конфігурація v59.0-NEXUS ────────────────────────────────────
+// ─── Навігаційна конфігурація v60.5-ELITE ────────────────────────────────────
 /**
  * 6 логічних зон платформи. Сегментація:
  *   CLIENT  (client_basic)   → EXECUTIVE (базово) + AI Oracle
