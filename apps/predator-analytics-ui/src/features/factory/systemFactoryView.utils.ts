@@ -4,6 +4,20 @@ export type HealthStatus = 'healthy' | 'degraded' | 'down' | 'recovering';
 export type RegistryAvailability = 'online' | 'offline' | 'unknown';
 export type PodStatus = 'Running' | 'Pending' | 'Terminating' | 'Restarting';
 
+export type BugSeverity = 'critical' | 'high' | 'medium' | 'low';
+export type BugStatus = 'detected' | 'fixing' | 'fixed';
+export type InfinitePhase = 'observe' | 'orient' | 'decide' | 'act';
+
+export interface FactoryBugRecord {
+  id: string;
+  description: string;
+  severity: BugSeverity;
+  component: string;
+  file: string;
+  status: BugStatus;
+  fixProgress: number;
+}
+
 export interface FactoryHealthCheckRecord {
   id: string;
   service: string;

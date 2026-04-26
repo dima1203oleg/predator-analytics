@@ -45,6 +45,10 @@ import {
   type FactoryHealthCheckRecord,
   type FactoryPodRecord,
   type FactoryRegistryStatsSnapshot,
+  type FactoryBugRecord,
+  type InfinitePhase,
+  type BugSeverity,
+  type BugStatus,
 } from './systemFactoryView.utils';
 
 const graphApi = api.graph;
@@ -85,9 +89,7 @@ export default function SystemFactoryView() {
   // ═══ Ingestion State (REAL) ═══
   const { data: dataOps } = useDataOpsStatus();
 
-  type BugSeverity = RiskLevelValue;
-  type BugStatus = 'detected' | 'fixing' | 'fixed';
-  type InfinitePhase = 'observe' | 'orient' | 'decide' | 'act';
+
 
   interface InfiniteStatusPayload {
     is_running: boolean;
@@ -105,7 +107,7 @@ export default function SystemFactoryView() {
   const [infiniteStats, setInfiniteStats] = useState({ improvements: 0, bugs: 0, cycles: 0 });
   const [infiniteLastUpdate, setInfiniteLastUpdate] = useState<string>('Ще не синхронізовано');
   const [infiniteSyncedAt, setInfiniteSyncedAt] = useState<string>('—');
-  const [bugs, setBugs] = useState<Array<{ id: string, description: string, severity: BugSeverity, component: string, file: string, status: BugStatus, fixProgress: number }>>([]);
+  const [bugs, setBugs] = useState<FactoryBugRecord[]>([]);
   const [isBackendOffline, setIsBackendOffline] = useState(false);
   const [goldPatterns, setGoldPatterns] = useState<any[]>([]);
   const [factoryStats, setFactoryStats] = useState<any>(null);
