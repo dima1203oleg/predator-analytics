@@ -9,7 +9,7 @@ interface ExplorerViewProps {
 }
 
 /**
- * 🛰 EXPLORER VIEW // ПРОВІДНИК ДАНИХ | v58.2-WRAITH
+ * 🛰 EXPLORER VIEW // ПРОВІДНИК ДАНИХ | v61.0-ELITE
  * PREDATOR Analytics — Immersive Data Environment
  */
 export const ExplorerView: React.FC<ExplorerViewProps> = ({ children, className }) => {

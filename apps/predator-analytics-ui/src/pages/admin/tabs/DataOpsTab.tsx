@@ -159,7 +159,7 @@ export const DataOpsTab: React.FC = () => {
             Управління Даними & Потокова Аналітика
           </h2>
           <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            ІНДУСТРІАЛЬНИЙ_РІВЕНЬ_V6
+            ІНДУСТРІАЛЬНИЙ_РІВЕНЬ_V61
           </div>
         </div>
         <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
@@ -272,7 +272,7 @@ export const DataOpsTab: React.FC = () => {
            <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ДАТА_КОНВЕЄР_СТАБІЛЬНИЙ</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Управління Даними v6.0 — ЕЛІТНИЙ_РІВЕНЬ</span>
+        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Управління Даними v61.0 — ЕЛІТНИЙ_РІВЕНЬ</span>
       </div>
     </div>
   );

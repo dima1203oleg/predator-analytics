@@ -120,6 +120,7 @@ security unlock-keychain -p 1204 ~/Library/Keychains/login.keychain-db 2>/dev/nu
 remote_exec "
 # Додаємо правильні репозиторії
 helm repo add bitnami https://charts.bitnami.com/bitnami || true
+helm repo remove neo4j 2>/dev/null || true
 helm repo add neo4j https://helm.neo4j.com || true
 helm repo add qdrant https://qdrant.github.io/helm || true
 helm repo update || true

@@ -233,6 +233,31 @@ let systemState = {
     customs_offices: {
       'Одеська': { count: 1200, value: 89000000, highRisk: 12 },
       'Київська': { count: 4500, value: 450000000, highRisk: 4 },
+    },
+    factory: {
+      bugs: [
+        { id: 'BUG-124', description: 'Витік пам\'яті у Kafka consumer', severity: 'critical', component: 'ingestion-worker', file: 'consumer.py', status: 'detected', fixProgress: 0 },
+        { id: 'BUG-125', description: 'Некоректний мапінг типів Neo4j', severity: 'high', component: 'graph-service', file: 'mapper.py', status: 'fixing', fixProgress: 45 },
+        { id: 'BUG-126', description: 'Таймаут при великих запитах OpenSearch', severity: 'medium', component: 'core-api', file: 'search.py', status: 'detected', fixProgress: 0 },
+        { id: 'BUG-127', description: 'Помилка валідації JWT токена', severity: 'critical', component: 'core-api', file: 'auth.py', status: 'fixed', fixProgress: 100 },
+      ],
+      goldPatterns: [
+        { id: 'GP-1', name: 'Система очищення даних', accuracy: 0.99, throughput: 1500, status: 'verified' },
+        { id: 'GP-2', name: 'Матриця ризиків v4', accuracy: 0.94, throughput: 850, status: 'active' },
+      ],
+      infinite: {
+        is_running: true,
+        current_phase: 'orient',
+        cycles_completed: 42,
+        improvements_made: 156,
+        last_update: new Date().toISOString(),
+        logs: [
+          "[OBSERVE] Сканування системних логів завершено. Виявлено 2 аномалії.",
+          "[ORIENT] Аномалії ідентифіковано як BUG-124 та BUG-125.",
+          "[DECIDE] Прийнято стратегію автоматичного виправлення для BUG-125.",
+          "[ACT] Запущено процес патчування mapper.py..."
+        ]
+      }
     }
   }
 };
@@ -408,6 +433,341 @@ const server = http.createServer((req, res) => {
   // 10. System Infrastructure (v58.2-WRAITH)
   if (path === '/api/v1/system/infrastructure' && req.method === 'GET') {
     return sendJSON(res, systemState.infra.infrastructure);
+  }
+
+  // 11. Factory (v60.0-ELITE)
+  if (path === '/api/v1/factory/bugs' && req.method === 'GET') {
+    return sendJSON(res, systemState.factory.bugs);
+  }
+
+  if (path === '/api/v1/factory/patterns/gold' && req.method === 'GET') {
+    return sendJSON(res, systemState.factory.goldPatterns);
+  }
+
+  if (path === '/api/v1/factory/infinite/status' && req.method === 'GET') {
+    systemState.factory.infinite.last_update = new Date().toISOString();
+    return sendJSON(res, systemState.factory.infinite);
+  }
+
+  if (path === '/api/v1/factory/infinite/start' && req.method === 'POST') {
+    systemState.factory.infinite.is_running = true;
+    return sendJSON(res, { success: true });
+  }
+
+  if (path === '/api/v1/factory/infinite/stop' && req.method === 'POST') {
+    systemState.factory.infinite.is_running = false;
+    return sendJSON(res, { success: true });
+  }
+
+  if (path === '/api/v1/factory/fix-bug' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      const { bugId } = JSON.parse(body);
+      const bug = systemState.factory.bugs.find(b => b.id === bugId);
+      if (bug) {
+        bug.status = 'fixing';
+        bug.fixProgress = 10;
+      }
+      sendJSON(res, { success: true });
+    });
+    return;
+  }
+
+  // 12. Monitoring & Graph
+  if (path === '/api/v1/monitoring/cluster' && req.method === 'GET') {
+    return sendJSON(res, { 
+      pods: [
+        { id: 'core-api-85947', name: 'core-api', status: 'Running', restarts: 0, replicas: 2, cpu: '120m', memory: '450Mi', uptime: '12d' },
+        { id: 'graph-service-2341', name: 'graph-service', status: 'Running', restarts: 1, replicas: 1, cpu: '80m', memory: '1.2Gi', uptime: '4d' },
+        { id: 'ingestion-worker-992', name: 'ingestion-worker', status: 'Running', restarts: 12, replicas: 3, cpu: '450m', memory: '890Mi', uptime: '2h' },
+      ]
+    });
+  }
+
+  if (path === '/api/v1/graph/summary' && req.method === 'GET') {
+    return sendJSON(res, {
+      node_count: 154200,
+      relationship_count: 892100,
+      labels: ['Company', 'Person', 'Asset', 'Transaction'],
+      types: ['OWNER_OF', 'DIRECTOR_OF', 'TRANSFER_TO']
+    });
+  }
+
+  if (path === '/api/v1/monitoring/logs/stream' && req.method === 'GET') {
+    return sendJSON(res, [
+      { timestamp: new Date().toISOString(), service: 'core-api', level: 'info', message: 'Incoming request GET /api/v1/factory/stats' },
+      { timestamp: new Date().toISOString(), service: 'ingestion', level: 'warn', message: 'Topic lag detected: 1204 messages' },
+      { timestamp: new Date().toISOString(), service: 'system', level: 'info', message: 'OODA Cycle #42 completed successfully' }
+    ]);
+  }
+
+  // 13. V2 Admin Endpoints (v58.2-WRAITH)
+  if (path === '/api/v2/admin/telemetry' && req.method === 'GET') {
+    return sendJSON(res, {
+      nodes: [
+        { id: 'n1', node: '0xPRED_MASTER', role: 'GPU Master', cpu: 42, ram: 65, vram: 78, vramGb: 18.5, temp: 62, net: 'rx 1.2/tx 0.8', status: 'online', uptime: '14d 2h' },
+        { id: 'n2', node: 'IMAC_COMPUTE', role: 'Compute Node', cpu: 15, ram: 45, temp: 48, net: 'rx 0.4/tx 0.2', status: 'online', uptime: '4d 12h' },
+        { id: 'n3', node: 'CLOUD_RESERVE', role: 'Cloud Mirror', cpu: 0, ram: 0, status: 'offline', uptime: '0s' },
+      ],
+      services: [
+        { name: 'core-api', status: 'ok', latencyMs: 42, version: '60.5-ELITE', lastCheck: 'Щойно' },
+        { name: 'graph-service', status: 'ok', latencyMs: 85, version: '5.17', lastCheck: '2с тому' },
+        { name: 'ingestion-worker', status: 'warn', latencyMs: 1200, version: '1.2', lastCheck: '5с тому' },
+      ]
+    });
+  }
+
+  if (path === '/api/v2/admin/dataops' && req.method === 'GET') {
+    return sendJSON(res, {
+      kafkaTopics: [
+        { name: 'raw_ingestion', partitions: 12, lag: 450, throughput: '1.2 MB/s', consumers: 3, status: 'ok' },
+        { name: 'enriched_entities', partitions: 6, lag: 0, throughput: '0.8 MB/s', consumers: 1, status: 'ok' },
+      ],
+      datasets: [
+        { id: 'd1', name: 'UA_CUSTOMS_2024', type: 'CSV/Parquet', records: 450000, sizeGb: 1.2, version: '1.4', status: 'ready', updatedAt: new Date().toISOString() },
+      ],
+      factoryModules: []
+    });
+  }
+
+  if (path === '/api/v2/admin/gitops' && req.method === 'GET') {
+    return sendJSON(res, {
+      argoApps: [{ name: 'predator-core', status: 'Synced', health: 'Healthy' }],
+      ciRuns: [{ id: 'run-123', status: 'success', duration: '4m 20s' }],
+      etlPipelines: [{ id: 'etl-main', status: 'active', lag: '0s' }]
+    });
+  }
+
+  if (path === '/api/v2/admin/failover' && req.method === 'GET') {
+    return sendJSON(res, {
+      activeMode: 'SOVEREIGN',
+      activeNode: 'n1',
+      nodes: {
+        n1: { label: 'MASTER_NVIDIA', ip: '192.168.0.240', status: 'online', load: 45 },
+        n2: { label: 'IMAC_FALLBACK', ip: '192.168.0.199', status: 'online', load: 12 },
+      },
+      history: []
+    });
+  }
+
+  if (path === '/api/v2/admin/agents' && req.method === 'GET') {
+    return sendJSON(res, {
+      stats: { total: 12, alive: 12, dead: 0, idle: 8, avgCpu: 15 },
+      list: []
+    });
+  }
+
+  if (path === '/api/v2/admin/security/sessions' && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 's1', user: 'admin', role: 'admin', ip: '192.168.0.10', userAgent: 'Chrome', lastActivity: 'Щойно', createdAt: '2г тому', expiresIn: '22г' }
+    ]);
+  }
+
+  if (path === '/api/v2/admin/security/keys' && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 'k1', name: 'Predator-Internal', owner: 'system', scopes: 'read/write', lastUsed: '5хв тому', expiresAt: '365д', status: 'active' }
+    ]);
+  }
+
+  if (path === '/api/v2/admin/security/audit' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  // 14. SuperIntelligence & Trinity (v58.2-WRAITH)
+  if (path.startsWith('/api/v45/trinity/audit') && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 't1', created_at: new Date().toISOString(), status: 'verified', intent: 'CODE_OPTIMIZATION', request_text: 'Refactor search_tenders using SQLAlchemy ORM', mistral_output: 'Generated optimization patch #42...' },
+      { id: 't2', created_at: new Date().toISOString(), status: 'info', intent: 'THREAT_SCAN', request_text: 'Periodic security audit of ua-sources', gemini_plan: 'Scanning for SQL injection patterns...' }
+    ]);
+  }
+
+  if (path.startsWith('/api/v1/intelligence/council-history') && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 'ch1', query: 'Яка стратегія захисту від картельних змов?', final_answer: 'Рекомендується впровадження графових алгоритмів Louvain для детекції прихованих зв\'язків.' }
+    ]);
+  }
+
+  if (path === '/api/v1/nas/providers' && req.method === 'GET') {
+    return sendJSON(res, [
+      { id: 'google', name: 'Gemini 2.0 Flash' },
+      { id: 'openai', name: 'GPT-4o' },
+      { id: 'deepseek', name: 'DeepSeek V3' }
+    ]);
+  }
+
+  if (path === '/api/v45/training/arbitration-scores' && req.method === 'GET') {
+    return sendJSON(res, [
+      { modelId: 'gemini', modelName: 'Gemini 2.0', criteria: { safety: 0.95, performance: 0.85, cost: 0.9, logic: 0.92 }, totalScore: 0.91 },
+      { modelId: 'openai', modelName: 'GPT-4o', criteria: { safety: 0.92, performance: 0.9, cost: 0.8, logic: 0.95 }, totalScore: 0.89 }
+    ]);
+  }
+
+  if (path === '/api/v45/monitoring/health' && req.method === 'GET') {
+    return sendJSON(res, { cpu_usage: 45, memory_usage: 62, status: 'ok' });
+  }
+
+  if (path === '/api/v1/system/restart' && req.method === 'POST') {
+    return sendJSON(res, { status: 'restarting' });
+  }
+
+  if (path === '/api/v1/llm/providers' && req.method === 'GET') {
+    return sendJSON(res, [
+        { id: 'google', name: 'Google Vertex AI', status: 'connected' },
+        { id: 'anthropic', name: 'Anthropic Claude', status: 'connected' },
+        { id: 'ollama', name: 'Ollama (Local)', status: 'connected' }
+    ]);
+  }
+
+  if (path === '/api/v1/llm/benchmarks' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/llm/automl' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/llm/config' && req.method === 'GET') {
+    return sendJSON(res, { temperature: 0.7, max_tokens: 4096 });
+  }
+
+  // 15. Graph specific
+  if (path === '/api/v1/graph/clusters/cartels' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/graph/clusters/cartel-rings' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  // 16. Antigravity (v60.5-ELITE)
+  if (path === '/api/v1/antigravity/status' && req.method === 'GET') {
+    return sendJSON(res, {
+        is_running: true,
+        completed_tasks: 124,
+        total_spent_usd: 12.45,
+        llm_gateway_status: 'online',
+        sandbox_status: 'ready',
+        agents: [
+            { id: 'a1', name: 'Qwen-Coder', role: 'Surgical Coder', is_busy: true, last_task: 'Refactor Auth' },
+            { id: 'a2', name: 'Nemotron', role: 'Logic Specialist', is_busy: false, last_task: 'Audit DB' }
+        ]
+    });
+  }
+
+  if (path === '/api/v1/antigravity/tasks' && req.method === 'GET') {
+    return sendJSON(res, [
+        { task_id: 't1', description: 'Fix PTY exhaustion', priority: 'high', status: 'completed', created_at: '2026-04-25T12:00:00Z' },
+        { task_id: 't2', description: 'Optimize Neo4j indexes', priority: 'medium', status: 'running', created_at: '2026-04-26T00:00:00Z' }
+    ]);
+  }
+
+  // 17. Orchestrator Pods
+  if (path.startsWith('/api/v1/orchestrator/pods/') && path.endsWith('/restart') && req.method === 'POST') {
+    return sendJSON(res, { status: 'restarting', pod_id: path.split('/')[4] });
+  }
+
+  if (path.startsWith('/api/v1/orchestrator/pods/') && path.endsWith('/scale') && req.method === 'POST') {
+    return sendJSON(res, { status: 'scaled', pod_id: path.split('/')[4] });
+  }
+
+  // 18. Neural Training
+  if (path === '/api/v1/neural/training/status' && req.method === 'GET') {
+    return sendJSON(res, { status: 'IDLE' });
+  }
+
+  if (path === '/api/v1/neural/training/stats' && req.method === 'GET') {
+    return sendJSON(res, []);
+  }
+
+  // 19. Chaos Engineering
+  if (path.startsWith('/api/v1/factory/chaos/launch') && req.method === 'POST') {
+    return sendJSON(res, { status: 'launched', scenario: 'test' });
+  }
+
+  // 20. Other missing endpoints
+  if (path === '/api/v1/factory/patterns' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/factory/logs' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/system/config' && req.method === 'GET') {
+      return sendJSON(res, { maintenance: false, debug: true });
+  }
+
+  if (path === '/api/v1/system/etl/status' && req.method === 'GET') {
+      return sendJSON(res, { status: 'idle' });
+  }
+
+  if (path === '/api/v1/system/data-catalog' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/autonomy/hypotheses' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/autonomy/metrics' && req.method === 'GET') {
+      return sendJSON(res, {});
+  }
+
+  if (path === '/api/v1/stats/categories' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/databases' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/vectors' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/buckets' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/ml/training-pairs' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/connectors' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/documents' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/deployment/environments' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/deployment/pipelines' && req.method === 'GET') {
+      return sendJSON(res, []);
+  }
+
+  if (path === '/api/v1/warroom/dashboard-summary' && req.method === 'GET') {
+      return sendJSON(res, {});
+  }
+
+  if (path === '/api/v1/twin/ontology/summary' && req.method === 'GET') {
+      return sendJSON(res, {});
+  }
+
+  if (path === '/api/v1/self-improve/feedback/stats' && req.method === 'GET') {
+      return sendJSON(res, {});
+  }
+
+  if (path === '/api/v1/smb/air-alarm/status' && req.method === 'GET') {
+      return sendJSON(res, { active: false });
+  }
+
+  if (path === '/api/v1/gitops/incidents/active' && req.method === 'GET') {
+      return sendJSON(res, []);
   }
 
   // 404
