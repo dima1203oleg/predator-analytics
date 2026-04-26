@@ -311,7 +311,4 @@ const ReportGenerator: React.FC = () => {
 };
 
 export default ReportGenerator;
-  );
-};
 
-export default ReportGenerator;
