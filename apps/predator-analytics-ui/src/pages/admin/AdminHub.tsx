@@ -8,7 +8,8 @@ import {
   TrendingUp, BarChart3, Fingerprint, Target, Search,
   Lock, MessageSquare, Anchor, FileText, Share2, AlertTriangle,
   ZapOff, Terminal, Sparkles, Radio, Shield, Zap as ZapIcon,
-  Atom, Box, Boxes, PieChart
+  Atom, Box, Boxes, PieChart, ChevronRight, Maximize2,
+  RefreshCw, Orbit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -16,6 +17,14 @@ import {
   useSystemStats, 
   useAgentsStats 
 } from '@/hooks/useAdminApi';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
+import { useBackendStatus } from '@/hooks/useBackendStatus';
+
+/**
+ * 🦅 PREDATOR Analytics | Admin Hub v61.0-ELITE
+ * ГЛОБАЛЬНИЙ_ОРКЕСТРАТОР_СУВЕРЕНУ: Єдиний інтерфейс управління всіма системами.
+ */
 
 // ─── Ліниве завантаження вкладок ─────────────────────────────────────────────
 
@@ -99,73 +108,73 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
-  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'Ранковий звіт', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
-  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'Ризики портфеля', badge: 'ФІН',    icon: PieChart,      component: PortfolioRiskView },
-  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'Сканер M&A',     badge: 'УГОДА',   icon: Target,        component: MATargetScannerView },
-  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'Аналіз ринку',    badge: 'ЕКСПАНСІЯ', icon: Globe,        component: MarketEntryView },
-  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'Аудит ROI',      badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialDashboard },
+  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'РАНКОВИЙ_ЗВІТ', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
+  { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'РИЗИКИ_ПОРТФЕЛЯ', badge: 'ФІН',    icon: PieChart,      component: PortfolioRiskView },
+  { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'СКАНЕР_M&A',     badge: 'УГОДА',   icon: Target,        component: MATargetScannerView },
+  { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'АНАЛІЗ_РИНКУ',    badge: 'ЕКСПАНСІЯ', icon: Globe,        component: MarketEntryView },
+  { id: 'roi-audit',    category: 'BUSINESS_INTEL', label: 'АУДИТ_ROI',      badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialDashboard },
 
   // ─── SYSTEM_CORE ───────────────────────────────────────────────────────────
-  { id: 'command',      category: 'SYSTEM_CORE', label: 'Командний центр', badge: 'СУВЕРЕН', icon: Zap,           component: SovereignCommandCenter },
-  { id: 'infra',        category: 'SYSTEM_CORE', label: 'Телеметрія',   badge: 'ЖИВИЙ',     icon: Activity,      component: InfraTelemetryTab },
-  { id: 'failover',     category: 'SYSTEM_CORE', label: 'Резервування',                    icon: Network,       component: FailoverRoutingTab },
-  { id: 'gitops',       category: 'SYSTEM_CORE', label: 'Конвеєр GitOps',                 icon: GitMerge,      component: GitOpsPipelineTab  },
-  { id: 'agents-ops',   category: 'SYSTEM_CORE', label: 'Агенти',                          icon: Cpu,           component: AgentsOpsTab       },
-  { id: 'security',     category: 'SYSTEM_CORE', label: 'Нульова довіра',   badge: 'БЕЗПЕКА',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
-  { id: 'dataops',      category: 'SYSTEM_CORE', label: 'Центр DataOps',                   icon: Database,      component: DataOpsTab         },
-  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Операції Хаосу',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
-  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'Захист ресурсів', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
-  { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY Термінал',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
+  { id: 'command',      category: 'SYSTEM_CORE', label: 'КОМАНДНИЙ_ЦЕНТР', badge: 'СУВЕРЕН', icon: Zap,           component: SovereignCommandCenter },
+  { id: 'infra',        category: 'SYSTEM_CORE', label: 'ТЕЛЕМЕТРІЯ',   badge: 'ЖИВИЙ',     icon: Activity,      component: InfraTelemetryTab },
+  { id: 'failover',     category: 'SYSTEM_CORE', label: 'РЕЗЕРВУВАННЯ',                    icon: Network,       component: FailoverRoutingTab },
+  { id: 'gitops',       category: 'SYSTEM_CORE', label: 'КОНВЕЄР_GITOPS',                 icon: GitMerge,      component: GitOpsPipelineTab  },
+  { id: 'agents-ops',   category: 'SYSTEM_CORE', label: 'ШІ_АГЕНТИ_OPS',                          icon: Cpu,           component: AgentsOpsTab       },
+  { id: 'security',     category: 'SYSTEM_CORE', label: 'НУЛЬОВА_ДОВІРА',   badge: 'БЕЗПЕКА',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
+  { id: 'dataops',      category: 'SYSTEM_CORE', label: 'ЦЕНТР_DATAOPS',                   icon: Database,      component: DataOpsTab         },
+  { id: 'chaos',        category: 'SYSTEM_CORE', label: 'ОПЕРАЦІЇ_ХАОСУ',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
+  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'ЗАХИСТ_РЕСУРСІВ', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
+  { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY_ТЕРМІНАЛ',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
-  { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
-  { id: 'ai-insights',  category: 'AI_LAB', label: 'Аналітика ШІ',  badge: 'ГЛИБИНА',     icon: BrainCircuit,  component: AIInsightsHub },
-  { id: 'ai-engines',   category: 'AI_LAB', label: 'Двигуни ШІ',   badge: 'ЯДРО',     icon: Cpu,           component: EnginesView },
-  { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM Провідник',                    icon: BookOpen,      component: LLMView },
-  { id: 'factory',      category: 'AI_LAB', label: 'Завод ШІ',      badge: 'ПРОД',     icon: Factory,       component: SystemFactoryView  },
-  { id: 'factory-studio', category: 'AI_LAB', label: 'Студія Заводу',  badge: 'ДИЗАЙН',   icon: Layers,        component: FactoryStudio },
-  { id: 'auto-factory', category: 'AI_LAB', label: 'Авто-Фабрика',  badge: 'ПСВД',     icon: Sparkles,      component: AutoFactoryView },
-  { id: 'models',       category: 'AI_LAB', label: 'Донавчання',    badge: 'МН',       icon: BrainCircuit,  component: ModelTrainingView  },
-  { id: 'datasets',     category: 'AI_LAB', label: 'Датасети',      badge: 'ДАНІ',     icon: HardDrive,     component: DatasetsStudioView },
-  { id: 'prompts',      category: 'AI_LAB', label: 'Промпти',                         icon: MessageSquare, component: SystemPromptsView },
-  { id: 'nas',          category: 'AI_LAB', label: 'Нейромережі',  badge: 'НПС',      icon: Cpu,           component: NasView },
-  { id: 'forecast',     category: 'AI_LAB', label: 'Прогнози',      badge: 'МАТЕМ',     icon: TrendingUp,    component: ForecastView },
-  { id: 'super-intel',  category: 'AI_LAB', label: 'СуперІнтелект',   badge: 'ОМЕГА',    icon: Zap,           component: SuperIntelligenceView },
+  { id: 'ai-control',   category: 'AI_LAB', label: 'КЕРУВАННЯ_ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
+  { id: 'ai-insights',  category: 'AI_LAB', label: 'АНАЛІТИКА_ШІ',  badge: 'ГЛИБИНА',     icon: BrainCircuit,  component: AIInsightsHub },
+  { id: 'ai-engines',   category: 'AI_LAB', label: 'ДВИГУНИ_ШІ',   badge: 'ЯДРО',     icon: Cpu,           component: EnginesView },
+  { id: 'llm-explorer', category: 'AI_LAB', label: 'LLM_ПРОВІДНИК',                    icon: BookOpen,      component: LLMView },
+  { id: 'factory',      category: 'AI_LAB', label: 'ЗАВОД_ШІ',      badge: 'ПРОД',     icon: Factory,       component: SystemFactoryView  },
+  { id: 'factory-studio', category: 'AI_LAB', label: 'СТУДІЯ_ЗАВОДУ',  badge: 'ДИЗАЙН',   icon: Layers,        component: FactoryStudio },
+  { id: 'auto-factory', category: 'AI_LAB', label: 'АВТО-ФАБРИКА',  badge: 'ПСВД',     icon: Sparkles,      component: AutoFactoryView },
+  { id: 'models',       category: 'AI_LAB', label: 'ДОНАВЧАННЯ',    badge: 'МН',       icon: BrainCircuit,  component: ModelTrainingView  },
+  { id: 'datasets',     category: 'AI_LAB', label: 'ДАТАСЕТИ',      badge: 'ДАНІ',     icon: HardDrive,     component: DatasetsStudioView },
+  { id: 'prompts',      category: 'AI_LAB', label: 'ПРОМПТИ',                         icon: MessageSquare, component: SystemPromptsView },
+  { id: 'nas',          category: 'AI_LAB', label: 'НЕЙРОМЕРЕЖІ',  badge: 'НПС',      icon: Cpu,           component: NasView },
+  { id: 'forecast',     category: 'AI_LAB', label: 'ПРОГНОЗИ',      badge: 'МАТЕМ',     icon: TrendingUp,    component: ForecastView },
+  { id: 'super-intel',  category: 'AI_LAB', label: 'СУПЕР_ІНТЕЛЕКТ',   badge: 'ОМЕГА',    icon: Zap,           component: SuperIntelligenceView },
 
   // ─── INTEL_OSINT ───────────────────────────────────────────────────────────
-  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'Хаб Розвідки',    badge: 'ОРАКУЛ',   icon: Network,       component: SovereignIntelHub },
-  { id: 'nexus',        category: 'INTEL_OSINT', label: 'Нексус',        badge: 'ПРОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
-  { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'Гіпотези',                        icon: BrainCircuit,  component: HypothesisEngineView },
-  { id: 'knowledge',    category: 'INTEL_OSINT', label: 'Знання',                         icon: BookOpen,      component: KnowledgeEngineeringView },
-  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'Сценарії',     badge: 'СИМ',      icon: Layers,        component: ScenarioModelingView },
-  { id: 'intelligence', category: 'INTEL_OSINT', label: 'Розвідка',     badge: 'ПРИВИД',   icon: Eye,           component: CustomsIntelligenceView },
-  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'Фін. SIGINT',   badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialSigintView },
-  { id: 'due-diligence', category: 'INTEL_OSINT', label: 'Належна Обачність', badge: 'ЗК',       icon: ShieldCheck,   component: DueDiligenceView },
-  { id: 'timeline',     category: 'INTEL_OSINT', label: 'Хронограф',    badge: 'ІСТОРІЯ',      icon: Activity,      component: TimelineBuilderView },
-  { id: 'supply-chain', category: 'INTEL_OSINT', label: 'Ланцюги Поставок', badge: 'ЛОГІСТИКА', icon: Box,        component: SupplyChainAnalyticsView },
-  { id: 'entity-resolver', category: 'INTEL_OSINT', label: 'Резолвер Сутностей', badge: 'СПІВПАДІННЯ', icon: Fingerprint, component: EntityResolverView },
-  { id: 'clients',      category: 'INTEL_OSINT', label: 'Хаб Клієнтів', badge: 'CRM',       icon: Globe,         component: ClientsHubView },
-  { id: 'fin-dashboard', category: 'INTEL_OSINT', label: 'Фінансовий Дашборд', badge: 'СКАРБНИЦЯ', icon: BarChart3, component: FinancialDashboard },
-  { id: 'market-intel', category: 'INTEL_OSINT', label: 'Аналіз Ринку',  badge: 'РИНОК',   icon: Globe,         component: MarketOverviewTab },
-  { id: 'geo-radar',    category: 'INTEL_OSINT', label: 'Гео-Радар',    badge: 'ГЛОБУС',    icon: Globe,         component: GeopoliticalRadarView },
-  { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'Мапа UBO',     badge: 'СУТНОСТІ', icon: Share2,        component: UBOMapView },
-  { id: 'entity-radar', category: 'INTEL_OSINT', label: 'Радар Об\'єктів', badge: 'ТРЕК',    icon: Target,        component: EntityRadarView },
-  { id: 'evolution',    category: 'INTEL_OSINT', label: 'Еволюція',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
-  { id: 'osint',        category: 'INTEL_OSINT', label: 'Консоль ОСІНТ', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
-  { id: 'zrada',        category: 'INTEL_OSINT', label: 'Контроль Зради', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
-  { id: 'aml',          category: 'INTEL_OSINT', label: 'Скоринг АМЛ',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
-  { id: 'sanctions',    category: 'INTEL_OSINT', label: 'Санкції',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
-  { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'Соц. Розвідка', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
-  { id: 'maritime',     category: 'INTEL_OSINT', label: 'Морський Трек', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
-  { id: 'tenders',      category: 'INTEL_OSINT', label: 'Тендери',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
-  { id: 'registries',   category: 'INTEL_OSINT', label: 'Реєстри',      badge: 'БД',       icon: Database,      component: RegistriesView },
-  { id: 'open-data',    category: 'INTEL_OSINT', label: 'Відкриті Дані', badge: 'ДЕРЖ',      icon: Globe,         component: DataGovView },
+  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'ХАБ_РОЗВІДКИ',    badge: 'ОРАКУЛ',   icon: Network,       component: SovereignIntelHub },
+  { id: 'nexus',        category: 'INTEL_OSINT', label: 'НЕКСУС_ПРОГНОЗ',        badge: 'ПРОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
+  { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'ГІПОТЕЗИ',                        icon: BrainCircuit,  component: HypothesisEngineView },
+  { id: 'knowledge',    category: 'INTEL_OSINT', label: 'ЗНАННЯ',                         icon: BookOpen,      component: KnowledgeEngineeringView },
+  { id: 'scenarios',    category: 'INTEL_OSINT', label: 'СЦЕНАРІЇ',     badge: 'СИМ',      icon: Layers,        component: ScenarioModelingView },
+  { id: 'intelligence', category: 'INTEL_OSINT', label: 'РОЗВІДКА',     badge: 'ПРИВИД',   icon: Eye,           component: CustomsIntelligenceView },
+  { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'ФІН_SIGINT',   badge: 'ГРОШІ',    icon: BarChart3,     component: FinancialSigintView },
+  { id: 'due-diligence', category: 'INTEL_OSINT', label: 'ОБАЧНІСТЬ', badge: 'ЗК',       icon: ShieldCheck,   component: DueDiligenceView },
+  { id: 'timeline',     category: 'INTEL_OSINT', label: 'ХРОНОГРАФ',    badge: 'ІСТОРІЯ',      icon: Activity,      component: TimelineBuilderView },
+  { id: 'supply-chain', category: 'INTEL_OSINT', label: 'ЛАНЦЮГИ_ПОСТАВОК', badge: 'ЛОГІСТИКА', icon: Box,        component: SupplyChainAnalyticsView },
+  { id: 'entity-resolver', category: 'INTEL_OSINT', label: 'РЕЗОЛВЕР', badge: 'СПІВПАДІННЯ', icon: Fingerprint, component: EntityResolverView },
+  { id: 'clients',      category: 'INTEL_OSINT', label: 'ХАБ_КЛІЄНТІВ', badge: 'CRM',       icon: Globe,         component: ClientsHubView },
+  { id: 'fin-dashboard', category: 'INTEL_OSINT', label: 'ФІН_ДАШБОРД', badge: 'СКАРБНИЦЯ', icon: BarChart3, component: FinancialDashboard },
+  { id: 'market-intel', category: 'INTEL_OSINT', label: 'АНАЛІЗ_РИНКУ_OSINT',  badge: 'РИНОК',   icon: Globe,         component: MarketOverviewTab },
+  { id: 'geo-radar',    category: 'INTEL_OSINT', label: 'ГЕО-РАДАР',    badge: 'ГЛОБУС',    icon: Globe,         component: GeopoliticalRadarView },
+  { id: 'ubo-map',      category: 'INTEL_OSINT', label: 'МАПА_UBO',     badge: 'СУТНОСТІ', icon: Share2,        component: UBOMapView },
+  { id: 'entity-radar', category: 'INTEL_OSINT', label: 'РАДАР_ОБ\'ЄКТІВ', badge: 'ТРЕК',    icon: Target,        component: EntityRadarView },
+  { id: 'evolution',    category: 'INTEL_OSINT', label: 'ЕВОЛЮЦІЯ_АКТИВУ',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
+  { id: 'osint',        category: 'INTEL_OSINT', label: 'КОНСОЛЬ_ОСІНТ', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
+  { id: 'zrada',        category: 'INTEL_OSINT', label: 'КОНТРОЛЬ_ЗРАДИ', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
+  { id: 'aml',          category: 'INTEL_OSINT', label: 'СКОРИНГ_АМЛ',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
+  { id: 'sanctions',    category: 'INTEL_OSINT', label: 'САНКЦІЇ',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
+  { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'СОЦ_РОЗВІДКА', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
+  { id: 'maritime',     category: 'INTEL_OSINT', label: 'МОРСЬКИЙ_ТРЕК', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
+  { id: 'tenders',      category: 'INTEL_OSINT', label: 'ТЕНДЕРИ_PROZORRO',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
+  { id: 'registries',   category: 'INTEL_OSINT', label: 'РЕЄСТРИ_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
+  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДКРИТІ_ДАНІ', badge: 'ДЕРЖ',      icon: Globe,         component: DataGovView },
   
   // ─── PLATFORM ──────────────────────────────────────────────────────────────
-  { id: 'settings',     category: 'PLATFORM', label: 'Налаштування',                    icon: Settings,      component: SettingsView },
-  { id: 'alerts-system', category: 'PLATFORM', label: 'Системні Сповіщення', badge: 'ЛОГ', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
-  { id: 'decisions',    category: 'PLATFORM', label: 'Журнал Рішень',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
-  { id: 'logs',         category: 'PLATFORM', label: 'Системні Логи',    badge: 'СИРІ',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
+  { id: 'settings',     category: 'PLATFORM', label: 'НАЛАШТУВАННЯ',                    icon: Settings,      component: SettingsView },
+  { id: 'alerts-system', category: 'PLATFORM', label: 'СИСТЕМНІ_СПОВІЩЕННЯ', badge: 'ЛОГ', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
+  { id: 'decisions',    category: 'PLATFORM', label: 'ЖУРНАЛ_РІШЕНЬ',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
+  { id: 'logs',         category: 'PLATFORM', label: 'СИСТЕМНІ_ЛОГИ',    badge: 'СИРІ',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
 ];
 
 const DEFAULT_TAB = 'brief';
@@ -174,25 +183,25 @@ const DEFAULT_TAB = 'brief';
 
 const HeartbeatLine: React.FC<{ color?: string }> = ({ color = 'rose' }) => {
   return (
-    <div className="flex items-end gap-[1px] h-4 w-12 px-1">
-      {Array.from({ length: 12 }).map((_, i) => (
+    <div className="flex items-end gap-[2px] h-6 w-16 px-2">
+      {Array.from({ length: 14 }).map((_, i) => (
         <motion.div
           key={i}
           animate={{ 
             height: [
               `${20 + Math.random() * 30}%`, 
-              `${50 + Math.random() * 50}%`, 
+              `${60 + Math.random() * 40}%`, 
               `${20 + Math.random() * 30}%`
             ] 
           }}
           transition={{ 
-            duration: 0.5 + Math.random() * 0.5, 
+            duration: 0.4 + Math.random() * 0.4, 
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
           className={cn(
-            "w-[2px] rounded-full",
-            color === 'rose' ? "bg-rose-500/40" : "bg-emerald-500/40"
+            "w-[2px] rounded-full shadow-2xl",
+            color === 'rose' ? "bg-rose-500/40 shadow-rose-500/20" : "bg-emerald-500/40 shadow-emerald-500/20"
           )}
         />
       ))}
@@ -206,6 +215,7 @@ const SystemStatusHeader: React.FC = () => {
   const { data: status } = useSystemStatus();
   const { data: stats } = useSystemStats();
   const { data: agentsData } = useAgentsStats();
+  const { llmTriStateMode } = useBackendStatus();
   
   const [time, setTime] = useState(new Date());
 
@@ -218,8 +228,6 @@ const SystemStatusHeader: React.FC = () => {
   const vramTotal = (stats?.gpu_mem_total || (8 * 1024 ** 3)) / (1024 ** 3);
   const cpuPercent = stats?.cpu_percent ?? 0;
   const agentsCount = agentsData?.stats.total ?? 0;
-  const healthyCount = status?.summary.healthy ?? 0;
-  const totalServices = status?.summary.total ?? 1;
   
   const threatLevel = status ? Math.min(100, (status.summary.failed * 25) + (status.summary.degraded * 10) + 5) : 5;
   const entropy = (stats?.memory_percent ?? 0) / 100;
@@ -228,189 +236,150 @@ const SystemStatusHeader: React.FC = () => {
   const isHybrid = vramUsed > (vramTotal * 0.75) && !isCritical;
 
   return (
-    <div className="flex flex-col bg-black/40 glass-wraith border-b border-white/10 relative overflow-hidden group select-none z-30 backdrop-blur-3xl">
-      {/* Background Glows & Tactical Overlays */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-32 bg-rose-500/[0.1] blur-[150px] pointer-events-none animate-pulse" />
-      <div className="absolute top-0 right-1/4 w-[600px] h-32 bg-rose-900/[0.08] blur-[150px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
+    <div className="flex flex-col bg-black/60 glass-wraith border-b-2 border-white/5 relative overflow-hidden group select-none z-30 backdrop-blur-[60px] shadow-4xl">
+      <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
       
-      {/* Noise Texture */}
-      <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-noise" />
-      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03] pointer-events-none" />
-
-      {/* Dynamic Scan Line */}
-      <motion.div 
-        initial={{ left: '-100%' }}
-        animate={{ left: '200%' }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="absolute top-0 bottom-0 w-[1000px] bg-gradient-to-r from-transparent via-rose-500/[0.1] to-transparent pointer-events-none z-0"
-      />
-
       {/* Top Border Accent */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/50 to-transparent shadow-[0_0_20px_rgba(225,29,72,0.6)]" />
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500/50 to-transparent shadow-[0_0_30px_rgba(225,29,72,0.8)]" />
 
-      <div className="flex items-center justify-between px-10 py-5 text-[10px] font-mono tracking-[0.2em] uppercase z-10 relative">
-        <div className="flex items-center gap-14">
-          {/* System Identity with Radar-like effect */}
-          <div className="flex items-center gap-8 relative">
-            <div className="relative group/logo cursor-none">
-              <div className="absolute -inset-10 bg-rose-500/20 blur-3xl rounded-full scale-0 group-hover/logo:scale-150 transition-transform duration-1000 opacity-0 group-hover/logo:opacity-100" />
-              
-              {/* Radar Circles */}
-              <div className="absolute -inset-6 border border-rose-500/15 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '4s' }} />
-              <div className="absolute -inset-12 border border-rose-500/10 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '6s' }} />
+      <div className="flex items-center justify-between px-12 py-8 text-[11px] font-black tracking-[0.3em] uppercase z-10 relative">
+        <div className="flex items-center gap-20">
+          {/* System Identity */}
+          <div className="flex items-center gap-12 relative group/logo">
+            <div className="relative">
+              <div className="absolute -inset-12 bg-rose-500/10 blur-[60px] rounded-full scale-0 group-hover/logo:scale-150 transition-transform duration-1000 opacity-0 group-hover/logo:opacity-100" />
+              <div className="absolute -inset-8 border-2 border-rose-500/10 rounded-full animate-ping pointer-events-none" style={{ animationDuration: '4s' }} />
               
               <div className="flex flex-col relative">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-4 mb-3">
                   <motion.div 
                     animate={{ scale: [1, 1.8, 1], opacity: [0.6, 1, 0.6] }}
                     transition={{ duration: 2.5, repeat: Infinity }}
-                    className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(225,29,72,1)]" 
+                    className="w-2.5 h-2.5 bg-rose-500 rounded-full shadow-[0_0_20px_rgba(225,29,72,1)]" 
                   />
-                  <span className="text-white/40 text-[8px] leading-none tracking-[0.6em] font-black italic">СУВЕРЕННИЙ_ХАБ_ОМЕГА</span>
+                  <span className="text-white/30 text-[9px] leading-none tracking-[0.7em] font-black italic">СУВЕРЕННИЙ_ХАБ_ОМЕГА</span>
                 </div>
-                <span className="flex items-center gap-4 text-white font-black tracking-[0.4em] text-[15px] italic glint-elite chromatic-elite">
-                   <Atom size={20} className="animate-spin-slow text-rose-500" style={{ animationDuration: '15s' }} />
+                <span className="flex items-center gap-6 text-white font-black tracking-[0.5em] text-2xl italic glint-elite">
+                   <Atom size={28} className="animate-spin-slow text-rose-500 shadow-rose-500/20" />
                    PREDATOR <span className="text-rose-500">v61.0-ELITE</span>
                 </span>
               </div>
             </div>
             
-            <div className="flex flex-col border-l border-white/10 pl-10 h-14 justify-center">
-              <span className="text-white/20 text-[8px] leading-none mb-2.5 tracking-[0.4em] font-black uppercase italic">АРХІТЕКТУРА_СИСТЕМИ</span>
-              <div className="flex items-center gap-5">
+            <div className="flex flex-col border-l-2 border-white/5 pl-12 h-16 justify-center">
+              <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.5em] font-black uppercase italic">СТРАТЕГІЯ_ЯДРА</span>
+              <div className="flex items-center gap-6">
                 <div className="relative flex items-center justify-center">
                   <div className={cn(
-                    "w-3.5 h-3.5 rounded-full shadow-[0_0_25px]",
-                    isCritical ? "bg-blue-500 shadow-blue-500/80" : isHybrid ? "bg-emerald-500 shadow-emerald-500/80" : "bg-rose-500 shadow-rose-500/80"
+                    "w-4 h-4 rounded-full shadow-[0_0_30px]",
+                    llmTriStateMode === 'CLOUD' ? "bg-sky-500 shadow-sky-500/80" : llmTriStateMode === 'HYBRID' ? "bg-emerald-500 shadow-emerald-500/80" : "bg-rose-500 shadow-rose-500/80"
                   )} />
                   <motion.div 
                     animate={{ scale: [1, 3], opacity: [0.5, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
                     className={cn(
                       "absolute inset-0 rounded-full",
-                      isCritical ? "bg-blue-500" : isHybrid ? "bg-emerald-500" : "bg-rose-500"
+                      llmTriStateMode === 'CLOUD' ? "bg-sky-500" : llmTriStateMode === 'HYBRID' ? "bg-emerald-500" : "bg-rose-500"
                     )} 
                   />
                 </div>
                 <div className="flex flex-col">
                   <span className={cn(
-                    "font-black tracking-[0.3em] text-[12px] italic",
-                    isCritical ? "text-blue-400" : isHybrid ? "text-emerald-400" : "text-rose-400"
+                    "font-black tracking-[0.4em] text-xl italic glint-elite",
+                    llmTriStateMode === 'CLOUD' ? "text-sky-400" : llmTriStateMode === 'HYBRID' ? "text-emerald-400" : "text-rose-400"
                   )}>
-                    {isCritical ? "ХМАРНЕ_ПЕРЕКЛЮЧЕННЯ" : isHybrid ? "ГІБРИДНИЙ_СУВЕРЕН" : "ЛОКАЛЬНИЙ_СУВЕРЕН"}
+                    {llmTriStateMode === 'CLOUD' ? "ХМАРНЕ_ПЕРЕКЛЮЧЕННЯ" : llmTriStateMode === 'HYBRID' ? "ГІБРИДНИЙ_СУВЕРЕН" : "ЛОКАЛЬНИЙ_СУВЕРЕН"}
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.25em] mt-1.5 uppercase font-bold">ВІДЕОПАМ'ЯТЬ: {vramUsed.toFixed(1)}ГБ / {vramTotal.toFixed(1)}ГБ • {isCritical ? 'ЗОВНІШНІЙ_КЛАСТЕР' : 'ЛОКАЛЬНИЙ_НЕЙРОВУЗОЛ'}</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.3em] mt-2 uppercase font-black italic">VRAM: {vramUsed.toFixed(1)}GB / {vramTotal.toFixed(1)}GB • {llmTriStateMode === 'CLOUD' ? 'OUTER_CLUSTER' : 'LOCAL_NODE'}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Detailed Telemetry Grid */}
-          <div className="flex items-center gap-12 border-l border-white/10 pl-12 h-14">
-            <div className="flex items-center gap-8 group/stat">
-              <div className="flex flex-col gap-2.5 min-w-[160px]">
+          {/* Telemetry Grid */}
+          <div className="flex items-center gap-16 border-l-2 border-white/5 pl-16 h-16">
+            <div className="flex items-center gap-10 group/stat">
+              <div className="flex flex-col gap-3.5 min-w-[180px]">
                 <div className="flex justify-between items-end">
                   <div className="flex flex-col">
-                    <span className="text-white/20 text-[8px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-black italic">НЕЙРОННЕ_НАВАНТАЖЕННЯ</span>
-                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">АКТИВНІ_ВАГИ</span>
+                    <span className="text-white/20 text-[9px] group-hover/stat:text-rose-500 transition-colors tracking-widest font-black italic">НЕЙРОННЕ_НАВАНТАЖЕННЯ</span>
+                    <span className="text-white/10 text-[7px] tracking-widest leading-none mt-1.5 uppercase font-black">АКТИВНІ_ВАГИ_L3</span>
                   </div>
-                  <span className={cn("font-black text-[14px] tracking-tighter italic", cpuPercent > 80 ? "text-rose-500" : "text-white/90")}>
+                  <span className={cn("font-black text-2xl tracking-tighter italic glint-elite", cpuPercent > 80 ? "text-rose-500" : "text-white/90")}>
                     {cpuPercent.toFixed(1)}%
                   </span>
                 </div>
-                <div className="h-[6px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.08] glass-wraith">
+                <div className="h-2 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5 glass-wraith">
                   <motion.div 
                     animate={{ width: `${cpuPercent}%`, backgroundColor: cpuPercent > 80 ? '#f43f5e' : '#e11d48' }}
-                    className="h-full rounded-full shadow-[0_0_15px_rgba(225,29,72,0.6)] relative"
+                    className="h-full rounded-full shadow-[0_0_20px_rgba(225,29,72,0.8)] relative"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
                   </motion.div>
                 </div>
               </div>
               <HeartbeatLine />
             </div>
 
-            <div className="flex items-center gap-8 group/stat">
-              <div className="flex flex-col gap-2.5 min-w-[160px]">
-                <div className="flex justify-between items-end">
-                  <div className="flex flex-col">
-                    <span className="text-white/20 text-[8px] group-hover/stat:text-emerald-500 transition-colors tracking-widest font-black italic">РІВЕНЬ_ЕНТРОПІЇ</span>
-                    <span className="text-white/10 text-[6px] tracking-widest leading-none mt-1 uppercase font-bold">СИНХРОФАЗА_ЗАБЛОКОВАНА</span>
-                  </div>
-                  <span className="text-emerald-400 font-black text-[14px] tracking-tighter italic">{entropy.toFixed(3)}</span>
-                </div>
-                <div className="h-[6px] bg-white/[0.03] rounded-full overflow-hidden p-[1px] border border-white/[0.08] glass-wraith">
-                  <motion.div 
-                    animate={{ width: `${entropy * 100}%` }}
-                    className="h-full bg-emerald-500 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.6)] relative opacity-70"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
-                  </motion.div>
-                </div>
-              </div>
-              <HeartbeatLine color="emerald" />
-            </div>
-
-            <div className="flex flex-col border-l border-white/10 pl-12 h-12 justify-center">
-              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic">АКТИВНІ_ВУЗЛИ</span>
-              <div className="flex items-center gap-5">
-                <Radio size={20} className="text-rose-500 animate-pulse" />
+            <div className="flex flex-col border-l-2 border-white/5 pl-16 h-14 justify-center">
+              <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic">АКТИВНІ_ВУЗЛИ</span>
+              <div className="flex items-center gap-6">
+                <Radio size={24} className="text-rose-500 animate-pulse shadow-rose-500/20" />
                 <div className="flex flex-col">
-                  <span className="text-white font-black text-[16px] leading-none tracking-tighter italic">
-                    {agentsCount.toString().padStart(2, '0')} <span className="text-[9px] text-rose-500 not-italic ml-1 font-black">ВУЗЛІВ</span>
+                  <span className="text-white font-black text-2xl leading-none tracking-tighter italic glint-elite">
+                    {agentsCount.toString().padStart(2, '0')} <span className="text-[10px] text-rose-500 not-italic ml-2 font-black uppercase tracking-widest">ВУЗЛІВ_OODA</span>
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 font-bold">ЗАТРИМКА: {status?.services[0]?.latency_ms ?? 0}ms</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 font-black italic uppercase">ЛАТЕНТНІСТЬ: {status?.services[0]?.latency_ms ?? 0}MS</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col border-l border-white/10 pl-12 h-12 justify-center group/threat">
-              <span className="text-white/20 text-[8px] leading-none mb-3 tracking-[0.4em] font-black italic group-hover/threat:text-rose-500 transition-colors">РІВЕНЬ_ЗАГРОЗИ</span>
-              <div className="flex items-center gap-5">
+            <div className="flex flex-col border-l-2 border-white/5 pl-16 h-14 justify-center group/threat">
+              <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic group-hover/threat:text-rose-500 transition-colors uppercase">РІВЕНЬ_ЗАГРОЗИ_L7</span>
+              <div className="flex items-center gap-6">
                 <div className="relative">
-                  <ShieldAlert size={22} className={cn("transition-all duration-700", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_12px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
-                  {threatLevel > 70 && <motion.div animate={{ scale: [1, 2], opacity: [0.6, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} className="absolute inset-0 bg-rose-500 rounded-full blur-lg" />}
+                  <ShieldAlert size={28} className={cn("transition-all duration-1000", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
+                  {threatLevel > 70 && <motion.div animate={{ scale: [1, 2.5], opacity: [0.6, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} className="absolute inset-0 bg-rose-500 rounded-full blur-xl" />}
                 </div>
                 <div className="flex flex-col">
-                  <span className={cn("font-black text-[16px] tracking-tighter italic leading-none", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
-                    {threatLevel.toFixed(0)}% <span className="text-[9px] opacity-40 ml-1 not-italic">РИЗИК</span>
+                  <span className={cn("font-black text-2xl tracking-tighter italic leading-none glint-elite", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
+                    {threatLevel.toFixed(0)}% <span className="text-[10px] opacity-40 ml-2 not-italic font-black">РИЗИК</span>
                   </span>
-                  <span className="text-white/10 text-[7px] tracking-[0.3em] mt-2 uppercase font-bold">{threatLevel > 70 ? 'КРИТИЧНА_ЗАГРОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 uppercase font-black italic">{threatLevel > 70 ? 'КРИТИЧНА_ЗАГРОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-12">
-          <div className="flex flex-col items-end border-r border-white/10 pr-12 h-12 justify-center">
-            <span className="text-white/20 text-[8px] leading-none mb-2 tracking-[0.5em] font-black uppercase italic">СИСТЕМНИЙ_ЧАС_UTC</span>
-            <span className="text-white font-mono tracking-[0.4em] text-[16px] font-black italic glint-elite">
+        <div className="flex items-center gap-16">
+          <div className="flex flex-col items-end border-r-2 border-white/5 pr-16 h-14 justify-center">
+            <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.6em] font-black uppercase italic">СИСТЕМНИЙ_ЧАС_UTC</span>
+            <span className="text-white font-mono tracking-[0.5em] text-2xl font-black italic glint-elite">
               {time.toLocaleTimeString('uk-UA', { hour12: false })}
-              <span className="text-[10px] text-rose-500/40 ml-2 font-bold">[{time.getMilliseconds().toString().padStart(3, '0')}]</span>
+              <span className="text-[12px] text-rose-500/40 ml-3 font-black">[{time.getMilliseconds().toString().padStart(3, '0')}]</span>
             </span>
           </div>
           
-          <div className="flex items-center gap-8 bg-rose-500/5 px-10 py-4 rounded-[1.2rem] glass-wraith border border-rose-500/20 group-hover:border-rose-500/60 transition-all duration-1000 hover:bg-rose-500/10 cursor-crosshair relative group/secured shadow-2xl">
-              {/* Corner Ornaments */}
-              <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-              <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-              <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
-              <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+          <div className="flex items-center gap-10 bg-rose-500/5 px-12 py-6 rounded-[2rem] glass-wraith border-2 border-rose-500/20 group-hover:border-rose-500/60 transition-all duration-1000 hover:bg-rose-500/10 cursor-crosshair relative group/secured shadow-4xl">
+              <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
+              <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-rose-500/40 group-hover/secured:border-rose-500 transition-colors" />
               
-            <div className="relative flex items-center justify-center scale-125">
-              <div className="w-5 h-5 rounded-full bg-rose-500 animate-ping absolute opacity-30" />
-              <div className="w-5 h-5 rounded-full bg-rose-500 relative shadow-[0_0_25px_rgba(225,29,72,1)] flex items-center justify-center border border-white/20">
-                <Shield size={10} className="text-black" />
+            <div className="relative flex items-center justify-center scale-150">
+              <div className="w-6 h-6 rounded-full bg-rose-500 animate-ping absolute opacity-30" />
+              <div className="w-6 h-6 rounded-full bg-rose-500 relative shadow-[0_0_30px_rgba(225,29,72,1)] flex items-center justify-center border-2 border-white/20">
+                <Shield size={12} className="text-black" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-rose-500 font-black text-[15px] leading-none tracking-[0.25em] italic">ЗАХИЩЕНО</span>
-              <div className="flex items-center gap-3 mt-2.5">
-                <div className="flex gap-1">
-                  {[1,2,3,4,5].map(i => <div key={i} className="w-[4px] h-[4px] bg-rose-500/60 rounded-full" />)}
+              <span className="text-rose-500 font-black text-xl leading-none tracking-[0.3em] italic glint-elite">ЗАХИЩЕНО_L5</span>
+              <div className="flex items-center gap-4 mt-3">
+                <div className="flex gap-1.5">
+                  {[1,2,3,4,5,6].map(i => <div key={i} className="w-[5px] h-[5px] bg-rose-500/60 rounded-full shadow-rose-500/20" />)}
                 </div>
-                <span className="text-white/30 text-[8px] tracking-[0.5em] font-black italic">X-QUANTUM_L5</span>
+                <span className="text-white/30 text-[9px] tracking-[0.6em] font-black italic uppercase">X-QUANTUM_CORE</span>
               </div>
             </div>
           </div>
@@ -423,70 +392,70 @@ const SystemStatusHeader: React.FC = () => {
 // ─── Індикатор завантаження ───────────────────────────────────────────────────
 
 const TabLoader: React.FC = () => (
-  <div className="flex flex-col items-center justify-center h-full min-h-[500px] gap-8 bg-[#050202] relative overflow-hidden">
-    {/* Matrix-like background numbers/data */}
-    <div className="absolute inset-0 pointer-events-none opacity-[0.03] font-mono text-[8px] flex flex-wrap gap-4 overflow-hidden p-4">
-      {Array.from({ length: 100 }).map((_, i) => (
-        <span key={i}>{Math.random().toString(16).substring(2, 10).toUpperCase()}</span>
+  <div className="flex flex-col items-center justify-center h-full min-h-[600px] gap-12 bg-black relative overflow-hidden">
+    <div className="absolute inset-0 bg-cyber-grid opacity-[0.05] pointer-events-none" />
+    <div className="absolute inset-0 pointer-events-none opacity-[0.03] font-mono text-[9px] flex flex-wrap gap-6 overflow-hidden p-6 text-rose-500">
+      {Array.from({ length: 150 }).map((_, i) => (
+        <span key={i} className="animate-pulse" style={{ animationDelay: `${i * 0.02}s` }}>{Math.random().toString(16).substring(2, 12).toUpperCase()}</span>
       ))}
     </div>
 
     <div className="relative">
       <motion.div 
         animate={{ rotate: 360 }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-        className="w-32 h-32 border border-rose-500/10 rounded-full"
+        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        className="w-48 h-48 border-2 border-rose-500/10 rounded-full shadow-4xl"
       />
       <motion.div 
         animate={{ rotate: -360 }}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-2 border border-dashed border-rose-500/20 rounded-full"
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="absolute inset-4 border-2 border-dashed border-rose-500/20 rounded-full"
       />
       
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-20 h-20 bg-rose-500/5 rounded-full flex items-center justify-center relative overflow-hidden border border-rose-500/10">
+        <div className="w-32 h-32 bg-rose-500/5 rounded-full flex items-center justify-center relative overflow-hidden border-2 border-rose-500/10 shadow-inner">
           <motion.div 
-            initial={{ y: -100 }}
-            animate={{ y: 100 }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            className="absolute left-0 right-0 h-[1px] bg-rose-500 shadow-[0_0_15px_rgba(225,29,72,1)]"
+            initial={{ y: -150 }}
+            animate={{ y: 150 }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+            className="absolute left-0 right-0 h-[2px] bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,1)]"
           />
-          <Atom className="w-8 h-8 text-rose-500/40 animate-spin" strokeWidth={1} />
+          <Atom className="w-12 h-12 text-rose-500 animate-spin-slow" />
         </div>
       </div>
     </div>
 
-    <div className="flex flex-col items-center gap-6 z-10">
-      <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-10 z-10">
+      <div className="flex flex-col items-center gap-3">
         <motion.span 
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="text-[12px] font-mono font-black uppercase tracking-[0.5em] text-rose-500"
+          className="text-xl font-black uppercase tracking-[0.6em] text-rose-500 italic glint-elite"
         >
-          Ініціалізація модуля
+          ІНІЦІАЛІЗАЦІЯ_ВУЗЛА_ELITE
         </motion.span>
-        <div className="h-[2px] w-48 bg-white/5 relative overflow-hidden rounded-full">
+        <div className="h-1 w-80 bg-white/5 relative overflow-hidden rounded-full border border-white/5">
           <motion.div 
             initial={{ left: '-100%' }}
             animate={{ left: '100%' }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 bottom-0 w-1/2 bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]"
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 bottom-0 w-1/2 bg-rose-500 shadow-[0_0_25px_rgba(225,29,72,1)] rounded-full"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-12 gap-y-2 opacity-30 max-w-sm">
+      <div className="grid grid-cols-2 gap-x-20 gap-y-3 opacity-40 max-w-lg">
         {[
-          "НЕЙРОННИЙ_ЗВ'ЯЗОК: ВСТАНОВЛЕНО",
-          "РУКОСТИСКАННЯ_ЯДРА: УСПІШНО",
-          "ШАР_ДЕШИФРУВАННЯ: РІВЕНЬ_7",
-          "СУВЕРЕННА_АВТЕНТИФІКАЦІЯ: ПІДТВЕРДЖЕНО",
-          "РОЗПОДІЛ_VRAM: ОПТИМІЗОВАНО",
-          "СИНХРОНІЗАЦІЯ_МАПИ_UBO: АКТИВНО"
+          "НЕЙРОННИЙ_ЗВ'ЯЗОК: 10.4 GB/S",
+          "РУКОСТИСКАННЯ_ЯДРА: ПІДТВЕРДЖЕНО",
+          "ШАР_ДЕШИФРУВАННЯ: AES-256-GCM",
+          "СУВЕРЕННА_АВТЕНТИФІКАЦІЯ: OK",
+          "РОЗПОДІЛ_VRAM: 8GB_GUARD_АКТИВНИЙ",
+          "СИНХРОНІЗАЦІЯ_МАПИ_UBO: L5"
         ].map((text, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div className="w-1 h-1 bg-rose-500 rounded-full" />
-            <span className="text-[7px] font-mono text-white whitespace-nowrap">{text}</span>
+          <div key={i} className="flex items-center gap-4">
+            <div className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_rgba(225,29,72,1)]" />
+            <span className="text-[9px] font-black font-mono text-white whitespace-nowrap tracking-widest italic">{text}</span>
           </div>
         ))}
       </div>
@@ -513,11 +482,11 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   );
 
   const CATEGORIES: { id: TabCategory; label: string; subLabel: string; icon: any; color: string }[] = [
-    { id: 'BUSINESS_INTEL', label: 'Бізнес-Аналітика', subLabel: 'Ранковий звіт & KPI', icon: TrendingUp, color: 'emerald' },
-    { id: 'SYSTEM_CORE', label: 'Ядро Системи', subLabel: 'Інфраструктура & Моніторинг', icon: Shield, color: 'rose' },
-    { id: 'AI_LAB',      label: 'AI Лабораторія', subLabel: 'Навчання & Автозавод', icon: BrainCircuit, color: 'rose' },
-    { id: 'INTEL_OSINT', label: 'Розвідка & OSINT', subLabel: 'Глобальний Аналіз', icon: Eye, color: 'rose' },
-    { id: 'PLATFORM',    label: 'Платформа', subLabel: 'Налаштування & Аудит', icon: Settings, color: 'rose' },
+    { id: 'BUSINESS_INTEL', label: 'БІЗНЕС-АНАЛІТИКА', subLabel: 'РАНКОВИЙ_ЗВІТ_&_KPI', icon: TrendingUp, color: 'emerald' },
+    { id: 'SYSTEM_CORE', label: 'ЯДРО_СИСТЕМИ', subLabel: 'ІНФРАСТРУКТУРА_&_CONTROL', icon: Shield, color: 'rose' },
+    { id: 'AI_LAB',      label: 'AI_ЛАБОРАТОРІЯ', subLabel: 'НАВЧАННЯ_&_АВТОЗАВОД', icon: BrainCircuit, color: 'rose' },
+    { id: 'INTEL_OSINT', label: 'РОЗВІДКА_&_OSINT', subLabel: 'ГЛОБАЛЬНИЙ_АНАЛІЗ_L7', icon: Eye, color: 'rose' },
+    { id: 'PLATFORM',    label: 'ПЛАТФОРМА', subLabel: 'НАЛАШТУВАННЯ_&_АУДИТ', icon: Settings, color: 'rose' },
   ];
 
   const filteredTabs = TABS.filter(t => t.category === selectedCategory);
@@ -543,10 +512,10 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   }, [activeTab]);
 
   return (
-    <div className="flex flex-col bg-[#050202] border-b border-white/[0.08] z-20 sticky top-0 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
+    <div className="flex flex-col bg-black border-b-2 border-white/5 z-20 sticky top-0 shadow-4xl">
       {/* Category Selector */}
-      <div className="flex items-center gap-1 px-8 py-0 border-b border-white/[0.03] bg-black/80 backdrop-blur-3xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-rose-500/[0.05] via-transparent to-transparent pointer-events-none" />
+      <div className="flex items-center gap-1 px-10 py-0 border-b border-white/5 bg-black/80 backdrop-blur-3xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
         
         {CATEGORIES.map(cat => {
           const isActive = selectedCategory === cat.id;
@@ -556,7 +525,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
               className={cn(
-                "flex flex-col items-start gap-1 px-8 py-5 transition-all relative group overflow-hidden border-r border-white/[0.03] min-w-[220px]",
+                "flex flex-col items-start gap-2 px-10 py-7 transition-all duration-700 relative group overflow-hidden border-r border-white/5 min-w-[280px]",
                 isActive 
                   ? "text-rose-500" 
                   : "text-white/20 hover:text-white/50"
@@ -565,18 +534,18 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
               {isActive && (
                 <>
                   <motion.div 
-                    layoutId="activeCategoryBg"
-                    className="absolute inset-0 bg-rose-500/[0.07] z-0"
+                    layoutId="activeCategoryBgElite"
+                    className="absolute inset-0 bg-rose-500/[0.08] z-0"
                   />
-                  <div className="absolute top-0 left-0 w-full h-[2px] bg-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.8)]" />
+                  <div className="absolute top-0 left-0 w-full h-[3px] bg-rose-500 shadow-[0_0_20px_rgba(225,29,72,1)]" />
                 </>
               )}
-              <div className="flex items-center gap-3 relative z-10">
-                <Icon size={16} className={cn("transition-all duration-500", isActive ? "text-rose-500 scale-110 drop-shadow-[0_0_8px_rgba(225,29,72,0.5)]" : "text-white/10 group-hover:text-white/30")} />
-                <span className="text-[11px] font-black uppercase tracking-[0.25em]">{cat.label}</span>
+              <div className="flex items-center gap-5 relative z-10">
+                <Icon size={20} className={cn("transition-all duration-700", isActive ? "text-rose-500 scale-125 glint-elite" : "text-white/10 group-hover:text-white/30")} />
+                <span className="text-[13px] font-black uppercase tracking-[0.3em] italic">{cat.label}</span>
               </div>
               <span className={cn(
-                "text-[7px] font-mono uppercase tracking-[0.3em] transition-colors relative z-10",
+                "text-[9px] font-black font-mono uppercase tracking-[0.4em] transition-colors relative z-10 italic",
                 isActive ? "text-rose-500/60" : "text-white/10"
               )}>
                 {cat.subLabel}
@@ -585,27 +554,27 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
           );
         })}
 
-        <div className="ml-auto flex items-center gap-6 pr-4">
-           <div className="flex flex-col items-end">
-              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Статус вузла</span>
+        <div className="ml-auto flex items-center gap-10 pr-6 relative z-10">
+           <div className="flex flex-col items-end gap-1">
+              <span className="text-white/10 text-[8px] font-black font-mono tracking-widest uppercase italic">СТАТУС_ВУЗЛА</span>
               <span className={cn(
-                "text-[10px] font-black tracking-widest uppercase animate-pulse",
+                "text-[12px] font-black tracking-[0.3em] uppercase animate-pulse italic",
                 status?.overall_status === 'optimal' ? "text-emerald-500" : "text-rose-500"
               )}>
-                {status?.overall_status === 'optimal' ? 'В мережі' : 'Нестабільно'}
+                {status?.overall_status === 'optimal' ? 'АКТИВНИЙ_L7' : 'НЕСТАБІЛЬНИЙ'}
               </span>
            </div>
-           <div className="w-[1px] h-8 bg-white/5" />
-           <div className="flex flex-col items-end">
-              <span className="text-white/10 text-[7px] font-mono tracking-widest uppercase">Сила сигналу</span>
-              <div className="flex gap-0.5 mt-1">
-                 {[1,2,3,4,5].map(i => {
+           <div className="w-[2px] h-12 bg-white/5" />
+           <div className="flex flex-col items-end gap-1">
+              <span className="text-white/10 text-[8px] font-black font-mono tracking-widest uppercase italic">СИЛА_СИГНАЛУ</span>
+              <div className="flex gap-1 mt-1">
+                 {[1,2,3,4,5,6].map(i => {
                     const isHealthy = status?.overall_status === 'optimal';
-                    const threshold = isHealthy ? 4 : 2;
+                    const threshold = isHealthy ? 5 : 2;
                     return (
                        <div key={i} className={cn(
-                         "w-1 h-2 rounded-full", 
-                         i <= threshold ? (isHealthy ? "bg-emerald-500/60 shadow-[0_0_5px_rgba(16,185,129,0.4)]" : "bg-rose-500/60 shadow-[0_0_5px_rgba(225,29,72,0.4)]") : "bg-white/5"
+                         "w-1.5 h-3 rounded-full transition-all duration-700 shadow-2xl", 
+                         i <= threshold ? (isHealthy ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500 shadow-rose-500/40") : "bg-white/5"
                        )} />
                     );
                  })}
@@ -615,11 +584,11 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
       </div>
 
       {/* Tabs list */}
-      <div className="relative flex items-center h-16 overflow-hidden bg-black/60 group/nav">
+      <div className="relative flex items-center h-20 overflow-hidden bg-black/60 group/nav">
         <div 
           ref={scrollContainerRef}
           onScroll={checkScroll}
-          className="flex items-center gap-0 px-2 overflow-x-auto no-scrollbar scroll-smooth flex-1 h-full"
+          className="flex items-center gap-0 px-4 overflow-x-auto no-scrollbar scroll-smooth flex-1 h-full"
         >
           {filteredTabs.map((tab) => {
             const active = activeTab === tab.id;
@@ -629,7 +598,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  'relative flex items-center whitespace-nowrap gap-5 px-10 py-4 text-[10px] font-mono transition-all duration-500 uppercase tracking-[0.35em] group/tab h-full border-r border-white/[0.03]',
+                  'relative flex items-center whitespace-nowrap gap-6 px-12 py-5 text-[11px] font-black transition-all duration-700 uppercase tracking-[0.4em] group/tab h-full border-r border-white/5 italic',
                   active
                     ? 'text-rose-400 bg-white/[0.04]'
                     : 'text-white/30 hover:text-white/80 hover:bg-white/[0.02]',
@@ -638,28 +607,28 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
                 {active && (
                   <>
                     <motion.div 
-                      layoutId="activeTabUnderline"
-                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-rose-500 shadow-[0_0_20px_rgba(225,29,72,1)] z-10"
+                      layoutId="activeTabUnderlineElite"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-rose-500 shadow-[0_0_30px_rgba(225,29,72,1)] z-10"
                     />
-                    <div className="absolute top-0 left-0 right-0 bottom-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-rose-500/[0.12] via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-rose-500/10 via-transparent to-transparent pointer-events-none" />
                   </>
                 )}
 
                 <div className={cn(
-                  "p-2 rounded-sm transition-all duration-700 relative",
-                  active ? "bg-rose-500/20 text-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.3)] scale-110" : "text-white/10 group-hover/tab:text-white/50"
+                  "p-3 rounded-xl transition-all duration-700 relative border-2",
+                  active ? "bg-rose-500/20 border-rose-500/40 text-rose-500 shadow-rose-500/20 scale-110" : "text-white/10 border-white/5 group-hover/tab:text-white/50 group-hover/tab:border-white/10"
                 )}>
-                  {active && <div className="absolute inset-0 bg-rose-500/20 blur-md animate-pulse" />}
-                  <Icon className="w-4 h-4 relative z-10" />
+                  {active && <div className="absolute inset-0 bg-rose-500/20 blur-xl animate-pulse" />}
+                  <Icon className="w-5 h-5 relative z-10" />
                 </div>
                 
-                <span className="relative z-10 font-black">{tab.label}</span>
+                <span className="relative z-10 glint-elite">{tab.label}</span>
 
                 {tab.badge && (
                   <span className={cn(
-                    'text-[8px] font-mono font-black px-2 py-0.5 rounded-sm tracking-tighter transition-all duration-700 ml-2',
+                    'text-[9px] font-black font-mono px-3 py-1 rounded-lg tracking-widest transition-all duration-700 ml-2 italic shadow-2xl',
                     active 
-                      ? 'text-white bg-rose-600 shadow-[0_0_15px_rgba(225,29,72,0.5)]' 
+                      ? 'text-white bg-rose-600 border border-rose-400/50' 
                       : 'text-white/20 bg-white/5 group-hover/tab:text-white/60',
                   )}>
                     {tab.badge}
@@ -672,11 +641,11 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
 
         {/* Scroll gradients */}
         <div className={cn(
-          "absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050202] via-[#050202]/80 to-transparent z-10 pointer-events-none transition-opacity duration-500",
+          "absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 pointer-events-none transition-opacity duration-700",
           canScrollLeft ? "opacity-100" : "opacity-0"
         )} />
         <div className={cn(
-          "absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050202] via-[#050202]/80 to-transparent z-10 pointer-events-none transition-opacity duration-500",
+          "absolute right-0 top-0 bottom-0 w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-10 pointer-events-none transition-opacity duration-700",
           canScrollRight ? "opacity-100" : "opacity-0"
         )} />
       </div>
@@ -707,18 +676,9 @@ export const AdminHub: React.FC = () => {
   const ActiveComponent = TABS.find((t) => t.id === activeTab)?.component;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-[#050202] selection:bg-rose-500/30">
-      {/* Background Grid & Scanline */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px]" />
-        <motion.div 
-          initial={{ top: '-10%' }}
-          animate={{ top: '110%' }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500/10 to-transparent blur-sm"
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,transparent_0%,#050202_80%)]" />
-      </div>
+    <div className="flex flex-col h-full overflow-hidden bg-black selection:bg-rose-500/30">
+      <AdvancedBackground mode="sovereign" />
+      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
 
       {/* Глобальний статус системи */}
       <SystemStatusHeader />
@@ -727,63 +687,39 @@ export const AdminHub: React.FC = () => {
       <TabNav activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Контент вкладки */}
-      <div className="flex-1 overflow-auto relative custom-scrollbar">
+      <div className="flex-1 overflow-auto relative custom-scrollbar pb-20">
         {/* Tactical UI Ornaments */}
-        <div className="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-[1px] bg-rose-500 animate-pulse" />
+        <div className="absolute top-10 left-10 flex flex-col gap-3 pointer-events-none opacity-40 z-0 font-black font-mono text-[9px] text-white/40 tracking-[0.4em] italic uppercase">
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-[1px] bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)]" />
             <span>ГЕО_ЛОКАЦІЯ: 50.4501° N, 30.5234° E</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-[1px] bg-blue-500 animate-pulse" />
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-[1px] bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,1)]" />
             <span>ВІДСТЕЖЕННЯ_ВУЗЛА: 0x9F431B95-ELITE</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-[1px] bg-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-[1px] bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
             <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v61.0_ELITE_СТАБІЛЬНО</span>
           </div>
-          <div className="mt-2 flex gap-1">
-            {Array.from({ length: 12 }).map((_, i) => (
+          <div className="mt-4 flex gap-2">
+            {Array.from({ length: 16 }).map((_, i) => (
               <motion.div 
                 key={i}
-                animate={{ opacity: [0.1, 0.5, 0.1] }}
-                transition={{ duration: 1.5, delay: i * 0.1, repeat: Infinity }}
-                className="w-[2px] h-4 bg-rose-500/20"
+                animate={{ opacity: [0.1, 0.6, 0.1] }}
+                transition={{ duration: 2, delay: i * 0.1, repeat: Infinity }}
+                className="w-[2px] h-6 bg-rose-500/20"
               />
             ))}
           </div>
         </div>
         
-        <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest text-right">
-          <span>СИНХРОНІЗАЦІЯ_ЗАТРИМКИ: 0.0014ms</span>
-          <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/с</span>
-          <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/с</span>
-          <div className="mt-2 w-32 h-[1px] bg-gradient-to-l from-rose-500/50 to-transparent" />
-          <span className="text-[6px] opacity-20">ШИФР: CHACHA20-POLY1305</span>
-        </div>
-
-        <div className="absolute bottom-4 left-4 flex flex-col gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest">
-          <span>РОЗМІР_БУФЕРА: 16384КБ</span>
-          <span>ВТРАТА_ПАКЕТІВ: 0.0000%</span>
-          <span>КРИПТО_МІЦНІСТЬ: 512-БІТ</span>
-          <div className="flex gap-1 mt-1">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="w-2 h-[2px] bg-rose-500/20" />)}
-          </div>
-        </div>
-        
-        <div className="absolute bottom-4 right-4 flex flex-col items-end gap-1.5 pointer-events-none opacity-40 z-0 font-mono text-[8px] text-white/40 tracking-widest text-right">
-          <div className="flex gap-2 mb-2 items-end h-8">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <motion.div 
-                key={i}
-                animate={{ height: [4, 24, 4] }}
-                transition={{ duration: 1.5 + Math.random(), repeat: Infinity }}
-                className="w-[1px] bg-rose-500/40"
-              />
-            ))}
-          </div>
-          <span className="text-rose-500/60 font-black tracking-[0.3em]">SOVEREIGN_OS_ГОТОВО</span>
-          <span>PREDATOR_ANALYTICS_V61.0_ELITE</span>
+        <div className="absolute top-10 right-10 flex flex-col items-end gap-3 pointer-events-none opacity-40 z-0 font-black font-mono text-[9px] text-white/40 tracking-[0.4em] italic text-right uppercase">
+          <span>СИНХРОНІЗАЦІЯ_ЗАТРИМКИ: 0.0014MS</span>
+          <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/С</span>
+          <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/С</span>
+          <div className="mt-4 w-48 h-[2px] bg-gradient-to-l from-rose-500/50 to-transparent rounded-full shadow-rose-500/20" />
+          <span className="text-[7px] opacity-30 font-bold">ШИФР: CHACHA20-POLY1305_QUANTUM_L5</span>
         </div>
 
         <div className="relative z-10 h-full">
@@ -791,10 +727,10 @@ export const AdminHub: React.FC = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+                initial={{ opacity: 0, y: 30, filter: 'blur(20px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                exit={{ opacity: 0, y: -30, filter: 'blur(20px)' }}
+                transition={{ duration: 0.6, ease: "circOut" }}
                 className="h-full"
               >
                 {ActiveComponent && <ActiveComponent />}
@@ -805,13 +741,19 @@ export const AdminHub: React.FC = () => {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.2); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.4); }
+          .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
+          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .chromatic-elite { text-shadow: 2px 0 0 rgba(255,0,0,0.2), -2px 0 0 rgba(0,255,0,0.1); }
+          .animate-spin-slow { animation: spin 20s linear infinite; }
+          .animate-shimmer { animation: shimmer 2s linear infinite; }
+          @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+          .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(225,29,72,0.1); border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(225,29,72,0.3); }
       `}} />
     </div>
   );

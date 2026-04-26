@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle, 
   XCircle, 
@@ -10,11 +10,19 @@ import {
   Database,
   Cpu,
   Activity,
-  ArrowRightLeft
+  ArrowRightLeft,
+  RefreshCw,
+  Server,
+  Shield,
+  Zap,
+  Globe,
+  Settings
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 import { useGitOpsStatus } from '@/hooks/useAdminApi';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -52,26 +60,67 @@ interface ETLPipeline {
 // ─── Колонки ──────────────────────────────────────────────────────────────────
 
 const ciCols: VirtualColumn<CIRun>[] = [
-  { key: 'id',      label: 'ID_ЗАПУСКУ', width: '90px',  mono: true, render: (v) => <span className="text-white/40 font-black italic">#{String(v)}</span> },
+  { 
+    key: 'id',      
+    label: 'ID_ЗАПУСКУ', 
+    width: '100px',  
+    mono: true, 
+    render: (v) => <span className="text-white/40 font-black italic tracking-widest">#{String(v)}</span> 
+  },
   {
-    key: 'status',  label: 'СТАТУС_ПРОЦЕСУ', width: '120px',
+    key: 'status',  label: 'СТАТУС_ПРОЦЕСУ', width: '160px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { success: 'text-rose-500', failure: 'text-red-600', running: 'text-sky-400', pending: 'text-white/20' };
-      const labelMap: Record<string, string> = { success: 'УСПІШНО_ДЕПЛОЙ', failure: 'КРИТИЧНИЙ_ЗБІЙ', running: 'ФОРМУВАННЯ_АРТЕФАКТІВ', pending: 'В_ЧЕРЗІ_ВИКОНАННЯ' };
+      const labelMap: Record<string, string> = { success: 'УСПІШНО_ДЕПЛОЙ', failure: 'КРИТИЧНИЙ_ЗБІЙ', running: 'ФОРМУВАННЯ', pending: 'В_ЧЕРЗІ' };
       return (
-        <div className={cn('text-[9px] font-black tracking-widest flex items-center gap-1.5', map[s] ?? 'text-white/20')}>
-          <div className={cn("w-1 h-1 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse' : 'bg-current')} />
+        <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s] ?? 'text-white/20')}>
+          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
           {labelMap[s] || s.toUpperCase()}
         </div>
       );
     },
   },
-  { key: 'branch',  label: 'ВЕТКА_КОДУ',  width: '140px', mono: true, render: (v) => <span className="text-rose-500/60 font-bold tracking-tighter uppercase italic">{String(v)}</span> },
-  { key: 'commit',  label: 'ХЕШ_КОМІТУ',  width: '90px',  mono: true, render: (v) => <span className="text-white/30 font-mono">{String(v)}</span> },
-  { key: 'trigger', label: 'АКТИВАТОР', width: '100px',  mono: true, render: (v) => <span className="text-white/20 uppercase text-[9px] font-black italic">{String(v)}</span> },
-  { key: 'duration',label: 'ТРИВАЛІСТЬ',    width: '80px',  mono: true, align: 'right', render: (v) => <span className="text-white/50">{String(v)}</span> },
-  { key: 'ts',      label: 'МОМЕНТ_СТАРТУ',              mono: true, render: (v) => <span className="text-white/10 text-[8px] uppercase italic tracking-tighter">{String(v)}</span> },
+  { 
+    key: 'branch',  
+    label: 'ВЕТКА_КОДУ',  
+    width: '180px', 
+    mono: true, 
+    render: (v) => (
+      <div className="flex items-center gap-3">
+        <GitBranch size={12} className="text-rose-500/40" />
+        <span className="text-rose-500/80 font-black tracking-tighter uppercase italic">{String(v)}</span>
+      </div>
+    )
+  },
+  { 
+    key: 'commit',  
+    label: 'ХЕШ_КОМІТУ',  
+    width: '100px',  
+    mono: true, 
+    render: (v) => <span className="text-white/30 font-mono text-[10px] uppercase font-black italic">{String(v)}</span> 
+  },
+  { 
+    key: 'trigger', 
+    label: 'АКТИВАТОР', 
+    width: '120px',  
+    mono: true, 
+    render: (v) => <span className="text-white/20 uppercase text-[9px] font-black italic tracking-widest">{String(v)}</span> 
+  },
+  { 
+    key: 'duration',
+    label: 'ТРИВАЛІСТЬ',    
+    width: '100px',  
+    mono: true, 
+    align: 'right', 
+    render: (v) => <span className="text-white/50 font-black italic">{String(v)}</span> 
+  },
+  { 
+    key: 'ts',      
+    label: 'МОМЕНТ_СТАРТУ',              
+    mono: true, 
+    render: (v) => <span className="text-white/10 text-[9px] uppercase italic tracking-tighter font-black">{String(v)}</span> 
+  },
 ];
 
 const getCIStatus = (row: CIRun): RowStatus =>
@@ -80,32 +129,68 @@ const getCIStatus = (row: CIRun): RowStatus =>
   row.status === 'running'  ? 'info' : 'neutral';
 
 const etlCols: VirtualColumn<ETLPipeline>[] = [
-  { key: 'name',       label: 'ЕТАЛОН_ETL',  width: '200px', mono: true, render: (v) => <span className="font-black italic tracking-tight text-white/80 uppercase">{String(v)}</span> },
-  { key: 'source',     label: 'ДЖЕРЕЛО_ДАНИХ',   width: '150px', mono: true, render: (v) => <span className="text-rose-500/40 text-[9px] font-black italic uppercase tracking-widest">{String(v)}</span> },
+  { 
+    key: 'name',       
+    label: 'ЕТАЛОН_ETL',  
+    width: '250px', 
+    mono: true, 
+    render: (v) => <span className="font-black italic tracking-tighter text-white uppercase glint-elite">{String(v)}</span> 
+  },
+  { 
+    key: 'source',     
+    label: 'ДЖЕРЕЛО_ДАНИХ',   
+    width: '180px', 
+    mono: true, 
+    render: (v) => (
+      <div className="flex items-center gap-3">
+        <Database size={12} className="text-rose-500/30" />
+        <span className="text-rose-500/50 text-[10px] font-black italic uppercase tracking-widest">{String(v)}</span>
+      </div>
+    )
+  },
   {
-    key: 'status',     label: 'СТАТУС_ПОТОКУ',    width: '120px',
+    key: 'status',     label: 'СТАТУС_ПОТОКУ',    width: '160px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { running: 'text-sky-400', completed: 'text-rose-500', failed: 'text-red-600', idle: 'text-white/10' };
       const labelMap: Record<string, string> = { running: 'ТРАНСФОРМАЦІЯ', completed: 'СИНХРОНІЗОВАНО', failed: 'ЗБІЙ_ДЖЕРЕЛА', idle: 'ОЧІКУВАННЯ' };
       return (
-        <div className={cn('text-[9px] font-black tracking-widest flex items-center gap-1.5', map[s])}>
-          <div className={cn("w-1 h-1 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse' : 'bg-current')} />
+        <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s])}>
+          <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
           {labelMap[s] || s.toUpperCase()}
         </div>
       );
     },
   },
-  { key: 'recordsIn',  label: 'ВХІД_RECORDS',      width: '110px',  mono: true, align: 'right', render: (v) => <span className="text-white/40 font-bold">{Number(v).toLocaleString()}</span> },
-  { key: 'recordsOut', label: 'ВИХІД_RECORDS',     width: '110px',  mono: true, align: 'right', render: (v) => <span className="text-emerald-500/60 font-black italic">{Number(v).toLocaleString()}</span> },
+  { 
+    key: 'recordsIn',  
+    label: 'ВХІД_RECORDS',      
+    width: '120px',  
+    mono: true, 
+    align: 'right', 
+    render: (v) => <span className="text-white/40 font-black italic">{Number(v).toLocaleString()}</span> 
+  },
+  { 
+    key: 'recordsOut', 
+    label: 'ВИХІД_RECORDS',     
+    width: '120px',  
+    mono: true, 
+    align: 'right', 
+    render: (v) => <span className="text-emerald-500 font-black italic shadow-emerald-500/20">{Number(v).toLocaleString()}</span> 
+  },
   {
-    key: 'lag',        label: 'ЗАТРИМКА_LAG',       width: '100px',  mono: true, align: 'right',
+    key: 'lag',        label: 'ЗАТРИМКА_LAG',       width: '120px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={cn("font-black italic", n > 1000 ? 'text-red-500 animate-pulse' : n > 100 ? 'text-amber-400' : 'text-white/20')}>{n.toLocaleString()}</span>;
+      return <span className={cn("font-black italic text-[11px]", n > 1000 ? 'text-red-500 animate-pulse' : n > 100 ? 'text-amber-400' : 'text-white/20')}>{n.toLocaleString()}</span>;
     },
   },
-  { key: 'lastRun',    label: 'ОСТАННЯ_СИНХРОНІЗАЦІЯ',                    mono: true, render: (v) => <span className="text-white/10 text-[8px] uppercase italic tracking-tighter">{String(v)}</span> },
+  { 
+    key: 'lastRun',    
+    label: 'ОСТАННЯ_СИНХРОНІЗАЦІЯ',                    
+    mono: true, 
+    render: (v) => <span className="text-white/10 text-[9px] uppercase italic tracking-tighter font-black">{String(v)}</span> 
+  },
 ];
 
 const getETLStatus = (row: ETLPipeline): RowStatus =>
@@ -116,36 +201,48 @@ const getETLStatus = (row: ETLPipeline): RowStatus =>
 // ─── ArgoCD картки ────────────────────────────────────────────────────────────
 
 const SyncIcon: React.FC<{ status: ArgoCDApp['syncStatus'] }> = ({ status }) => {
-  if (status === 'Synced')    return <CheckCircle className="w-4 h-4 text-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]" />;
-  if (status === 'OutOfSync') return <XCircle className="w-4 h-4 text-amber-500 animate-pulse" />;
-  return <Clock className="w-4 h-4 text-white/20" />;
+  if (status === 'Synced')    return <CheckCircle className="w-6 h-6 text-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]" />;
+  if (status === 'OutOfSync') return <XCircle className="w-6 h-6 text-amber-500 animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.5)]" />;
+  return <Clock className="w-6 h-6 text-white/20" />;
 };
 
-// ─── Вкладка ─────────────────────────────────────────────────────────────────
+// ─── MAIN VIEW ───────────────────────────────────────────────────────────────
 
 export const GitOpsPipelineTab: React.FC = () => {
   const { data, isLoading, isError } = useGitOpsStatus();
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] text-white/30 space-y-6">
+      <div className="flex flex-col items-center justify-center h-[700px] text-white/40 space-y-10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-cyber-grid opacity-[0.05] pointer-events-none" />
         <div className="relative">
-          <Loader2 className="w-12 h-12 animate-spin text-rose-500/20" strokeWidth={1} />
-          <Workflow className="absolute inset-0 m-auto w-5 h-5 text-rose-500 animate-pulse" />
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+          />
+          <Workflow className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-[0.4em] animate-pulse italic">ОПИТУВАННЯ_МАГІСТРАЛЕЙ_GITOPS...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">АНАЛІЗ_МАГІСТРАЛЕЙ_GITOPS_V61...</div>
       </div>
     );
   }
 
   if (isError || !data) {
     return (
-      <div className="flex flex-col items-center justify-center h-[500px] p-12 text-center glass-wraith m-8 border border-rose-500/20 rounded-xl">
-        <GitBranch size={48} className="text-rose-500/40 mb-6" />
-        <div className="text-[18px] font-black uppercase tracking-widest text-white/90 mb-2">КРИТИЧНИЙ_ЗБІЙ_МАГІСТРАЛІ</div>
-        <p className="text-[11px] font-mono text-white/30 max-w-sm mb-8 leading-relaxed uppercase italic">
-          СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФОРМ_CI_CD. ПЕРЕВІРТЕ_GITOPS_CONTROLLER_V6.
+      <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
+        <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
+        <GitBranch size={64} className="text-rose-500/40 mb-10 animate-pulse" />
+        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗБІЙ_МАГІСТРАЛІ</div>
+        <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
+          СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФОРМ_CI_CD. ПЕРЕВІРТЕ_GITOPS_CONTROLLER_V61_ELITE.
         </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-12 py-5 bg-rose-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-xl hover:bg-rose-500 transition-all shadow-4xl italic"
+        >
+          ПЕРЕПІДКЛЮЧИТИСЬ_ДО_МАГІСТРАЛІ
+        </button>
       </div>
     );
   }
@@ -153,62 +250,72 @@ export const GitOpsPipelineTab: React.FC = () => {
   const { argoApps, ciRuns, etlPipelines } = data;
 
   return (
-    <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
+    <div className="p-12 space-y-16 max-w-[1700px] mx-auto relative">
+      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+
       {/* Header Section */}
-      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
-        <div className="flex items-center gap-3">
-          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Автоматизація Розгортання та ETL (CI/CD Control)
+      <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
+        <div className="flex items-center gap-6">
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
+            АВТОМАТИЗАЦІЯ РОЗГОРТАННЯ <span className="text-rose-500">& ETL</span>
           </h2>
-          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter uppercase italic">
-            АВТОДЕПЛОЙ_ELITE_V62
+          <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
+            CI_CD_ELITE_v61.0
           </div>
         </div>
-        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase italic">
-          <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>СИНХРОНІЗОВАНО_З_REPO</span>
+        <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <span className="text-emerald-500/80">СИНХРОНІЗОВАНО_З_MASTER_REPO</span>
           </div>
-          <span>•</span>
-          <span>РЕВІЗІЯ: HEAD_ELITE_PROD</span>
-          <span>•</span>
-          <span>КЛАСТЕР: PREDATOR_MAIN_CLUSTER</span>
+          <span className="opacity-20">•</span>
+          <div className="flex items-center gap-3">
+             <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+             <span>РЕВІЗІЯ: HEAD_ELITE_PROD_v61</span>
+          </div>
+          <span className="opacity-20">•</span>
+          <div className="flex items-center gap-3 text-rose-500/40">
+             <Shield size={14} />
+             <span>КЛАСТЕР: PREDATOR_ELITE_COMPUTE_iMAC</span>
+          </div>
         </div>
       </div>
 
       {/* ArgoCD Apps */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-           <div className="w-1 h-1 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
-           <span className="text-[10px] font-mono font-black text-white/40 uppercase tracking-[0.4em] italic glint-elite">ArgoCD — СТАН_АРХІТЕКТУРНИХ_МОДУЛІВ</span>
+      <div className="space-y-8 relative z-10">
+        <div className="flex items-center gap-6 px-4">
+           <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+           <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ArgoCD — СТАН_АРХІТЕКТУРНИХ_МОДУЛІВ</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {argoApps.map((app) => (
             <motion.div 
               key={app.name} 
-              whileHover={{ x: 4, scale: 1.01 }}
-              className="flex items-center gap-5 px-5 py-4 glass-wraith rounded-xl border border-white/5 group hover:border-rose-500/30 transition-all duration-500 relative overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ x: 10, scale: 1.01 }}
+              className="flex items-center gap-8 px-8 py-8 glass-wraith rounded-[2.5rem] border-2 border-white/5 group hover:border-rose-500/40 transition-all duration-700 relative overflow-hidden shadow-4xl"
             >
-              <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
-              <div className="p-2.5 bg-white/5 rounded-lg group-hover:bg-rose-500/10 transition-colors border border-white/5">
+              <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+              <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-rose-500/10 transition-all duration-700 border-2 border-white/5 group-hover:border-rose-500/20 shadow-inner">
                  <SyncIcon status={app.syncStatus} />
               </div>
-              <div className="flex flex-col flex-1 gap-1 relative z-10">
-                <span className="text-[13px] font-black tracking-widest text-white/80 group-hover:text-white transition-colors italic uppercase leading-none">{app.name}</span>
-                <span className="text-[8px] font-mono text-rose-500/30 uppercase tracking-[0.2em] font-bold italic">{app.namespace}</span>
+              <div className="flex flex-col flex-1 gap-2 relative z-10">
+                <span className="text-2xl font-black tracking-tighter text-white group-hover:text-rose-500 transition-colors italic uppercase leading-none glint-elite">{app.name}</span>
+                <span className="text-[10px] font-black font-mono text-rose-500/40 uppercase tracking-[0.3em] font-bold italic">{app.namespace}</span>
               </div>
-              <div className="flex flex-col items-end gap-2 relative z-10">
+              <div className="flex flex-col items-end gap-3 relative z-10">
                  <span className={cn(
-                    'text-[9px] font-black px-3 py-1 rounded-sm border tracking-[0.2em] italic uppercase',
-                    app.healthStatus === 'Healthy'     ? 'text-emerald-500 bg-emerald-500/5 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]' :
-                    app.healthStatus === 'Degraded'    ? 'text-rose-500 bg-rose-500/5 border-rose-500/20 animate-pulse' :
-                                                           'text-sky-500 bg-sky-500/5 border-sky-500/20',
+                    'text-[10px] font-black px-5 py-1.5 rounded-xl border-2 tracking-[0.3em] italic uppercase shadow-4xl',
+                    app.healthStatus === 'Healthy'     ? 'text-emerald-500 bg-emerald-500/5 border-emerald-500/30 shadow-emerald-500/10' :
+                    app.healthStatus === 'Degraded'    ? 'text-rose-500 bg-rose-500/5 border-rose-500/30 animate-pulse' :
+                                                           'text-sky-500 bg-sky-500/5 border-sky-500/30',
                   )}>
-                    {app.healthStatus === 'Healthy' ? 'СТАБІЛЬНО' : app.healthStatus === 'Degraded' ? 'ДЕГРАДАЦІЯ_ЯДРА' : 'ОБРОБКА_ЗМІН'}
+                    {app.healthStatus === 'Healthy' ? 'HEALTHY' : app.healthStatus === 'Degraded' ? 'DEGRADED' : 'PROGRESSING'}
                  </span>
-                 <div className="flex items-center gap-3 text-[8px] font-mono text-white/10 uppercase font-black italic tracking-widest">
+                 <div className="flex items-center gap-4 text-[9px] font-black font-mono text-white/20 uppercase font-black italic tracking-[0.2em]">
                     <span className="group-hover:text-rose-500/40 transition-colors">{app.revision}</span>
-                    <span className="opacity-40">{app.lastSync}</span>
+                    <span className="opacity-30">{app.lastSync}</span>
                  </div>
               </div>
             </motion.div>
@@ -217,20 +324,20 @@ export const GitOpsPipelineTab: React.FC = () => {
       </div>
 
       {/* CI/CD & ETL Tables Row */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 2xl:grid-cols-2 gap-12 relative z-10 pb-20">
         {/* CI/CD Runs */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-             <div className="w-1.5 h-1.5 bg-rose-500 rotate-45" />
-             <span className="text-[11px] font-mono font-black text-white/50 uppercase tracking-[0.4em] italic">ЖУРНАЛ_МАГІСТРАЛІ_CI_CD</span>
+        <div className="space-y-8">
+          <div className="flex items-center gap-6 px-4">
+             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">ЖУРНАЛ_МАГІСТРАЛІ_CI_CD (AUDIT_TRAIL)</span>
           </div>
-          <div className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative">
-            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+            <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
             <VirtualTable
               rows={ciRuns}
               columns={ciCols}
-              rowHeight={48}
-              maxHeight={400}
+              rowHeight={64}
+              maxHeight={500}
               getRowStatus={getCIStatus}
               emptyLabel="ЗАПИСІВ_CI_CD_НЕ_ВИЯВЛЕНО"
             />
@@ -238,24 +345,31 @@ export const GitOpsPipelineTab: React.FC = () => {
         </div>
 
         {/* ETL Пайплайни */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-             <div className="w-1.5 h-1.5 bg-rose-500 rotate-45" />
-             <span className="text-[11px] font-mono font-black text-white/50 uppercase tracking-[0.4em] italic">МАТРИЦЯ_ПОТОКІВ_ETL_CORE</span>
+        <div className="space-y-8">
+          <div className="flex items-center gap-6 px-4">
+             <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
+             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">МАТРИЦЯ_ПОТОКІВ_ETL_CORE_ELITE</span>
           </div>
-          <div className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative">
-            <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
+          <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
+            <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
             <VirtualTable
               rows={etlPipelines}
               columns={etlCols}
-              rowHeight={48}
-              maxHeight={400}
+              rowHeight={64}
+              maxHeight={500}
               getRowStatus={getETLStatus}
               emptyLabel="АКТИВНИХ_ПОТОКІВ_ETL_НЕ_ЗНАЙДЕНО"
             />
           </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+          .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
+          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .animate-spin-slow { animation: spin 10s linear infinite; }
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}} />
     </div>
   );
 };

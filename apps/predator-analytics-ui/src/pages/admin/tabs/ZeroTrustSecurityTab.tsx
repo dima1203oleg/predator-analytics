@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Users, Key, FileText, Shield, Loader2, AlertCircle } from 'lucide-react';
+import { Lock, Users, Key, FileText, Shield, Loader2, AlertCircle, RefreshCw, Zap, Globe, Activity, Database, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VirtualTable, VirtualColumn, RowStatus } from '@/components/shared/VirtualTable';
 import { 
   useAuditLogs, 
   useSecuritySessions, 
-  useSecurityKeys 
+  useSecurityKeys,
+  useSystemStatus
 } from '@/hooks/useAdminApi';
 import type { 
   SecuritySession as Session, 
   SecurityApiKey as ApiKey 
 } from '@/services/adminApi';
+import { AdvancedBackground } from '@/components/AdvancedBackground';
+import { CyberGrid } from '@/components/CyberGrid';
 
 // ─── Типи ─────────────────────────────────────────────────────────────────────
 
@@ -29,71 +32,91 @@ interface AuditEntry {
 // ─── Колонки таблиць ──────────────────────────────────────────────────────────
 
 const sessionCols: VirtualColumn<Session>[] = [
-  { key: 'user',         label: 'Користувач',  width: '180px', mono: true },
+  { 
+    key: 'user',         
+    label: 'КОРИСТУВАЧ_ELITE',  
+    width: '220px', 
+    mono: true, 
+    render: (v) => (
+      <div className="flex items-center gap-3">
+        <Users size={12} className="text-rose-500/40" />
+        <span className="font-black tracking-tight uppercase italic text-white glint-elite">{String(v)}</span>
+      </div>
+    )
+  },
   {
-    key: 'role',         label: 'Роль',         width: '100px',
+    key: 'role',         label: 'РІВЕНЬ_ДОСТУПУ',         width: '140px',
     render: (v) => {
       const s = String(v);
       const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
       const label = s === 'admin' ? 'АДМІНІСТРАТОР' : s === 'client_premium' ? 'КЛІЄНТ_ПРЕМІУМ' : s.toUpperCase();
-      return <span className={cn('text-[10px] font-mono font-bold', color)}>{label}</span>;
+      return (
+        <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', color)}>
+           <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]' : 'bg-current')} />
+           {label}
+        </div>
+      );
     },
   },
-  { key: 'ip',           label: 'IP',           width: '110px',  mono: true },
-  { key: 'userAgent',    label: 'Клієнт (UA)',  width: '160px',  mono: true, render: (v) => <span className="text-white/30">{String(v)}</span> },
-  { key: 'lastActivity', label: 'Активність',   width: '100px',  mono: true },
-  { key: 'expiresIn',    label: 'Закінчується', width: '90px',   mono: true, align: 'right' },
+  { key: 'ip',           label: 'IP_АДРЕСА',           width: '130px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
+  { key: 'userAgent',    label: 'ТЕРМІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
+  { key: 'lastActivity', label: 'ОСТАННЯ_ДІЯ',   width: '120px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
+  { key: 'expiresIn',    label: 'ДО_ВИКЛЮЧЕННЯ', width: '110px',   mono: true, align: 'right', render: (v) => <span className="text-rose-500/60 font-black italic text-[10px]">{String(v)}</span> },
 ];
 
 const getSessionStatus = (row: Session): RowStatus =>
   row.role === 'admin' ? 'warning' : 'neutral';
 
 const auditCols: VirtualColumn<AuditEntry>[] = [
-  { key: 'ts',        label: 'Час',      width: '140px', mono: true },
-  { key: 'user',      label: 'Юзер',     width: '160px', mono: true },
+  { key: 'ts',        label: 'ЧАС_ПОДІЇ',      width: '160px', mono: true, render: (v) => <span className="text-white/30 font-black italic text-[10px] tracking-widest">{String(v)}</span> },
+  { key: 'user',      label: 'СУБ\'ЄКТ',     width: '180px', mono: true, render: (v) => <span className="text-white font-black italic text-[10px] uppercase glint-elite">{String(v)}</span> },
   {
-    key: 'method',    label: 'Метод',    width: '60px',
+    key: 'method',    label: 'МЕТОД',    width: '80px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { GET: 'text-rose-400', POST: 'text-rose-600', PUT: 'text-amber-400', DELETE: 'text-red-500', PATCH: 'text-purple-400' };
-      return <span className={cn('text-[10px] font-mono font-bold', map[s] ?? 'text-white/40')}>{s}</span>;
+      return <span className={cn('text-[10px] font-black italic tracking-widest', map[s] ?? 'text-white/40')}>{s}</span>;
     },
   },
-  { key: 'endpoint',  label: 'Ендпоїнт',             mono: true, render: (v) => <span className="text-white/45">{String(v)}</span> },
+  { key: 'endpoint',  label: 'ЕНДПОЇНТ_API',             mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px] uppercase tracking-tighter">{String(v)}</span> },
   {
-    key: 'status',    label: 'HTTP',     width: '60px', mono: true, align: 'right',
+    key: 'status',    label: 'HTTP',     width: '80px', mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      const color = n >= 500 ? 'text-red-500' : n >= 400 ? 'text-amber-500' : 'text-rose-500/70';
-      return <span className={color}>{n}</span>;
+      const color = n >= 500 ? 'text-red-500' : n >= 400 ? 'text-amber-500' : 'text-emerald-500/80';
+      return <span className={cn("font-black italic text-[10px]", color)}>{n}</span>;
     },
   },
   {
-    key: 'latencyMs', label: 'мс',       width: '60px', mono: true, align: 'right',
+    key: 'latencyMs', label: 'ЛАТЕНТ.',       width: '80px', mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
-      return <span className={n > 300 ? 'text-amber-400' : 'text-white/40'}>{n}</span>;
+      return <span className={cn("font-black italic text-[10px]", n > 300 ? 'text-amber-400' : 'text-white/20')}>{n}мс</span>;
     },
   },
-  { key: 'ip',        label: 'IP',       width: '110px', mono: true, render: (v) => <span className="text-white/30">{String(v)}</span> },
+  { key: 'ip',        label: 'IP',       width: '130px', mono: true, render: (v) => <span className="text-white/20 font-black italic text-[10px]">{String(v)}</span> },
 ];
 
 const getAuditStatus = (row: AuditEntry): RowStatus =>
   row.status >= 500 ? 'danger' : row.status >= 400 ? 'warning' : 'ok';
 
 const keyCols: VirtualColumn<ApiKey>[] = [
-  { key: 'name',      label: 'Назва',     width: '160px', mono: true },
-  { key: 'owner',     label: 'Власник',   width: '160px', mono: true, render: (v) => <span className="text-white/45">{String(v)}</span> },
-  { key: 'scopes',    label: 'Область',                     mono: true, render: (v) => <span className="text-white/30 text-[9px]">{String(v)}</span> },
-  { key: 'lastUsed',  label: 'Остання дія', width: '90px', mono: true },
-  { key: 'expiresAt', label: 'Дійсний до', width: '90px', mono: true },
+  { key: 'name',      label: 'НАЗВА_КЛЮЧА',     width: '180px', mono: true, render: (v) => <span className="text-white font-black italic text-[10px] uppercase glint-elite">{String(v)}</span> },
+  { key: 'owner',     label: 'ВЛАСНИК_АКТИВУ',   width: '180px', mono: true, render: (v) => <span className="text-white/45 font-black italic text-[10px] uppercase">{String(v)}</span> },
+  { key: 'scopes',    label: 'ОБЛАСТЬ_ДОСТУПУ',                     mono: true, render: (v) => <span className="text-white/20 text-[9px] font-black italic uppercase tracking-widest">{String(v)}</span> },
+  { key: 'lastUsed',  label: 'ОСТАННЯ_АКТИВ.', width: '120px', mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
+  { key: 'expiresAt', label: 'ТЕРМІН_ДІЇ', width: '120px', mono: true, render: (v) => <span className="text-rose-500/40 font-black italic text-[10px] uppercase">{String(v)}</span> },
   {
-    key: 'status',    label: 'Статус',    width: '80px',
+    key: 'status',    label: 'СТАТУС',    width: '120px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { active: 'text-rose-500', revoked: 'text-red-500', expired: 'text-white/30' };
       const labelMap: Record<string, string> = { active: 'АКТИВНИЙ', revoked: 'ВІДКЛИКАНО', expired: 'ПРОТЕРМІНОВАНО' };
-      return <span className={cn('text-[10px] font-mono font-semibold', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
+      return (
+        <div className={cn('text-[10px] font-black italic tracking-widest uppercase', map[s])}>
+           {labelMap[s] || s.toUpperCase()}
+        </div>
+      );
     },
   },
 ];
@@ -101,7 +124,7 @@ const keyCols: VirtualColumn<ApiKey>[] = [
 const getKeyStatus = (row: ApiKey): RowStatus =>
   row.status === 'active' ? 'ok' : row.status === 'revoked' ? 'danger' : 'neutral';
 
-// ─── Вкладка ─────────────────────────────────────────────────────────────────
+// ─── MAIN VIEW ───────────────────────────────────────────────────────────────
 
 export const ZeroTrustSecurityTab: React.FC = () => {
   const [section, setSection] = useState<'sessions' | 'audit' | 'keys' | 'mtls'>('sessions');
@@ -124,31 +147,39 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                     (section === 'mtls' && isStatusLoading);
 
   return (
-    <div className="p-8 space-y-10 max-w-[1400px] mx-auto">
+    <div className="p-12 space-y-16 max-w-[1700px] mx-auto relative">
+      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+
       {/* Header Section */}
-      <div className="flex flex-col gap-1 border-l-2 border-rose-500 pl-6 py-1">
-        <div className="flex items-center gap-3">
-          <h2 className="text-[18px] font-black text-white uppercase tracking-[0.2em]">
-            Периметр Zero Trust & Кіберзахист
+      <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
+        <div className="flex items-center gap-6">
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
+            ПЕРИМЕТР ZERO TRUST <span className="text-rose-500">& КІБЕРЗАХИСТ</span>
           </h2>
-          <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter">
-            ЗАХИСТ_АКТИВНИЙ
+          <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
+            SECURITY_CORE_v61.0
           </div>
         </div>
-        <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
-          <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-            <span>ПЕРИМЕТР_ЗАСТОСОВАНО</span>
+        <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
+            <span className="text-emerald-500/80">ПЕРИМЕТР_ЗАСТОСОВАНО_L7</span>
           </div>
-          <span>•</span>
-          <span>ІДЕНТИФІКАЦІЯ: МОНІТОРИНГ_В_РЕАЛЬНОМУ_ЧАСІ</span>
-          <span>•</span>
-          <span>WORM_LOGS: УВІМК</span>
+          <span className="opacity-20">•</span>
+          <div className="flex items-center gap-3">
+             <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
+             <span>WORM_LOCK: АКТИВНО_ПОЖИТТЄВО</span>
+          </div>
+          <span className="opacity-20">•</span>
+          <div className="flex items-center gap-3 text-rose-500/40">
+             <Shield size={14} />
+             <span>АЛГОРИТМ: AES-256-GCM + mTLS_v1.3</span>
+          </div>
         </div>
       </div>
 
       {/* Internal Navigation */}
-      <div className="flex gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = section === t.id;
@@ -157,32 +188,34 @@ export const ZeroTrustSecurityTab: React.FC = () => {
               key={t.id}
               onClick={() => setSection(t.id)}
               className={cn(
-                'flex flex-col items-start gap-2 px-6 py-4 rounded-xl transition-all duration-500 relative overflow-hidden flex-1 group',
+                'flex flex-col items-start gap-4 px-8 py-8 rounded-[2.5rem] transition-all duration-700 relative overflow-hidden group shadow-4xl border-2',
                 active
-                  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-2xl shadow-rose-500/5'
-                  : 'bg-white/[0.02] border border-white/5 hover:border-white/10 text-white/30 hover:text-white/60',
+                  ? 'glass-wraith border-rose-500/40 bg-rose-500/5 shadow-rose-500/20'
+                  : 'bg-white/[0.02] border-white/5 hover:border-white/10 text-white/30 hover:text-white/60',
               )}
             >
-              <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
-              <div className="flex items-center gap-3 w-full">
+              <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+              <div className="flex items-center justify-between w-full relative z-10">
                 <div className={cn(
-                   'p-2 rounded-lg transition-colors',
-                   active ? 'bg-rose-500/10 text-rose-500' : 'bg-white/5 text-white/20 group-hover:text-white/40'
+                   'p-4 rounded-2xl transition-all duration-700 border-2 shadow-inner',
+                   active ? 'bg-rose-500/20 border-rose-500/40 text-rose-500' : 'bg-white/5 border-white/5 text-white/20 group-hover:text-white/40 group-hover:border-white/10'
                 )}>
-                  {t.loading && active ? <Loader2 className="w-4 h-4 animate-spin" /> : <Icon className="w-4 h-4" />}
-                </div>
-                <div className="flex-1">
-                   <div className={cn('text-[10px] font-black uppercase tracking-[0.2em] italic', active ? 'text-white' : 'text-white/40 group-hover:text-white/60')}>
-                     {t.label}
-                   </div>
-                   <div className="text-[8px] font-mono text-white/10 uppercase tracking-widest mt-0.5">{t.count} ОБ'ЄКТІВ</div>
+                  {t.loading && active ? <Loader2 className="w-6 h-6 animate-spin" /> : <Icon className="w-6 h-6" />}
                 </div>
                 {active && (
                    <motion.div 
-                     layoutId="security-tab-indicator"
-                     className="w-1 h-4 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(225,29,72,1)]"
+                     layoutId="security-tab-indicator-v61"
+                     className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(225,29,72,1)] animate-pulse"
                    />
                 )}
+              </div>
+              <div className="relative z-10">
+                 <div className={cn('text-xl font-black uppercase tracking-tighter italic glint-elite transition-colors duration-700', active ? 'text-white' : 'text-white/40')}>
+                   {t.label}
+                 </div>
+                 <div className="text-[10px] font-black font-mono text-white/10 uppercase tracking-[0.4em] mt-2 group-hover:text-rose-500/40 transition-colors italic">
+                   {t.count} ОБ'ЄКТІВ_СЕКТОРА
+                 </div>
               </div>
             </button>
           );
@@ -190,116 +223,143 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       </div>
 
       {/* Content Area */}
-      <div className="relative min-h-[500px]">
-        {isLoading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center space-y-6">
-             <div className="relative">
-                <Loader2 className="w-16 h-16 animate-spin text-rose-500/20" strokeWidth={1} />
-                <Shield className="absolute inset-0 m-auto w-6 h-6 text-rose-500 animate-pulse" />
-             </div>
-             <div className="text-[10px] font-mono text-rose-500/60 uppercase tracking-[0.4em] animate-pulse italic">
-               СИНАПТИЧНИЙ_ЗАХИСТ_В_ПРОЦЕСІ...
-             </div>
-          </div>
-        )}
-
-        <motion.div
-          key={section}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="glass-wraith border border-white/5 rounded-xl overflow-hidden backdrop-blur-3xl shadow-2xl relative"
-        >
-          <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
-          
-          {section === 'sessions' && (
-            <VirtualTable
-              rows={sessionsData || []}
-              columns={sessionCols}
-              rowHeight={48}
-              maxHeight={550}
-              getRowStatus={getSessionStatus}
-              emptyLabel="Активних сесій немає"
-            />
-          )}
-          {section === 'audit' && (
-            <VirtualTable
-              rows={auditData || []}
-              columns={auditCols}
-              rowHeight={44}
-              maxHeight={550}
-              getRowStatus={getAuditStatus}
-              emptyLabel="Записів аудиту немає"
-            />
-          )}
-          {section === 'keys' && (
-            <VirtualTable
-              rows={keysData || []}
-              columns={keyCols}
-              rowHeight={48}
-              maxHeight={550}
-              getRowStatus={getKeyStatus}
-              emptyLabel="API-ключів немає"
-            />
-          )}
-          {section === 'mtls' && (
-            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(systemStatus?.services || []).map((service, i) => (
-                <motion.div 
-                   key={service.name}
-                   initial={{ opacity: 0, scale: 0.98 }}
-                   animate={{ opacity: 1, scale: 1 }}
-                   transition={{ delay: i * 0.1 }}
-                   className="p-6 rounded-xl bg-white/[0.02] border border-white/5 hover:border-rose-500/20 transition-all group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 cyber-scan-grid opacity-[0.02] pointer-events-none" />
-                  <div className="flex justify-between items-center relative z-10">
-                    <div className="flex flex-col gap-1">
-                       <span className="text-[14px] font-black italic text-white/80 group-hover:text-white transition-colors uppercase tracking-widest">{service.label}</span>
-                       <span className="text-[8px] font-mono text-white/20 uppercase tracking-[0.2em]">Сервіс ID: {service.name}</span>
-                    </div>
-                    <span className={cn(
-                      "text-[9px] px-3 py-1 rounded-lg font-black tracking-widest italic border transition-all",
-                      service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" : "bg-rose-500/10 border-rose-500/20 text-rose-400 animate-pulse"
-                    )}>{service.status === 'ok' ? 'ВЕРИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}</span>
-                  </div>
-                  <div className="mt-6 flex justify-between text-[9px] font-mono text-white/30 uppercase tracking-widest relative z-10">
-                    <span>Затримка: <span className="text-white/50">{service.latency_ms}мс</span></span>
-                    <span>Режим: <span className="text-white/50">mTLS 1.3</span></span>
-                  </div>
-                  <div className="mt-4 h-[1px] w-full bg-white/5 relative z-10">
+      <div className="relative min-h-[600px] z-10">
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div 
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-20 flex flex-col items-center justify-center space-y-10"
+            >
+               <div className="relative">
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    className="w-24 h-24 border-2 border-rose-500/20 rounded-full border-t-rose-500 shadow-[0_0_30px_rgba(225,29,72,0.3)]"
+                  />
+                  <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
+               </div>
+               <div className="text-[14px] font-black font-mono text-rose-500/60 uppercase tracking-[0.6em] animate-pulse italic">
+                 СИНАПТИЧНИЙ_АНАЛІЗ_ПЕРИМЕТРА_V61...
+               </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={section}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.6, ease: "circOut" }}
+              className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4"
+            >
+              <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
+              
+              {section === 'sessions' && (
+                <VirtualTable
+                  rows={sessionsData || []}
+                  columns={sessionCols}
+                  rowHeight={64}
+                  maxHeight={650}
+                  getRowStatus={getSessionStatus}
+                  emptyLabel="АКТИВНИХ_СЕСІЙ_НЕ_ВИЯВЛЕНО"
+                />
+              )}
+              {section === 'audit' && (
+                <VirtualTable
+                  rows={auditData || []}
+                  columns={auditCols}
+                  rowHeight={64}
+                  maxHeight={650}
+                  getRowStatus={getAuditStatus}
+                  emptyLabel="ЖУРНАЛ_АУДИТУ_ПОРОЖНІЙ"
+                />
+              )}
+              {section === 'keys' && (
+                <VirtualTable
+                  rows={keysData || []}
+                  columns={keyCols}
+                  rowHeight={64}
+                  maxHeight={650}
+                  getRowStatus={getKeyStatus}
+                  emptyLabel="API_КЛЮЧІВ_НЕ_ГЕНЕРОВАНО"
+                />
+              )}
+              {section === 'mtls' && (
+                <div className="p-10 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8">
+                  {(systemStatus?.services || []).map((service, i) => (
                     <motion.div 
-                       className="h-full bg-rose-500/40"
-                       initial={{ width: 0 }}
-                       animate={{ width: service.status === 'ok' ? '100%' : '30%' }}
-                       transition={{ duration: 1.5, ease: 'circOut' }}
-                    />
-                  </div>
-                  <div className="mt-3 flex justify-end relative z-10">
-                     <span className="text-[8px] font-mono text-white/10 uppercase font-black italic">СТАТУС_ВУЗЛА: {service.status.toUpperCase()}</span>
-                  </div>
-                </motion.div>
-              ))}
-              {!isStatusLoading && (!systemStatus?.services || systemStatus.services.length === 0) && (
-                <div className="col-span-full py-20 flex flex-col items-center justify-center text-white/20 gap-4">
-                  <Shield className="w-12 h-12 stroke-1 opacity-20" />
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em]">mTLS вузли не виявлені</span>
+                       key={service.name}
+                       initial={{ opacity: 0, scale: 0.95 }}
+                       animate={{ opacity: 1, scale: 1 }}
+                       transition={{ delay: i * 0.05 }}
+                       whileHover={{ y: -5, scale: 1.02 }}
+                       className="p-8 rounded-[2.5rem] bg-white/[0.02] border-2 border-white/5 hover:border-rose-500/40 transition-all duration-700 group relative overflow-hidden shadow-4xl"
+                    >
+                      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
+                      <div className="flex justify-between items-start relative z-10 mb-8">
+                        <div className="flex flex-col gap-2">
+                           <span className="text-2xl font-black italic text-white group-hover:text-rose-500 transition-colors uppercase tracking-tighter glint-elite leading-none">{service.label}</span>
+                           <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.3em] italic">UUID: {service.name}</span>
+                        </div>
+                        <div className={cn(
+                          "px-4 py-1.5 rounded-xl text-[10px] font-black tracking-[0.2em] italic border-2 transition-all shadow-4xl",
+                          service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-rose-500/10 border-rose-500/30 text-rose-500 animate-pulse shadow-rose-500/10"
+                        )}>
+                          {service.status === 'ok' ? 'ВЕРИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-6 relative z-10">
+                         <div className="flex justify-between text-[10px] font-black font-mono text-white/40 uppercase tracking-widest italic">
+                           <div className="flex items-center gap-2">
+                              <Activity size={12} className="text-white/20" />
+                              <span>ЛАТЕНТНІСТЬ: <span className="text-white/60">{service.latency_ms}мс</span></span>
+                           </div>
+                           <div className="flex items-center gap-2">
+                              <Lock size={12} className="text-white/20" />
+                              <span>ШИФР: <span className="text-white/60">mTLS 1.3</span></span>
+                           </div>
+                         </div>
+                         <div className="h-2 w-full bg-white/5 rounded-full relative overflow-hidden border border-white/5 p-[1px]">
+                           <motion.div 
+                              className={cn("h-full rounded-full shadow-2xl", service.status === 'ok' ? "bg-emerald-500 shadow-emerald-500/40" : "bg-rose-500 shadow-rose-500/40")}
+                              initial={{ width: 0 }}
+                              animate={{ width: service.status === 'ok' ? '100%' : '30%' }}
+                              transition={{ duration: 1.5, ease: 'circOut' }}
+                           />
+                         </div>
+                         <div className="flex justify-between items-center pt-2">
+                            <span className="text-[9px] font-black font-mono text-white/10 uppercase tracking-[0.4em] italic">NODE_SECURITY_SYNC</span>
+                            <Server size={14} className="text-white/10 group-hover:text-rose-500/40 transition-colors" />
+                         </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
-        </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Footer System Status */}
-      <div className="flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-700">
-        <div className="flex items-center gap-3 px-4 py-2 bg-rose-500/5 border border-rose-500/10 rounded-lg">
-           <AlertCircle className="w-4 h-4 text-rose-500" />
-           <span className="text-[10px] font-mono text-rose-500 font-black uppercase tracking-[0.2em]">ЗАХИСТ_WORM_УВІМКНЕНО</span>
+      <div className="flex items-center gap-8 relative z-10 opacity-60 hover:opacity-100 transition-opacity duration-700">
+        <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/10 border-2 border-rose-500/20 rounded-2xl shadow-rose-500/10">
+           <AlertCircle className="w-5 h-5 text-rose-500 animate-pulse" />
+           <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
         </div>
-        <div className="h-px flex-1 bg-gradient-to-r from-rose-500/20 via-transparent to-transparent" />
-        <span className="text-[9px] font-mono text-white/20 uppercase tracking-[0.4em] italic font-black">Ядро Zero Trust v60.5 — ЕЛІТНИЙ_ВАРТОВИЙ</span>
+        <div className="h-[2px] flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />
+        <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕРЕННИЙ_ВАРТОВИЙ</span>
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+          .shadow-4xl { box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9); }
+          .glint-elite { text-shadow: 0 0 30px rgba(225,29,72,0.4); }
+          .animate-spin-slow { animation: spin 10s linear infinite; }
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}} />
     </div>
   );
 };
