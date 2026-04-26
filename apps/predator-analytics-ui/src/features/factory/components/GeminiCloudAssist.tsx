@@ -107,8 +107,14 @@ export function GeminiCloudAssist() {
                           value={query}
                           onChange={(e) => setQuery(e.target.value)}
                           placeholder="Запитай Cloud Assist про свою архітектуру..."
-                          className="w-full h-14 bg-black/60 border border-white/10 rounded-2xl px-6 pr-16 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all font-medium placeholder:text-slate-600"
+                          className="w-full h-14 bg-black/60 border border-white/10 rounded-2xl px-14 pr-16 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all font-medium placeholder:text-slate-600"
                         />
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                           <label className="cursor-pointer text-slate-500 hover:text-blue-400 transition-colors">
+                              <input type="file" className="hidden" accept="image/*" onChange={() => alert('Vision Analysis ініційовано...')} />
+                              <Layout size={20} />
+                           </label>
+                        </div>
                         <button className="absolute right-2 top-2 bottom-2 w-10 bg-blue-600 hover:bg-blue-500 rounded-xl flex items-center justify-center text-white transition-colors">
                            <ArrowRight size={18} />
                         </button>

@@ -36,7 +36,8 @@ from .competitors import router as competitors_router
 from .copilot import router as copilot_router
 from .dashboard import router as dashboard_router
 from .declarations import router as declarations_router
-from .factory import router as factory_router
+from app.api.v1.endpoints.cloud_assist import router as cloud_assist_router
+from app.api.v1.endpoints.factory import router as factory_router
 from .graph import router as graph_router
 from .ingestion import router as ingestion_router
 from .intelligence import router as intelligence_router

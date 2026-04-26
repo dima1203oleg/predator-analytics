@@ -17,8 +17,9 @@ from __future__ import annotations
 
 import os
 import time
+import base64
 from collections.abc import AsyncIterator
-from typing import Any
+from typing import Any, Optional
 
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
@@ -245,6 +246,71 @@ class GeminiAgentService:
         except (json.JSONDecodeError, IndexError):
             logger.warning("Не вдалося спарсити JSON з Gemini Risk Analysis")
             return {**result, "structured": None}
+
+    # ─── Vision Analysis ──────────────────────────────────────────────────────
+
+    @staticmethod
+    async def analyze_vision(
+        prompt: str, 
+        image_bytes: bytes, 
+        mime_type: str = "image/jpeg",
+        model: str = "gemini-2.5-flash"
+    ) -> dict[str, Any]:
+        """Мультимодальний аналіз (Vision).
+        
+        Використовується для аналізу:
+        - Сканів митних декларацій
+        - Схем корпоративної власності
+        - Скріншотів GCP архітектури
+        """
+        from google.genai import types
+        client = _get_client()
+        start_time = time.time()
+        
+        try:
+            import asyncio
+            response = await asyncio.to_thread(
+                client.models.generate_content,
+                model=model,
+                contents=[
+                    types.Content(
+                        role="user",
+                        parts=[
+                            types.Part.from_text(text=prompt),
+                            types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+                        ]
+                    )
+                ]
+            )
+            
+            latency = (time.time() - start_time) * 1000
+            return {
+                "content": response.text,
+                "model": model,
+                "latency_ms": round(latency, 1)
+            }
+        except Exception as e:
+            logger.error(f"Gemini Vision error: {e}")
+            raise
+
+    async def audit_infrastructure(self, project_id: str) -> dict[str, Any]:
+        """Автономний аудит GCP інфраструктури через Gemini."""
+        prompt = f"""
+        Проведи критичний аудит GCP проекту {project_id}.
+        Проаналізуй наступні аспекти:
+        1. Безпека: IAM ролі, публічні бакети, правила фаєрволу.
+        2. Продуктивність: Latency між регіонами, використання GPU квот.
+        3. Витрати: Невикористані диски, перерозхід BigQuery.
+        
+        Поверни результат у форматі JSON:
+        {{
+          "score": 0-100,
+          "critical_issues": [],
+          "recommendations": [],
+          "efficiency_gain_usd": number
+        }}
+        """
+        return await self.analyze_risk({"project_id": project_id})
 
     # ─── Embeddings (для Qdrant) ──────────────────────────────────────────────
 
