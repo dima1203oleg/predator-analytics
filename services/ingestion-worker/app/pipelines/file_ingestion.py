@@ -14,6 +14,7 @@ import hashlib
 import io
 import json
 from typing import Any, ClassVar
+import pandas as pd
 
 import chardet
 
@@ -234,10 +235,12 @@ class FileIngestionPipeline:
         elif file_ext == ".json":
             async for record in self._parse_json(content):
                 yield record
+        elif file_ext in [".xlsx", ".xls"]:
+            async for record in self._parse_excel(file_ext, content if isinstance(content, bytes) else content.encode()):
+                yield record
         else:
-            # Для xlsx/xls потрібен pandas, поки підтримуємо тільки CSV/JSON
-            logger.warning(f"Format {file_ext} requires pandas, falling back to CSV")
-            async for record in self._parse_csv(content):
+            logger.warning(f"Unsupported format {file_ext}, falling back to CSV")
+            async for record in self._parse_csv(content if isinstance(content, str) else content.decode()):
                 yield record
 
     async def _parse_csv(self, content: str) -> AsyncGenerator[dict[str, Any], None]:
@@ -366,6 +369,72 @@ class FileIngestionPipeline:
                         yield normalized
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse JSON: {e}")
+            raise
+
+    async def _parse_excel(self, file_ext: str, content: bytes) -> AsyncGenerator[dict[str, Any], None]:
+        """Парсить Excel контент."""
+        try:
+            # Використовуємо pandas для читання Excel
+            df = pd.read_excel(io.BytesIO(content))
+            
+            # Конвертуємо назви колонок
+            df.columns = [
+                self.COLUMN_MAPPING.get(str(c).lower().strip(), str(c).lower().strip())
+                for c in df.columns
+            ]
+            
+            # Обробка рядків
+            for _, row in df.iterrows():
+                record = row.to_dict()
+                # Фільтруємо NaN
+                record = {k: (None if pd.isna(v) else v) for k, v in record.items()}
+                
+                self.stats.total_rows += 1
+                
+                # Валідація та обробка аналогічно CSV
+                validation = DeclarationValidator.validate_record(record)
+                
+                if validation.quarantine:
+                    self.stats.quarantined_rows += 1
+                    self.quarantine.append(
+                        QuarantineRecord(
+                            job_id=self.job_id,
+                            tenant_id=self.tenant_id,
+                            original_record=record,
+                            errors=[
+                                {
+                                    "field": e.field,
+                                    "message": e.message,
+                                    "severity": e.severity.value,
+                                }
+                                for e in validation.errors
+                            ],
+                        )
+                    )
+                    continue
+
+                if validation.record_hash in self.seen_hashes:
+                    self.stats.duplicate_rows += 1
+                    continue
+
+                self.seen_hashes.add(validation.record_hash)
+                normalized = validation.normalized_record
+                normalized["_record_hash"] = validation.record_hash
+                normalized["_job_id"] = self.job_id
+                normalized["_tenant_id"] = self.tenant_id
+                normalized["_ingested_at"] = datetime.now(UTC).isoformat()
+
+                edrpou = normalized.get("company_edrpou", "")
+                if edrpou:
+                    normalized["ueid"] = CompanyNormalizer.generate_ueid(
+                        str(edrpou), self.tenant_id
+                    )
+
+                self.stats.valid_rows += 1
+                yield normalized
+
+        except Exception as e:
+            logger.error(f"Failed to parse Excel: {e}")
             raise
 
     async def _process_batch(

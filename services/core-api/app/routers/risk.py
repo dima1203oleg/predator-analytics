@@ -15,6 +15,10 @@ from app.dependencies import PermissionChecker, get_tenant_id
 
 # --- Моделі відповідей v55.2 ---
 from app.models.schemas import CersComponents, ComponentDetail, Uncertainty
+from app.services.elite_risk_engine import EliteRiskEngine
+from app.services.insight_engine import InsightEngine
+
+
 
 # Використовуємо спільні моделі v55.2
 from predator_common.models import Company, RiskScore
@@ -126,7 +130,34 @@ async def get_risk_scores(
 
         score_record = latest_scores.get(ueid)
         if not score_record:
-            # Заглушка, якщо оцінки відсутні (у реальності Triggered Async)
+            # Спроба динамічного обчислення (Elite Fallback)
+            engine = EliteRiskEngine(db)
+            try:
+                await engine.compute_full_risk(ueid, tenant_id)
+                # Отримуємо щойно створений запис
+                scores_query_single = select(
+                    RiskScore.entity_ueid,
+                    RiskScore.cers,
+                    RiskScore.cers_confidence,
+                    RiskScore.behavioral_score,
+                    RiskScore.institutional_score,
+                    RiskScore.influence_score,
+                    RiskScore.structural_score,
+                    RiskScore.predictive_score,
+                    RiskScore.explanation,
+                    RiskScore.flags
+                ).where(
+                    RiskScore.tenant_id == tenant_id,
+                    RiskScore.entity_ueid == ueid
+                ).order_by(RiskScore.score_date.desc()).limit(1)
+                
+                score_res = await db.execute(scores_query_single)
+                score_record = score_res.fetchone()
+            except Exception as e:
+                logger.error(f"Failed dynamic calculation for {ueid}: {e}")
+                continue
+
+        if not score_record:
             continue
 
         # Формування результату за структурою v55.2
@@ -165,3 +196,35 @@ async def get_risk_scores(
         cached=True,
         calculation_time_ms=calc_time
     )
+
+
+@router.get("/insight/{ueid}")
+async def get_risk_insight(
+    ueid: str,
+    db: AsyncSession = Depends(get_db),
+    tenant_id: str = Depends(get_tenant_id),
+    _ = Depends(PermissionChecker([READ_COMPANIES_PERMISSION]))
+):
+    """Отримати інтелектуальний висновок AI для конкретної сутності."""
+    # 1. Отримуємо дані компанії
+    company_res = await db.execute(select(Company).where(Company.ueid == ueid, Company.tenant_id == tenant_id))
+    company = company_res.scalar_one_or_none()
+    if not company:
+        raise HTTPException(status_code=404, detail="Компанію не знайдено")
+
+    # 2. Обчислюємо/Отримуємо ризик через Elite Engine
+    engine = EliteRiskEngine(db)
+    risk_data = await engine.compute_full_risk(ueid, tenant_id)
+
+    # 3. Генеруємо інсайт
+    insight = await InsightEngine.generate_company_summary(
+        company_data={"name": company.name, "edrpou": company.edrpou, "ueid": ueid},
+        risk_data=risk_data,
+        anomalies=[] # У реальності підтягнути з БД
+    )
+
+    return {
+        "ueid": ueid,
+        "insight": insight,
+        "generated_at": datetime.now(UTC)
+    }

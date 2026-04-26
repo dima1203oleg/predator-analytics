@@ -8,6 +8,8 @@
 
 > [!IMPORTANT]
 > **CANONICAL SPECIFICATION**: Усі технічні рішення мають відповідати [PREDATOR_ELITE_SPEC_v56.5.md](file:///Users/Shared/Predator_60/docs/PREDATOR_ELITE_SPEC_v56.5.md).
+>
+> **ПОТОЧНИЙ СТАН**: MVP ELITE впроваджено (Risk Engine v56.5, Insight Engine, Ingestion v55.1).
 
 > [!IMPORTANT]
 > **ZERO-LOCAL-DEPLOYMENT RULE**: На MacBook (локальна машина розробника) ЗАБОРОНЕНО розгортати будь-які важкі сервіси, бази даних або кластери K8s. MacBook використовується ВИКЛЮЧНО як термінал для написання коду (IDE) та керування через Web UI. Усе навантаження (Backend, DBs, AI) має розгортатися на **iMac** (Compute Node) або **NVIDIA Server** (Cloud Fallback).
