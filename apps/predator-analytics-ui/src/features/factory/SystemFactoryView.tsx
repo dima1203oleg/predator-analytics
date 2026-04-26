@@ -61,7 +61,7 @@ export default function SystemFactoryView() {
     {
       id: 'msg-0',
       sender: 'system',
-      text: 'ЗАВОД PREDATOR v60.0-ELITE ІНІЦІАЛІЗОВАНО. Очікую команд для управління K8s кластером, архітектурою або CI/CD.',
+      text: 'СУВЕРЕННИЙ ЗАВОД PREDATOR v61.0-ELITE ІНІЦІАЛІЗОВАНО. Очікую директив для оркестрації K8s кластера, нейромережевого вдосконалення коду та CI/CD.',
       timestamp: new Date()
     }
   ]);
@@ -782,7 +782,7 @@ export default function SystemFactoryView() {
               </div>
               <div>
                 <div className="text-[10px] font-black uppercase tracking-widest text-rose-500">FACTORY ELITE</div>
-                <div className="text-[8px] text-slate-500 font-mono uppercase tracking-tighter">v60.0-PROD</div>
+                <div className="text-[8px] text-slate-500 font-mono uppercase tracking-tighter">v61.0-ELITE</div>
               </div>
             </div>
             <div className="h-px bg-rose-500/20 my-2" />
