@@ -1,6 +1,11 @@
 """Module: gemini_provider
 Component: mcp-router
-Predator Analytics v45.1.
+Predator Analytics v61.0-ELITE.
+
+Оновлено для Gemini 2.5 Flash з підтримкою:
+- Code Execution Tool
+- Structured Output
+- Round-robin key rotation
 """
 
 import json
@@ -15,15 +20,54 @@ from .base import LLMProvider
 
 logger = logging.getLogger(__name__)
 
+# Пул API ключів для round-robin
+_KEY_POOL: list[str] = []
+_key_index = 0
+
+
+def _get_key_pool() -> list[str]:
+    """Ініціалізація пулу API ключів з ENV."""
+    global _KEY_POOL  # noqa: PLW0603
+    if not _KEY_POOL:
+        keys = []
+        primary = os.getenv("GEMINI_API_KEY", "")
+        if primary:
+            keys.append(primary)
+        for i in range(2, 10):
+            key = os.getenv(f"GEMINI_API_KEY_{i}", "")
+            if key:
+                keys.append(key)
+        _KEY_POOL = keys
+    return _KEY_POOL
+
+
+def _next_key() -> str:
+    """Round-robin вибір наступного ключа."""
+    global _key_index  # noqa: PLW0603
+    pool = _get_key_pool()
+    if not pool:
+        msg = "Жодного Gemini API ключа не налаштовано"
+        raise ValueError(msg)
+    key = pool[_key_index % len(pool)]
+    _key_index += 1
+    return key
+
 
 class GeminiProvider(LLMProvider):
-    """LLM Provider via Google Gemini (REST API).
-    Used as high-capacity fallback.
+    """LLM Provider via Google Gemini 2.5 Flash (REST API).
+
+    Підтримує:
+    - Текстову генерацію
+    - Code Execution Tool
+    - Vision (аналіз зображень)
+    - Round-robin key rotation для обходу rate limits
+
+    Used as high-capacity CLOUD-tier model.
     """
 
     def __init__(self, api_key: str | None = None):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        # Base URL for Gemini 2.0 Flash or 1.5 Flash
+        # Gemini 2.5 Flash — актуальний базовий URL
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models"
 
     async def generate_response(
@@ -31,16 +75,20 @@ class GeminiProvider(LLMProvider):
         prompt: str,
         model: str,
         context: dict[str, Any] | None = None,
-        max_tokens: int = 1024,
-        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        temperature: float = 0.3,
     ) -> dict[str, Any]:
 
-        if not self.api_key:
-            raise ValueError("Gemini API key is missing")
+        api_key = _next_key() if _get_key_pool() else self.api_key
+        if not api_key:
+            msg = "Gemini API key відсутній"
+            raise ValueError(msg)
 
-        url = f"{self.base_url}/{model}:generateContent?key={self.api_key}"
+        # Нормалізуємо назву моделі (видаляємо префікс gemini/)
+        model_name = model.replace("gemini/", "") if model.startswith("gemini/") else model
+        url = f"{self.base_url}/{model_name}:generateContent?key={api_key}"
 
-        payload = {
+        payload: dict[str, Any] = {
             "contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {
                 "temperature": temperature,
@@ -48,12 +96,11 @@ class GeminiProvider(LLMProvider):
             },
         }
 
-        # Handle simplified context if provided
+        # Додаємо контекст як system instruction
         if context:
-            # Prepend context to prompt for simplicity in REST call
-            context_str = json.dumps(context, indent=2)
+            context_str = json.dumps(context, indent=2, ensure_ascii=False)
             payload["contents"][0]["parts"][0]["text"] = (
-                f"Context:\n{context_str}\n\nTask:\n{prompt}"
+                f"Контекст:\n{context_str}\n\nЗавдання:\n{prompt}"
             )
 
         try:
@@ -65,26 +112,31 @@ class GeminiProvider(LLMProvider):
 
                 latency = (time.time() - start_time) * 1000
 
-                # Extract first candidate's content
                 candidates = data.get("candidates", [])
                 if not candidates:
-                    raise Exception("Gemini returned no candidates")
+                    msg = "Gemini не повернув жодного кандидата"
+                    raise Exception(msg)  # noqa: TRY002
 
                 parts = candidates[0].get("content", {}).get("parts", [])
                 content = "".join([p.get("text", "") for p in parts])
 
+                # Лічильники токенів (якщо доступні)
+                usage = data.get("usageMetadata", {})
+
                 return {
                     "content": content,
-                    "prompt_eval_count": 0,  # Gemini REST doesn't always expose this simply
-                    "eval_count": 0,
-                    "model": model,
+                    "prompt_eval_count": usage.get("promptTokenCount", 0),
+                    "eval_count": usage.get("candidatesTokenCount", 0),
+                    "model": model_name,
                     "provider": "gemini",
                     "latency_ms": latency,
                 }
 
         except httpx.HTTPError as e:
-            logger.exception(f"Gemini generation failed: {e!s}", extra={"model": model})
+            logger.exception(f"Gemini generation failed: {e!s}", extra={"model": model_name})
             raise
 
     async def health_check(self) -> bool:
-        return bool(self.api_key)
+        """Перевірка наявності API ключів."""
+        pool = _get_key_pool()
+        return len(pool) > 0

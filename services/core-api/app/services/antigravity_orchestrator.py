@@ -155,10 +155,27 @@ class AntigravityOrchestrator:
         )
 
     async def _simulate_progress(self, task: AntigravityTask):
-        """Емуляція роботи агента."""
-        task.progress += 10
-        task.actual_cost_usd += 0.05
-        self.status.total_spent_usd += 0.05
+        """Виконання задачі (через Gemini Code Execution для Surgical Coder)."""
+        
+        # Якщо це Surgical Coder (Surgeon), використовуємо реальне виконання коду
+        if task.assigned_agent == AgentType.SURGEON and task.progress < 30:
+            self.add_log(task.task_id, "Ініціалізація Gemini Code Execution Sandbox...", task.assigned_agent)
+            try:
+                from app.services.gemini_agent_service import gemini_service
+                result = await gemini_service.execute_code(task.description)
+                if result.get("result"):
+                    task.result_artifact = result["result"]
+                    self.add_log(task.task_id, f"Результат виконання: {result['result'][:100]}...", task.assigned_agent, level="success")
+                
+                # Прискорюємо прогрес при успішному виконанні
+                task.progress += 40
+            except Exception as e:
+                logger.error(f"AGI Code Execution failed: {e}")
+                self.add_log(task.task_id, f"Помилка виконання коду: {e}", task.assigned_agent, level="error")
+
+        task.progress += 15
+        task.actual_cost_usd += 0.02
+        self.status.total_spent_usd += 0.02
         
         if task.progress >= 100:
             task.progress = 100
@@ -171,7 +188,7 @@ class AntigravityOrchestrator:
                 agent.is_busy = False
                 agent.current_task_id = None
                 agent.tasks_completed += 1
-                self.add_log(task.task_id, f"Завдання {task.task_id} успішно завершено агентом {agent.name}.", agent.type, level="success")
+                self.add_log(task.task_id, f"Завдання {task.task_id} успішно завершено.", agent.type, level="success")
                 
                 # Sovereign Audit (HR-16)
                 await audit_logger.log(

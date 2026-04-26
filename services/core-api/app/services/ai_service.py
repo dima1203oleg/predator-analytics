@@ -13,6 +13,7 @@ from typing import Any
 import httpx
 
 from app.config import get_settings
+from app.services.gemini_agent_service import gemini_service
 from predator_common.circuit_breaker import CircuitBreaker
 from predator_common.logging import get_logger
 
@@ -42,8 +43,16 @@ class AIService:
         model: str | None = None,
         temperature: float = 0.2,
         max_tokens: int = 4096,
+        route: LLMRoute = LLMRoute.HYBRID,
     ) -> str:
-        """Виклик LiteLLM для отримання відповіді з Circuit Breaker."""
+        """Виклик LiteLLM або Gemini для отримання відповіді з Circuit Breaker."""
+        
+        # CLOUD routing через Gemini SDK
+        if route == LLMRoute.CLOUD:
+            prompt = "\n".join([f"{m['role']}: {m['content']}" for m in messages])
+            result = await gemini_service.generate(prompt)
+            return result["content"]
+
         target_model = model or settings.OLLAMA_MODEL
 
         if not _llm_breaker.allow_request():
@@ -180,14 +189,23 @@ class AIService:
 
     @staticmethod
     async def get_embeddings(text: str, model: str | None = None) -> list[float]:
-        """Отримання векторних ембедінгів для тексту."""
-        embed_model = model or f"ollama/{settings.OLLAMA_EMBEDDING_MODEL}"
-        fallback_dim = 768  # nomic-embed-text default
+        """Отримання векторних ембедінгів для тексту (пріоритет: Gemini 004)."""
+        fallback_dim = 768
 
         if not _embedding_breaker.allow_request():
-            logger.warning("Embedding Circuit Breaker OPEN")
             return [0.0] * fallback_dim
 
+        # 1. Пріоритет — Gemini Enterprise (768-dim)
+        try:
+            vector = await gemini_service.embed(text)
+            if any(vector):  # Якщо не нульовий
+                _embedding_breaker.record_success()
+                return vector
+        except Exception as e:
+            logger.warning(f"Gemini embedding failed, falling back to LiteLLM: {e}")
+
+        # 2. Fallback — LiteLLM / Ollama
+        embed_model = model or f"ollama/{settings.OLLAMA_EMBEDDING_MODEL}"
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
@@ -204,5 +222,5 @@ class AIService:
                 return [0.0] * fallback_dim
         except Exception as e:
             _embedding_breaker.record_failure()
-            logger.warning(f"Embedding error: {e!s}")
+            logger.warning(f"Embedding fallback error: {e!s}")
             return [0.0] * fallback_dim

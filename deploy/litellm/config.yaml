@@ -1,8 +1,8 @@
 # ================================================================
-# Ultra-Router для Google Antigravity Coder
-# PREDATOR Analytics v55.1 — Тільки безплатні моделі 2026
+# Ultra-Router для PREDATOR Analytics v61.0-ELITE
+# Оновлено: 2026-04-27 — Gemini 2.5 Flash (Free Tier)
 # ================================================================
-# Провайдери: DeepSeek, Groq, Gemini, Together AI, Mistral
+# Провайдери: Gemini (ОСНОВНИЙ), DeepSeek, Groq, Mistral
 # Стратегія: least-busy з fallback між групами
 # ================================================================
 
@@ -12,30 +12,22 @@ model_list:
   # ==============================================================
   - model_name: ultra-router-coding
     litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY}
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY_2}
+  - model_name: ultra-router-coding
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY_3}
+
+  - model_name: ultra-router-coding
+    litellm_params:
       model: mistral/codestral-latest
       api_key: ${MISTRAL_API_KEY}
       api_base: https://api.mistral.ai/v1
-  - model_name: ultra-router-coding
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_2}
-      api_base: https://api.mistral.ai/v1
-  - model_name: ultra-router-coding
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_3}
-      api_base: https://api.mistral.ai/v1
-  - model_name: ultra-router-coding
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_4}
-      api_base: https://api.mistral.ai/v1
-  - model_name: ultra-router-coding
-    litellm_params:
-      model: mistral/codestral-latest
-      api_key: ${MISTRAL_API_KEY_5}
-      api_base: https://api.mistral.ai/v1
-
   - model_name: ultra-router-coding
     litellm_params:
       model: deepseek/deepseek-coder
@@ -47,28 +39,16 @@ model_list:
   # ==============================================================
   - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-1.5-flash
+      model: gemini/gemini-2.5-flash
       api_key: ${GEMINI_API_KEY}
   - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-1.5-flash
+      model: gemini/gemini-2.5-flash
       api_key: ${GEMINI_API_KEY_2}
   - model_name: ultra-router-fast
     litellm_params:
-      model: gemini/gemini-1.5-flash
+      model: gemini/gemini-2.5-flash
       api_key: ${GEMINI_API_KEY_3}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: gemini/gemini-1.5-flash
-      api_key: ${GEMINI_API_KEY_4}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: gemini/gemini-1.5-flash
-      api_key: ${GEMINI_API_KEY_5}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: gemini/gemini-1.5-flash
-      api_key: ${GEMINI_API_KEY_6}
 
   - model_name: ultra-router-fast
     litellm_params:
@@ -82,38 +62,18 @@ model_list:
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: ${GROQ_API_KEY_3}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_4}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_5}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_6}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_7}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_8}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_9}
-  - model_name: ultra-router-fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: ${GROQ_API_KEY_10}
 
   # ==============================================================
   # REASONING — Глибокий аналіз та міркування
   # ==============================================================
+  - model_name: ultra-router-reasoning
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY}
+  - model_name: ultra-router-reasoning
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY_2}
   - model_name: ultra-router-reasoning
     litellm_params:
       model: together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo
@@ -121,11 +81,27 @@ model_list:
       api_base: https://api.together.xyz/v1
 
   # ==============================================================
-  # CHAT — Загальний чат
+  # CHAT — Загальний чат / AI Copilot
   # ==============================================================
   - model_name: ultra-router-chat
     litellm_params:
-      model: gemini/gemini-1.5-flash
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY}
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY_2}
+  - model_name: ultra-router-chat
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: ${GEMINI_API_KEY_3}
+
+  # ==============================================================
+  # EMBEDDING — Векторні ембедінги для Qdrant
+  # ==============================================================
+  - model_name: ultra-router-embedding
+    litellm_params:
+      model: gemini/text-embedding-004
       api_key: ${GEMINI_API_KEY}
 
 # ================================================================
@@ -141,12 +117,12 @@ litellm_settings:
   num_retries: 5
   request_timeout: 45
   fallbacks_verbose: false
-  
-  # ВИМКНЕНО БАЗУ ДАНИХ ТА ЛОГУВАННЯ (Fixing 400 error)
+
+  # ВИМКНЕНО БАЗУ ДАНИХ ТА ЛОГУВАННЯ
   success_callback: []
   failure_callback: []
   metadata_callback: []
-  
+
   fallbacks:
     - {"ultra-router-coding": ["ultra-router-fast"]}
     - {"ultra-router-fast": ["ultra-router-coding"]}

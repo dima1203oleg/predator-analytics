@@ -77,16 +77,16 @@ import type {
 
 const INITIAL_LLM_MODE: LlmModeState = {
   active: 'API',
-  active_model: 'glm-5.1',
-  active_provider: 'zai',
+  active_model: 'gemini-2.5-flash',
+  active_provider: 'gemini',
   active_cascade_level: 1,
   tri_state_mode: 'HYBRID',
   auto_switch_enabled: true,
   cascade: [
-    { id: 'l1-architect', name: 'Lead Architect (GLM-5.1)', provider: 'zai', role: 'lead_architect', online: true, latency_ms: 1200, model_tag: 'zai/glm-5.1' },
-    { id: 'l1-gemini', name: 'Cloud Pool (Gemini)', provider: 'gemini', role: 'primary', online: true, latency_ms: 450, model_tag: 'gemini-1.5-pro' },
+    { id: 'l1-gemini-flash', name: 'Gemini 2.5 Flash (Free Tier)', provider: 'gemini', role: 'lead_architect', online: true, latency_ms: 350, model_tag: 'gemini-2.5-flash' },
+    { id: 'l1-gemini-code', name: 'Gemini Code Execution', provider: 'gemini', role: 'primary', online: true, latency_ms: 800, model_tag: 'gemini-2.5-flash+code' },
     { id: 'l1-groq', name: 'Cloud Pool (Groq)', provider: 'groq', role: 'fallback_fast', online: true, latency_ms: 120, model_tag: 'llama3-70b' },
-    { id: 'l2-azure', name: 'Azure Enterprise', provider: 'azure', role: 'fallback_azure', online: true, latency_ms: 320, model_tag: 'gpt-4o' },
+    { id: 'l2-mistral', name: 'Codestral (Mistral)', provider: 'zai', role: 'fallback_azure', online: true, latency_ms: 400, model_tag: 'codestral-latest' },
     { id: 'l3-sovereign', name: 'Logic Specialist (Nemotron)', provider: 'ollama', role: 'fallback_local', online: true, latency_ms: 65, model_tag: 'nemotron-cascade-2' },
     { id: 'l3-coder', name: 'Surgical Coder (Qwen3)', provider: 'ollama', role: 'surgical_coder', online: true, latency_ms: 42, model_tag: 'qwen3-coder-next' },
     { id: 'l4-parser', name: 'Light Parser (Gemma4)', provider: 'ollama', role: 'light_parser', online: true, latency_ms: 15, model_tag: 'gemma4:e2b' },
@@ -150,8 +150,12 @@ const CODER_MODELS: CoderModel[] = [
   { id: 'mistral-sm-3.2',  name: 'Mistral Small 3.2 (24B)', source: 'ollama', tag: 'mistral-small:24b', specialty: 'Tool Use / Stability', vram_gb: 14.5, online: true, context_k: 32 },
   { id: 'codestral-v0.1',  name: 'Codestral (22B)', source: 'ollama', tag: 'codestral', specialty: 'FIM / Python Master', vram_gb: 14.0, online: true, context_k: 32 },
   
-  // ── Free / Partial Free API ──
-  { id: 'gemini-2-flash',  name: 'Gemini 2.0 Flash', source: 'api', tag: 'gemini-2.0-flash-exp', specialty: 'Long Context / Vision API', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 1048 },
+  // ── Gemini Enterprise Agent Platform (Free Tier) ──
+  { id: 'gemini-2.5-flash',   name: '⚡ Gemini 2.5 Flash', source: 'api', tag: 'gemini-2.5-flash', specialty: 'Reasoning + Code + Vision (1M context)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 1048 },
+  { id: 'gemini-2.5-code',    name: '🧪 Gemini Code Execution', source: 'api', tag: 'gemini-2.5-flash+code', specialty: 'Python Sandbox (виконання коду в хмарі)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 1048 },
+  { id: 'gemini-embed',       name: '🧲 Gemini Embeddings', source: 'api', tag: 'text-embedding-004', specialty: 'Семантичний пошук (768-dim)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 2 },
+
+  // ── Інші Free API ──
   { id: 'groq-llama3.1',   name: 'Llama 3.1 70B (Groq)', source: 'api', tag: 'llama-3.1-70b-versatile', specialty: 'Ultra-Fast Inference', online: true, cost_per_1k: 'FREE (Beta)', context_k: 128 },
   { id: 'hf-all-models',   name: 'Hugging Face API', source: 'api', tag: 'mistralai/Mistral-7B-v0.3', specialty: 'Research / NLP', online: true, cost_per_1k: 'FREE', context_k: 32 },
 ];

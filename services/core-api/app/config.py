@@ -129,6 +129,15 @@ class Settings(BaseSettings):
     COPILOT_STREAM_BUFFER: int = 100
     MLFLOW_TRACKING_URL: str = "http://mlflow-internal.predator.svc:5000"
 
+    # Gemini Enterprise Agent Platform (Free Tier)
+    GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY_2: str = ""
+    GEMINI_API_KEY_3: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_EMBEDDING_MODEL: str = "text-embedding-004"
+    GOOGLE_CLOUD_PROJECT: str = ""
+    GOOGLE_CLOUD_LOCATION: str = "global"
+
     # Modular Services
     GRAPH_SERVICE_URL: str = "http://localhost:8001"
     INGESTION_SERVICE_URL: str = "http://localhost:9100"

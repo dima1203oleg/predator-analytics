@@ -45,15 +45,8 @@ const ttsClient = new textToSpeech.TextToSpeechClient(googleOptions);
 // Remote Ollama Configuration (NVIDIA Server)
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
 
-// Gemini Keys for Stealth Routing
+// Gemini Keys for Stealth Routing (v61.0-ELITE)
 const GEMINI_KEYS = [
-  process.env.GEMINI_KEY_1,
-  process.env.GEMINI_KEY_2,
-  process.env.GEMINI_KEY_3,
-  process.env.GEMINI_KEY_4,
-  process.env.GEMINI_KEY_5,
-  process.env.GEMINI_KEY_6,
-  process.env.GEMINI_KEY_7,
   process.env.GOOGLE_CLOUD_API_KEY
 ].filter(Boolean);
 
@@ -454,8 +447,9 @@ function runTelegramPipeline(jobId, url) {
 
       // Save simulated data
       try {
-        fs.mkdirSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp', { recursive: true });
-        fs.writeFileSync('/Users/dima-mac/Documents/Predator_21/.antigravity_tmp/channel_data.json', JSON.stringify(mockMessages, null, 2));
+        const tmpDir = '/Users/Shared/Predator_60/.antigravity_tmp';
+        if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+        fs.writeFileSync(`${tmpDir}/channel_data.json`, JSON.stringify(mockMessages, null, 2));
       } catch (e) { console.warn('Could not save simulated data:', e); }
 
       job.progress.records_total = mockMessages.length;
@@ -4369,8 +4363,9 @@ async function callGeminiCLI(prompt) {
 // REST API Fallback
 async function callGeminiAPI(prompt) {
   const apiKey = getNextGeminiKey();
+  if (!apiKey) return "API Key Missing";
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
