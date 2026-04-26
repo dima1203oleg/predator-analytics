@@ -525,5 +525,6 @@ export const {
   agents,
   analytics,
   catalog,
-  intelligence
+  intelligence,
+  decisions
 } = dataService;

@@ -296,7 +296,7 @@ export const InfraTelemetryTab: React.FC = () => {
               Моніторинг Глобальної Інфраструктури
             </h2>
             <div className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 rounded-sm text-[8px] font-bold text-rose-500 tracking-tighter uppercase italic">
-              ІНДУСТРІАЛЬНИЙ_СТАН_V6
+              ІНДУСТРІАЛЬНИЙ_СТАН_V61
             </div>
           </div>
           <div className="flex items-center gap-4 text-[9px] font-mono text-white/30 tracking-widest uppercase">
@@ -307,7 +307,7 @@ export const InfraTelemetryTab: React.FC = () => {
             <span>•</span>
             <span>ІНТЕРВАЛ: 3000мс</span>
             <span>•</span>
-            <span>ВУЗОЛ_МАЙСТЕР: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_60_ELITE'}</span>
+            <span>ВУЗОЛ_МАЙСТЕР: {nodes.find(n => n.role.includes('Master'))?.node || '0xPRED_61_ELITE'}</span>
           </div>
         </div>
 

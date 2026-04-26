@@ -37,7 +37,7 @@ remote_exec() {
 # 1. Перевірка Docker/Colima
 if ! remote_exec "docker ps" > /dev/null 2>&1; then
     echo "🏗️ Запуск Docker Engine (Colima)..."
-    remote_exec "colima start --cpu 6 --memory 12 --disk 100 || true"
+    remote_exec "colima start --cpu 4 --memory 6 --disk 60 || true"
     sleep 10
 fi
 
@@ -115,7 +115,7 @@ EOF"
 echo "📝 Встановлення Helm-чартів (Neo4j, Kafka, ClickHouse, Qdrant)..."
 
 # Розблокування Keychain (якщо потрібно для Kafka)
-security unlock-keychain -p 1204 ~/Library/Keychains/login.keychain-db 2>/dev/null || true
+remote_exec "security unlock-keychain -p 1204 ~/Library/Keychains/login.keychain-db 2>/dev/null || true"
 
 remote_exec "
 # Додаємо правильні репозиторії
@@ -155,5 +155,4 @@ sleep 60
 remote_exec "kubectl get pods -n predator"
 
 echo "🏁 Всі системи (8 DBs + Core) ініціалізовано на iMac."
-echo "🔗 UI доступний за адресою: http://192.168.0.199:3030"
 echo "🔗 API доступний за адресою: http://192.168.0.199:8000/api/v1"

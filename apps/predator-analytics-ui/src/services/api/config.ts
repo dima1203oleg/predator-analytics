@@ -1,309 +1,239 @@
 /**
- * ⚙️ КОНФІГУРАЦІЯ API | PREDATOR Analytics v58.2-WRAITH
- * Гібридний протокол відмовостійкості (Failover Protocol)
- *
- * Каскад пріоритетів:
- *  1. NVIDIA Direct   → http://194.177.1.240:8000/api/v1
- *  2. NVIDIA via ZROK → https://predator.share.zrok.io/api/v1
- *  3. Суверенний Mock → http://localhost:9080/api/v1  (Always available)
+ * ⚙️ API CONFIGURATION | PREDATOR v61.0-ELITE
+ * Гібридний протокол відмовостійкості (Tri-State Routing)
+ * 
+ * Вузли:
+ *  1. SOVEREIGN (iMac) → http://192.168.0.199:8000/api/v1
+ *  2. HYBRID (NVIDIA)  → http://194.177.1.240:8000/api/v1
+ *  3. CLOUD (Colab)   → https://predator-mirror.share.zrok.io/api/v1
+ *  4. MOCK (Local)    → /api/v1
  */
 import axios, { AxiosError } from 'axios';
 
-// ─── Утиліта для безпечного читання import.meta.env ─────────────────────────
+// ─── Константи Вузлів ────────────────────────────────────────────────────────
+
+export const NODE_IDS = {
+    SOVEREIGN: 'sovereign', // iMac (...199)
+    HYBRID:    'hybrid',    // NVIDIA (...240)
+    CLOUD:     'cloud',     // Colab Mirror
+    MOCK:      'mock',      // Sandbox
+} as const;
+
+const NODE_URLS = {
+    [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
+    [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
+    [NODE_IDS.CLOUD]:     'https://predator-mirror.share.zrok.io/api/v1',
+    [NODE_IDS.MOCK]:      '/api/v1',
+};
+
+const NODE_NAMES = {
+    [NODE_IDS.SOVEREIGN]: 'SOVEREIGN_NODE_IMAC',
+    [NODE_IDS.HYBRID]:    'HYBRID_MASTER_NVIDIA',
+    [NODE_IDS.CLOUD]:     'CLOUD_MIRROR_COLAB',
+    [NODE_IDS.MOCK]:      'LOCAL_SUVEREIGN_MOCK',
+};
+
+// ─── Утиліти стану ───────────────────────────────────────────────────────────
+
 const getMetaEnv = () => {
     try { return (import.meta as any).env || {}; } catch { return {}; }
 };
 const metaEnv = getMetaEnv();
 
-// ─── Точки підключення ───────────────────────────────────────────────────────
-// ─── Точки підключення ───────────────────────────────────────────────────────
-const NVIDIA_DIRECT_URL  = 'http://194.177.1.240:8000/api/v1'; // HYBRID (Master)
-const NVIDIA_LOCAL_URL   = 'http://192.168.0.199:8000/api/v1'; // SOVEREIGN (Local Compute)
-const NVIDIA_ZROK_URL    = 'https://predator.share.zrok.io/api/v1';
-const NVIDIA_COLAB_URL   = metaEnv.VITE_COLAB_URL || 'https://predator-mirror.share.zrok.io/api/v1'; // CLOUD (Mirror)
-const MOCK_URL           = '/api/v1';
+const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as any;
 
-// Мітки для зручної ідентифікації в useBackendStatus
-export const NODE_IDS = {
-    SOVEREIGN: 'sovereign', // iMac (...199)
-    HYBRID:    'hybrid',    // NVIDIA (...240)
-    CLOUD:     'cloud',     // Colab
-    MOCK:      'mock',
-} as const;
+// ─── Визначення Активного Вузла ──────────────────────────────────────────────
 
-// ─── Визначення активного URL ────────────────────────────────────────────────
-const resolveApiUrl = (): string => {
-    // 1. Явна настройка через .env.local
+const resolveInitialUrl = (): string => {
+    if (typeof window === 'undefined') return NODE_URLS.HYBRID;
+
+    // 1. Ручний вибір користувача (пріоритет #1)
+    const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
+    if (savedNode && NODE_URLS[savedNode as keyof typeof NODE_URLS]) {
+        return NODE_URLS[savedNode as keyof typeof NODE_URLS];
+    }
+
+    // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
     
-    // 2. Якщо ми в локальній мережі (MacBook -> iMac) — пріоритет на SOVEREIGN
-    if (metaEnv.DEV) return NVIDIA_LOCAL_URL;
+    // 3. Авто-вибір для розробки (MacBook -> iMac)
+    if (metaEnv.DEV) return NODE_URLS.SOVEREIGN;
 
-    // 3. HTTPS-сторінка — завжди через ZROK (немає mixed-content)
-    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-        return NVIDIA_ZROK_URL;
-    }
-    // 4. По замовчуванню — прямий NVIDIA (HYBRID)
-    return NVIDIA_DIRECT_URL;
+    // 4. Default
+    return NODE_URLS.HYBRID;
 };
 
-export let API_BASE_URL  = resolveApiUrl();
-export const API_V45_URL = '/api/v45';
+export let API_BASE_URL = resolveInitialUrl();
 
-/** Визначає поточний вузол за URL */
+/** Визначає ID вузла за URL */
 const resolveNodeId = (url: string): string => {
-    if (url === NVIDIA_LOCAL_URL) return NODE_IDS.SOVEREIGN;
-    if (url === NVIDIA_DIRECT_URL || url === NVIDIA_ZROK_URL) return NODE_IDS.HYBRID;
-    if (url === NVIDIA_COLAB_URL) return NODE_IDS.CLOUD;
-    if (url.includes('localhost') || url.includes('9080') || url.startsWith('/api')) return NODE_IDS.MOCK;
-    return NODE_IDS.HYBRID;
+    if (url === NODE_URLS.SOVEREIGN) return NODE_IDS.SOVEREIGN;
+    if (url === NODE_URLS.HYBRID)    return NODE_IDS.HYBRID;
+    if (url === NODE_URLS.CLOUD)     return NODE_IDS.CLOUD;
+    return NODE_IDS.MOCK;
 };
 
-/** Режим "тільки правдиві дані" — без підстановки мок-відповідей */
 export const IS_TRUTH_ONLY_MODE = true;
 
-// ─── Глобальний стан вузлів ──────────────────────────────────────────────────
-type NodeStatus = 'online' | 'offline' | 'checking';
+// ─── Глобальний Стан (для useBackendStatus) ──────────────────────────────────
+
 interface BackendNodeInternal {
     id: string;
     name: string;
     url: string;
     active: boolean;
-    status: NodeStatus;
+    status: 'online' | 'offline' | 'checking';
     mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' | 'MOCK';
 }
 
-const ALL_NODES: BackendNodeInternal[] = [
-    { id: NODE_IDS.SOVEREIGN, name: 'SOVEREIGN_NODE_IMAC', url: NVIDIA_LOCAL_URL, active: false, status: 'checking', mode: 'SOVEREIGN' },
-    { id: NODE_IDS.HYBRID,    name: 'HYBRID_MASTER_NVIDIA', url: NVIDIA_DIRECT_URL, active: false, status: 'checking', mode: 'HYBRID' },
-    { id: NODE_IDS.CLOUD,     name: 'CLOUD_MIRROR_COLAB',  url: NVIDIA_COLAB_URL,  active: false, status: 'checking', mode: 'CLOUD' },
-    { id: NODE_IDS.MOCK,      name: 'LOCAL_SUVEREIGN_MOCK', url: MOCK_URL,          active: false, status: 'checking', mode: 'MOCK' },
-];
-
-const getGlobalWindow = () => window as Window & {
-    __BACKEND_OFFLINE_MODE__?: boolean;
-    __CURRENT_BACKEND__?: string;
-    __BACKEND_NODES__?: BackendNodeInternal[];
-};
-
-// ─── Ініціалізація глобального стану вузлів ──────────────────────────────────
-const initNodes = () => {
+const initGlobalState = () => {
     if (typeof window === 'undefined') return;
     const gw = getGlobalWindow();
-    const activeNodeId = resolveNodeId(API_BASE_URL);
-    gw.__BACKEND_NODES__ = ALL_NODES.map(n => ({
-        ...n,
-        active: n.id === activeNodeId,
-        status: n.id === activeNodeId ? 'online' : 'checking',
+    const activeId = resolveNodeId(API_BASE_URL);
+
+    gw.__BACKEND_NODES__ = Object.values(NODE_IDS).map(id => ({
+        id,
+        name: NODE_NAMES[id],
+        url: NODE_URLS[id],
+        active: id === activeId,
+        status: id === activeId ? 'online' : 'checking',
+        mode: id.toUpperCase() as any
     }));
+
     gw.__CURRENT_BACKEND__ = API_BASE_URL;
+    gw.__BACKEND_OFFLINE_MODE__ = activeId === NODE_IDS.MOCK;
 };
 
-// ─── Функція відправки подій про зміну стану ─────────────────────────────────
-const dispatchStatusEvent = (isOffline: boolean) => {
-    if (typeof window === 'undefined') return;
-    const gw = getGlobalWindow();
-    window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
-        detail: { isOffline, nodes: gw.__BACKEND_NODES__ }
-    }));
-    window.dispatchEvent(new CustomEvent(
-        isOffline ? 'predator-backend-offline' : 'predator-backend-online'
-    ));
-};
+// ─── Публічні Методи Управління ──────────────────────────────────────────────
 
-// ─── Перемикання на вузол ─────────────────────────────────────────────────────
-export const switchToNode = (nodeId: string, targetUrl: string) => {
-    const gw = getGlobalWindow();
+export const switchToNode = (nodeId: string) => {
+    const targetUrl = NODE_URLS[nodeId as keyof typeof NODE_URLS];
+    if (!targetUrl) return;
+
+    localStorage.setItem('PREDATOR_ACTIVE_NODE', nodeId);
+    
+    // Оновлюємо поточний стан
     API_BASE_URL = targetUrl;
     apiClient.defaults.baseURL = targetUrl;
+    
+    const gw = getGlobalWindow();
     gw.__CURRENT_BACKEND__ = targetUrl;
-
+    gw.__BACKEND_OFFLINE_MODE__ = nodeId === NODE_IDS.MOCK;
+    
     if (gw.__BACKEND_NODES__) {
-        gw.__BACKEND_NODES__ = gw.__BACKEND_NODES__.map(n => ({
+        gw.__BACKEND_NODES__ = gw.__BACKEND_NODES__.map((n: any) => ({
             ...n,
             active: n.id === nodeId,
-            status: n.id === nodeId ? 'online' : (n.status === 'online' && n.id !== nodeId ? 'offline' : n.status),
+            status: n.id === nodeId ? 'online' : 'checking'
         }));
     }
 
-    const isOffline = nodeId === NODE_IDS.MOCK;
-    const wasOffline = gw.__BACKEND_OFFLINE_MODE__;
-    gw.__BACKEND_OFFLINE_MODE__ = isOffline;
+    // Повідомляємо систему
+    window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
+        detail: { isOffline: nodeId === NODE_IDS.MOCK, nodes: gw.__BACKEND_NODES__ }
+    }));
 
-    if (wasOffline !== isOffline) {
-        dispatchStatusEvent(isOffline);
-    }
-
-    console.info(`[PREDATOR] Активний вузол: ${nodeId.toUpperCase()} → ${targetUrl}`);
+    console.info(`[PREDATOR] Перемикання на вузол: ${nodeId.toUpperCase()} | ${targetUrl}`);
+    
+    // Перезавантаження для чистої ініціалізації всіх сервісів
+    window.location.reload();
 };
 
-// ─── Автоматичне перемикання при збої ────────────────────────────────────────
-let _failoverAttempts = 0;
-const MAX_FAILOVER_ATTEMPTS = 3;
+// ─── Axios Клієнт ────────────────────────────────────────────────────────────
 
-const triggerFailover = async () => {
-    if (typeof window === 'undefined') return;
-    const gw = getGlobalWindow();
-    const currentId = resolveNodeId(API_BASE_URL);
+export const apiClient = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 15000,
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Client-Version': '61.0.0-ELITE',
+    },
+});
 
-    _failoverAttempts++;
+// Alias for backward compatibility
+export const v45Client = apiClient;
+export const API_V45_URL = API_BASE_URL;
 
-    if (_failoverAttempts > MAX_FAILOVER_ATTEMPTS) {
-        // Кінцева точка — Суверенний Mock (завжди доступний)
-        if (currentId !== NODE_IDS.MOCK) {
-            console.warn('[PREDATOR] 🚨 Всі зовнішні вузли недоступні. Активація СУВЕРЕННОГО MOCK API...');
-            switchToNode(NODE_IDS.MOCK, MOCK_URL);
-        }
-        return;
-    }
-
-    // Каскад: SOVEREIGN (iMac) → HYBRID (NVIDIA) → CLOUD (Colab) → Mock
-    if (currentId === NODE_IDS.SOVEREIGN) {
-        console.warn('[PREDATOR] ⚠️ Sovereign Node (iMac) недоступний. Спроба HYBRID (NVIDIA)...');
-        try {
-            await axios.get(`${NVIDIA_DIRECT_URL.replace('/api/v1', '')}/health`, { timeout: 4000 });
-            switchToNode(NODE_IDS.HYBRID, NVIDIA_DIRECT_URL);
-            _failoverAttempts = 0;
-        } catch {
-            await triggerFailover(); // Перейти до наступного у каскаді
-        }
-    } else if (currentId === NODE_IDS.HYBRID) {
-        console.warn('[PREDATOR] ⚠️ Hybrid Node (NVIDIA) недоступний. Перемикання на CLOUD MIRROR (Colab)...');
-        try {
-            await axios.get(`${NVIDIA_COLAB_URL.replace('/api/v1', '')}/health`, { timeout: 4000 });
-            switchToNode(NODE_IDS.CLOUD, NVIDIA_COLAB_URL);
-            _failoverAttempts = 0;
-        } catch {
-            await triggerFailover();
-        }
-    } else if (currentId === NODE_IDS.CLOUD) {
-        console.warn('[PREDATOR] ⚠️ Cloud Mirror (Colab) недоступний. Активація Mock...');
-        switchToNode(NODE_IDS.MOCK, MOCK_URL);
-    }
-};
-
-// ─── Успішна відповідь — фіксує вузол як онлайн ──────────────────────────────
-const onSuccess = (response: any) => {
-    const gw = getGlobalWindow();
-    _failoverAttempts = 0;
-    const currentId = resolveNodeId(API_BASE_URL);
-
-    if (gw.__BACKEND_NODES__) {
-        gw.__BACKEND_NODES__ = gw.__BACKEND_NODES__.map(n => ({
-            ...n,
-            active: n.id === currentId,
-            status: n.id === currentId ? 'online' : n.status,
-        }));
-    }
-
-    if (gw.__BACKEND_OFFLINE_MODE__ !== false) {
-        gw.__BACKEND_OFFLINE_MODE__ = false;
-        dispatchStatusEvent(false);
-    }
-
-    return response;
-};
-
-// ─── Перехоплювач помилок ────────────────────────────────────────────────────
-const onError = async (error: AxiosError) => {
-    const url   = error.config?.url ?? 'unknown';
-    const status = error.response?.status;
-
-    if (!error.response || (status && status >= 500)) {
-        console.error(`[PREDATOR] Мережева/серверна помилка: ${error.config?.method?.toUpperCase()} ${url}`, { status, message: error.message });
-        await triggerFailover();
-    } else if (status === 401) {
-        console.warn(`[PREDATOR] 401 Unauthorized: ${url} — очищення токену`);
-        sessionStorage.removeItem('predator_auth_token');
-    } else if (status === 403) {
-        console.warn(`[PREDATOR] 403 Forbidden: ${url}`);
-    } else if (status === 404) {
-        console.warn(`[PREDATOR] 404 Not Found: ${url}`);
-    } else {
-        console.warn(`[PREDATOR] HTTP ${status}: ${url}`, error.message);
-    }
-
-    return Promise.reject(error);
-};
-
-// ─── Auth Interceptor ─────────────────────────────────────────────────────────
-const authInterceptor = (config: any) => {
+apiClient.interceptors.request.use((config) => {
     const token = sessionStorage.getItem('predator_auth_token');
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
+});
+
+apiClient.interceptors.response.use(
+    (response) => {
+        const gw = getGlobalWindow();
+        const activeId = resolveNodeId(API_BASE_URL);
+        if (gw.__BACKEND_NODES__) {
+            const node = gw.__BACKEND_NODES__.find((n: any) => n.id === activeId);
+            if (node) node.status = 'online';
+        }
+        return response;
+    },
+    async (error: AxiosError) => {
+        const status = error.response?.status;
+        
+        // Автоматична відмовостійкість (Failover)
+        if (!error.response || (status && status >= 500)) {
+            console.error(`[PREDATOR] Помилка вузла ${API_BASE_URL}. Запуск Failover...`);
+            await triggerFailover();
+        }
+
+        if (status === 401) sessionStorage.removeItem('predator_auth_token');
+        return Promise.reject(error);
+    }
+);
+
+// ─── Логіка Failover (Каскадна Відмовостійкість) ─────────────────────────────
+
+const triggerFailover = async () => {
+    const currentId = resolveNodeId(API_BASE_URL);
+    
+    const cascade = [
+        NODE_IDS.SOVEREIGN,
+        NODE_IDS.HYBRID,
+        NODE_IDS.CLOUD,
+        NODE_IDS.MOCK
+    ];
+
+    const currentIndex = cascade.indexOf(currentId as any);
+    const nextNodeId = cascade[currentIndex + 1];
+
+    if (nextNodeId) {
+        console.warn(`[PREDATOR] Failover: ${currentId} ➔ ${nextNodeId}`);
+        switchToNode(nextNodeId);
+    }
 };
 
-// ─── Axios клієнти ───────────────────────────────────────────────────────────
-export const apiClient = axios.create({
-    baseURL: API_BASE_URL,
-    timeout: 10_000,
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Version': '56.5.0-WRAITH',
-    },
-});
+// ─── Watchdog (Синхронізація Стану) ──────────────────────────────────────────
 
-export const v45Client = axios.create({
-    baseURL: API_V45_URL,
-    timeout: 10_000,
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Version': '56.5.0-WRAITH',
-    },
-});
-
-// Підключення перехоплювачів
-apiClient.interceptors.request.use(authInterceptor);
-apiClient.interceptors.response.use(onSuccess, onError);
-
-v45Client.interceptors.request.use(authInterceptor);
-v45Client.interceptors.response.use(onSuccess, onError);
-
-// ─── Watchdog: автоматичне відновлення до NVIDIA ─────────────────────────────
 const startWatchdog = () => {
     if (typeof window === 'undefined') return;
 
     setInterval(async () => {
         const gw = getGlobalWindow();
-        const currentId = resolveNodeId(API_BASE_URL);
+        if (!gw.__BACKEND_NODES__) return;
 
-        // Якщо не на NVIDIA — перевіряємо чи він знову доступний
-        if (currentId !== NODE_IDS.NVIDIA) {
+        for (const node of gw.__BACKEND_NODES__) {
             try {
-                await axios.get(`http://194.177.1.240:8000/health`, { timeout: 3000 });
-                console.info('[PREDATOR] 🚀 NVIDIA Master відновлено. Failback...');
-                switchToNode(NODE_IDS.NVIDIA, NVIDIA_DIRECT_URL);
-                _failoverAttempts = 0;
+                // Пряма перевірка здоров'я вузла
+                const healthUrl = node.url.replace('/api/v1', '/health');
+                await axios.get(healthUrl, { timeout: 3000 });
+                node.status = 'online';
             } catch {
-                // NVIDIA все ще недоступний — лишаємось на поточному вузлі
+                node.status = node.active ? 'checking' : 'offline';
             }
         }
 
-        // Оновлення статусу поточних вузлів
-        if (gw.__BACKEND_NODES__) {
-            for (const node of gw.__BACKEND_NODES__) {
-                try {
-                    const healthUrl = node.url.replace('/api/v1', '/health');
-                    await axios.get(healthUrl, { timeout: 2000 });
-                    node.status = 'online';
-                } catch {
-                    node.status = node.active ? 'checking' : 'offline';
-                }
-            }
-        }
-
-        // Публікація оновленого стану
         window.dispatchEvent(new CustomEvent('predator-backend-status-change', {
-            detail: {
-                isOffline: gw.__BACKEND_OFFLINE_MODE__,
-                nodes: gw.__BACKEND_NODES__,
-            }
+            detail: { isOffline: gw.__BACKEND_OFFLINE_MODE__, nodes: gw.__BACKEND_NODES__ }
         }));
-    }, 15_000);
+    }, 20000);
 };
 
-// ─── Ініціалізація при завантаженні ─────────────────────────────────────────
+// ─── Ініціалізація ───────────────────────────────────────────────────────────
+
 if (typeof window !== 'undefined') {
-    initNodes();
+    initGlobalState();
     startWatchdog();
 }

@@ -1,5 +1,5 @@
 /**
- * LoginScreen — SOVEREIGN NEXUS TERMINAL v60.5-ELITE
+ * LoginScreen — SOVEREIGN NEXUS TERMINAL v61.0-ELITE
  * Екран авторизації глобальної розвідувальної платформи.
  * Атмосфера: суверенітет, абсолютний контроль, міць WRAITH.
  */
@@ -202,7 +202,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         >
                             <div className="w-2.5 h-2.5 bg-rose-600 rounded-full shadow-[0_0_20px_#E11D48] animate-pulse" />
                             <span className="text-[11px] font-black text-white tracking-[0.6em] uppercase drop-shadow-[0_0_8px_rgba(225,29,72,0.8)]">
-                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v60.5_ELITE
+                                ЦІЛКОМ ТАЄМНО // SOVEREIGN_v61.0_ELITE
                             </span>
                         </motion.div>
                         <span className="text-[8px] text-slate-700">│</span>
@@ -420,7 +420,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-rose-600 to-transparent opacity-60" />
                                 </div>
                                 <p className="text-[10px] text-rose-600 font-black tracking-[0.55em] uppercase italic group-hover:text-rose-400 transition-colors">
-                                    ГЛОБАЛЬНИЙ_ТЕРМІНАЛ_УПРАВЛІННЯ_WRAITH v60.5-ELITE · ТІР-1_СЕКРЕТНО
+                                    ГЛОБАЛЬНИЙ_ТЕРМІНАЛ_УПРАВЛІННЯ_WRAITH v61.0-ELITE · ТІР-1_СЕКРЕТНО
                                 </p>
                             </div>
 
@@ -536,7 +536,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                             >
                                 <div className="text-[10px] text-rose-500/80 font-black tracking-[0.6em] uppercase flex items-center justify-center gap-4 italic underline decoration-rose-600/30">
                                     <Shield size={14} className="text-rose-600" />
-                                    ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v60.5-ELITE]
+                                    ОПЕРАТИВНИЙ ТЕРМІНАЛ ПРИЙНЯТТЯ РІШЕНЬ [v61.0-ELITE]
                                     <Shield size={14} className="text-rose-600" />
                                 </div>
                                 <div className="text-[9px] text-slate-100/40 tracking-[0.4em] font-black uppercase">
@@ -692,7 +692,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                         </motion.div>
                     </div>
                     <div className="px-6 text-[10px] font-black text-yellow-600 tracking-[0.4em] italic underline decoration-yellow-600/40">
-                        PREDATOR v60.5-ELITE
+                        PREDATOR v61.0-ELITE
                     </div>
                 </div>
                 <div className="h-[3px] bg-yellow-600 shadow-[0_0_15px_rgba(212,175,55,0.8)]" />

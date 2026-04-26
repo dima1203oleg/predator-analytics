@@ -655,7 +655,6 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                         </button>
                                     </div>
                                 </div>
-                                </div>
 
                                 {/* Row 3: Shadow Network Overview */}
                                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">

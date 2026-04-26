@@ -336,31 +336,40 @@ const GraphAnalyticsPage: React.FC = () => {
                                                          <div className="absolute inset-0 bg-white/5 blur-3xl opacity-0 group-hover/sat:opacity-100 transition-opacity" />
                                                          <div className="relative w-16 h-16 bg-slate-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl group-hover:border-white/30">
                                                              <sat.icon size={28} className={sat.color} />
-                                                             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-                                 <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5 shadow-2xl">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-slate-500 shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ОСОБИ</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]" />
-                                        <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">CRITICAL_THREAT</span>
-                                    </div>
-                                </div>
->ТРАНЗАКЦІЇ</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ВИСОКИЙ РИЗИК</span>
-                                    </div>
-                                </div>
+                                                             <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black text-slate-500 uppercase tracking-widest group-hover:text-white transition-colors">
+                                                                 {sat.label}
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 </motion.div>
+                                             ))}
+
+                                             {/* Graph Legend */}
+                                             <div className="absolute bottom-10 left-10 z-20 flex gap-8 items-center bg-black/40 backdrop-blur-3xl p-6 rounded-[2rem] border border-white/5 shadow-2xl">
+                                                 <div className="flex items-center gap-3">
+                                                     <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
+                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">КОМПАНІЇ</span>
+                                                 </div>
+                                                 <div className="flex items-center gap-3">
+                                                     <div className="w-3 h-3 rounded-full bg-slate-500 shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
+                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ОСОБИ</span>
+                                                 </div>
+                                                 <div className="flex items-center gap-3">
+                                                     <div className="w-3 h-3 rounded-full bg-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
+                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
+                                                 </div>
+                                                 <div className="flex items-center gap-3">
+                                                     <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]" />
+                                                     <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">CRITICAL_THREAT</span>
+                                                 </div>
+                                                 <div className="flex items-center gap-3">
+                                                     <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ВИСОКИЙ РИЗИК</span>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     )}
+                                 </div>
 
                                 <AnimatePresence>
                                     {selectedNode && <NodeDetailPanel node={selectedNode} onClose={() => setSelectedNode(null)} />}

@@ -1,4 +1,4 @@
-import { apiClient, v45Client } from './config';
+import { apiClient } from './config';
 
 export interface ServiceCheck {
   status: string;
@@ -131,21 +131,21 @@ export const systemApi = {
     return (await apiClient.post('/system/config', config)).data;
   },
   restartServices: async () => {
-    return (await v45Client.post('/system/restart')).data;
+    return (await apiClient.post('/system/restart')).data;
   },
   lockdown: async () => {
-    return (await v45Client.post('/system/lockdown')).data;
+    return (await apiClient.post('/system/lockdown')).data;
   },
   getETLStatus: async () => {
-    return (await v45Client.get('/system/etl/status')).data;
+    return (await apiClient.get('/system/etl/status')).data;
   },
   getDataCatalog: async () => {
-    return (await v45Client.get('/system/data-catalog')).data;
+    return (await apiClient.get('/system/data-catalog')).data;
   },
   startEvolutionCycle: async (options?: Record<string, unknown>) => {
-    return (await v45Client.post('/system/evolution/start', options)).data;
+    return (await apiClient.post('/system/evolution/start', options)).data;
   },
   syncConnector: async (id: string) => {
-    return (await v45Client.post(`/system/connectors/${id}/sync`)).data;
+    return (await apiClient.post(`/system/connectors/${id}/sync`)).data;
   },
 };
