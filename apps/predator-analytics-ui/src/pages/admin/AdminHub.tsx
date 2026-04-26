@@ -270,7 +270,7 @@ const SystemStatusHeader: React.FC = () => {
                 </div>
                 <span className="flex items-center gap-4 text-white font-black tracking-[0.4em] text-[15px] italic glint-elite chromatic-elite">
                    <Atom size={20} className="animate-spin-slow text-rose-500" style={{ animationDuration: '15s' }} />
-                   PREDATOR <span className="text-rose-500">v60.5-ELITE</span>
+                   PREDATOR <span className="text-rose-500">v61.0-ELITE</span>
                 </span>
               </div>
             </div>
@@ -740,7 +740,7 @@ export const AdminHub: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-[1px] bg-emerald-500 animate-pulse" />
-            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v60.5_ELITE_СТАБІЛЬНО</span>
+            <span>СТАБІЛЬНІСТЬ_ЯДРА: WRAITH_v61.0_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-2 flex gap-1">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -783,7 +783,7 @@ export const AdminHub: React.FC = () => {
             ))}
           </div>
           <span className="text-rose-500/60 font-black tracking-[0.3em]">SOVEREIGN_OS_ГОТОВО</span>
-          <span>PREDATOR_ANALYTICS_V60.5_ELITE</span>
+          <span>PREDATOR_ANALYTICS_V61.0_ELITE</span>
         </div>
 
         <div className="relative z-10 h-full">

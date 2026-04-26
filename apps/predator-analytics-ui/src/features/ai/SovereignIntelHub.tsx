@@ -120,7 +120,7 @@ export default function SovereignIntelHub() {
                                 <div className="flex items-center gap-6 mb-4">
                                     <div className="w-3 h-3 bg-rose-500 rounded-full animate-ping shadow-[0_0_15px_#e11d48]" />
                                     <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[1em] italic">
-                                        GLM-5.1 SOVEREIGN AGENT · ELITE_v60.0
+                                        GLM-5.1 SOVEREIGN AGENT · ELITE_v61.0
                                     </span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none italic glint-elite chromatic-elite">
