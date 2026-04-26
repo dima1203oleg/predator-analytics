@@ -12,8 +12,8 @@ fi
 
 # Запит токена, якщо не активовано
 if [ ! -d "$HOME/.zrok" ]; then
-    echo "🔑 Будь ласка, введіть ваш zrok токен (з пошти після zrok invite):"
-    read -r TOKEN
+    TOKEN="1eeje4um7yvA" # Автоматично підставлено
+    echo "🔑 Активація zrok з токеном $TOKEN..."
     zrok enable "$TOKEN"
 fi
 
