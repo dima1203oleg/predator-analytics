@@ -607,6 +607,17 @@ const server = http.createServer((req, res) => {
     return sendJSON(res, { cpu_usage: 45, memory_usage: 62, status: 'ok' });
   }
 
+  if (path === '/api/v45/azr/status' && req.method === 'GET') {
+    return sendJSON(res, {
+        status: 'active',
+        generation: 42,
+        phase_name: 'Режим Рекомендацій',
+        uptime: '124г',
+        health: 99.8,
+        active: true
+    });
+  }
+
   if (path === '/api/v1/system/restart' && req.method === 'POST') {
     return sendJSON(res, { status: 'restarting' });
   }

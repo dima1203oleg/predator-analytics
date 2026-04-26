@@ -29,6 +29,7 @@ const ZeroTrustSecTab    = lazy(() => import('./tabs/ZeroTrustSecurityTab'));
 const DataOpsTab         = lazy(() => import('./tabs/DataOpsTab'));
 const ChaosControlHub    = lazy(() => import('./ChaosControlHub'));
 const ResourceGuardTab   = lazy(() => import('./tabs/ResourceGuardTab'));
+const PtyTerminal        = lazy(() => import('@/features/monitoring/PtyTerminal'));
 
 // AI Lab
 const AIControlPlane        = lazy(() => import('@/features/ai/AIControlPlane'));
@@ -114,6 +115,7 @@ const TABS: TabConfig[] = [
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'Центр DataOps',                   icon: Database,      component: DataOpsTab         },
   { id: 'chaos',        category: 'SYSTEM_CORE', label: 'Операції Хаосу',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
   { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'Захист ресурсів', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
+  { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY Термінал',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
   { id: 'ai-control',   category: 'AI_LAB', label: 'Керування ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
