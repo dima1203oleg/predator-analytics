@@ -194,20 +194,27 @@ sudo systemctl reload nginx
 # Тепер доступ: http://194.177.1.240 (без порту)
 ```
 
-#### Варіант B: Ngrok Tunnel (Рекомендовано для v61.0)
+#### Варіант B: zrok Tunnel (Основний стандарт v61.0)
+
+zrok — це open-source альтернатива ngrok, побудована на OpenZiti. Вона забезпечує більш стабільні та швидкі тунелі.
 
 ```bash
-# Встановлення ngrok (якщо немає)
-curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-sudo apt update && sudo apt install ngrok
+# Встановлення zrok
+curl -sSLf https://get.openziti.io/install.bash | sudo bash -s zrok
 
-# Авторизація
-ngrok config add-authtoken <your-token>
+# Реєстрація (якщо немає акаунта)
+zrok invite
 
-# Запуск тунелю
-ngrok http 8092
+# Активація середовища (токен з пошти)
+zrok enable <your-token>
+
+# Запуск тунелю для frontend
+zrok share public http://localhost:8092 --headless
 ```
+
+Для статичних тунелів використовуйте:
+`zrok reserve public http://localhost:8092`
+`zrok share reserved <share_token>`
 
 ---
 
@@ -296,7 +303,7 @@ ngrok http 8092
 
 **Для постійного публічного доступу:**
 - Налаштуйте Nginx reverse proxy (порт 80/443)
-- Або використовуйте Ngrok Tunnel (рекомендовано для v61.0)
+- Або використовуйте zrok Tunnel (основний стандарт v61.0)
 
 ---
 
