@@ -239,6 +239,74 @@ const getServiceStatus = (row: ServiceStatus): RowStatus =>
 
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
+const LiveNetworkTopology: React.FC<{ nodes: NodeMetric[] }> = ({ nodes }) => {
+  return (
+    <div className="relative w-full h-[250px] bg-black/40 glass-wraith rounded-xl border border-white/5 overflow-hidden flex items-center justify-center shadow-2xl mb-6">
+      <div className="absolute inset-0 cyber-scan-grid opacity-[0.03]" />
+      
+      {/* Central Core */}
+      <div className="absolute z-20 flex flex-col items-center justify-center">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 bg-rose-500/20 blur-xl rounded-full animate-pulse" />
+          <div className="w-16 h-16 bg-gradient-to-br from-rose-600 to-rose-400 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(225,29,72,0.8)] border border-rose-300/50">
+            <Shield size={28} className="text-black" />
+          </div>
+        </div>
+        <span className="mt-3 text-[10px] font-black text-rose-500 uppercase tracking-widest italic">PREDATOR_CORE</span>
+      </div>
+
+      {/* Orbiting Nodes */}
+      {nodes.slice(0, 8).map((node, i) => {
+        const totalNodes = Math.min(nodes.length, 8);
+        const angle = (i / totalNodes) * Math.PI * 2;
+        const radiusX = 250; // px
+        const radiusY = 80;
+        const x = Math.cos(angle) * radiusX;
+        const y = Math.sin(angle) * radiusY;
+        const isOnline = node.status === 'online';
+        
+        return (
+          <React.Fragment key={node.id}>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+              <line 
+                x1="50%" y1="50%" 
+                x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`} 
+                stroke={isOnline ? 'rgba(225,29,72,0.4)' : 'rgba(255,255,255,0.05)'} 
+                strokeWidth="1.5"
+                strokeDasharray={isOnline ? "4 4" : "none"}
+              />
+            </svg>
+            
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: i * 0.1 }}
+              className="absolute z-10 flex flex-col items-center group cursor-crosshair"
+              style={{ 
+                left: `calc(50% + ${x}px)`, 
+                top: `calc(50% + ${y}px)`,
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              <div className={cn(
+                "w-10 h-10 rounded-lg flex items-center justify-center border shadow-xl relative",
+                isOnline ? "bg-black/80 border-rose-500/50" : "bg-black/40 border-white/10"
+              )}>
+                {isOnline && <div className="absolute inset-0 bg-rose-500/20 rounded-lg blur-md animate-pulse" />}
+                <Server size={18} className={isOnline ? "text-rose-500" : "text-white/20"} />
+              </div>
+              <div className="mt-2 absolute top-full flex flex-col items-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none w-max bg-black/80 border border-white/10 p-2 rounded z-30 shadow-2xl">
+                <span className="text-[9px] font-black text-white/90 uppercase tracking-widest">{node.node}</span>
+                <span className={cn("text-[8px] font-mono", isOnline ? "text-emerald-500" : "text-white/40")}>{node.ip || 'IP_UNKNOWN'}</span>
+              </div>
+            </motion.div>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+};
+
 export const InfraTelemetryTab: React.FC = () => {
   const { data, isLoading, isError } = useInfraTelemetry();
   const { data: systemStatus } = useSystemStatus();
@@ -336,6 +404,8 @@ export const InfraTelemetryTab: React.FC = () => {
            </div>
         </div>
       </div>
+
+      <LiveNetworkTopology nodes={nodes} />
 
       {/* Grid Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

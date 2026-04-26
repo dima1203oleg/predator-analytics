@@ -42,6 +42,7 @@ const PulseIndicator: React.FC<{ active?: boolean; color?: string }> = ({ active
 // ─── SovereignCommandCenter ────────────────────────────────────────────────────
 
 export const SovereignCommandCenter: React.FC = () => {
+  const [triState, setTriState] = useState<'SOVEREIGN' | 'HYBRID' | 'CLOUD'>('SOVEREIGN');
   const { data: status } = useSystemStatus();
   const { data: stats } = useSystemStats();
   const { data: engines } = useAIEngines();
@@ -135,6 +136,43 @@ export const SovereignCommandCenter: React.FC = () => {
             </div>
           </TacticalCard>
 
+          <TacticalCard variant="holographic" title="TRI-STATE_OVERRIDE" className={cn("bg-black/40 border-white/5 border-l-2", triState === 'SOVEREIGN' ? 'border-l-rose-600' : triState === 'HYBRID' ? 'border-l-emerald-600' : 'border-l-blue-600')}>
+            <div className="grid grid-cols-1 gap-2 mt-4">
+              <button 
+                onClick={() => setTriState('SOVEREIGN')}
+                className={cn("flex items-center justify-between p-3 rounded-sm transition-all group", triState === 'SOVEREIGN' ? "bg-rose-500/20 border border-rose-500/50 shadow-[0_0_15px_rgba(225,29,72,0.2)]" : "bg-white/5 border border-white/5 hover:bg-rose-500/10")}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("w-2 h-2 rounded-full transition-all", triState === 'SOVEREIGN' ? "bg-rose-500 shadow-[0_0_10px_rgba(225,29,72,1)] animate-pulse" : "bg-rose-500/20")} />
+                  <span className={cn("text-[10px] font-black uppercase tracking-widest italic transition-colors", triState === 'SOVEREIGN' ? "text-rose-500" : "text-white/40")}>SOVEREIGN</span>
+                </div>
+                <span className={cn("text-[8px] font-mono uppercase transition-colors", triState === 'SOVEREIGN' ? "text-rose-400" : "text-white/20")}>NVIDIA_LOCAL</span>
+              </button>
+              
+              <button 
+                onClick={() => setTriState('HYBRID')}
+                className={cn("flex items-center justify-between p-3 rounded-sm transition-all group", triState === 'HYBRID' ? "bg-emerald-500/20 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : "bg-white/5 border border-white/5 hover:bg-emerald-500/10")}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("w-2 h-2 rounded-full transition-all", triState === 'HYBRID' ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)] animate-pulse" : "bg-emerald-500/20")} />
+                  <span className={cn("text-[10px] font-black uppercase tracking-widest italic transition-colors", triState === 'HYBRID' ? "text-emerald-500" : "text-white/40")}>HYBRID</span>
+                </div>
+                <span className={cn("text-[8px] font-mono uppercase transition-colors", triState === 'HYBRID' ? "text-emerald-400" : "text-white/20")}>BALANCED_NODE</span>
+              </button>
+
+              <button 
+                onClick={() => setTriState('CLOUD')}
+                className={cn("flex items-center justify-between p-3 rounded-sm transition-all group", triState === 'CLOUD' ? "bg-blue-500/20 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]" : "bg-white/5 border border-white/5 hover:bg-blue-500/10")}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={cn("w-2 h-2 rounded-full transition-all", triState === 'CLOUD' ? "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,1)] animate-pulse" : "bg-blue-500/20")} />
+                  <span className={cn("text-[10px] font-black uppercase tracking-widest italic transition-colors", triState === 'CLOUD' ? "text-blue-500" : "text-white/40")}>CLOUD</span>
+                </div>
+                <span className={cn("text-[8px] font-mono uppercase transition-colors", triState === 'CLOUD' ? "text-blue-400" : "text-white/20")}>GEMINI_FALLBACK</span>
+              </button>
+            </div>
+          </TacticalCard>
+
           <TacticalCard variant="holographic" title="ОПЕРАЦІЙНІ_МАГІСТРАЛІ" className="bg-black/40 border-white/5">
             <div className="space-y-3 mt-4">
               <motion.div 
@@ -206,8 +244,9 @@ export const SovereignCommandCenter: React.FC = () => {
               </div>
             </div>
 
-            {/* The 3D Core */}
+            {/* The 3D Core with dynamic TriState color logic */}
             <div className="absolute inset-0 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-1000 scale-110 group-hover:scale-100 transition-transform duration-[2000ms]">
+              <div className="absolute inset-0 mix-blend-color z-20 pointer-events-none transition-colors duration-1000" style={{ backgroundColor: triState === 'HYBRID' ? 'rgba(16, 185, 129, 0.4)' : triState === 'CLOUD' ? 'rgba(59, 130, 246, 0.4)' : 'transparent' }} />
               <NeuralCore />
             </div>
 
