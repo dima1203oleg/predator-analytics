@@ -107,7 +107,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 <span className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping" />
                 <h3 className="text-base font-black uppercase tracking-[0.2em] text-white italic">{title}</h3>
               </div>
-              <p className="text-[10px] uppercase font-black tracking-[0.4em] text-rose-500/50">PREDATOR_NEXUS_v60_LIVE_SYNC</p>
+              <p className="text-[10px] uppercase font-black tracking-[0.4em] text-rose-500/50">PREDATOR_NEXUS_v61.0_ELITE_LIVE_SYNC</p>
             </div>
           </div>
 

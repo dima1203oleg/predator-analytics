@@ -68,7 +68,7 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
               </div>
               <div className="flex items-center justify-between p-4 bg-slate-900/40 rounded-2xl border border-white/5">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">ВЕРСІЯ_МОДЕЛІ:</span>
-                <span className="text-purple-400 font-mono font-black italic tracking-tighter">P-v45_NEURAL_0.0</span>
+                <span className="text-purple-400 font-mono font-black italic tracking-tighter">P-v61.0_ELITE_NEURAL</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-slate-900/40 rounded-2xl border border-white/5">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">IQ_INDEX:</span>
