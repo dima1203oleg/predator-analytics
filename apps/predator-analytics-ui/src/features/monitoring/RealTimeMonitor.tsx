@@ -21,6 +21,7 @@ import { TacticalCard } from '@/components/ui/TacticalCard';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { API_BASE_URL } from '@/services/api/config';
 
 // ─── TYPES ────────────────────────────────────────────────────────────
 
@@ -57,7 +58,8 @@ export const RealTimeMonitor: React.FC = () => {
   useEffect(() => {
     const connectWebSocket = () => {
       try {
-        const ws = new WebSocket('ws://localhost:8000/api/v1/stream/realtime');
+        const wsUrl = API_BASE_URL.replace('http', 'ws') + '/stream/realtime';
+        const ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
           setIsConnected(true);
@@ -378,31 +380,6 @@ export const RealTimeMonitor: React.FC = () => {
 
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8); }
-            .no-scrollbar::-webkit-scrollbar { display: none; }
-        `}} />
-      </div>
-    </PageTransition>
-  );
-};
-
-export default RealTimeMonitor;
-value)}</p>
-                                  </div>
-                                ))}
-                             </div>
-                           )}
-                        </motion.div>
-                      ))
-                    )}
-                  </AnimatePresence>
-               </div>
-            </div>
-
-          </div>
-        </div>
-
-        <style dangerouslySetInnerHTML={{ __html: `
-            .shadow-3xl { box-shadow: 0 60px 100px -30px rgba(0,0,0,0.8); }
             .no-scrollbar::-webkit-scrollbar { display: none; }
         `}} />
       </div>

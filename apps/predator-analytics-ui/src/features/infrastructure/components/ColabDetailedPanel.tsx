@@ -159,7 +159,7 @@ users:
                       rel="noopener noreferrer"
                       className="text-xs text-sky-500 hover:text-sky-400 transition-colors flex items-center gap-1 font-mono font-bold"
                     >
-                      {extended.zrok_id || 'predator-mirror'}.share.zrok.io <ExternalLink className="w-3 h-3" />
+                      {extended.zrok_id || 'predator'}.share.zrok.io <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
                   <div className="h-px bg-white/5" />

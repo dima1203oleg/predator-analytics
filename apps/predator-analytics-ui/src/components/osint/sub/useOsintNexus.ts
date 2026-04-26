@@ -11,9 +11,10 @@ import {
     RegistryCategory 
 } from './OsintTypes';
 
-// ─── Mock API Base URL ──────────────────────────────
-const MOCK_API_PORT = 9080;
-const BASE_URL = `http://localhost:${MOCK_API_PORT}/api/v1/osint`;
+import { API_BASE_URL } from '@/services/api/config';
+
+// ─── API Base URL ──────────────────────────────
+const BASE_URL = `${API_BASE_URL}/osint`;
 
 export const useOsintNexus = () => {
     const queryClient = useQueryClient();

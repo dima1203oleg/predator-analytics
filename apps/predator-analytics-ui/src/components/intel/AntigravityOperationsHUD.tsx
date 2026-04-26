@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Database
 } from 'lucide-react';
+import { API_BASE_URL } from '@/services/api/config';
 
 interface Agent {
   type: string;
@@ -36,7 +37,7 @@ const AntigravityOperationsHUD: React.FC = () => {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/antigravity/status');
+        const response = await fetch(`${API_BASE_URL}/antigravity/status`);
         const data = await response.json();
         setStatus(data);
       } catch (err) {

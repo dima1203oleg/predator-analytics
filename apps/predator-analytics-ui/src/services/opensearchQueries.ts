@@ -8,6 +8,7 @@
  *
  * © 2026 PREDATOR Analytics
  */
+import { OPENSEARCH_URL, OPENSEARCH_API_URL } from './api/config';
 
 // OpenSearch Query Templates
 export interface OpenSearchQuery {
@@ -21,8 +22,8 @@ export interface OpenSearchQuery {
 }
 
 // Base URL for OpenSearch
-export const OPENSEARCH_BASE_URL = 'http://localhost:5601';
-export const OPENSEARCH_API_URL = 'http://localhost:9200';
+export const OPENSEARCH_BASE_URL = OPENSEARCH_URL;
+// OPENSEARCH_API_URL вже імпортовано
 
 // ============================================
 // TITAN QUERIES - Business Intelligence

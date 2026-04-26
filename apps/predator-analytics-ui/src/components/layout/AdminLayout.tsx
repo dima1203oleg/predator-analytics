@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/UserContext';
+import { useAppStore } from '@/store/useAppStore';
 import { LiveAgentTerminal } from '@/components/intelligence/LiveAgentTerminal';
 import { OfflineBanner } from '@/components/shared/OfflineBanner';
 
@@ -203,11 +204,24 @@ const AdminSidebar: React.FC = () => {
 
 const AdminStatusBar: React.FC = () => {
   const [time, setTime] = useState(new Date());
+  const { isTerminalOpen, setTerminalOpen } = useAppStore();
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + ` or Cmd/Ctrl + T (if not taken)
+      if ((e.metaKey || e.ctrlKey) && (e.key === '`')) {
+        e.preventDefault();
+        setTerminalOpen(!isTerminalOpen);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTerminalOpen, setTerminalOpen]);
 
   return (
     <header className="flex items-center justify-between px-6 h-12 bg-black/40 glass-wraith border-b border-white/5 shrink-0 relative z-50">
@@ -247,13 +261,19 @@ const AdminStatusBar: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-6 relative z-10">
-        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-           <Terminal className="w-3 h-3 text-rose-400" />
+        <div className="flex items-center gap-6 relative z-10">
+        <button 
+          onClick={() => setTerminalOpen(!isTerminalOpen)}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1 bg-white/5 border rounded-full transition-all duration-300",
+            isTerminalOpen ? "border-rose-500 bg-rose-500/10 shadow-[0_0_10px_rgba(225,29,72,0.3)]" : "border-white/10 hover:border-rose-500/50"
+          )}
+        >
+           <Terminal className={cn("w-3 h-3 transition-colors", isTerminalOpen ? "text-rose-500" : "text-rose-400")} />
            <span className="text-[10px] font-mono font-black text-rose-300 italic tracking-tighter">
              {time.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
            </span>
-        </div>
+        </button>
         
         <div className="flex items-center gap-3 px-4 py-1 bg-amber-500/5 border border-amber-500/20 rounded-full group/vram">
           <Zap className="w-3 h-3 text-amber-400 animate-pulse" />

@@ -12,6 +12,7 @@ import {
   Clock
 } from 'lucide-react';
 import { monitoringApi } from '@/services/api/monitoring';
+import { OPENSEARCH_URL } from '@/services/api/config';
 
 interface OpenSearchDashboardsEmbedProps {
   dashboardId?: string;
@@ -22,23 +23,7 @@ interface OpenSearchDashboardsEmbedProps {
 
 // Dynamic base URL handling for remote access
 const getDashboardsUrl = () => {
-  if (typeof window !== 'undefined') {
-    // If running on ngrok/remote, assume dashboards are proxied or on same host port 5601
-    // For V45 production, we use a relative path if proxied, or fallback to absolute
-    const protocol = window.location.protocol;
-    const hostname = window.location.hostname;
-
-    // If local dev
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:5601';
-    }
-
-    // If remote/ngrok, we might need a proxy path like /opensearch-dashboards
-    // Or we assume port 5601 is also exposed/tunneled.
-    // Best practice: Use relative path via Nginx proxy
-    return '/opensearch-dashboards';
-  }
-  return 'http://localhost:5601';
+  return OPENSEARCH_URL;
 };
 
 const DASHBOARDS_BASE_URL = getDashboardsUrl();

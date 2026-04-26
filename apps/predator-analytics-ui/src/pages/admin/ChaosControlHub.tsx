@@ -23,6 +23,7 @@ import { useSystemStatus } from '@/hooks/useAdminApi';
 import { cn } from '@/lib/utils';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
 import { CyberGrid } from '@/components/CyberGrid';
+import { API_BASE_URL } from '@/services/api/config';
 
 interface Experiment {
   active: boolean;
@@ -39,7 +40,7 @@ const ChaosControlHub: React.FC = () => {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/admin/chaos/status');
+      const response = await fetch(`${API_BASE_URL}/admin/chaos/status`);
       if (!response.ok) throw new Error();
       const data = await response.json();
       setExperiments(data);
@@ -57,7 +58,7 @@ const ChaosControlHub: React.FC = () => {
   const toggleExperiment = async (name: string, active: boolean) => {
     setLoading(true);
     try {
-      await fetch('http://localhost:8000/api/v1/admin/chaos/trigger', {
+      await fetch(`${API_BASE_URL}/admin/chaos/trigger`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ experiment_name: name, active })

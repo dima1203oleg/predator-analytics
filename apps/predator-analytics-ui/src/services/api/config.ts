@@ -22,7 +22,7 @@ export const NODE_IDS = {
 const NODE_URLS = {
     [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
-    [NODE_IDS.CLOUD]:     'https://predator-mirror.share.zrok.io/api/v1',
+    [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
     [NODE_IDS.MOCK]:      '/api/v1',
 };
 
@@ -64,6 +64,10 @@ const resolveInitialUrl = (): string => {
 };
 
 export let API_BASE_URL = resolveInitialUrl();
+
+// ─── Зовнішні сервіси (OpenSearch, etc.) ────────────────────────────────────
+export const OPENSEARCH_URL = API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':5601');
+export const OPENSEARCH_API_URL = API_BASE_URL.replace(/:8000\/api\/v1|:9080\/api\/v1/g, ':9200');
 
 /** Визначає ID вузла за URL */
 const resolveNodeId = (url: string): string => {
