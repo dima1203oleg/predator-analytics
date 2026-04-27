@@ -55,6 +55,9 @@ import { factoryApi } from '@/services/api/factory';
 import { AgentSwarmMap } from './AgentSwarmMap';
 import { ReasoningStream } from './ReasoningStream';
 import { E2BSandboxFeed } from './E2BSandboxFeed';
+import { JulesIntelBridge } from './JulesIntelBridge';
+import { ChromeOrchestrator } from './ChromeOrchestrator';
+import { GeminiTerminal } from './GeminiTerminal';
 
 import type {
   ChaosLogEntry,
@@ -143,19 +146,14 @@ const INITIAL_SANDBOX: SandboxSession | null = null;
 const INITIAL_STEPS: ReasoningStep[] = [];
 
 const CODER_MODELS: CoderModel[] = [
-  // ── Ollama (NVIDIA Server, GTX 1080) ──
-  { id: 'qwen3.6-35b',     name: 'Qwen 3.6 (35B) Coder', source: 'ollama', tag: 'qwen3.6:35b-coder', specialty: 'Agentic / Thinking / Logic', vram_gb: 24.0, online: true, context_k: 64 },
-  { id: 'qwen2.5-coder-7', name: 'Qwen 2.5 Coder (7B)', source: 'ollama', tag: 'qwen2.5-coder:7b', specialty: 'Full-Stack / Fast Coder', vram_gb: 5.5, online: true, context_k: 32 },
-  { id: 'ds-r1-7b',        name: 'DeepSeek R1 (7B)', source: 'ollama', tag: 'deepseek-r1:7b', specialty: 'Reasoning / Math', vram_gb: 5.5, online: true, context_k: 16 },
-  { id: 'llama3.2-vision', name: 'Llama 3.2 Vision (11B)', source: 'ollama', tag: 'llama3.2-vision:11b', specialty: 'OSINT Vision / UI Analysis', vram_gb: 9.0, online: true, context_k: 128 },
-  { id: 'phi4-14b',        name: 'Microsoft Phi-4 (14B)', source: 'ollama', tag: 'phi4', specialty: 'Extreme Logic / Scientific', vram_gb: 10.5, online: true, context_k: 16 },
-  { id: 'mistral-sm-3.2',  name: 'Mistral Small 3.2 (24B)', source: 'ollama', tag: 'mistral-small:24b', specialty: 'Tool Use / Stability', vram_gb: 14.5, online: true, context_k: 32 },
-  { id: 'codestral-v0.1',  name: 'Codestral (22B)', source: 'ollama', tag: 'codestral', specialty: 'FIM / Python Master', vram_gb: 14.0, online: true, context_k: 32 },
-  
-  // ── Gemini Enterprise Agent Platform (Free Tier) ──
-  { id: 'gemini-2.5-flash',   name: '⚡ Gemini 2.5 Flash', source: 'api', tag: 'gemini-2.5-flash', specialty: 'Reasoning + Code + Vision (1M context)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 1048 },
-  { id: 'gemini-2.5-code',    name: '🧪 Gemini Code Execution', source: 'api', tag: 'gemini-2.5-flash+code', specialty: 'Python Sandbox (виконання коду в хмарі)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 1048 },
-  { id: 'gemini-embed',       name: '🧲 Gemini Embeddings', source: 'api', tag: 'text-embedding-004', specialty: 'Семантичний пошук (768-dim)', online: true, cost_per_1k: '$0.00 (Free Tier)', context_k: 2 },
+  // ── Zero-Cost ELITE Stack (April 2026) ──
+  { id: 'groq-qwen3-32b',  name: '⚡ Qwen 3 (32B) · Groq', source: 'api', tag: 'qwen3-32b-latest', specialty: 'Ultra-Fast Reasoning (1000 RPD)', online: true, cost_per_1k: 'FREE (1k RPD)', context_k: 128 },
+  { id: 'groq-llama4-scout', name: '🛡️ Llama 4 Scout (17B)', source: 'api', tag: 'llama4-17b-scout', specialty: 'Agentic / Logic (1000 RPD)', online: true, cost_per_1k: 'FREE (1k RPD)', context_k: 64 },
+  { id: 'groq-llama3-instant', name: '🚀 Llama 3.1 8B Instant', source: 'api', tag: 'llama-3.1-8b-instant', specialty: 'Massive Vol. (14,400 RPD)', online: true, cost_per_1k: 'FREE (14k RPD)', context_k: 128 },
+  { id: 'gemini-2.5-flash',   name: '💎 Gemini 2.5 Flash', source: 'api', tag: 'gemini-2.5-flash', specialty: 'Stable / Multimodal (1500 RPD)', online: true, cost_per_1k: 'FREE (AI Studio)', context_k: 1048 },
+  { id: 'gemini-2.5-pro',     name: '🧠 Gemini 2.5 Pro', source: 'api', tag: 'gemini-2.5-pro', specialty: 'Deep Logic (Best Effort)', online: true, cost_per_1k: 'FREE (Trial)', context_k: 2048 },
+  { id: 'deepseek-v3',        name: '🐳 DeepSeek V3 (Code)', source: 'api', tag: 'deepseek-coder', specialty: 'Advanced Coding / No RPD Limit', online: true, cost_per_1k: 'Free Quota', context_k: 128 },
+  { id: 'vertex-model-garden', name: '🔍 Model Garden / Vertex', source: 'api', tag: 'google/vertex-search', specialty: 'Enterprise OSINT / Search', online: true, cost_per_1k: 'FREE', context_k: 128 },
 
   // ── Інші Free API ──
   { id: 'groq-llama3.1',   name: 'Llama 3.1 70B (Groq)', source: 'api', tag: 'llama-3.1-70b-versatile', specialty: 'Ultra-Fast Inference', online: true, cost_per_1k: 'FREE (Beta)', context_k: 128 },
@@ -866,6 +864,17 @@ export function FabrykaAutonomousTab() {
                 </div>
               </div>
             </div>
+
+            {/* ══ Factory Intelligence Cloud (Google AI & Browser Agents) ═══════════ */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+              <div className="space-y-5">
+                <JulesIntelBridge />
+                <GeminiTerminal />
+              </div>
+              <ChromeOrchestrator />
+            </div>
+
+            {renderVramGuardian()}
 
             {/* Main Visualizers Row */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 h-[500px]">

@@ -283,7 +283,7 @@ monitoring:
 
 # AI AGI Stack (Antigravity Core)
 litellm:
-  enabled: false
+  enabled: true
   replicaCount: 1
   image:
     repository: ghcr.io/berriai/litellm
@@ -302,6 +302,16 @@ litellm:
     path: "/app/config.yaml"
     content: |
       model_list:
+        - model_name: gemini-1.5-pro
+          litellm_params:
+            model: vertex_ai/gemini-1.5-pro
+            vertex_project: "predator-analytics"
+            vertex_location: "us-central1"
+        - model_name: gemini-1.5-flash
+          litellm_params:
+            model: vertex_ai/gemini-1.5-flash
+            vertex_project: "predator-analytics"
+            vertex_location: "us-central1"
         - model_name: qwen3:8b
           litellm_params:
             model: ollama/qwen3:8b
