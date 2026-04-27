@@ -227,7 +227,7 @@ const SystemStatusHeader: React.FC = () => {
   const vramUsed = (stats?.gpu_mem_used ?? 0) / (1024 ** 3);
   const vramTotal = (stats?.gpu_mem_total || (8 * 1024 ** 3)) / (1024 ** 3);
   const cpuPercent = stats?.cpu_percent ?? 0;
-  const agentsCount = agentsData?.stats.total ?? 0;
+  const agentsCount = agentsData?.stats?.total ?? 0;
   
   const threatLevel = status ? Math.min(100, (status.summary.failed * 25) + (status.summary.degraded * 10) + 5) : 5;
   const entropy = (stats?.memory_percent ?? 0) / 100;
@@ -329,7 +329,7 @@ const SystemStatusHeader: React.FC = () => {
                   <span className="text-white font-black text-2xl leading-none tracking-tighter italic glint-elite">
                     {agentsCount.toString().padStart(2, '0')} <span className="text-[10px] text-rose-500 not-italic ml-2 font-black uppercase tracking-widest">ВУЗЛІВ_OODA</span>
                   </span>
-                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 font-black italic uppercase">ЛАТЕНТНІСТЬ: {status?.services[0]?.latency_ms ?? 0}MS</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 font-black italic uppercase">ЛАТЕНТНІСТЬ: {status?.services?.[0]?.latency_ms ?? 0}MS</span>
                 </div>
               </div>
             </div>

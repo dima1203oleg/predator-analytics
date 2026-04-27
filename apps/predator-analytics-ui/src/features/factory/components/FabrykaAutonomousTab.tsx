@@ -109,6 +109,8 @@ const INITIAL_FITNESS: FitnessMetrics | null = null;
 const CHAOS_SCENARIOS: ChaosScenario[] = [
   { id: 'kill_pod', name: 'Вбити под', description: 'Примусово завершити один із системних подів K8s', severity: 'high', duration_sec: 30 },
   { id: 'network_delay', name: 'Затримка мережі', description: 'Додати 200ms latency до всіх внутрішніх запитів', severity: 'medium', duration_sec: 60 },
+  { id: 'gemini_429', name: 'Gemini Rate Limit (429)', description: 'Симуляція вичерпання лімітів Gemini API (15 RPM). Перехід на SOVEREIGN.', severity: 'high', duration_sec: 45 },
+  { id: 'sandbox_crash', name: 'Code Sandbox Crash', description: 'Примусовий збій виконання коду в хмарі. Fallback на локальний Python.', severity: 'high', duration_sec: 20 },
   { id: 'memory_pressure', name: 'Тиск пам\'яті', description: 'Виділити 48GB RAM, симулювати OOM ситуацію', severity: 'high', duration_sec: 45 },
   { id: 'gpu_overload', name: 'Перевантаження GPU', description: 'Запустити стрес-тест VRAM + inference одночасно', severity: 'high', duration_sec: 20 },
 ];

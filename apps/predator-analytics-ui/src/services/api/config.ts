@@ -13,6 +13,7 @@ import axios, { AxiosError } from 'axios';
 // ─── Константи Вузлів ────────────────────────────────────────────────────────
 
 export const NODE_IDS = {
+    LOCAL:     'local',     // Local Developer API (MacBook)
     SOVEREIGN: 'sovereign', // iMac (...199)
     HYBRID:    'hybrid',    // NVIDIA (...240)
     CLOUD:     'cloud',     // Colab Mirror
@@ -20,10 +21,11 @@ export const NODE_IDS = {
 } as const;
 
 const NODE_URLS: Record<string, string> = {
+    [NODE_IDS.LOCAL]:     'http://localhost:8000/api/v1',
     [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
     [NODE_IDS.HYBRID]:    'http://194.177.1.240:8000/api/v1',
     [NODE_IDS.CLOUD]:     'https://predator.share.zrok.io/api/v1',
-    [NODE_IDS.MOCK]:      '/api/v1',
+    [NODE_IDS.MOCK]:      'http://localhost:9080/api/v1',
 };
 
 const NODE_NAMES: Record<string, string> = {
@@ -56,8 +58,8 @@ const resolveInitialUrl = (): string => {
     // 2. Явна настройка через .env
     if (metaEnv.VITE_API_URL) return metaEnv.VITE_API_URL;
     
-    // 3. Авто-вибір для розробки (MacBook -> iMac)
-    if (metaEnv.DEV) return NODE_URLS[NODE_IDS.SOVEREIGN];
+    // 3. Авто-вибір для розробки (MacBook Local Dev)
+    if (metaEnv.DEV) return NODE_URLS[NODE_IDS.LOCAL];
 
     // 4. Default
     return NODE_URLS[NODE_IDS.HYBRID];

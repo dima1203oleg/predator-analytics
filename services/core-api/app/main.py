@@ -66,6 +66,7 @@ from app.routers import (
     decisions_router,
     admin_v2_router,
     cloud_assist_router,
+    osint_vision_router,
 )
 from app.services.factory_repository import FactoryRepository
 from app.services.factory_runtime import (
@@ -260,6 +261,7 @@ ROUTERS = [
     ("/api/v1", sanctions_router),
     ("/api/v1", decisions_router),
     ("/api/v1", cloud_assist_router),
+    ("/api/v1", osint_vision_router),
     ("/api/v2", admin_v2_router),
 ]
 
