@@ -443,7 +443,7 @@ export default function ModelTrainingView() {
                                 <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,1)]" />
-                                        <span>ЖИВА_ТЕЛЕМЕТ ІЯ_СИНХ ОНІЗАЦІЯ_ФАЗИ</span>
+                                        <span>ЖИВА_ТЕЛЕМЕТ ІЯ_СИНХРОНІЗАЦІЯ_ФАЗИ</span>
                                     </div>
                                     <span>З АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
                                 </div>

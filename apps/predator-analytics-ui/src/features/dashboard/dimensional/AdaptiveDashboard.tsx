@@ -55,9 +55,9 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
           result = await api.lockdown();
           toast.warning("БЛОКУВАННЯ", result.lockdown_active ? "Систему ЗАБЛОКОВАНО" : "Блокування знято");
           break;
-        case 'СИНХ ОНІЗАЦІЯ':
+        case 'СИНХРОНІЗАЦІЯ':
           result = await api.syncETL();
-          toast.success("СИНХ ОНІЗАЦІЯ", "Синхронізацію джерел запущено успішно");
+          toast.success("СИНХРОНІЗАЦІЯ", "Синхронізацію джерел запущено успішно");
           break;
         case 'ПЕ ЕЗАПУСК':
           result = await api.restartServices();
@@ -66,7 +66,7 @@ const AdaptiveDashboard: React.FC<AdaptiveDashboardProps> = ({ onNavigate }) => 
         case 'Б АНДМАУЕ ':
           toast.info("Б АНДМАУЕ ", "Правила безпеки оновлено");
           break;
-        case 'ТЕ МІНАЛ':
+        case 'ТЕРМІНАЛ':
           if (onNavigate) onNavigate('monitoring');
           break;
         case 'АУДИТ':
@@ -217,7 +217,7 @@ function getDimensionIcon(dimension: string) {
 function getDimensionBreadcrumbs(dimension: string): string[] {
   switch (dimension) {
     case 'NEBULA': return ['ГОЛОВНА', 'ОГЛЯД'];
-    case 'CORTEX': return ['МОНІТО ИНГ', 'ТАКТИЧНИЙ ВИД'];
+    case 'CORTEX': return ['МОНІТОРИНГ', 'ТАКТИЧНИЙ ВИД'];
     case 'NEXUS': return ['КОМАНДНИЙ ЦЕНТР', 'ПОВНИЙ КОНТРОЛЬ'];
     default: return ['ГОЛОВНА'];
   }

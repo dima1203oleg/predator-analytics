@@ -139,12 +139,12 @@ export const normalizeClientsHubSnapshot = (
     banking: buildSegment(
       [
         {
-          label: 'Високий ризик',
+          label: 'Високийризик',
           value: formatCount(summary?.high_risk_count),
           hint: 'Підтверджено `/dashboard/overview.summary.high_risk_count`.',
         },
         {
-          label: 'Середній ризик',
+          label: 'Середнійризик',
           value: formatCount(summary?.medium_risk_count),
           hint: 'Підтверджено `/dashboard/overview.summary.medium_risk_count`.',
         },
@@ -154,7 +154,7 @@ export const normalizeClientsHubSnapshot = (
           hint: 'Підтверджено `/system/stats.search_rate`.',
         },
       ],
-      'Фінансовий контур показує лише фактичні ризикові сигнали та темп пошуку з бекенду.',
+      'Фінансовий контур показує лише фактичніризикові сигнали та темп пошуку з бекенду.',
     ),
     government: buildSegment(
       [
@@ -234,7 +234,7 @@ export const normalizeClientsHubSnapshot = (
           hint: 'Підтверджено `/system/stats.avg_latency`.',
         },
       ],
-      'Юридичний контур відображає лише підтверджені ризикові списки, векторну базу й затримку відповіді.',
+      'Юридичний контур відображає лише підтвердженіризикові списки, векторну базу й затримку відповіді.',
     ),
   };
 
@@ -248,7 +248,7 @@ export const normalizeClientsHubSnapshot = (
     },
     {
       id: 'high-risk',
-      label: 'Високий ризик',
+      label: 'Високийризик',
       value: formatCount(summary?.high_risk_count),
       hint: 'Кількість високоризикових записів.',
       tone: 'amber',

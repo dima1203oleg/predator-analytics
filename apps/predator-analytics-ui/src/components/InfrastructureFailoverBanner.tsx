@@ -150,7 +150,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         {/* Connection Telemetry */}
         <div className="hidden md:flex items-center gap-8 pl-8 border-l border-white/10 ml-2">
           <div className="text-right">
-            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest italic">ЗАТ ИМКА (PING)</p>
+            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest italic">ЗАТрИМКА (PING)</p>
             <p className="text-lg font-black italic font-mono tracking-tighter shadow-sm text-white">
               {isOffline ? '---' : isMirror ? '142ms' : '0.8ms'}
             </p>

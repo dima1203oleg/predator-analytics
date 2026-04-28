@@ -43,7 +43,7 @@ const SuperIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SuperIntelligence',
-                    message: 'ПОТОКОВА СИНХ ОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_ELITE). Повний доступ до GPU-ферми.',
+                    message: 'ПОТОКОВА СИНХРОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_ELITE). Повний доступ до GPU-ферми.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'CORE_SYNC_ELITE'
@@ -76,7 +76,7 @@ const SuperIntelligenceView: React.FC = () => {
                 <ViewHeader
                     title="СУПЕ ІНТЕЛЕКТ (ЯДРО GLM-5.1)"
                     icon={<Zap size={20} className="icon-3d-yellow" />}
-                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'СУВЕ ЕННИЙ_ШІ']}
+                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'СУВЕРЕННИЙ_ШІ']}
                     stats={[
                         { label: 'Статус', value: isActive ? 'АКТИВНИЙ' : 'ГОТОВИЙ', icon: <Activity size={14} />, color: isActive ? 'success' : 'warning', animate: isActive },
                         {
@@ -107,7 +107,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
-                                {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТ ИЦІ'}
+                                {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТрИЦІ'}
                             </motion.button>
                         </div>
                     }

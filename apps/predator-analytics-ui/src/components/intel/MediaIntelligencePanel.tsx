@@ -196,7 +196,7 @@ export const MediaIntelligencePanel: React.FC = () => {
                     ) : (
                         <div className="h-full flex flex-col items-center justify-center text-slate-600">
                             <Brain size={32} className="mb-2 opacity-20" />
-                            <p className="text-xs uppercase font-bold text-center">Виберіть медіа<br />для перегляду аналізу</p>
+                            <p className="text-xs uppercase font-bold text-center">Виберіть медіа<br />дляперегляду аналізу</p>
                         </div>
                     )}
                 </div>

@@ -164,7 +164,7 @@ export const SearchConsolePage: React.FC = () => {
 
             const processed = apiResults.length > 0 ? apiResults : [
                 { id: '1', title: 'ДП "АНТОНОВ" — Реєстр Експортних Операцій', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ'] },
-                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — Аномальна активність', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['РИЗИК', 'ФІНАНСИ'] },
+                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — Аномальна активність', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індексризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['РИЗИК', 'ФІНАНСИ'] },
                 { id: '3', title: 'Аналіз санкційних списків — Пакет №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0, tags: ['САНКЦІЇ', 'ВПК'] }
             ];
 
@@ -249,7 +249,7 @@ export const SearchConsolePage: React.FC = () => {
                                             value={query}
                                             onChange={(e) => setQuery(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                            placeholder="ЗАПИТАЙТЕ У МАТ ИЦІ... (напр. 'Експорт титану 2026')"
+                                            placeholder="ЗАПИТАЙТЕ У МАТрИЦІ... (напр. 'Експорт титану 2026')"
                                             className="w-full bg-transparent text-3xl font-bold text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg]"
                                         />
                                         <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-[#D4AF37] group-focus-within:w-full transition-all duration-700" />

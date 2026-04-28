@@ -45,7 +45,7 @@ export interface SessionResponse {
 
 export const copilotApi = {
     /**
-     * Відправка повідомлення до Copilot
+     * Відправкаповідомлення до Copilot
      */
     chat: async (request: ChatRequest): Promise<ChatResponse> => {
         return (await apiClient.post('/copilot/chat', request)).data;

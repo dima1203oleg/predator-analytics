@@ -47,7 +47,7 @@ export const PremiumHero: React.FC = () => {
     {
       icon: Shield,
       title: 'Smart Risk Radar',
-      description: '360° моніторинг ризиків в реальному часі',
+      description: '360° моніторингризиків в реальному часі',
       color: 'from-blue-600 to-cyan-600'
     },
     {

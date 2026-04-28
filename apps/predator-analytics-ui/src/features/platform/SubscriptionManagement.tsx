@@ -111,7 +111,7 @@ const plans: Plan[] = [
       { name: 'Експорт PDF/Excel', included: true },
       { name: 'AI Insights', included: true },
       { name: 'Real-time дані', included: false },
-      { name: 'Email підтримка', included: true },
+      { name: 'Emailпідтримка', included: true },
     ],
     current: true
   },
@@ -132,7 +132,7 @@ const plans: Plan[] = [
       { name: 'Всі формати експорту', included: true },
       { name: 'AI Insights +  изики', included: true },
       { name: 'Real-time дані', included: true },
-      { name: 'Пріоритетна підтримка', included: true },
+      { name: 'Пріоритетнапідтримка', included: true },
     ]
   },
   {

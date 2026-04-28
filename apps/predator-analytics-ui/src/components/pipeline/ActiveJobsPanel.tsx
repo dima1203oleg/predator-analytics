@@ -250,7 +250,7 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
                                 </div>
                                 <div>
                                     <h3 className="text-sm font-black uppercase tracking-[0.22em] text-white">
-                                        Активні процеси
+                                        Активніпроцеси
                                     </h3>
                                     <p className="mt-1 text-xs text-slate-400">
                                         Підтверджені ingestion jobs з /ingestion/jobs без локальних підстановок.
@@ -281,7 +281,7 @@ export const ActiveJobsPanel: React.FC<ActiveJobsPanelProps> = ({
                             type="button"
                             onClick={() => void fetchJobs(true)}
                             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-200 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
-                            aria-label="Оновити активні процеси"
+                            aria-label="Оновити активніпроцеси"
                             disabled={loading || refreshing}
                         >
                             <RefreshCw className={`h-4 w-4 ${loading || refreshing ? 'animate-spin' : ''}`} />

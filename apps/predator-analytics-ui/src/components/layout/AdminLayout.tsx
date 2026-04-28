@@ -44,7 +44,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'datasets',   label: 'Datasets Studio',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
   { id: 'prompts',    label: 'System Prompts',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
   
-  // розширена Аналітика
+  //розширена Аналітика
   { id: 'nexus',      label: 'Predictive Nexus',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'розширена Аналітика' },
   { id: 'ai-insights',label: 'AI Insights Hub',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'розширена Аналітика' },
   { id: 'hypothesis', label: 'Гіпотези & NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'розширена Аналітика' },

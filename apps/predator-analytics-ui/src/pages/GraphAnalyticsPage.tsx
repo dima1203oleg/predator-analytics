@@ -224,11 +224,11 @@ const GraphAnalyticsPage: React.FC = () => {
                         }
                         stats={[
                             { label: 'ВУЗЛІВ ОП АЦЬОВАНО', value: '1.2M+', color: 'primary', icon: <Database size={14} />, animate: true },
-                            { label: 'К ИТИЧНІСТЬ МЕ ЕЖІ', value: '0.92', color: 'success', icon: <Share2 size={14} /> },
+                            { label: 'КрИТИЧНІСТЬ МЕ ЕЖІ', value: '0.92', color: 'success', icon: <Share2 size={14} /> },
                             { label: 'NODE_SOURCE', value: nodeSource, color: isOffline ? 'warning' : 'success', icon: <Cpu size={14} /> },
                             { label: 'LATENCY (OODA)', value: '8ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТ ИЦЯ', 'STRATEGIC_OSINT']}
+                        breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТрИЦЯ', 'STRATEGIC_OSINT']}
                     />
 
                     <div className="grid grid-cols-12 gap-10">
@@ -356,7 +356,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                                  </div>
                                                  <div className="flex items-center gap-3">
                                                      <div className="w-3 h-3 rounded-full bg-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.3)]" />
-                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Т АНЗАКЦІЇ</span>
+                                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">ТРАНЗАКЦІЇ</span>
                                                  </div>
                                                  <div className="flex items-center gap-3">
                                                      <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.7)]" />
@@ -391,7 +391,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      
                                      <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar pr-4">
                                          {[
-                                            { label: 'К ИТИЧНІСТЬ_КЛАСТЕ У', val: 0.84, color: 'bg-indigo-500' },
+                                            { label: 'КрИТИЧНІСТЬ_КЛАСТЕ У', val: 0.84, color: 'bg-indigo-500' },
                                             { label: 'ІНДЕКС_ІЗОЛЯЦІЇ', val: 0.12, color: 'bg-emerald-500' },
                                             { label: 'РИЗИК_КОНТАМІНАЦІЇ', val: 0.45, color: 'bg-amber-500' },
                                             { label: 'ШЛЯХ_OODA', val: 0.99, color: 'bg-rose-500' }
@@ -429,7 +429,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНОПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
                                          <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v61.0-ELITE</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКО  = 0.9984</p>
-                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ Т АФІК У КЛАСТЕ І "B-12"</p>
+                                         <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ ТРАФІК У КЛАСТЕ І "B-12"</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} А ХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕ ШЕНО]</p>
                                      </div>
                                      

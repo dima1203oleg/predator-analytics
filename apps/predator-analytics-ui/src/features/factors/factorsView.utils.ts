@@ -192,15 +192,15 @@ export const normalizeFactorsSnapshot = (
             },
             {
                 id: 'risk-scoring',
-                label: 'Оцінка ризику',
+                label: 'Оцінкаризику',
                 path: '/risk-scoring',
-                description: 'Оцінка критичних і середніх ризиків на базі агрегованого огляду системи.',
+                description: 'Оцінка критичних і середніхризиків на базі агрегованого огляду системи.',
                 tone: 'amber',
                 metrics: [
-                    { label: 'Високий ризик', value: formatCount(summary?.high_risk_count ?? null) },
-                    { label: 'Середній ризик', value: formatCount(summary?.medium_risk_count ?? null) },
+                    { label: 'Високийризик', value: formatCount(summary?.high_risk_count ?? null) },
+                    { label: 'Середнійризик', value: formatCount(summary?.medium_risk_count ?? null) },
                 ],
-                statusLabel: summary ? 'Агреговано з /dashboard/overview' : 'Огляд ризиків не повернуто',
+                statusLabel: summary ? 'Агреговано з /dashboard/overview' : 'Оглядризиків не повернуто',
             },
             {
                 id: 'aml',

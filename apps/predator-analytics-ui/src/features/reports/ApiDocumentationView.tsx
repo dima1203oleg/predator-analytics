@@ -2,7 +2,7 @@
  * 📚 API Documentation View
  *
  * Інтерактивна документація API
- * REST endpoints, приклади, тестування
+ * REST endpoints,приклади, тестування
  */
 
 import React, { useState, useMemo } from 'react';
@@ -168,8 +168,8 @@ const endpoints: ApiEndpoint[] = [
     id: '6',
     method: 'GET',
     path: '/api/v1/risk/score',
-    title: 'Отримати ризик-скор',
-    description: ' озрахунок ризик-скору для компанії.',
+    title: 'Отриматиризик-скор',
+    description: ' озрахунокризик-скору для компанії.',
     category: ' изики',
     auth: 'token',
     rateLimit: '30/хв',

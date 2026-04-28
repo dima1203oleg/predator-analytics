@@ -27,7 +27,7 @@ const createOverview = (): DashboardOverview => ({
     {
       id: 'a1',
       type: 'risk',
-      message: 'Підвищений ризик',
+      message: 'Підвищенийризик',
       severity: 'critical',
       timestamp: '2026-03-30T09:10:00.000Z',
       sector: 'banking',

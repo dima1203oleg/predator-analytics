@@ -446,9 +446,9 @@ export default function SystemFactoryView() {
     if (lower === 'autofix status') {
        const activeFixes = bugs.filter(b => b.status === 'fixing');
        if (activeFixes.length > 0) {
-          return `🤖 [AUTOFIX STATUS] ${activeFixes.length} багів в процесі ремедіації. Прогрес: ${activeFixes[0].fixProgress}%`;
+          return `🤖 [AUTOFIX STATUS] ${activeFixes.length} багів впроцесі ремедіації. Прогрес: ${activeFixes[0].fixProgress}%`;
        }
-       return '🤖 [AUTOFIX STATUS] Немає активних процесів виправлення коду.';
+       return '🤖 [AUTOFIX STATUS] Немає активнихпроцесів виправлення коду.';
     }
 
     if (lower.includes('масштабуй') || lower.includes('скейл') || lower.includes('scale')) {
@@ -471,7 +471,7 @@ export default function SystemFactoryView() {
          }
          return 'Pod API не підтверджено у відповіді `/system/cluster`.';
        }
-       return 'Вкажіть підсистему для перегляду логів (напр. "покажи логи API").';
+       return 'Вкажіть підсистему дляперегляду логів (напр. "покажи логи API").';
     }
 
     if (lower.includes('кеш') || lower.includes('cache')) {
@@ -488,7 +488,7 @@ export default function SystemFactoryView() {
     } 
     if (lower.includes('білд') || lower.includes('збір')) {
       setPipelineProgress(0);
-      return { action: 'build', reply: 'Ініційовано процес збірки Docker образів та CI. Контекст оновлено.' };
+      return { action: 'build', reply: 'Ініційованопроцес збірки Docker образів та CI. Контекст оновлено.' };
     } 
 
     if (lower.includes('що') && (lower.includes('виправ') || lower.includes('роби'))) {

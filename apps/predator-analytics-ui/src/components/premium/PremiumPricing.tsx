@@ -4,7 +4,7 @@
  * Компонент для показу цінових планів та активації підписки:
  * - STARTER: Базова аналітика
  * - PROFESSIONAL: Повний TITAN/INQUISITOR/SOVEREIGN доступ
- * - ENTERPRISE: Кастомізація + API + Виділена підтримка
+ * - ENTERPRISE: Кастомізація + API + Виділенапідтримка
  *
  * © 2026 PREDATOR Analytics
  */

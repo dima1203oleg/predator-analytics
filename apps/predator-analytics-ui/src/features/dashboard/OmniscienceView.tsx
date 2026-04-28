@@ -237,7 +237,7 @@ const OmniscienceView: React.FC = () => {
                 Нексус Всезнання
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                ЯДРО_СИСТЕМИ_V56.5-ELITE // ГЛОБАЛЬНА_МАТ ИЦЯ_ЗНАНЬ
+                ЯДРО_СИСТЕМИ_V56.5-ELITE // ГЛОБАЛЬНА_МАТрИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
@@ -326,7 +326,7 @@ const OmniscienceView: React.FC = () => {
                     </div>
                     <div className="absolute bottom-10 left-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl z-20 flex items-center gap-8">
                       <div className="flex flex-col">
-                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТ ИМКА</span>
+                        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">ЗАТрИМКА</span>
                         <span className="text-sm font-black text-white font-mono">14мс</span>
                       </div>
                       <div className="w-px h-8 bg-white/5" />
@@ -429,7 +429,7 @@ const OmniscienceView: React.FC = () => {
                     <Zap size={32} className="text-slate-600 group-hover/new:text-blue-400 group-hover/new:animate-pulse" />
                   </div>
                   <h3 className="text-xl font-black text-slate-600 uppercase tracking-tighter group-hover/new:text-white transition-colors">Створити Нового Агента</h3>
-                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_П ОТОКОЛУ_НС</p>
+                  <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest mt-2 group-hover/new:text-blue-500">ІНІЦІАЛІЗАЦІЯ_ПРОТОКОЛУ_НС</p>
                 </TacticalCard>
               </div>
             </motion.div>

@@ -29,7 +29,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
     subtitle: 'ринкова розвідка, конкуренти, ланцюги постачання та прогнозування попиту.',
     icon: <Building2 className="w-6 h-6" />,
     typicalTasks: [
-      'Перевірка контрагентів та ризиків співпраці',
+      'Перевірка контрагентів таризиків співпраці',
       'Аналіз конкурентів та зміни ринкових часток',
       'Пошук нових постачальників та ніш',
       'Прогноз попиту, імпорту та цін',
@@ -43,10 +43,10 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
   },
   banking: {
     title: 'Банки та Фінанси',
-    subtitle: 'AML/KYC, санкційний комплаєнс, моніторинг транзакційних ризиків і дефолтів.',
+    subtitle: 'AML/KYC, санкційний комплаєнс, моніторинг транзакційнихризиків і дефолтів.',
     icon: <DollarSign className="w-6 h-6" />,
     typicalTasks: [
-      'AML аналіз і ризик-скоринг',
+      'AML аналіз іризик-скоринг',
       'Санкційна перевірка та комплаєнс',
       'Швидкий due diligence клієнтів (KYB)',
       'Виявлення аномалій у поведінці компаній',
@@ -65,7 +65,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
     typicalTasks: [
       'Моніторинг імпорту/експорту та структурних змін',
       'Виявлення схем та аномалій у потоках',
-      'Прогнозування трендів і ризиків секторів',
+      'Прогнозування трендів іризиків секторів',
       'Аналітика ринкової концентрації',
     ],
     shortcuts: [
@@ -82,7 +82,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
     typicalTasks: [
       'Аналіз звʼязків між компаніями/особами',
       'Формування справ та збір доказів',
-      'Перевірка санкцій та ризиків',
+      'Перевірка санкцій таризиків',
       'Хронологія подій і підозрілих операцій',
     ],
     shortcuts: [
@@ -99,7 +99,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
     typicalTasks: [
       'Контроль ринків і виявлення схем',
       'Комплаєнс-аудит та протоколи перевірок',
-      'Моніторинг ризикових груп і аномалій',
+      'Моніторингризикових груп і аномалій',
       'Формування звітів для нагляду',
     ],
     shortcuts: [
@@ -111,13 +111,13 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
   },
   legal: {
     title: 'Юридичні Компанії',
-    subtitle: 'Підготовка доказів, перевірка компаній, пошук активів і судові розслідування.',
+    subtitle: 'Підготовка доказів, перевірка компаній, пошук активів і судовірозслідування.',
     icon: <FileCheck className="w-6 h-6" />,
     typicalTasks: [
       'Перевірка контрагентів і бенефіціарів',
       'Підготовка доказової бази та звітів',
       'Пошук активів і повʼязаних структур',
-      'Перевірка санкційних ризиків',
+      'Перевірка санкційнихризиків',
     ],
     shortcuts: [
       { label: 'Глобальний Пошук', path: '/search-v2', icon: <FileSearch className="w-4 h-4" /> },
@@ -195,7 +195,7 @@ type BusinessCompetitor = {
 };
 
 type BusinessSignalKind = 'IMPORT_SPIKE' | 'PRICE_SHOCK' | 'NEW_PLAYERS' | 'SANCTIONS_RISK';
-type BusinessSignalLevel = 'ІНФО' | 'ПОПЕ ЕДЖЕННЯ' | 'К ИТИЧНО';
+type BusinessSignalLevel = 'ІНФО' | 'ПОПЕ ЕДЖЕННЯ' | 'КРИТИЧНО';
 type BusinessSignal = {
   id: string;
   createdAt: string;
@@ -359,7 +359,7 @@ const ClientSegmentView: React.FC = () => {
     const uktzed = bizDraft.uktzed.trim();
     const countries = bizDraft.supplyCountries.trim();
     const horizon = bizDraft.horizonDays;
-    const goalLabel = bizDraft.goal === 'П ОДАЖІ' ? 'зростання продажів' : bizDraft.goal === 'СОБІВА ТІСТЬ' ? 'зниження собівартості' : 'вихід у нішу';
+    const goalLabel = bizDraft.goal === 'П ОДАЖІ' ? 'зростанняпродажів' : bizDraft.goal === 'СОБІВА ТІСТЬ' ? 'зниження собівартості' : 'вихід у нішу';
 
     const lines: string[] = [];
     lines.push(`БІЗНЕС‑СЦЕНА ІЙ: ${product}`);
@@ -371,12 +371,12 @@ const ClientSegmentView: React.FC = () => {
     lines.push('ПЛАН АНАЛІЗУ (легально):');
     lines.push('1)  инок: обсяг імпорту, сезонність, ціни, топ‑гравці, концентрація.');
     lines.push('2) Конкуренти: хто імпортує, які країни/маршрути, зміни за 30/90 днів.');
-    lines.push('3) Постачання: альтернативні країни/постачальники, ризики санкцій/судів.');
+    lines.push('3) Постачання: альтернативні країни/постачальники,ризики санкцій/судів.');
     lines.push('4) Прогноз: попит/ціни на горизонт, сценарії «оптимістичний/базовий/ризиковий».');
     lines.push('5) рекомендація: що завозити, коли, в яких обсягах, які KPI моніторити щотижня.');
     lines.push('');
     lines.push('ШВИДКІ ДІЇ В ІНТЕ ФЕЙСІ:');
-    lines.push('- ринкова Аналітика → /market');
+    lines.push('-ринкова Аналітика → /market');
     lines.push('- Прогнозування → /forecast');
     lines.push('- Можливості → /opportunities');
     lines.push('- Пошук → /search-v2');
@@ -441,7 +441,7 @@ const ClientSegmentView: React.FC = () => {
     if (businessRadar.signals.importSpike) {
       base.push(mk(
         'IMPORT_SPIKE',
-        businessRadar.thresholds.importSpikePct >= 30 ? 'К ИТИЧНО' : 'ПОПЕ ЕДЖЕННЯ',
+        businessRadar.thresholds.importSpikePct >= 30 ? 'КРИТИЧНО' : 'ПОПЕ ЕДЖЕННЯ',
         `Стрибок імпорту: ${product}`,
         `Поріг: ${businessRadar.thresholds.importSpikePct}%. Перевірте топ‑імпортерів, країни та митні коридори за 30/90 днів.`,
         38
@@ -450,7 +450,7 @@ const ClientSegmentView: React.FC = () => {
     if (businessRadar.signals.priceShock) {
       base.push(mk(
         'PRICE_SHOCK',
-        businessRadar.thresholds.priceShockPct >= 15 ? 'К ИТИЧНО' : 'ПОПЕ ЕДЖЕННЯ',
+        businessRadar.thresholds.priceShockPct >= 15 ? 'КРИТИЧНО' : 'ПОПЕ ЕДЖЕННЯ',
         `Ціновий шок: ${product}`,
         `Поріг: ${businessRadar.thresholds.priceShockPct}%. Перевірте митну вартість, партії та розкид по країнах.`,
         95
@@ -641,8 +641,8 @@ const ClientSegmentView: React.FC = () => {
     const common = [
       {
         key: 'common_risk_summary',
-        title: 'Короткий ризик-профіль',
-        text: 'Сформуй короткий ризик-профіль компанії за ЄДРПОУ/UEID: ключові фактори, рівень впевненості, що перевірити вручну, і які дані ще потрібні.',
+        title: 'Короткийризик-профіль',
+        text: 'Сформуй короткийризик-профіль компанії за ЄДРПОУ/UEID: ключові фактори, рівень впевненості, що перевірити вручну, і які дані ще потрібні.',
       },
       {
         key: 'common_sources',
@@ -657,7 +657,7 @@ const ClientSegmentView: React.FC = () => {
         {
           key: 'bank_kredit',
           title: 'Кредитний скринінг (легально)',
-          text: 'Підготуй кредитний скринінг компанії: фінансова стійкість, санкційні ризики, судові ризики, аномалії в імпорті/цінах, рекомендація «видавати/не видавати» з поясненням. Без персональних даних і без незаконних припущень.',
+          text: 'Підготуй кредитний скринінг компанії: фінансова стійкість, санкційніризики, судовіризики, аномалії в імпорті/цінах, рекомендація «видавати/не видавати» з поясненням. Без персональних даних і без незаконних припущень.',
         },
         {
           key: 'bank_aml',
@@ -705,7 +705,7 @@ const ClientSegmentView: React.FC = () => {
         {
           key: 'case_timeline',
           title: 'Хронологія подій',
-          text: 'Склади хронологію подій по компанії: ключові зміни, ризикові події, суди/санкції, різкі зміни імпорту. Дай короткий висновок і що перевірити далі.',
+          text: 'Склади хронологію подій по компанії: ключові зміни,ризикові події, суди/санкції, різкі зміни імпорту. Дай короткий висновок і що перевірити далі.',
         },
         {
           key: 'evidence_pack',
@@ -823,7 +823,7 @@ const ClientSegmentView: React.FC = () => {
                 <CardTitle className="text-slate-100 text-base">Швидка Перевірка Контрагента</CardTitle>
               </div>
               <CardDescription className="text-slate-300">
-                Введіть ЄДРПОУ/UEID і відкрийте ризик-панель (CERS) одним кліком.
+                Введіть ЄДРПОУ/UEID і відкрийтеризик-панель (CERS) одним кліком.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -857,7 +857,7 @@ const ClientSegmentView: React.FC = () => {
                 <CardTitle className="text-slate-100 text-base">Нотатки Сегменту</CardTitle>
               </div>
               <CardDescription className="text-slate-300">
-                Збережіть короткі правила/чекліст для вашого типового процесу роботи.
+                Збережіть короткі правила/чекліст для вашого типовогопроцесу роботи.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -865,7 +865,7 @@ const ClientSegmentView: React.FC = () => {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={6}
-                placeholder="Наприклад: критерії ризику, пороги, шаблон запиту, обовʼязкові кроки перевірки…"
+                placeholder="Наприклад: критеріїризику, пороги, шаблон запиту, обовʼязкові кроки перевірки…"
                 className={cn(
                   'w-full rounded-xl border border-slate-700/60 bg-slate-950/40 p-3 text-sm text-slate-200',
                   'placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-yellow-500/40'
@@ -987,7 +987,7 @@ const ClientSegmentView: React.FC = () => {
                     value={bizDraft.goal}
                     onChange={(e) => setBizDraft(s => ({ ...s, goal: e.target.value as BusinessScenario['goal'] }))}
                   >
-                    <SelectItem value="П ОДАЖІ">Зростання продажів</SelectItem>
+                    <SelectItem value="П ОДАЖІ">Зростанняпродажів</SelectItem>
                     <SelectItem value="СОБІВА ТІСТЬ">Зниження собівартості</SelectItem>
                     <SelectItem value="НІША">Вихід у нішу</SelectItem>
                   </Select>
@@ -1008,7 +1008,7 @@ const ClientSegmentView: React.FC = () => {
                   {copiedKey === 'biz_plan' ? 'План скопійовано' : 'Копіювати план аналізу'}
                 </Button>
                 <Button variant="outline" className="bg-slate-950/40 border-slate-700/60" onClick={() => navigate('/market')}>
-                  ринкова аналітика
+                 ринкова аналітика
                 </Button>
                 <Button variant="outline" className="bg-slate-950/40 border-slate-700/60" onClick={() => navigate('/forecast')}>
                   Прогнозування
@@ -1092,7 +1092,7 @@ const ClientSegmentView: React.FC = () => {
                   />
                 </div>
                 <div className="md:col-span-6 flex items-center justify-between gap-3">
-                  <div className="text-sm font-bold text-slate-200">Санкційний ризик</div>
+                  <div className="text-sm font-bold text-slate-200">Санкційнийризик</div>
                   <Switch
                     checked={businessRadar.signals.sanctionsRisk}
                     onCheckedChange={(v) => updateBusinessRadar({ signals: { ...businessRadar.signals, sanctionsRisk: v } })}
@@ -1167,7 +1167,7 @@ const ClientSegmentView: React.FC = () => {
               {signals.map(sig => {
                 const st = signalState[sig.id] ?? 'НОВЕ';
                 const badgeVariant = st === 'ПІДТВЕРДЖЕНО' ? 'secondary' : st === 'ІГНО ОВАНО' ? 'outline' : 'default';
-                const levelColor = sig.level === 'К ИТИЧНО' ? 'text-red-400' : sig.level === 'ПОПЕ ЕДЖЕННЯ' ? 'text-amber-300' : 'text-slate-300';
+                const levelColor = sig.level === 'КРИТИЧНО' ? 'text-red-400' : sig.level === 'ПОПЕ ЕДЖЕННЯ' ? 'text-amber-300' : 'text-slate-300';
                 return (
                   <div key={sig.id} className="rounded-xl border border-slate-700/60 bg-slate-950/30 p-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">

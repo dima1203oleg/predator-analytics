@@ -45,7 +45,7 @@ export const NewspaperTab = () => {
           subtitle: 'Аналіз графа зв\'язків підтвердив 12 транзакцій через стамбульського посередника.',
           riskScore: 94,
           tag: 'РОЗСЛІДУВАННЯ',
-          hook: 'К ИТИЧНА ЗАГ ОЗА НАЦІОНАЛЬНІЙ БЕЗПЕЦІ',
+          hook: 'КрИТИЧНА ЗАГРОЗА НАЦІОНАЛЬНІЙ БЕЗПЕЦІ',
           edrpou: '40012921',
           declarationNumber: 'UA-4001/26',
           date: '2026-04-13'
@@ -59,11 +59,11 @@ export const NewspaperTab = () => {
           { id: 't2', title: 'ЕКСПОРТ ЗЕ НОВИХ', subtitle: 'HS-10: Сезонне зниження активності', hook: 'СТАБІЛЬНИЙ СЕКТО : -12%', direction: 'down', percent: 12, hsCode: '1001', count: 4500, totalValue: 128000000 }
         ],
         customs: [
-          { id: 'c1', title: 'НОВИЙ МА Ш УТ: ПОТІ - ХУСТ', subtitle: 'Використання малих вантажних хабів для уникнення алертов', hook: 'МОНІТО ИНГ ГДЗ', type: 'risk', avgRisk: 65 },
-          { id: 'c2', title: 'ВІДК ИТТЯ ХАБУ "ДЕСНА"', subtitle: 'Оптимізація логістики для чесних експортерів', hook: 'ОПТИМІЗАЦІЯ', type: 'opportunity', avgRisk: 12 }
+          { id: 'c1', title: 'НОВИЙ МА Ш УТ: ПОТІ - ХУСТ', subtitle: 'Використання малих вантажних хабів для уникнення алертов', hook: 'МОНІТОРИНГ ГДЗ', type: 'risk', avgRisk: 65 },
+          { id: 'c2', title: 'ВІДКрИТТЯ ХАБУ "ДЕСНА"', subtitle: 'Оптимізація логістики для чесних експортерів', hook: 'ОПТИМІЗАЦІЯ', type: 'opportunity', avgRisk: 12 }
         ],
         alerts: [
-          { id: 'a1', text: 'К ИТИЧНО: Спроба ввезення товарів подвійного призначення під виглядом с/г техніки.', urgency: 'high', time: '10:42' },
+          { id: 'a1', text: 'КРИТИЧНО: Спроба ввезення товарів подвійного призначення під виглядом с/г техніки.', urgency: 'high', time: '10:42' },
           { id: 'a2', text: 'УВАГА:  ізка зміна курсу митної вартості для HS-7308.', urgency: 'medium', time: '10:35' },
           { id: 'a3', text: 'ІНФО: Синхронізація з базою OFAC завершена успішно.', urgency: 'info', time: '10:15' }
         ],
@@ -72,7 +72,7 @@ export const NewspaperTab = () => {
           totalDeclarations: 14205, totalValueUsd: 1240000000,
           importCount: 8420, exportCount: 5785
         },
-        summary: 'ОПЕ АТИВНИЙ ДАЙДЖЕСТ: ВИСОКИЙ РІВЕНЬ АНОМАЛЬНОЇ АКТИВНОСТІ В СЕКТО І ТИТАНУ',
+        summary: 'ОПЕРАТИВНИЙ ДАЙДЖЕСТ: ВИСОКИЙ РІВЕНЬ АНОМАЛЬНОЇ АКТИВНОСТІ В СЕКТО І ТИТАНУ',
         generated_at: '2026-04-13T10:00:00Z'
       });
     } finally {
@@ -101,7 +101,7 @@ export const NewspaperTab = () => {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-8 italic">
         <CyberOrb size={120} status="processing" />
-        <p className="text-xl font-black text-yellow-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІ  МЕДІА- ОЗВІДКИ...</p>
+        <p className="text-xl font-black text-yellow-500 uppercase italic tracking-[0.6em] animate-pulse">ЗБІ  МЕДІА- РОЗВІДКИ...</p>
       </div>
     );
   }
@@ -193,7 +193,7 @@ export const NewspaperTab = () => {
                 <FileText size={20} /> ПОВНЕ_ДОСЬЄ
               </button>
               <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl tracking-[0.2em] text-[11px] font-black uppercase italic hover:bg-white/10 transition-all flex items-center gap-4">
-                <Network size={20} /> Т АСУВАННЯ
+                <Network size={20} /> ТРАСУВАННЯ
               </button>
             </div>
           </div>

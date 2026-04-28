@@ -363,7 +363,7 @@ const CompanyCard = ({
                                     </div>
                                     <div>
                                         <div className="mb-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                                            Статус та ризик
+                                            Статус таризик
                                         </div>
                                         <div className="flex flex-wrap items-center gap-3">
                                             <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-200">
@@ -501,7 +501,7 @@ const CompanyCard = ({
 
                                 <div className="w-full border-t border-white/5 pt-6">
                                     <div className="text-sm font-semibold leading-relaxed text-slate-400">
-                                        Побудовано з фактичних полів картки: ризик, звʼязки, капітал, статус і повнота відповіді.
+                                        Побудовано з фактичних полів картки:ризик, звʼязки, капітал, статус і повнота відповіді.
                                     </div>
                                 </div>
                             </HoloContainer>
@@ -536,7 +536,7 @@ const CompanyCard = ({
 
                                 <div className="mt-8 flex flex-wrap gap-3 border-t border-white/5 pt-6 text-xs text-slate-500">
                                     <span> изикова оцінка: {company.riskScore}</span>
-                                    <span>Категорія ризику: {company.riskLabel}</span>
+                                    <span>Категоріяризику: {company.riskLabel}</span>
                                     <span>Видача побудована тільки з наявних полів API</span>
                                 </div>
                             </div>
@@ -662,9 +662,9 @@ export const SearchView = () => {
         >
             <div className="relative mb-20 pt-10">
                 <ViewHeader
-                    title={isConsoleMode ? '> РЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО РЕЄСТРАХ І ВІДК ИТИХ ДЖЕ ЕЛАХ'}
+                    title={isConsoleMode ? '> РЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО РЕЄСТРАХ І ВІДКрИТИХ ДЖЕ ЕЛАХ'}
                     icon={isConsoleMode ? <SearchCode className="text-emerald-400" /> : <Radar className="text-primary-500" />}
-                    breadcrumbs={['ВІДК ИТІ_ДЖЕ ЕЛА', 'ПОШУК', 'ПІДТВЕ ДЖЕНІ_ДАНІ']}
+                    breadcrumbs={['ВІДКрИТІ_ДЖЕ ЕЛА', 'ПОШУК', 'ПІДТВЕ ДЖЕНІ_ДАНІ']}
                     stats={[
                         { label: 'Статус API', value: backendStatus.statusLabel, icon: <Database />, color: 'primary' },
                         { label: 'режим даних', value: backendStatus.modeLabel, icon: <Radio />, color: 'cyan' },
@@ -764,7 +764,7 @@ export const SearchView = () => {
                                     placeholder={
                                         isConsoleMode
                                             ? 'ВВЕДІТЬ_ЄДРПОУ_АБО_ЗАПИТ'
-                                            : 'Введіть код ЄДРПОУ, назву компанії або опис ризикової схеми'
+                                            : 'Введіть код ЄДРПОУ, назву компанії або описризикової схеми'
                                     }
                                     className={cn(
                                         'min-w-0 flex-1 bg-transparent px-6 py-7 text-xl font-black tracking-tight text-white outline-none placeholder:text-slate-600 lg:text-2xl',

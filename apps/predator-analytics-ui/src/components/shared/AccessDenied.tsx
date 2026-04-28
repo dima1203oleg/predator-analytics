@@ -9,7 +9,7 @@ interface AccessDeniedProps {
 }
 
 export const AccessDenied: React.FC<AccessDeniedProps> = ({
-  message = 'У вас немає прав для перегляду цієї сторінки',
+  message = 'У вас немає прав дляперегляду цієї сторінки',
   showBack = true,
 }) => {
   const navigate = useNavigate();

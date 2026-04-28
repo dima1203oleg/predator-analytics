@@ -87,7 +87,7 @@ describe('TradeFlowMapPremium', () => {
 
         await waitFor(() => {
             expect(screen.getByText(/Китай/i)).toBeInTheDocument();
-            expect(screen.getByText(/ІМПОРТ_З_К АЇНИ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ІМПОРТ_З_КРАЇНИ/i)).toBeInTheDocument();
         });
     });
 

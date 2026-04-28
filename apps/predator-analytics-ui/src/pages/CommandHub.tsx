@@ -34,7 +34,7 @@ const CommandHub: React.FC = () => {
   const hubTabs = [
     { id: 'board', label: 'Виконавча рада', icon: <LayoutDashboard size={16} /> },
     { id: 'brief', label: ' анковий брифінг', icon: <FileText size={16} /> },
-    { id: 'risk', label: 'Портфельний ризик', icon: <PieChart size={16} /> },
+    { id: 'risk', label: 'Портфельнийризик', icon: <PieChart size={16} /> },
     { id: 'warroom', label: 'Ситуаційна кімната', icon: <ShieldAlert size={16} /> },
     { id: 'observer', label: 'Суверенний спостерігач', icon: <Eye size={16} /> },
   ];

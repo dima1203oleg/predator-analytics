@@ -72,7 +72,7 @@ function App() {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'AppKernel',
-            message: `К ИТИЧНА ПОМИЛКА ЯД А: ${msg}`,
+            message: `КрИТИЧНА ПОМИЛКА ЯД А: ${msg}`,
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'KERNEL_RUNTIME_ERROR'

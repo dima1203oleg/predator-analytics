@@ -192,7 +192,7 @@ describe('TendersView', () => {
         expect(screen.queryByText('Tender 2')).not.toBeInTheDocument();
     });
 
-    it('повинен фільтрувати за рівнем ризику', async () => {
+    it('повинен фільтрувати за рівнемризику', async () => {
         (apiClient.get as any).mockImplementation((url: string) => {
             if (url.includes('/tenders')) return Promise.resolve({ data: mockTendersData });
             if (url.includes('/stats')) return Promise.resolve({ data: mockStatsData });
@@ -215,7 +215,7 @@ describe('TendersView', () => {
         expect(screen.getByText('Tender 2')).toBeInTheDocument();
         
         // Click critical risk button
-        const criticalBtn = screen.getByRole('button', { name: /К ИТИЧНІ 80%\+/i });
+        const criticalBtn = screen.getByRole('button', { name: /КрИТИЧНІ 80%\+/i });
         fireEvent.click(criticalBtn);
         expect(screen.queryByText('Tender 1')).not.toBeInTheDocument();
         expect(screen.getByText('Tender 2')).toBeInTheDocument();

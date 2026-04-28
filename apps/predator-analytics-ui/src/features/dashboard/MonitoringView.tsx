@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v58.2 — ЯДРО МОНІТО ИНГУ (ELITE CORE)
+ * 🦅 PREDATOR v58.2 — ЯДРО МОНІТОРИНГУ (ELITE CORE)
  *  озділ I.6 — Операційний моніторинг платформи.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -63,7 +63,7 @@ import {
 type Tab = 'metrics' | 'logs' | 'pipelines' | 'nodes';
 
 const tabs: Array<{ key: Tab; label: string; icon: JSX.Element }> = [
-    { key: 'metrics', label: 'МЕТ ИКИ', icon: <Activity size={16} /> },
+    { key: 'metrics', label: 'МЕТрИКИ', icon: <Activity size={16} /> },
     { key: 'logs', label: 'ЛОГИ СИСТЕМИ', icon: <Terminal size={16} /> },
     { key: 'pipelines', label: 'ПАЙПЛАЙНИ', icon: <Layers3 size={16} /> },
     { key: 'nodes', label: 'ВУЗЛИ КЛАСТЕ А', icon: <Server size={16} /> },
@@ -290,7 +290,7 @@ const MonitoringView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'MonitoringCore',
-                    message: `АВТОНОМНИЙ МОНІТО ИНГ [${backendStatus.nodeSource}]: Зв'язок з NVIDIA Master втрачено. Використовується резервний вузол MIRROR.`,
+                    message: `АВТОНОМНИЙ МОНІТОРИНГ [${backendStatus.nodeSource}]: Зв'язок з NVIDIA Master втрачено. Використовується резервний вузол MIRROR.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'MONITORING_OFFLINE'
@@ -300,7 +300,7 @@ const MonitoringView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'MonitoringCore',
-                    message: `ЯДРО МОНІТО ИНГУ [${backendStatus.nodeSource}]: Синхронізація з кластером активна. Телеметрія стабільна.`,
+                    message: `ЯДРО МОНІТОРИНГУ [${backendStatus.nodeSource}]: Синхронізація з кластером активна. Телеметрія стабільна.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'MONITORING_SUCCESS'
@@ -366,7 +366,7 @@ const MonitoringView: React.FC = () => {
                                    <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                 </div>
                                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                                  ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТО ИНГ</span>
+                                  ОПЕРАЦІЙНИЙ <span className="text-sky-500">МОНІТОРИНГ</span>
                                 </h1>
                                 <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                   Метрики Ядра • Потік Подій • Шлюзи Інгвестії • Архітектура Вузлів
@@ -385,7 +385,7 @@ const MonitoringView: React.FC = () => {
                                   <p className="text-lg font-black text-white italic">{serviceSummary.healthy}/{serviceSummary.total}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
-                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЗАТ ИМКА_API</p>
+                                  <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1 italic">ЗАТрИМКА_API</p>
                                   <p className="text-lg font-black text-sky-400 italic font-mono">{formatLatency(averageLatency)}</p>
                                </div>
                                <div className="text-center px-4 border-l border-white/5">
@@ -432,7 +432,7 @@ const MonitoringView: React.FC = () => {
                             </div>
                             <div className="h-10 w-px bg-white/5" />
                             <div className="text-right">
-                               <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">ОСТАННЯ СИНХ ОНІЗАЦІЯ ЯД А</p>
+                               <p className="text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none mb-1">ОСТАННЯ СИНХРОНІЗАЦІЯ ЯД А</p>
                                <p className="text-[11px] font-bold text-slate-400 font-mono italic uppercase tracking-tighter">{formatDateTime(lastSyncedAt) || 'ОЧІКУВАННЯ_ПОТОКУ'}</p>
                             </div>
                         </div>
@@ -493,12 +493,12 @@ const MonitoringView: React.FC = () => {
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                                             <MetricTile label="ЗАТ ИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕ ЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'amber' : 'sky'} />
+                                             <MetricTile label="ЗАТрИМКА_API" value={formatLatency(averageLatency)} hint="ЗАПИТ ЧЕ ЕЗ /SYSTEM/STATS" icon={<Clock3 size={20} />} tone={averageLatency > 800 ? 'amber' : 'sky'} />
                                              <MetricTile label="МЕ ЕЖЕВІ СЕСІЇ" value={formatCount(systemStats?.active_connections)} hint="АКТИВНІ З'ЄДНАННЯ TCP/IP" icon={<Network size={20} />} tone="sky" />
                                              <MetricTile label="ОБ'ЄМ_БД" value={formatCount(systemStats?.documents_total)} hint="ПІДТВЕРДЖЕНО В ША І ЗБЕ ЕЖЕННЯ" icon={<Database size={20} />} tone="emerald" />
                                             <MetricTile label="ІНДЕКС_MAP" value={formatCount(systemStats?.total_indices)} hint="КІЛЬКІСТЬ ПОШУКОВИХ ША ІВ" icon={<Layers3 size={20} />} tone="amber" />
-                                            <MetricTile label="МЕ ЕЖА_ВХІД" value={formatBytes(systemStats?.network_bytes_recv)} hint="ВХІДНИЙ Т АФІК TITAN" icon={<Zap size={20} />} tone="sky" />
-                                            <MetricTile label="МЕ ЕЖА_ВИХІД" value={formatBytes(systemStats?.network_bytes_sent)} hint="ВИХІДНИЙ Т АФІК TITAN" icon={<Boxes size={20} />} tone="slate" />
+                                            <MetricTile label="МЕ ЕЖА_ВХІД" value={formatBytes(systemStats?.network_bytes_recv)} hint="ВХІДНИЙ ТРАФІК TITAN" icon={<Zap size={20} />} tone="sky" />
+                                            <MetricTile label="МЕ ЕЖА_ВИХІД" value={formatBytes(systemStats?.network_bytes_sent)} hint="ВИХІДНИЙ ТРАФІК TITAN" icon={<Boxes size={20} />} tone="slate" />
                                         </div>
                                     </motion.div>
                                 )}
@@ -555,7 +555,7 @@ const MonitoringView: React.FC = () => {
                                                                     {log.latencyLabel && (
                                                                         <div className="mt-4 flex items-center gap-2">
                                                                            <Clock3 size={12} className="text-slate-700" />
-                                                                           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ЗАТ ИМКА: {log.latencyLabel}</span>
+                                                                           <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">ЗАТрИМКА: {log.latencyLabel}</span>
                                                                         </div>
                                                                     )}
                                                                 </div>
@@ -575,7 +575,7 @@ const MonitoringView: React.FC = () => {
                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <MetricTile label="АКТИВНІ_ЗАВДАННЯ" value={formatCount(pipelineJobs.filter(j => j.isActive).length)} hint="ЖИВІПРОЦЕСИ ІНГЕСТІЇ" icon={<Activity size={20} />} tone="sky" />
                                             <MetricTile label="УСПІШНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'emerald').length)} hint="ЗАВЕ ШЕНІ СЬОГОДНІ" icon={<CheckCircle2 size={20} />} tone="emerald" />
-                                            <MetricTile label="К ИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'amber').length)} hint="ПОТ ЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="amber" />
+                                            <MetricTile label="КРИТИЧНО" value={formatCount(pipelineJobs.filter(j => j.tone === 'amber').length)} hint="ПОТ ЕБУЮТЬ УВАГИ" icon={<AlertOctagon size={20} />} tone="amber" />
                                          </div>
 
                                          <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl">
@@ -625,7 +625,7 @@ const MonitoringView: React.FC = () => {
                                                          </div>
                                                      </div>
                                                  )) : (
-                                                     <EmptyPanel title="ЧЕ ГА ЗАВДАНЬ ПО ОЖНЯ" description="Наразі в системі немає активних або чергових процесів інгвестії." />
+                                                     <EmptyPanel title="ЧЕ ГА ЗАВДАНЬ ПО ОЖНЯ" description="Наразі в системі немає активних або черговихпроцесів інгвестії." />
                                                  )}
                                              </div>
                                          </section>
@@ -640,7 +640,7 @@ const MonitoringView: React.FC = () => {
                                                 <Server size={64} className="text-sky-500 animate-pulse" />
                                              </div>
                                              <div className="space-y-2">
-                                                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">СУВЕ ЕННИЙ КЛАСТЕ  ВУЗЛІВ</h2>
+                                                <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">СУВЕРЕННИЙ КЛАСТЕ  ВУЗЛІВ</h2>
                                                 <p className="text-[11px] font-bold text-slate-600 uppercase tracking-[0.4em] italic mb-10">КА ТОГРАФУВАННЯ ТА ЛОГІКА РОЗПОДІЛУ</p>
                                              </div>
                                           </div>

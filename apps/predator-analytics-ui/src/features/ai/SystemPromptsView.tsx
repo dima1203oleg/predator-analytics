@@ -63,7 +63,7 @@ const SystemPromptsView = () => {
         title="СИСТЕМНІПРОМПТІ ШІ"
         subtitle="Керування інструкціями для нейромереж та системної логіки PREDATOR"
         icon={<Terminal size={24} className="text-rose-400" />}
-        breadcrumbs={['П ЕДАТО ', 'ЗАВОД', 'П ОМПТИ']}
+        breadcrumbs={['PREDATOR', 'ЗАВОД', 'П ОМПТИ']}
         stats={[
           { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
           { label: 'ШАБЛОНИ', value: templates?.length?.toString() || '...', icon: <Zap size={14} />, color: 'primary' },
@@ -160,7 +160,7 @@ const SystemPromptsView = () => {
                     </div>
                     <div className="w-px h-6 bg-white/10 mx-2" />
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] italic font-mono">
-                       ЕДАКТО : {selectedTemplate?.name || "ОБЕ ІТЬ_П ОМПТ"}
+                       ЕДАКТО : {selectedTemplate?.name || "ОБЕРІТЬ_П ОМПТ"}
                     </span>
                  </div>
                  <div className="flex items-center gap-3">
@@ -214,7 +214,7 @@ const SystemPromptsView = () => {
                  ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center opacity-30 select-none">
                        <Lock size={48} className="mb-6 mx-auto" />
-                       <p className="text-[12px] font-black uppercase tracking-[0.4em]">Оберіть промпт для перегляду ядра</p>
+                       <p className="text-[12px] font-black uppercase tracking-[0.4em]">Оберіть промпт дляперегляду ядра</p>
                     </div>
                  )}
               </div>

@@ -91,7 +91,7 @@ export const diligenceApi = {
     },
 
     /**
-     * Пошук компаній з фільтрацією по ризику (v61.0-ELITE).
+     * Пошук компаній з фільтрацією поризику (v61.0-ELITE).
      */
     searchCompanies: async (params: CompanySearchParams | string = {}): Promise<CompanySearchResponse | RiskEntity[]> => {
         const response = await apiClient.get('/companies', { params: normalizeSearchParams(params) });
@@ -130,7 +130,7 @@ export const diligenceApi = {
     },
 
     /**
-     * Аліас для отримання ризикових сутностей (для сумісності).
+     * Аліас для отриманняризикових сутностей (для сумісності).
      */
     getRiskEntities: async (): Promise<RiskEntity[]> => {
         const payload = await diligenceApi.searchCompanies({ limit: 50 });

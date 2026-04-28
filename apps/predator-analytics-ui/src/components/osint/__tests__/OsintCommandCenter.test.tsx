@@ -200,7 +200,7 @@ describe('OsintCommandCenter', () => {
             });
             expect(screen.getByText('127')).toBeInTheDocument();
             expect(screen.getByText('ЗНАХІДОК')).toBeInTheDocument();
-            expect(screen.getByText('К ИТИЧНИХ')).toBeInTheDocument();
+            expect(screen.getByText('КрИТИЧНИХ')).toBeInTheDocument();
             expect(screen.getByText('ІНСТ УМЕНТІВ')).toBeInTheDocument();
         });
 
@@ -267,7 +267,7 @@ describe('OsintCommandCenter', () => {
             fireEvent.click(screen.getByText('АНАЛІТИКА'));
 
             await waitFor(() => {
-                expect(screen.getByText('РОЗПОДІЛ ЗА КАТЕГО ІЯМИ')).toBeInTheDocument();
+                expect(screen.getByText('РОЗПОДІЛ ЗА КАТЕГОРІЯМИ')).toBeInTheDocument();
             });
             expect(screen.getByText('КА ТА РИЗИКІВ ЗА ДЖЕРЕЛОМ')).toBeInTheDocument();
             expect(screen.getByText('АКТИВНІСТЬ ЗА 24 ГОДИНИ')).toBeInTheDocument();
@@ -297,7 +297,7 @@ describe('OsintCommandCenter', () => {
             expect(screen.queryByText('Держреєстрація')).not.toBeInTheDocument();
         });
 
-        it('повинен показувати повідомлення коли нічого не знайдено', async () => {
+        it('повинен показуватиповідомлення коли нічого не знайдено', async () => {
             render(<OsintCommandCenter />);
 
             await waitFor(() => {
@@ -415,7 +415,7 @@ describe('OsintCommandCenter', () => {
             await waitFor(() => {
                 // Статистичні картки
                 expect(screen.getByText('ЗНАХІДОК')).toBeInTheDocument();
-                expect(screen.getByText('К ИТИЧНИХ')).toBeInTheDocument();
+                expect(screen.getByText('КрИТИЧНИХ')).toBeInTheDocument();
                 expect(screen.getByText('ІНСТ УМЕНТІВ')).toBeInTheDocument();
                 expect(screen.getByText('СКАНУЮТЬСЯ')).toBeInTheDocument();
                 expect(screen.getByText('РЕЄСТРІВ')).toBeInTheDocument();

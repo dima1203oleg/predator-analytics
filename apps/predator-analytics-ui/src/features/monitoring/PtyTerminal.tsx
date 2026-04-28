@@ -19,7 +19,7 @@ export const PtyTerminal: React.FC = () => {
         { text: 'PREDATOR OS v61.0-ELITE (Build 2026.04.26-MASTER)', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'ВСТАНОВЛЕННЯ_ЗВ’ЯЗКУ_З_КЛАСТЕ ОМ_IMAC... [192.168.0.199]', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'PTY_SUBSYSTEM: READY [QUANTUM_LINK_ESTABLISHED]', type: 'system', timestamp: new Date().toLocaleTimeString() },
-        { text: 'ВІТАЄМО, SENIOR ENGINEER. ЯДРО СУВЕ ЕННОГОРУПРАВЛІННЯ ГОТОВЕ ДО ДИ ЕКТИВ.', type: 'system', timestamp: new Date().toLocaleTimeString() },
+        { text: 'ВІТАЄМО, SENIOR ENGINEER. ЯДРО СУВЕРЕННОГОРУПРАВЛІННЯ ГОТОВЕ ДО ДИ ЕКТИВ.', type: 'system', timestamp: new Date().toLocaleTimeString() },
     ]);
     const [inputValue, setInputValue] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -59,7 +59,7 @@ export const PtyTerminal: React.FC = () => {
             } else if (cmd === 'scan') {
                 response = 'SCANNING OSINT SOURCES...\n[OK] Customs DB\n[OK] ProZorro\n[OK] OpenDataGov\nRESULT: 42 NEW ENTITIES DETECTED';
             } else {
-                response = `ВИКОНАННЯ КОМАНДИ: ${cmd}... ПАКЕТ ОБ ОБЛЕНО ЯДРОМ.`;
+                response = `ВИКОНАННЯ КОМАНДИ: ${cmd}... ПАКЕТ ОБРОБЛЕНО ЯДРОМ.`;
             }
 
             setLines(prev => [...prev, { text: response, type, timestamp: new Date().toLocaleTimeString() }]);
@@ -83,7 +83,7 @@ export const PtyTerminal: React.FC = () => {
                     </div>
                     <div className="flex flex-col gap-1">
                         <h2 className="text-[16px] font-black uppercase tracking-[0.3em] italic text-emerald-500/90 glint-elite">PTY_SESSION_MASTER_0x61</h2>
-                        <span className="text-[9px] text-emerald-500/40 uppercase tracking-[0.5em] font-black italic">СУВЕ ЕННИЙ_КАНАЛ_ЗВ’ЯЗКУ_ELITE</span>
+                        <span className="text-[9px] text-emerald-500/40 uppercase tracking-[0.5em] font-black italic">СУВЕРЕННИЙ_КАНАЛ_ЗВ’ЯЗКУ_ELITE</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-10">
@@ -144,7 +144,7 @@ export const PtyTerminal: React.FC = () => {
                     autoFocus
                     spellCheck={false}
                     className="w-full bg-emerald-950/5 border-2 border-emerald-900/20 rounded-[2rem] py-6 pl-16 pr-10 text-[14px] font-black tracking-[0.2em] text-white outline-none focus:border-rose-500/50 focus:bg-rose-500/5 transition-all placeholder:text-white/5 italic shadow-4xl"
-                    placeholder="ВВЕДІТЬ КОМАНДУ ДЛЯ СУВЕ ЕННОГО ЯД А..."
+                    placeholder="ВВЕДІТЬ КОМАНДУ ДЛЯ СУВЕРЕННОГО ЯД А..."
                 />
                 <div className="absolute inset-y-0 right-8 flex items-center gap-6">
                     <div className="flex items-center gap-2">

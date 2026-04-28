@@ -40,7 +40,7 @@ interface Report {
 
 const AVAILABLE_SECTIONS = [
   { id: 'title', name: '📌 ЗАГОЛОВОК_H1', icon: <FileText size={16} /> },
-  { id: 'kpi', name: '📊 KPI_МЕТ ИКА', icon: <BarChart3 size={16} /> },
+  { id: 'kpi', name: '📊 KPI_МЕТрИКА', icon: <BarChart3 size={16} /> },
   { id: 'chart', name: '📈 ГРАФІК_ALPHA', icon: <PieChart size={16} /> },
   { id: 'table', name: '📋 ТАБЛИЦЯ_DATA', icon: <TableIcon size={16} /> },
   { id: 'text', name: '📝 ТЕКСТ_ANALYTICS', icon: <Layout size={16} /> },
@@ -56,7 +56,7 @@ export const ReportBuilder: React.FC = () => {
   
   const [report, setReport] = useState<Report>({
     id: 'report_' + Date.now(),
-    name: 'НОВИЙ_СУВЕ ЕННИЙ_ЗВІТ',
+    name: 'НОВИЙ_СУВЕРЕННИЙ_ЗВІТ',
     sections: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

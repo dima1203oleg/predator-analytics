@@ -62,7 +62,7 @@ const SovereignReliabilityBadge: React.FC<{ score: number }> = ({ score }) => {
       "bg-amber-600/10 border-amber-600/30 text-amber-500 shadow-[0_0_15px_rgba(225,29,72,0.2)]"
     )}>
       {isEmerald ? <CheckCircle size={14} /> : isAmber ? <AlertCircle size={14} /> : <Siren size={14} className="animate-pulse" />}
-      {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'К ИТИЧНИЙ_РИЗИК'}
+      {score}% {isEmerald ? 'НАДІЙНИЙ_ВУЗОЛ' : isAmber ? 'ДОПУСТИМО' : 'КРИТИЧНИЙ_РИЗИК'}
     </div>
   );
 };
@@ -224,7 +224,7 @@ export default function SupplierDiscoveryPremium() {
                      <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic border-l-4 border-yellow-500/40 pl-6">ФІЛЬТ _ПО_ГЕОГРАФІЇ</p>
                      <div className="grid grid-cols-2 gap-4">
                         <button onClick={() => setSelectedCountry('all')} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all", selectedCountry === 'all' ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
-                           УСІ_К АЇНИ
+                           УСІ_КРАЇНИ
                         </button>
                         {countries.slice(0, 5).map(c => (
                           <button key={c} onClick={() => setSelectedCountry(c)} className={cn("p-5 rounded-2xl border-2 text-[10px] font-black uppercase tracking-widest italic transition-all truncate", selectedCountry === c ? "bg-yellow-500 border-yellow-400 text-black shadow-lg" : "bg-black border-white/5 text-slate-600 hover:text-white")}>
@@ -240,7 +240,7 @@ export default function SupplierDiscoveryPremium() {
                      <Sparkles size={18} />ПРЕДИКТИВНІ_ПО АДИ_AI
                   </h4>
                   <p className="text-[12px] text-slate-500 leading-relaxed italic font-medium uppercase tracking-tight">
-                     ИНОК П ИСТ ОЇВ ЗБЕ ЕЖЕННЯ ЕНЕ ГІЇ В ПОЛЬЩІ ДЕМОНСТ УЄ АНОМАЛЬНО НИЗЬКІ ЦІНИ (+12% ВИГІДНІШЕ).  ЕКОМЕНДОВАНО ЗВЕРНУТИ УВАГУ НА НОВИХГРАВЦІВ В ОДЕСЬКОМУ ПОРТУ.
+                     ИНОК ПРИСТ ОЇВ ЗБЕ ЕЖЕННЯ ЕНЕ ГІЇ В ПОЛЬЩІ ДЕМОНСТ УЄ АНОМАЛЬНО НИЗЬКІ ЦІНИ (+12% ВИГІДНІШЕ).  ЕКОМЕНДОВАНО ЗВЕРНУТИ УВАГУ НА НОВИХГРАВЦІВ В ОДЕСЬКОМУ ПОРТУ.
                   </p>
                </div>
             </div>

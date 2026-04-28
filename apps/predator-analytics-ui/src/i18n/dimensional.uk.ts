@@ -14,7 +14,7 @@ export const uk = {
   // Breadcrumbs
   breadcrumbs: {
     nebula: ['ГОЛОВНА', 'ОГЛЯД'],
-    cortex: ['МОНІТО ИНГ', 'ТАКТИЧНИЙ ВИД'],
+    cortex: ['МОНІТОРИНГ', 'ТАКТИЧНИЙ ВИД'],
     nexus: ['КОМАНДНИЙ ЦЕНТР', 'ПОВНИЙ КОНТРОЛЬ'],
   },
 
@@ -82,7 +82,7 @@ export const uk = {
 
   // Dashboard - Nexus (Commander)
   nexus: {
-    omniscienceMatrix: 'МАТ ИЦЯ ВСЕЗНАННЯ СИСТЕМИ',
+    omniscienceMatrix: 'МАТрИЦЯ ВСЕЗНАННЯ СИСТЕМИ',
     neuralVisualization: '3D Нейронна Візуалізація',
     containers: 'Контейнери',
     infrastructure: 'Інфраструктура',
@@ -92,7 +92,7 @@ export const uk = {
     lockdown: 'БЛОКУВАННЯ',
     restart: 'ПЕ ЕЗАПУСК',
     firewall: 'Б АНДМАУЕ ',
-    terminal: 'ТЕ МІНАЛ',
+    terminal: 'ТЕРМІНАЛ',
     forceSync: 'П ИМУСОВА СИН',
     audit: 'АУДИТ',
     cpuLoad: 'Навантаж. CPU',
@@ -159,7 +159,7 @@ export const uk = {
     },
     blurred: {
       title: 'Частковий Доступ',
-      message: 'Повний перегляд потребує підвищених прав доступу',
+      message: 'Повнийперегляд потребує підвищених прав доступу',
     },
     redacted: {
       title: 'Інформація Приховано',

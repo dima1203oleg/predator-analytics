@@ -266,7 +266,7 @@ export const GraphView = () => {
                       <Database className="w-16 h-16 text-slate-700 mx-auto mb-4" />
                       <h3 className="text-xl font-bold text-slate-500">ГРАФ ПО ОЖНІЙ</h3>
                       <p className="text-xs text-slate-600 mt-2 max-w-md mx-auto">
-                          База знань не містить об'єктів. Запустіть Ingestion процес або додайте документи.
+                          База знань не містить об'єктів. Запустіть Ingestionпроцес або додайте документи.
                       </p>
                   </div>
                   {/* Empty State Grid */}

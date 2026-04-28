@@ -69,7 +69,7 @@ describe('CargoManifestPremium', () => {
         expect(screen.getByText(/UA\/ODS\/22901/i)).toBeInTheDocument();
     });
 
-    it('дозволяє вибирати маніфест для перегляду деталей', async () => {
+    it('дозволяє вибирати маніфест дляперегляду деталей', async () => {
         render(<CargoManifestPremium />);
         
         const manifest = screen.getByText(/UA\/LVV\/11405/i);

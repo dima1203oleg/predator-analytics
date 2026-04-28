@@ -304,20 +304,20 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const PHASE_TEXTS: Record<number, string> = {
 
     0: '',
-    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕ ЕННОГО КВАНТОВОГОПРОТОКОЛУ [V58.2-ELITE]...',
-    2: '> БЛОКУВАННЯ СПЕКТ У: 47 ВУЗЛІВ / 1,217 ПОТОКІВ К ИПТОАНАЛІЗУ',
-    3: '> НЕЙРОННИЙ ПЕ ЕХОПЛЮВАЧ ОНЛАЙН: ПЕ ЕХ ЕСНЕ ВІДСТЕЖЕННЯ Т АФІКУ...',
+    1: '> ІНІЦІАЛІЗАЦІЯ СУВЕРЕННОГО КВАНТОВОГОПРОТОКОЛУ [V58.2-ELITE]...',
+    2: '> БЛОКУВАННЯ СПЕКТ У: 47 ВУЗЛІВ / 1,217 ПОТОКІВ КРИПТОАНАЛІЗУ',
+    3: '> НЕЙРОННИЙ ПЕ ЕХОПЛЮВАЧ ОНЛАЙН: ПЕ ЕХ ЕСНЕ ВІДСТЕЖЕННЯ ТРАФІКУ...',
     4: '> ДОСТУП  ІВНЯ TIER-1 ПІДТВЕРДЖЕНО — PREDATOR АКТИВОВАНО',
   };
 
   const DB_SCAN_LINES = [
-    'СИНХ ОНІЗАЦІЯ З ЗАК ИТИМИ БАЗАМИ INTERPOL & NSA...',
-    'АКТИВАЦІЯПРОТОКОЛУ СУВЕ ЕННОГО ПЕ ЕХОПЛЕННЯ Т АФІКУ (SWIFT/SEPA)...',
-    'МОНІТО ИНГ ГЛОБАЛЬНИХ ЛАНЦЮГІВ ПОСТАЧАННЯ (12.4 ЕКЗАБАЙТ ДАНИХ)...',
+    'СИНХРОНІЗАЦІЯ З ЗАКрИТИМИ БАЗАМИ INTERPOL & NSA...',
+    'АКТИВАЦІЯПРОТОКОЛУ СУВЕРЕННОГО ПЕРЕХОПЛЕННЯ ТРАФІКУ (SWIFT/SEPA)...',
+    'МОНІТОРИНГ ГЛОБАЛЬНИХ ЛАНЦЮГІВ ПОСТАЧАННЯ (12.4 ЕКЗАБАЙТ ДАНИХ)...',
     'ДЕ-АНОНІМІЗАЦІЯ ПА АВАННИХ ОФШО НИХ СТ УКТУ  (BERMUDA, BVI)...',
     'AI-ПОШУКПРИХОВАНИХ БЕНЕФІЦІА ІВ ЧЕ ЕЗ АЛГО ИТМИ НЕЙ ОГРАФІВ...',
-    'ОЦІНКА ВІ ОГІДНОСТІ Т АНЗАКЦІЙ... ВІДХИЛЕННЯ 0.0001%...',
-    'QUANTUM_DECRYPTION: ЗЛАМ СИМЕТ ИЧНИХ КЛЮЧІВ КОНТ АГЕНТА...',
+    'ОЦІНКА ВІ ОГІДНОСТІ ТРАНЗАКЦІЙ... ВІДХИЛЕННЯ 0.0001%...',
+    'QUANTUM_DECRYPTION: ЗЛАМ СИМЕТрИЧНИХ КЛЮЧІВ КОНТ АГЕНТА...',
     'МАСШТАБ ТА ПОТУЖНІСТЬ НЕДОСЯЖНА ДЛЯ КОМЕ ЦІЙНИХ СИСТЕМ...',
     'АБСОЛЮТНИЙ ЗБІГ ЦИФ ОВОГО СЛІДУ: 99.998%',
     'ФІКСАЦІЯ КОО ДИНАТ ЦІЛІ БЕЗ МОЖЛИВОСТІ БЛОКУВАННЯ...',
@@ -1064,7 +1064,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             transition={{ duration: 0.5 }}
             className="absolute inset-0 pointer-events-none z-[25]"
           >
-            {/* ─── КУТОВІ L-МА КЕ И П ИЦІЛУ ─── */}
+            {/* ─── КУТОВІ L-МА КЕ И ПРИЦІЛУ ─── */}
             {([['top-0 left-0',0],['top-0 right-0',1],['bottom-0 left-0',2],['bottom-0 right-0',3]] as [string,number][]).map(([pos,i]) => (
               <div key={i} className={`absolute ${pos} w-24 h-24`}>
                 <div className="absolute inset-3 border-amber-700/60" style={{
@@ -1093,7 +1093,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   <div className="absolute inset-0 bg-yellow-500 rounded-full animate-ping opacity-30"/>
                 </div>
                 <span className="text-[9px] font-black tracking-[0.6em] text-yellow-500 drop-shadow-[0_0_8px_rgba(251,191,36,0.7)] uppercase">
-                  П ЕДАТО  МЕ ЕЖА: ОНЛАЙН
+                  PREDATOR МЕ ЕЖА: ОНЛАЙН
                 </span>
               </div>
 
@@ -1103,7 +1103,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   АБСОЛЮТНИЙ КОНТРОЛЬ: ДОСТУП  ІВНЯ TIER-1
                 </p>
                 <p className="text-[6px] text-slate-500 tracking-[0.35em] uppercase">
-                  КЛАСИФІКАЦІЯ: БЕЗП ЕЦЕДЕНТНА ДЕ ЖАВНА ТАЄМНИЦЯ
+                  КЛАСИФІКАЦІЯ: БЕЗПрЕЦЕДЕНТНА ДЕ ЖАВНА ТАЄМНИЦЯ
                 </p>
                 <p className="text-[6px] text-slate-600 tracking-[0.3em] uppercase">
                   ЛІЦЕНЗІЯ: У ЯДОВИЙ АКТИВ · ВА ТІСТЬ: НЕ ОЦІНЮЄТЬСЯ
@@ -1121,7 +1121,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {/* ─── ВЕ ХНІЙ П АВИЙ БЛОК — ТЕЛЕМЕТ ІЯ ─── */}
             <div className="absolute top-8 right-8 text-right space-y-1.5">
               <div className="text-[7px] text-slate-600 uppercase tracking-[0.35em] font-bold">
-                ПЕ ЕХОПЛЕНО /ПРОАНАЛІЗОВАНО
+                ПЕРЕХОПЛЕНО /ПРОАНАЛІЗОВАНО
               </div>
               <motion.div
                 animate={{ opacity: [0.65, 1, 0.65] }}
@@ -1136,7 +1136,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   ВУЗЛІВ: {(4217+Math.floor(interceptCount/8000)).toLocaleString()} · ПОТОКІВ: 1,247
                 </div>
                 <div className="text-[6px] text-slate-700 uppercase tracking-widest">
-                  БАЗ ДАНИХ: 23 · К АЇНИ: 47 · СУПУТНИКИ: 47
+                  БАЗ ДАНИХ: 23 · КРАЇНИ: 47 · СУПУТНИКИ: 47
                 </div>
               </div>
               {/* Міні-sparkline */}
@@ -1176,7 +1176,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
               {phase === 3 && (
                 <div className="space-y-1">
                   <div className="flex justify-between text-[7px] uppercase tracking-[0.3em]">
-                    <span className="text-slate-700">ІНДЕКС ЗАГ ОЗИ</span>
+                    <span className="text-slate-700">ІНДЕКС ЗАГРОЗИ</span>
                     <motion.span
                       animate={{ color: threatLevel>80 ? ['#ef4444','#ff0000','#ef4444'] : ['#f97316','#ef4444'] }}
                       transition={{ duration: 0.3, repeat: Infinity }}
@@ -1226,14 +1226,14 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
             {/* ─── ВЕ ХНІЙ ЦЕНТ : TIMESTAMP / ВЕРСІЯ ─── */}
             <div className="absolute top-8 left-1/2 -translate-x-1/2 text-center space-y-0.5">
               <div className="text-[6px] text-slate-800 uppercase tracking-[0.5em]">
-                PREDATOR ANALYTICS · СУВЕ ЕННИЙ  ОЗВІДУВАЛЬНИЙ АКТИВ
+                PREDATOR ANALYTICS · СУВЕРЕННИЙ  ОЗВІДУВАЛЬНИЙ АКТИВ
               </div>
               <div className="text-[5.5px] text-yellow-600/70 tracking-[0.4em] uppercase font-black">
                 ВЕРСІЯ 58.2-ELITE · ЗБІ КА {rndHex(6)} · {new Date().toISOString().slice(0,10)}
               </div>
             </div>
 
-            {/* ─── ТЕ МІНАЛ ВНИЗУ ─── */}
+            {/* ─── ТЕРМІНАЛ ВНИЗУ ─── */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
               <div className="inline-flex items-center gap-2.5 bg-black/90 border border-amber-900/35 px-7 py-2.5"
                 style={{ boxShadow:'0 0 30px rgba(251,191,36,0.08),inset 0 0 20px rgba(0,0,0,0.6)' }}>
@@ -1359,7 +1359,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     }`}
                   >
                     <span className="mt-px opacity-50 text-[6px]">
-                      {line.includes('ЦІЛЬ') || line.includes('К ИТИЧНИЙ') ? '●' : '›'}
+                      {line.includes('ЦІЛЬ') || line.includes('КРИТИЧНИЙ') ? '●' : '›'}
                     </span>
                     <span style={line.includes('ЦІЛЬ ІДЕНТИФІКОВАНО')
                       ? {textShadow:'0 0 12px rgba(255,0,0,0.8)'} : {}}>
@@ -1391,7 +1391,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     ✛ ІМПЕ АТИВНИЙ КОНТРОЛЬ ВСТАНОВЛЕНО
                   </motion.div>
                   <div className="text-[10px] font-black tracking-[0.65em] text-white/90 uppercase animate-pulse">
-                    ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕ АТИВНА ГОТОВНІСТЬ ПІДТВЕ ДЖЕНА
+                    ОБ'ЄКТ ІЗОЛЬОВАНО · ОПЕРАТИВНА ГОТОВНІСТЬ ПІДТВЕРДЖЕНА
                   </div>
                 </motion.div>
               ) : (
@@ -1540,7 +1540,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
                   <h2 className="text-[12px] md:text-[18px] font-black tracking-[0.9em] text-amber-500 uppercase whitespace-nowrap italic skew-x-[-12deg] drop-shadow-[0_0_12px_rgba(245,158,11,0.6)]">
-                    БЕЗП ЕЦЕДЕНТНИЙ СУВЕ ЕННИЙ АКТИВ
+                    БЕЗПрЕЦЕДЕНТНИЙ СУВЕРЕННИЙ АКТИВ
                   </h2>
                   <div className="w-1.5 h-1.5 bg-amber-500/80 rotate-45"/>
                 </div>
@@ -1555,10 +1555,10 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 className="space-y-2 mt-4"
               >
                 <div className="text-[10px] text-slate-500 tracking-[0.65em] uppercase font-bold">
-                  НАЙДО ОЖЧА ПЛАТФО МА ФІНАНСОВОЇ  ОЗВІДКИ В ІСТО ІЇ
+                  НАЙДО ОЖЧА ПЛАТФОРМА ФІНАНСОВОЇ  РОЗВІДКИ В ІСТО ІЇ
                 </div>
                 <div className="text-[8px] text-slate-600 tracking-[0.45em] uppercase font-bold">
-                  АБСОЛЮТНА ГЕОПОЛІТИЧНА ПЕ ЕВАГА · ЯДРО ШІ GLM-5.1 · КВАНТОВА ДЕК ИПЦІЯ
+                  АБСОЛЮТНА ГЕОПОЛІТИЧНА ПЕ ЕВАГА · ЯДРО ШІ GLM-5.1 · КВАНТОВА ДЕКрИПЦІЯ
                 </div>
               </motion.div>
 
@@ -1581,7 +1581,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                   transition={{ duration:2.5, repeat:Infinity }}
                   className="text-[20px] md:text-[34px] font-black tracking-[0.4em] text-white uppercase italic"
                 >
-                  ГЛОБАЛЬНИЙ СУВЕ ЕННИЙ КОНТРОЛЬ.
+                  ГЛОБАЛЬНИЙ СУВЕРЕННИЙ КОНТРОЛЬ.
                 </motion.p>
                 <div className="flex items-center justify-center gap-6">
                   <div className="h-px w-24 bg-amber-900/40"/>
@@ -1603,7 +1603,7 @@ const BootScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 </motion.p>
                 <p className="text-[7px] text-amber-700/90 tracking-[0.55em] uppercase font-bold bg-amber-950/30 py-1.5 px-4 rounded inline-block border border-amber-900/30">
 
-                   ️ К ИТИЧНА ПОПЕ ЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТО ИЗОВАНИХ ОСІБ TIER-1
+                   ️ КрИТИЧНА ПОПЕ ЕДЖУВАЛЬНА ЗОНА: ТІЛЬКИ ДЛЯ АВТО ИЗОВАНИХ ОСІБ TIER-1
                 </p>
               </motion.div>
 

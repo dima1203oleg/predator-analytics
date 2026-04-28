@@ -54,7 +54,7 @@ export default function ComprompatPersonView() {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'PersonalIntel',
-            message: 'АКТИВОВАНО РЕЖИМ ЛОКАЛЬНОГО Т АСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
+            message: 'АКТИВОВАНО РЕЖИМ ЛОКАЛЬНОГО ТРАСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
             severity: 'warning',
             timestamp: new Date().toISOString(),
             code: 'PERSON_OFFLINE'
@@ -90,7 +90,7 @@ export default function ComprompatPersonView() {
         pib: form.pib.toUpperCase() || 'КОВАЛЬОВ ВІКТО  ПАВЛОВИЧ',
         region: form.region || 'Київська',
         riskScore: 84,
-        status: 'К ИТИЧНО',
+        status: 'КРИТИЧНО',
         sources_checked: 42,
         court_cases: 12,
         tax_debts: 4,
@@ -223,7 +223,7 @@ export default function ComprompatPersonView() {
               <div className="py-32 flex flex-col items-center justify-center space-y-12">
                  <CyberOrb size={220} status="quantum" />
                  <div className="space-y-4 text-center">
-                    <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] animate-pulse">Т АСУВАННЯ Т АНЗАКЦІЙ...</p>
+                    <p className="text-2xl font-black text-orange-500 uppercase italic tracking-[0.8em] animate-pulse">Т АСУВАННЯ ТРАНЗАКЦІЙ...</p>
                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">SEARCHING: {form.pib.toUpperCase()}</p>
                  </div>
               </div>
@@ -261,7 +261,7 @@ export default function ComprompatPersonView() {
                             { l: 'СУДОВІ СП АВИ', v: result.court_cases, i: Scale, color: 'amber' },
                             { l: 'БО ГИ ДПС', v: result.tax_debts, i: AlertTriangle, color: 'amber' },
                             { l: 'САНКЦІЇ', v: result.sanctions_hits, i: ShieldAlert, color: 'amber' },
-                            { l: 'К ИМІНАЛ', v: result.criminal_records, i: Lock, color: 'red' }
+                            { l: 'КрИМІНАЛ', v: result.criminal_records, i: Lock, color: 'red' }
                          ].map((s, i) => (
                             <div key={i} className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/[0.04] hover:border-white/10 transition-all text-center group/metric">
                                <s.i size={28} className={cn("mx-auto mb-5 transition-transform group-hover/metric:scale-110", `text-${s.color}-500`)} />
@@ -273,7 +273,7 @@ export default function ComprompatPersonView() {
 
                       <div className="flex flex-wrap items-center gap-6 pt-10 border-t border-white/[0.04] relative z-10">
                          <button className="px-10 py-5 bg-orange-700 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-orange-600 shadow-2xl flex items-center gap-4">
-                            <Target size={20} /> ВСТАНОВИТИ_ПОСТІЙНИЙ_МОНІТО ИНГ
+                            <Target size={20} /> ВСТАНОВИТИ_ПОСТІЙНИЙ_МОНІТОРИНГ
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-white/10 transition-all flex items-center gap-4">
                             <FileText size={20} /> ГЕНЕ УВАТИ_ПОВНИЙ_ЗВІТ
@@ -348,14 +348,14 @@ export default function ComprompatPersonView() {
 
                    <section className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8 relative overflow-hidden">
                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
-                          <Activity size={18} /> ОПЕ АТИВНИЙ_СТАН
+                          <Activity size={18} /> ОПЕРАТИВНИЙ_СТАН
                        </h3>
                        <div className="p-8 rounded-[2.5rem] bg-amber-600/5 border border-amber-600/20 space-y-6">
                           <p className="text-[14px] font-bold text-amber-300 italic leading-snug">ВИЯВЛЕНО НЕПОВ'ЯЗАНІ АКТИВИ В КІП СЬКИХ РЕЄСТРАХ ЧЕ ЕЗ АНОМАЛЬНЕ СПІВПАДІННЯ ДА Т-СПЕКТ ІВ.</p>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-3">
                                 <ShieldAlert size={16} className="text-amber-500" />
-                                <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">К ИТИЧНА_АНОМАЛІЯ_detected</span>
+                                <span className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em]">КрИТИЧНА_АНОМАЛІЯ_detected</span>
                              </div>
                              <span className="text-[9px] font-black text-slate-600 font-mono italic">0.0024s // PREDATOR_BRAIN</span>
                           </div>

@@ -208,7 +208,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
 
           <button
              onClick={async () => {
-                if (window.confirm("ВИ ВПЕВНЕНІ? Це зупинить всі автономні процеси AZR!")) {
+                if (window.confirm("ВИ ВПЕВНЕНІ? Це зупинить всі автономніпроцеси AZR!")) {
                    await fetch('/api/v45/azr/freeze', { method: 'POST' });
                    window.location.reload();
                 }

@@ -181,7 +181,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <div className="absolute left-0 w-8 h-full bg-gradient-to-r from-[rgba(2,6,18,1)] to-transparent z-10" />
             <span className="text-[8px] font-bold text-rose-500/70 uppercase tracking-widest shrink-0 z-20">OSINT:</span>
             <div className="flex gap-6 animate-[marquee_40s_linear_infinite] whitespace-nowrap pl-4">
-              {["Аналіз митних декларацій (UA-EU)", "Індекс ризику ТОВ 'ЕНЕ ДЖИ'", "Синхронізація з YouControl", "Виявлено нові зв'язки в секторі ВПК", "Моніторинг транзакцій завершено"].map((text, i) => (
+              {["Аналіз митних декларацій (UA-EU)", "Індексризику ТОВ 'ЕНЕ ДЖИ'", "Синхронізація з YouControl", "Виявлено нові зв'язки в секторі ВПК", "Моніторинг транзакцій завершено"].map((text, i) => (
                 <span key={i} className="text-[9px] font-mono text-slate-400 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-1 bg-rose-500/50 rounded-full" /> {text}
                 </span>

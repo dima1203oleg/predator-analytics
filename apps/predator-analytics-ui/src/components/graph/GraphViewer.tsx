@@ -30,7 +30,7 @@ export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset
 // Типи зв'язків
 export type EdgeType = 'OWNS' | 'MANAGES' | 'CONTROLS' | 'REGISTERED_AT' | 'INVOLVED_IN' | 'RELATED_TO';
 
-// рівні ризику
+// рівніризику
 // export type RiskLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
 
 // Інтерфейс вузла
@@ -77,7 +77,7 @@ const NODE_COLORS: Record<NodeType, string> = {
   Indicator: '#6b7280',    // gray-500
 };
 
-// Кольори для рівнів ризику
+// Кольори для рівнівризику
 const RISK_COLORS: Partial<Record<RiskLevelValue, string>> = {
   critical: '#ef4444', // red-500
   high: '#f97316',     // orange-500
@@ -127,7 +127,7 @@ const getCytoscapeStyle = (highVisibility: boolean) => {
       'background-color': color,
     },
   })),
-  // Стилі для рівнів ризику (border)
+  // Стилі для рівнівризику (border)
   ...Object.entries(RISK_COLORS).map(([level, color]) => ({
     selector: `node[riskLevel="${level}"]`,
     style: {

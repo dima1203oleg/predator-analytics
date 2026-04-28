@@ -50,7 +50,7 @@ export function OODALoopPanel({
             "bg-slate-500/10 border-slate-500/20 text-slate-400"
           )}>
             <Bell className="w-3 h-3" />
-            {alertLevel === 'NORMAL' ? 'НОРМАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'К ИТИЧНИЙ'}
+            {alertLevel === 'NORMAL' ? 'НОРМАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'КРИТИЧНИЙ'}
           </div>
       </div>
 
@@ -181,7 +181,7 @@ export function OODALoopPanel({
               <CheckCircle className="w-6 h-6 text-rose-500/40 relative z-10" />
               <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.2em] relative z-10 leading-relaxed">
                 СИСТЕМИ В НО МІ<br/>
-                <span className="text-[8px] opacity-60">OODA LOOP: ПАСИВНИЙ МОНІТО ИНГ</span>
+                <span className="text-[8px] opacity-60">OODA LOOP: ПАСИВНИЙ МОНІТОРИНГ</span>
               </p>
             </div>
           )}

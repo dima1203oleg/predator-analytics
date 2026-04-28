@@ -304,7 +304,7 @@ const SettingsView: React.FC = () => {
                                 <div className="space-y-1">
                                     <p className="text-sm font-semibold text-slate-100">Висока видимість</p>
                                     <p className="text-[11px] text-slate-400">
-                                       рекомендовано для яскравих екранів, проєкторів та тривалої роботи.
+                                      рекомендовано для яскравих екранів, проєкторів та тривалої роботи.
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-3">

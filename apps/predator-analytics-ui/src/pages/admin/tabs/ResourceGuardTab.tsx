@@ -117,7 +117,7 @@ export const ResourceGuardTab: React.FC = () => {
           />
           <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
         </div>
-        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">СИНХ ОНІЗАЦІЯ_МЕТ ИК_ЗАХИСТУ_V61...</div>
+        <div className="text-[14px] font-black font-mono uppercase tracking-[0.6em] animate-pulse italic text-rose-500/60">СИНХРОНІЗАЦІЯ_МЕТрИК_ЗАХИСТУ_V61...</div>
       </div>
     );
   }
@@ -158,7 +158,7 @@ export const ResourceGuardTab: React.FC = () => {
         {/* Routing Indicator Badge */}
         <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2rem] border-2 border-white/5 shadow-4xl group">
            <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТ АТЕГІЯ_МА Ш УТИЗАЦІЇ</span>
+              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">СТРАТЕГІЯ_МА Ш УТИЗАЦІЇ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
@@ -293,7 +293,7 @@ export const ResourceGuardTab: React.FC = () => {
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                <div className="flex items-center justify-between mb-8 relative z-10">
                   <div className="flex flex-col">
-                     <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.4em] italic mb-2">СУВЕ ЕННИЙ_ОФЛОАД</span>
+                     <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.4em] italic mb-2">СУВЕРЕННИЙ_ОФЛОАД</span>
                      <span className="text-2xl font-black text-white italic tracking-tighter uppercase glint-elite">SOVEREIGN_NODE_IMAC</span>
                   </div>
                   <div className="p-4 bg-rose-500/10 rounded-2xl border-2 border-rose-500/20 group-hover:bg-rose-500/20 transition-all duration-700">
@@ -325,7 +325,7 @@ export const ResourceGuardTab: React.FC = () => {
                  {toggleFailover.isPending ? (
                    <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                  ) : (
-                   llmTriStateMode === 'SOVEREIGN' ? 'СУВЕ ЕННИЙ_РЕЖИМ_АКТИВОВАНО' : 'АКТИВУВАТИ_СУВЕ ЕННИЙ_ОФЛОАД'
+                   llmTriStateMode === 'SOVEREIGN' ? 'СУВЕРЕННИЙ_РЕЖИМ_АКТИВОВАНО' : 'АКТИВУВАТИ_СУВЕРЕННИЙ_ОФЛОАД'
                  )}
                </button>
             </div>

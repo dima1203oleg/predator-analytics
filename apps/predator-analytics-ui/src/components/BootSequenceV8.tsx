@@ -549,7 +549,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
             className="absolute bottom-20 left-10 pointer-events-none"
           >
             <div className="text-white/40 text-xs font-mono mb-2">PREDATOR OS v8.0 — АКТИВНО</div>
-            <div className="text-white/60 text-xs font-mono mb-2">ВСІ СИСТЕМИ П ИВЕДЕНІ В БОЙОВУ ГОТОВНІСТЬ</div>
+            <div className="text-white/60 text-xs font-mono mb-2">ВСІ СИСТЕМИ ПРИВЕДЕНІ В БОЙОВУ ГОТОВНІСТЬ</div>
             <div className="text-white text-sm font-bold tracking-[0.5em] uppercase italic">ГОТОВО ДО РОЗГОРТАННЯ</div>
           </motion.div>
         )}

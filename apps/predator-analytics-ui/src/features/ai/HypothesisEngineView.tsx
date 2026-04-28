@@ -72,7 +72,7 @@ const HYPOTHESES: Hypothesis[] = [
     nextActions: [
       'ПОДАТИ ЗАЯВУ ДО НАБУ — СТ. 199 ККУ',
       'КЛОПОТАННЯПРО ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
-      'ЗАПИТ ДО КІП СЬКОГО  ЕГУЛЯТО А НА  ОЗК ИТТЯ UBO',
+      'ЗАПИТ ДО КІП СЬКОГО  ЕГУЛЯТО А НА  ОЗКрИТТЯ UBO',
     ],
     aiModel: 'PREDATOR-SIGINT-7B',
     processingTime: '2.4с',
@@ -84,7 +84,7 @@ const HYPOTHESES: Hypothesis[] = [
     category: 'corruption',
     status: 'probable',
     confidence: 81,
-    impact: 'Збитки державі · Конкурентне право',
+    impact: 'Збитки державі · Конкурентнеправо',
     impactValue: '$67M',
     createdAt: '03:47:19',
     entities: ['ТОВ "ЗАХИСТ-Т ЕЙД"', 'ФОП Бойченко І.В.', 'БФ "ПЕ ЕМОГА"'],
@@ -148,7 +148,7 @@ const HypothesisEngineView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'HypothesisEngine',
-          message: 'СИНХ ОНІЗАЦІЯ ГЕНЕ АТО А ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
+          message: 'СИНХРОНІЗАЦІЯ ГЕНЕ АТО А ГІПОТЕЗ УСПІШНА (HYPOTHESIS_SUCCESS). Зв\'язок з NVIDIA-кластером стабільний.',
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'HYPOTHESIS_SUCCESS'
@@ -271,7 +271,7 @@ const HypothesisEngineView: React.FC = () => {
           }
         />
 
-        {/* ── МЕТ ИКИ ELITE ── */}
+        {/* ── МЕТрИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'ГІПОТЕЗ СФО МОВАНО', v: '47',    sub: 'Активний векторний скан',       c: '#D4AF37' },
@@ -308,7 +308,7 @@ const HypothesisEngineView: React.FC = () => {
                 value={promptText}
                 onChange={e => setPromptText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleGenerate()}
-                placeholder="ВВЕДІТЬ_ПА АМЕТ И_ПОШУКУ_ОБ'ЄКТА..."
+                placeholder="ВВЕДІТЬ_ПА АМЕТрИ_ПОШУКУ_ОБ'ЄКТА..."
                 className="flex-1 bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono italic"
               />
             </div>
@@ -526,7 +526,7 @@ const HypothesisEngineView: React.FC = () => {
                       <div className="flex items-center gap-4">
                         <div className="p-3 bg-rose-500/10 rounded-2xl"><Target size={20} className="text-rose-500" /></div>
                         <div>
-                           <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase italic font-bold">ОПЕ АТИВНИЙ ВПЛИВ</p>
+                           <p className="text-[10px] text-slate-500 font-black tracking-widest uppercase italic font-bold">ОПЕРАТИВНИЙ ВПЛИВ</p>
                            <p className="text-[13px] font-black text-rose-500 font-mono italic uppercase">{selected.impactValue}</p>
                         </div>
                       </div>
@@ -614,7 +614,7 @@ const HypothesisEngineView: React.FC = () => {
                      </div>
                   </div>
                   <p className="text-[14px] font-black text-slate-800 uppercase tracking-[.8em] italic">
-                    ОБЕ ІТЬ_АНАЛІТИЧНУ_ЦІЛЬ
+                    ОБЕРІТЬ_АНАЛІТИЧНУ_ЦІЛЬ
                   </p>
                 </div>
               )}

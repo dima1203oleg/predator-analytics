@@ -78,7 +78,7 @@ describe('searchView.utils', () => {
         expect(radar.reputation).toBe(20);
     });
 
-    it('формує коректний текст рішення залежно від ризику', () => {
+    it('формує коректний текст рішення залежно відризику', () => {
         const highRisk = normalizeCompany(
             { id: '1', title: ' изик', metadata: { edrpou: '100', risk_level: 'high' } },
             0,

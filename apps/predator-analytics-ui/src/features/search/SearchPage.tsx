@@ -80,10 +80,10 @@ const SearchPage: React.FC = () => {
                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                        ПОШУК <span className="text-red-600 underline decoration-red-600/20 decoration-8">П ЕДАТО А</span>
+                                        ПОШУК <span className="text-red-600 underline decoration-red-600/20 decoration-8">PREDATORА</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                        СЕМАНТИЧНИЙ ДВИГУН  ОЗВІДКИ • ГЛОБАЛЬНЕ Т ЕКУВАННЯ ОБ'ЄКТІВ
+                                        СЕМАНТИЧНИЙ ДВИГУН  РОЗВІДКИ • ГЛОБАЛЬНЕ Т ЕКУВАННЯ ОБ'ЄКТІВ
                                     </p>
                                 </div>
                             </div>
@@ -153,7 +153,7 @@ const SearchPage: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="text-center space-y-4">
-                                    <span className="text-2xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">АНАЛІЗ_К ИМІНАЛЬНИХ_ВЕКТО ІВ</span>
+                                    <span className="text-2xl font-black text-red-600 uppercase tracking-[1em] italic animate-pulse block">АНАЛІЗ_КрИМІНАЛЬНИХ_ВЕКТО ІВ</span>
                                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] italic">SEARCH_IN_PROGRESS_v58.2</p>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ const SearchPage: React.FC = () => {
                                                       </div>
                                                    </div>
                                                    {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-lg">К ИТИЧНИЙ_РИЗИК</span>
+                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-lg">КРИТИЧНИЙ_РИЗИК</span>
                                                    )}
                                                 </div>
 
@@ -220,7 +220,7 @@ const SearchPage: React.FC = () => {
                                 <Ghost size={120} className="text-red-950/20 animate-pulse" />
                                 <div className="space-y-4">
                                    <p className="text-4xl font-black text-red-950/40 uppercase tracking-[0.8em] italic">СИСТЕМА ТИШІ</p>
-                                   <p className="text-[11px] text-red-950/30 font-black uppercase tracking-[0.4em] italic leading-tight">П ЕДАТО  ПОТ ЕБУЄ ЦІЛЬ. ІНІЦІЮЙТЕ СКАНУВАННЯ.</p>
+                                   <p className="text-[11px] text-red-950/30 font-black uppercase tracking-[0.4em] italic leading-tight">PREDATOR ПОТ ЕБУЄ ЦІЛЬ. ІНІЦІЮЙТЕ СКАНУВАННЯ.</p>
                                 </div>
                             </div>
                         )}

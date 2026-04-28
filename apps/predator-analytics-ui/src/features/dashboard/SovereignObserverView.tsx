@@ -1,6 +1,6 @@
 /**
- * 👁️ Sovereign Observer Matrix | v61.0-ELITEПРЕМІУМ-МАТ ИЦЯ
- * PREDATOR SOM (МОДУЛЬ СУВЕ ЕННОГО НАГЛЯДУ)
+ * 👁️ Sovereign Observer Matrix | v61.0-ELITEПРЕМІУМ-МАТрИЦЯ
+ * PREDATOR SOM (МОДУЛЬ СУВЕРЕННОГО НАГЛЯДУ)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
  * Включає:
@@ -191,9 +191,9 @@ const SOMView: React.FC = () => {
 
             <div className="absolute bottom-10 inset-x-10 p-6 bg-black/60 border border-white/5 rounded-2xl backdrop-blur-xl">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">П ОТОКОЛ_АКТИВНОГО_ ІВНЯ</span>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ПРОТОКОЛ_АКТИВНОГО_ ІВНЯ</span>
                 <span className="text-[9px] font-black text-white uppercase tracking-widest">
-                  {selectedRing === 3 ? 'АБСОЛЮТНИЙ_ОТ ИМУВАЧ' : selectedRing === 2 ? 'Ю ИДИЧНА_ВЕ ИФІКАЦІЯ' : 'АВТОНОМНИЙ_СКАН'}
+                  {selectedRing === 3 ? 'АБСОЛЮТНИЙ_ОТрИМУВАЧ' : selectedRing === 2 ? 'Ю ИДИЧНА_ВЕ ИФІКАЦІЯ' : 'АВТОНОМНИЙ_СКАН'}
                 </span>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed italic">
@@ -476,7 +476,7 @@ const SOMView: React.FC = () => {
             </div>
             <div className="flex flex-col text-right">
               <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1 flex items-center gap-2 justify-end">
-                <Radio size={10} /> Т АНСМІСІЯ
+                <Radio size={10} /> ТРАНСМІСІЯ
               </span>
               <span className="text-xs font-black text-white uppercase font-mono">ШИФ УВАННЯ_AES256</span>
             </div>

@@ -299,7 +299,7 @@ const NetworkMapPage: React.FC = () => {
                                                 </span>
                                                 {selectedNode.primary_risk === 'high' && (
                                                     <span className="px-4 py-2 bg-rose-500/10 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-500 animate-pulse flex items-center gap-3">
-                                                        <ShieldAlert size={14} /> К ИТИЧНИЙ_РИЗИК
+                                                        <ShieldAlert size={14} /> КРИТИЧНИЙ_РИЗИК
                                                     </span>
                                                 )}
                                             </div>
@@ -311,7 +311,7 @@ const NetworkMapPage: React.FC = () => {
                                                 <span className="text-xs font-black uppercase tracking-[0.3em] italic">НЕЙ О-ВИСНОВОК v5</span>
                                             </div>
                                             <p className="text-sm font-black text-slate-300 leading-relaxed italic opacity-80">
-                                                Об'єкт ідентифіковано як {selectedNode.type === 'company' ? "центральний вузол холдингової структури" : "пов'язану особу з правом вирішального впливу"}.
+                                                Об'єкт ідентифіковано як {selectedNode.type === 'company' ? "центральний вузол холдингової структури" : "пов'язану особу зправом вирішального впливу"}.
                                                 Мережевий аналіз вказує на непрямий зв'язок з {selectedNode.primary_risk === 'high' ? "санкційними списками" : "прозорими капіталами"}.
                                             </p>
                                         </div>
@@ -341,10 +341,10 @@ const NetworkMapPage: React.FC = () => {
 
                                     <div className="flex flex-col gap-4 mt-auto pt-10 border-t border-white/5">
                                         <button className="w-full py-6 bg-rose-600 hover:bg-white text-white hover:text-black font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5 shadow-2xl">
-                                            <Share2 size={20} /> ВІДК ИТИ_CERS_ДОСЬЄ
+                                            <Share2 size={20} /> ВІДКрИТИ_CERS_ДОСЬЄ
                                         </button>
                                         <button className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-500 font-black rounded-3xl uppercase tracking-[0.4em] text-[10px] transition-all flex items-center justify-center gap-5">
-                                            <Radio size={20} /> МОНІТО ИНГ_ЗВʼЯЗКІВ
+                                            <Radio size={20} /> МОНІТОРИНГ_ЗВʼЯЗКІВ
                                         </button>
                                     </div>
                                 </div>

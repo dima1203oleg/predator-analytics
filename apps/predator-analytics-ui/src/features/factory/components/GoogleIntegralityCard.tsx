@@ -54,7 +54,7 @@ export function GoogleIntegralityCard({
              <div className="text-[11px] font-black uppercase text-white">Google Аналітика</div>
              <div className="text-[8px] text-rose-400 font-mono">Аналіз трафіку та конверсії</div>
            </div>
-           <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХ ОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
+           <Badge variant="neon" className="bg-rose-500/20 text-rose-400 animate-pulse text-[8px]">{googleStatus.analytics.toUpperCase() === 'SYNCING' ? 'СИНХРОНІЗАЦІЯ' : googleStatus.analytics.toUpperCase()}</Badge>
         </div>
 
         <div className="pt-4 border-t border-white/10">

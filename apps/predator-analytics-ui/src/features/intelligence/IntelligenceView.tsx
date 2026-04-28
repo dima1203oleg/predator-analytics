@@ -43,7 +43,7 @@ const IntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'IntelligenceNexus',
-                    message: `АВА ІЙНА СИНХ ОНІЗАЦІЯ [${nodeSource}]:  обота через MIRROR_VAULT. Деякі когнітивні шари можуть бути обмежені.`,
+                    message: `АВА ІЙНА СИНХРОНІЗАЦІЯ [${nodeSource}]:  обота через MIRROR_VAULT. Деякі когнітивні шари можуть бути обмежені.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'INTEL_OFFLINE'
@@ -124,7 +124,7 @@ const IntelligenceView: React.FC = () => {
                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                        ЦЕНТ  <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8"> ОЗВІДКИ</span>
+                                        ЦЕНТ  <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8"> РОЗВІДКИ</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                         Аналіз  инку • Оперативні Шанси • Пріоритети Суверенітету
@@ -214,7 +214,7 @@ const IntelligenceView: React.FC = () => {
                                      </div>
                                      <p className="text-sm font-black text-slate-400 italic leading-relaxed mb-6">Виявлення нових глобальних джерел постачання та аналіз цінової конкурентності.</p>
                                      <div className="flex items-center gap-3 text-[#D4AF37] font-black text-[10px] uppercase tracking-widest italic">
-                                        ВІДК ИТИ_SOURCING <ChevronRight size={14} />
+                                        ВІДКрИТИ_SOURCING <ChevronRight size={14} />
                                      </div>
                                 </section>
                             </div>
@@ -227,7 +227,7 @@ const IntelligenceView: React.FC = () => {
                                             <Layers size={24} className="animate-pulse" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТ АТЕГІЧНА МАТ ИЦЯ</h3>
+                                            <h3 className="text-xl font-black text-white italic uppercase tracking-tighter leading-none mb-1">СЕМАНТИЧНА ТА СТРАТЕГІЧНА МАТрИЦЯ</h3>
                                             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em]">VISUAL_INTELLIGENCE // TOPOLOGY_v58.2</p>
                                         </div>
                                     </div>
@@ -249,9 +249,9 @@ const IntelligenceView: React.FC = () => {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mt-12 pt-10 border-t border-white/[0.04]">
                                     {[
-                                        { label: 'ЗАТ ИМКА_СИНАПСІВ', value: '4.2ms', sub: 'ОПТИМІЗОВАНО', c: 'text-[#D4AF37]' },
+                                        { label: 'ЗАТрИМКА_СИНАПСІВ', value: '4.2ms', sub: 'ОПТИМІЗОВАНО', c: 'text-[#D4AF37]' },
                                         { label: 'ІНДЕКС_ЕНТ ОПІЇ', value: '0.084', sub: 'СТАБІЛЬНО', c: 'text-[#D4AF37]' },
-                                        { label: 'ДОВІ А_ ОЗВІДКИ', value: 'SURPLUS', sub: 'ELITE-01', c: 'text-[#D4AF37]' },
+                                        { label: 'ДОВІ А_ РОЗВІДКИ', value: 'SURPLUS', sub: 'ELITE-01', c: 'text-[#D4AF37]' },
                                         { label: 'АКТИВНІ_АГЕНТИ', value: '14/14', sub: 'РОЗГОРНУТО', c: 'text-[#D4AF37]' },
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
@@ -330,7 +330,7 @@ const IntelligenceView: React.FC = () => {
                                    {[
                                       { l: 'ШАНСИ  ИНКУ', v: '12 АКТИВНИХ', c: 'text-[#D4AF37]', icon: BarChart3 },
                                       { l: 'П ИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-[#D97706]', icon: AlertCircle },
-                                      { l: 'ПРІОРИТЕТИ_CEO', v: '03 К ИТИЧНІ', c: 'text-white', icon: Star },
+                                      { l: 'ПРІОРИТЕТИ_CEO', v: '03 КрИТИЧНІ', c: 'text-white', icon: Star },
                                    ].map((m, i) => (
                                       <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-[#D4AF37]/20 transition-all cursor-pointer group">
                                          <div className="flex items-center gap-4">

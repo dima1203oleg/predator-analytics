@@ -191,7 +191,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                             <span className={`text-sm font-black tracking-[0.2em] ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'}`}>
                                 ЯДРО МА Ш УТИЗАЦІЇ
                             </span>
-                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний розподілювач</div>
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірнийрозподілювач</div>
                         </div>
                     </motion.div>
 
@@ -324,7 +324,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                     }`}>
                     <Server size={14} className={isActive ? 'animate-pulse' : ''} />
                     <span className="text-[10px] uppercase font-black tracking-widest">
-                        Стан Системи: {isActive ? 'СИНХ ОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
+                        Стан Системи: {isActive ? 'СИНХРОНІЗАЦІЯ МАНІФЕСТУ' : 'ОЧІКУВАННЯ ДАНИХ'}
                     </span>
                 </div>
             </div>

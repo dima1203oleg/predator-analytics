@@ -6,8 +6,8 @@
  * Включає:
  * - Physics-based Entity Graph (Семантичний  адар)
  * - Нейронний HUD сутності
- * - AI Інсайти та аналіз ризиків
- * - розширена візуальна аналітика
+ * - AI Інсайти та аналізризиків
+ * -розширена візуальна аналітика
  *
  * Sovereign Power Design · Classified · Tier-1
  * 
@@ -365,7 +365,7 @@ const AnalyticsView: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'SemanticRadar',
-                message: ` АДА _МАТ ИЦЯ [${nodeSource}]: Семантичний контур активовано. Готовність до когнітивного сканування.`,
+                message: ` АДА _МАТрИЦЯ [${nodeSource}]: Семантичний контур активовано. Готовність до когнітивного сканування.`,
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'SEMANTIC_SUCCESS'
@@ -410,7 +410,7 @@ const AnalyticsView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SemanticRadar',
-                    message: `К ИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА SEMANTIC_NODES. Перевірте з'єднання з ${nodeSource}.`,
+                    message: `КрИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА SEMANTIC_NODES. Перевірте з'єднання з ${nodeSource}.`,
                     severity: 'critical',
                     timestamp: new Date().toISOString(),
                     code: 'SEMANTIC_NODES'

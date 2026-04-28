@@ -13,7 +13,7 @@ interface CaseStatsProps {
 export const CaseStats: React.FC<CaseStatsProps> = ({ cases, activeFilter, onFilterChange }) => {
   const stats = useMemo(() => ({
     total: cases.length,
-    critical: cases.filter(c => c.status === 'К ИТИЧНО').length,
+    critical: cases.filter(c => c.status === 'КРИТИЧНО').length,
     attention: cases.filter(c => c.status === 'УВАГА').length,
     safe: cases.filter(c => c.status === 'БЕЗПЕЧНО').length,
     archived: cases.filter(c => c.status === 'А ХІВ').length,
@@ -41,10 +41,10 @@ export const CaseStats: React.FC<CaseStatsProps> = ({ cases, activeFilter, onFil
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => onFilterChange('К ИТИЧНО')}
+        onClick={() => onFilterChange('КРИТИЧНО')}
         className={`
           p-4 rounded-2xl border transition-all
-          ${activeFilter === 'К ИТИЧНО'
+          ${activeFilter === 'КРИТИЧНО'
             ? 'bg-red-500/10 border-red-500/50 ring-2 ring-red-500/20'
             : 'bg-slate-900/50 border-slate-800 hover:border-red-500/30'}
         `}

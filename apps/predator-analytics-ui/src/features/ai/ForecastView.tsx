@@ -58,7 +58,7 @@ const ForecastView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'Forecast_Engine',
-                    message: 'П ЕДИКТИВНЕ ЯДРО СИНХ ОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
+                    message: 'ПрЕДИКТИВНЕ ЯДРО СИНХ ОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'FORECAST_SUCCESS'
@@ -110,7 +110,7 @@ const ForecastView: React.FC = () => {
                 <ViewHeader
                     title="ML Прогнозування Попиту"
                     icon={<Brain className="text-purple-400" size={20} />}
-                    breadcrumbs={['ШІ', 'П ОГНОЗУВАННЯ', productCode]}
+                    breadcrumbs={['ШІ', 'ПРОГНОЗУВАННЯ', productCode]}
                     stats={[
                         { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                         { label: 'МОДЕЛЬ', value: forecast?.model_used || 'prophet_v4', icon: <Cpu size={14} />, color: 'primary' },

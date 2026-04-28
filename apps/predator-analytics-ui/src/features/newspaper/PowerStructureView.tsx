@@ -111,7 +111,7 @@ export default function PowerStructureView() {
                 levels: {
                     level1: { 
                         name: 'ВЕ ХОВНИЙ_А ХІТЕКТО ', 
-                        nodes: [{ id: '1', name: 'ОЛЕКСАНД _Г.В.', role: 'Тіньовий Куратор Митниці', power: 94, status: 'К ИТИЧНО', edrpou: 'PRIVATE', riskScore: 88, totalValue: 450000000, category: 'Politics', connections: 124 }] 
+                        nodes: [{ id: '1', name: 'ОЛЕКСАНД _Г.В.', role: 'Тіньовий Куратор Митниці', power: 94, status: 'КРИТИЧНО', edrpou: 'PRIVATE', riskScore: 88, totalValue: 450000000, category: 'Politics', connections: 124 }] 
                     },
                     level2: { 
                         name: 'ФІНАНСОВІ_ОПЕ АТО И', 
@@ -294,7 +294,7 @@ export default function PowerStructureView() {
                                 <Scan size={280} className="text-yellow-500" />
                              </div>
                              <h3 className="text-[12px] font-black text-yellow-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
-                                <Target size={18} /> К ИТИЧНІ_ІНСАЙТИ
+                                <Target size={18} /> КрИТИЧНІ_ІНСАЙТИ
                              </h3>
                              <div className="space-y-6 relative z-10">
                                 {data?.insights.map((insight, i) => (

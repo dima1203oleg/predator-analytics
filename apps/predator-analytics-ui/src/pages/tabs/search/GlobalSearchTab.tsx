@@ -103,7 +103,7 @@ export const GlobalSearchTab: React.FC = () => {
                 stats={[
                     { label: 'ІНДЕКСОВАНО_ОБ\'ЄКТІВ', value: '14.8M', icon: <Database size={14} />, color: 'primary' },
                     { label: 'ШВИДКІСТЬ_ПОШУКУ', value: '42ms', icon: <Zap size={14} />, color: 'success' },
-                    { label: 'ВІДК ИТІ_ЗВ\'ЯЗКИ', value: '1.2B+', icon: <Activity size={14} />, color: 'warning' }
+                    { label: 'ВІДКрИТІ_ЗВ\'ЯЗКИ', value: '1.2B+', icon: <Activity size={14} />, color: 'warning' }
                 ]}
             />
 
@@ -203,7 +203,7 @@ export const GlobalSearchTab: React.FC = () => {
                                                       </div>
                                                    </div>
                                                    {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-xl tracking-tighter">К ИТИЧНО</span>
+                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-xl tracking-tighter">КРИТИЧНО</span>
                                                    )}
                                                 </div>
 
@@ -240,7 +240,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 <div className="space-y-4">
                                    <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГО ИЗОНТ ПОДІЙ ПО ОЖНІЙ</p>
                                    <p className="text-[11px] text-red-950/10 font-bold uppercase tracking-[0.3em] italic max-w-lg mx-auto leading-relaxed">
-                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПА АМЕТ И ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУ І.
+                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПА АМЕТрИ ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУ І.
                                    </p>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 <div className="p-10 bg-black/80 rounded-[3rem] border border-red-600/20 text-center min-w-[240px]">
                                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic mb-2 leading-none">CERS_THREAT_LVL</p>
                                     <p className={cn("text-6xl font-black italic tracking-tighter font-mono", selectedEntity.risk > 70 ? 'text-red-500' : 'text-emerald-500')}>{selectedEntity.risk}%</p>
-                                    <p className="text-[9px] font-black text-slate-500 uppercase italic mt-2">КАТЕГО ІЯ: К ИТИЧНО</p>
+                                    <p className="text-[9px] font-black text-slate-500 uppercase italic mt-2">КАТЕГОРІЯ: КРИТИЧНО</p>
                                 </div>
                             </TacticalCard>
 

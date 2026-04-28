@@ -120,8 +120,8 @@ const normalizeStatus = (value?: string): { value: CompanyStatus; label: string 
         case 'process':
         case 'suspended':
         case 'pending':
-        case 'в процесі':
-            return { value: 'process', label: 'В процесі припинення' };
+        case 'впроцесі':
+            return { value: 'process', label: 'Впроцесіприпинення' };
         default:
             return { value: 'unknown', label: 'Невідомо' };
     }

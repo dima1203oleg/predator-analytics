@@ -2,7 +2,7 @@
  * 🎯 Smart Risk Radar - Killer Feature #2
  *
  * Real-time 360° risk visualization with predictive alerts
- * Використовує ML для передбачення ризиків та аномалій
+ * Використовує ML для передбаченняризиків та аномалій
  */
 
 import React, { useState, useEffect } from 'react';
@@ -51,7 +51,7 @@ export const SmartRiskRadar: React.FC = () => {
             id: alert.id || `risk-${Date.now()}-${alert.timestamp}`,
             category: mapAlertToCategory(alert.type || alert.category),
             severity: mapAlertSeverity(alert.severity),
-            title: alert.title || alert.message || 'Виявлено ризик',
+            title: alert.title || alert.message || 'Виявленоризик',
             description: alert.description || alert.summary || 'Потребує перевірки',
             probability: alert.probability || alert.confidence || 0.5,
             impact: alert.impact || alert.risk_score / 100 || 0.5,
@@ -159,12 +159,12 @@ export const SmartRiskRadar: React.FC = () => {
                   {riskScore > 50 ? (
                     <>
                       <TrendingUp className="w-4 h-4 text-red-400" />
-                      <span className="text-red-400">Підвищений ризик</span>
+                      <span className="text-red-400">Підвищенийризик</span>
                     </>
                   ) : (
                     <>
                       <TrendingDown className="w-4 h-4 text-green-400" />
-                      <span className="text-green-400">Знижений ризик</span>
+                      <span className="text-green-400">Зниженийризик</span>
                     </>
                   )}
                 </div>

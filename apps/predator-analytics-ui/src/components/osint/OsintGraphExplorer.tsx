@@ -298,7 +298,7 @@ export function OsintGraphExplorer() {
                 <div className="p-4 border-b border-slate-800/60 bg-slate-900/50">
                     <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <History className="w-4 h-4 text-rose-500" />
-                        Ваші розслідування
+                        Вашірозслідування
                     </h2>
                 </div>
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
@@ -458,7 +458,7 @@ export function OsintGraphExplorer() {
                 </div>
             </div>
 
-            {/* ─── П АВА ПАНЕЛЬ: ENTITY PROFILE (ДОСЬЄ В 4.0) ────────── */}
+            {/* ─── ПРАВА ПАНЕЛЬ: ENTITY PROFILE (ДОСЬЄ В 4.0) ────────── */}
             <AnimatePresence>
                 {selectedNode && (
                     <motion.div

@@ -108,7 +108,7 @@ export default function CargoManifestPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CargoForensic',
-          message: `ВАНТАЖНИЙ_ВУЗОЛ [${nodeSource}]: ФО ЕНЗИК-МАТ ИЦЮ успішно активовано. Готовність до глибокого аналізу маніфестів.`,
+          message: `ВАНТАЖНИЙ_ВУЗОЛ [${nodeSource}]: ФО ЕНЗИК-МАТрИЦЮ успішно активовано. Готовність до глибокого аналізу маніфестів.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'MANIFEST_SUCCESS'
@@ -315,7 +315,7 @@ export default function CargoManifestPremium() {
                            <div className="space-y-10">
                               <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
                                  <div className="absolute top-6 right-8 text-slate-900 group-hover/card:text-yellow-500/10 transition-colors"><Truck size={42} /></div>
-                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОТ ИМУВАЧ_ВАНТАЖУ_UA</p>
+                                 <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-[0.4em]">ОТрИМУВАЧ_ВАНТАЖУ_UA</p>
                                  <p className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedManifest.consignee}</p>
                               </div>
                               <div className="p-10 bg-black/40 border-2 border-white/[0.03] rounded-[3.5rem] space-y-4 shadow-inset relative group/card">
@@ -401,7 +401,7 @@ export default function CargoManifestPremium() {
                         </div>
                         
                         <div className="p-10 rounded-[4rem] border-2 border-amber-600/20 bg-amber-600/[0.02] shadow-4xl space-y-8 relative overflow-hidden group/ai2">
-                           <h5 className="text-[12px] font-black text-amber-500 uppercase italic tracking-[0.5em] border-b border-amber-500/10 pb-6">AI_П ЕДИКЦІЯ_РИЗИКУ</h5>
+                           <h5 className="text-[12px] font-black text-amber-500 uppercase italic tracking-[0.5em] border-b border-amber-500/10 pb-6">AI_ПрЕДИКЦІЯ_РИЗИКУ</h5>
                            <div className="space-y-6 pt-4 relative z-10">
                               <div className="flex justify-between items-end">
                                  <p className="text-[12px] text-slate-400 font-black italic uppercase">Ймовірність_СХЕМИ:</p>
@@ -447,7 +447,7 @@ export default function CargoManifestPremium() {
                        <div className="absolute inset-0 border-4 border-amber-500/10 rounded-full animate-ping group-hover:border-amber-500/30 transition-all" />
                     </div>
                     <div className="space-y-6">
-                      <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБЕ ІТЬ_ОБ'ЄКТ_ДЛЯ_ФО ЕНЗИКИ</h3>
+                      <h3 className="text-4xl font-black text-slate-700 uppercase tracking-widest italic leading-none shadow-sm">ОБЕРІТЬ_ОБ'ЄКТ_ДЛЯ_ФО ЕНЗИКИ</h3>
                       <p className="text-slate-900 font-black uppercase tracking-[0.6em] italic text-xs max-w-xl mx-auto opacity-60">СИСТЕМА ГОТОВА ДО ГЛИБИННОГО СКАНУВАННЯ МАНІФЕСТІВ</p>
                     </div>
                   </div>

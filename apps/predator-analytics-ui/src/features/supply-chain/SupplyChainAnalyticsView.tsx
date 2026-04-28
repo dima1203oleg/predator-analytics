@@ -66,7 +66,7 @@ const formatPercent = (value?: number | null): string =>
 
 const getRiskMeta = (value?: number | null) => {
     if (value == null || !Number.isFinite(value)) return { label: 'Н/д', tone: 'text-slate-500', border: 'border-white/10' };
-    if (value >= 80) return { label: 'К ИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
+    if (value >= 80) return { label: 'КРИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
     if (value >= 60) return { label: 'ВИСОКИЙ', tone: 'text-amber-500', border: 'border-amber-500/30' };
     return { label: 'НОРМА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
 };
@@ -158,7 +158,7 @@ export default function SupplyChainAnalyticsView() {
                                ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase"> АДА </span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                МОНІТО ИНГ ЛАНЦЮГІВ ПОСТАЧАННЯ ТА AIS-Т ЕКІНГ
+                                МОНІТОРИНГ ЛАНЦЮГІВ ПОСТАЧАННЯ ТА AIS-Т ЕКІНГ
                              </p>
                           </div>
                        </div>
@@ -166,7 +166,7 @@ export default function SupplyChainAnalyticsView() {
                      stats={[
                        { label: 'АКТИВНИХ_ВАНТАЖІВ', value: statsData.items[0]?.value ?? '42', icon: <Box size={14} />, color: 'primary' },
                        { 
-                         label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИКОВІ_ЗАТ ИМКИ', 
+                         label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИКОВІ_ЗАТрИМКИ', 
                          value: isOffline ? `${Math.floor(healingProgress)}%` : '7', 
                          icon: isOffline ? <Activity /> : <Siren size={14} />, 
                          color: isOffline ? 'warning' : 'danger', 

@@ -1,6 +1,6 @@
 /**
  *   PREDATOR Strategic Intelligence Center | v62.7-ELITE
- * Sovereign Elite Edition — МOДУЛЬ СТ АТЕГІЧНОЇ  ОЗВІДКИ ТА КОГНІТИВНОГО МОНІТО ИНГУ
+ * Sovereign Elite Edition — МOДУЛЬ СТРАТЕГІЧНОЇ  РОЗВІДКИ ТА КОГНІТИВНОГО МОНІТОРИНГУ
  *
  * Центр управління AI-агентами та стратегічного аналізу.
  * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
@@ -103,7 +103,7 @@ const IntelligenceNode: React.FC<{
 // ========================
 
 const IntelligencePage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'СТ АТЕГІЯ' | 'ТАКТИКА' | 'НЕЙ ОМЕ ЕЖА' | 'АВТОНОМІЯ'>('СТ АТЕГІЯ');
+    const [activeTab, setActiveTab] = useState<'СТРАТЕГІЯ' | 'ТАКТИКА' | 'НЕЙ ОМЕ ЕЖА' | 'АВТОНОМІЯ'>('СТРАТЕГІЯ');
 
     const { data: metrics } = useQuery({
         queryKey: ['system-metrics'],
@@ -143,7 +143,7 @@ const IntelligencePage: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-2deg]">
-                                        СТ АТЕГІЧНА <span className="text-red-600">РОЗВІДКА</span>
+                                        СТРАТЕГІЧНА <span className="text-red-600">РОЗВІДКА</span>
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-red-600/50" />
@@ -159,7 +159,7 @@ const IntelligencePage: React.FC = () => {
                             { label: 'СТ АТ_ОЦІНКА', value: metrics?.cpu_percent != null ? `${((100 - metrics.cpu_percent) / 100).toFixed(2)}` : '0.82', color: 'success', icon: <TrendingUp size={14} /> },
                             { label: 'ЧАС  ЕАКЦІЇ', value: '4ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['ЯДРО', 'OSINT-КОНТУ ', 'ЦЕНТ _ ОЗВІДКИ']}
+                        breadcrumbs={['ЯДРО', 'OSINT-КОНТУ ', 'ЦЕНТ _ РОЗВІДКИ']}
                     />
 
                     <div className="grid grid-cols-12 gap-10">
@@ -169,7 +169,7 @@ const IntelligencePage: React.FC = () => {
 
                              {/* Strategic Tabs */}
                              <div className="flex bg-[#050505]/60 backdrop-blur-3xl p-2 rounded-[2.5rem] border border-white/5 self-start shadow-xl">
-                                {['СТ АТЕГІЯ', 'ТАКТИКА', 'НЕЙ ОМЕ ЕЖА', 'АВТОНОМІЯ'].map(tab => (
+                                {['СТРАТЕГІЯ', 'ТАКТИКА', 'НЕЙ ОМЕ ЕЖА', 'АВТОНОМІЯ'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab as any)}
@@ -194,7 +194,7 @@ const IntelligencePage: React.FC = () => {
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="ROI_ ОЗВІДКИ (x6.2)"
+                                        title="ROI_ РОЗВІДКИ (x6.2)"
                                         status="МАКСИМУМ"
                                         progress={95}
                                         icon={<TrendingUp size={24} />}
@@ -202,7 +202,7 @@ const IntelligencePage: React.FC = () => {
                                      />
                                      <IntelligenceNode
                                         title="КОНКУ ЕНТНИЙ_ПУЛЬС"
-                                        status="К ИТИЧНО"
+                                        status="КРИТИЧНО"
                                         progress={92}
                                         icon={<ShieldAlert size={24} />}
                                         color="crimson"
@@ -215,8 +215,8 @@ const IntelligencePage: React.FC = () => {
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="К ИПТО_ПОТОКИ_SWIFT"
-                                        status="МОНІТО ИНГ"
+                                        title="КрИПТО_ПОТОКИ_SWIFT"
+                                        status="МОНІТОРИНГ"
                                         progress={68}
                                         icon={<Lock size={24} />}
                                         color="rose"
@@ -312,7 +312,7 @@ const IntelligencePage: React.FC = () => {
                                          <Target size={24} className="text-red-600" />
                                      </div>
                                      <div>
-                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">СТ АТЕГІЧНІ_ЦІЛІ</h4>
+                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">СТРАТЕГІЧНІ_ЦІЛІ</h4>
                                          <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ПРІОРИТЕТ_ЦІЛЕЙ_v62.7</p>
                                      </div>
                                  </div>
@@ -325,14 +325,14 @@ const IntelligencePage: React.FC = () => {
                                          color: job.status === 'error' || job.status === 'failed' ? 'crimson' : 'rose'
                                      })) : [
                                          { name: 'ІДЕНТИФІКАЦІЯ_КБ', status: 'В_П ОЦЕСІ', val: 74, color: 'rose' },
-                                         { name: 'Т ЕКІНГ_ОФШО ІВ', status: 'К ИТИЧНО', val: 91, color: 'crimson' },
+                                         { name: 'Т ЕКІНГ_ОФШО ІВ', status: 'КРИТИЧНО', val: 91, color: 'crimson' },
                                          { name: 'КА ТУВАННЯ_ПОСТАЧАНЬ', status: 'СКАНИНГ', val: 42, color: 'rose' },
                                          { name: 'АНОМАЛІЇ_ШІ', status: 'ВИКОНАНО', val: 100, color: 'rose' }
                                      ]).map((goal: any) => (
                                          <div key={goal.name} className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/5 transition-all group/goal">
                                              <div className="flex justify-between items-center mb-4">
                                                   <span className="text-[10px] font-black text-white uppercase tracking-widest group-hover/goal:text-red-600 transition-colors italic">{goal.name}</span>
-                                                  <Badge className={cn("text-[7px] border-none px-2 py-0.5 text-white shadow-sm", goal.status === 'К ИТИЧНО' || goal.color === 'crimson' ? "bg-red-700" : "bg-red-600")}>
+                                                  <Badge className={cn("text-[7px] border-none px-2 py-0.5 text-white shadow-sm", goal.status === 'КРИТИЧНО' || goal.color === 'crimson' ? "bg-red-700" : "bg-red-600")}>
                                                       {goal.status}
                                                   </Badge>
                                              </div>
@@ -387,7 +387,7 @@ const IntelligencePage: React.FC = () => {
                                              <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-4 opacity-40">
                                                  <span className="text-[9px] font-mono text-slate-600 shrink-0">0{i}:24:14</span>
                                                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                                     СИНХ ОНІЗАЦІЯ ПОТОКУ... ВУЗОЛ_0{i+1}
+                                                     СИНХРОНІЗАЦІЯ ПОТОКУ... ВУЗОЛ_0{i+1}
                                                  </p>
                                              </div>
                                          ))
@@ -404,7 +404,7 @@ const IntelligencePage: React.FC = () => {
                                       <PieChart size={120} className="text-[#f43f5e]/5 group-hover:text-[#f43f5e]/10 transition-colors rotate-12" />
                                   </div>
                                   <div className="relative z-10 space-y-6">
-                                      <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] italic">МАТ ИЦЯ_ЗАГ ОЗ</h3>
+                                      <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] italic">МАТрИЦЯ_ЗАГРОЗ</h3>
                                       <div className="grid grid-cols-2 gap-4">
                                           <div>
                                               <p className="text-[8px] font-mono text-slate-500 uppercase">ЗОВНІШНІ</p>

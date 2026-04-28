@@ -39,7 +39,7 @@ import {
 
 const RiskMeter: React.FC<{ score: number; size?: 'sm' | 'md' }> = ({ score, size = 'md' }) => {
     const color = score > 80 ? '#f43f5e' : score > 60 ? '#f59e0b' : score > 40 ? '#3b82f6' : '#10b981';
-    const label = score > 80 ? 'К ИТИЧНИЙ' : score > 60 ? 'ПІДВИЩЕНИЙ' : score > 40 ? 'ПОМІ НИЙ' : 'НИЗЬКИЙ';
+    const label = score > 80 ? 'КРИТИЧНИЙ' : score > 60 ? 'ПІДВИЩЕНИЙ' : score > 40 ? 'ПОМІ НИЙ' : 'НИЗЬКИЙ';
 
     return (
         <div className="w-full space-y-2">
@@ -197,14 +197,14 @@ export default function MaritimeView() {
                                МО СЬКИЙ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">СУВЕ ЕН</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                МОНІТО ИНГ ГЛОБАЛЬНОГО Т АФІКУ ТА САНКЦІЙНОГО ФЛОТУ
+                                МОНІТОРИНГ ГЛОБАЛЬНОГО ТРАФІКУ ТА САНКЦІЙНОГО ФЛОТУ
                              </p>
                           </div>
                        </div>
                      }
                      stats={[
                        { label: 'АКТИВНІ_СУДНА', value: String(vessels.length), icon: <Ship size={14} />, color: 'primary' },
-                       { label: 'К ИТИЧНИЙ_РИЗИК', value: String(vessels.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
+                       { label: 'КРИТИЧНИЙ_РИЗИК', value: String(vessels.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
                        { label: 'ПО ТИ_В_ ОБОТІ', value: String(ports.length), icon: <Anchor size={14} />, color: 'success' }
                      ]}
                      actions={

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * 🔊 SYNERGETIC AUDIO SANCTUARY | v61.0-ELITE
- * П ЕДАТО : АУДІО-СУП ОВІД (TACTICAL AMBIENCE)
+ * PREDATOR: АУДІО-СУП ОВІД (TACTICAL AMBIENCE)
  * 
  * Генерує низькочастотний ембієнт та тактичні звуковірефекти через Web Audio API.
  * Створює атмосферу серйозності та "хижацького" спостереження.

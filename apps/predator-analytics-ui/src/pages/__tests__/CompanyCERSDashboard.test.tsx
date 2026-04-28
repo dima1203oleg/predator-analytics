@@ -101,10 +101,10 @@ describe('CompanyCERSDashboard', () => {
         fireEvent.change(input, { target: { value: 'New Company' } });
         fireEvent.submit(input);
         
-        expect(screen.getByText(/ АХУЄМО МАТ ИЦЮ РИЗИКІВ.../i)).toBeInTheDocument();
+        expect(screen.getByText(/ АХУЄМО МАТрИЦЮ РИЗИКІВ.../i)).toBeInTheDocument();
         
         await waitFor(() => {
-            expect(screen.queryByText(/ АХУЄМО МАТ ИЦЮ РИЗИКІВ.../i)).not.toBeInTheDocument();
+            expect(screen.queryByText(/ АХУЄМО МАТрИЦЮ РИЗИКІВ.../i)).not.toBeInTheDocument();
         }, { timeout: 2000 });
     });
 

@@ -192,7 +192,7 @@ export default function ExecutiveBoardView() {
         <motion.div variants={fadeUp} className="space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-black text-white italic tracking-tight">ОПЕ АТИВНИЙ КОНТУ </h2>
+              <h2 className="text-lg font-black text-white italic tracking-tight">ОПЕРАТИВНИЙ КОНТУ </h2>
               <p className="text-xs text-slate-500 mt-0.5">6 стратегічних Titan-модулів управління</p>
             </div>
             <div className="inline-flex items-center gap-1.5 rounded-full border border-rose-400/15 bg-rose-500/8 px-2.5 py-1 text-[10px] font-bold text-rose-400">

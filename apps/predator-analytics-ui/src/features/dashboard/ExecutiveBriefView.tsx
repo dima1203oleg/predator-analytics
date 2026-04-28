@@ -83,9 +83,9 @@ export default function ExecutiveBriefView() {
     const messages = [
       'ГРАФ: Виявлено нову афіліацію першого рівня в офшорній зоні',
       'OSINT: Виявлено 14 нових згадок суб\'єкта в закритих реєстрах',
-      'Т ИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
-      'СИНХ ОНІЗАЦІЯ: Оновлено санкційні списки РНБО та OFAC/EU',
-      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГ О" підвищено до 98.9% (АГЕНТСЬКА_СИНХ ОНІЗАЦІЯ)',
+      'ТРИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
+      'СИНХРОНІЗАЦІЯ: Оновлено санкційні списки РНБО та OFAC/EU',
+      'GLM-5.1 АНАЛІЗ: Прогнозризику для ТОВ "АГ О" підвищено до 98.9% (АГЕНТСЬКА_СИНХРОНІЗАЦІЯ)',
       'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною — Тунель ZROK активний',
       'ФІНАНСИ: Виявлено ознаки кругової торгівлі у секторі палива'
     ];
@@ -133,7 +133,7 @@ export default function ExecutiveBriefView() {
                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
             </div>
             <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg]">
-              СУВЕ ЕННЕ <span className="text-red-600">СТ АТЕГІЧНЕ ЗВЕДЕННЯ</span>
+              СУВЕ ЕННЕ <span className="text-red-600">СТРАТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
              ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТ АЛЬНОГО ЯД А | v61.0-ELITE (АГЕНТСЬКИЙ_ПУЛ)
@@ -146,7 +146,7 @@ export default function ExecutiveBriefView() {
                 {overview?.summary ? (overview.summary.total_declarations / 1000).toFixed(1) + 'k' : '14.2k'}
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mt-1 italic">
-                ОБ'ЄКТІВ ОБ ОБЛЕНО
+                ОБ'ЄКТІВ ОБРОБЛЕНО
               </div>
             </div>
             <div className="w-px h-12 bg-white/10 hidden md:block" />
@@ -176,7 +176,7 @@ export default function ExecutiveBriefView() {
                   <Network size={20} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-white uppercase italic tracking-tight">АКТИВНІСТЬ ЗАГ ОЗ МЕ ЕЖІ</h2>
+                  <h2 className="text-lg font-black text-white uppercase italic tracking-tight">АКТИВНІСТЬ ЗАГРОЗ МЕ ЕЖІ</h2>
                   <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Останні 24 години управління</p>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export default function ExecutiveBriefView() {
               </div>
               <div>
                 <h2 className="text-lg font-black text-white uppercase italic tracking-tight">ПРІОРИТЕТНІ ОБ'ЄКТИ</h2>
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Критичний рівень ризику — аналіз AI</p>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Критичний рівеньризику — аналіз AI</p>
               </div>
             </div>
             
@@ -231,7 +231,7 @@ export default function ExecutiveBriefView() {
                 <thead className="bg-white/[0.02] text-slate-500 uppercase tracking-[0.2em] text-[10px] font-black italic">
                   <tr>
                     <th className="px-6 py-4">ID_СЕ ТИФІКАТ</th>
-                    <th className="px-6 py-4">СУБ'ЄКТ_ ОЗВІДКИ</th>
+                    <th className="px-6 py-4">СУБ'ЄКТ_ РОЗВІДКИ</th>
                     <th className="px-6 py-4">ОБСЯГ_USD</th>
                     <th className="px-6 py-4 text-center">ІНДЕКС_РИЗИКУ</th>
                     <th className="px-6 py-4 text-right">ДІЯ</th>
@@ -285,7 +285,7 @@ export default function ExecutiveBriefView() {
             
             <div className="absolute bottom-5 right-5 z-10 flex flex-col items-end">
               <div className="text-2xl font-black text-white tracking-widest italic tabular-nums">
-                194 <span className="text-[10px] text-slate-500">К АЇНИ</span>
+                194 <span className="text-[10px] text-slate-500">КРАЇНИ</span>
               </div>
             </div>
           </section>
@@ -297,7 +297,7 @@ export default function ExecutiveBriefView() {
                 <div className="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                   <Terminal size={18} />
                 </div>
-                <h2 className="text-lg font-black text-white italic uppercase tracking-tight">ЯДРО ТЕ МІНАЛУ</h2>
+                <h2 className="text-lg font-black text-white italic uppercase tracking-tight">ЯДРО ТЕРМІНАЛУ</h2>
               </div>
               <div className="h-2 w-2 rounded-full bg-red-600 animate-ping" />
             </div>

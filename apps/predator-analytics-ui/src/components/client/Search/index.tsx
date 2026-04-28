@@ -86,7 +86,7 @@ export const Search: React.FC = () => {
           stats={[
             { label: ' ЕЗУЛЬТАТІВ', value: String(results.length), icon: <Target size={14} />, color: 'primary' },
             { label: 'БАЗА_ДАНИХ', value: '4.2M+', icon: <Database size={14} />, color: 'primary' },
-            { label: 'ЗАТ ИМКА', value: '14ms', icon: <Activity size={14} />, color: 'success' }
+            { label: 'ЗАТрИМКА', value: '14ms', icon: <Activity size={14} />, color: 'success' }
           ]}
         />
 
@@ -112,7 +112,7 @@ export const Search: React.FC = () => {
 
           <div className="flex items-center gap-4 overflow-x-auto pb-4 no-scrollbar opacity-80">
             <button className="flex items-center gap-3 px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">
-              <Filter size={14} /> ВСІ_ФІЛЬТ И
+              <Filter size={14} /> ВСІ_ФІЛЬТрИ
             </button>
             <div className="h-4 w-px bg-white/5" />
             <button className="px-6 py-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-500 text-[9px] uppercase font-black tracking-widest transition-all hover:border-blue-500/30 hover:text-blue-400">Ю ИДИЧНІ_ОСОБИ</button>
@@ -176,7 +176,7 @@ export const Search: React.FC = () => {
                          onClick={() => window.location.href = `/company/${result.id}/cers`}
                          className="flex items-center gap-4 px-10 py-5 bg-white/[0.03] hover:bg-blue-600 text-white border border-white/5 hover:border-blue-500 rounded-3xl transition-all text-[10px] font-black uppercase tracking-[0.3em] italic group-hover:shadow-2xl active:scale-95"
                       >
-                        ВІДК ИТИ_ДОСЬЄ <ArrowRight size={18} />
+                        ВІДКрИТИ_ДОСЬЄ <ArrowRight size={18} />
                       </button>
                     </div>
                     

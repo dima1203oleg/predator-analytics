@@ -31,7 +31,7 @@ const DatasetsStudioView = () => {
         service: 'Datasets_Studio',
         message: isOffline 
           ? 'ДАТАСЕТ-ЦЕНТ : РЕЖИМ ЛОКАЛЬНОГО КЕШУ (DATA_OFFLINE).' 
-          : 'СИНХ ОНІЗАЦІЯ ДАТАСЕТІВ: NVIDIA-GRID ACTIVE.',
+          : 'СИНХРОНІЗАЦІЯ ДАТАСЕТІВ: NVIDIA-GRID ACTIVE.',
         severity: isOffline ? 'warning' : 'info',
         timestamp: new Date().toISOString(),
         code: isOffline ? 'DATA_OFFLINE' : 'DATA_SUCCESS'
@@ -47,7 +47,7 @@ const DatasetsStudioView = () => {
 
   const datasets = [
     { id: 'DS-001', name: 'Митні декларації 2024-2026', source: 'ДМСУ (API)', size: '1.2 GB', status: 'АКТИВНО', quality: 99 },
-    { id: 'DS-002', name: 'Реєстр бенефіціарів (EDR)', source: 'МінЮст', size: '450 MB', status: 'МОНІТО ИНГ', quality: 94 },
+    { id: 'DS-002', name: 'Реєстр бенефіціарів (EDR)', source: 'МінЮст', size: '450 MB', status: 'МОНІТОРИНГ', quality: 94 },
     { id: 'DS-003', name: 'Судові рішення OSINT', source: 'Crawler-v4', size: '2.8 GB', status: 'ОБ ОБКА', quality: 87 },
     { id: 'DS-004', name: 'Санкційні списки OFAC/ЄС', source: 'Global Sync', size: '12 MB', status: 'АКТИВНО', quality: 100 },
   ];
@@ -165,7 +165,7 @@ const DatasetsStudioView = () => {
                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                       <div className="h-full bg-rose-500 w-[84%] shadow-[0_0_10px_rgba(225,29,72,0.5)]" />
                    </div>
-                   <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | ЗАТ ИМКА: 0.12ms</p>
+                   <p className="text-[9px] font-mono text-white/30 italic">IOPS: 420K | ЗАТрИМКА: 0.12ms</p>
                 </div>
               </TacticalCard>
             </div>
@@ -248,7 +248,7 @@ const DatasetsStudioView = () => {
                                 <td className="py-6">
                                    <div className="flex items-center gap-2">
                                       <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", 
-                                        ds.status === 'АКТИВНО' ? "bg-emerald-500" : ds.status === 'МОНІТО ИНГ' ? "bg-amber-500" : "bg-rose-500"
+                                        ds.status === 'АКТИВНО' ? "bg-emerald-500" : ds.status === 'МОНІТОРИНГ' ? "bg-amber-500" : "bg-rose-500"
                                       )} />
                                       <span className="text-[9px] font-black tracking-[0.2em] text-white/60 uppercase">
                                         {ds.status}

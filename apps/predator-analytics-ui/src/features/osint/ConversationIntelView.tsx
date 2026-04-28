@@ -158,7 +158,7 @@ export default function ConversationIntelView() {
                                СИГНАЛЬНИЙ <span className={cn("italic uppercase underline decoration-8 underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-emerald-500 decoration-emerald-500/20")}>ДЕКОДЕ </span>
                              </h1>
                              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-emerald-500/20 pl-8 opacity-90 max-w-2xl">
-                               МОНІТО ИНГ ТЕЛЕГ АМ-КАНАЛІВ, ЗМІ ТА ДА КНЕТ-ФОРУМІВ // SOVEREIGN CLOUD
+                               МОНІТОРИНГ ТЕЛЕГ АМ-КАНАЛІВ, ЗМІ ТА ДА КНЕТ-ФОРУМІВ // SOVEREIGN CLOUD
                              </p>
                           </div>
                        </div>
@@ -174,7 +174,7 @@ export default function ConversationIntelView() {
                              <RefreshCcw size={24} className="group-hover:rotate-180 transition-transform duration-1000" />
                           </button>
                           <button className="px-14 py-6 bg-emerald-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-5 border-4 border-emerald-500/20">
-                             <Radar size={24} className="animate-spin-slow" /> ЗАПУСТИТИ_ПЕ ЕХОПЛЕННЯ
+                             <Radar size={24} className="animate-spin-slow" /> ЗАПУСТИТИ_ПЕРЕХОПЛЕННЯ
                           </button>
                        </div>
                      }
@@ -210,7 +210,7 @@ export default function ConversationIntelView() {
                                         <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
                                         <Satellite size={80} className="relative z-10 text-emerald-500 animate-spin-slow" />
                                     </div>
-                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕ ЕХОПЛЕННЯ_СИГНАЛІВ...</p>
+                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕРЕХОПЛЕННЯ_СИГНАЛІВ...</p>
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="p-40 text-center border-4 border-dashed border-white/5 rounded-[4rem] bg-black/40 h-full flex flex-col items-center justify-center">
@@ -255,7 +255,7 @@ export default function ConversationIntelView() {
                                      </div>
                                      {msg.riskLevel === 'critical' ? (
                                         <div className="px-6 py-2 bg-red-600 text-white rounded-full text-[10px] font-black uppercase italic tracking-[0.3em] shadow-4xl animate-pulse">
-                                           К ИТИЧНИЙ_РИЗИК
+                                           КРИТИЧНИЙ_РИЗИК
                                         </div>
                                      ) : (
                                         <div className="flex gap-2">

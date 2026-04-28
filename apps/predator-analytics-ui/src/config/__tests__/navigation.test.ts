@@ -20,7 +20,7 @@ describe('navigation', () => {
       'МІСІЯ-КОНТРОЛЬ',
     ]);
     expect(sections[0]?.groups?.map((group) => group.title)).toContain('Оперативний огляд');
-    expect(sections[1]?.groups?.map((group) => group.title)).toContain('OSINT та розслідування');
+    expect(sections[1]?.groups?.map((group) => group.title)).toContain('OSINT тарозслідування');
   });
 
   it('ховає адміністративні модулі від бізнес-ролей', () => {

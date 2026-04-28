@@ -2,7 +2,7 @@
  * PREDATOR v61.0-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної  озвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
- * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
+ * - TITAN (Market Sovereignty): Конкуренти,ринкові прогнози, інсайди
  * - INQUISITOR (Risk Sovereignty): Аномалії, схеми, компромат
  * - SOVEREIGN (Macro Architect): Тренди, кореляції, макро-прогнози
  * 
@@ -99,7 +99,7 @@ const PERSONA_CONFIG = {
   INQUISITOR: {
     name: 'INQUISITOR',
     title: 'ВЕЛИКИЙ ІНКВІЗИТО ',
-    subtitle: 'Контроль ризиків та виявлення прихованих схем',
+    subtitle: 'Контрольризиків та виявлення прихованих схем',
     icon: Shield,
     color: 'rose',
     gradient: 'from-[#E11D48] via-rose-600 to-[#E11D48]',
@@ -127,13 +127,13 @@ const PERSONA_CONFIG = {
     features: [
       { icon: Globe, label: 'ГЕОПОЛІТИЧНИЙ МОНІТО ', desc: 'Вплив санкцій та ембарго на глобальні торгові потоки' },
       { icon: Landmark, label: 'СЕКТО НИЙ А ХІТЕКТО ', desc: 'Картування цілих галузей економіки через митні дані' },
-      { icon: BrainCircuit, label: 'NEXUS-П ОГНОЗУВАННЯ', desc: 'Мультимодальні моделі майбутнього стану ринку України' },
+      { icon: BrainCircuit, label: 'NEXUS-ПРОГНОЗУВАННЯ', desc: 'Мультимодальні моделі майбутнього стану ринку України' },
       { icon: Network, label: 'СИСТЕМНІ КО ЕЛЯЦІЇ', desc: 'Приховані зв\'язки між курсом валют та обсягами критичного імпорту' },
     ],
     insights: [
       'Кореляція 0.94 між ціною на енергоносії та імпортом добрив',
       'Прогноз росту товарообігу з ОАЕ на 45% у річному обчисленні',
-      'Системний ризик: критична залежність ВПК від 2 хабів у КН ',
+      'Системнийризик: критична залежність ВПК від 2 хабів у КН ',
     ]
   }
 };
@@ -340,7 +340,7 @@ const PremiumHubView: React.FC = () => {
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
                     <div className="px-10 py-4 flex items-center gap-3 text-[#E11D48]">
                         <Crown size={18} />
-                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕ ЕННИЙ РЕЖИМ</span>
+                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕРЕННИЙ РЕЖИМ</span>
                     </div>
                 </div>
 
@@ -407,7 +407,7 @@ const PremiumHubView: React.FC = () => {
                                             {currentConfig.subtitle}
                                         </h2>
                                         <div className="flex items-center gap-6">
-                                            <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_П ОТОКОЛИ</Badge>
+                                            <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_ПРОТОКОЛИ</Badge>
                                             <span className="text-xs text-slate-500 font-mono">v61.0-ELITE.1-stable</span>
                                         </div>
                                     </div>

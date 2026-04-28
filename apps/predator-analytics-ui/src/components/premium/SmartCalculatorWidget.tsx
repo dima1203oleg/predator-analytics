@@ -24,7 +24,7 @@ export const SmartCalculatorWidget: React.FC<{ persona: string }> = ({ persona }
     // Real AI Check
     const fetchRiskCheck = async () => {
       try {
-        const query = ` озрахуй мито для коду УКТ ЗЕД ${hsCode} при вартості ${value} ${currency}. Вкажи чи є ризики.`;
+        const query = ` озрахуй мито для коду УКТ ЗЕД ${hsCode} при вартості ${value} ${currency}. Вкажи чи єризики.`;
         const response = await intelligenceApi.query(query, 'forensics');
         
         const val = parseFloat(value);

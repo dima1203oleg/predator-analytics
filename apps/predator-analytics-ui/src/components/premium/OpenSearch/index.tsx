@@ -165,7 +165,7 @@ export const OpenSearch: React.FC = () => {
     switch (health) {
       case 'green': return 'ЗДО ОВИЙ';
       case 'yellow': return 'ПОПЕ ЕДЖЕННЯ';
-      case 'red': return 'К ИТИЧНИЙ';
+      case 'red': return 'КРИТИЧНИЙ';
       default: return 'НЕВІДОМО';
     }
   };
@@ -341,7 +341,7 @@ export const OpenSearch: React.FC = () => {
                   <AlertTriangle size={48} className="text-amber-400" />
                   <h4 className="text-lg font-black text-white">Неможливо завантажити дашборд</h4>
                   <p className="text-sm text-slate-400 text-center max-w-md">
-                    OpenSearch Dashboards недоступний. Перевірте підключення до сервера або використайте режим "Графіки" для перегляду локальних метрик.
+                    OpenSearch Dashboards недоступний. Перевірте підключення до сервера або використайте режим "Графіки" дляперегляду локальних метрик.
                   </p>
                   <button
                     onClick={() => setEmbedMode('native')}

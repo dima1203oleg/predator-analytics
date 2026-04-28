@@ -201,7 +201,7 @@ const DataIngestionHub: React.FC = () => {
 
            <div className="flex items-center gap-8">
                 <div className="flex flex-col text-right">
-                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХ ОНІЗАЦІЯ_ОЗЕ А</span>
+                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХРОНІЗАЦІЯ_ОЗЕ А</span>
                     <span className="text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
                 </div>
                 <button 
@@ -296,7 +296,7 @@ const DataIngestionHub: React.FC = () => {
                 <TacticalCard variant="cyber" className="p-10 flex flex-col gap-8 bg-blue-500/5">
                     <div className="flex items-center gap-4">
                         <Terminal size={24} className="text-blue-400" />
-                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ВИКОНАВЧИЙ_ТЕ МІНАЛ_v6</h3>
+                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ВИКОНАВЧИЙ_ТЕРМІНАЛ_v6</h3>
                     </div>
                     <div className="bg-black/80 rounded-[2rem] p-8 font-mono text-[11px] border border-white/5 relative min-h-[300px] shadow-inner group">
                          <div className="absolute top-4 right-6 flex gap-2">
@@ -347,7 +347,7 @@ const DataIngestionHub: React.FC = () => {
                 <TacticalCard variant="glass" className="p-10 flex flex-col gap-6 bg-slate-900">
                      <div className="flex items-center gap-4 text-emerald-400">
                          <ShieldCheck size={24} />
-                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">П ОТОКОЛИ_БЕЗПЕКИ</span>
+                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">ПРОТОКОЛИ_БЕЗПЕКИ</span>
                      </div>
                      <div className="space-y-4">
                         {[

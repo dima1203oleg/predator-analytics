@@ -2,8 +2,8 @@
  * 💼 P&L РИЗИКІВ ПО ТФЕЛЮ | v61.0-ELITE
  * PREDATOR Analytics — Portfolio Risk Management
  *
- * Скільки $ у зоні ризику прямо зараз:
- * контрагенти, санкції, ланцюги постачання, фін. ризики.
+ * Скільки $ у зоніризику прямо зараз:
+ * контрагенти, санкції, ланцюги постачання, фін.ризики.
  * CEO-рівень · Sovereign Power Design · LIVE · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -111,7 +111,7 @@ const RISK_POSITIONS: RiskPosition[] = [
   },
   {
     id: 'POS-004',
-    counterparty: 'АГ О-ЛІДЕ  Г УП',
+    counterparty: 'АГ О-ЛІДЕ  ГРУП',
     type: 'Контракт на поставку',
     exposure: '$22.5M',
     atRisk: '$5.8M',
@@ -135,7 +135,7 @@ const RISK_COLOR: Partial<Record<RiskLevelValue, string>> = {
 };
 
 const RISK_LABEL: Partial<Record<RiskLevelValue, string>> = {
-  critical: 'К ИТИЧНИЙ',
+  critical: 'КРИТИЧНИЙ',
   high:     'ВИСОКИЙ',
   medium:   'СЕРЕДНІЙ',
   low:      'НИЗЬКИЙ',
@@ -163,7 +163,7 @@ const PortfolioRiskView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'PortfolioRisk',
-          message: `RISK_CORE_READY [${nodeSource}]: Моніторинг ризиків синхронізовано з NVIDIA Master.`,
+          message: `RISK_CORE_READY [${nodeSource}]: Моніторингризиків синхронізовано з NVIDIA Master.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'RISK_SUCCESS'
@@ -219,7 +219,7 @@ const PortfolioRiskView: React.FC = () => {
                     P&L <span className="text-red-600 underline decoration-red-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РИЗИКІВ</span>
                   </h1>
                   <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-red-500/30 pl-8 opacity-90 max-w-2xl">
-                    МОНІТО ИНГ ДЕФОЛТНИХ ВЕКТО ІВ · К ИТИЧНА ЕКСПОЗИЦІЯ · СУВЕ ЕННИЙ АНАЛІЗ
+                    МОНІТОРИНГ ДЕФОЛТНИХ ВЕКТО ІВ · КрИТИЧНА ЕКСПОЗИЦІЯ · СУВЕРЕННИЙ АНАЛІЗ
                   </p>
                 </div>
               </div>
@@ -236,7 +236,7 @@ const PortfolioRiskView: React.FC = () => {
             stats={[
               { label: 'У ЗОНІ РИЗИКУ', value: `$${liveRisk}M`, icon: <TrendingUp size={14} />, color: 'danger' },
               { 
-                label: isOffline ? 'FAILOVER_SYNC' : 'К ИТИЧНИЙ_NET', 
+                label: isOffline ? 'FAILOVER_SYNC' : 'КРИТИЧНИЙ_NET', 
                 value: isOffline ? `${Math.floor(healingProgress)}%` : '$41.8M', 
                 icon: isOffline ? <Activity /> : <AlertTriangle />, 
                 color: isOffline ? 'warning' : 'danger',
@@ -264,10 +264,10 @@ const PortfolioRiskView: React.FC = () => {
           {/* ── KPI GRID ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { l: 'К ИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
+              { l: 'КрИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
               { l: 'РИЗИК_INDEX',      v: '15.1%',      sub: 'Від загальних активів',       c: '#D4AF37' },
               { l: 'ГЕО_ОХОПЛЕННЯ',    v: '4 Країни',   sub: 'Географічне покриття',  c: '#D4AF37' },
-              { l: 'ВІДК ИТІСТЬ_АЛЬФА',   v: '$127.4M',    sub: 'Вплив на суверенний прибуток',  c: '#E11D48' },
+              { l: 'ВІДКрИТІСТЬ_АЛЬФА',   v: '$127.4M',    sub: 'Вплив на сувереннийприбуток',  c: '#E11D48' },
             ].map((m, i) => (
               <motion.div
                 key={m.l}
@@ -378,7 +378,7 @@ const PortfolioRiskView: React.FC = () => {
               </div>
             </div>
 
-            {/* ── П АВА ПАНЕЛЬ: ДЕТАЛІ ── */}
+            {/* ── ПРАВА ПАНЕЛЬ: ДЕТАЛІ ── */}
             <div className="col-span-12 xl:col-span-4 space-y-10">
               
               <AnimatePresence mode="wait">
@@ -399,7 +399,7 @@ const PortfolioRiskView: React.FC = () => {
                              </div>
                              <div className="flex gap-2">
                                 <span className="w-2 h-2 bg-red-600 rounded-full animate-ping" />
-                                <span className="text-[9px] font-black text-red-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГ ОЗА</span>
+                                <span className="text-[9px] font-black text-red-700 uppercase tracking-widest font-mono italic">АКТИВНА_ЗАГРОЗА</span>
                              </div>
                           </div>
 
@@ -427,7 +427,7 @@ const PortfolioRiskView: React.FC = () => {
                           <div className="p-8 bg-red-600/5 border-2 border-red-500/20 rounded-[3rem] relative group/action">
                              <div className="flex items-center gap-4 mb-4">
                                 <Flame size={20} className="text-red-500 animate-pulse" />
-                                <h4 className="text-[11px] font-black text-red-500/60 uppercase tracking-[0.5em] italic">К ИТИЧНИЙ_Т ИГЕ </h4>
+                                <h4 className="text-[11px] font-black text-red-500/60 uppercase tracking-[0.5em] italic">КРИТИЧНИЙ_ТрИГЕ </h4>
                              </div>
                              <p className="text-[15px] font-black text-red-100 italic leading-tight uppercase tracking-tight">
                                {selectedPos.trigger}

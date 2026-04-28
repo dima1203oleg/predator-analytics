@@ -121,7 +121,7 @@ describe('EntityRadarView', () => {
             expect(screen.getByText(' АДА _ТЕСТ_1')).toBeInTheDocument();
         });
 
-        const searchInput = screen.getByPlaceholderText(/ПОШУК СЕ ЕД К ИТИЧНИХ/i);
+        const searchInput = screen.getByPlaceholderText(/ПОШУК СЕ ЕД КРИТИЧНИХ/i);
         fireEvent.change(searchInput, { target: { value: '99999999' } });
         
         expect(screen.queryByText(' АДА _ТЕСТ_1')).not.toBeInTheDocument();

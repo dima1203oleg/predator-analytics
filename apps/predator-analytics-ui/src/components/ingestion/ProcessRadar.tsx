@@ -169,7 +169,7 @@ export const ProcessRadar = () => {
                             {activeCount > 3 && (
                                 <div className="mt-4 pt-2 border-t border-white/5 text-[9px] text-slate-500 text-center font-black uppercase tracking-widest flex items-center justify-center gap-2">
                                     <Bell size={10} />
-                                    + {activeCount - 3} активних фонових процесів
+                                    + {activeCount - 3} активних фоновихпроцесів
                                 </div>
                             )}
                         </motion.div>

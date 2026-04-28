@@ -29,7 +29,7 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 
 const MOCK_UBO_TREE: UBONode = {
   id: 'root',
-  name: 'ТОВ "АГ О-ЛІДЕ  Г УП"',
+  name: 'ТОВ "АГ О-ЛІДЕ  ГРУП"',
   type: 'company',
   risk: 87,
   country: '🇺🇦',
@@ -241,7 +241,7 @@ const UBOMapView: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<ActiveView>('ubo-tree');
   const [searchQuery, setSearchQuery] = useState('');
-  const [company, setCompany] = useState('ТОВ "АГ О-ЛІДЕ  Г УП"');
+  const [company, setCompany] = useState('ТОВ "АГ О-ЛІДЕ  ГРУП"');
   const { isOffline, nodeSource, healingProgress } = useBackendStatus();
 
   useEffect(() => {
@@ -249,7 +249,7 @@ const UBOMapView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'UBONexus',
-          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
+          message: `РЕЖИМ АВТОНОМНОЇ  РОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'UBO_OFFLINE'
@@ -303,7 +303,7 @@ const UBOMapView: React.FC = () => {
   }, [fetchUboData]);
 
   const views: Array<{ id: ActiveView; label: string; icon: React.ElementType; badge?: string }> = [
-    { id: 'ubo-tree',       label: 'СТРУКТУРА_ВЛАСНОСТІ',       icon: Network,      badge: 'ПОК АЩЕНО' },
+    { id: 'ubo-tree',       label: 'СТРУКТУРА_ВЛАСНОСТІ',       icon: Network,      badge: 'ПОКрАЩЕНО' },
     { id: 'pep-tracker',    label: 'PEP_РОЗВІДКА',           icon: Fingerprint,  badge: 'LIVE' },
     { id: 'shadow-director', label: 'ТІНЬОВИЙ_ДИ ЕКТО ',     icon: Eye,          badge: 'AI_ЯДРО' },
   ];
@@ -332,7 +332,7 @@ const UBOMapView: React.FC = () => {
              <AlertTriangle className="text-red-500" size={48} />
            </div>
            <div className="space-y-4">
-             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">К ИТИЧНИЙ ЗБІЙ  ОЗВІДКИ</h2>
+             <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">КРИТИЧНИЙ ЗБІЙ  РОЗВІДКИ</h2>
              <p className="text-slate-400 font-bold uppercase tracking-widest text-xs leading-relaxed">{error || 'НЕВІДОМА ПОМИЛКА ЯД А'}</p>
            </div>
            <button 
@@ -380,8 +380,8 @@ const UBOMapView: React.FC = () => {
           }
           breadcrumbs={['ІНТЕЛЕКТ', 'УПРАВЛІННЯ', 'UBO_ВУЗОЛ']}
           badges={[
-            { label: 'СЕК ЕТНО_T1', color: 'primary', icon: <Lock size={10} /> },
-            { label: 'СУВЕ ЕННИЙ_П ИВИД', color: 'gold', icon: <Star size={10} /> },
+            { label: 'СЕКРЕТНО_T1', color: 'primary', icon: <Lock size={10} /> },
+            { label: 'СУВЕРЕННИЙ_П ИВИД', color: 'gold', icon: <Star size={10} /> },
             { 
               label: nodeSource, 
               color: isOffline ? 'warning' : 'success', 
@@ -393,7 +393,7 @@ const UBOMapView: React.FC = () => {
             { label: 'PEP_DETECTION', value: '02_LEADS', icon: <Fingerprint />, color: 'warning' },
             { label: 'OFFSHORE_NODES', value: '03_UNITS', icon: <Globe />, color: 'danger' },
             { 
-              label: isOffline ? 'АВА ІЙНА_СИНХ ОНІЗАЦІЯ' : 'ПОКАЗНИК_РИЗИКУ', 
+              label: isOffline ? 'АВА ІЙНА_СИНХРОНІЗАЦІЯ' : 'ПОКАЗНИК_РИЗИКУ', 
               value: isOffline ? `${Math.floor(healingProgress)}%` : '94.8%', 
               icon: isOffline ? <Activity /> : <Target />, 
               color: isOffline ? 'warning' : 'danger',
@@ -418,7 +418,7 @@ const UBOMapView: React.FC = () => {
           </button>
         </div>
 
-        {/* ── МЕТ ИКИ ELITE ── */}
+        {/* ── МЕТрИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { label: ' ІВНІВ СТ УКТУ И', value: '4_TIERS',   icon: Network,      color: '#D4AF37' },
@@ -652,7 +652,7 @@ const UBOMapView: React.FC = () => {
                 {[
                   {
                     name: 'Петренко М.О.',
-                    company: 'ТОВ "АГ О-ЛІДЕ  Г УП"',
+                    company: 'ТОВ "АГ О-ЛІДЕ  ГРУП"',
                     evidence: ['AUTHORIZED_SIGNATURE_PATT_47', 'BANK_INITIATION_BY_PROXY', 'RECOGNIZED_BY_VENDORS_AS_UBO'],
                     confidence: 94.2,
                     method: 'NEURAL_BEHAVIORAL_MESH',

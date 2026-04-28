@@ -49,7 +49,7 @@ export default function DocumentsView() {
             // Mock fallback
             setDocuments([
                 { id: 'doc-001', title: 'ЗВІТ_МИТНИЦЯ_АНТОНОВ_2026', snippet: 'Аналіз ланцюгів постачання компонентів для АН-178.', category: 'customs', source: 'UA_CUSTOMS', created_at: '2026-04-12' },
-                { id: 'doc-002', title: 'Ю ИДИЧНИЙ_ВИСНОВОК_ГЛОБАЛ_СТІЛ', snippet: 'Оцінка офшорних ризиків бенефіціарів групи.', category: 'legal', source: 'COMPLIANCE_DEPT', created_at: '2026-04-11' }
+                { id: 'doc-002', title: 'Ю ИДИЧНИЙ_ВИСНОВОК_ГЛОБАЛ_СТІЛ', snippet: 'Оцінка офшорнихризиків бенефіціарів групи.', category: 'legal', source: 'COMPLIANCE_DEPT', created_at: '2026-04-11' }
             ]);
         } finally {
             setLoading(false);
@@ -103,7 +103,7 @@ export default function DocumentsView() {
                      }
                      stats={[
                        { label: 'ВЕ ІФІКОВАНО_AI', value: String(documents.length), icon: <Fingerprint size={14} />, color: 'primary' },
-                       { label: 'СИНХ ОНІЗАЦІЯ', value: 'ONLINE', icon: <Satellite size={14} />, color: 'success' },
+                       { label: 'СИНХРОНІЗАЦІЯ', value: 'ONLINE', icon: <Satellite size={14} />, color: 'success' },
                        { label: 'ОБСЯГ_СХОВИЩА', value: '8.4 TB', icon: <Box size={14} />, color: 'warning' }
                      ]}
                      actions={
@@ -128,7 +128,7 @@ export default function DocumentsView() {
                          <div className="space-y-4">
                             <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase group-hover:text-yellow-400 transition-colors leading-none"> ОЗПОЧАТИ CЕМАНТИЧНУ ІНДЕКСАЦІЮ</h3>
                             <p className="text-sm text-slate-500 max-w-2xl mx-auto font-black uppercase tracking-widest italic leading-relaxed px-10">
-                               ПІДТ ИМУЮТЬСЯ PDF, XLSX, JSON ТА ТЕКСТОВІ ДОКУМЕНТИ. АВТОМАТИЧНЕ ВИДІЛЕННЯ СУТНОСТЕЙ ТА ЗВ'ЯЗКІВ.
+                               ПІДТрИМУЮТЬСЯ PDF, XLSX, JSON ТА ТЕКСТОВІ ДОКУМЕНТИ. АВТОМАТИЧНЕ ВИДІЛЕННЯ СУТНОСТЕЙ ТА ЗВ'ЯЗКІВ.
                             </p>
                          </div>
                       </div>
@@ -170,7 +170,7 @@ export default function DocumentsView() {
                             <thead className="border-b border-white/[0.04] text-slate-700 text-[10px] font-black uppercase tracking-[0.4em] italic">
                                <tr>
                                   <th className="px-8 py-8">ОБ'ЄКТ_ДОСЛІДЖЕННЯ</th>
-                                  <th className="px-8 py-8">КАТЕГО ІЯ</th>
+                                  <th className="px-8 py-8">КАТЕГОРІЯ</th>
                                   <th className="px-8 py-8">ДЖЕРЕЛО</th>
                                   <th className="px-8 py-8">ДАТА</th>
                                   <th className="px-8 py-8">СТАТУС</th>

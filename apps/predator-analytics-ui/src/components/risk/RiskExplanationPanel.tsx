@@ -44,7 +44,7 @@ const RiskExplanationPanel: React.FC<RiskExplanationProps> = ({ explanation, fac
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-xl font-bold text-rose-500 uppercase tracking-wider">
-            Драйвери ризику (SHAP Explainability)
+            Драйвериризику (SHAP Explainability)
           </h3>
           <p className="text-xs text-rose-300/60 mt-1">
             Аналіз внеску кожного фактора у сумарний скор CERS

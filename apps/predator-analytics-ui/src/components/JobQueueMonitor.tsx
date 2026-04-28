@@ -283,7 +283,7 @@ export const JobQueueMonitor: React.FC = () => {
   }, [fetchData]);
 
   const handlePurge = async (queueName: string) => {
-    if (!window.confirm(`Ви впевнені що хочете очистити чергу ${queueName}? Всі повідомлення будуть втрачені.`)) return;
+    if (!window.confirm(`Ви впевнені що хочете очистити чергу ${queueName}? Всіповідомлення будуть втрачені.`)) return;
     try {
       await fetch(`/api/v45/monitoring/queues/${queueName}/purge`, { method: 'POST' });
       fetchData(); // immediate refresh

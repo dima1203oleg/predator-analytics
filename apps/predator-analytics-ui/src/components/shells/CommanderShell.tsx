@@ -242,8 +242,8 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
               <div className="space-y-4">
                 {[
                   { label: 'ЯДРО AI', value: metrics.cpu, color: 'bg-rose-500', text: 'text-rose-500' },
-                  { label: 'СИНХ ОНІЗАЦІЯ ДАНИХ', value: metrics.sync, color: 'bg-emerald-500', text: 'text-emerald-500' },
-                  { label: 'МАТ ИЦЯ БЕЗПЕКИ', value: metrics.safety, color: 'bg-rose-400', text: 'text-rose-400' },
+                  { label: 'СИНХРОНІЗАЦІЯ ДАНИХ', value: metrics.sync, color: 'bg-emerald-500', text: 'text-emerald-500' },
+                  { label: 'МАТрИЦЯ БЕЗПЕКИ', value: metrics.safety, color: 'bg-rose-400', text: 'text-rose-400' },
                 ].map(stat => (
                   <div key={stat.label} className="space-y-2">
                     <div className="flex justify-between text-[9px] font-black tracking-widest uppercase">

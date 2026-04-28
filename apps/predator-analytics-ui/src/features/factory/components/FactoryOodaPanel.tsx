@@ -170,7 +170,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
         })}
       </div>
 
-      {/* ═══ 4. ЖИВИЙ ТЕ МІНАЛ ═══ */}
+      {/* ═══ 4. ЖИВИЙ ТЕРМІНАЛ ═══ */}
       <div className="rounded-2xl border border-rose-500/20 bg-slate-950/90 overflow-hidden shadow-inner">
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-rose-500/20 bg-rose-500/5">
           <div className="flex items-center gap-2 min-w-0">
@@ -181,7 +181,7 @@ export const FactoryOodaPanel: React.FC<FactoryOodaPanelProps> = ({
             </div>
             <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest ml-2 truncate">
               <Terminal size={11} className="inline mr-1 text-rose-400" />
-              PREDATOR-OODA — ЖИВА Т АНСЛЯЦІЯ
+              PREDATOR-OODA — ЖИВА ТРАНСЛЯЦІЯ
             </span>
           </div>
           <div className="flex items-center gap-3 shrink-0">

@@ -126,7 +126,7 @@ export const LLMCouncilPanel: React.FC<LLMCouncilPanelProps> = ({ isLockdown }) 
                                         <span className="text-2xl font-black text-emerald-400 font-mono">{(result.confidence * 100).toFixed(1)}%</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">ЗАТ ИМКА_СИНТЕЗУ</span>
+                                        <span className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">ЗАТрИМКА_СИНТЕЗУ</span>
                                         <span className="text-2xl font-black text-cyan-400 font-mono">{(result.metadata.deliberation_time_seconds || 0).toFixed(1)}s</span>
                                     </div>
                                 </div>

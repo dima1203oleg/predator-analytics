@@ -418,7 +418,7 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                                         <div>
                                             <label className="block text-sm font-medium text-slate-300 mb-2">
                                                 <Clock size={14} className="inline mr-2" />
-                                                розклад оновлення
+                                               розклад оновлення
                                             </label>
                                             <select
                                                 value={config.schedule || ''}

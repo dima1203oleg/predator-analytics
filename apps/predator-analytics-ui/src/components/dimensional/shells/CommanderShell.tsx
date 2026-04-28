@@ -148,14 +148,14 @@ export const CommanderShell: React.FC<CommanderShellProps> = ({ metrics, onActio
       </div>
 
       {/* God Mode / Shadow Protocols */}
-      <TacticalCard variant="holographic" title="🎛️ ТІНЬОВІ_П ОТОКОЛИ_КЕ УВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
+      <TacticalCard variant="holographic" title="🎛️ ТІНЬОВІ_ПРОТОКОЛИ_КЕ УВАННЯ" className="border-red-500/30 bg-gradient-to-br from-red-950/20 to-slate-950/80 rounded-[3rem]">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 p-2">
           {[
             { icon: Lock, label: 'БЛОКУВАННЯ', color: 'red', code: 'S-LOCK' },
             { icon: RefreshCw, label: 'ПЕ ЕЗАПУСК', color: 'amber', code: 'R-BOOT' },
             { icon: Shield, label: 'Б АНДМАУЕ ', color: 'blue', code: 'F-WALL' },
-            { icon: Terminal, label: 'ТЕ МІНАЛ', color: 'green', code: 'T-CORE' },
-            { icon: Zap, label: 'СИНХ ОНІЗАЦІЯ', color: 'purple', code: 'P-SYNC' },
+            { icon: Terminal, label: 'ТЕРМІНАЛ', color: 'green', code: 'T-CORE' },
+            { icon: Zap, label: 'СИНХРОНІЗАЦІЯ', color: 'purple', code: 'P-SYNC' },
             { icon: Eye, label: 'АУДИТ', color: 'cyan', code: 'X-SCAN' },
           ].map((control, idx) => (
             <motion.button

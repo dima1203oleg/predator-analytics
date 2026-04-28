@@ -133,7 +133,7 @@ export function IngestionProgressMonitor({
             {isProcessing && (
               <Badge variant="secondary">
                 <Clock className="h-3 w-3 mr-1 animate-spin" />
-                В процесі
+                Впроцесі
               </Badge>
             )}
           </div>

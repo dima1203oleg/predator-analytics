@@ -717,7 +717,7 @@ export function AntigravityAgiTab() {
               <div className="flex h-full min-h-[200px] flex-col items-center justify-center text-center">
                 <Terminal size={28} className="mb-3 text-slate-700" />
                 <div className="text-xs text-slate-600">
-                  Виберіть задачу зі списку для перегляду логів
+                  Виберіть задачу зі списку дляперегляду логів
                 </div>
               </div>
             )}

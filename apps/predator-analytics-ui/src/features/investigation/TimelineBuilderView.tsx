@@ -67,8 +67,8 @@ const MOCK_EVENTS: TimelineEvent[] = [
         date: '2026-01-15',
         time: '09:30',
         category: 'financial',
-        title: 'ВІДК ИТТЯ_ АХУНКУ_MONOBANK',
-        description: 'Відкрито поточний рахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
+        title: 'ВІДКрИТТЯ_ АХУНКУ_MONOBANK',
+        description: 'Відкрито поточнийрахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
         source: 'БАНКІВСЬКІ_РЕЄСТРИ',
         confidence: 98,
         relatedEntities: ['Марченко  .Г.', 'Monobank'],
@@ -81,7 +81,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         category: 'legal',
         title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_Т ЕЙД',
         description: 'Зареєстровано нову юридичну особу. КВЕДи: 46.39, 46.90. Статутний капітал 1,000 UAH.',
-        source: 'ЄД _УК АЇНИ',
+        source: 'ЄД _УКРАЇНИ',
         confidence: 100,
         relatedEntities: ['ТОВ "ГОЛДЕН Т ЕЙД"', 'Марченко  .Г.'],
         verified: true,
@@ -311,7 +311,7 @@ const TimelineBuilderView: React.FC = () => {
                                 type="text"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                placeholder="ПОШУК ПОДІЙ У МАТ ИЦІ ЧАСУ..."
+                                placeholder="ПОШУК ПОДІЙ У МАТрИЦІ ЧАСУ..."
                                 className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-8 pl-24 rounded-[2rem] text-2xl font-black text-white italic tracking-tighter placeholder:text-slate-900 outline-none focus:border-indigo-500/40 focus:bg-indigo-500/[0.02] transition-all uppercase"
                             />
                         </div>
@@ -354,7 +354,7 @@ const TimelineBuilderView: React.FC = () => {
                                     <Satellite size={120} className="text-slate-900 animate-pulse" />
                                     <div className="space-y-4">
                                         <h3 className="text-3xl font-black text-slate-800 uppercase italic tracking-tighter">ВІДСУТНІСТЬ_ДАННИХ</h3>
-                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПО ОЖНЯ. ЗАДАЙТЕ ІНШІ ПА АМЕТ И ФІЛЬТ АЦІЇ АБО ЗАПУСТИТИ_СКАНЕ .</p>
+                                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.4em] italic max-w-md mx-auto leading-relaxed">СІТКА ЧАСУ ПО ОЖНЯ. ЗАДАЙТЕ ІНШІ ПА АМЕТрИ ФІЛЬТ АЦІЇ АБО ЗАПУСТИТИ_СКАНЕ .</p>
                                     </div>
                                 </motion.div>
                             ) : (
@@ -385,7 +385,7 @@ const TimelineBuilderView: React.FC = () => {
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КАТЕГО ІЯ_МАТ ИЦІ</label>
+                                <label className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КАТЕГОРІЯ_МАТрИЦІ</label>
                                 <select className="w-full bg-black/60 border border-white/10 p-5 rounded-2xl text-white outline-none focus:border-indigo-500/40 uppercase font-black italic text-xs tracking-widest">
                                     {Object.values(CATEGORY_CONFIG).map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
                                 </select>

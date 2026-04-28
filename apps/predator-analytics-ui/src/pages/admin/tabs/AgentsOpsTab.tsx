@@ -161,7 +161,7 @@ export const AgentsOpsTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
         <Bot size={64} className="text-rose-500/40 mb-10 animate-pulse" />
-        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite"> ОЗСИНХ ОНІЗАЦІЯ_НЕЙ ОННОЇ_МЕ ЕЖІ</div>
+        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite"> ОЗСИНХРОНІЗАЦІЯ_НЕЙ ОННОЇ_МЕ ЕЖІ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_ВТ АТИЛА_ЗВ'ЯЗОК_З_О КЕСТ АТО ОМ_АГЕНТІВ. ПЕ ЕВІ ТЕ_СТАН_AGENT_CONTROL_HUB_ELITE_v61.
         </p>
@@ -204,7 +204,7 @@ export const AgentsOpsTab: React.FC = () => {
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3 text-rose-500/40">
              <Shield size={14} />
-             <span>СИНХ ОНІЗАЦІЯ: ELITE_REALTIME_OODA</span>
+             <span>СИНХРОНІЗАЦІЯ: ELITE_REALTIME_OODA</span>
           </div>
         </div>
       </div>
@@ -253,7 +253,7 @@ export const AgentsOpsTab: React.FC = () => {
         <div className="flex items-center gap-10 px-4">
           <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           <div className="flex flex-col items-center gap-3">
-            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">МАТ ИЦЯ ШІ-ВУЗЛІВ</span>
+            <span className="text-2xl font-black text-white/50 uppercase tracking-[0.4em] italic glint-elite">МАТрИЦЯ ШІ-ВУЗЛІВ</span>
             <div className="flex items-center gap-4">
                <Bot size={14} className="text-rose-500/40 animate-pulse" />
                <span className="text-[10px] font-black font-mono text-rose-500/60 uppercase tracking-[0.3em] font-black italic">НЕЙРОННИЙ_РЕЄСТР_СИНХ ОНІЗОВАНО_V61_ELITE</span>

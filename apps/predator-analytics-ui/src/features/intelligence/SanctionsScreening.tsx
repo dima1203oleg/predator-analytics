@@ -1,5 +1,5 @@
 /**
- * 🛡️ САНКЦІЙНА МАТ ИЦЯ | v61.0-ELITE
+ * 🛡️ САНКЦІЙНА МАТрИЦЯ | v61.0-ELITE
  * PREDATOR Analytics — Sanctions Screening & Compliance
  *
  * Перевірка сутностей за міжнародними санкційними списками
@@ -288,7 +288,7 @@ const SanctionsScreening: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SanctionsHub',
-                    message: `РЕЖИМ АВТОНОМНОГО СК ИНІНГУ [${backendStatus.nodeSource}]: Доступ до глобальних списків обмежено. Використовується MIRROR_VAULT.`,
+                    message: `РЕЖИМ АВТОНОМНОГО СКрИНІНГУ [${backendStatus.nodeSource}]: Доступ до глобальних списків обмежено. Використовується MIRROR_VAULT.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'COMPLIANCE_OFFLINE'
@@ -335,7 +335,7 @@ const SanctionsScreening: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SanctionsHub',
-                    message: `ВЕ ДИКТ_СК ИНІНГУ [${backendStatus.nodeSource}]: Сутність ${query} перевірена. результат: ${normalized.status.toUpperCase()}.`,
+                    message: `ВЕ ДИКТ_СКрИНІНГУ [${backendStatus.nodeSource}]: Сутність ${query} перевірена. результат: ${normalized.status.toUpperCase()}.`,
                     severity: normalized.status === 'blocked' ? 'warning' : 'info',
                     timestamp: new Date().toISOString(),
                     code: 'COMPLIANCE_SCAN_SUCCESS'
@@ -403,7 +403,7 @@ const SanctionsScreening: React.FC = () => {
                                         <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                                      </div>
                                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif">
-                                        САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТ ИЦЯ</span>
+                                        САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТрИЦЯ</span>
                                      </h1>
                                 </div>
                             </div>
@@ -431,7 +431,7 @@ const SanctionsScreening: React.FC = () => {
                             { l: 'ДЖЕРЕЛО_ДАНИХ', v: '/sanctions/screen', c: 'text-rose-600' },
                             { l: 'ВУЗОЛ_БЕКЕНДУ', v: backendStatus.sourceLabel.toUpperCase(), c: 'text-white' },
                             { l: 'СТАТУС', v: backendStatus.statusLabel.toUpperCase(), c: 'text-emerald-500' },
-                            { l: 'ОСТАННЯ_СИНХ ОНІЗАЦІЯ', v: formatTimestamp(lastConfirmedAt), c: 'text-slate-600' }
+                            { l: 'ОСТАННЯ_СИНХРОНІЗАЦІЯ', v: formatTimestamp(lastConfirmedAt), c: 'text-slate-600' }
                         ].map((m, i) => (
                             <div key={i} className="flex items-center gap-4 px-6 border-r border-white/5 last:border-0 h-10">
                                 <span className="text-[9px] font-black text-slate-800 tracking-[0.3em] uppercase">{m.l}:</span>
@@ -480,7 +480,7 @@ const SanctionsScreening: React.FC = () => {
                                 <ScanLine size={32} />
                             </div>
                             <div className="space-y-4">
-                                <h2 className="text-3xl font-black uppercase tracking-[0.6em] text-white font-serif italic leading-none">ПІДТВЕ ДЖЕНИЙ СК ИНІНГ СУТНОСТІ</h2>
+                                <h2 className="text-3xl font-black uppercase tracking-[0.6em] text-white font-serif italic leading-none">ПІДТВЕ ДЖЕНИЙ СКрИНІНГ СУТНОСТІ</h2>
                                 <p className="text-[10px] font-black text-slate-800 uppercase tracking-[0.4em] italic border-l-2 border-amber-900/40 pl-6">SOVEREIGN_VETTING_PROTOCOL // DEEP_SCAN_ACTIVE</p>
                             </div>
                         </div>
@@ -527,7 +527,7 @@ const SanctionsScreening: React.FC = () => {
                                 className="flex shrink-0 items-center gap-6 rounded-[3rem] bg-rose-600 px-16 py-6 text-[13px] font-black uppercase tracking-[0.5em] text-white shadow-4xl shadow-rose-900/40 transition-all hover:brightness-110 disabled:opacity-30 italic font-bold border-4 border-rose-500/20"
                             >
                                 {isSearching ? <RefreshCw className="animate-spin" size={24} /> : <Target size={24} />}
-                                {isSearching ? 'СКАН_АКТИВНИЙ' : 'ЗАПУСТИТИ_СК ИНІНГ'}
+                                {isSearching ? 'СКАН_АКТИВНИЙ' : 'ЗАПУСТИТИ_СКрИНІНГ'}
                             </button>
                         </div>
 

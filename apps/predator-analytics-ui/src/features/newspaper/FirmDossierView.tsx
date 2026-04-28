@@ -3,7 +3,7 @@
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
  * Повний збір даних про суб'єкта: реєстри, Митниця, Податки,
- * Судові справи та ШІ-оцінка ризиків.
+ * Судові справи та ШІ-оцінкаризиків.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -221,7 +221,7 @@ export default function FirmDossierView() {
 
                       <div className="space-y-6 mb-12 relative z-10">
                          <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
-                            <ShieldAlert size={18} /> К ИТИЧНІ_ЗАГ ОЗИ_ТА_АНОМАЛІЇ
+                            <ShieldAlert size={18} /> КрИТИЧНІ_ЗАГРОЗИ_ТА_АНОМАЛІЇ
                          </h4>
                          {result.threats.map((t: string, i: number) => (
                            <div key={i} className="p-8 rounded-[2rem] bg-amber-600/5 border border-amber-600/20 text-[15px] font-bold text-amber-200 italic flex items-start gap-5 transition-all hover:bg-amber-600/10">

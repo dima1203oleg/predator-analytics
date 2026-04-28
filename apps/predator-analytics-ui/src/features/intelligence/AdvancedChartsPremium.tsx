@@ -2,7 +2,7 @@
  * 📊 ADVANCED CHARTS ELITE //  ОЗШИ ЕНА АНАЛІТИКА | v61.0-ELITE
  * PREDATOR Analytics — High-Fidelity Data Visualization
  * 
- * Потужні графіки для аналітики товарних потоків, ринків та ризиків.
+ * Потужні графіки для аналітики товарних потоків, ринків таризиків.
  * Sovereign Power Design · Tactical Intelligence · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -366,7 +366,7 @@ const AdvancedChartsPremium: React.FC = () => {
               { label: 'LIVE_TELEMETRY', color: 'primary', icon: <Activity size={10} /> },
             ]}
             stats={[
-              { label: 'ДАНІ_ОБ ОБЛЕНО', value: '4.2B+', icon: <Database />, color: 'primary' },
+              { label: 'ДАНІ_ОБРОБЛЕНО', value: '4.2B+', icon: <Database />, color: 'primary' },
               { label: 'ТОЧНІСТЬ_MODEL', value: '99.9%', icon: <Zap />, color: 'success' },
               { label: 'NODES_QUANTUM', value: '1.2M', icon: <Layers />, color: 'warning' },
               { label: 'ALPHA_TRUST', value: '98.5', icon: <Shield />, color: 'primary' },

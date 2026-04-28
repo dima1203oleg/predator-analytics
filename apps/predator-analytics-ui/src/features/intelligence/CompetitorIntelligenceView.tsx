@@ -35,11 +35,11 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 // --- LOCALIZATION ---
 const localLocales = {
   title: 'СТРАТЕГІЧНИЙ НЕКСУС КОНКУ ЕНТІВ',
-  breadcrumbs: ['РОЗВІДКА', 'МАТ ИЦЯ  ИНКУ', 'v58.2.ELITE'],
+  breadcrumbs: ['РОЗВІДКА', 'МАТрИЦЯ  ИНКУ', 'v58.2.ELITE'],
   stats: {
     database: 'БАЗА ДАНИХ',
-    monitoring: 'МОНІТО ИНГ',
-    risk: 'РІВЕНЬ ЗАГ ОЗ',
+    monitoring: 'МОНІТОРИНГ',
+    risk: 'РІВЕНЬ ЗАГРОЗ',
   },
   filters: {
     placeholder: 'Пошук сутностей за назвою, ЄДРПОУ або доменом...',
@@ -48,7 +48,7 @@ const localLocales = {
       share: 'ЗА ЧАСТКОЮ',
       trend: 'ЗА ДИНАМІКОЮ',
     },
-    btn: 'ФІЛЬТ И',
+    btn: 'ФІЛЬТрИ',
   },
   card: {
     tracked: 'ПЕ ЕБУВАЄ ПІД НАГЛЯДОМ',
@@ -295,7 +295,7 @@ const CompetitorIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
               detail: {
                 service: 'CompetitorIntel',
-                message: 'МАТ ИЦЯ КОНКУ ЕНТІВ: Дані успішно синхронізовано через MIRROR_CHANNEL (COMPETITOR_NODES).',
+                message: 'МАТрИЦЯ КОНКУ ЕНТІВ: Дані успішно синхронізовано через MIRROR_CHANNEL (COMPETITOR_NODES).',
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'COMPETITOR_NODES'
@@ -312,7 +312,7 @@ const CompetitorIntelligenceView: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'CompetitorIntel',
-            message: 'К ИТИЧНА ПОМИЛКА ДОСТУПУ ДО ВУЗЛА COMPETITOR_NODES. Перевірте з\'єднання.',
+            message: 'КрИТИЧНА ПОМИЛКА ДОСТУПУ ДО ВУЗЛА COMPETITOR_NODES. Перевірте з\'єднання.',
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'COMPETITOR_NODES'
@@ -330,7 +330,7 @@ const CompetitorIntelligenceView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CompetitorIntel',
-          message: 'АКТИВОВАНО АВТОНОМНУ МАТ ИЦЮ КОНКУ ЕНТІВ (COMPETITOR_NODES). Перехід на локальні OSINT-дзеркала.',
+          message: 'АКТИВОВАНО АВТОНОМНУ МАТрИЦЮ КОНКУ ЕНТІВ (COMPETITOR_NODES). Перехід на локальні OSINT-дзеркала.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'COMPETITOR_NODES'

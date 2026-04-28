@@ -138,7 +138,7 @@ export const ClusterTopology: React.FC = () => {
                     </p>
                 </div>
                 <div className="px-3 py-1 rounded bg-black/40 border border-white/10 relative z-10">
-                    <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest">ЗАТ ИМКА: 42ms</span>
+                    <span className="text-[9px] font-black font-mono text-rose-500 uppercase tracking-widest">ЗАТрИМКА: 42ms</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>

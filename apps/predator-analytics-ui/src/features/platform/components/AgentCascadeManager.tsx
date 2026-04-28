@@ -177,7 +177,7 @@ const AgentCascadeManager: React.FC = () => {
                     </div>
                 </TacticalCard>
 
-                <TacticalCard title="СИНХ ОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="СИНХРОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
                     <div className="space-y-4 pt-4">
                         {(activeCascade.steps || []).map((step: string, i: number) => {
                             const isCurrent = step === activeCascade.current_step;

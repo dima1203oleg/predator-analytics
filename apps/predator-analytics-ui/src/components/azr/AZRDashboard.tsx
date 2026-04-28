@@ -105,7 +105,7 @@ export const AZRDashboard: React.FC = () => {
   }, [fetchData]);
 
   const handleFreeze = async () => {
-    if (!confirm(' ️ Зупинити AZR Engine? Це заморозить всі автономні процеси.')) return;
+    if (!confirm(' ️ Зупинити AZR Engine? Це заморозить всі автономніпроцеси.')) return;
 
     try {
       const res = await fetch(`${API_BASE}/freeze`, { method: 'POST' });
@@ -401,7 +401,7 @@ export const AZRDashboard: React.FC = () => {
 
       {/* Footer */}
       <div className="azr-footer">
-        <span className="azr-risk">рівень ризику: {status.risk_level}</span>
+        <span className="azr-risk">рівеньризику: {status.risk_level}</span>
         <span className="azr-violations">
           ⚖️ Порушень Конституції: {status.metrics.constitutional_violations}
         </span>

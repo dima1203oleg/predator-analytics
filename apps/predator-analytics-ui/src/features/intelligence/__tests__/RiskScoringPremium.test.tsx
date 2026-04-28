@@ -73,11 +73,11 @@ describe('RiskScoringPremium', () => {
         vi.clearAllMocks();
     });
 
-    it('відображає інтерфейс моніторингу ризиків та завантажує суб\'єктів', async () => {
+    it('відображає інтерфейс моніторингуризиків та завантажує суб\'єктів', async () => {
         render(<RiskScoringPremium />);
         
         expect(screen.getByText(/РИЗИК/i)).toBeInTheDocument();
-        expect(screen.getByText(/МОНІТО ИНГ/i)).toBeInTheDocument();
+        expect(screen.getByText(/МОНІТОРИНГ/i)).toBeInTheDocument();
         
         await waitFor(() => {
             expect(screen.getByText('ТЕСТ_РИЗИК_1')).toBeInTheDocument();

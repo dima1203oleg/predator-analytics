@@ -6,7 +6,7 @@ import { apiClient } from './config';
  * які раніше існували в mock-api, але не були підключені до UI.
  */
 export const infraApi = {
-  /** Статус вузлів (NVIDIA, MacBook, Colab) та їх ресурси */
+  /** Статус вузлів (NVIDIA, MacBook, Colab) та їхресурси */
   getNodes: async () => {
     return (await apiClient.get('/system/nodes')).data;
   },

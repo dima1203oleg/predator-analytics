@@ -167,7 +167,7 @@ const MessageBubble = ({ message, onCopy }: { message: Message; onCopy: (text: s
 const QuickActions = ({ onSelect }: { onSelect: (query: string) => void }) => {
   const actions = [
     { icon: Target, label: 'Аналіз аномалій', query: 'Проаналізуй останні аномалії в даних' },
-    { icon: Shield, label: 'Оцінка ризиків', query: 'Яка поточна оцінка ризиків?' },
+    { icon: Shield, label: 'Оцінкаризиків', query: 'Яка поточна оцінкаризиків?' },
     { icon: Zap, label: 'Швидкий звіт', query: 'Згенеруй короткий звіт за сьогодні' },
   ];
 

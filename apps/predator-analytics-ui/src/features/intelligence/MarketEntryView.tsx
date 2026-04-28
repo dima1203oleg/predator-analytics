@@ -4,7 +4,7 @@
  *
  * Скоринг привабливості ринків для входу:
  * конкуренція, регуляторика, геополітика,
- * купівельна спроможність, партнери, ризики.
+ * купівельна спроможність, партнери,ризики.
  * Sovereign Power Design · Classified · Tier-1
  */
 
@@ -99,7 +99,7 @@ const MARKETS: MarketEntry[] = [
     competition: 55, regulatory: 65, geopolitical: 60, infrastructure: 88, talent: 71, purchasing: 89,
     recommendation: 'buy',
     opportunities: ['Tax-free зона Дубай', 'Швидке зростання фінтеку', 'Hub для MENA та СА'],
-    risks: ['Геополітична нестабільність регіону', 'Санкційні ризики ( Ф-зв\'язки)', 'Культурні особливості'],
+    risks: ['Геополітична нестабільність регіону', 'Санкційніризики ( Ф-зв\'язки)', 'Культурні особливості'],
     localPartners: ['DIFC FinTech Hive', 'Majid Al Futtaim'],
     entryMode: ['DMCC Free Zone', 'LLC з місцевим партнером'],
     timeToRevenue: '4-8 місяців',
@@ -108,7 +108,7 @@ const MARKETS: MarketEntry[] = [
 ];
 
 const RECOMMENDATION_CFG: Record<MarketEntry['recommendation'], { label: string; color: string; bg: string; border: string; shadow: string; icon: any }> = {
-  'strong-buy': { label: 'СУВЕ ЕННИЙ ВХІД', color: '#e11d48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]', icon: Star },
+  'strong-buy': { label: 'СУВЕРЕННИЙ ВХІД', color: '#e11d48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', shadow: 'shadow-[0_0_20px_rgba(225,29,72,0.3)]', icon: Star },
   'buy':        { label: ' ЕКОМЕНДОВАНО', color: '#fb7185', bg: 'bg-rose-900/20', border: 'border-rose-500/30', shadow: 'shadow-none', icon: CheckCircle },
   'hold':       { label: 'СПОСТЕ ЕЖЕННЯ',   color: '#94a3b8', bg: 'bg-slate-900/40',   border: 'border-slate-800/30', shadow: 'shadow-none', icon: Activity },
   'avoid':      { label: 'УНИКАТИ',      color: '#be123c', bg: 'bg-rose-950/40',     border: 'border-rose-900/40',  shadow: 'shadow-none', icon: AlertTriangle },
@@ -163,7 +163,7 @@ const MarketEntryView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'MarketEntry',
-          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Дані про ринки завантажено з локального кешу Mirror Vault.`,
+          message: `РЕЖИМ АВТОНОМНОЇ  РОЗВІДКИ [${nodeSource}]: Дані про ринки завантажено з локального кешу Mirror Vault.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'OPPORTUNITY_OFFLINE'
@@ -273,7 +273,7 @@ const MarketEntryView: React.FC = () => {
           }
         />
 
-        {/* ── МЕТ ИКИ ELITE ── */}
+        {/* ── МЕТрИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter(m => m.recommendation === 'strong-buy').length}`, sub: 'High Opportunity Hubs', c: '#e11d48' },
@@ -604,7 +604,7 @@ const MarketEntryView: React.FC = () => {
               ) : (
                 <div className="h-[600px] flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20 border-2 border-dashed border-white/10 rounded-[4rem]">
                    <Globe size={120} className="text-slate-600 mb-10 animate-pulse" />
-                   <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕ ІТЬ ВЕКТО  ДЛЯ АНАЛІЗУ</p>
+                   <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ВЕКТО  ДЛЯ АНАЛІЗУ</p>
                 </div>
               )}
             </AnimatePresence>

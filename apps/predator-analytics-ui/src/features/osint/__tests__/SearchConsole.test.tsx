@@ -97,7 +97,7 @@ describe('SearchConsole Component', () => {
         render(<SearchConsole />);
         expect(screen.getByText(/SYNAPTIC/)).toBeInTheDocument();
         expect(screen.getByText(/DISCOVERY/)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ ИЦІ.../)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТрИЦІ.../)).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /ЗНАЙТИ/i })).toBeInTheDocument();
     });
 
@@ -119,7 +119,7 @@ describe('SearchConsole Component', () => {
 
         render(<SearchConsole />);
 
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ ИЦІ.../);
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТрИЦІ.../);
         fireEvent.change(input, { target: { value: 'Тестовий пошук' } });
 
         const searchButton = screen.getByRole('button', { name: /ЗНАЙТИ/i });
@@ -143,7 +143,7 @@ describe('SearchConsole Component', () => {
     it('повинен зберігати та відображати історію пошуку', async () => {
         render(<SearchConsole />);
 
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ ИЦІ.../);
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТрИЦІ.../);
         fireEvent.change(input, { target: { value: 'Запит для історії' } });
 
         const searchButton = screen.getByRole('button', { name: /ЗНАЙТИ/i });
@@ -199,7 +199,7 @@ describe('SearchConsole Component', () => {
         fireEvent.click(truthButton);
 
         //  обимо пошук
-        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТ ИЦІ.../);
+        const input = screen.getByPlaceholderText(/ЗАПИТАЙТЕ У МАТрИЦІ.../);
         fireEvent.change(input, { target: { value: 'Тест' } });
         fireEvent.click(screen.getByRole('button', { name: /ЗНАЙТИ/i }));
 

@@ -15,7 +15,7 @@ interface Case {
   id: string;
   title: string;
   situation: string;
-  status: 'ВІДК ИТО' | 'В  ОБОТІ' | 'ЗАВЕ ШЕНО' | 'К ИТИЧНО';
+  status: 'ВІДКрИТО' | 'В  ОБОТІ' | 'ЗАВЕ ШЕНО' | 'КРИТИЧНО';
   priority: 'low' | 'medium' | 'high' | 'critical';
   risk_score: number;
   sector: string;
@@ -26,10 +26,10 @@ interface Case {
 }
 
 const statusConfig = {
-  'ВІДК ИТО': { color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: FileText },
+  'ВІДКрИТО': { color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: FileText },
   'В  ОБОТІ': { color: 'bg-amber-500/20 text-amber-400 border-amber-500/30', icon: Clock },
   'ЗАВЕ ШЕНО': { color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle },
-  'К ИТИЧНО': { color: 'bg-rose-500/20 text-rose-400 border-rose-500/30', icon: AlertTriangle },
+  'КРИТИЧНО': { color: 'bg-rose-500/20 text-rose-400 border-rose-500/30', icon: AlertTriangle },
 };
 
 const priorityColors = {
@@ -265,8 +265,8 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
             className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-cyan-500/50 outline-none appearance-none cursor-pointer"
           >
             <option value="all">Всі статуси</option>
-            <option value="К ИТИЧНО">Критично</option>
-            <option value="ВІДК ИТО">Відкрито</option>
+            <option value="КРИТИЧНО">Критично</option>
+            <option value="ВІДКрИТО">Відкрито</option>
             <option value="В  ОБОТІ">В роботі</option>
             <option value="ЗАВЕ ШЕНО">Завершено</option>
           </select>
@@ -277,7 +277,7 @@ export const SmartCaseBrowser: React.FC<{ onCaseSelect?: (caseItem: Case) => voi
             className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-cyan-500/50 outline-none appearance-none cursor-pointer"
           >
             <option value="date">За датою</option>
-            <option value="risk">За ризиком</option>
+            <option value="risk">Заризиком</option>
           </select>
 
           {/* View Toggle */}

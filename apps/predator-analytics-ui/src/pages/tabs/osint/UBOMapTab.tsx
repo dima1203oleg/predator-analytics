@@ -62,7 +62,7 @@ export const UBOMapTab: React.FC = () => {
                         <div className="absolute inset-0 bg-rose-500/5 blur-xl opacity-0 group-hover/search:opacity-100 transition-opacity" />
                         <input 
                             type="text" 
-                            placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІА А..."
+                            placeholder="ПОШУК ГЕО-ВУЗЛА АБО БЕНЕФІЦІАРА..."
                             className="w-full bg-slate-950/80 backdrop-blur-xl border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono tracking-widest text-white focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-hover/search:text-rose-400 transition-colors z-10" />
@@ -181,7 +181,7 @@ export const UBOMapTab: React.FC = () => {
                                     
                                     <div className="space-y-2 overflow-y-auto pr-1">
                                         {[
-                                            { name: 'ТОВ "ЕНЕ ГО-Г ИД"', risk: 92, status: 'К ИТИЧНО', loc: 'Київ, Україна' },
+                                            { name: 'ТОВ "ЕНЕ ГО-Г ИД"', risk: 92, status: 'КРИТИЧНО', loc: 'Київ, Україна' },
                                             { name: 'OFFSHORE_VESTA_LTD', risk: 85, status: 'ВИСОКО', loc: 'Лімасол, Кіпр' },
                                             { name: 'GLOBAL_TRANS_LOGISTICS', risk: 42, status: 'СТАБІЛЬНО', loc: 'Варшава, Польща' },
                                             { name: 'PRIVATE_INVEST_GROUP', risk: 12, status: 'БЕЗПЕЧНО', loc: 'Лондон, Великобританія' },
@@ -200,7 +200,7 @@ export const UBOMapTab: React.FC = () => {
                                                     <span className="text-[11px] font-bold text-white group-hover/node:text-rose-400 transition-colors uppercase italic truncate max-w-[140px] leading-none">{node.name}</span>
                                                     <span className={cn(
                                                         "text-[8px] font-black px-1.5 py-0.5 rounded leading-none",
-                                                        node.status === 'К ИТИЧНО' ? 'bg-rose-500 text-white' : 
+                                                        node.status === 'КРИТИЧНО' ? 'bg-rose-500 text-white' : 
                                                         node.status === 'ВИСОКО' ? 'bg-orange-500 text-white' :
                                                         'bg-slate-800 text-slate-400'
                                                     )}>{node.status}</span>

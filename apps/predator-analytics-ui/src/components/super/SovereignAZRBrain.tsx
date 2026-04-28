@@ -26,7 +26,7 @@ interface OSINTSignal {
 }
 
 /**
- * 🛡️ SOVEREIGN AZR BRAIN // СУВЕ ЕННИЙ МОЗОК AZR | v61.0-ELITE
+ * 🛡️ SOVEREIGN AZR BRAIN // СУВЕРЕННИЙ МОЗОК AZR | v61.0-ELITE
  * -------------------------------------------------------------
  * Central Intelligence Nexus — Вершина OSINT-архітектури України.
  * Керує автономним навчанням, загоєнням та стратегічним висновком.
@@ -153,7 +153,7 @@ const SovereignAZRBrain: React.FC = () => {
                 </h1>
                 <p className="text-sm text-slate-400 font-black uppercase tracking-[0.5em] flex items-center gap-3 mt-2">
                   <TrendingUp size={14} className="text-emerald-400" />
-                  ГОЛОВНИЙ ОПЕ АТИВНИЙ НЕЙРОННИЙ ВУЗОЛ
+                  ГОЛОВНИЙ ОПЕРАТИВНИЙ НЕЙРОННИЙ ВУЗОЛ
                 </p>
               </div>
             </motion.div>
@@ -167,7 +167,7 @@ const SovereignAZRBrain: React.FC = () => {
                 className="px-8 py-5 bg-amber-500/10 border border-amber-500/40 rounded-[24px] backdrop-blur-3xl shadow-[0_0_30px_rgba(245,158,11,0.2)] flex flex-col justify-center"
               >
                 <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest mb-1 flex items-center gap-2">
-                  <ZapOff size={12} /> СУВЕ ЕННИЙ АВТОНОМНИЙ РЕЖИМ
+                  <ZapOff size={12} /> СУВЕРЕННИЙ АВТОНОМНИЙ РЕЖИМ
                 </span>
                 <div className="text-xl font-black text-white italic">EMERGENCY_LOCAL</div>
               </motion.div>
@@ -247,7 +247,7 @@ const SovereignAZRBrain: React.FC = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                   <Radar className="text-yellow-500" size={24} />
-                  <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic underline decoration-yellow-500/20 underline-offset-8">МОНІТО ИНГ СЕКТО ІВ</h3>
+                  <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic underline decoration-yellow-500/20 underline-offset-8">МОНІТОРИНГ СЕКТО ІВ</h3>
                 </div>
                 <Layers className="text-slate-800" size={20} />
               </div>
@@ -292,7 +292,7 @@ const SovereignAZRBrain: React.FC = () => {
                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="text-rose-500" size={24} />
-                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУ НАЛ СУВЕ ЕННОГО ПОТОКУ [ELITE]</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-[0.3em] font-mono italic">ЖУ НАЛ СУВЕРЕННОГО ПОТОКУ [ELITE]</h3>
                   </div>
                   <div className="text-[9px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
@@ -404,7 +404,7 @@ const SovereignAZRBrain: React.FC = () => {
             {/* Elite Info Card */}
             <div className="p-8 bg-gradient-to-br from-yellow-900/10 to-rose-950/10 border border-yellow-500/20 rounded-[40px] shadow-2xl relative overflow-hidden">
                <Fingerprint className="absolute -bottom-4 -right-4 text-yellow-500 opacity-10" size={100} />
-               <h4 className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase mb-4">СЕ ТИФІКАТ СУВЕ ЕНІТЕТУ</h4>
+               <h4 className="text-[10px] font-black text-yellow-500 tracking-[0.4em] uppercase mb-4">СЕ ТИФІКАТ СУВЕРЕНІТЕТУ</h4>
                <p className="text-[11px] text-slate-300 font-bold italic leading-relaxed opacity-70">
                  Платформа PREDATOR Analytics v61.0-ELITE є інтелектуальною власністю суверенної держави. Будь-яка спроба декомпіляції карається згідно з протоколом THREAT-X.
                </p>

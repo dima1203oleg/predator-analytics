@@ -169,7 +169,7 @@ const SystemVerificationSuite: React.FC = () => {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'VerificationCitadel',
-            message: `К ИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
+            message: `КрИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'NODE_OFFLINE'
@@ -388,7 +388,7 @@ const SystemVerificationSuite: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'SearchEngine',
-          message: 'К ИТИЧНО: Відмова контрольного запиту HS-Code.',
+          message: 'КРИТИЧНО: Відмова контрольного запиту HS-Code.',
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'QUERY_FAILED'
@@ -509,7 +509,7 @@ const SystemVerificationSuite: React.FC = () => {
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">02. Виконання ETL Пайплайну</h3>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2 italic">Realtime_Process_Log</p>
               </div>
-              {isProcessing && <div className="text-[10px] font-black text-cyan-400 animate-pulse font-mono tracking-widest">ПОТІК АКТИВНИЙ: {jobId?.split('-')[0] || 'PROC-9921'}</div>}
+              {isProcessing && <div className="text-[10px] font-black text-cyan-400 animate-pulse font-mono tracking-widest">ПОТІКрАКТИВНИЙ: {jobId?.split('-')[0] || 'PROC-9921'}</div>}
             </div>
 
             <div className="space-y-1">

@@ -41,7 +41,7 @@ const MOCK_THOUGHTS: AIThought[] = [
 export default function SovereignIntelHub() {
     const { isOffline, nodeSource, healingProgress } = useBackendStatus();
     const [messages, setMessages] = useState<ChatMessage[]>([
-        { role: 'system', content: `СУВЕ ЕННИЙ ІНТЕЛЕКТ П ЕДАТО  GLM-5.1 АКТИВОВАНО. Зв'язок через ${isOffline ? 'ЛОКАЛЬНИЙ ЕМУЛЯТО ' : 'ZROK тунель'}: ВСТАНОВЛЕНО.` }
+        { role: 'system', content: `СУВЕРЕННИЙ ІНТЕЛЕКТ PREDATOR GLM-5.1 АКТИВОВАНО. Зв'язок через ${isOffline ? 'ЛОКАЛЬНИЙ ЕМУЛЯТО ' : 'ZROK тунель'}: ВСТАНОВЛЕНО.` }
     ]);
 
     useEffect(() => {
@@ -59,7 +59,7 @@ export default function SovereignIntelHub() {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SovereignHub',
-                    message: 'СИНХ ОНІЗАЦІЯ З ОРАКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
+                    message: 'СИНХРОНІЗАЦІЯ З ОРАКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'SOVEREIGN_SUCCESS'
@@ -164,7 +164,7 @@ export default function SovereignIntelHub() {
                                 variant="outline" 
                                 className="h-16 px-10 border-rose-500/20 bg-rose-500/5 hover:bg-rose-500 text-rose-500 hover:text-black rounded-[2rem] text-[10px] font-black tracking-[0.4em] uppercase transition-all duration-500 italic shadow-2xl"
                             >
-                                <Command size={18} className="mr-3" /> ТЕ МІНАЛ_ДОСТУПУ
+                                <Command size={18} className="mr-3" /> ТЕРМІНАЛ_ДОСТУПУ
                             </Button>
                         </div>
                     </div>
@@ -238,7 +238,7 @@ export default function SovereignIntelHub() {
                                     <Shield size={220} className="text-rose-500" />
                                 </div>
                                 <h3 className="text-[12px] font-black text-rose-500 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
-                                    <Shield size={20} /> СУВЕ ЕННИЙ_Б АНДМАУЕ 
+                                    <Shield size={20} /> СУВЕРЕННИЙ_Б АНДМАУЕ 
                                 </h3>
                                 <div className="space-y-6 relative z-10">
                                     <div className="flex justify-between items-center bg-rose-500/5 p-6 rounded-[2rem] border border-rose-500/20 shadow-xl">
@@ -331,7 +331,7 @@ export default function SovereignIntelHub() {
                                         <div className="flex flex-col gap-3">
                                             <div className="h-5 w-80 bg-white/10 rounded-full" />
                                             <div className="h-5 w-64 bg-white/5 rounded-full opacity-50" />
-                                            <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[0.6em] mt-3 italic animate-pulse">СИНТЕЗ_АГЕНТНОЇ_СТ АТЕГІЇ_GLM...</span>
+                                            <span className="text-[11px] font-black text-rose-600/80 uppercase tracking-[0.6em] mt-3 italic animate-pulse">СИНТЕЗ_АГЕНТНОЇ_СТРАТЕГІЇ_GLM...</span>
                                         </div>
                                     </div>
                                 )}

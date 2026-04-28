@@ -59,7 +59,7 @@ export interface AgentTask {
   priority: AgentTaskPriority;
   created_at: string;
   updated_at: string;
-  /** Поточний крок або повідомлення про статус */
+  /** Поточний крок абоповідомлення про статус */
   progress?: string | null;
   /** Фактичні витрати на LLM API */
   spent_usd?: number | null;

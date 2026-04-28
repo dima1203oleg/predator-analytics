@@ -495,7 +495,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 <span className={`text-4xl font-black ${cersGradeColor} drop-shadow-[0_0_15px_rgba(244,63,94,0.5)] tracking-tighter`}>
                                                     {companyData?.grade || 'B+'}
                                                 </span>
-                                                <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зона ризику.<br/> Рекомендовано: Умови акредитиву.</p>
+                                                <p className="text-[10px] text-slate-400 mt-2 uppercase font-bold italic leading-tight">Помірна зонаризику.<br/> Рекомендовано: Умови акредитиву.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -637,7 +637,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                                 </div>
                                                 <div className="space-y-1">
                                                     <p className="text-xs text-slate-400 leading-relaxed italic">
-                                                        Виявлений рівень ризику <span className="text-rose-500 font-bold">{getGradeConfig((profile as any).risk_level).label}</span> вимагає 
+                                                        Виявлений рівеньризику <span className="text-rose-500 font-bold">{getGradeConfig((profile as any).risk_level).label}</span> вимагає 
                                                         негайного задіювання протоколу <span className="text-white font-bold">"ТІНЬОВИЙ_ШЛЮЗ"</span> для мінімізації втрат капіталу.
                                                     </p>
                                                 </div>
@@ -906,7 +906,7 @@ function ShadowNetworkAnalysis({ onClose, companyName }: { onClose: () => void; 
                 <div className="md:col-span-2 bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-3xl flex items-center justify-between">
                     <div>
                         <h4 className="text-[10px] font-black text-emerald-400 uppercase mb-1">Висновок Комплаєнс-Офіцера AI</h4>
-                        <p className="text-xs text-slate-300 italic">"Мережа зв'язків є прозорою на 84%. Виявлені транзитні вузли мають низький рівень ризику."</p>
+                        <p className="text-xs text-slate-300 italic">"Мережа зв'язків є прозорою на 84%. Виявлені транзитні вузли мають низький рівеньризику."</p>
                     </div>
                     <Award className="text-emerald-400 opacity-20" size={48} />
                 </div>

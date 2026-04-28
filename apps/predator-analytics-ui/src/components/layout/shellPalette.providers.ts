@@ -142,7 +142,7 @@ const buildAssistantEntries = (): CommandPaletteEntry[] => [
   ),
   createAssistantEntry(
     'assistant-market',
-    'Відкрити ринковий аналіз',
+    'Відкритиринковий аналіз',
     'Перейти до ринку та перевірити наступну можливість',
     BarChart3,
     'analyze',

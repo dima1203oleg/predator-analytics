@@ -170,7 +170,7 @@ export const DailyGazette = ({ onAskAI }: { onAskAI: (query: string) => void }) 
                         Виявлено приховану мережу бенефіціарів: ТОВ "Агро-Вектор"
                     </h2>
                     <p className="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-4 max-w-[80%]">
-                        Наш AI проаналізував останні зміни в реєстрі ЄД . Новий бенефіціар має прямі зв'язки з ризиковими контрагентами в офшорних зонах.
+                        Наш AI проаналізував останні зміни в реєстрі ЄД . Новий бенефіціар має прямі зв'язки зризиковими контрагентами в офшорних зонах.
                     </p>
                     <button className="text-xs text-amber-500 font-bold flex items-center gap-1 group/btn bg-amber-900/10 px-3 py-1.5 rounded-lg w-fit border border-amber-500/20 hover:bg-amber-900/30 transition-all">
                         Дослідити Зв'язки <ArrowUpRight size={12} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform"/>

@@ -443,11 +443,11 @@ const AMLScoringView: React.FC = () => {
         analyticsService.getAMLRiskLevels()
             .then((levels: RiskLevelInfo[]) => setRiskLevels(levels))
             .catch(() => setRiskLevels([
-                { level: 'critical', range: '80-100', description: 'Критичний ризик — блокування / ДМС' },
-                { level: 'high',     range: '60-79',  description: 'Високий ризик — посилена перевірка' },
-                { level: 'medium',   range: '40-59',  description: 'Середній ризик — розширений моніторинг' },
-                { level: 'low',      range: '20-39',  description: 'Низький ризик — стандартний протокол' },
-                { level: 'minimal',  range: '0-19',   description: 'Мінімальний ризик — Green Path' },
+                { level: 'critical', range: '80-100', description: 'Критичнийризик — блокування / ДМС' },
+                { level: 'high',     range: '60-79',  description: 'Високийризик — посилена перевірка' },
+                { level: 'medium',   range: '40-59',  description: 'Середнійризик — розширений моніторинг' },
+                { level: 'low',      range: '20-39',  description: 'Низькийризик — стандартний протокол' },
+                { level: 'minimal',  range: '0-19',   description: 'Мінімальнийризик — Green Path' },
             ]));
     }, []);
 
@@ -630,7 +630,7 @@ const AMLScoringView: React.FC = () => {
                         {!batchMode ? (
                             <TacticalCard variant="holographic" className="p-10 flex flex-col gap-8 rounded-[3.5rem] border-rose-500/10 shadow-4xl bg-black/60 backdrop-blur-3xl">
                                 <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4 italic font-serif">
-                                    <Crosshair size={24} className="text-rose-500 animate-pulse" /> ПА АМЕТ И_СКАНУВАННЯ
+                                    <Crosshair size={24} className="text-rose-500 animate-pulse" /> ПА АМЕТрИ_СКАНУВАННЯ
                                 </h3>
 
                                 <div className="flex gap-4">
@@ -719,7 +719,7 @@ const AMLScoringView: React.FC = () => {
                                     <Upload size={24} className="text-rose-500" /> МАСОВЕ_ЗАВАНТАЖЕННЯ_МАСИВУ
                                 </h3>
                                 <p className="text-[10px] text-slate-700 leading-relaxed uppercase font-black tracking-widest bg-white/[0.02] p-4 rounded-xl border border-white/5 italic">
-                                    ФО МАТ: entity_id, name, type (org/pers) // ЛІМІТ: 100_ВУЗЛІВ
+                                    ФОРМАТ: entity_id, name, type (org/pers) // ЛІМІТ: 100_ВУЗЛІВ
                                 </p>
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
@@ -763,10 +763,10 @@ const AMLScoringView: React.FC = () => {
                             </TacticalCard>
                         )}
 
-                        {/* Шкала ризику ELITE */}
+                        {/* Шкаларизику ELITE */}
                         <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
-                                <Info size={16} className="text-rose-600/40" /> МАТ ИЦЯ_ОЦІНКИ_ РИЗИКІВ
+                                <Info size={16} className="text-rose-600/40" /> МАТрИЦЯ_ОЦІНКИ_ РИЗИКІВ
                             </h3>
                             <div className="flex flex-col gap-4">
                                 {riskLevels.map(l => {
@@ -788,7 +788,7 @@ const AMLScoringView: React.FC = () => {
                         </TacticalCard>
                     </div>
 
-                    {/* ===== П АВА ПАНЕЛЬ: результати ELITE ===== */}
+                    {/* ===== ПРАВА ПАНЕЛЬ: результати ELITE ===== */}
                     <div className="col-span-12 lg:col-span-8 flex flex-col gap-10">
                         <AnimatePresence mode="wait">
 
@@ -816,7 +816,7 @@ const AMLScoringView: React.FC = () => {
 
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
                                             {[
-                                                { l: 'ОБ ОБЛЕНО', v: batchResult.total_processed, c: 'text-white' },
+                                                { l: 'ОБРОБЛЕНО', v: batchResult.total_processed, c: 'text-white' },
                                                 { l: 'КРИТИЧНО', v: batchResult.distribution?.critical || 0, c: 'text-rose-500' },
                                                 { l: 'ВИСОКИЙ', v: batchResult.distribution?.high || 0, c: 'text-rose-600' },
                                                 { l: 'СЕРЕДНІЙ', v: batchResult.distribution?.medium || 0, c: 'text-rose-700' },
@@ -893,7 +893,7 @@ const AMLScoringView: React.FC = () => {
                                             </div>
                                             <div className="mt-8 grid grid-cols-2 gap-4 relative z-10">
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
-                                                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">ВИЯВЛЕНО_ЗАГ ОЗ</span>
+                                                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">ВИЯВЛЕНО_ЗАГРОЗ</span>
                                                     <span className="text-2xl font-black text-rose-500 font-mono italic">{detectedCount}</span>
                                                 </div>
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
@@ -944,7 +944,7 @@ const AMLScoringView: React.FC = () => {
                                     <div className="text-center space-y-4 max-w-2xl px-12">
                                         <h3 className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter group-hover:text-white transition-colors duration-1000">ОЧІКУВАННЯ_ВВОДУ_DATA</h3>
                                         <p className="text-[11px] text-slate-900 font-bold uppercase tracking-[0.6em] italic leading-relaxed">
-                                            ВВЕДІТЬІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-П ОТОКОЛУ v61.0-ELITE
+                                            ВВЕДІТЬІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-ПРОТОКОЛУ v61.0-ELITE
                                         </p>
                                     </div>
                                     <div className="flex gap-6 mt-8">

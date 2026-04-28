@@ -2,7 +2,7 @@
  * ✅ DUE DILIGENCE WORKFLOW | v61.0-ELITE
  * PREDATOR Analytics — Tactical Compliance Auditing
  * 
- * Багатоетапний процес перевірки контрагентів із застосуванням
+ * Багатоетапнийпроцес перевірки контрагентів із застосуванням
  * ШІ-скорингу, автоматичних запитів та фінального затвердження.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -139,7 +139,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                           <AlertTriangle size={24} />
                        </div>
                        <div>
-                          <h4 className="text-lg font-black text-white uppercase italic tracking-tighter">К ИТИЧНИЙ  ЕНТГЕН-РИЗИК</h4>
+                          <h4 className="text-lg font-black text-white uppercase italic tracking-tighter">КРИТИЧНИЙ  ЕНТГЕН-РИЗИК</h4>
                           <p className="text-[10px] font-bold text-red-400 uppercase tracking-[0.2em] italic">ВИЯВЛЕНО НЕВІДПОВІДНОСТІ В СТ УКТУ І UBO ТА САНКЦІЙНИХ СПИСКАХ</p>
                        </div>
                     </div>

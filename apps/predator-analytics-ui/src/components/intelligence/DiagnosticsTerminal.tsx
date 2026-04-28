@@ -122,7 +122,7 @@ export const DiagnosticsTerminal: React.FC = () => {
                 <div className="h-full flex flex-col items-center justify-center text-center space-y-6 opacity-40">
                   <ShieldAlert size={48} className="text-slate-800" />
                   <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em] italic leading-relaxed">
-                    СИСТЕМА СТАБІЛЬНА.<br />К ИТИЧНИХ ПОМИЛОК НЕ ВИЯВЛЕНО.
+                    СИСТЕМА СТАБІЛЬНА.<br />КрИТИЧНИХ ПОМИЛОК НЕ ВИЯВЛЕНО.
                   </p>
                 </div>
               ) : (

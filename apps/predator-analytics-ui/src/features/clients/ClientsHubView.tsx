@@ -72,7 +72,7 @@ const SEGMENTS: SegmentCardDefinition[] = [
   {
     key: 'banking',
     title: 'Банки та фінанси',
-    subtitle: 'AML, санкційний контур, ризикові сигнали та швидкість обробки пошуку.',
+    subtitle: 'AML, санкційний контур,ризикові сигнали та швидкість обробки пошуку.',
     persona: 'BANKING',
     icon: DollarSign,
     accent: {
@@ -100,7 +100,7 @@ const SEGMENTS: SegmentCardDefinition[] = [
   {
     key: 'law',
     title: 'Правоохоронний контур',
-    subtitle: 'Граф звʼязків, ризикові сигнали та алерти для оперативних сценаріїв.',
+    subtitle: 'Граф звʼязків,ризикові сигнали та алерти для оперативних сценаріїв.',
     persona: 'INTELLIGENCE',
     icon: ShieldAlert,
     accent: {
@@ -128,7 +128,7 @@ const SEGMENTS: SegmentCardDefinition[] = [
   {
     key: 'legal',
     title: 'Юридичний контур',
-    subtitle: 'Належна перевірка, ризикові списки, векторна база і затримка відповіді.',
+    subtitle: 'Належна перевірка,ризикові списки, векторна база і затримка відповіді.',
     persona: 'BUSINESS',
     icon: Scale,
     accent: {

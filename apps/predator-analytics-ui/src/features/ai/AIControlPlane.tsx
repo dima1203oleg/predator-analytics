@@ -282,7 +282,7 @@ export default function AIControlPlane() {
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="animate-pulse" />
-                    v61.0-ELITE · МОНІТО ИНГ СУВЕ ЕННИХ  УШІЇВ
+                    v61.0-ELITE · МОНІТОРИНГ СУВЕ ЕННИХ  УШІЇВ
                   </div>
                 </div>
               </div>
@@ -434,7 +434,7 @@ export default function AIControlPlane() {
                             : 'Підтверджених даних для контуру керування зараз немає.'}
                         </div>
                         <div className="mt-3 text-sm leading-6 text-slate-300">
-                          Якщо контракт не повертає температуру графічного процесора, токенний бюджет або операційні перемикачі, ці блоки відсутні замість декоративних цифр і локальних тумблерів.
+                          Якщо контракт не повертає температуру графічногопроцесора, токенний бюджет або операційні перемикачі, ці блоки відсутні замість декоративних цифр і локальних тумблерів.
                         </div>
                       </div>
                     </div>

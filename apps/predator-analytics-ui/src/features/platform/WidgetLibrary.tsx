@@ -166,7 +166,7 @@ const widgets: Widget[] = [
   {
     id: '3',
     name: 'Pie Chart',
-    description: 'Кругова діаграма для розподілу',
+    description: 'Кругова діаграма длярозподілу',
     category: 'charts',
     size: 'small',
     icon: PieChart,
@@ -277,7 +277,7 @@ const widgets: Widget[] = [
   {
     id: '10',
     name: 'Risk Score Gauge',
-    description: 'Індикатор ризик-скору',
+    description: 'Індикаторризик-скору',
     category: 'metrics',
     size: 'small',
     icon: Shield,

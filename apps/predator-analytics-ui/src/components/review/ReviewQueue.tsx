@@ -37,7 +37,7 @@ interface ReviewTask {
 }
 
 const PRIORITY_CONFIG: Record<Priority, { color: string; label: string; icon: any }> = {
-  critical: { color: 'rose', label: 'К ИТИЧНИЙ', icon: AlertTriangle },
+  critical: { color: 'rose', label: 'КРИТИЧНИЙ', icon: AlertTriangle },
   high: { color: 'amber', label: 'ВИСОКИЙ', icon: Flag },
   normal: { color: 'blue', label: 'ЗВИЧАЙНИЙ', icon: Clock },
   low: { color: 'slate', label: 'НИЗЬКИЙ', icon: Clock },

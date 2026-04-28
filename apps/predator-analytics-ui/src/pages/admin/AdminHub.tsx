@@ -124,7 +124,7 @@ const TABS: TabConfig[] = [
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'ЦЕНТ _DATAOPS',                   icon: Database,      component: DataOpsTab         },
   { id: 'chaos',        category: 'SYSTEM_CORE', label: 'ОПЕ АЦІЇ_ХАОСУ',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
   { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'ЗАХИСТ_РЕСУРСІВ', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
-  { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY_ТЕ МІНАЛ',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
+  { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY_ТЕРМІНАЛ',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
   { id: 'ai-control',   category: 'AI_LAB', label: 'КЕ УВАННЯ_ШІ',   badge: 'НЕКСУС',    icon: Zap,           component: AIControlPlane },
@@ -142,7 +142,7 @@ const TABS: TabConfig[] = [
   { id: 'super-intel',  category: 'AI_LAB', label: 'СУПЕ _ІНТЕЛЕКТ',   badge: 'ОМЕГА',    icon: Zap,           component: SuperIntelligenceView },
 
   // ─── INTEL_OSINT ───────────────────────────────────────────────────────────
-  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'ХАБ_ ОЗВІДКИ',    badge: 'О АКУЛ',   icon: Network,       component: SovereignIntelHub },
+  { id: 'intel-hub',    category: 'INTEL_OSINT', label: 'ХАБ_ РОЗВІДКИ',    badge: 'О АКУЛ',   icon: Network,       component: SovereignIntelHub },
   { id: 'nexus',        category: 'INTEL_OSINT', label: 'НЕКСУС_П ОГНОЗ',        badge: 'П ОГНОЗ',  icon: Zap,           component: PredictiveNexusView },
   { id: 'hypothesis',   category: 'INTEL_OSINT', label: 'ГІПОТЕЗИ',                        icon: BrainCircuit,  component: HypothesisEngineView },
   { id: 'knowledge',    category: 'INTEL_OSINT', label: 'ЗНАННЯ',                         icon: BookOpen,      component: KnowledgeEngineeringView },
@@ -168,12 +168,12 @@ const TABS: TabConfig[] = [
   { id: 'maritime',     category: 'INTEL_OSINT', label: 'МО СЬКИЙ_Т ЕК', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
   { id: 'tenders',      category: 'INTEL_OSINT', label: 'ТЕНДЕ И_PROZORRO',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
   { id: 'registries',   category: 'INTEL_OSINT', label: 'РЕЄСТРИ_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
-  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДК ИТІ_ДАНІ', badge: 'ДЕ Ж',      icon: Globe,         component: DataGovView },
+  { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДКрИТІ_ДАНІ', badge: 'ДЕ Ж',      icon: Globe,         component: DataGovView },
   
   // ─── PLATFORM ──────────────────────────────────────────────────────────────
   { id: 'settings',     category: 'PLATFORM', label: 'НАЛАШТУВАННЯ',                    icon: Settings,      component: SettingsView },
   { id: 'alerts-system', category: 'PLATFORM', label: 'СИСТЕМНІ_СПОВІЩЕННЯ', badge: 'ЛОГ', icon: AlertTriangle, component: lazy(() => import('@/features/alerts/AlertCenterView')) },
-  { id: 'decisions',    category: 'PLATFORM', label: 'ЖУ НАЛ_ ІШЕНЬ',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
+  { id: 'decisions',    category: 'PLATFORM', label: 'ЖУ НАЛ_РІШЕНЬ',    badge: 'АУДИТ',    icon: FileText,      component: lazy(() => import('@/features/decisions/DecisionsJournal')) },
   { id: 'logs',         category: 'PLATFORM', label: 'СИСТЕМНІ_ЛОГИ',    badge: 'СИ І',      icon: Terminal,      component: lazy(() => import('@/features/monitoring/RealTimeMonitor')) },
 ];
 
@@ -257,7 +257,7 @@ const SystemStatusHeader: React.FC = () => {
                     transition={{ duration: 2.5, repeat: Infinity }}
                     className="w-2.5 h-2.5 bg-rose-500 rounded-full shadow-[0_0_20px_rgba(225,29,72,1)]" 
                   />
-                  <span className="text-white/30 text-[9px] leading-none tracking-[0.7em] font-black italic">СУВЕ ЕННИЙ_ХАБ_ОМЕГА</span>
+                  <span className="text-white/30 text-[9px] leading-none tracking-[0.7em] font-black italic">СУВЕРЕННИЙ_ХАБ_ОМЕГА</span>
                 </div>
                 <span className="flex items-center gap-6 text-white font-black tracking-[0.5em] text-2xl italic glint-elite">
                    <Atom size={28} className="animate-spin-slow text-rose-500 shadow-rose-500/20" />
@@ -267,7 +267,7 @@ const SystemStatusHeader: React.FC = () => {
             </div>
             
             <div className="flex flex-col border-l-2 border-white/5 pl-12 h-16 justify-center">
-              <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.5em] font-black uppercase italic">СТ АТЕГІЯ_ЯД А</span>
+              <span className="text-white/20 text-[9px] leading-none mb-3 tracking-[0.5em] font-black uppercase italic">СТРАТЕГІЯ_ЯД А</span>
               <div className="flex items-center gap-6">
                 <div className="relative flex items-center justify-center">
                   <div className={cn(
@@ -335,7 +335,7 @@ const SystemStatusHeader: React.FC = () => {
             </div>
 
             <div className="flex flex-col border-l-2 border-white/5 pl-16 h-14 justify-center group/threat">
-              <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic group-hover/threat:text-rose-500 transition-colors uppercase">РІВЕНЬ_ЗАГ ОЗИ_L7</span>
+              <span className="text-white/20 text-[9px] leading-none mb-4 tracking-[0.5em] font-black italic group-hover/threat:text-rose-500 transition-colors uppercase">РІВЕНЬ_ЗАГРОЗИ_L7</span>
               <div className="flex items-center gap-6">
                 <div className="relative">
                   <ShieldAlert size={28} className={cn("transition-all duration-1000", threatLevel > 70 ? "text-rose-500 drop-shadow-[0_0_20px_rgba(225,29,72,1)] scale-110" : "text-white/20")} />
@@ -345,7 +345,7 @@ const SystemStatusHeader: React.FC = () => {
                   <span className={cn("font-black text-2xl tracking-tighter italic leading-none glint-elite", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
                     {threatLevel.toFixed(0)}% <span className="text-[10px] opacity-40 ml-2 not-italic font-black">РИЗИК</span>
                   </span>
-                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 uppercase font-black italic">{threatLevel > 70 ? 'К ИТИЧНА_ЗАГ ОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 uppercase font-black italic">{threatLevel > 70 ? 'КрИТИЧНА_ЗАГРОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
                 </div>
               </div>
             </div>
@@ -451,7 +451,7 @@ const TabLoader: React.FC = () => (
           "ША _ДЕШИФ УВАННЯ: AES-256-GCM",
           "СУВЕ ЕННА_АВТЕНТИФІКАЦІЯ: OK",
           "РОЗПОДІЛ_VRAM: 8GB_GUARD_АКТИВНИЙ",
-          "СИНХ ОНІЗАЦІЯ_МАПИ_UBO: L5"
+          "СИНХРОНІЗАЦІЯ_МАПИ_UBO: L5"
         ].map((text, i) => (
           <div key={i} className="flex items-center gap-4">
             <div className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_10px_rgba(225,29,72,1)]" />
@@ -486,7 +486,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
     { id: 'SYSTEM_CORE', label: 'ЯДРО_СИСТЕМИ', subLabel: 'ІНФ АСТРУКТУРА_&_CONTROL', icon: Shield, color: 'rose' },
     { id: 'AI_LAB',      label: 'AI_ЛАБО АТО ІЯ', subLabel: 'НАВЧАННЯ_&_АВТОЗАВОД', icon: BrainCircuit, color: 'rose' },
     { id: 'INTEL_OSINT', label: 'РОЗВІДКА_&_OSINT', subLabel: 'ГЛОБАЛЬНИЙ_АНАЛІЗ_L7', icon: Eye, color: 'rose' },
-    { id: 'PLATFORM',    label: 'ПЛАТФО МА', subLabel: 'НАЛАШТУВАННЯ_&_АУДИТ', icon: Settings, color: 'rose' },
+    { id: 'PLATFORM',    label: 'ПЛАТФОРМА', subLabel: 'НАЛАШТУВАННЯ_&_АУДИТ', icon: Settings, color: 'rose' },
   ];
 
   const filteredTabs = TABS.filter(t => t.category === selectedCategory);
@@ -715,7 +715,7 @@ export const AdminHub: React.FC = () => {
         </div>
         
         <div className="absolute top-10 right-10 flex flex-col items-end gap-3 pointer-events-none opacity-40 z-0 font-black font-mono text-[9px] text-white/40 tracking-[0.4em] italic text-right uppercase">
-          <span>СИНХ ОНІЗАЦІЯ_ЗАТ ИМКИ: 0.0014MS</span>
+          <span>СИНХРОНІЗАЦІЯ_ЗАТрИМКИ: 0.0014MS</span>
           <span>ВИХІДНИЙ_ПОТІК: 14.8 ГБ/С</span>
           <span>ВХІДНИЙ_ПОТІК: 8.2 ГБ/С</span>
           <div className="mt-4 w-48 h-[2px] bg-gradient-to-l from-rose-500/50 to-transparent rounded-full shadow-rose-500/20" />

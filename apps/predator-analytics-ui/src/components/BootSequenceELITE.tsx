@@ -216,7 +216,7 @@ const sfx = new ApexAudioEngine();
    ANALYTICAL MODULES (Sovereign Ukrainian)
    ─────────────────────────────────────────────────────────────────────────── */
 const RAW_SOURCES = [
-  "SIGINT:ПОТОК_ЦЕНТ АЛЬНИЙ // ПЕ ЕХОПЛЕННЯ_АКТИВНЕ",
+  "SIGINT:ПОТОК_ЦЕНТ АЛЬНИЙ // ПЕРЕХОПЛЕННЯ_АКТИВНЕ",
   "NEURAL:PARSER-ELITE // СТАТИСТИЧНИЙ_ВИСНОВОК",
   "QUANTUM:LEO-SYNC // ТЕЛЕМЕТ ІЯ_КЛУСТЕ У",
   "GLOBAL:REWRITE-PROTOCOL // ВСТАНОВЛЕННЯ_ДИКТАТУ И_ДАНИХ",
@@ -243,7 +243,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
     >
       <div className="bg-black p-24 border border-[#D4AF37]/20 relative overflow-hidden backdrop-blur-3xl">
         <div className="absolute top-0 right-0 p-8">
-           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_П ОТОКОЛ_60.0</div>
+           <div className="text-[#D4AF37] font-mono text-[10px] tracking-widest opacity-30">ВЛАСНИЙ_ПРОТОКОЛ_60.0</div>
         </div>
         
         <div className="flex flex-col gap-20">
@@ -277,7 +277,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                   ))}
                </div>
                <div className="text-[11px] text-[#D4AF37] tracking-[0.8em] uppercase font-bold animate-pulse">
-                 АНАЛІЗ БІОМЕТ ИЧНОГО ВІДБИТКУ...
+                 АНАЛІЗ БІОМЕТрИЧНОГО ВІДБИТКУ...
                </div>
             </div>
           </div>
@@ -301,10 +301,10 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
   useEffect(() => {
     const logs = [
       "BOOT: ЗАВАНТАЖЕННЯ_ЕЛІТНИХ_СИСТЕМНИХ_ВИКЛИКІВ",
-      "CORE: П ИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60",
+      "CORE: ПРИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60",
       "SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_ ЕЗЕ ВІВ [КИЇВ_СИНХ О]",
       "AUTH: ВСТАНОВЛЕНО_ДОПУСК_ОМЕГА",
-      "STATUS:ПРОБУДЖЕННЯ_П ЕДАТО А [СУВЕ ЕННИЙ_РЕЖИМ]",
+      "STATUS:ПРОБУДЖЕННЯ_PREDATORА [СУВЕРЕННИЙ_РЕЖИМ]",
     ];
     let i = 0;
     const interval = setInterval(() => {
@@ -577,7 +577,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
                 <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ВЕ ИФІКОВАНІ_ДАНІ ] </div>
                 <div className="text-white font-mono text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
-                  {["АНАЛІЗ Т АНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТО ИНГ КО ДОНІВ: АКТИВНО", "ПОШУК АНОМАЛІЙ: 0.042ms", "РИЗИК-П ОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
+                  {["АНАЛІЗ ТРАНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТОРИНГ КО ДОНІВ: АКТИВНО", "ПОШУКрАНОМАЛІЙ: 0.042ms", "РИЗИК-П ОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
                     <motion.div 
                       key={idx} 
                       initial={{ opacity: 0, x: 20 }}
@@ -633,7 +633,7 @@ export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComp
               <span>GEO_SIGINT: ОДЕСЬКА_ОБЛАСТЬ_АНАЛІЗ...</span>
               <span className="text-white/40">НЕЙ ОННЕ_НАВАНТАЖЕННЯ: 3.48%</span>
               <span className="text-[#D4AF37]/80">ВИЯВЛЕНО_МАНІПУЛЯЦІЮ_ ИНКОМ</span>
-              <span>ЗАТ ИМКА: 0.000042ms</span>
+              <span>ЗАТрИМКА: 0.000042ms</span>
             </React.Fragment>
           ))}
         </div>

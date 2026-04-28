@@ -38,7 +38,7 @@ export const VramSentinel: React.FC = () => {
   const limit = 8.0;
   const statusColor = vram.total > 7.6 ? 'crimson' : vram.total > 7.0 ? 'rose' : 'emerald';
   const modeLabel = {
-    SOVEREIGN: { text: 'СУВЕ ЕННИЙ (Червоний)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
+    SOVEREIGN: { text: 'СУВЕРЕННИЙ (Червоний)', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30' },
     HYBRID: { text: 'ГІБ ИДНИЙ (Зелений)', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
     CLOUD: { text: 'ХМА НИЙ (Синій)', color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
   }[vram.mode];

@@ -2,7 +2,7 @@
  * 🦅 PREDATOR STRATEGIC NEXUS | v58.2.0-TITAN
  * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
- * Центральний вузол моніторингу митних ризиків та торговельних потоків.
+ * Центральний вузол моніторингу митнихризиків та торговельних потоків.
  * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
  */
 
@@ -108,7 +108,7 @@ const StrategicRadarMatrix: React.FC<{ data: RadarItem[] }> = ({ data }) => {
         data: [
           {
             value: values.length > 0 ? values : [0],
-            name: 'Середній ризик за секторами',
+            name: 'Середнійризик за секторами',
             symbol: 'circle',
             symbolSize: 6,
             itemStyle: { color: '#dc2626' },
@@ -308,7 +308,7 @@ const DashboardView: React.FC = () => {
             >
               <AlertTriangle size={32} className="animate-pulse" />
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">К ИТИЧНА_ПОМИЛКА_ЯД А</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-1">КрИТИЧНА_ПОМИЛКА_ЯД А</p>
                 <p className="text-xl font-bold italic uppercase">{error}</p>
               </div>
             </motion.div>
@@ -345,7 +345,7 @@ const DashboardView: React.FC = () => {
                 animate: isOffline
               },
               { label: 'ЯДРО', value: stats?.totalOPS! > 0 ? `${formatNumber(stats?.totalOPS!)} оп/с` : 'Н/Д', color: 'success', icon: <Activity size={14} />, animate: true },
-              { label: 'К ИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
+              { label: 'КрИТИЧНІСТЬ', value: `${stats?.topRisk!}%`, color: stats?.topRisk! > 80 ? 'danger' : 'warning', icon: <Flame size={14} /> },
               { label: 'ОБ\'ЄМ', value: formatNumber(stats?.totalDecls!), color: 'primary', icon: <Boxes size={14} /> }
             ]}
             actions={
@@ -358,7 +358,7 @@ const DashboardView: React.FC = () => {
                   className="px-10 py-5 bg-black/60 border-2 border-red-500/30 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] hover:bg-red-600/20 transition-all flex items-center gap-4 disabled:opacity-50 italic group"
                 >
                   <RefreshCw size={20} className={cn("text-red-500 transition-transform", refreshing && "animate-spin")} />
-                  <span>СИНХ ОНІЗАЦІЯ_ЯД А</span>
+                  <span>СИНХРОНІЗАЦІЯ_ЯД А</span>
                 </motion.button>
               </div>
             }
@@ -383,9 +383,9 @@ const DashboardView: React.FC = () => {
                   { label: 'ФІНАНСОВИЙ_ПОТІК', value: formatCurrency(overview!.summary.total_value_usd), icon: <TrendingUp size={24} />, color: 'red', sub: 'Загальна вартість' },
                   { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
-                  { label: 'ЗОНА_К ИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
+                  { label: 'ЗОНА_КРИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високийризик' },
                   { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
-                  { label: 'НЕЙ О_МАТ ИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'amber', sub: 'Векторні індекси' },
+                  { label: 'НЕЙ О_МАТрИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'amber', sub: 'Векторні індекси' },
                 ].map((m, i) => (
                   <motion.div
                     key={m.label}
@@ -449,7 +449,7 @@ const DashboardView: React.FC = () => {
                               <p className="text-2xl font-mono font-black text-white italic">{formatNumber(data.throughput)}/с</p>
                             </div>
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЗАТ ИМКА</p>
+                              <p className="text-[9px] font-black text-slate-600 uppercase tracking-tighter italic">ЗАТрИМКА</p>
                               <p className="text-2xl font-mono font-black text-emerald-400 italic">{data.latency}мс</p>
                             </div>
                             <div className="space-y-1">
@@ -480,7 +480,7 @@ const DashboardView: React.FC = () => {
                     <div className="section-header">
                       <div className="section-dot-cyan" />
                       <div>
-                        <h2 className="section-title">МАТ ИЦЯ_РИЗИКІВ</h2>
+                        <h2 className="section-title">МАТрИЦЯ_РИЗИКІВ</h2>
                         <p className="section-subtitle">Багатовимірний аналіз загроз</p>
                       </div>
                     </div>
@@ -516,7 +516,7 @@ const DashboardView: React.FC = () => {
                        <div className="section-header">
                          <div className="section-dot-yellow" />
                          <div>
-                           <h2 className="section-title">ОПЕ АТИВНА_П ОЕКЦІЯ</h2>
+                           <h2 className="section-title">ОПЕРАТИВНА_П ОЕКЦІЯ</h2>
                            <p className="section-subtitle">Глобальний транзит</p>
                          </div>
                        </div>
@@ -613,14 +613,14 @@ const DashboardView: React.FC = () => {
                    </section>
                 </div>
 
-                {/* П АВА КОЛОНКА */}
+                {/* ПРАВА КОЛОНКА */}
                 <div className="col-span-12 xl:col-span-3 space-y-12">
                    <section className="page-section section-amber shadow-3xl">
                       <div className="section-header">
                         <div className="section-dot-amber" />
                         <div>
                           <h2 className="section-title">ВЕ ТИКАЛЬ_РИЗИКІВ</h2>
-                          <p className="section-subtitle">Топ суб'єкти високого ризику</p>
+                          <p className="section-subtitle">Топ суб'єкти високогоризику</p>
                         </div>
                       </div>
                       <div className="space-y-6">
@@ -678,7 +678,7 @@ const DashboardView: React.FC = () => {
                       <div className="section-header">
                         <div className="section-dot-slate" />
                         <div>
-                          <h2 className="section-title">ІНФ А_МАТ ИЦЯ</h2>
+                          <h2 className="section-title">ІНФ А_МАТрИЦЯ</h2>
                           <p className="section-subtitle">Стан базової інфраструктури</p>
                         </div>
                       </div>
@@ -722,7 +722,7 @@ const DashboardView: React.FC = () => {
           <div className="px-12 bg-red-600 h-full flex items-center shrink-0 border-r border-white/10 shadow-[15px_0_40px_rgba(220,38,38,0.5)] relative z-10 italic text-white">
             <div className="flex items-center gap-4">
                <Fingerprint size={24} className="text-white animate-pulse" />
-               <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">СУВЕ ЕННИЙ_ЗВ'ЯЗОК_PREDATOR</span>
+               <span className="text-[13px] font-black uppercase tracking-[0.4em] whitespace-nowrap">СУВЕРЕННИЙ_ЗВ'ЯЗОК_PREDATOR</span>
             </div>
           </div>
           <div className="flex-1 flex items-center">
@@ -732,11 +732,11 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v58.2.0 ELITE NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕ ЕННИЙ`,
+                `СИСТЕМА: v58.2.0 ELITE NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕРЕННИЙ`,
                 `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,
-                `НЕЙ О-АКТИВНІСТЬ: 78% | ЗАТ ИМКА_OODA: 5.8мс`,
+                `НЕЙ О-АКТИВНІСТЬ: 78% | ЗАТрИМКА_OODA: 5.8мс`,
                 `ЗАГАЛЬНИЙ ПУЛ: ${formatCurrency(overview?.summary.total_value_usd ?? 0)} | ДЕКЛА АЦІЙ: ${formatNumber(overview?.summary.total_declarations ?? 0)}`
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-10">

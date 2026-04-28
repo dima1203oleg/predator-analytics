@@ -2,7 +2,7 @@
  * 🚩 ZRADA CONTROL // СИСТЕМА ДЕТЕКЦІЇ З АДИ | v61.0-ELITE
  * PREDATOR Analytics — Corruption & Collaboration Intelligence
  * 
- * Моніторинг ризиків: Корупція, Колаборація, промислове шпигунство.
+ * Моніторингризиків: Корупція, Колаборація, промислове шпигунство.
  * Elite Power Design · Integrity Sentinel · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)

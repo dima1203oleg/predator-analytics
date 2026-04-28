@@ -260,7 +260,7 @@ export default function RegistriesView() {
                      <div className="py-32 flex flex-col items-center justify-center space-y-12">
                         <CyberOrb size={80} color="#D4AF37" />
                         <div className="space-y-4 text-center">
-                           <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТ ИЦІ...</p>
+                           <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТрИЦІ...</p>
                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">EDRPOU: {query.toUpperCase()}</p>
                         </div>
                      </div>
@@ -335,7 +335,7 @@ export default function RegistriesView() {
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                               <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-10">
                                  <h3 className="text-[12px] font-black text-emerald-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/[0.04] pb-6 mb-2">
-                                    <Users size={18} /> БЕНЕФІЦІА НА_МАТ ИЦЯ
+                                    <Users size={18} /> БЕНЕФІЦІА НА_МАТрИЦЯ
                                  </h3>
                                  <div className="space-y-8">
                                     <div className="space-y-4">
@@ -401,7 +401,7 @@ export default function RegistriesView() {
                            <div className="flex items-center gap-6 px-10 py-5 bg-black border border-white/[0.04] rounded-[2.5rem] w-fit shadow-2xl">
                                <CheckCircle size={18} className="text-emerald-500" />
                                <span className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] italic">
-                                   ОСТАННЯ_СИНХ ОНІЗАЦІЯ_З_ЄД : {new Date(selectedCompany.last_updated).toLocaleString('uk-UA')}
+                                   ОСТАННЯ_СИНХРОНІЗАЦІЯ_З_ЄД : {new Date(selectedCompany.last_updated).toLocaleString('uk-UA')}
                                </span>
                            </div>
                         </motion.div>
@@ -413,7 +413,7 @@ export default function RegistriesView() {
                       <div className="flex items-center justify-between mb-12">
                          <div className="space-y-2">
                             <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg]">ПІДКЛЮЧЕНІ_РЕЄСТРИ_ТА_ДЖЕ ЕЛА</h3>
-                            <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТО ИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В РЕАЛЬНОМУ ЧАСІ</p>
+                            <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТОРИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В РЕАЛЬНОМУ ЧАСІ</p>
                          </div>
                          <div className="px-6 py-3 bg-emerald-600/10 border border-emerald-600/40 rounded-full flex items-center gap-4 text-emerald-500 shadow-2xl">
                             <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />

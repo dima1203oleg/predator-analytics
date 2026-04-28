@@ -1,6 +1,6 @@
 /**
  * 📊 CERS 5-Layer Gauge | PREDATOR v61.0-ELITE-SM-EXTENDED
- * Візуалізація 5 шарів ризику (Behavioral, Institutional, Influence, Structural, Predictive).
+ * Візуалізація 5 шарівризику (Behavioral, Institutional, Influence, Structural, Predictive).
  */
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -124,7 +124,7 @@ export const Cers5LayerGauge: React.FC<Cers5LayerGaugeProps> = ({ factors, total
                                 totalScore > 0.4 ? "bg-amber-500/10 border-amber-500/30 text-amber-500" :
                                     "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
                         )}>
-                            {totalScore > 0.7 ? 'К ИТИЧНО' : totalScore > 0.4 ? 'СЕРЕДНІЙ' : 'СТАБІЛЬНО'}
+                            {totalScore > 0.7 ? 'КРИТИЧНО' : totalScore > 0.4 ? 'СЕРЕДНІЙ' : 'СТАБІЛЬНО'}
                         </span>
                     </div>
                 </div>

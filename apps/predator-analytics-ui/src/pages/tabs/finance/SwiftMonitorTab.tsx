@@ -66,7 +66,7 @@ export const SwiftMonitorTab: React.FC = () => {
         <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-6">
           <h2 className="text-sm font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-4">
             <Activity size={20} className="text-emerald-500 shadow-[0_0_15px_#10b981]" />
-            ДИНАМІКА_ПОТОКІВ_SWIFT // МОНІТО ИНГ
+            ДИНАМІКА_ПОТОКІВ_SWIFT // МОНІТОРИНГ
           </h2>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const SwiftMonitorTab: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]" />
-              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">ЗАГ ОЗА</span>
+              <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">ЗАГРОЗА</span>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ export const SwiftMonitorTab: React.FC = () => {
           <Skull size={200} className="text-emerald-600" />
         </div>
         <h3 className="text-[12px] font-black text-emerald-600 italic uppercase tracking-[0.4em] mb-6 border-b border-emerald-500/10 pb-6 flex items-center justify-between">
-          <span>ЗАГ ОЗЛИВІ_Т АНЗАКЦІЇ</span>
+          <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
           <div className="flex gap-1.5">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse delay-75" />

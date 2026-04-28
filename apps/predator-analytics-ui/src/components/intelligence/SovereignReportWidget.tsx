@@ -96,7 +96,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                             <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v61.0-ELITE</span>
                             <Badge className="bg-[#D4AF37]/10 text-[#D4AF37] border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
-                        <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕ ЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
+                        <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕРЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
                         <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1 opacity-60">IDENTIFIER: {ueid} // LAYER: COGNITIVE_ANALYSIS</p>
                     </div>
                 </div>
@@ -189,7 +189,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     ) : (
                         <div className="flex flex-col items-center justify-center py-32 text-slate-800 border border-dashed border-white/5 rounded-[3rem]">
                             <Fingerprint size={80} className="opacity-10 mb-6" />
-                            <p className="text-sm font-black uppercase tracking-[0.4em] italic opacity-40">К ИПТОМАТ ИЦЯ_ПО ОЖНЯ</p>
+                            <p className="text-sm font-black uppercase tracking-[0.4em] italic opacity-40">КрИПТОМАТрИЦЯ_ПО ОЖНЯ</p>
                         </div>
                     )}
                 </AnimatePresence>

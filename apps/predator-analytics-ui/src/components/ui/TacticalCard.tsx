@@ -161,7 +161,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                     priority === 'high' ? "bg-amber-500/20 border-amber-500/40 text-amber-500" :
                     "bg-white/5 border-white/10 text-slate-500"
                   )}>
-                    {priority === 'critical' ? 'К ИТИЧНО' : 
+                    {priority === 'critical' ? 'КРИТИЧНО' : 
                      priority === 'high' ? 'ВИСОКИЙ' : 
                      priority === 'medium' ? 'СЕРЕДНІЙ' : 'НИЗЬКИЙ'}
                   </span>

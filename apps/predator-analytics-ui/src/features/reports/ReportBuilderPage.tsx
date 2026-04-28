@@ -85,7 +85,7 @@ const TEMPLATES: ReportTemplate[] = [
     {
         id: 'customs',
         name: 'Митний фокус',
-        description: 'Виділяє торгові, логістичні та митні ризики з готового звіту.',
+        description: 'Виділяє торгові, логістичні та митніризики з готового звіту.',
         icon: Target,
         color: 'text-emerald-300',
         modeLabel: 'Звіт + Copilot',
@@ -177,9 +177,9 @@ const extractGeneratedAt = (payload: unknown): string => {
 const buildCopilotPrompt = (templateId: TemplateId, ueid: string, report: string): string => {
     const tasks: Record<Exclude<TemplateId, 'sovereign'>, string> = {
         executive:
-            'Стисло перепиши цей звіт для керівника. Залиш лише 4-6 найважливіших висновків, ризики йрекомендовані дії. Відповідь дай українською у Markdown.',
+            'Стисло перепиши цей звіт для керівника. Залиш лише 4-6 найважливіших висновків,ризики йрекомендовані дії. Відповідь дай українською у Markdown.',
         customs:
-            'На основі цього звіту виділи саме митні, торгові та логістичні ризики. Додай короткий блок "Що перевірити далі". Відповідь дай українською у Markdown.',
+            'На основі цього звіту виділи саме митні, торгові та логістичніризики. Додай короткий блок "Що перевірити далі". Відповідь дай українською у Markdown.',
         cartel:
             'На основі цього звіту виділи ознаки повʼязаності, бенефіціарного контролю та можливих узгоджених дій. Дай результат українською у Markdown.',
     };
@@ -201,7 +201,7 @@ const buildStatusText = (status: GenerationStatus, batchMode: boolean): string =
         return batchMode ? 'Виконується пакетна обробка' : 'Формується звіт';
     }
     if (status === 'success') {
-        return 'Готово до перегляду';
+        return 'Готово доперегляду';
     }
     if (status === 'error') {
         return 'Потрібне втручання';
@@ -229,7 +229,7 @@ const buildSourceCards = (
     },
     {
         id: 'risk',
-        name: 'CERS та ризикові деталі',
+        name: 'CERS таризикові деталі',
         description: backendOffline
             ? 'Недоступно без відповіді маршруту звіту.'
             : 'Включаються до контексту звіту, якщо присутні у профілі.',
@@ -715,7 +715,7 @@ const ReportBuilderPage: React.FC = () => {
                                 </div>
 
                                 <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-right">
-                                    <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">Стан процесу</div>
+                                    <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">Станпроцесу</div>
                                     <div
                                         className={cn(
                                             'text-[11px] font-black uppercase tracking-[0.2em]',
@@ -870,7 +870,7 @@ const ReportBuilderPage: React.FC = () => {
                                         <Loader2 size={42} className="animate-spin text-amber-300" />
                                         <div className="text-center">
                                             <h4 className="text-2xl font-black uppercase tracking-tight text-white">
-                                                Формування звіту в процесі
+                                                Формування звіту впроцесі
                                             </h4>
                                             <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-400">
                                                 {currentUeid
@@ -909,7 +909,7 @@ const ReportBuilderPage: React.FC = () => {
                                         <div className="mb-4 flex items-start justify-between gap-4">
                                             <div>
                                                 <div className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-300">
-                                                    Попередній перегляд
+                                                    Попереднійперегляд
                                                 </div>
                                                 <h3 className="mt-2 text-xl font-black uppercase tracking-tight text-white">
                                                     {previewReport.templateName}
@@ -1023,7 +1023,7 @@ const ReportBuilderPage: React.FC = () => {
                             <div className="rounded-[3rem] border border-white/10 bg-black/30 p-10 text-center">
                                 <ScanText size={40} className="mx-auto mb-4 text-slate-600" />
                                 <h3 className="text-xl font-black uppercase tracking-tight text-white">
-                                    Попередній перегляд зʼявиться тут
+                                    Попереднійперегляд зʼявиться тут
                                 </h3>
                                 <p className="mt-3 text-sm leading-relaxed text-slate-500">
                                     Після першого успішного запуску тут зʼявиться markdown-звіт або історія поточної сесії.

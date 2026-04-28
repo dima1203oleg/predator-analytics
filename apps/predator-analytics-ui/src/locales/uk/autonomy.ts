@@ -58,7 +58,7 @@ export const autonomyLocales = {
     reject: 'Відхилити',
     status: {
       pending_review: 'очікує перевірки',
-      under_review: 'на розгляді',
+      under_review: 'нарозгляді',
       approved: 'схвалено',
       rejected: 'відхилено',
       implemented: 'впроваджено',
@@ -330,7 +330,7 @@ export const knowledgeLocales = {
   explainability: {
     title: 'Пояснюваність та Аудит',
     decision: ' ішення',
-    riskScore: 'Оцінка ризику',
+    riskScore: 'Оцінкаризику',
     factors: 'Фактори',
     graphPaths: 'Шляхи в Графі',
     auditTrail: 'Аудит-трейл',

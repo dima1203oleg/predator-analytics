@@ -83,7 +83,7 @@ export const ReportCenterWidget: React.FC<{ persona: string }> = ({ persona }) =
                    {template.type === 'JSON' && <FileSearch size={24} />}
                  </div>
                  <div className="flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <button aria-label="Попередній перегляд" className="p-2 hover:bg-white/10 rounded-lg text-slate-400">
+                    <button aria-label="Попереднійперегляд" className="p-2 hover:bg-white/10 rounded-lg text-slate-400">
                         <Eye size={16} />
                     </button>
                     <button aria-label="Видалити" className="p-2 hover:bg-rose-500/20 rounded-lg text-rose-400">

@@ -2,8 +2,8 @@
  * PREDATOR OpenSearch Real Queries - реальні Запити до OpenSearch
  *
  * Готові запити для кожної персони:
- * - TITAN: бізнес-аналітика, конкуренти, ринкові тренди
- * - INQUISITOR: аномалії, ризики, підозрілі патерни
+ * - TITAN: бізнес-аналітика, конкуренти,ринкові тренди
+ * - INQUISITOR: аномалії,ризики, підозрілі патерни
  * - SOVEREIGN: макро-тренди, системний аналіз
  *
  * © 2026 PREDATOR Analytics
@@ -221,8 +221,8 @@ export const INQUISITOR_QUERIES: OpenSearchQuery[] = [
   },
   {
     id: 'inq-risk-scoring',
-    name: 'Скоринг ризику Компаній',
-    description: 'рейтинг компаній за ризиком порушень',
+    name: 'Скорингризику Компаній',
+    description: 'рейтинг компаній заризиком порушень',
     persona: 'INQUISITOR',
     category: ' изики',
     query: {
@@ -326,7 +326,7 @@ export const INQUISITOR_QUERIES: OpenSearchQuery[] = [
   {
     id: 'inq-suspicious-declarations',
     name: 'Підозрілі Декларації',
-    description: 'Декларації з високим ризик-скором',
+    description: 'Декларації з високимризик-скором',
     persona: 'INQUISITOR',
     category: 'Аномалії',
     query: {

@@ -32,10 +32,10 @@ export const LiveAgentTerminal: React.FC = () => {
     'Нейронна мережа ідентифікувала аномальну транзакцію',
     'Оновлення КБ-профілю обʼєкта 41829391',
     'Запуск протоколу глибинного сканування...',
-    'Предиктивна модель: рівень ризику підвищено до 0.84',
+    'Предиктивна модель: рівеньризику підвищено до 0.84',
     'Оптимізація VRAM для локальної моделі Qwen3',
     'Дешифрування зашифрованого потоку даних...',
-    'Вузли ризику Wraith: знайдено 12 нових звʼязків'
+    'Вузлиризику Wraith: знайдено 12 нових звʼязків'
   ];
 
   // Auto-scrolling and log generation
@@ -250,7 +250,7 @@ export const LiveAgentTerminal: React.FC = () => {
                   </div>
                   <div className="flex flex-col items-center">
                     <p className="uppercase tracking-[1em] font-black italic text-rose-500/80 mb-2">ELITE_STANDBY</p>
-                    <p className="text-[9px] text-slate-500 font-mono italic">ЯДРО ГОТОВЕ ДО П ИЙОМУ КОМАНД...</p>
+                    <p className="text-[9px] text-slate-500 font-mono italic">ЯДРО ГОТОВЕ ДО ПРИЙОМУ КОМАНД...</p>
                   </div>
                 </div>
               )}

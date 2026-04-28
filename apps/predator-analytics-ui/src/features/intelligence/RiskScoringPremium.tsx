@@ -1,5 +1,5 @@
 /**
- * 🚨 RISK SCORING PREMIUM // МОНІТО ИНГ РИЗИКІВ | v61.0-ELITE
+ * 🚨 RISK SCORING PREMIUM // МОНІТОРИНГ РИЗИКІВ | v61.0-ELITE
  * PREDATOR Analytics — Advanced Risk Assessment & Forensic Investigation
  * 
  * Система виявлення схем, санкційного комплаєнсу та глибокої перевірки суб'єктів.
@@ -45,7 +45,7 @@ interface Investigation {
 }
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string; icon: any }> = {
-  critical: { label: 'К ИТИЧНИЙ', color: '#E11D48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]', icon: XCircle },
+  critical: { label: 'КРИТИЧНИЙ', color: '#E11D48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]', icon: XCircle },
   high: { label: 'ВИСОКИЙ', color: '#BE123C', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(190,18,60,0.2)]', icon: AlertTriangle },
   medium: { label: 'СЕРЕДНІЙ', color: '#FB7185', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(251,113,133,0.2)]', icon: AlertCircle },
   low: { label: 'НИЗЬКИЙ', color: '#22c55e', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
@@ -73,7 +73,7 @@ const ScanningHUD: React.FC = () => {
                 <span>COGNITIVE_ENGINE: ELITE_58.2</span>
             </div>
             <div className="absolute bottom-40 right-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic text-right">
-                <span>РИЗИК_МАТ ИЦЯ_ОТЛАДКА: ON</span>
+                <span>РИЗИК_МАТрИЦЯ_ОТЛАДКА: ON</span>
                 <span>ГЛИБИННИЙ_СКАН: MAX</span>
             </div>
         </div>
@@ -272,7 +272,7 @@ export default function RiskScoringPremium() {
               { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Database size={10} /> },
             ]}
             stats={[
-              { label: 'К ИТИЧНО', value: String(stats.critical), icon: <XCircle />, color: 'rose', animate: stats.critical > 0 },
+              { label: 'КРИТИЧНО', value: String(stats.critical), icon: <XCircle />, color: 'rose', animate: stats.critical > 0 },
               { label: 'ВИСОКИЙ', value: String(stats.high), icon: <AlertTriangle />, color: 'danger' },
               { label: 'СЕРЕДНІЙ', value: String(stats.medium), icon: <AlertCircle />, color: 'primary' },
               { label: 'ОБІГ_ПІДОЗ ', value: `₴${(stats.totalSuspicious / 1000000).toFixed(1)}M`, icon: <DollarSign />, color: 'rose' },
@@ -314,7 +314,7 @@ export default function RiskScoringPremium() {
           {/* METRICS GRID ELITE */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
               {[
-                { label: 'К ИТИЧНИЙ_РИЗИК', value: stats.critical, level: 'critical', icon: XCircle },
+                { label: 'КРИТИЧНИЙ_РИЗИК', value: stats.critical, level: 'critical', icon: XCircle },
                 { label: 'ВИСОКИЙ_РИЗИК', value: stats.high, level: 'high', icon: AlertTriangle },
                 { label: 'СЕРЕДНІЙ_РИЗИК', value: stats.medium, level: 'medium', icon: AlertCircle },
                 { label: 'НИЗЬКИЙ_РИЗИК', value: stats.low, level: 'low', icon: CheckCircle },
@@ -465,7 +465,7 @@ export default function RiskScoringPremium() {
                   <div className="space-y-6 relative z-10 pt-4 font-black italic">
                      {[
                        { t: 'П ОЦЕСУАЛЬНА_ДІЯ', v: 'Відкрито справу про дроблення бізнесу // [CASE_4282]', cl: 'text-rose-500', i: Flag },
-                       { t: 'СИГНАЛ_МОНІТО ИНГУ', v: 'Аномальні виплати на користь офшорів (Кіпр) // TRIGGER_7', cl: 'text-rose-600', i: AlertTriangle },
+                       { t: 'СИГНАЛ_МОНІТОРИНГУ', v: 'Аномальні виплати на користь офшорів (Кіпр) // TRIGGER_7', cl: 'text-rose-600', i: AlertTriangle },
                        { t: 'ВЕ ИФІКАЦІЯ_UBO', v: 'Зміна бенефіціара П АТ "ЕНЕ ГО" на номінальну особу', cl: 'text-rose-700', i: Users },
                      ].map((ins, i) => (
                        <div key={i} className="p-8 rounded-[2.5rem] bg-black/60 border-2 border-white/[0.03] space-y-4 group/item hover:border-rose-500/30 transition-all duration-500 shadow-inner">
@@ -490,7 +490,7 @@ export default function RiskScoringPremium() {
                   </h3>
                   <div className="space-y-6 relative z-10 pt-4 font-black">
                      {[
-                       { i: Network, l: 'МАТ ИЦЯ_ЗВ\'ЯЗКІВ', c: 'text-rose-500', sub: 'GRAPH_ENGINE_ANALYSIS' },
+                       { i: Network, l: 'МАТрИЦЯ_ЗВ\'ЯЗКІВ', c: 'text-rose-500', sub: 'GRAPH_ENGINE_ANALYSIS' },
                        { i: Target, l: 'АВТО_СКАНЕ _СХЕМ', c: 'text-rose-600', sub: 'PATTERN_RECOGNITION' },
                        { i: FileText, l: 'VIP_INTEL_PACKAGE', c: 'text-white', sub: 'PDF_EXECUTIVE_SUMMARY' },
                        { i: Clock, l: 'А ХІВ_РОЗСЛІДУВАНЬ', c: 'text-slate-400', sub: 'DATA_LEDGER_2025' },

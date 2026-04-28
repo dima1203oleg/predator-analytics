@@ -1,6 +1,6 @@
 /**
  * 🔴 REAL-TIME EVENT MONITOR | v61.0-ELITE
- * МОНІТО ИНГ_ПОДІЙ: Прямий ефір від Kafka + WebSocket streaming.
+ * МОНІТОРИНГ_ПОДІЙ: Прямий ефір від Kafka + WebSocket streaming.
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
 
@@ -164,10 +164,10 @@ export const RealTimeMonitor: React.FC = () => {
                     <span className="text-[11px] font-black text-white/30 uppercase tracking-[0.4em] italic font-mono">STREAMING_ENGINE_ACTIVE</span>
                   </div>
                   <h1 className="text-8xl font-black text-white tracking-tighter uppercase italic leading-none glint-elite chromatic-elite">
-                    МОНІТО ИНГ <span className="text-rose-500">ПОДІЙ</span>
+                    МОНІТОРИНГ <span className="text-rose-500">ПОДІЙ</span>
                   </h1>
                   <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-rose-900/50 pl-8">
-                    П ЯМИЙ_ЕФІ _Т АНЗАКЦІЙ_ТА_ОНОВЛЕНЬ_ГЛОБАЛЬНИХ_РЕЄСТРІВ_L7
+                    П ЯМИЙ_ЕФІ _ТРАНЗАКЦІЙ_ТА_ОНОВЛЕНЬ_ГЛОБАЛЬНИХ_РЕЄСТРІВ_L7
                   </p>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export const RealTimeMonitor: React.FC = () => {
                       : "bg-amber-600 hover:bg-amber-500 text-white border-amber-400/50 shadow-amber-500/20"
                   )}
                 >
-                  {isPaused ? <><Play size={24} className="group-hover:scale-125 transition-transform duration-700" /> ВІДНОВИТИ_ПОТІК</> : <><Pause size={24} className="group-hover:scale-125 transition-transform duration-700" /> П ИЗУПИНИТИ_ПОТІК</>}
+                  {isPaused ? <><Play size={24} className="group-hover:scale-125 transition-transform duration-700" /> ВІДНОВИТИ_ПОТІК</> : <><Pause size={24} className="group-hover:scale-125 transition-transform duration-700" /> ПРИЗУПИНИТИ_ПОТІК</>}
                 </button>
               </div>
             }
@@ -227,9 +227,9 @@ export const RealTimeMonitor: React.FC = () => {
                           className="w-full bg-white/[0.03] border-2 border-white/5 p-6 rounded-[2rem] text-[12px] font-black text-white/80 italic tracking-widest outline-none focus:border-rose-500/40 transition-all duration-700 cursor-pointer shadow-inner hover:bg-white/[0.06]"
                         >
                           <option value="all">УСІ_ ІВНІ_ВАЖЛИВОСТІ</option>
-                          <option value="info">ІНФО МАЦІЯ // ЗВИЧАЙНИЙ</option>
+                          <option value="info">ІНФОРМАЦІЯ // ЗВИЧАЙНИЙ</option>
                           <option value="warning">ПОПЕ ЕДЖЕННЯ // УВАГА</option>
-                          <option value="critical">К ИТИЧНО // ЗАГ ОЗА</option>
+                          <option value="critical">КРИТИЧНО // ЗАГРОЗА</option>
                         </select>
                      </div>
                   </div>
@@ -249,7 +249,7 @@ export const RealTimeMonitor: React.FC = () => {
                      </p>
                   </div>
                   <p className="text-[11px] font-black text-white/20 uppercase leading-relaxed italic relative z-10 tracking-widest">
-                     СУВЕ ЕННИЙ ШЛЮЗ АВТОМАТИЧНО ПІДКЛЮЧАЄТЬСЯ ДО KAFKA-СТ ІМУ ЧЕ ЕЗ WEBSOCKET_v61. ЦИКЛ ПЕ ЕПІДКЛЮЧЕННЯ: 3 СЕКУНДИ. ШИФ : CHACHA20.
+                     СУВЕРЕННИЙ ШЛЮЗ АВТОМАТИЧНО ПІДКЛЮЧАЄТЬСЯ ДО KAFKA-СТ ІМУ ЧЕ ЕЗ WEBSOCKET_v61. ЦИКЛ ПЕ ЕПІДКЛЮЧЕННЯ: 3 СЕКУНДИ. ШИФ : CHACHA20.
                   </p>
                   <motion.div 
                     animate={{ rotate: 360 }}
@@ -265,7 +265,7 @@ export const RealTimeMonitor: React.FC = () => {
             <div className="col-span-12 xl:col-span-9 space-y-12">
                <div className="flex items-center justify-between px-12">
                   <h4 className="text-[14px] font-black text-white/30 uppercase tracking-[0.6em] italic flex items-center gap-8">
-                     <Terminal size={24} className="text-rose-600 glint-elite" /> ТЕ МІНАЛ_АКТИВНОСТІ_ЯД А_OODA
+                     <Terminal size={24} className="text-rose-600 glint-elite" /> ТЕРМІНАЛ_АКТИВНОСТІ_ЯД А_OODA
                   </h4>
                   <div className="flex items-center gap-8">
                      <div className="px-6 py-2 bg-white/5 rounded-2xl text-[11px] font-black text-white/20 italic tracking-[0.3em] border border-white/5 shadow-inner">
@@ -351,7 +351,7 @@ export const RealTimeMonitor: React.FC = () => {
                                    event.severity === 'warning' ? "bg-amber-600/10 border-amber-600/50 text-amber-500 shadow-amber-500/30" : 
                                    "bg-emerald-600/10 border-emerald-600/50 text-emerald-500 shadow-emerald-500/30"
                                  )}>
-                                    {event.severity === 'critical' ? 'К ИТИЧНО' : event.severity === 'warning' ? 'УВАГА_РИЗИК' : 'ІНФО МАЦІЯ_L7'}
+                                    {event.severity === 'critical' ? 'КРИТИЧНО' : event.severity === 'warning' ? 'УВАГА_РИЗИК' : 'ІНФОРМАЦІЯ_L7'}
                                  </div>
                                  <div className="text-[11px] font-black text-white/10 uppercase italic tracking-widest font-mono group-hover:text-rose-500/40 transition-colors duration-700">OSINT_TRACE_ID: {event.id.slice(0, 16).toUpperCase()}</div>
                               </div>

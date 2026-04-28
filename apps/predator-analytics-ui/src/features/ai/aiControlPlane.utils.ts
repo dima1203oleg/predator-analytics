@@ -236,11 +236,11 @@ const buildLogRecords = (value: unknown): AIControlLogRecord[] => {
         timestampLabel: formatDateTime(readString(entry.timestamp)) ?? 'Н/д',
         serviceLabel: readString(entry.service) ?? 'Система',
         levelLabel: levelMeta.label,
-        message: readString(entry.message) ?? 'Немає тексту повідомлення',
+        message: readString(entry.message) ?? 'Немає текступовідомлення',
         tone: levelMeta.tone,
       };
     })
-    .filter((entry) => entry.message !== 'Немає тексту повідомлення')
+    .filter((entry) => entry.message !== 'Немає текступовідомлення')
     .slice(0, 40);
 };
 

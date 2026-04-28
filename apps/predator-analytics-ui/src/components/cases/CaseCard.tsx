@@ -10,7 +10,7 @@ import { UserRole } from '../../context/UserContext';
 import { useShell, UIShell } from '../../context/ShellContext';
 import { NeutralizedContent } from '../NeutralizedContent';
 
-export type CaseStatus = 'К ИТИЧНО' | 'УВАГА' | 'БЕЗПЕЧНО' | 'А ХІВ';
+export type CaseStatus = 'КРИТИЧНО' | 'УВАГА' | 'БЕЗПЕЧНО' | 'А ХІВ';
 export type CaseSector = 'GOV' | 'BIZ' | 'MED' | 'SCI';
 
 export interface Evidence {
@@ -73,7 +73,7 @@ export const SECTOR_CONFIG = {
 };
 
 export const STATUS_CONFIG = {
-  'К ИТИЧНО': {
+  'КРИТИЧНО': {
     icon: <AlertCircle size={16} />,
     bg: 'bg-red-500/10',
     border: 'border-red-500/50',

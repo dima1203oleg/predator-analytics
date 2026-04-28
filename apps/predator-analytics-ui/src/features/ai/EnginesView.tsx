@@ -39,7 +39,7 @@ const ENGINE_TEMPLATES = [
     {
         id: 'institutional', name: 'Інституційний Двигун', shortName: 'INST',
         icon: Globe, color: '#06b6d4',
-        description: 'Аналіз інституційних зв\'язків: корпоративні структури, регуляторні ризики, комплаєнс.',
+        description: 'Аналіз інституційних зв\'язків: корпоративні структури, регуляторніризики, комплаєнс.',
         subScores: [
             { label: 'Корп. структури', value: 95 },
             { label: 'Комплаєнс', value: 91 },
@@ -72,7 +72,7 @@ const ENGINE_TEMPLATES = [
     {
         id: 'predictive', name: 'Предиктивний Двигун', shortName: 'PRED',
         icon: Waves, color: '#ec4899',
-        description: 'Прогностичний аналіз: ринкові тренди, ризикові сценарії, AI-прогнози.',
+        description: 'Прогностичний аналіз:ринкові тренди,ризикові сценарії, AI-прогнози.',
         subScores: [
             { label: 'Ринкові прогнози', value: 84 },
             { label: 'Ризик-сценарії', value: 79 },
@@ -83,7 +83,7 @@ const ENGINE_TEMPLATES = [
     {
         id: 'cers', name: 'CERS Двигун Оцінки', shortName: 'CERS',
         icon: ShieldCheck, color: '#f97316',
-        description: 'Комплексна оцінка ризиків суб\'єктів: синтез всіх двигунів у єдиний скор.',
+        description: 'Комплексна оцінкаризиків суб\'єктів: синтез всіх двигунів у єдиний скор.',
         subScores: [
             { label: 'Синтез скорів', value: 72 },
             { label: 'Калібрування', value: 61 },
@@ -132,7 +132,7 @@ const EngineCardHeader: React.FC<{ engine: any }> = ({ engine }) => {
                 <p className="text-sm text-slate-400 font-bold italic leading-relaxed max-w-2xl">{engine.description}</p>
                 <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
                     {[
-                        { label: 'ОБ ОБЛЕНО', value: engine.metrics.processed.toLocaleString(), unit: 'OBJ', icon: Database, color: 'slate' },
+                        { label: 'ОБРОБЛЕНО', value: engine.metrics.processed.toLocaleString(), unit: 'OBJ', icon: Database, color: 'slate' },
                         { label: 'ТОЧНІСТЬ', value: `${engine.metrics.accuracy}%`, unit: 'ACC', icon: Target, color: 'emerald' },
                         { label: 'ПОТІК', value: engine.metrics.throughput, unit: 'TPS', icon: Radio, color: 'sky' },
                         { label: 'ЗАТРИМКА', value: engine.metrics.latency, unit: 'MS', icon: Clock, color: 'amber' },

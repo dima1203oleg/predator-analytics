@@ -378,7 +378,7 @@ const DataExportCenter: React.FC = () => {
                 <Calendar className="text-slate-700 mx-auto mb-4" size={48} />
                 <p className="text-slate-500">Немає запланованих експортів</p>
                 <button className="mt-4 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-bold">
-                  Створити розклад
+                  Створитирозклад
                 </button>
               </div>
             )}

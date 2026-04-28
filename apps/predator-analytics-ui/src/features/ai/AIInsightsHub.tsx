@@ -59,7 +59,7 @@ const TYPE_CONFIG: Record<string, { icon: any, color: string, label: string }> =
 };
 
 const PRIORITY_CONFIG: Record<string, { color: string; label: string }> = {
-  critical: { color: '#9f1239', label: 'К ИТИЧНО' },
+  critical: { color: '#9f1239', label: 'КРИТИЧНО' },
   high:     { color: '#be123c', label: 'ВИСОКИЙ' },
   medium:   { color: '#e11d48', label: 'СЕРЕДНІЙ' },
   low:      { color: '#475569', label: 'НИЗЬКИЙ' },
@@ -166,8 +166,8 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
   const stats = useMemo(() => [
     { label: 'СТРАТЕГІЧНИЙ ВПЛИВ', value: overview?.summary ? `$${(overview.summary.total_value_usd / 1e6).toFixed(1)}M` : '...', sub: 'П ОЕКЦІЯ_ЕФЕКТУ_L7', icon: DollarSign, color: '#e11d48' },
     { label: 'СИНЕ ГІЯ МОДЕЛЕЙ', value: '99.9%', sub: 'ГІПЕ _УЗГОДЖЕННЯ', icon: Cpu, color: '#9f1239' },
-    { label: 'СУВЕ ЕННИЙ ГРАФ', value: overview?.summary?.vectors ? (overview.summary.vectors / 1e3).toFixed(1) + 'K' : '...', sub: 'ВУЗЛІВ_КА ТОВАНО', icon: Network, color: '#e11d48' },
-    { label: 'АВТОНОМНІСТЬ ЯД А', value: 'TIER-1', sub: 'S-РІВЕНЬ_П ОТОКОЛУ', icon: ShieldCheck, color: '#9f1239' },
+    { label: 'СУВЕРЕННИЙ ГРАФ', value: overview?.summary?.vectors ? (overview.summary.vectors / 1e3).toFixed(1) + 'K' : '...', sub: 'ВУЗЛІВ_КА ТОВАНО', icon: Network, color: '#e11d48' },
+    { label: 'АВТОНОМНІСТЬ ЯД А', value: 'TIER-1', sub: 'S-РІВЕНЬ_ПРОТОКОЛУ', icon: ShieldCheck, color: '#9f1239' },
   ], [overview]);
 
   if (isWidgetMode) {
@@ -185,7 +185,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-6 opacity-30">
               <RefreshCw size={32} className="animate-spin text-rose-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] italic">СИНХ ОНІЗАЦІЯ_ЯД А_L7...</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] italic">СИНХРОНІЗАЦІЯ_ЯД А_L7...</span>
             </div>
           ) : filtered.map((insight: any, idx: number) => (
             <motion.div
@@ -315,7 +315,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                 <span className="text-[11px] font-black text-white/30 uppercase tracking-[0.4em] italic font-mono">LEAD_ARCHITECT_ACTIVE_L7</span>
               </div>
               <h1 className="text-8xl font-black text-white tracking-tighter uppercase italic leading-none glint-elite">АНАЛІТИЧНИЙ <span className="text-rose-500">О АКУЛ</span></h1>
-              <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-rose-900/50 pl-8">АВТОНОМНИЙ_СИНТЕЗ_ДЕ ЖАВНОЇ_СТ АТЕГІЇ_ТА_РИЗИКІВ</p>
+              <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-rose-900/50 pl-8">АВТОНОМНИЙ_СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ_ТА_РИЗИКІВ</p>
             </div>
           </div>
 
@@ -366,7 +366,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
           <div className="col-span-12 xl:col-span-8 space-y-12">
             <div className="flex items-center justify-between px-8">
                <h4 className="text-[13px] font-black text-white/30 uppercase tracking-[0.6em] italic flex items-center gap-6">
-                  <Terminal size={20} className="text-rose-600" /> ПОТІК_СТ АТЕГІЧНИХ_ВИСНОВКІВ
+                  <Terminal size={20} className="text-rose-600" /> ПОТІК_СТРАТЕГІЧНИХ_ВИСНОВКІВ
                </h4>
                <div className="flex gap-4">
                   {['all', 'risk', 'anomaly', 'prediction'].map(f => (
@@ -389,7 +389,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                 {loading ? (
                   <div className="py-40 text-center animate-pulse flex flex-col items-center gap-8 glass-wraith rounded-[4rem] border-2 border-dashed border-white/5">
                     <Atom size={64} className="text-rose-500 animate-spin-slow" />
-                    <span className="text-2xl font-black text-white/20 uppercase tracking-[0.5em] italic">СИНТЕЗ_ДЕ ЖАВНОЇ_СТ АТЕГІЇ...</span>
+                    <span className="text-2xl font-black text-white/20 uppercase tracking-[0.5em] italic">СИНТЕЗ_ДЕ ЖАВНОЇ_СТРАТЕГІЇ...</span>
                   </div>
                 ) : filtered.length === 0 ? (
                   <div className="py-40 text-center glass-wraith rounded-[4rem] border-2 border-dashed border-white/5 space-y-6">
@@ -454,7 +454,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                 </div>
                 <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter glint-elite">СИНТЕЗ_ELITE</h3>
                 <p className="text-[13px] text-white/30 font-black uppercase tracking-[0.5em] mt-6 italic max-w-xs leading-relaxed font-mono">
-                   ГЕНЕ УЄМО_СТ АТЕГІЧНІ_ВІКТО _ДЛЯ_ДЕ ЖАВНОГО_УПРАВЛІННЯ_L7
+                   ГЕНЕ УЄМО_СТРАТЕГІЧНІ_ВІКТО _ДЛЯ_ДЕ ЖАВНОГО_УПРАВЛІННЯ_L7
                 </p>
                 <div className="mt-12 w-48 h-1 bg-white/5 rounded-full relative overflow-hidden">
                    <motion.div 

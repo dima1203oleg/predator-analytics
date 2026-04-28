@@ -59,7 +59,7 @@ const sessionCols: VirtualColumn<Session>[] = [
     },
   },
   { key: 'ip',           label: 'IP_АД ЕСА',           width: '130px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
-  { key: 'userAgent',    label: 'ТЕ МІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
+  { key: 'userAgent',    label: 'ТЕРМІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
   { key: 'lastActivity', label: 'ОСТАННЯ_ДІЯ',   width: '120px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
   { key: 'expiresIn',    label: 'ДО_ВИКЛЮЧЕННЯ', width: '110px',   mono: true, align: 'right', render: (v) => <span className="text-rose-500/60 font-black italic text-[10px]">{String(v)}</span> },
 ];
@@ -351,7 +351,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
            <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
         </div>
         <div className="h-[2px] flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />
-        <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕ ЕННИЙ_ВА ТОВИЙ</span>
+        <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕРЕННИЙ_ВА ТОВИЙ</span>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

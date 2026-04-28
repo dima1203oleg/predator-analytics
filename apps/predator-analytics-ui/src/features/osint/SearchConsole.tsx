@@ -119,7 +119,7 @@ export default function SearchConsole() {
             // Fallback for demo
             const processed = apiResults?.length > 0 ? apiResults : [
                 { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
-                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] },
+                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індексризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] },
                 { id: '3', title: 'АНАЛІЗ САНКЦІЙНИХ СПИСКІВ — ПАКЕТ №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0, tags: ['САНКЦІЇ', 'ВПК', 'БЕЗПЕКА'] }
             ];
 
@@ -130,7 +130,7 @@ export default function SearchConsole() {
             // Fallback for mock environment
             setResults([
                 { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-04-12', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
-                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-04-11', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] }
+                { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індексризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТОРИНГ', searchType: 'semantic', date: '2026-04-11', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] }
             ]);
         } finally {
             setSearchTime(Date.now() - startTime);
@@ -179,7 +179,7 @@ export default function SearchConsole() {
                         stats={[
                             { label: 'ІНДЕКС_ІСТИНИ', value: '99.9%', color: 'success', icon: <Fingerprint size={14} />, animate: true },
                             { label: 'ЛАТЕНТНІСТЬ', value: searchTime ? `${searchTime}мс` : '0мс', color: 'primary', icon: <Zap size={14} /> },
-                            { label: 'СТАН_МАТ ИЦІ', value: 'АКТИВНО', color: 'success', icon: <Radio size={14} /> }
+                            { label: 'СТАН_МАТрИЦІ', value: 'АКТИВНО', color: 'success', icon: <Radio size={14} /> }
                         ]}
                         actions={
                             <div className="flex gap-4">
@@ -209,7 +209,7 @@ export default function SearchConsole() {
                                         <input
                                             value={query} onChange={(e) => setQuery(e.target.value)}
                                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                            placeholder="ЗАПИТАЙТЕ У МАТ ИЦІ... (напр. 'Експорт титану 2026')"
+                                            placeholder="ЗАПИТАЙТЕ У МАТрИЦІ... (напр. 'Експорт титану 2026')"
                                             className="w-full bg-transparent text-3xl font-black text-white placeholder-slate-800 focus:outline-none tracking-tight skew-x-[-1deg] uppercase"
                                         />
                                         <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-yellow-500 group-focus-within:w-full transition-all duration-700" />
@@ -273,7 +273,7 @@ export default function SearchConsole() {
                             <div className="flex flex-col items-center justify-center py-40 gap-12 text-center">
                                 <CyberOrb size={220} status="processing" color="#6366f1" />
                                 <div className="space-y-4">
-                                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em] animate-pulse italic">КВАНТОВИЙ_АНАЛІЗ_МАТ ИЦІ</h3>
+                                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.8em] animate-pulse italic">КВАНТОВИЙ_АНАЛІЗ_МАТрИЦІ</h3>
                                     <p className="text-[10px] font-mono text-yellow-500 uppercase tracking-widest italic tracking-[0.4em]">ЗВЕ НЕННЯ_ДО_СЕМАНТИЧНОГО_ЯД А_v56_TITAN...</p>
                                 </div>
                             </div>
@@ -360,7 +360,7 @@ export default function SearchConsole() {
                                 <HelpCircle size={80} className="text-slate-800 animate-pulse" />
                                 <div>
                                     <h3 className="text-2xl font-black text-slate-700 uppercase tracking-[0.6em] italic">NEXUS_ПУСТИЙ_НАБІ </h3>
-                                    <p className="text-slate-800 mt-3 italic font-black text-xs tracking-widest uppercase">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО_В_ЦЬОМУ_СЕКТО І_МАТ ИЦІ</p>
+                                    <p className="text-slate-800 mt-3 italic font-black text-xs tracking-widest uppercase">ОБ'ЄКТІВ_НЕ_ВИЯВЛЕНО_В_ЦЬОМУ_СЕКТО І_МАТрИЦІ</p>
                                 </div>
                             </div>
                         ) : (
@@ -368,7 +368,7 @@ export default function SearchConsole() {
                                 {[
                                     { title: 'ГЛОБАЛЬНА_ТО ГІВЛЯ', icon: Globe, desc: 'Аналіз морських та наземних шляхів' },
                                     { title: 'ФІНАНСОВІ_ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
-                                    { title: 'ВПК_СТ АТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
+                                    { title: 'ВПК_СТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
                                     <TacticalCard key={i} variant="cyber" className="p-12 space-y-8 hover:border-yellow-500/40 transition-all rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-3xl">
                                         <div className="w-16 h-16 bg-yellow-600/10 rounded-2xl border border-yellow-600/30 flex items-center justify-center text-yellow-500 shadow-2xl">

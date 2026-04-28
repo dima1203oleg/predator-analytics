@@ -89,7 +89,7 @@ export default function TradeFlowMapPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'GeoIntel',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  ОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  РОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'GEOSPATIAL_NODES'
@@ -155,7 +155,7 @@ export default function TradeFlowMapPremium() {
                 { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },
               ]}
               stats={[
-                { label: 'К АЇН-ПА ТНЕ ІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
+                { label: 'КРАЇН-ПА ТНЕ ІВ', value: String(MOCK_COUNTRIES.length - 1), icon: <Navigation size={14} />, color: 'primary' },
                 { label: 'АКТИВНИХ_ЛІНІЙ', value: String(MOCK_FLOWS.length), icon: <Zap size={14} />, color: 'warning', animate: true },
                 { label: 'ОБСЯГ_TRADE (Σ)', value: '$120.4M', icon: <DollarSign size={14} />, color: 'success' },
                 { label: 'AI_GEOSPATIAL', value: 'READY', icon: <Sparkles size={14} />, color: 'gold' },
@@ -257,7 +257,7 @@ export default function TradeFlowMapPremium() {
                             
                             <div className="space-y-4">
                                <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
-                                  <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ІМПОРТ_З_К АЇНИ</p>
+                                  <p className="text-[9px] font-black text-slate-600 uppercase italic mb-1">ІМПОРТ_З_КРАЇНИ</p>
                                   <p className="text-3xl font-black text-[#D4AF37] italic font-mono tracking-tighter">{formatValue(MOCK_FLOWS.filter(f => f.from === selectedCountry.id).reduce((a, b) => a + b.value, 0))}</p>
                                </div>
                                <div className="p-6 bg-black border border-white/5 rounded-[2rem] shadow-xl">
@@ -286,7 +286,7 @@ export default function TradeFlowMapPremium() {
                     ) : (
                       <div className="h-full flex flex-col items-center justify-center space-y-10 opacity-20">
                          <Crosshair size={100} className="text-slate-600 animate-spin-slow" />
-                         <p className="text-xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕ ІТЬ ТО ГОВУ ЦІЛЬ</p>
+                         <p className="text-xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТО ГОВУ ЦІЛЬ</p>
                       </div>
                     )}
                  </AnimatePresence>

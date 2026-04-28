@@ -48,7 +48,7 @@ export const SystemMetricsHUD: React.FC = () => {
             color: stats.cpu_percent > 80 ? 'text-rose-500' : 'text-cyan-400'
         },
         { 
-            label: 'ОПЕ АТИВНА_ОЗП', 
+            label: 'ОПЕРАТИВНА_ОЗП', 
             icon: Activity, 
             value: `${Math.round(stats.memory_percent)}%`, 
             sub: `ВІЛЬНО: ${(stats.memory_available / (1024**3)).toFixed(1)}ГБ / ${(stats.memory_total / (1024**3)).toFixed(1)}ГБ`,

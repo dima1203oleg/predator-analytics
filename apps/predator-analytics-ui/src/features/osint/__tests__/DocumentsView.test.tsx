@@ -179,7 +179,7 @@ describe('DocumentsView', () => {
         expect(screen.queryByText('Document One')).not.toBeInTheDocument();
     });
 
-    it('повинен показувати повідомлення, якщо документів немає', async () => {
+    it('повинен показуватиповідомлення, якщо документів немає', async () => {
         (api.documents.list as any).mockResolvedValue({ documents: [] });
         
         render(<DocumentsView />);

@@ -285,7 +285,7 @@ export default function FactoryStudio() {
                        <div className="text-lg font-bold text-white mt-1">
                           {trainingStatus?.status === 'TRAINING' ? (
                              <span className="text-yellow-400 flex items-center gap-2">
-                                <RefreshCw className="w-4 h-4 animate-spin" /> В процесі...
+                                <RefreshCw className="w-4 h-4 animate-spin" /> Впроцесі...
                              </span>
                           ) : trainingStatus?.status === 'COMPLETED' ? (
                              <span className="text-emerald-400 flex items-center gap-2">

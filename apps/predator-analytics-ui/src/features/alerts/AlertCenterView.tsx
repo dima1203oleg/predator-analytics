@@ -264,7 +264,7 @@ export const AlertCenterView: React.FC = () => {
              <div className="lg:col-span-2 p-10 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3.5rem] flex items-center gap-8 shadow-inner">
                 <ShieldAlert size={40} className="text-rose-500" />
                 <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">
-                   ЦЕНТ  МОНІТО ИНГУ П АЦЮЄ В РЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ  ІШЕНЬ.
+                   ЦЕНТ  МОНІТОРИНГУ П АЦЮЄ В РЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ РІШЕНЬ.
                 </p>
              </div>
              <div className="p-10 bg-amber-500/5 border-2 border-amber-500/10 rounded-[3.5rem] flex items-center justify-between">

@@ -85,7 +85,7 @@ export function GeminiCloudAssist() {
                            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/30 text-blue-400">G</div>
                            <div className="bg-white/5 rounded-2xl rounded-tl-none p-4 text-slate-300 max-w-[80%] border border-white/5 leading-relaxed">
                              Вітаю у **Gemini Cloud Assist**! Я ваш інтелектуальний помічник у світі Google Cloud Platform. 
-                             Чим я можу допомогти вам сьогодні? Я маю доступ до логів вашого проекту `ancient-bond` та конфігурацій GKE.
+                             Чим я можу допомогти вам сьогодні? Я маю доступ до логів вашогопроекту `ancient-bond` та конфігурацій GKE.
                            </div>
                         </div>
                         <div className="flex gap-3 flex-row-reverse">
@@ -161,7 +161,7 @@ export function GeminiCloudAssist() {
                    <div className="text-[10px] font-black text-white uppercase tracking-widest">Cloud Topology</div>
                 </div>
                 <div className="text-[9px] text-slate-500 font-mono leading-relaxed">
-                   Синхронізація з VPC та Subnets у проекті ancient-bond.
+                   Синхронізація з VPC та Subnets упроекті ancient-bond.
                 </div>
              </div>
           </div>

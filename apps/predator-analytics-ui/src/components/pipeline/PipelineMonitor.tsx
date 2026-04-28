@@ -398,7 +398,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                         </div>
                         <div className="space-y-1">
                             <p>ЯДРО: {pipelineConfig.visualMode}</p>
-                            <p>СИНХ ОНІЗАЦІЯ: ПА АЛЕЛЬНА</p>
+                            <p>СИНХРОНІЗАЦІЯ: ПА АЛЕЛЬНА</p>
                             <p>СТАТУС_V3.5: АКТИВНО</p>
                             <p>БУФЕ : OODA_PRIMARY</p>
                         </div>
@@ -473,7 +473,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                         <div className="flex items-center gap-3">
                                             <span className="text-slate-600 font-bold text-[8px]">[SYSEVENT_{100 + i}]</span>
                                             <span className="group-hover:text-emerald-300 transition-colors uppercase">
-                                                {(status?.progress?.details ?? 'СИНХ ОНІЗАЦІЯ_МАНІФЕСТУ...')}
+                                                {(status?.progress?.details ?? 'СИНХРОНІЗАЦІЯ_МАНІФЕСТУ...')}
                                             </span>
                                         </div>
                                         <span className="text-slate-700 text-[8px]">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>

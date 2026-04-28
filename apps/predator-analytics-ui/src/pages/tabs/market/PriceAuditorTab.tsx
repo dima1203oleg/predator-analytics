@@ -182,7 +182,7 @@ export const PriceAuditorTab: React.FC = () => {
                                 {offer.isVerified && <BadgeCheck size={14} className="text-[#D4AF37]" />}
                                 {offer.isBestPrice && (
                                   <span className="bg-[#D4AF37] text-black px-2 py-0.5 rounded-full text-[7px] font-black italic uppercase tracking-widest">
-                                    НАЙК АЩА_ЦІНА
+                                    НАЙКрАЩА_ЦІНА
                                   </span>
                                 )}
                               </div>

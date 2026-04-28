@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const reports = [
   { id: 101, name: 'Щомісячний звіт експорту (Грудень 2025)', size: '2.4 MB', date: '02.01.2026', type: 'PDF' },
-  { id: 102, name: 'Аналіз ризиків постачання (Q4 2025)', size: '1.1 MB', date: '28.12.2025', type: 'DOCX' },
+  { id: 102, name: 'Аналізризиків постачання (Q4 2025)', size: '1.1 MB', date: '28.12.2025', type: 'DOCX' },
   { id: 103, name: 'Огляд митних тарифів 2026', size: '5.8 MB', date: '15.12.2025', type: 'PDF' },
   { id: 104, name: 'Зведення по конкурентах (Агро)', size: '0.9 MB', date: '10.12.2025', type: 'XLSX' },
 ];

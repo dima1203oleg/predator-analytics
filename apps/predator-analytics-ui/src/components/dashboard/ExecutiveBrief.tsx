@@ -73,7 +73,7 @@ export const ExecutiveBrief: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-4">
             <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-              СТ АТЕГІЧНА_РОЗВІДКА // РАНКОВИЙ_ЗВІТ
+              СТРАТЕГІЧНА_РОЗВІДКА // РАНКОВИЙ_ЗВІТ
             </span>
             <div className="h-px w-12 bg-emerald-500/20" />
             <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">КОНФІДЕНЦІЙНО</span>
@@ -207,11 +207,11 @@ export const ExecutiveBrief: React.FC = () => {
                 <AlertTriangle size={32} />
               </div>
               <div className="space-y-2">
-                <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-2deg]">К ИТИЧНИЙ СПОВІЩУВАЧ</h4>
+                <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-2deg]">КРИТИЧНИЙ СПОВІЩУВАЧ</h4>
                 <p className="text-[11px] font-black text-rose-800 uppercase tracking-[0.3em] italic leading-none">
                   {summary?.high_risk_count && summary.high_risk_count > 0 
-                    ? `ВИЯВЛЕНО ${summary.high_risk_count} П ЯМИХ ЗАГ ОЗ ПО ТФЕЛЮ` 
-                    : 'ЗАГ ОЗ ПО ТФЕЛЮ НЕ ВИЯВЛЕНО'}
+                    ? `ВИЯВЛЕНО ${summary.high_risk_count} П ЯМИХ ЗАГРОЗ ПО ТФЕЛЮ` 
+                    : 'ЗАГРОЗ ПО ТФЕЛЮ НЕ ВИЯВЛЕНО'}
                 </p>
               </div>
             </div>
@@ -239,7 +239,7 @@ export const ExecutiveBrief: React.FC = () => {
                 className="h-full bg-gradient-to-r from-emerald-500/40 to-emerald-500"
               />
             </div>
-            <p className="text-[9px] text-slate-500 font-medium italic">ШІ прогнозує прискорення повернення інвестицій за рахунок оптимізації митних зборів.</p>
+            <p className="text-[9px] text-slate-500 font-medium italic">ШІ прогнозує прискорення повернення інвестицій зарахунок оптимізації митних зборів.</p>
           </div>
         </TacticalCard>
 

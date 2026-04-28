@@ -113,7 +113,7 @@ describe('ExecutiveBoardView', () => {
     expect(screen.getByText(/PREDATOR v61.0-ELITE/i)).toBeInTheDocument();
     
     await waitFor(() => {
-      expect(screen.getByText(/ОПЕ АТИВНИЙ КОНТУ /i)).toBeInTheDocument();
+      expect(screen.getByText(/ОПЕРАТИВНИЙ КОНТУ /i)).toBeInTheDocument();
     });
 
     expect(screen.getByText(/Критичні сигнали/i)).toBeInTheDocument();

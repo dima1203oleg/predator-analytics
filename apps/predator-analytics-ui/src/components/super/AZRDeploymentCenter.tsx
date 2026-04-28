@@ -186,7 +186,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                         <div>[SYSTEM] ІНІЦІАЛІЗАЦІЯ GITOPS  УКОСТИСКАННЯ...</div>
                         <div>[K8S]  ЕЗЕ ВУВАННЯ CANARYПРОСТОРУ ІМЕН: predator-canary-v45...</div>
                         <div>[SCAN] ПЕ ЕВІ КА ПОЛІТИКИ БЕЗПЕКИ:ПРОЙДЕНО (VULN: 0)</div>
-                        {progress > 40 && <div>[NEURAL] СИНХ ОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
+                        {progress > 40 && <div>[NEURAL] СИНХРОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
                         {progress > 70 && <div>[DEPLOY] ПОЧАТО ROLL-OUT: 1 З 12 ПОДІВ ЗАПУЩЕНО...</div>}
                         <div className="animate-pulse">_</div>
                     </motion.div>

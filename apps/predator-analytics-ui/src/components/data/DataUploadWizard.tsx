@@ -88,7 +88,7 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                                 <h3 className="text-xl font-bold text-white uppercase tracking-widest mb-2">ЗАВАНТАЖЕННЯ УСПІШНЕ</h3>
                                 <p className="text-slate-400 font-mono text-center max-w-md">
                                     Файл передано на сервер. <br/>
-                                     озпочато ETL процес обробки та індексації даних.
+                                     озпочато ETLпроцес обробки та індексації даних.
                                 </p>
                             </div>
                         ) : (

@@ -132,7 +132,7 @@ describe('AMLScoringView', () => {
         await waitFor(() => {
             expect(screen.getByText(/TEST CORP/i)).toBeInTheDocument()
             expect(screen.getByText(/85/i)).toBeInTheDocument()
-            expect(screen.getByText(/К ИТИЧНИЙ/i)).toBeInTheDocument()
+            expect(screen.getByText(/КРИТИЧНИЙ/i)).toBeInTheDocument()
         })
     })
 

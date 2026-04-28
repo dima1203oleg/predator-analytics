@@ -98,7 +98,7 @@ describe('Sidebar', () => {
     );
 
     expect(screen.getByText('РОЗВІДКА КОНТ АГЕНТІВ')).toBeInTheDocument();
-    expect(screen.getByText('OSINT та розслідування')).toBeInTheDocument();
+    expect(screen.getByText('OSINT тарозслідування')).toBeInTheDocument();
     expect(screen.queryByText('Фабрика')).toBeNull();
     expect(screen.queryByText('Центр керування ШІ')).toBeNull();
     expect(screen.queryByText('Суверенне врядування')).toBeNull();

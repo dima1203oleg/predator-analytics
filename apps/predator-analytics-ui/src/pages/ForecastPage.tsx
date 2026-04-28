@@ -507,7 +507,7 @@ function DemandForecastTab({
                 />
                 <SummaryCard
                     icon={<Target className="text-amber-400" />}
-                    label="СТ АТЕГІЧНА ВПЕВНЕНІСТЬ"
+                    label="СТРАТЕГІЧНА ВПЕВНЕНІСТЬ"
                     tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
                     value={forecast.confidence_score != null ? `${(forecast.confidence_score * 100).toFixed(0)}%` : '—'}
                 />
@@ -599,7 +599,7 @@ function DemandForecastTab({
 
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
                 <div className="border-b border-white/[0.06] px-6 py-5 flex items-center justify-between">
-                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТ ИЦЯПРОГНОЗУ</h3>
+                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТрИЦЯПРОГНОЗУ</h3>
                     <div className="h-1 w-32 bg-gradient-to-r from-red-600 to-transparent rounded-full" />
                 </div>
                 <div className="overflow-x-auto">

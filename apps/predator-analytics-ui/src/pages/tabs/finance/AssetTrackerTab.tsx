@@ -45,11 +45,11 @@ export const AssetTrackerTab: React.FC = () => {
               РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
             </h2>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic border-l-2 border-emerald-500/40 pl-4">
-              ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
+              ПЕ ЕЛІК ПЕ ЕКрИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
             </p>
           </div>
           <button className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 hover:border-emerald-500/50 transition-all flex items-center gap-3">
-            ARBITRAGE_МАТ ИЦЯ <ArrowUpRight size={14} />
+            ARBITRAGE_МАТрИЦЯ <ArrowUpRight size={14} />
           </button>
         </div>
 

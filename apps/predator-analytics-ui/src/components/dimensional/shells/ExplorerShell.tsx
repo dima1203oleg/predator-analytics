@@ -98,7 +98,7 @@ export const ExplorerShell: React.FC<ExplorerShellProps> = ({
       </TacticalCard>
 
       {/* Quick Actions */}
-      <TacticalCard variant="glass" title="✨ ІНСТ УМЕНТА ІЙ">
+      <TacticalCard variant="glass" title="✨ ІНСТРУМЕНТА ІЙ">
         <div className="grid grid-cols-1 gap-4 p-2">
           {[
             { icon: Search, label: 'ГЛОБАЛЬНИЙ_ПОШУК', color: 'purple', action: 'search', desc: 'Пошук по всій БД' },

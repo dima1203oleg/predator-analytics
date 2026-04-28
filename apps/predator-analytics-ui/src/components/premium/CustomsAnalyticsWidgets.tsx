@@ -7,7 +7,7 @@
  * - PriceAnomalyDetector: Детекція цінових аномалій
  * - TradeFlowMap: Географія торгівлі
  * - CompetitorRadar:  адар конкурентів
- * - RiskScoreCard: Скоринг ризику
+ * - RiskScoreCard: Скорингризику
  *
  * © 2026 PREDATOR Analytics
  */

@@ -42,13 +42,13 @@ export const VoiceAssistant: React.FC = () => {
     }
 
     if (input.includes('хаб') || input.includes('процес')) {
-      speak("Активую центр процесів.");
+      speak("Активую центрпроцесів.");
       setHubOpen(true);
       return;
     }
 
     if (input.includes('хто ти')) {
-      speak(`Я — архітектурний асистент П ЕДАТО . режим: ${persona}.`);
+      speak(`Я — архітектурний асистент PREDATOR. режим: ${persona}.`);
       return;
     }
 
@@ -69,7 +69,7 @@ export const VoiceAssistant: React.FC = () => {
       }
     } catch (error) {
       console.error("Trinity API Error:", error);
-      speak("Зв'язок з центральним процесором розірвано.");
+      speak("Зв'язок з центральнимпроцесором розірвано.");
     } finally {
       setIsAiThinking(false);
     }

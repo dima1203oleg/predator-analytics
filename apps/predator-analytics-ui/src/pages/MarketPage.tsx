@@ -333,7 +333,7 @@ export default function MarketPage() {
         id: 'direct-profit',
         label: 'Пряма Вигода',
         value: `$${(amount * 0.75).toLocaleString('uk-UA')}`,
-        detail: 'Очікуваний прибуток за 1-й квартал',
+        detail: 'Очікуванийприбуток за 1-й квартал',
         icon: TrendingUp,
         tone: 'amber'
       },
@@ -890,7 +890,7 @@ function CompetitorsTab({ competitors, error, loading, hhi }: { competitors: Com
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed font-medium italic">
-              Цей індекс розраховується на основі часток ринку провідних компаній. Показник вище 2500 свідчить про високу концентрацію та ризики для нових гравців.
+              Цей індекс розраховується на основі часток ринку провідних компаній. Показник вище 2500 свідчить про високу концентрацію таризики для нових гравців.
             </p>
           </div>
         </div>

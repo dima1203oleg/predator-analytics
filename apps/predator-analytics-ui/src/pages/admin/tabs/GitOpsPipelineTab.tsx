@@ -72,7 +72,7 @@ const ciCols: VirtualColumn<CIRun>[] = [
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { success: 'text-rose-500', failure: 'text-red-600', running: 'text-sky-400', pending: 'text-white/20' };
-      const labelMap: Record<string, string> = { success: 'УСПІШНО_ДЕПЛОЙ', failure: 'К ИТИЧНИЙ_ЗБІЙ', running: 'ФО МУВАННЯ', pending: 'В_ЧЕ ЗІ' };
+      const labelMap: Record<string, string> = { success: 'УСПІШНО_ДЕПЛОЙ', failure: 'КРИТИЧНИЙ_ЗБІЙ', running: 'ФО МУВАННЯ', pending: 'В_ЧЕ ЗІ' };
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s] ?? 'text-white/20')}>
           <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
@@ -109,7 +109,7 @@ const ciCols: VirtualColumn<CIRun>[] = [
   },
   { 
     key: 'duration',
-    label: 'Т ИВАЛІСТЬ',    
+    label: 'ТрИВАЛІСТЬ',    
     width: '100px',  
     mono: true, 
     align: 'right', 
@@ -153,7 +153,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { running: 'text-sky-400', completed: 'text-rose-500', failed: 'text-red-600', idle: 'text-white/10' };
-      const labelMap: Record<string, string> = { running: 'Т АНСФО МАЦІЯ', completed: 'СИНХ ОНІЗОВАНО', failed: 'ЗБІЙ_ДЖЕ ЕЛА', idle: 'ОЧІКУВАННЯ' };
+      const labelMap: Record<string, string> = { running: 'Т АНСФОРМАЦІЯ', completed: 'СИНХ ОНІЗОВАНО', failed: 'ЗБІЙ_ДЖЕ ЕЛА', idle: 'ОЧІКУВАННЯ' };
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', map[s])}>
           <div className={cn("w-2 h-2 rounded-full", s === 'running' ? 'bg-sky-400 animate-pulse shadow-[0_0_8px_rgba(56,189,248,0.8)]' : 'bg-current')} />
@@ -179,7 +179,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
     render: (v) => <span className="text-emerald-500 font-black italic shadow-emerald-500/20">{Number(v).toLocaleString()}</span> 
   },
   {
-    key: 'lag',        label: 'ЗАТ ИМКА_LAG',       width: '120px',  mono: true, align: 'right',
+    key: 'lag',        label: 'ЗАТрИМКА_LAG',       width: '120px',  mono: true, align: 'right',
     render: (v) => {
       const n = Number(v);
       return <span className={cn("font-black italic text-[11px]", n > 1000 ? 'text-red-500 animate-pulse' : n > 100 ? 'text-amber-400' : 'text-white/20')}>{n.toLocaleString()}</span>;
@@ -187,7 +187,7 @@ const etlCols: VirtualColumn<ETLPipeline>[] = [
   },
   { 
     key: 'lastRun',    
-    label: 'ОСТАННЯ_СИНХ ОНІЗАЦІЯ',                    
+    label: 'ОСТАННЯ_СИНХРОНІЗАЦІЯ',                    
     mono: true, 
     render: (v) => <span className="text-white/10 text-[9px] uppercase italic tracking-tighter font-black">{String(v)}</span> 
   },
@@ -233,7 +233,7 @@ export const GitOpsPipelineTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[700px] p-24 text-center glass-wraith m-12 border-2 border-rose-600/20 rounded-[4rem] relative overflow-hidden shadow-4xl">
         <div className="absolute inset-0 bg-rose-900/5 blur-[120px] pointer-events-none" />
         <GitBranch size={64} className="text-rose-500/40 mb-10 animate-pulse" />
-        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">К ИТИЧНИЙ_ЗБІЙ_МАГІСТ АЛІ</div>
+        <div className="text-3xl font-black uppercase tracking-tighter text-white mb-4 glint-elite">КРИТИЧНИЙ_ЗБІЙ_МАГІСТ АЛІ</div>
         <p className="text-[12px] font-black font-mono text-white/30 max-w-lg mb-12 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА_НЕ_ЗМОГЛА_ОТРИМАТИ_СТАН_ARGOCD_ТА_ПЛАТФО М_CI_CD. ПЕ ЕВІ ТЕ_GITOPS_CONTROLLER_V61_ELITE.
         </p>
@@ -348,7 +348,7 @@ export const GitOpsPipelineTab: React.FC = () => {
         <div className="space-y-8">
           <div className="flex items-center gap-6 px-4">
              <div className="w-2.5 h-2.5 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">МАТ ИЦЯ_ПОТОКІВ_ETL_CORE_ELITE</span>
+             <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.6em] italic glint-elite">МАТрИЦЯ_ПОТОКІВ_ETL_CORE_ELITE</span>
           </div>
           <div className="glass-wraith border-2 border-white/5 rounded-[3.5rem] overflow-hidden backdrop-blur-3xl shadow-4xl relative p-4">
             <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />

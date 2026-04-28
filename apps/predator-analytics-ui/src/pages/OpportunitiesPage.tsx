@@ -504,7 +504,7 @@ function ExecutiveTab({
                 
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between relative z-10">
                     <div>
-                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові ринкові Сигнали</h3>
+                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключовіринкові Сигнали</h3>
                         <p className="mt-1 text-sm text-slate-500 font-medium italic">
                             Пріоритетні вектори розвитку, виявлені нейронним ядром.
                         </p>

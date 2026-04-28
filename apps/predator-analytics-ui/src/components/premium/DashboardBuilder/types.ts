@@ -147,7 +147,7 @@ export const PERSONA_TEMPLATES: Record<PersonaType, DashboardTemplate[]> = {
     {
       id: 'inquisitor-risk-matrix',
       name: 'Risk Assessment Matrix',
-      description: 'Матриця оцінки ризиків та загроз',
+      description: 'Матриця оцінкиризиків та загроз',
       persona: 'INQUISITOR',
       category: 'Risk Management',
       widgets: []
@@ -226,7 +226,7 @@ export const WIDGET_LIBRARY: Record<WidgetType, {
   },
   pie_chart: {
     name: 'Кругова діаграма',
-    description: 'Кругова діаграма для розподілу',
+    description: 'Кругова діаграма длярозподілу',
     icon: 'PieChart',
     category: 'Charts',
     supportedDataSources: ['customs_registry', 'tax_data', 'contracts'],
@@ -322,7 +322,7 @@ export const WIDGET_LIBRARY: Record<WidgetType, {
   },
   funnel: {
     name: 'Воронка',
-    description: 'Воронка для конверсій та процесів',
+    description: 'Воронка для конверсій тапроцесів',
     icon: 'Filter',
     category: 'Charts',
     supportedDataSources: ['customs_registry', 'court_cases'],
@@ -347,7 +347,7 @@ export const DATA_SOURCE_META: Record<DataSource, {
   },
   tax_data: {
     name: 'Податкові Дані',
-    description: 'ПДВ, акциз, податок на прибуток',
+    description: 'ПДВ, акциз, податок наприбуток',
     icon: 'Receipt',
     isPremium: true,
     updateFrequency: 'Щомісяця'

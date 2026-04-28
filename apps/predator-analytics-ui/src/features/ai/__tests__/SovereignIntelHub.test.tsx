@@ -86,7 +86,7 @@ describe('SovereignIntelHub', () => {
         
         expect(screen.getByText(/ХАБ/i)).toBeInTheDocument();
         expect(screen.getByText(/ІНТЕЛЕКТУ/i)).toBeInTheDocument();
-        expect(screen.getByText(/СУВЕ ЕННИЙ ІНТЕЛЕКТ П ЕДАТО /i)).toBeInTheDocument();
+        expect(screen.getByText(/СУВЕРЕННИЙ ІНТЕЛЕКТ PREDATOR/i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error (SOVEREIGN_SUCCESS) при успішному зв’язку', async () => {
@@ -129,7 +129,7 @@ describe('SovereignIntelHub', () => {
         });
     });
 
-    it('дозволяє відправляти повідомлення та отримувати відповідь', async () => {
+    it('дозволяє відправлятиповідомлення та отримувати відповідь', async () => {
         render(<SovereignIntelHub />);
         
         const input = screen.getByPlaceholderText(/Введіть директиву для GLM-5.1/i);

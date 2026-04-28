@@ -209,7 +209,7 @@ const MATargetScannerView: React.FC = () => {
             }
           />
 
-          {/* ── МЕТ ИКИ ELITE ── */}
+          {/* ── МЕТрИКИ ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
@@ -420,7 +420,7 @@ const MATargetScannerView: React.FC = () => {
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center p-20 opacity-20 transform translate-y-20">
                      <Target size={120} className="text-slate-600 mb-10 animate-pulse" />
-                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕ ІТЬ ТО ГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
+                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[1em] italic text-center">ОБЕРІТЬ ТО ГОВУ ЦІЛЬ ДЛЯ АНАЛІЗУ</p>
                   </div>
                 )}
               </AnimatePresence>

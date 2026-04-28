@@ -72,7 +72,7 @@ describe('ZradaControlView', () => {
         expect(screen.getByText(/Ковальчук Дмитро Олексійович/i)).toBeInTheDocument();
     });
 
-    it('дозволяє вибирати об’єкт для перегляду деталей', async () => {
+    it('дозволяє вибирати об’єкт дляперегляду деталей', async () => {
         render(<ZradaControlView />);
         
         const subject = screen.getByText(/Зінченко Марина Вікторівна/i);
@@ -90,7 +90,7 @@ describe('ZradaControlView', () => {
         const addBtn = screen.getByText(/ДОДАТИ_ОБ'ЄКТ/i);
         fireEvent.click(addBtn);
 
-        expect(screen.getByText(/АВТО ИЗАЦІЯ ОБ'ЄКТА/i)).toBeInTheDocument();
+        expect(screen.getByText(/АВТОРИЗАЦІЯ ОБ'ЄКТА/i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error при автономному режимі', async () => {

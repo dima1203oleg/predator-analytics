@@ -50,7 +50,7 @@ const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
           ? "bg-rose-900/40 text-rose-500 border border-rose-500/30" 
           : "bg-crimson-900/40 text-crimson-500 border border-crimson-500/30"
       )}>
-        {scenario.impact === 'critical' || scenario.impact === 'high' ? 'К ИТИЧНО' : 'ПОМІ НО'}
+        {scenario.impact === 'critical' || scenario.impact === 'high' ? 'КРИТИЧНО' : 'ПОМІ НО'}
       </Badge>
     </div>
     <h4 className="text-md font-bold text-white mb-2">{scenario.name}</h4>
@@ -142,7 +142,7 @@ export default function PredictiveNexusView() {
                         badges={[
                             { label: `CORE: GLM-5.1`, color: 'danger', icon: <Cpu size={10} /> },
                             { label: `NODE: ${nodeSource}`, color: activeFailover ? 'danger' : 'success', icon: <Activity size={10} /> },
-                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХ ОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
+                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХРОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
                             <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]">

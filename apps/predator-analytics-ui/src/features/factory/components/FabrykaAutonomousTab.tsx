@@ -953,7 +953,7 @@ export function FabrykaAutonomousTab() {
                 <VramDonutChart metrics={vram} />
                 <div className="flex-1 space-y-4 w-full">
                   <div className="space-y-3">
-                    <div className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-2">Правила розподілу</div>
+                    <div className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-2">Правиларозподілу</div>
                     {[
                       { label: 'LLM Інференс', value: vram.allocation.llm_gb, total: vram.allocation.total_gb, unit: 'GB', color: 'bg-[#D4AF37]' },
                       { label: 'Rendering / UI', value: vram.allocation.rendering_gb, total: vram.allocation.total_gb, unit: 'GB', color: 'bg-emerald-400' },
@@ -1007,7 +1007,7 @@ export function FabrykaAutonomousTab() {
                     {fitness.score.toFixed(2)}
                   </div>
                   <div className="text-[10px] font-mono text-slate-500 mt-1">
-                    Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ П ИЙНЯТО' : '❌ ВІДХИЛЕНО'}
+                    Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ ПРИЙНЯТО' : '❌ ВІДХИЛЕНО'}
                   </div>
                   <div className="mt-3 text-[10px] text-slate-600 font-mono">
                     score = (perf_gain × 2 + stability_gain) / (cpu_cost + vram_cost + latency_cost)
@@ -1101,7 +1101,7 @@ export function FabrykaAutonomousTab() {
             <div className="rounded-[28px] border border-white/8 bg-slate-950/60 overflow-hidden">
               <div className="flex items-center gap-3 border-b border-white/5 bg-black/30 px-5 py-3.5">
                 <Shield size={14} className="text-slate-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Останні події ризику</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Останні подіїризику</span>
               </div>
               <div className="p-3 space-y-2 max-h-[280px] overflow-y-auto">
                 {riskEvents?.length > 0 ? (
@@ -1149,7 +1149,7 @@ export function FabrykaAutonomousTab() {
                       <Shield size={20} className="text-slate-600" />
                     </div>
                     <div className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Подій не виявлено</div>
-                    <div className="text-[10px] text-slate-600 max-w-[200px]">Система Risk Engine наразі не зафіксувала жодних аномалій або критичних ризиків.</div>
+                    <div className="text-[10px] text-slate-600 max-w-[200px]">Система Risk Engine наразі не зафіксувала жодних аномалій або критичнихризиків.</div>
                   </div>
                 )}
               </div>

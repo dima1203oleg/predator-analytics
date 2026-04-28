@@ -6,7 +6,7 @@
  * - Моніторинг та енфорсмент аксіом ядра
  * - Керування динамічними поправками
  * - Детекція парадигмальних порушень
- * - Візуалізація ризикової експозиції через Truth Ledger
+ * - Візуалізаціяризикової експозиції через Truth Ledger
  * 
  * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
@@ -387,7 +387,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
                 onClick={() => setShowAllAxioms(!showAllAxioms)}
                 className="px-6 py-2 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 text-[10px] font-black text-slate-500 uppercase tracking-widest transition-all"
               >
-                {showAllAxioms ? 'ЗГО НУТИ_МАТ ИЦЮ' : 'ПОКАЗАТИ_ВСІ_АКСІОМИ'}
+                {showAllAxioms ? 'ЗГО НУТИ_МАТрИЦЮ' : 'ПОКАЗАТИ_ВСІ_АКСІОМИ'}
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

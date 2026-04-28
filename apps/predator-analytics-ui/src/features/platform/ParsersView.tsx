@@ -3,7 +3,7 @@
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
- * - реальний час моніторингу ETL процесів
+ * - реальний час моніторингу ETLпроцесів
  * - Преміальна кібернетична естетика з акцентами смарагдового та ціанового кольорів
  * - Повна локалізація (Українська)
  * 
@@ -196,7 +196,7 @@ const ParsersView: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {[
                         { label: 'ЗАГАЛЬНИЙ ОБ\'ЄМ', value: '84.2 TB', icon: Server, color: 'slate' },
-                        { label: 'ОБ ОБЛЕНО (24г)', value: '1.4M', icon: Activity, color: 'emerald' },
+                        { label: 'ОБРОБЛЕНО (24г)', value: '1.4M', icon: Activity, color: 'emerald' },
                         { label: 'WORKERS АКТИВНО', value: '32', icon: Cpu, color: 'sky' },
                         { label: 'ЧЕ ГА ІНДЕКСАЦІЇ', value: '12,402', icon: Layers, color: 'purple' },
                     ].map((m, i) => (

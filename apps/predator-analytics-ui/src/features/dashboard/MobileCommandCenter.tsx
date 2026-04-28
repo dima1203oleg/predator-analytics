@@ -5,7 +5,7 @@
  * Включає:
  * - ⚡ Оперативна матриця (Quick Matrix)
  * - 🎯 AI-Інсайти (Neural Insights)
- * - 🛡️ Моніторинг ризиків (Risk Watch)
+ * - 🛡️ Моніторингризиків (Risk Watch)
  * - 🛰️ Супутниковий зв'язок (Orbital Link)
  * 
  * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
@@ -187,7 +187,7 @@ const MobileCommandCenter: React.FC = () => {
                 </div>
                 <h4 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Цінова аномалія</h4>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії.рекомендуємо перегляд контракту протягом 2 годин.
+                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії.рекомендуємоперегляд контракту протягом 2 годин.
                 </p>
               </div>
             </div>

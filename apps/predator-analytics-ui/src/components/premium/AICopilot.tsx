@@ -114,7 +114,7 @@ export const Predator: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'AICopilot',
-            message: `СИНХ ОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕ НІВ.`,
+            message: `СИНХРОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕ НІВ.`,
             severity: 'info',
             timestamp: new Date().toISOString(),
             code: 'AI_SYNC_ELITE'
@@ -125,7 +125,7 @@ export const Predator: React.FC = () => {
            window.dispatchEvent(new CustomEvent('predator-error', {
              detail: {
                service: 'AICopilot',
-               message: `К ИТИЧНА ПОМИЛКА КОГНІТИВНОГО ПОРТУ: ${error?.message || 'TIMEOUT'}. ВУЗОЛ: ${backendStatus.nodeSource}`,
+               message: `КрИТИЧНА ПОМИЛКА КОГНІТИВНОГО ПОРТУ: ${error?.message || 'TIMEOUT'}. ВУЗОЛ: ${backendStatus.nodeSource}`,
                severity: 'error',
                timestamp: new Date().toISOString(),
                code: 'AI_PORT_FAILURE'
@@ -200,7 +200,7 @@ export const Predator: React.FC = () => {
           }
         }));
       } else {
-        setAiResponse(`✨ КОМАНДУ ВИКОНАНО. СТ АТЕГІЧНІ ДАНІ ОНОВЛЕНО.`);
+        setAiResponse(`✨ КОМАНДУ ВИКОНАНО. СТРАТЕГІЧНІ ДАНІ ОНОВЛЕНО.`);
       }
     } catch (e: any) {
       window.dispatchEvent(new CustomEvent('predator-error', {
@@ -212,7 +212,7 @@ export const Predator: React.FC = () => {
           code: 'AI_QUERY_FAILURE'
         }
       }));
-      setAiResponse(`ПОМИЛКА СУВЕ ЕННОГО КЛАСТЕ А: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
+      setAiResponse(`ПОМИЛКА СУВЕРЕННОГО КЛАСТЕ А: ${e?.message}. Перевірте статус NVIDIA сертифіката.`);
     }
   };
 
@@ -381,7 +381,7 @@ export const Predator: React.FC = () => {
                       value={message} 
                       onChange={(e) => setMessage(e.target.value)} 
                       onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                      placeholder="ВВЕДІТЬ_СТ АТЕГІЧНУ_КОМАНДУ..."
+                      placeholder="ВВЕДІТЬ_СТРАТЕГІЧНУ_КОМАНДУ..."
                       className="w-full bg-slate-950 border-2 border-rose-500/10 rounded-[2.5rem] px-10 py-8 text-white font-mono text-[16px] uppercase italic tracking-[0.1em] focus:outline-none focus:border-rose-500/40 transition-all placeholder:text-slate-800 shadow-inner"
                     />
                     <div className="absolute top-1/2 right-10 -translate-y-1/2 flex items-center gap-4 text-slate-800">
@@ -398,7 +398,7 @@ export const Predator: React.FC = () => {
                   <Send size={32} />
                 </motion.button>
               </div>
-              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">ЗАСЕК ЕЧЕНЕ СЕ ЕДОВИЩЕ PREDATOR // ВИМАГАЄТЬСЯ ДОПУСК ТІ -1</p>
+              <p className="text-[10px] text-slate-800 text-center mt-6 font-black uppercase tracking-[0.5em] italic">ЗАСЕК ЕЧЕНЕ СЕ ЕДОВИЩЕ PREDATOR // ВИМАГАЄТЬСЯ ДОПУСК ТІР-1</p>
             </div>
             <audio ref={audioRef} style={{ display: 'none' }} />
           </motion.div>

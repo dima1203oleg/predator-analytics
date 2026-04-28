@@ -100,7 +100,7 @@ describe('PriceComparisonPremium', () => {
             </MemoryRouter>
         )
 
-        // p1 розгорнутий за замовчуванням
+        // p1розгорнутий за замовчуванням
         expect(screen.getByText(/SINO_TECH_EXPORT/i)).toBeInTheDocument()
 
         const productHeader = screen.getByText(/ГЕНЕ АТО И_ДИЗЕЛЬ_5KW/i)

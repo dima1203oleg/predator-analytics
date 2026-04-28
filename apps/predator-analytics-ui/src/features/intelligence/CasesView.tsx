@@ -2,7 +2,7 @@
  * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v61.0-ELITE
  * PREDATOR Analytics — Sovereign Investigative Framework
  * 
- * Модуль керування оперативними розслідуваннями та чергою подій.
+ * Модуль керування оперативнимирозслідуваннями та чергою подій.
  * Sovereign Power Design · Strategic Hub · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -84,7 +84,7 @@ const CasesView: React.FC = () => {
     }
 
     return result.sort((a, b) => {
-      const statusOrder: Record<string, number> = { 'К ИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'А ХІВ': 3 };
+      const statusOrder: Record<string, number> = { 'КРИТИЧНО': 0, 'УВАГА': 1, 'БЕЗПЕЧНО': 2, 'А ХІВ': 3 };
       return (statusOrder[a.status || ''] ?? 9) - (statusOrder[b.status || ''] ?? 9) || (b.riskScore || 0) - (a.riskScore || 0);
     });
   }, [cases, activeFilter, searchQuery]);
@@ -124,7 +124,7 @@ const CasesView: React.FC = () => {
         title: newCaseData.title,
         situation: newCaseData.description,
         priority: newCaseData.priority,
-        status: newCaseData.priority === 'high' ? 'К ИТИЧНО' : 'УВАГА',
+        status: newCaseData.priority === 'high' ? 'КРИТИЧНО' : 'УВАГА',
         source: 'MANUAL_ENTRY'
       });
 
@@ -160,12 +160,12 @@ const CasesView: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-4 mb-2">
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
-                      INSPECT_OPS // ТЕ МІНАЛ КЕЙСІВ
+                      INSPECT_OPS // ТЕРМІНАЛ КЕЙСІВ
                     </span>
                     <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕ АТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
+                    {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕРАТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
                   </h1>
                 </div>
               </div>
@@ -177,7 +177,7 @@ const CasesView: React.FC = () => {
             ]}
             stats={[
               { label: 'АКТИВНІ_КЕЙСИ', value: filteredCases.length.toString(), icon: <Archive size={14} />, color: 'primary' },
-              { label: 'К ИТИЧНІ_ВУЗЛИ', value: cases.filter(c => c.status === 'К ИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
+              { label: 'КрИТИЧНІ_ВУЗЛИ', value: cases.filter(c => c.status === 'КРИТИЧНО').length.toString(), icon: <AlertOctagon size={14} />, color: 'danger', animate: true },
               { label: 'THROUGHPUT', value: '94%', icon: <Zap size={14} />, color: 'success' },
             ]}
             actions={
@@ -214,13 +214,13 @@ const CasesView: React.FC = () => {
                 onFilterChange={setActiveFilter}
               />
               <button className="px-8 py-6 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2rem] text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] italic hover:text-white transition-all shadow-xl">
-                <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТ И_ДАН ИХ
+                <Filter size={18} className="text-blue-500 inline mr-3" /> ФІЛЬТрИ_ДАН ИХ
               </button>
             </div>
           </div>
 
           {/* CRITICAL RECOMMENDATION HUD */}
-          {cases.some(c => c.status === 'К ИТИЧНО') && (
+          {cases.some(c => c.status === 'КРИТИЧНО') && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -237,12 +237,12 @@ const CasesView: React.FC = () => {
                     <div className="h-px w-20 bg-amber-600/20" />
                   </div>
                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-tight">
-                    ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'К ИТИЧНО').length} КЕЙСІВ</span> З К ИТИЧНИМ  ІВНЕМ РИЗИКУ. 
+                    ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'КРИТИЧНО').length} КЕЙСІВ</span> З КРИТИЧНИМ  ІВНЕМ РИЗИКУ. 
                     <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручаннярекомендовано для стабілізації контуру.</span>
                   </h3>
                 </div>
                 <button 
-                  onClick={() => handleViewCase(cases.find(c => c.status === 'К ИТИЧНО')?.id || '')}
+                  onClick={() => handleViewCase(cases.find(c => c.status === 'КРИТИЧНО')?.id || '')}
                   className="px-12 py-6 bg-amber-600 hover:bg-amber-500 text-white font-black text-[12px] uppercase tracking-[0.3em] italic rounded-[2rem] transition-all shadow-4xl active:scale-95"
                 >
                   ПЕ ЕЙТИ_ДО_ВІ УСУ
@@ -351,7 +351,7 @@ const CasesView: React.FC = () => {
                       </label>
                       <textarea
                         className="w-full bg-white/[0.02] border-2 border-white/[0.04] rounded-[3rem] px-10 py-7 text-lg font-black italic text-slate-300 placeholder-slate-900 focus:outline-none focus:border-blue-500/50 transition-all h-48 resize-none shadow-inset"
-                        placeholder="ОПИШІТЬПРИЧИНИ ВІДК ИТТЯ КЕЙСУ..."
+                        placeholder="ОПИШІТЬПРИЧИНИ ВІДКрИТТЯ КЕЙСУ..."
                         value={newCaseData.description}
                         onChange={(e) => setNewCaseData({ ...newCaseData, description: e.target.value })}
                       />
@@ -376,7 +376,7 @@ const CasesView: React.FC = () => {
                                 : 'bg-white/[0.02] border-white/[0.05] text-slate-700 hover:border-white/10'
                             )}
                           >
-                            {p === 'high' ? 'К ИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
+                            {p === 'high' ? 'КРИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
                           </button>
                         ))}
                       </div>

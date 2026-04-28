@@ -195,7 +195,7 @@ export default function InfraView() {
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tighter">
                       <Layers className="text-rose-600 w-6 h-6" /> 
-                      МОНІТО ИНГ АПА АТНИХ ВУЗЛІВ
+                      МОНІТОРИНГ АПА АТНИХ ВУЗЛІВ
                     </h2>
                     <span className="text-[10px] text-slate-600 font-mono uppercase font-black">3 СИСТЕМИ ВИЯВЛЕНО</span>
                   </div>

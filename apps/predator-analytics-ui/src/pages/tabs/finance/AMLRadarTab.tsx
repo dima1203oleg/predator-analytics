@@ -90,7 +90,7 @@ export const AMLRadarTab: React.FC = () => {
               </div>
               <p className="text-7xl font-black italic text-emerald-500 font-mono leading-none tracking-tighter drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">94.8%</p>
               <p className="text-[10px] font-bold text-slate-500 uppercase italic tracking-wide border-l-4 border-emerald-500/20 pl-4 leading-relaxed max-w-sm">
-                К ИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
+                КрИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
               </p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export const AMLRadarTab: React.FC = () => {
         </div>
 
         <button className="w-full py-6 bg-emerald-600 text-slate-950 rounded-[2rem] tracking-[0.6em] text-[12px] font-black uppercase italic hover:bg-emerald-500 shadow-xl transition-all border border-emerald-400/20 active:scale-95">
-          ВІДК ИТИ ПОВНУ ЕКСПЕ ТИЗУ
+          ВІДКрИТИ ПОВНУ ЕКСПЕ ТИЗУ
         </button>
       </div>
     </div>

@@ -100,7 +100,7 @@ describe('GraphAnalyticsPage', () => {
         })
 
         await waitFor(() => {
-            expect(screen.getByText(/МЕТ ИКИ/i)).toBeInTheDocument()
+            expect(screen.getByText(/МЕТрИКИ/i)).toBeInTheDocument()
         })
 
         expect(screen.getByText(/АНОМАЛЬНІ/i)).toBeInTheDocument()

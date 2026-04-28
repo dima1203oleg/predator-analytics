@@ -124,7 +124,7 @@ export function GlobalIngestionController() {
                             {jobIds.length === 0 ? (
                                 <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                                     <Loader2 size={48} className="text-slate-800 mb-4 animate-spin" />
-                                    <h3 className="text-lg font-black text-slate-500 uppercase">Активні процеси відсутні</h3>
+                                    <h3 className="text-lg font-black text-slate-500 uppercase">Активніпроцеси відсутні</h3>
                                     <p className="text-sm text-slate-600 mt-2">Запустіть імпорт даних, щоб побачити телеметрію в реальному часі.</p>
                                 </div>
                             ) : (
@@ -148,7 +148,7 @@ export function GlobalIngestionController() {
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                СИНХ ОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
+                                СИНХРОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
                             </div>
                         </div>
                     </motion.div>
@@ -283,7 +283,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                         </div>
-                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] АВТО ИЗАЦІЯ_PREDATOR: УСПІШНО</div>
+                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] АВТОРИЗАЦІЯ_PREDATOR: УСПІШНО</div>
                         <div className="flex gap-2 text-indigo-400/80">
                             <ChevronRight size={10} className="mt-0.5" />
                             <span>ЕТАП_ВУЗЛА: {STAGE_LIBRARY[job.stage]?.label || job.stage}</span>

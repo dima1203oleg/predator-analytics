@@ -135,7 +135,7 @@ describe('DataGovView', () => {
     it('повинен відмальовувати основні елементи інтерфейсу', async () => {
         render(<DataGovView />);
         
-        expect(screen.getByText(/ВІДК ИТІ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ВІДКрИТІ/i)).toBeInTheDocument();
         expect(screen.getByText(/ДАНІ/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/ПОШУК ПО МІЛЬЙОНАХ/i)).toBeInTheDocument();
         await waitFor(() => {

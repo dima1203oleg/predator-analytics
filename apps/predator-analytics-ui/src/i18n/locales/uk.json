@@ -22,7 +22,7 @@
     },
     "chat": {
       "title": "AI Помічник",
-      "placeholder": "Введіть повідомлення...",
+      "placeholder": "Введітьповідомлення...",
       "typing": "Друк...",
       "greeting": "Привіт! Я AI Copilot Predator Analytics. Чим можу допомогти?"
     },

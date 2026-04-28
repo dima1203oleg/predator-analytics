@@ -360,7 +360,7 @@ const OSINTToolRow: React.FC<{
                         border-white/10 bg-white/5 text-slate-400 hover:border-blue-500/40 hover:text-blue-400 hover:bg-blue-500/10
                     `}
                 >
-                    ВІДК ИТИ
+                    ВІДКрИТИ
                 </motion.button>
             </div>
         </motion.div>
@@ -748,7 +748,7 @@ const AgentsView: React.FC = () => {
                     </AnimatePresence>
                 </div>
 
-                {/* ── П АВА ПАНЕЛЬ (1/3 ширини) ── */}
+                {/* ── ПРАВА ПАНЕЛЬ (1/3 ширини) ── */}
                 <div className="space-y-5">
 
                     {/* ── NEURAL NETWORK ВІЗУАЛІЗАЦІЯ + ДЕТАЛЬНИЙ СТАТУС ── */}
@@ -898,7 +898,7 @@ const AgentsView: React.FC = () => {
                                     className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-start gap-3 text-[10px] text-amber-100"
                                 >
                                     <AlertCircle size={16} className="shrink-0" />
-                                    <span className="leading-relaxed">Бекенд тимчасово не повернув сповіщення флоту. Екран не підміняє це повідомлення фразою про штатний стан.</span>
+                                    <span className="leading-relaxed">Бекенд тимчасово не повернув сповіщення флоту. Екран не підміняє цеповідомлення фразою про штатний стан.</span>
                                 </motion.div>
                             ) : (
                                 <motion.div

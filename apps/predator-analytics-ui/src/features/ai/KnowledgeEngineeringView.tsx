@@ -119,7 +119,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
             <h3 className="text-xl font-bold text-white mb-4">Машина Станів Пайплайну</h3>
             <div className="grid grid-cols-6 gap-2">
               {['СТВО ЕНО', 'ДЖЕРЕЛО_ПЕ ЕВІ ЕНО', 'ІНГЕСТІЯ', 'ПА СИНГ', 'ВАЛІДАЦІЯ',
-                'Т АНСФО МАЦІЯ', 'ОБ’ЄКТИ_ВИ ІШЕНІ', 'ЗАВАНТАЖЕНО', 'ГРАФ_ПОБУДОВАНО',
+                'Т АНСФОРМАЦІЯ', 'ОБ’ЄКТИ_ВИ ІШЕНІ', 'ЗАВАНТАЖЕНО', 'ГРАФ_ПОБУДОВАНО',
                 'ІНДЕКСОВАНО', 'ВЕКТО ОВАНО', 'ГОТОВО'].map((state, i) => (
                   <motion.div
                     key={state}
@@ -213,7 +213,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                       <Globe size={16} />
                       <span className="text-[10px] font-black uppercase tracking-wider">3️⃣ Тір: Контексний OSINT</span>
                     </div>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Афіліація через спільні контактні дані у Telegram витоках та медіа-згадках у розслідуваннях</p>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Афіліація через спільні контактні дані у Telegram витоках та медіа-згадках урозслідуваннях</p>
                   </div>
                 </div>
               </div>

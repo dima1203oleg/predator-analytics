@@ -96,7 +96,7 @@ describe('SanctionsScreening', () => {
         render(<SanctionsScreening />);
         
         expect(screen.getByText(/САНКЦІЙНА/i)).toBeInTheDocument();
-        expect(screen.getByText(/МАТ ИЦЯ/i)).toBeInTheDocument();
+        expect(screen.getByText(/МАТрИЦЯ/i)).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/Введіть назву компанії/i)).toBeInTheDocument();
     });
 

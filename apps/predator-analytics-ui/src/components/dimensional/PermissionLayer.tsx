@@ -94,7 +94,7 @@ export const PermissionLayer: React.FC<PermissionLayerProps> = ({
                   Частковий Доступ
                 </p>
                 <p className="text-[10px] text-slate-400 leading-relaxed">
-                  {explanation || 'Повний перегляд потребує підвищених прав доступу'}
+                  {explanation || 'Повнийперегляд потребує підвищених прав доступу'}
                 </p>
               </div>
             </motion.div>

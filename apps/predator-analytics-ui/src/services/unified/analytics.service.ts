@@ -130,7 +130,7 @@ export interface TransactionFlow {
   currency?: string;
   /** Дата транзакції */
   date?: string;
-  /** Оцінка ризику (0-1) */
+  /** Оцінкаризику (0-1) */
   risk_score?: number;
 }
 
@@ -239,7 +239,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Отримати список ризикових суб'єктів
+   * Отримати списокризикових суб'єктів
    */
   async getHighRiskEntities(limit: number = 10): Promise<RiskEntity[]> {
     try {
@@ -294,7 +294,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Отримати налаштування рівнів ризику
+   * Отримати налаштування рівнівризику
    */
   async getAMLRiskLevels(): Promise<any> {
     try {
@@ -345,7 +345,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Отримати сигнали митних ризиків
+   * Отримати сигнали митнихризиків
    */
   async getRiskAlerts(): Promise<any[]> {
     try {
@@ -370,7 +370,7 @@ export class AnalyticsService {
   }
 
   /**
-   * Отримати глобальний профіль ризику
+   * Отримати глобальний профільризику
    */
   async getGlobalRiskProfile(): Promise<any> {
     try {

@@ -298,14 +298,14 @@ const GraphAnalyticsPage: React.FC = () => {
                         </section>
 
                         <aside className="col-span-12 xl:col-span-4 flex flex-col gap-12 overflow-y-auto custom-scrollbar pr-4">
-                            {/* МЕТ ИКИ ELITE */}
+                            {/* МЕТрИКИ ELITE */}
                             <section className="p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden group">
                                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
                                 <div className="flex items-center gap-8 mb-4 border-b border-white/[0.04] pb-8">
                                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-yellow-500 transform group-hover:rotate-12 transition-transform">
                                       <TrendingUp size={28} />
                                    </div>
-                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙ О_МЕТ ИКИ_ГРАФА</h4>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙ О_МЕТрИКИ_ГРАФА</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-10">
                                    {[

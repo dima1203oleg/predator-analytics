@@ -65,7 +65,7 @@ describe('IntelligenceView', () => {
         render(<IntelligenceView />);
         
         expect(screen.getByText(/ЦЕНТ /i)).toBeInTheDocument();
-        expect(screen.getByText(/ ОЗВІДКИ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ РОЗВІДКИ/i)).toBeInTheDocument();
         expect(screen.getByTestId('search-widget')).toBeInTheDocument();
         expect(screen.getByTestId('sovereign-report')).toBeInTheDocument();
     });

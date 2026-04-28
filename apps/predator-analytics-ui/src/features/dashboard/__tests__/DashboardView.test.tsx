@@ -197,14 +197,14 @@ describe('DashboardView', () => {
       expect(screen.getByText(/ГОЛОВНИЙ/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/СИНХ ОНІЗАЦІЯ_ЯД А/i)).toBeInTheDocument();
+    expect(screen.getByText(/СИНХРОНІЗАЦІЯ_ЯД А/i)).toBeInTheDocument();
     expect(screen.getByText(/ДВИГУНИ_АНАЛІЗУ/i)).toBeInTheDocument();
     expect(screen.getByText(/ВЕ ТИКАЛЬ_РИЗИКІВ/i)).toBeInTheDocument();
     expect(screen.getByText(/ ізкий стрибок митної вартості/i)).toBeInTheDocument();
     expect(screen.getAllByTestId('mock-echart').length).toBeGreaterThan(0);
   });
 
-  test('показує повідомлення про помилку, якщо бекенд недоступний', async () => {
+  test('показуєповідомлення про помилку, якщо бекенд недоступний', async () => {
     getOverviewMock.mockRejectedValue(new Error('offline'));
 
     render(

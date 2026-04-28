@@ -130,7 +130,7 @@ describe('MaritimeView', () => {
         expect(screen.queryByText('AURORA')).not.toBeInTheDocument();
     });
 
-    it('повинен фільтрувати за рівнем ризику', async () => {
+    it('повинен фільтрувати за рівнемризику', async () => {
         const mockVessels = [
             { id: 'v1', name: 'SAFE SHIP', flag: 'UK', type: 'Cargo', location: { lat: 0, lon: 0 }, risk_score: 10 },
             { id: 'v2', name: 'RISKY SHIP', flag: 'PA', type: 'Tanker', location: { lat: 0, lon: 0 }, risk_score: 95 }

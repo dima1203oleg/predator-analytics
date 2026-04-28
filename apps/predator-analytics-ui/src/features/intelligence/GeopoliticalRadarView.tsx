@@ -3,7 +3,7 @@
  * PREDATOR Analytics — Geopolitical Risk Intelligence
  *
  * Real-time геополітичні тренди, санкції, конфлікти,
- * ризики для ланцюгів постачання по країнах.
+ *ризики для ланцюгів постачання по країнах.
  * Sovereign Power Design · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -153,7 +153,7 @@ const RADAR_DATA = [
 ];
 
 const LIVE_EVENTS = [
-  { time: '14:22', region: 'Червоне море', event: 'Влучання БПЛА в танкер "AQUILA"', level: 'К ИТИЧНИЙ', icon: Flame },
+  { time: '14:22', region: 'Червоне море', event: 'Влучання БПЛА в танкер "AQUILA"', level: 'КРИТИЧНИЙ', icon: Flame },
   { time: '13:58', region: 'Нідерланди',   event: 'Кібератака на портовий термінал  оттердаму', level: 'ВАЖЛИВИЙ',  icon: Network },
   { time: '12:45', region: 'Тайвань',     event: 'Входження 42 винищувачів КН  у зону ППО', level: 'ВАЖЛИВИЙ',  icon: Crosshair },
   { time: '11:10', region: 'Україна',      event: 'Ухвалення закону про спец. конфіскацію активів  Ф', level: 'ІНФО',       icon: Shield },
@@ -195,7 +195,7 @@ const GeopoliticalRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'GeoRadar',
-          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано резервний супутник (ГЕОП ОСТО ОВІ_ВУЗЛИ).`,
+          message: `РЕЖИМ АВТОНОМНОЇ  РОЗВІДКИ [${nodeSource}]: Активовано резервний супутник (ГЕОП ОСТО ОВІ_ВУЗЛИ).`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'GEO_OFFLINE'
@@ -272,7 +272,7 @@ const GeopoliticalRadarView: React.FC = () => {
             },
           ]}
           stats={[
-            { label: 'АЛЬФА_Т ИВОГИ', value: String(alertCount), icon: <Radio />, color: 'gold', animate: true },
+            { label: 'АЛЬФА_ТрИВОГИ', value: String(alertCount), icon: <Radio />, color: 'gold', animate: true },
             { 
               label: isOffline ? 'ВІДНОВЛЕННЯ_SAT' : 'ВУЗОЛ_ДЖЕРЕЛО', 
               value: isOffline ? `${Math.floor(healingProgress)}%` : activeFailover ? 'ZROK_ТУНЕЛЬ' : 'NVIDIA_MASTER', 
@@ -280,7 +280,7 @@ const GeopoliticalRadarView: React.FC = () => {
               color: isOffline ? 'warning' : 'gold',
               animate: isOffline
             },
-            { label: 'СТАН_П ОТОКОЛУ', value: isOffline ? 'FAILOVER' : 'СИНХ О', icon: <Zap />, color: isOffline ? 'warning' : 'success' }
+            { label: 'СТАН_ПРОТОКОЛУ', value: isOffline ? 'FAILOVER' : 'СИНХ О', icon: <Zap />, color: isOffline ? 'warning' : 'success' }
           ]}
         />
 
@@ -325,7 +325,7 @@ const GeopoliticalRadarView: React.FC = () => {
               {[
                 { label: 'МАКС_НАП УЖЕНІСТЬ', value: '98/100', color: 'text-amber-500', icon: Flame },
                 { label: 'АКТИВНІ_КОНФЛІКТИ', value: '8_ЛОКАЦІЙ', color: 'text-orange-500', icon: Target },
-                { label: 'САНКЦІЙНІ_Т ИГЕ И', value: '1,582', color: 'text-amber-600', icon: Lock },
+                { label: 'САНКЦІЙНІ_ТрИГЕ И', value: '1,582', color: 'text-amber-600', icon: Lock },
                 { label: 'ДИСТ УКЦІЯ_ГЛОБАЛ', value: '34%_VOL', color: 'text-yellow-600', icon: Network },
               ].map((m, i) => (
                 <div key={i} className="flex flex-col gap-4 italic group/metric">
@@ -440,7 +440,7 @@ const GeopoliticalRadarView: React.FC = () => {
                                <div className="flex items-baseline gap-4">
                                   <p className="text-5xl font-black font-mono tracking-tighter italic leading-none group-hover/stat:scale-110 transition-transform origin-left" style={{ color: getRiskColor(r.value) }}>{r.value}%</p>
                                   <div className={cn("text-[10px] font-black uppercase tracking-widest italic", r.value > 85 ? "text-amber-600 animate-pulse" : "text-slate-800")}>
-                                     {r.value > 85 ? 'ЕКСТ ЕМАЛЬНО' : 'МОНІТО ИНГ'}
+                                     {r.value > 85 ? 'ЕКСТ ЕМАЛЬНО' : 'МОНІТОРИНГ'}
                                   </div>
                                 </div>
                                <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-white/5 shadow-inner">
@@ -457,7 +457,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-600/20 to-transparent" />
                     <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04]">
                        <h3 className="text-xl font-black text-white uppercase italic tracking-[0.4em] flex items-center gap-6 leading-none font-serif">
-                          <AlertTriangle size={28} className="text-orange-500 animate-pulse" /> К ИТИЧНІ ФАКТО И ТА ПОДІЇ
+                          <AlertTriangle size={28} className="text-orange-500 animate-pulse" /> КрИТИЧНІ ФАКТО И ТА ПОДІЇ
                        </h3>
                        <div className="flex items-center gap-4">
                           <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic leading-none font-mono">TI_LVL: АЛЬФА_НУЛЬ</span>
@@ -545,7 +545,7 @@ const GeopoliticalRadarView: React.FC = () => {
                       <p className="text-4xl font-black text-white italic tracking-tighter shadow-sm">74.2%</p>
                    </div>
                    <div className="text-center group/met">
-                      <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mb-2 italic">П ОТОКОЛ_АЛЬФА</p>
+                      <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest mb-2 italic">ПРОТОКОЛ_АЛЬФА</p>
                       <p className="text-4xl font-black text-amber-600 italic tracking-tighter shadow-sm animate-pulse">SET-1</p>
                    </div>
                 </div>
@@ -555,7 +555,7 @@ const GeopoliticalRadarView: React.FC = () => {
              <div className="rounded-[3.5rem] bg-black border-2 border-white/[0.04] overflow-hidden shadow-4xl group/feed">
                 <div className="p-10 border-b-2 border-white/[0.04] flex items-center justify-between bg-white/[0.01]">
                    <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] italic flex items-center gap-5 leading-none font-serif">
-                      <Radio size={22} className="text-amber-600 animate-pulse" /> ДЕКОДУВАННЯ_ ОЗВІДКИ_LIVE
+                      <Radio size={22} className="text-amber-600 animate-pulse" /> ДЕКОДУВАННЯ_ РОЗВІДКИ_LIVE
                    </h3>
                    <span className="px-4 py-1.5 bg-amber-600/10 border border-amber-600/20 text-amber-600 text-[10px] font-black italic rounded-lg shadow-lg shadow-amber-900/40">14_ВУЗЛІВ</span>
                 </div>
@@ -570,7 +570,7 @@ const GeopoliticalRadarView: React.FC = () => {
                        <div className="flex items-center justify-between mb-5">
                          <div className={cn(
                            "px-4 py-1.5 rounded-xl text-[10px] font-black italic tracking-widest uppercase border-2 transition-all",
-                           ev.level === 'К ИТИЧНИЙ' ? "bg-amber-600 text-white border-amber-500 shadow-xl scale-110" :
+                           ev.level === 'КРИТИЧНИЙ' ? "bg-amber-600 text-white border-amber-500 shadow-xl scale-110" :
                            "bg-black border-white/10 text-slate-800 group-hover/ev:border-amber-900/40 group-hover/ev:text-amber-500"
                          )}>
                             {ev.level}
@@ -596,7 +596,7 @@ const GeopoliticalRadarView: React.FC = () => {
                   </div>
                   <h4 className="text-[10px] font-black text-yellow-700 uppercase tracking-[0.6em] mb-4 italic font-serif underline decoration-yellow-600/20 underline-offset-8">ПО АДА_PREDATOR_SENTINEL</h4>
                   <p className="text-[13px] font-black text-slate-300 italic leading-relaxed uppercase tracking-tight relative z-10 border-l-4 border-yellow-500/30 pl-8 group-hover:text-white transition-colors">
-                     Зміщення центрів ризику в напрямку Червоного моря вказує на неминуче подорожчання страхування морських перевезень (+22%). рекомендується активація альтернативних маршрутів сушею.
+                     Зміщення центрівризику в напрямку Червоного моря вказує на неминуче подорожчання страхування морських перевезень (+22%). рекомендується активація альтернативних маршрутів сушею.
                   </p>
              </div>
 

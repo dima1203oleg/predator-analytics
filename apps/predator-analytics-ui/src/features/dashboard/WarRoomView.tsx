@@ -90,7 +90,7 @@ export default function WarRoomView() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'СУВЕ ЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v61.0-ELITE
+                        {isOffline ? 'СУВЕРЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v61.0-ELITE
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -129,7 +129,7 @@ export default function WarRoomView() {
                     </span>
                  </div>
                  <button className="px-10 py-5 bg-red-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:brightness-110 shadow-4xl transition-all">
-                    ДЕФО МАТУВАТИ // АВА ІЙНИЙ_ВИХІД
+                    ДЕФОРМАТУВАТИ // АВА ІЙНИЙ_ВИХІД
                  </button>
               </div>
             }
@@ -253,7 +253,7 @@ export default function WarRoomView() {
                          </div>
                          <div className="space-y-3 opacity-80 italic font-bold">
                             <p className="text-slate-700 leading-none">[14:32:01] <span className="text-emerald-600">ІНГЕСТІЯ:</span> Синхронізація підтверджена v58.2</p>
-                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">Т ИВОГА:</span> Порушення порогу ризику POS-001</p>
+                            <p className="text-slate-700 leading-none">[14:32:05] <span className="text-red-700">ТРИВОГА:</span> Порушення порогуризику POS-001</p>
                             <p className="text-slate-700 leading-none">[14:32:15] <span className="text-yellow-600">СУВЕ ЕН:</span>  езолюція Kyoto Holdings активна</p>
                             <p className="text-slate-700 leading-none">[14:32:22] <span className="text-slate-900">СИСТЕМА:</span> Очікування сплеску кластера Kafka...</p>
                             <motion.p animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="text-emerald-500">_ГОТОВИЙ_ДО_КОМАНД</motion.p>
@@ -277,7 +277,7 @@ export default function WarRoomView() {
                          <div className="p-3 bg-red-500/10 rounded-2xl">
                             <Layers size={20} className="text-red-500" />
                          </div>
-                         <h3 className="text-[11px] font-black text-red-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТ ИЦЯ</h3>
+                         <h3 className="text-[11px] font-black text-red-500 uppercase tracking-[0.6em] italic">РИЗИК-МАТрИЦЯ</h3>
                       </div>
                       <button onClick={() => setExpanded(expanded === 'q3' ? null : 'q3')} className="p-2 text-slate-700 hover:text-white transition-colors">
                         {expanded === 'q3' ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
@@ -342,7 +342,7 @@ export default function WarRoomView() {
                             </div>
                             <div>
                                <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНА ІЙ: ОМЕГА-4</h4>
-                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">П ЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ  ОЗШИ ЕННЯ КОНФЛІКТУ</p>
+                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">ПрЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ  ОЗШИ ЕННЯ КОНФЛІКТУ</p>
                             </div>
                          </div>
                          <div className="space-y-4 flex-1">

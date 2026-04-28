@@ -136,7 +136,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                             <div className="px-6 py-4 bg-yellow-600/10 flex items-center justify-between border-t border-yellow-500/20">
                                 <div className="flex items-center gap-3">
                                     <ShieldAlert size={14} className="text-yellow-500 animate-pulse" />
-                                    <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТО ИНГУ АКТИВОВАНА</span>
+                                    <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТОРИНГУ АКТИВОВАНА</span>
                                 </div>
                                 <span className="text-[8px] font-mono text-yellow-900 uppercase">LATENCY: 0.1ms</span>
                             </div>

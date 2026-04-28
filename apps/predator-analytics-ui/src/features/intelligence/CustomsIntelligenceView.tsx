@@ -3,7 +3,7 @@
  * PREDATOR Analytics — Logistics & Trade Flow Intelligence
  * 
  * Моніторинг митних декларацій, аналіз контрагентів (ЗЕД),
- * трекінг товарних груп та виявлення митних ризиків.
+ * трекінг товарних груп та виявлення митнихризиків.
  * 
  * PREDATOR_ELITE v61.0 · Sovereign Classified · Tier-1
  * 
@@ -547,7 +547,7 @@ export default function CustomsIntelligenceView() {
                              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />
                              <h4 className="text-[10px] font-black text-rose-700 uppercase tracking-[0.6em] mb-6 italic">СУВЕРЕННИЙ_ШІ_ВАРТОВИЙ (SENTINEL)</h4>
                              <p className="text-[14px] font-black text-slate-400 italic leading-relaxed uppercase tracking-tighter border-l-4 border-rose-500/30 pl-8 group-hover:text-white transition-colors">
-                                Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендується перегляд лімітів для імпортерів електроніки категорії A.
+                                Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендуєтьсяперегляд лімітів для імпортерів електроніки категорії A.
                              </p>
                           </div>
                        </div>

@@ -94,7 +94,7 @@ describe('CustomsIntelligenceView', () => {
         expect(screen.getByText(/ТОВ "МЕТАЛ-Т ЕЙД ОПТ"/i)).toBeInTheDocument();
     });
 
-    it('відображає попередження про митні ризики', async () => {
+    it('відображає попередження про митніризики', async () => {
         render(<CustomsIntelligenceView />);
         
         const risksTab = screen.getByText(/МИТНІ_РИЗИКИ/i);

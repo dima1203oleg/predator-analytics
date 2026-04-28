@@ -1,5 +1,5 @@
 /**
- * 🌐 OPEN DATA MATRIX // МАТ ИЦЯ ВІДК ИТИХ ДАНИХ | v61.0-ELITE
+ * 🌐 OPEN DATA MATRIX // МАТрИЦЯ ВІДКрИТИХ ДАНИХ | v61.0-ELITE
  * PREDATOR Analytics — Governance OSINT & Dataset Discovery
  * 
  * Модуль інтеграції з порталом data.gov.ua: пошук та аналіз датасетів.
@@ -67,8 +67,8 @@ export default function DataGovView() {
             console.error(e);
             // Mock
             setDatasets([
-                { id: 'ds-001', title: 'РЕЄСТР ОБ\'ЄКТІВ П АВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
-                { id: 'ds-002', title: 'ПЕ ЕЛІК ПІДП ИЄМСТВ З ОЗНАКАМИ САНКЦІЙ', organizationTitle: 'МНС УК АЇНИ', metadataModified: '2026-04-11', resources: [{ format: 'JSON', sizeLabel: '12 MB', name: 'SANCTIONS_UA', url: '#' }] }
+                { id: 'ds-001', title: 'РЕЄСТР ОБ\'ЄКТІВ ПРАВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
+                { id: 'ds-002', title: 'ПЕ ЕЛІК ПІДП ИЄМСТВ З ОЗНАКАМИ САНКЦІЙ', organizationTitle: 'МНС УКРАЇНИ', metadataModified: '2026-04-11', resources: [{ format: 'JSON', sizeLabel: '12 MB', name: 'SANCTIONS_UA', url: '#' }] }
             ]);
         } finally {
             setLoading(false);
@@ -106,7 +106,7 @@ export default function DataGovView() {
                                ДЕ ЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">РЕЄСТРИ</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                МОНІТО ИНГ ТА АНАЛІЗ ВІДК ИТИХ ДЕ ЖАВНИХ ДАТАСЕТІВ (DATA.GOV.UA)
+                                МОНІТОРИНГ ТА АНАЛІЗ ВІДКрИТИХ ДЕ ЖАВНИХ ДАТАСЕТІВ (DATA.GOV.UA)
                              </p>
                           </div>
                        </div>
@@ -122,7 +122,7 @@ export default function DataGovView() {
                              <RefreshCcw size={24} className={loading ? 'animate-spin' : ''} />
                           </button>
                           <button className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
-                             <Radar size={18} /> ІНІЦІЮВАТИ_МАТ ИЦЮ
+                             <Radar size={18} /> ІНІЦІЮВАТИ_МАТрИЦЮ
                           </button>
                        </div>
                      }
@@ -232,7 +232,7 @@ export default function DataGovView() {
                                  
                                  <div className="flex gap-6 relative z-10">
                                     <a href={`https://data.gov.ua/dataset/${selectedDataset.id}`} target="_blank" className="flex-1 py-8 bg-blue-700 text-white font-black rounded-[2.5rem] uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-3xl transition-all flex items-center justify-center gap-6">
-                                       <ExternalLink size={24} /> ВІДК ИТИ НА ПО ТАЛІ
+                                       <ExternalLink size={24} /> ВІДКрИТИ НА ПО ТАЛІ
                                     </a>
                                  </div>
                               </TacticalCard>

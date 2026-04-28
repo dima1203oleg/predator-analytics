@@ -187,7 +187,7 @@ export default function PriceComparisonPremium() {
                          <div className="space-y-1">
                             <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">{product.name}</h3>
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-700 uppercase italic tracking-widest">
-                               <span>КАТЕГО ІЯ: {product.category}</span>
+                               <span>КАТЕГОРІЯ: {product.category}</span>
                                <span className="text-slate-800">|</span>
                                <span>УКТЗЕД: {product.hsCode}</span>
                             </div>

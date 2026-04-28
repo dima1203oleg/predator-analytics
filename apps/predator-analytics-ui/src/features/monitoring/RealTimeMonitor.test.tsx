@@ -35,7 +35,7 @@ vi.stubGlobal('WebSocket', MockWebSocket);
 vi.mock('@/context/ThemeContext', () => ({
   useTheme: () => ({
     mode: 'sovereign',
-    modeInfo: { label: 'СУВЕ ЕННИЙ' },
+    modeInfo: { label: 'СУВЕРЕННИЙ' },
     cycleMode: vi.fn()
   }),
   ThemeProvider: ({ children }: any) => <div>{children}</div>
@@ -57,7 +57,7 @@ describe('RealTimeMonitor', () => {
 
   it('should render monitor title', () => {
     render(<RealTimeMonitor />);
-    expect(screen.getByText(/МОНІТО ИНГ/)).toBeInTheDocument();
+    expect(screen.getByText(/МОНІТОРИНГ/)).toBeInTheDocument();
   });
 
   it('should display connection status', async () => {

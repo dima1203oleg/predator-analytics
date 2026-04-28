@@ -61,7 +61,7 @@ export const CyberTerminal: React.FC = () => {
                                     <Activity className="h-4 w-4 text-emerald-500 animate-pulse" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">АЗ _ТЕ МІНАЛ_v45.1</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">АЗ _ТЕРМІНАЛ_v45.1</span>
                                     <span className="text-[8px] font-mono text-emerald-500/50">ЗАХИЩЕНИЙ_ШИФ ОВАНИЙ_КАНАЛ</span>
                                 </div>
                             </div>

@@ -319,7 +319,7 @@ const baseNavigationConfig: NavSection[] = [
   {
     id: 'executive',
     label: 'EXECUTIVE',
-    description: 'Стратегічний рівень: рішення, ризики, брифінги та ситуаційна обізнаність.',
+    description: 'Стратегічний рівень: рішення,ризики, брифінги та ситуаційна обізнаність.',
     outcome: 'Повний 360° контроль над бізнес-периметром.',
     accent: 'sky',
     groups: [
@@ -342,7 +342,7 @@ const baseNavigationConfig: NavSection[] = [
             label: ' анковий Брифінг',
             path: '/command?tab=brief',
             icon: Compass,
-            description: 'Пріоритетний аналіз ризиків та цілей на поточний день.',
+            description: 'Пріоритетний аналізризиків та цілей на поточний день.',
             group: 'Командування',
             audiences: ['business', 'analyst'],
             priority: 92,
@@ -379,7 +379,7 @@ const baseNavigationConfig: NavSection[] = [
             label: 'Портфельний  изик',
             path: '/command?tab=risk',
             icon: TrendingUp,
-            description: 'Агрегований фінансовий ризик портфелю клієнтів.',
+            description: 'Агрегований фінансовийризик портфелю клієнтів.',
             group: 'Оперативний штаб',
             badge: 'ОНЛАЙН',
             audiences: ['analyst'],
@@ -477,7 +477,7 @@ const baseNavigationConfig: NavSection[] = [
             label: 'Митний Моніторинг',
             path: '/market?tab=customs',
             icon: Shield,
-            description: 'Аналіз декларацій та ризикових митних операцій.',
+            description: 'Аналіз декларацій таризикових митних операцій.',
             group: 'Митниця та Логістика',
             audiences: ['analyst', 'supply_chain', 'admin'],
             priority: 88,
@@ -593,7 +593,7 @@ const baseNavigationConfig: NavSection[] = [
             label: 'Персональне Досьє',
             path: '/osint?tab=diligence',
             icon: User,
-            description: 'Повний KYC/KYB аудит та профіль ризиків суб\'єкта.',
+            description: 'Повний KYC/KYB аудит та профільризиків суб\'єкта.',
             group: ' озвідка та Комплаєнс',
             audiences: ['analyst', 'admin'],
             priority: 91,
@@ -783,13 +783,13 @@ const baseNavigationConfig: NavSection[] = [
   },
 
   // ══════════════════════════════════════════════════════════════
-  // 5. INVESTIGATION — кейси, хронологія, розслідування (indigo)
+  // 5. INVESTIGATION — кейси, хронологія,розслідування (indigo)
   // ══════════════════════════════════════════════════════════════
   {
     id: 'investigation',
     label: 'INVESTIGATION',
     description: 'Кейси, хронологія подій, структури влади та спостереження.',
-    outcome: 'Структуроване розслідування від сигналу до рішення.',
+    outcome: 'Структурованерозслідування від сигналу до рішення.',
     accent: 'indigo',
     groups: [
       {
@@ -801,7 +801,7 @@ const baseNavigationConfig: NavSection[] = [
             label: 'Кейс-Менеджер',
             path: '/cases',
             icon: Briefcase,
-            description: 'Управління розслідуваннями: від відкриття до архіву.',
+            description: 'Управліннярозслідуваннями: від відкриття до архіву.',
             group: 'Кейс-менеджмент',
             audiences: ['analyst', 'admin'],
             priority: 95,
@@ -858,7 +858,7 @@ const baseNavigationConfig: NavSection[] = [
             label: 'Фінансова SIGINT',
             path: '/financial-sigint',
             icon: Radar,
-            description: 'Виявлення фінансових сигналів у розподілених мережах.',
+            description: 'Виявлення фінансових сигналів урозподілених мережах.',
             group: 'Глибока  озвідка',
             audiences: ['analyst', 'admin'],
             priority: 78,

@@ -100,7 +100,7 @@ const RingPortal: React.FC<{ level: number }> = ({ level }) => {
                 <div className="relative z-10 w-4 h-4 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
             </div>
             <div className="flex flex-col">
-                <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">КІЛЬЦЕ СУВЕ ЕНІТЕТУ</span>
+                <span className="text-[8px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">КІЛЬЦЕ СУВЕРЕНІТЕТУ</span>
                 <span className="text-lg font-black tracking-tight text-ring-color">{current.label}</span>
                 <div className="flex gap-1 mt-1.5">
                     {[0, 1, 2, 3].map(i => (
@@ -234,7 +234,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                                 <GitBranch className="text-blue-400" size={20} />
                                 <h2 className="text-lg font-bold text-white uppercase tracking-widest">Пропозиції Еволюції</h2>
                             </div>
-                            <span className="text-[10px] text-slate-500 font-mono">{proposals.length}  ІШЕНЬ ОЧІКУЄТЬСЯ</span>
+                            <span className="text-[10px] text-slate-500 font-mono">{proposals.length} РІШЕНЬ ОЧІКУЄТЬСЯ</span>
                         </div>
 
                         <div className="p-6 space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">

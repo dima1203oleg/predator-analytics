@@ -148,7 +148,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 <Brain size={32} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 animate-pulse" />
                             </div>
                             <div className="text-center">
-                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] animate-pulse">ЗА ЯДЖАЮ_МАТ ИЦЮ_ЗВ'ЯЗКІВ...</p>
+                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] animate-pulse">ЗА ЯДЖАЮ_МАТрИЦЮ_ЗВ'ЯЗКІВ...</p>
                                 <p className="text-slate-600 text-[8px] font-mono mt-2 italic">DECRYPTING_NEURAL_LAYERS</p>
                             </div>
                         </motion.div>
@@ -317,12 +317,12 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                             </div>
                             
                             <div className="text-center">
-                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-500 mb-3 block italic">ОБ'ЄКТ_К ИПТОГРАФІЇ</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-500 mb-3 block italic">ОБ'ЄКТ_КрИПТОГРАФІЇ</span>
                                 <h4 className="text-3xl font-black text-white tracking-tighter uppercase leading-tight italic decoration-indigo-500/50 underline-offset-8 underline decoration-2">{selectedNode.name}</h4>
                                 <div className="flex justify-center gap-3 mt-4">
                                     <Badge variant="outline" className="border-white/10 text-slate-400 text-[8px] tracking-widest uppercase">{selectedNode.label}</Badge>
                                     <Badge className={cn("text-[8px] tracking-widest uppercase", selectedNode.status === 'critical' ? "bg-rose-500/20 text-rose-500" : "bg-emerald-500/20 text-emerald-500")}>
-                                        {selectedNode.status === 'critical' ? 'К ИТИЧНА_ЗАГ ОЗА' : 'СТАБІЛЬНИЙ_СТАН'}
+                                        {selectedNode.status === 'critical' ? 'КрИТИЧНА_ЗАГРОЗА' : 'СТАБІЛЬНИЙ_СТАН'}
                                     </Badge>
                                 </div>
                             </div>
@@ -381,7 +381,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                 className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-[1.8rem] transition-all border border-white/10 flex items-center justify-center gap-3"
                             >
-                                <Share2 size={18} /> ЕКСПОРТ_МАТ ИЦІ
+                                <Share2 size={18} /> ЕКСПОРТ_МАТрИЦІ
                             </motion.button>
                         </div>
                     </motion.div>

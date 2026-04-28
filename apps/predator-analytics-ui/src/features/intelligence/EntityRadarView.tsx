@@ -199,7 +199,7 @@ const EntityRadarView: React.FC = () => {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'EntityRadar',
-        message: ` АДА _МАТ ИЦЯ [${nodeSource}]:  адар суб'єктів активовано. Готовність до сканування контуру GDS.`,
+        message: ` АДА _МАТрИЦЯ [${nodeSource}]:  адар суб'єктів активовано. Готовність до сканування контуру GDS.`,
         severity: 'info',
         timestamp: new Date().toISOString(),
         code: 'RADAR_SUCCESS'
@@ -218,7 +218,7 @@ const EntityRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: `СЕ ВЕ _ АДА А [${nodeSource}]: Топологію ризику для ${data.length} об'єктів успішно синхронізовано.`,
+          message: `СЕ ВЕ _ АДА А [${nodeSource}]: Топологіюризику для ${data.length} об'єктів успішно синхронізовано.`,
           severity: 'info',
           timestamp: new Date().toISOString(),
           code: 'RADAR_SUCCESS'
@@ -230,7 +230,7 @@ const EntityRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'EntityRadar',
-          message: `К ИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
+          message: `КрИТИЧНА ПОМИЛКА СКАНУВАННЯ ВУЗЛА ENTITY_RADAR_NODES. Перевірте з'єднання з ${nodeSource}.`,
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'ENTITY_RADAR_NODES'
@@ -301,7 +301,7 @@ const EntityRadarView: React.FC = () => {
             ]}
             stats={[
               { label: 'ОБ\'ЄКТІВ_У_КОНТУ І', value: String(entities.length), icon: <Building2 />, color: 'gold' },
-              { label: 'К ИТИЧНІ_ВУЗЛИ', value: String(entities.filter(e => e.cers_score > 80).length), icon: <Siren />, color: 'danger', animate: true },
+              { label: 'КрИТИЧНІ_ВУЗЛИ', value: String(entities.filter(e => e.cers_score > 80).length), icon: <Siren />, color: 'danger', animate: true },
               { label: 'CONFIDENCE', value: '98.8%', icon: <Zap />, color: 'success' },
               { label: 'ALPHA_SYNC', value: 'NOMINAL', icon: <Activity />, color: 'primary' },
             ]}
@@ -334,7 +334,7 @@ const EntityRadarView: React.FC = () => {
                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-yellow-500 transition-colors" size={24} />
                 <input
                   type="text"
-                  placeholder="ПОШУК СЕ ЕД К ИТИЧНИХ СУБ'ЄКТІВ (ЄДРПОУ / НАЗВА)..."
+                  placeholder="ПОШУК СЕ ЕД КРИТИЧНИХ СУБ'ЄКТІВ (ЄДРПОУ / НАЗВА)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-20 pr-10 py-7 bg-black/60 border-2 border-white/[0.04] rounded-[2.2rem] text-white placeholder-slate-800 focus:outline-none focus:border-yellow-500/50 transition-all font-black text-lg italic tracking-tight"
@@ -356,7 +356,7 @@ const EntityRadarView: React.FC = () => {
                 </div>
 
                 <button className="px-10 py-7 bg-white/[0.02] border-2 border-white/[0.05] rounded-[2.2rem] text-slate-400 font-black text-[11px] uppercase tracking-[0.3em] italic hover:bg-white/[0.05] hover:text-white transition-all shadow-xl flex items-center gap-4">
-                  <Filter size={18} className="text-yellow-500" /> ФІЛЬТ И
+                  <Filter size={18} className="text-yellow-500" /> ФІЛЬТрИ
                 </button>
               </div>
             </div>
@@ -498,7 +498,7 @@ const EntityRadarView: React.FC = () => {
                                   <Sparkles size={16} /> ВЕ ДИКТ_PREDATOR_AI
                                 </h4>
                                 <p className="text-[16px] font-black text-white leading-relaxed italic border-l-8 border-yellow-500/30 pl-8 py-2">
-                                  "ВУЗОЛ ВИЯВЛЕНО ЯК К ИТИЧНИЙ. ФАКТО  РИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА П ЯМИХ ЗВ'ЯЗКАХ ПО СЕ ВЕ НИХ ЛОГАХ ТА ОФШО НИХПРОВІДНИКАХ.  ЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
+                                  "ВУЗОЛ ВИЯВЛЕНО ЯК КРИТИЧНИЙ. ФАКТО  РИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА П ЯМИХ ЗВ'ЯЗКАХ ПО СЕ ВЕ НИХ ЛОГАХ ТА ОФШО НИХПРОВІДНИКАХ.  ЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
                                 </p>
                              </div>
                           </div>
@@ -511,7 +511,7 @@ const EntityRadarView: React.FC = () => {
                                       <h4 className="text-[14px] font-black text-amber-600 uppercase tracking-[0.6em] italic flex items-center gap-4">
                                         <Siren size={20} className="animate-pulse" /> АКТИВНІ_ПОГ ОЗИ // ACTIVE_SIG
                                       </h4>
-                                      <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕ МІНАЛІ РИЗИКУ</p>
+                                      <p className="text-[10px] text-slate-800 font-bold uppercase tracking-[0.4em] italic">ВИЯВЛЕНІ АНОМАЛІЇ У ТЕРМІНАЛІ РИЗИКУ</p>
                                    </div>
                                    <div className="p-4 bg-amber-600/10 border-2 border-amber-600/20 rounded-2xl text-amber-600 animate-pulse shadow-amber-900/40">
                                       <Shield size={24} />

@@ -208,7 +208,7 @@ const SecurityView: React.FC = () => {
                 icon={<Shield size={20} className={state.defconLevel <= 2 ? "text-red-500 animate-pulse" : "icon-3d-green"} />}
                 breadcrumbs={['СИСТЕМА', 'БЕЗПЕКА', 'АКТИВНИЙ ЗАХИСТ']}
                 stats={[
-                    { label: 'рівень Загрози', value: state.defconLevel === 1 ? 'К ИТИЧНИЙ' : state.defconLevel === 2 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', icon: <Activity size={14} />, color: state.defconLevel <= 2 ? 'danger' : 'success' },
+                    { label: 'рівень Загрози', value: state.defconLevel === 1 ? 'КРИТИЧНИЙ' : state.defconLevel === 2 ? 'ВИСОКИЙ' : 'НИЗЬКИЙ', icon: <Activity size={14} />, color: state.defconLevel <= 2 ? 'danger' : 'success' },
                     { label: 'Нульова Довіра', value: 'АКТИВНО', icon: <ShieldAlert size={14} className="icon-3d-blue" />, color: 'primary' },
                     { label: 'Події WAF', value: '14/год', icon: <Ban size={14} className="icon-3d-red" />, color: 'warning', animate: true },
                 ]}

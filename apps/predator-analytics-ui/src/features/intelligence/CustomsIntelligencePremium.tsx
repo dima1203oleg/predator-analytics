@@ -2,7 +2,7 @@
  * 💎 CUSTOMS PREMIUM // МИТНИЙПРО | v61.0-ELITE
  * PREDATOR Analytics — Commercial Intelligence & Deep Market Analysis
  * 
- * Глибока аналітика для бізнесу: Аналіз конкурентів, ринкові ніші,
+ * Глибока аналітика для бізнесу: Аналіз конкурентів,ринкові ніші,
  * прогнози цін та ШІ-інсайти.
  * 
  * Sovereign Power Design · Tactical · Tier-1
@@ -247,7 +247,7 @@ export default function CustomsIntelligencePremium() {
                   <div className="space-y-6">
                      {[
                        { t: 'ВИЯВЛЕНО_НІШУ', d: 'Сегмент запасних частин для агротехніки демонструє дефіцит пропозиції при високому попиті.', r: 'high' },
-                       { t: 'П ЕДИКЦІЯ_ЦІНИ', d: 'Очікується стабілізація цін на сталь h10 протягом наступних 14 днів.', r: 'medium' },
+                       { t: 'ПрЕДИКЦІЯ_ЦІНИ', d: 'Очікується стабілізація цін на сталь h10 протягом наступних 14 днів.', r: 'medium' },
                        { t: 'РИЗИК_ЛОГІСТИКИ', d: 'Зміна маршрутів у Чорному морі може вплинути на терміни доставки з Туреччини.', r: 'low' },
                      ].map((insight, i) => (
                        <div key={i} className="p-6 rounded-3xl bg-white/[0.01] border-2 border-white/[0.04] space-y-3">

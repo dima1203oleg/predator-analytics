@@ -178,7 +178,7 @@ const DecisionRow: React.FC<{ decision: Decision }> = ({ decision }) => {
                <div className="flex items-center gap-3 p-4 bg-rose-500/5 border border-rose-500/20 rounded-2xl">
                   <Fingerprint size={16} className="text-rose-500" />
                   <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest italic">
-                     ЗАПИС ЗАХИЩЕНИЙ WORM-П ОТОКОЛОМ. ВНЕСЕННЯ ЗМІН АБО ВИДАЛЕННЯ НЕМОЖЛИВЕ (HR-16).
+                     ЗАПИС ЗАХИЩЕНИЙ WORM-ПРОТОКОЛОМ. ВНЕСЕННЯ ЗМІН АБО ВИДАЛЕННЯ НЕМОЖЛИВЕ (HR-16).
                   </p>
                </div>
             </div>
@@ -270,7 +270,7 @@ export const DecisionsJournal: React.FC = () => {
                 </div>
               </div>
             }
-            breadcrumbs={['П ЕДАТО ', 'АУДИТ', 'ЖУ НАЛ_ ІШЕНЬ']}
+            breadcrumbs={['PREDATOR', 'АУДИТ', 'ЖУ НАЛ_РІШЕНЬ']}
             stats={[
               { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Database />, color: isOffline ? 'warning' : 'gold' },
               { label: 'WORM_LOCK', value: 'АКТИВНО', icon: <Lock />, color: 'primary' },
@@ -283,7 +283,7 @@ export const DecisionsJournal: React.FC = () => {
             }
           />
 
-          {/* ФІЛЬТ И ELITE */}
+          {/* ФІЛЬТрИ ELITE */}
           <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-rose-500/40 transition-all">
               <Search size={22} className="text-slate-700 group-hover:text-rose-500 transition-colors" />
@@ -322,13 +322,13 @@ export const DecisionsJournal: React.FC = () => {
             </div>
           </div>
 
-          {/* СПИСОК  ІШЕНЬ */}
+          {/* СПИСОК РІШЕНЬ */}
           <div className="space-y-6 relative min-h-[600px]">
             {isLoading ? (
                <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm rounded-[3rem] z-20">
                   <div className="flex flex-col items-center gap-6">
                      <RefreshCw className="text-rose-500 animate-spin" size={64} />
-                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">СИНХ ОНІЗАЦІЯ_WORM_МАТ ИЦІ...</span>
+                     <span className="text-[12px] font-black text-rose-500 uppercase tracking-[0.5em] animate-pulse italic">СИНХРОНІЗАЦІЯ_WORM_МАТрИЦІ...</span>
                   </div>
                </div>
             ) : null}

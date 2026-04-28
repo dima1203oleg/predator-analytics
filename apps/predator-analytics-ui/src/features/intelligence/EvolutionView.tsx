@@ -266,7 +266,7 @@ const EvolutionView: React.FC = () => {
                                                 </div>
                                                 <div className="p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden">
                                                     <h4 className="text-[12px] font-black text-amber-500 italic uppercase tracking-[0.4em] flex items-center gap-4 border-b border-amber-500/10 pb-8">
-                                                        <Gauge size={20} /> МЕТ ИКИ СИСТЕМИ
+                                                        <Gauge size={20} /> МЕТрИКИ СИСТЕМИ
                                                     </h4>
                                                     <div className="space-y-6 pt-4 italic">
                                                         {[

@@ -150,7 +150,7 @@ export const DataOpsTab: React.FC = () => {
         <div className="absolute inset-0 bg-rose-900/5 blur-[150px] pointer-events-none" />
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
         <Database size={80} className="text-rose-600/40 mb-12 animate-pulse" />
-        <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">К ИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ А</div>
+        <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">КРИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ А</div>
         <p className="text-[14px] font-black text-white/30 max-w-2xl mb-16 leading-relaxed uppercase italic tracking-widest">
           СИСТЕМА НЕ ЗМОГЛА ОТРИМАТИ СТАН ВУЗЛІВ ОБ ОБКИ. <br/>
           ПЕ ЕВІ ТЕ З'ЄДНАННЯ З КОНТ ОЛЕ ОМ ДАНИХ <span className="text-rose-500">PREDATOR_LAKE_MASTER_L7</span>.

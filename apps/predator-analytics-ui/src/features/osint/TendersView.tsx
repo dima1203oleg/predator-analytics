@@ -3,7 +3,7 @@
  * PREDATOR Analytics — Anti-Corruption OSINT Matrix
  * 
  * Антикорупційний моніторинг публічних закупівель Prozorro у реальному часі.
- * CERS-скорингова оцінка ризиків та виявлення змов.
+ * CERS-скорингова оцінкаризиків та виявлення змов.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -38,7 +38,7 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 // ─── HELPER COMPONENTS ───────────────────────────────────────────────
 
 const RISK_CONFIG: Record<RiskLevelValue, { cls: string; label: string }> = {
-    critical:  { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'К ИТИЧНО' },
+    critical:  { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'КРИТИЧНО' },
     high:      { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'ВИСОКИЙ_РИЗИК' },
     medium:    { cls: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30', label: 'СЕРЕДНІЙ' },
     low:       { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'БЕЗПЕЧНО' },
@@ -165,7 +165,7 @@ export default function TendersView() {
                  setTenders([
                     { id: 'UA-2026-04-12-001234-a', title: 'ЗАКУПІВЛЯ ПАЛИВА ДЛЯ ДП "АНТОНОВ"', procuringEntity: 'ДП АНТОНОВ', value: 45200000, risk_score: 84, bids_count: 1 },
                     { id: 'UA-2026-04-12-005678-b', title: 'ПОСЛУГИ З КІБЕ БЕЗПЕКИ ХМЕЛЬНИЦЬКОЇ АЕС', procuringEntity: 'ЕНЕ ГОАТОМ', value: 12400000, risk_score: 22, bids_count: 5 },
-                    { id: 'UA-2026-04-11-009999-c', title: ' ЕМОНТ Т АСИ М-06 ТА ОГО ОЖІ', procuringEntity: 'УК АВТОДО ', value: 890000000, risk_score: 95, bids_count: 2 }
+                    { id: 'UA-2026-04-11-009999-c', title: ' ЕМОНТ ТРАСИ М-06 ТА ОГО ОЖІ', procuringEntity: 'УКрАВТОДО ', value: 890000000, risk_score: 95, bids_count: 2 }
                  ]);
             }
             
@@ -221,15 +221,15 @@ export default function TendersView() {
                                РЕЄСТР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЗАКУПІВЕЛЬ</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                               АНТИКОРУПЦІЙНИЙ МОНІТО ИНГ ДЕ ЖАВНОГО КОНТУ У В РЕАЛЬНОМУ ЧАСІ
+                               АНТИКОРУПЦІЙНИЙ МОНІТОРИНГ ДЕ ЖАВНОГО КОНТУ У В РЕАЛЬНОМУ ЧАСІ
                              </p>
                           </div>
                        </div>
                      }
                      stats={[
-                       { label: 'ЛОТІВ_ОБ ОБЛЕНО', value: String(tenders.length), icon: <Database size={14} />, color: 'primary' },
-                       { label: 'К ИТИЧНИЙ_РИЗИК', value: String(tenders.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
-                       { label: 'МОНІТО ИНГ', value: 'PROZORRO_API', icon: <Satellite size={14} />, color: 'success' }
+                       { label: 'ЛОТІВ_ОБРОБЛЕНО', value: String(tenders.length), icon: <Database size={14} />, color: 'primary' },
+                       { label: 'КРИТИЧНИЙ_РИЗИК', value: String(tenders.filter(v => v.risk_score > 80).length), icon: <Siren size={14} />, color: 'danger', animate: true },
+                       { label: 'МОНІТОРИНГ', value: 'PROZORRO_API', icon: <Satellite size={14} />, color: 'success' }
                      ]}
                      actions={
                        <div className="flex gap-4">
@@ -260,7 +260,7 @@ export default function TendersView() {
                                  key={f} onClick={() => setFilterRisk(f)}
                                  className={cn("px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all", filterRisk === f ? "bg-emerald-600 text-black shadow-2xl" : "text-slate-500 hover:text-white")}
                                >
-                                  {f === 'all' ? 'УСІ' : f === 'high' ? 'РИЗИК 60%+' : 'К ИТИЧНІ 80%+'}
+                                  {f === 'all' ? 'УСІ' : f === 'high' ? 'РИЗИК 60%+' : 'КрИТИЧНІ 80%+'}
                                </button>
                             ))}
                          </div>

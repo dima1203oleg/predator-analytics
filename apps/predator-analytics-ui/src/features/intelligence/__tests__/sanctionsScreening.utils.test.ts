@@ -16,7 +16,7 @@ describe('normalizeSanctionsScreeningPayload', () => {
                 {
                     id: 'match-1',
                     list: 'OFAC',
-                    program: 'Санкційна програма',
+                    program: 'Санкційнапрограма',
                     target: 'ГАЗП ОМ',
                     details: 'Підсанкційний субʼєкт.',
                     severity: 'high',

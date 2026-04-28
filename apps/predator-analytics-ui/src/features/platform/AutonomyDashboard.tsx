@@ -39,7 +39,7 @@ import { cn } from '@/utils/cn';
 
 const uk = {
     header: {
-        title: 'АВТОНОМНА СУВЕ ЕННА МАТ ИЦЯ',
+        title: 'АВТОНОМНА СУВЕ ЕННА МАТрИЦЯ',
         subtitle: 'Система Глобальної Еволюції та Алгоритмічної  ефлексії AZR_v56_Nexus',
     },
     tabs: {
@@ -56,7 +56,7 @@ const uk = {
         'TRN-001': 'Абсолютна прозорість кожного автономного рішення',
         'TRN-002': 'Заборона на приховану модифікацію логів',
         'STB-001': 'Стабільність системи вище за радикальні покращення',
-        'STB-002': 'Контроль рекурсивних процесів самомодифікації',
+        'STB-002': 'Контроль рекурсивнихпроцесів самомодифікації',
         'ETH-001': 'Заборона самореплікації без зовнішнього консенсусу',
         'ETH-002': 'Гарантія можливості екстреної деактивації',
     }
@@ -144,7 +144,7 @@ export const AutonomyDashboard: React.FC = () => {
                             </div>
                         }
                         icon={<Cpu size={22} className="text-cyan-400" />}
-                        breadcrumbs={['СИНАПСИС', 'NEXUS v61.0-ELITE', 'СУВЕ ЕННА МАТ ИЦЯ']}
+                        breadcrumbs={['СИНАПСИС', 'NEXUS v61.0-ELITE', 'СУВЕ ЕННА МАТрИЦЯ']}
                         stats={[
                             { label: 'ПОКОЛІННЯ', value: `G${status.generation}`, color: 'primary', icon: <GitBranch size={14} />, animate: true },
                             { label: 'КОНСТИТУЦІЙНІСТЬ', value: `${status.compliance}%`, color: 'success', icon: <Shield size={14} /> },
@@ -268,7 +268,7 @@ export const AutonomyDashboard: React.FC = () => {
                                             <div className="flex items-center justify-between gap-10 relative">
                                                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/5 -translate-y-1/2" />
                                                 {[
-                                                    { id: 1, label: 'МОНІТО ИНГ', status: 'COMPLETED', icon: Eye, color: 'emerald' },
+                                                    { id: 1, label: 'МОНІТОРИНГ', status: 'COMPLETED', icon: Eye, color: 'emerald' },
                                                     { id: 2, label: ' ЕКОМЕНДАЦІЇ', status: 'COMPLETED', icon: Compass, color: 'emerald' },
                                                     { id: 3, label: 'ОБМЕЖЕНА АВТОНОМІЯ', status: 'ACTIVE', icon: Zap, color: 'yellow' },
                                                     { id: 4, label: 'ПОВНА СУВЕРЕННІСТЬ', status: 'LOCKED', icon: Crown, color: 'slate' }

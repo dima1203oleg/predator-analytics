@@ -35,7 +35,7 @@ const NasView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'NAS_Orchestrator',
-                    message: 'СИНХ ОНІЗАЦІЯ З ЕВОЛЮЦІЙНИМ Г ІДОМ УСПІШНА (NAS_SUCCESS). Моделі SOTA доступні.',
+                    message: 'СИНХРОНІЗАЦІЯ З ЕВОЛЮЦІЙНИМ Г ІДОМ УСПІШНА (NAS_SUCCESS). Моделі SOTA доступні.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'NAS_SUCCESS'

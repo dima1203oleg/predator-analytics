@@ -37,7 +37,7 @@ const MODE_ORDER: OperationalMode[] = ['sovereign', 'vigilance', 'threat', 'stea
 
 const MODE_META: Record<OperationalMode, ModeInfo> = {
   sovereign: {
-    label: 'СУВЕ ЕННИЙ',
+    label: 'СУВЕРЕННИЙ',
     icon: '👑',
     accentHsl: '45 74% 52%',      // Sovereign Gold (#D4AF37)
     glowColor: 'rgba(212, 175, 55, 0.45)',
@@ -49,7 +49,7 @@ const MODE_META: Record<OperationalMode, ModeInfo> = {
     glowColor: 'rgba(245, 158, 11, 0.35)',
   },
   threat: {
-    label: 'ЗАГ ОЗА',
+    label: 'ЗАГРОЗА',
     icon: '🔴',
     accentHsl: '0 84% 60%',      // Червоний
     glowColor: 'rgba(239, 68, 68, 0.4)',

@@ -63,7 +63,7 @@ describe('ActiveJobsPanel', () => {
 
         render(<ActiveJobsPanel />);
 
-        expect(await screen.findByText(/Активні процеси/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Активніпроцеси/i)).toBeInTheDocument();
         expect(screen.getByText(/Підтверджені ingestion jobs з \/ingestion\/jobs/i)).toBeInTheDocument();
         expect(screen.getByText('manifest.csv')).toBeInTheDocument();
         expect(screen.getByText('PDF: report.pdf')).toBeInTheDocument();

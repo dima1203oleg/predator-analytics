@@ -116,7 +116,7 @@ const ScenarioModeling: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'ScenarioModeling',
-                    message: `К ИТИЧНА ПОМИЛКА ДВИГУНА МОДЕЛЮВАННЯ: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
+                    message: `КрИТИЧНА ПОМИЛКА ДВИГУНА МОДЕЛЮВАННЯ: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
                     severity: 'critical',
                     timestamp: new Date().toISOString(),
                     code: 'SCENARIO_ENGINE_CRITICAL'
@@ -328,7 +328,7 @@ const ScenarioModeling: React.FC = () => {
                             {[
                                 { label: 'Прогнозована Виручка', value: '$12.4M', diff: '+14.2%', up: true, color: '#10b981' },
                                 { label: 'Відхилення Маржі', value: `${marginChange > 0 ? '+' : ''}${marginChange.toFixed(1)}%`, diff: 'до бази', up: marginChange >= 0, color: marginChange >= 0 ? '#10b981' : '#ef4444' },
-                                { label: 'Індекс ризику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
+                                { label: 'Індексризику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
                             ].map((kpi, i) => (
                                 <div key={i} className="p-5 rounded-3xl bg-slate-900/60 border border-white/5 backdrop-blur-xl relative overflow-hidden">
                                     <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full pointer-events-none" />

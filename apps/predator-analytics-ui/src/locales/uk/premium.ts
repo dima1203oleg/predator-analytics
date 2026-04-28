@@ -87,7 +87,7 @@ export const premiumLocales = {
     // Modes
     modes: {
       edit: 'редагування',
-      preview: 'Попередній перегляд',
+      preview: 'Попереднійперегляд',
       view: 'Перегляд',
       mode: 'режим',
     },
@@ -107,7 +107,7 @@ export const premiumLocales = {
       dashboardNamePlaceholder: 'Назва дашборду',
       share: 'Поділитися',
       editMode: 'Перейти в режим редагування',
-      viewMode: 'Перейти в режим перегляду',
+      viewMode: 'Перейти в режимперегляду',
     },
 
     // Widget types
@@ -145,7 +145,7 @@ export const premiumLocales = {
     widgetDescriptions: {
       area_chart: 'Графік області для візуалізації трендів',
       bar_chart: 'Стовпчаста діаграма для порівнянь',
-      pie_chart: 'Кругова діаграма для розподілу',
+      pie_chart: 'Кругова діаграма длярозподілу',
       line_chart: 'Лінійний графік для часових рядів',
       radar_chart: 'радарна діаграма для багатовимірного аналізу',
       treemap: 'Деревоподібна карта для ієрархічних даних',
@@ -157,7 +157,7 @@ export const premiumLocales = {
       timeline: 'Хронологія подій та транзакцій',
       network_graph: 'Граф зв\'язків між сутностями',
       sankey: 'Діаграма потоків коштів/товарів',
-      funnel: 'Воронка для конверсій та процесів',
+      funnel: 'Воронка для конверсій тапроцесів',
     },
 
     // Data Source Categories
@@ -223,7 +223,7 @@ export const premiumLocales = {
     // Templates
     templates: {
       titan: 'Шаблон TITAN - Бізнес-аналітика',
-      inquisitor: 'Шаблон INQUISITOR - розслідування',
+      inquisitor: 'Шаблон INQUISITOR -розслідування',
       sovereign: 'Шаблон SOVEREIGN - Державний контроль',
       analyst: 'Шаблон ANALYST - Глибокий аналіз',
     },
@@ -348,7 +348,7 @@ export const premiumLocales = {
       activeAlerts: 'Активних алертів',
       opportunities: 'Можливостей',
       marketScore: 'ринковий бал',
-      riskLevel: 'рівень ризику',
+      riskLevel: 'рівеньризику',
       documents: 'Документів',
       systemHealth: 'Здоров\'я системи',
       activeModels: 'Активних моделей',
@@ -372,7 +372,7 @@ export const premiumLocales = {
     // Sections
     sections: {
       critical: '🚨 Критичні алерти',
-      opportunities: '📈 ринкові можливості',
+      opportunities: '📈ринкові можливості',
       insights: '🔮 AI Інсайти та прогнози',
       actions: '✅рекомендовані дії',
       industryForecasts: 'Галузеві Прогнози (AI)',
@@ -421,7 +421,7 @@ export const premiumLocales = {
       itemsCount: 'елементів',
     },
     mockNews: {
-      systemMessage: 'Системне повідомлення',
+      systemMessage: 'Системнеповідомлення',
       sourceData: 'Нові дані з джерела: {type}. Перегляньте для детального аналізу.',
       sectors: {
         energy: 'ЕНЕ ГЕТИКА',
@@ -512,7 +512,7 @@ export const premiumLocales = {
             {
               title: 'Переглянути цінову стратегію Q4',
               summary: 'Аналіз показує можливість оптимізації цін на 5 категорій товарів',
-              detail: 'рекомендуємо провести зустріч з відділом продажів до кінця тижня.',
+              detail: 'рекомендуємо провести зустріч з відділомпродажів до кінця тижня.',
             },
             {
               title: 'Оновити документацію постачальників',
@@ -522,7 +522,7 @@ export const premiumLocales = {
           ]
         }
       },
-      summary: 'Сьогодні виявлено {alerts} критичні алерти та {opportunities} ринкові можливості. Загальна оцінка ситуації: {status}.рекомендуємо звернути увагу на цінову активність конкурентів.',
+      summary: 'Сьогодні виявлено {alerts} критичні алерти та {opportunities}ринкові можливості. Загальна оцінка ситуації: {status}.рекомендуємо звернути увагу на цінову активність конкурентів.',
       statusPositive: 'ПОЗИТИВНА',
     },
 
@@ -624,7 +624,7 @@ export const premiumLocales = {
     storageUsage: 'ВИКОРИСТАННЯ СХОВИЩА',
     activeModels: 'АКТИВНІ NEXUS-AZR МОДЕЛІ',
     informationEntropy: 'Аналітика Інформаційної Ентропії',
-    crossCorrelation: 'Крос-кореляція та Патерни ризику',
+    crossCorrelation: 'Крос-кореляція та Патерниризику',
     waitingTelemetry: 'Очікування телеметричних даних...',
     accessRestricted: 'ДОСТУП ОБМЕЖЕНО',
     accessRestrictedDesc: 'розширена матриця кореляції та аналіз загроз вимагають доступу рівня 3.',
@@ -706,13 +706,13 @@ export const premiumLocales = {
     toolbar: {
       search: 'Пошук об\'єктів...',
       toggleLabels: 'Показати/сховати підписи',
-      toggleRisk: 'Показати/сховати ризики',
+      toggleRisk: 'Показати/сховатиризики',
       zoomIn: 'Збільшити',
       zoomOut: 'Зменшити',
       reset: 'Скинути вигляд',
       download: 'Завантажити',
       share: 'Поділитися',
-      hiddenDataWarning: ' ️ Імена приховано. Увімкніть чутливі дані для перегляду.',
+      hiddenDataWarning: ' ️ Імена приховано. Увімкніть чутливі дані дляперегляду.',
       subtitle: 'Візуалізація корпоративних та фінансових зв\'язків',
     },
 
@@ -759,7 +759,7 @@ export const premiumLocales = {
 
     // Detail panel
     detail: {
-      riskLevel: 'рівень ризику',
+      riskLevel: 'рівеньризику',
       connections: 'Зв\'язків',
       address: 'Адреса',
       status: 'Статус',
@@ -832,7 +832,7 @@ export const premiumLocales = {
       historical: 'Історичні Дані',
       forecast: 'Прогноз AI',
       growth: 'Очікуваний  іст',
-      riskFactor: 'Фактор ризику',
+      riskFactor: 'Факторризику',
       riskLevels: {
         low: 'Низький',
         medium: 'Середній',
@@ -1058,7 +1058,7 @@ export const premiumLocales = {
     },
 
     infrastructureStatus: 'Статус Інфраструктури',
-    footer: 'PREDATOR ANALYTICS © 2026 • ПОВНА УК АЇНІЗАЦІЯ',
+    footer: 'PREDATOR ANALYTICS © 2026 • ПОВНА УКРАЇНІЗАЦІЯ',
   },
 
   // ============================================
@@ -1087,7 +1087,7 @@ export const premiumLocales = {
       default: 'ОБ\'ЄКТ',
     },
     entityHud: {
-      params: 'ПА АМЕТ И ОБ\'ЄКТА',
+      params: 'ПА АМЕТрИ ОБ\'ЄКТА',
       aiInsight: 'AI ІНСАЙТ ELITE-2026',
       safe: 'БЕЗПЕЧНО',
       risk: 'РИЗИК',
@@ -1107,7 +1107,7 @@ export const premiumLocales = {
       operator: 'ТАКТИЧНА СПОСТЕ ЕЖНІСТЬ',
       explorer: 'ЗДОРОВ\'Я СИСТЕМИ',
     },
-    breadcrumbs: ['СИНАПСИС', 'СИСТЕМА', 'МОНІТО ИНГ'],
+    breadcrumbs: ['СИНАПСИС', 'СИСТЕМА', 'МОНІТОРИНГ'],
     tabs: {
       metrics: 'Метрики',
       logs: 'Логи',
@@ -1130,7 +1130,7 @@ export const premiumLocales = {
     },
     topology: {
       neural: 'НЕЙ ОННА ТОПОЛОГІЯ',
-      services: 'МАТ ИЦЯ СЕ ВІСІВ',
+      services: 'МАТрИЦЯ СЕ ВІСІВ',
     },
     simulation: {
       title: 'ЦИФ ОВИЙ ДВІЙНИК: БОЙОВІ ТЕСТИ',
@@ -1169,14 +1169,14 @@ export const premiumLocales = {
       coderOutput: 'Вихід Кодера (Mistral/Groq)',
       securityAudit: 'Аудит Безпеки (Aider/Copilot)',
       executionTime: 'Виконання',
-      riskLevel: 'рівень ризику',
+      riskLevel: 'рівеньризику',
       high: 'ВИСОКИЙ',
       medium: 'СЕРЕДНІЙ',
       low: 'НИЗЬКИЙ',
       selectTrace: 'Оберіть запис для візуалізації мислення',
     },
     sagaView: {
-      registryTitle: 'РЕЄСТР SAGA Т АНЗАКЦІЙ',
+      registryTitle: 'РЕЄСТР SAGA ТРАНЗАКЦІЙ',
       visualizeTitle: 'ВІЗУАЛІЗАЦІЯ РОЗПОДІЛЕНОГО Т ЕЙСУ',
       completed: 'ЗАВЕ ШЕНО',
       compensated: 'ВІДКОЧЕНО',
@@ -1198,7 +1198,7 @@ export const premiumLocales = {
       title: 'КОНКУ ЕНТНА РОЗВІДКА',
       descriptionStart: 'Отримайте доступ до',
       descriptionHighlight: 'найпотужнішого',
-      descriptionEnd: 'інструменту конкурентної розвідки. Аналізуйте ціни, ринкові частки, стратегії та слабкі місця ваших конкурентів.',
+      descriptionEnd: 'інструменту конкурентної розвідки. Аналізуйте ціни,ринкові частки, стратегії та слабкі місця ваших конкурентів.',
       upgrade: 'ОНОВИТИ ДОПРЕМІУМ',
       forgeView: {
         title: 'КУЗНЯ ЕВОЛЮЦІЇ ELITE',
@@ -1228,7 +1228,7 @@ export const premiumLocales = {
       importTrends: 'Тренди обсягів імпорту (6 місяців)',
       radar: ' адар конкурентного позиціонування',
       prices: 'Цінова розвідка по продуктам',
-      realtime: 'AI-керована ринкова розвідка',
+      realtime: 'AI-керованаринкова розвідка',
       yourCompany: 'Ваша компанія',
       competitor: 'Топ конкурент',
       others: 'Інші',
@@ -1269,7 +1269,7 @@ export const premiumLocales = {
     },
     tip: {
       title: 'Порада',
-      text: 'Налаштуйте автоматичні сповіщення про зміни цін конкурентів щоб миттєво реагувати на ринкові зміни.',
+      text: 'Налаштуйте автоматичні сповіщення про зміни цін конкурентів щоб миттєво реагувати наринкові зміни.',
     },
     status: {
       active: 'Активний',
@@ -1305,7 +1305,7 @@ export const premiumLocales = {
       noTargetsIdentified: 'Цілей не ідентифіковано',
       radarScanNotice: 'Сканування семантичного радару не повернуло сутностей, категорія яких "Організація" або "Конкурент". Запустіть глибше сканування або додайте джерела через ETL.',
       forceRescan: 'Примусове Пересканування',
-      riskScore: 'рівень ризику',
+      riskScore: 'рівеньризику',
       status: 'Статус',
       source: 'Джерело',
       unknownSector: 'НЕВІДОМИЙ_СЕКТО ',
@@ -1329,7 +1329,7 @@ export const premiumLocales = {
         error: 'ПОМИЛКА',
       },
     },
-    breadcrumbs: ['КОМАНДНИЙ ЦЕНТР', 'МОНІТО ИНГ', 'СВІДОМІСТЬ'],
+    breadcrumbs: ['КОМАНДНИЙ ЦЕНТР', 'МОНІТОРИНГ', 'СВІДОМІСТЬ'],
     stats: {
       connection: 'З\'єднання',
       system: 'Стан Системи',
@@ -1364,7 +1364,7 @@ export const premiumLocales = {
         purgeSuccess: '[CACHE] Кеш успішно очищено.',
         diagInit: '[DIAG] Запуск глибокої діагностики системи (System Doctor)...',
         diagStatus: '[DIAG] СТАТУС: {status}',
-        diagReport: '[DIAG] ЗВІТ ОТ ИМАНО.',
+        diagReport: '[DIAG] ЗВІТ ОТрИМАНО.',
         diagError: '[DIAG] ПОМИЛКА: Не вдалося запустити діагностику.',
         fixInit: '[FIX] Застосування виправлень на основі звіту...',
         fixStatus: '[FIX] СТАТУС: {status}',
@@ -1374,7 +1374,7 @@ export const premiumLocales = {
       }
     },
     matrix: {
-      title: 'МАТ ИЦЯ ЗНАНЬ',
+      title: 'МАТрИЦЯ ЗНАНЬ',
       search: 'Пошук сутностей, біосигналів, кластерів...',
       totalEntities: 'ВСЬОГО СУТНОСТЕЙ',
       totalEdges: 'ВСЬОГО ЗВ\'ЯЗКІВ',
@@ -1617,7 +1617,7 @@ export const premiumLocales = {
     },
     ledgerView: {
       title: 'ЖУ НАЛ_НЕЗМІННОЇ_ІСТИНИ_V48.LOG',
-      sync: 'СИНХ ОНІЗАЦІЯ_V45',
+      sync: 'СИНХРОНІЗАЦІЯ_V45',
       liveStream: 'ЖИВИЙ_ПОТІК',
       status: 'Статус: Суверенний',
       uptime: 'Час роботи',
@@ -1628,11 +1628,11 @@ export const premiumLocales = {
       title: 'ЦЕХ ВЕБ-ЕВОЛЮЦІЇ',
       subtitle: 'Автономний UX/UI Архітектор v2.0',
       liveActive: 'Живе покращення активне',
-      enhancement: 'ПОК АЩЕННЯ',
+      enhancement: 'ПОКрАЩЕННЯ',
       viewAllHistory: 'Переглянути Всю Історію Еволюції',
     },
     learningStack: {
-      title: 'СУВЕ ЕННИЙ СТЕК НАВЧАННЯ',
+      title: 'СУВЕРЕННИЙ СТЕК НАВЧАННЯ',
       engineStatus: 'Статус Двигуна Навчання',
       idle: 'ОЧІКУВАННЯ',
       startTraining: 'Запустити Навчання',
@@ -1674,7 +1674,7 @@ export const premiumLocales = {
       },
       ready: {
         title: 'Ви готові до роботи',
-        description: 'Система налаштована та готова до використання. Почніть своє перше розслідування прямо зараз.',
+        description: 'Система налаштована та готова до використання. Почніть своє першерозслідування прямо зараз.',
       },
     },
     ui: {
@@ -1719,7 +1719,7 @@ export const premiumLocales = {
       live: 'Живий Перегляд',
       history: 'Історія',
     },
-    piiWarning: 'Особисті дані (PII) приховано згідно з протоколом захисту. Для повного перегляду потрібна додаткова авторизація офіцера безпеки.',
+    piiWarning: 'Особисті дані (PII) приховано згідно з протоколом захисту. Для повногоперегляду потрібна додаткова авторизація офіцера безпеки.',
   },
 
   // ============================================
@@ -1775,10 +1775,10 @@ export const premiumLocales = {
         },
         diversifyChips: {
           title: 'Диверсифікуйте постачальників чіпів',
-          summary: '78% ваших напівпровідників надходять від одного постачальника.рекомендуємо розподілити ризики.',
+          summary: '78% ваших напівпровідників надходять від одного постачальника.рекомендуєморозподілитиризики.',
           timeframe: 'Стратегічно важливо',
           factors: [
-            'Високий ризик перебоїв поставок',
+            'Високийризик перебоїв поставок',
             'Виявлено 3 альтернативних постачальника',
             'Можлива економія на логістиці до 12%'
           ]
@@ -1818,7 +1818,7 @@ export const premiumLocales = {
           ]
         },
         microchipConcentration: {
-          title: 'Системний ризик: концентрація мікрочіпів',
+          title: 'Системнийризик: концентрація мікрочіпів',
           summary: '3 постачальника контролюють 89% імпорту напівпровідників. Критична вразливість інфраструктури.',
           timeframe: 'Постійний моніторинг',
           factors: [
@@ -1846,7 +1846,7 @@ export const premiumLocales = {
     subtitle: 'AI Аналітика світових ринків',
     watchlist: 'Список спостереження',
     tip: 'Порада дня',
-    advice: 'Ціни на мідь демонструють бичачий тренд.  озгляньте можливість хеджування ризиків на Q3.',
+    advice: 'Ціни на мідь демонструють бичачий тренд.  озгляньте можливість хеджуванняризиків на Q3.',
     modelTitle: 'Модель прогнозування',
     confidence: 'Достовірність',
     activateHedging: 'Активувати хеджування',
@@ -1881,7 +1881,7 @@ export const premiumLocales = {
     title: 'Щоденний Брифінг',
     archive: 'Архів',
     greetings: 'Доброго ранку, Титан.',
-    intro: 'Система PREDATOR проаналізувала 14,200 подій за ніч. ринкова ситуація сприятлива, але вимагає уваги до логістики.',
+    intro: 'Система PREDATOR проаналізувала 14,200 подій за ніч.ринкова ситуація сприятлива, але вимагає уваги до логістики.',
     opportunities: 'Можливості',
     opportunitiesDesc: ' ізкий стрибок попиту на Автозапчастини в Одеському регіоні (+34%). Ваші запаси дозволяють покрити дефіцит.',
     risks: ' изики',
@@ -1890,7 +1890,7 @@ export const premiumLocales = {
     actions: {
       confirmPurchase: 'Підтвердити закупівлю партії 8507',
       confirmPurchaseSub: 'Постачальник: Zhejiang Power • Економія: $12k',
-      updateRisk: 'Оновити профіль ризику',
+      updateRisk: 'Оновити профільризику',
       updateRiskSub: "Виявлено нові зв'язки у контрагента \"ТОВ Вектор\"",
     },
     protectionActive: 'Системи захисту активні',
@@ -1902,7 +1902,7 @@ export const premiumLocales = {
     subtitle: 'Останнє оновлення даних: {time}',
     lastUpdated: 'Останнє оновлення даних: 2 хв тому',
     entityType: 'Юридична Особа',
-    riskLevel: 'рівень ризику',
+    riskLevel: 'рівеньризику',
     highRisk: 'Високий',
     normalRisk: 'Нормальний',
     founded: 'Засновано',
@@ -1966,7 +1966,7 @@ export const premiumLocales = {
     all: 'Усі',
     noAlerts: 'Нових сповіщень не виявлено',
     severity: {
-      critical: 'К ИТИЧНО',
+      critical: 'КРИТИЧНО',
       high: 'ВИСОКИЙ',
       medium: 'СЕРЕДНІЙ',
       low: 'НИЗЬКИЙ',
@@ -2013,12 +2013,12 @@ export const premiumLocales = {
         },
         tovAlphaRisk: {
           title: 'ТОВ "Альфа" — 89% ймовірність порушення',
-          desc: 'Високий ризик-скор на основі історії декларацій, віку компанії та зв\'язків.',
+          desc: 'Високийризик-скор на основі історії декларацій, віку компанії та зв\'язків.',
         }
       },
       sovereign: {
         chipRisk: {
-          title: 'Системний ризик: залежність від 3 постачальників чіпів',
+          title: 'Системнийризик: залежність від 3 постачальників чіпів',
           desc: '78% імпорту мікрочіпів надходить від 3 компаній. Критична вразливість ланцюга поставок.',
         },
         euTradeForecast: {
@@ -2080,7 +2080,7 @@ export const premiumLocales = {
     templates: {
       monthly: {
         name: 'Щомісячний Звіт Керівництва',
-        desc: 'Повний огляд ринку, конкурентів та ризиків.',
+        desc: 'Повний огляд ринку, конкурентів таризиків.',
         time: '2 години тому',
       },
       audit: {
@@ -2202,7 +2202,7 @@ export const premiumLocales = {
       eu: 'ЄС',
       turkey: 'Туреччина',
     },
-    riskIndicator: 'Індикатор ризику',
+    riskIndicator: 'Індикаторризику',
     riskWarning: 'Можливе коригування митної вартості.рекомендовано підготувати експортну декларацію.',
     noRisks: ' изиків не виявлено. Зелений коридор.',
   },
@@ -2272,9 +2272,9 @@ export const premiumLocales = {
       }
     },
     riskScore: {
-      title: 'Оцінка ризику',
+      title: 'Оцінкаризику',
       levels: {
-        critical: 'К ИТИЧНИЙ',
+        critical: 'КРИТИЧНИЙ',
         high: 'ВИСОКИЙ',
         medium: 'СЕРЕДНІЙ',
         low: 'НИЗЬКИЙ',
@@ -2316,7 +2316,7 @@ export const premiumLocales = {
     greetingResponse: ' адий вас бачити. Готовий до роботи.',
     defaultResponse: 'Запит "{query}" отримано. Виконую глибокий пошук в базі даних Vector DB...',
     hints: {
-      analyzeRisks: 'Проаналізуй ризики',
+      analyzeRisks: 'Проаналізуйризики',
       createReport: 'Створити звіт',
       latestInsights: 'Останні інсайти',
     },
@@ -2332,7 +2332,7 @@ export const premiumLocales = {
     noResults: "результати перевірки з'являться тут",
     warningTitle: 'Автоматичне попередження',
     warningMessage: "Виявлено ланцюжок імовірного зв'язку вашого контрагента з директором ТОВ 'Альфа', що перебуває у списку РНБО.",
-    fullReportButton: 'Сформувати повний звіт ризиків',
+    fullReportButton: 'Сформувати повний звітризиків',
     statusClear: 'Чисто',
     statusMatch: 'Збіг знайдено',
     matchFound: 'Збіг по ПІБ',
@@ -2548,10 +2548,10 @@ export const premiumLocales = {
           },
           correlation: {
             title: 'Кореляція митних інспекторів',
-            desc: 'Інспектор Сидоров зафіксував 12 успішних проходів ризикових компаній за зміну.',
+            desc: 'Інспектор Сидоров зафіксував 12 успішних проходівризикових компаній за зміну.',
           }
         },
-        presets: ['Теплова карта заниження', 'Кореляція ризиків офіцерів', 'Тіньові маршрути']
+        presets: ['Теплова карта заниження', 'Кореляціяризиків офіцерів', 'Тіньові маршрути']
       },
       SOVEREIGN: {
         title: 'SOVEREIGN: СТРАТЕГІЧНЕ ЯДРО',
@@ -2563,7 +2563,7 @@ export const premiumLocales = {
           },
           energy: {
             title: 'Контроль енергоресурсів',
-            desc: 'Критична залежність від імпорту ПММ через вузол "C" досягла 75%. Стратегічний ризик.',
+            desc: 'Критична залежність від імпорту ПММ через вузол "C" досягла 75%. Стратегічнийризик.',
           }
         },
         presets: ['Аудит бюджетних втрат', 'Карта стратегічних ресурсів', 'Індекс імпортозалежності']
@@ -2576,7 +2576,7 @@ export const premiumLocales = {
       pro: 'Про-Моделювання',
       selectedPerspective: 'Вибрана перспектива',
       tradeVolume: 'Векторний аналіз обсягів торгівлі',
-      riskDistribution: 'розподіл величини ризиків',
+      riskDistribution: 'розподіл величиниризиків',
       xTime: 'Вісь X: Час',
       yValue: 'Вісь Y: Вартість',
       filterHq: 'Фільтр: HQ',
@@ -2604,13 +2604,13 @@ export const premiumLocales = {
       emptyRegistry: 'Реєстр порожній. Дані завантажуються...',
       accessingPort: 'Вхід у захищений порт...',
       declared: 'Задекларовано',
-      intelSignal: 'СИГНАЛ_ ОЗВІДКИ',
+      intelSignal: 'СИГНАЛ_ РОЗВІДКИ',
       mappingVectors: 'КА ТУВАННЯ_ТО ГОВИХ_ВЕКТО ІВ',
       secureChannel: 'КАНАЛ_ЗВ\'ЯЗКУ: ШИФ ОВАНО',
       density: 'Щільність',
       security: 'Безпека',
       traffic: 'Трафік',
-      vital: 'К ИТИЧНО',
+      vital: 'КРИТИЧНО',
       stable: 'СТАБІЛЬНО',
       modes: {
         sea: 'МО Е',
@@ -2619,7 +2619,7 @@ export const premiumLocales = {
       }
     },
     actions: {
-      generateDossier: 'Згенерувати досьє ризику',
+      generateDossier: 'Згенерувати досьєризику',
     },
     paywall: {
       title: 'НЕОБХІДНИЙПРЕМІУМ ДОСТУП',
@@ -2655,7 +2655,7 @@ export const premiumLocales = {
           'AI Інсайти',
           'Конкурентний аналіз',
           'API доступ',
-          'Пріоритетна підтримка',
+          'Пріоритетнапідтримка',
         ]
       },
       professional: {
@@ -2670,7 +2670,7 @@ export const premiumLocales = {
           'AI Інсайти (TITAN/INQUISITOR/SOVEREIGN)',
           'Конкурентний аналіз',
           'API доступ (10K запитів/день)',
-          'Стандартна підтримка',
+          'Стандартнапідтримка',
         ]
       },
       enterprise: {
@@ -2686,7 +2686,7 @@ export const premiumLocales = {
           'On-premise розгортання',
           'SLA 99.9% uptime',
           'Виділений менеджер',
-          '24/7 пріоритетна підтримка',
+          '24/7 пріоритетнапідтримка',
         ]
       }
     },
@@ -2740,7 +2740,7 @@ export const premiumLocales = {
   datasetStudio: {
     title: 'ДАТАСЕТ СТУДІО',
     subtitle: 'Лабораторія синтезу та обробки знань',
-    description: 'Тепер з підтримкою власних датасетів як прикладів для генерації.',
+    description: 'Тепер з підтримкою власних датасетів якприкладів для генерації.',
     forge: {
       title: 'НЕЙ ОННА КУЗНЯ',
       subtitle: 'Dataset Engineering & Latent Space Augmentation',
@@ -2754,7 +2754,7 @@ export const premiumLocales = {
       userDatasets: {
         title: 'Мої Датасети',
         upload: 'Завантажити',
-        stats: '{count} завантажено • {active} активних як приклад',
+        stats: '{count} завантажено • {active} активних якприклад',
         empty: {
           title: 'Немає завантажених датасетів',
           subtitle: 'Завантажте Excel, CSV або JSON файл'
@@ -2771,8 +2771,8 @@ export const premiumLocales = {
           disable: 'Вимкнути',
           activeDesc: 'Цей датасет буде використано як основу для генерації нових синтетичних даних',
           deleteConfirm: 'Видалити цей датасет?',
-          turnOff: 'Вимкнути як приклад',
-          turnOn: 'Увімкнути як приклад'
+          turnOff: 'Вимкнути якприклад',
+          turnOn: 'Увімкнути якприклад'
         },
         uploadModal: {
           title: 'Завантажити Датасет',
@@ -2863,7 +2863,7 @@ export const premiumLocales = {
     },
     executive: {
       title: 'Звіт керівнику',
-      description: 'Автогенерований executive brief з ключовими метриками, ризиками та можливостями. Доступний у форматах PDF та PPTX.',
+      description: 'Автогенерований executive brief з ключовими метриками,ризиками та можливостями. Доступний у форматах PDF та PPTX.',
       phaseInfo: '📋 Phase 2 — Report Generator',
       generate: 'Згенерувати звіт',
       lastReport: 'Останній звіт: {date}',
@@ -3008,7 +3008,7 @@ export const premiumLocales = {
           evasionSchemesDesc: 'Патерни маніпуляцій',
           profiling: 'Профілювання',
           profilingDesc: 'Досьє на суб\'єктів',
-          riskScoring: 'Оцінка ризику',
+          riskScoring: 'Оцінкаризику',
           riskScoringDesc: 'Скоринг декларацій',
         }
       },

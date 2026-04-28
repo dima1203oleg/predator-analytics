@@ -31,7 +31,7 @@ export const OsintCommandCenter: React.FC = () => {
             {/* ─── Анімований Фон ( адар) ────────────────────── */}
             <RadarBackground />
 
-            {/* ─── ВЕ ХНЯ ПАНЕЛЬ (HUD) ──────────────────────── */}
+            {/* ─── ВЕРХНЯ ПАНЕЛЬ (HUD) ──────────────────────── */}
             <header className="relative z-10 flex items-center justify-between mb-8 backdrop-blur-md bg-slate-900/40 p-4 rounded-2xl border border-slate-800/50 shadow-2xl">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
@@ -48,7 +48,7 @@ export const OsintCommandCenter: React.FC = () => {
 
                 <div className="flex items-center gap-6">
                     <div className="text-right">
-                        <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Глобальний рівень ризику</div>
+                        <div className="text-[10px] text-slate-500 font-bold uppercase mb-1">Глобальний рівеньризику</div>
                         <div className={cn(
                             "text-2xl font-black font-mono",
                             globalRiskScore > 70 ? "text-rose-500" : globalRiskScore > 40 ? "text-amber-500" : "text-rose-400"
@@ -77,7 +77,7 @@ export const OsintCommandCenter: React.FC = () => {
             {/* ─── ОСНОВНА СІТКА ────────────────────────────── */}
             <div className="relative z-10 grid grid-cols-12 gap-6 h-[calc(100vh-140px)]">
                 
-                {/* 📊 ЛІВА ПАНЕЛЬ: МОНІТО ИНГ ТА РИЗИКИ (3 cols) */}
+                {/* 📊 ЛІВА ПАНЕЛЬ: МОНІТОРИНГ ТА РИЗИКИ (3 cols) */}
                 <aside className="col-span-3 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
                     {/* RISK HEATMAP */}
                     <div className="bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 backdrop-blur-xl">
@@ -119,7 +119,7 @@ export const OsintCommandCenter: React.FC = () => {
                     </div>
                 </aside>
 
-                {/* 🎯 ЦЕНТ АЛЬНА ПАНЕЛЬ: ПОШУК ТА ІНСТ УМЕНТИ (6 cols) */}
+                {/* 🎯 ЦЕНТ АЛЬНА ПАНЕЛЬ: ПОШУК ТА ІНСТРУМЕНТИ (6 cols) */}
                 <main className="col-span-6 space-y-6 flex flex-col">
                     {/* SEARCH NEXUS */}
                     {/* SEARCH NEXUS */}
@@ -210,7 +210,7 @@ export const OsintCommandCenter: React.FC = () => {
                     </div>
                 </main>
 
-                {/* 📡 П АВА ПАНЕЛЬ: ЖИВА СТ ІЧКА (3 cols) */}
+                {/* 📡 ПРАВА ПАНЕЛЬ: ЖИВА СТ ІЧКА (3 cols) */}
                 <aside className="col-span-3 flex flex-col bg-slate-900/40 border border-slate-800/50 rounded-2xl p-5 backdrop-blur-xl h-full">
                     <div className="flex items-center justify-between mb-6">
                          <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">

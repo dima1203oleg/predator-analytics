@@ -2,7 +2,7 @@
  * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v61.0-ELITE
  * PREDATOR Analytics — Суверенна Транзакційна та Офшорна  озвідка
  * 
- * Власність: ДЕ ЖАВНА МИТНА СЛУЖБА УК АЇНИ
+ * Власність: ДЕ ЖАВНА МИТНА СЛУЖБА УКРАЇНИ
  * Статус: ОБМЕЖЕНИЙ ДОСТУП
  * 
  * PREDATOR_WRATH v58.2 · ТАЄМНО · РІВЕНЬ-1
@@ -68,13 +68,13 @@ const FinancialInterceptorTerminal: React.FC = () => {
     const [logs, setLogs] = useState<string[]>([]);
 
     const txPool = [
-        "ПЕ ЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
-        "ДЕШИФ УВАННЯ: ОСОБА_ВІДП АВНИКА_ОТ ИМАНА",
+        "ПЕРЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
+        "ДЕШИФ УВАННЯ: ОСОБА_ВІДП АВНИКА_ОТрИМАНА",
         "ПЕ ЕВІ КА_РЕЄСТРУ: ЗБІГ_З_OFFSHORE_LEAKS",
         "ВАЛІДАЦІЯ: ШЛЯХ_БАНКУ_КО ЕСПОНДЕНТА",
         "ЗБІГ_ЗНАЙДЕНО: [ЗВ'ЯЗОК_ІЗ_САНКЦІЯМИ]",
         "ШИФ УВАННЯ: ДАМП_АУДИТО СЬКОГО_СЛІДУ",
-        "Т АСУВАННЯ: ВИЯВЛЕНО_ВИХІД_З_К ИПТО_МІКСЕ А",
+        "Т АСУВАННЯ: ВИЯВЛЕНО_ВИХІД_З_КрИПТО_МІКСЕ А",
         "СТАТУС: ЦІЛЬ_ЗАК ІПЛЕНА_НА_КІП І",
         "ELITE_АНАЛІТИКА: ГЛИБИННИЙ_ХВИЛЬОВИЙ_ЗБІГ",
         "П ОГНОЗ_КОГНІТИВНОГО_ЗБОЮ: 0.002%"
@@ -208,7 +208,7 @@ export default function FinancialSigintView() {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'FinancialSigint',
-                message: `АВА ІЙНИЙ ФІНАНСОВИЙ МОНІТО ИНГ [${activeFailover ? 'ZROK' : 'MIRROR'}]: Використовується автономний вузол SIGINT_NODE. Дані можуть бути неповними.`,
+                message: `АВА ІЙНИЙ ФІНАНСОВИЙ МОНІТОРИНГ [${activeFailover ? 'ZROK' : 'MIRROR'}]: Використовується автономний вузол SIGINT_NODE. Дані можуть бути неповними.`,
                 severity: 'warning',
                 timestamp: new Date().toISOString(),
                 code: 'FINANCIAL_OFFLINE'
@@ -299,7 +299,7 @@ export default function FinancialSigintView() {
                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Landmark size={10} /> },
              ]}
              stats={[
-               { label: 'ЗАГ ОЗИ_НАЖИВО', value: liveAlerts.toString(), icon: <Siren />, color: 'gold', animate: true },
+               { label: 'ЗАГРОЗИ_НАЖИВО', value: liveAlerts.toString(), icon: <Siren />, color: 'gold', animate: true },
                { 
                    label: isOffline ? 'ВІДНОВЛЕННЯ_MIRROR' : 'ВУЗОЛ_ДЖЕРЕЛО', 
                    value: isOffline ? `${Math.floor(backendStatus.healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_П ОД'), 
@@ -393,7 +393,7 @@ export default function FinancialSigintView() {
                          <div className="flex items-center justify-between mb-6 border-b-2 border-white/[0.04] pb-10">
                             <h2 className="text-[16px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
                                <Activity size={28} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
-                               ДИНАМІКА_ПОТОКІВ_SWIFT // Т АНЗАКЦІЙНИЙ_МОНІТО ИНГ
+                               ДИНАМІКА_ПОТОКІВ_SWIFT // ТРАНЗАКЦІЙНИЙ_МОНІТОРИНГ
                             </h2>
                             <div className="flex items-center gap-8">
                                <div className="flex items-center gap-3">
@@ -402,7 +402,7 @@ export default function FinancialSigintView() {
                                </div>
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_15px_#d4af37]" />
-                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГ ОЗА_НАЖИВО</span>
+                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГРОЗА_НАЖИВО</span>
                                </div>
                             </div>
                          </div>
@@ -437,7 +437,7 @@ export default function FinancialSigintView() {
                             <Skull size={350} className="text-yellow-600" />
                          </div>
                          <h3 className="text-[14px] font-black text-amber-600 italic uppercase tracking-[0.5em] mb-10 border-b-2 border-amber-500/10 pb-10 flex items-center justify-between">
-                            <span>ЗАГ ОЗЛИВІ_Т АНЗАКЦІЇ</span>
+                            <span>ЗАГРОЗЛИВІ_ТРАНЗАКЦІЇ</span>
                             <div className="flex gap-2">
                                <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
                                <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse delay-75" />
@@ -638,7 +638,7 @@ export default function FinancialSigintView() {
                                   </div>
                                   <p className="text-8xl font-black italic text-yellow-600 font-mono leading-none tracking-tighter drop-shadow-[0_0_30px_rgba(212,175,55,0.5)] animate-pulse">94.8%</p>
                                   <div className="text-[12px] font-black text-slate-600 uppercase italic tracking-[0.4em] border-l-8 border-yellow-600/40 pl-8 leading-relaxed max-w-sm mx-auto lg:mx-0">
-                                     К ИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
+                                     КрИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
                                   </div>
                                </div>
                             </div>
@@ -660,7 +660,7 @@ export default function FinancialSigintView() {
                             </div>
                          </div>
                          <button className="mt-4 w-full py-10 bg-yellow-500 text-black rounded-[3rem] tracking-[0.8em] text-[14px] font-black uppercase italic hover:bg-yellow-400 shadow-4xl transition-all border-4 border-yellow-700/20 active:scale-95 duration-500">
-                            ВІДК ИТИ ПОВНУ ЕКСПЕ ТИЗУ
+                            ВІДКрИТИ ПОВНУ ЕКСПЕ ТИЗУ
                          </button>
                       </div>
                    </motion.div>
@@ -683,18 +683,18 @@ export default function FinancialSigintView() {
                                РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_РЕСУРСІВ
                             </h2>
                             <p className="text-[12px] text-slate-700 font-bold uppercase tracking-[0.4em] italic border-l-4 border-amber-600/40 pl-6">
-                               ПОВНИЙ ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
+                               ПОВНИЙ ПЕ ЕЛІК ПЕ ЕКрИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
                             </p>
                          </div>
                          <button className="px-12 py-6 bg-white/5 border-2 border-white/10 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-white/20 hover:border-yellow-500/50 transition-all shadow-xl group/btn">
-                            ВІДК ИТИ_ARBITRAGE_МАТ ИЦЮ <ArrowUpRight size={18} className="inline ml-4 transition-transform group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2" />
+                            ВІДКрИТИ_ARBITRAGE_МАТрИЦЮ <ArrowUpRight size={18} className="inline ml-4 transition-transform group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2" />
                          </button>
                       </div>
                       <div className="overflow-x-auto custom-scrollbar">
                          <table className="w-full text-left border-collapse">
                             <thead className="bg-white/[0.02]">
                                <tr>
-                                  {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА_УТ ИМАННЯ', 'ДАТА_ФІКСАЦІЇ', 'О ГАН_ВЛАДИ', 'СТАТУС_КЕ УВАННЯ'].map(h => (
+                                  {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА_УТрИМАННЯ', 'ДАТА_ФІКСАЦІЇ', 'О ГАН_ВЛАДИ', 'СТАТУС_КЕ УВАННЯ'].map(h => (
                                     <th key={h} className="px-16 py-10 text-[11px] font-black text-slate-800 uppercase tracking-[0.5em] italic font-mono border-b-2 border-white/5">{h}</th>
                                   ))}
                                </tr>

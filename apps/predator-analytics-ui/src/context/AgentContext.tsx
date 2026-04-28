@@ -93,7 +93,7 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 const systemLogs = await api.streamSystemLogs();
                 setLogs(normalizeAgentLogs(systemLogs));
             } catch (e) {
-                // Якщо журнал недоступний, не домальовуємо повідомлення
+                // Якщо журнал недоступний, не домальовуємоповідомлення
                 setLogs([]);
             }
 
