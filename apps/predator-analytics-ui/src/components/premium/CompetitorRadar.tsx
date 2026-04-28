@@ -18,7 +18,7 @@ const CompetitorRadar: React.FC = () => {
     const { t } = useTranslation();
     const [events, setEvents] = useState<RadarEvent[]>([]);
 
-    // Імітація WebSocket потоку з v58.2-WRAITH-SM Signal Bus
+    // Імітація WebSocket потоку з v61.0-ELITE-SM Signal Bus
     useEffect(() => {
         const interval = setInterval(() => {
             const newEvent: RadarEvent = {

@@ -150,7 +150,7 @@ const MOCK_FORECAST: ForecastResponse = {
   confidence_score: 0.94,
   mape: 0.032,
   data_points_used: 240,
-  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців.  івень стратегічної впевненості високий. рекомендовано формування резервного буфера у розмірі 12% від прогнозованого обсягу для нівелювання волатильності логістичних ланцюгів.',
+  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців. рівень стратегічної впевненості високий.рекомендовано формування резервного буфера у розмірі 12% від прогнозованого обсягу для нівелювання волатильності логістичних ланцюгів.',
   months_ahead: 6,
   model: 'prophet',
   forecast: [
@@ -529,7 +529,7 @@ function DemandForecastTab({
                 <div className="lg:col-span-2 overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
                     <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ГЕОМЕТ ІЯ П ОГНОЗУ</h3>
+                            <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ГЕОМЕТ ІЯПРОГНОЗУ</h3>
                             <p className="mt-1 text-sm text-slate-400 font-mono">
                                 {forecast.product_name} | {forecast.product_code}
                             </p>
@@ -589,7 +589,7 @@ function DemandForecastTab({
                                 <div className="text-xl font-black text-white italic">~ 8.4M ₴</div>
                             </div>
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ПОТЕНЦІЙНИЙ П ИБУТОК</div>
+                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ПОТЕНЦІЙНИЙПРИБУТОК</div>
                                 <div className="text-xl font-black text-emerald-500 italic">+1.2M ₴</div>
                             </div>
                         </div>
@@ -599,7 +599,7 @@ function DemandForecastTab({
 
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
                 <div className="border-b border-white/[0.06] px-6 py-5 flex items-center justify-between">
-                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТ ИЦЯ П ОГНОЗУ</h3>
+                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТ ИЦЯПРОГНОЗУ</h3>
                     <div className="h-1 w-32 bg-gradient-to-r from-red-600 to-transparent rounded-full" />
                 </div>
                 <div className="overflow-x-auto">

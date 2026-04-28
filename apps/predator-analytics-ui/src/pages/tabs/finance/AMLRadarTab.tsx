@@ -62,7 +62,7 @@ export const AMLRadarTab: React.FC = () => {
               <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 10, fontWeight: '900', fontStyle: 'italic' }} />
               <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
               <RechartsRadar name="ОБ'ЄКТ" dataKey="A" stroke="#10b981" strokeWidth={3} fill="#10b981" fillOpacity={0.4} />
-              <RechartsRadar name="НО МА" dataKey="B" stroke="#064e3b" strokeWidth={1} fill="#064e3b" fillOpacity={0.1} />
+              <RechartsRadar name="НОРМА" dataKey="B" stroke="#064e3b" strokeWidth={1} fill="#064e3b" fillOpacity={0.1} />
             </RadarChart>
           </ResponsiveContainer>
         </div>

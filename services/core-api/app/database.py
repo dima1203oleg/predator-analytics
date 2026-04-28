@@ -1,4 +1,4 @@
-"""Асинхронний драйвер PostgreSQL для Core API (v55.1).
+"""Асинхронний драйвер PostgreSQL для Core API (v61.0-ELITE).
 
 Підтримка Patroni HA, RLS (Row-Level Security), Multi-tenancy.
 """

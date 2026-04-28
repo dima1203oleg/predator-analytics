@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Observer Matrix | v58.2-WRAITHПРЕМІУМ-МАТ ИЦЯ
+ * 👁️ Sovereign Observer Matrix | v61.0-ELITEПРЕМІУМ-МАТ ИЦЯ
  * PREDATOR SOM (МОДУЛЬ СУВЕ ЕННОГО НАГЛЯДУ)
  * 
  * Інтерфейс вищого рівня контролю та конституційного нагляду.
@@ -9,7 +9,7 @@
  * - Idea Garden (Сад Гіпотез)
  * - Стан "Цифрового двійника" (Digital Twin)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -132,7 +132,7 @@ const SOMView: React.FC = () => {
       <ViewHeader
         title="Суверенний Наглядач"
         icon={<Eye size={24} />}
-        breadcrumbs={['PREDATOR', 'SOM_V56.5', 'КОНТ ОЛЬ_ЯД А']}
+        breadcrumbs={['PREDATOR', 'SOM_V56.5', 'КОНТРОЛЬ_ЯД А']}
         stats={[
           {
             label: 'ЦІЛІСНІСТЬ_КОНСТИТУЦІЇ',
@@ -142,7 +142,7 @@ const SOMView: React.FC = () => {
             animate: true
           },
           {
-            label: 'ЗДО ОВ\'Я_СИСТЕМИ',
+            label: 'ЗДОРОВ\'Я_СИСТЕМИ',
             value: `${systemHealth}%`,
             icon: <Activity size={14} />,
             color: 'primary'
@@ -167,17 +167,17 @@ const SOMView: React.FC = () => {
 
             <div className="relative w-80 h-80 flex items-center justify-center mt-10">
               <ControlRing
-                size={320} label=" івень III: Людська Влада"
+                size={320} label="рівень III: Людська Влада"
                 active={selectedRing === 3} color="#f43f5e"
                 onClick={() => setSelectedRing(3)} speed={120}
               />
               <ControlRing
-                size={200} label=" івень II: Суд Арбітрів"
+                size={200} label="рівень II: Суд Арбітрів"
                 active={selectedRing === 2} color="#a855f7"
                 onClick={() => setSelectedRing(2)} speed={-60}
               />
               <ControlRing
-                size={100} label=" івень I: Ядро Нагляду"
+                size={100} label="рівень I: Ядро Нагляду"
                 active={selectedRing === 1} color="#06b6d4"
                 onClick={() => setSelectedRing(1)} speed={30}
               />
@@ -198,7 +198,7 @@ const SOMView: React.FC = () => {
               </div>
               <p className="text-xs text-slate-400 leading-relaxed italic">
                 {selectedRing === 3 && "Абсолютна влада оператора. Увімкнено фізичні kill-switches та обов'язкові шлюзи схвалення."}
-                {selectedRing === 2 && " івень судочинства. Перевірка конституційної відповідності за допомогою AZR Engine."}
+                {selectedRing === 2 && "рівень судочинства. Перевірка конституційної відповідності за допомогою AZR Engine."}
                 {selectedRing === 1 && "Автономний моніторинг. Виявлення аномалій та генерація теорій SOM-агентами."}
               </p>
             </div>
@@ -438,7 +438,7 @@ const SOMView: React.FC = () => {
               <div className="font-mono text-[10px] text-slate-500 space-y-3 h-[250px] overflow-y-auto custom-scrollbar pr-3">
                 <p><span className="text-slate-700">[11:04:12]</span> <span className="text-blue-400">SOM_ЯДРО:</span> Truth Ledger синхронізовано.</p>
                 <p><span className="text-slate-700">[11:12:05]</span> <span className="text-emerald-400"> ЕЗОЛВЕ :</span> Вирішено сутність 'Global Holding Ltd' через Sovereign Linker (Conf: 0.94).</p>
-                <p><span className="text-slate-700">[11:12:15]</span> <span className="text-amber-500">Г АФ_МАЙНЕ :</span> Виявлено новий Кластер Впливу #7 (3 компанії, 1 UBO).</p>
+                <p><span className="text-slate-700">[11:12:15]</span> <span className="text-amber-500">ГРАФ_МАЙНЕ :</span> Виявлено новий Кластер Впливу #7 (3 компанії, 1 UBO).</p>
                 <p><span className="text-slate-700">[11:12:22]</span> <span className="text-blue-400">А ХІТЕКТО :</span> Згенеровано гіпотезу H-504 через Recursive Scan.</p>
                 <p><span className="text-slate-700">[11:15:01]</span> <span className="text-emerald-400">СИСТЕМА:</span> OSINT зачистка завершена. Purity: 94.2%.</p>
                 <p className="opacity-40 animate-pulse text-[8px]">--- СКАНУВАННЯ_НОВИХ_ЛОГІВ ---</p>

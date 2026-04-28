@@ -139,7 +139,7 @@ export const PERSONA_TEMPLATES: Record<PersonaType, DashboardTemplate[]> = {
     {
       id: 'inquisitor-entity-investigation',
       name: 'Entity Investigation Hub',
-      description: ' озслідування компаній та бенефіціарів',
+      description: 'розслідування компаній та бенефіціарів',
       persona: 'INQUISITOR',
       category: 'Investigation',
       widgets: []
@@ -241,8 +241,8 @@ export const WIDGET_LIBRARY: Record<WidgetType, {
     defaultSize: { width: 6, height: 3 }
   },
   radar_chart: {
-    name: ' адарна діаграма',
-    description: ' адарна діаграма для багатовимірного аналізу',
+    name: 'радарна діаграма',
+    description: 'радарна діаграма для багатовимірного аналізу',
     icon: 'Radar',
     category: 'Charts',
     supportedDataSources: ['company_registry', 'financial_reports'],
@@ -353,7 +353,7 @@ export const DATA_SOURCE_META: Record<DataSource, {
     updateFrequency: 'Щомісяця'
   },
   company_registry: {
-    name: 'реєстр Компаній',
+    name: 'Реєстр Компаній',
     description: 'ЄД , засновники, директори',
     icon: 'Building',
     isPremium: false,
@@ -361,7 +361,7 @@ export const DATA_SOURCE_META: Record<DataSource, {
   },
   court_cases: {
     name: 'Судові Справи',
-    description: 'Єдиний реєстр судових рішень',
+    description: 'Єдиний Реєстр судових рішень',
     icon: 'Scale',
     isPremium: false,
     updateFrequency: 'Щоденно'
@@ -375,14 +375,14 @@ export const DATA_SOURCE_META: Record<DataSource, {
   },
   real_estate: {
     name: 'Нерухомість',
-    description: 'реєстр прав на нерухоме майно',
+    description: 'Реєстр прав на нерухоме майно',
     icon: 'Home',
     isPremium: true,
     updateFrequency: 'Щотижня'
   },
   vehicles: {
     name: 'Транспорт',
-    description: 'реєстр транспортних засобів',
+    description: 'Реєстр транспортних засобів',
     icon: 'Car',
     isPremium: true,
     updateFrequency: 'Щомісяця'

@@ -1,4 +1,4 @@
-"""Search Router — PREDATOR Analytics v55.1 Ironclad.
+"""Search Router — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Hybrid search (Full-text + Vector) for entities and documents.
 """

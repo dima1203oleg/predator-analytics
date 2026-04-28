@@ -1,4 +1,4 @@
-"""EDRPOU Validator — PREDATOR Analytics v55.1 Ironclad.
+"""EDRPOU Validator — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Checksum validation for Ukrainian company identifiers (EDRPOU).
 """

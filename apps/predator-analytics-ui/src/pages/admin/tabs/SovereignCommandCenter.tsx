@@ -91,7 +91,7 @@ export const SovereignCommandCenter: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
                <Shield size={14} />
-               <span>ЗАХИСТ: ELITE_WRAITH_ACTIVE</span>
+               <span>ЗАХИСТ: ELITE_ELITE_ACTIVE</span>
             </div>
           </div>
         </div>

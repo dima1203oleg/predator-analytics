@@ -1,5 +1,5 @@
 /**
- * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕ  | v58.2-WRAITH
+ * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕ  | v61.0-ELITE
  * PREDATOR Analytics — Neural Signal Decoding & OSINT
  * 
  * Моніторинг Telegram каналів, ЗМІ, соцмереж та даркнет-форумів.
@@ -68,7 +68,7 @@ export default function ConversationIntelView() {
         refetchInterval: 15000 
     });
 
-    // Trace: v58.2-WRAITH Error Protocol Integration
+    // Trace: v61.0-ELITE Error Protocol Integration
     useEffect(() => {
         if (isOffline) {
             window.dispatchEvent(new CustomEvent('predator-error', { 
@@ -158,7 +158,7 @@ export default function ConversationIntelView() {
                                СИГНАЛЬНИЙ <span className={cn("italic uppercase underline decoration-8 underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-emerald-500 decoration-emerald-500/20")}>ДЕКОДЕ </span>
                              </h1>
                              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-emerald-500/20 pl-8 opacity-90 max-w-2xl">
-                               МОНІТО ИНГ ТЕЛЕГ АМ-КАНАЛІВ, ЗМІ ТА ДА КНЕТ-ФО УМІВ // SOVEREIGN CLOUD
+                               МОНІТО ИНГ ТЕЛЕГ АМ-КАНАЛІВ, ЗМІ ТА ДА КНЕТ-ФОРУМІВ // SOVEREIGN CLOUD
                              </p>
                           </div>
                        </div>
@@ -312,7 +312,7 @@ export default function ConversationIntelView() {
                                    <div className="p-8 bg-black/60 border-2 border-white/5 rounded-[3rem] space-y-4 shadow-inner group/stat hover:border-emerald-500/30 transition-all">
                                       <p className="text-[10px] font-black text-slate-800 uppercase italic tracking-widest leading-none">DETECTION_SPD</p>
                                       <p className="text-4xl font-black text-emerald-500 italic font-mono tracking-tighter leading-none">0.38s</p>
-                                      <p className="text-[9px] text-emerald-700 uppercase font-black tracking-widest italic opacity-60">WRAITH_LATENCY</p>
+                                      <p className="text-[9px] text-emerald-700 uppercase font-black tracking-widest italic opacity-60">ELITE_LATENCY</p>
                                    </div>
                                 </div>
                              </div>

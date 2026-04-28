@@ -1,5 +1,5 @@
 /**
- * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v58.2-WRAITH
+ * 🧬 EVOLUTIONARY TRUTH LEDGER // ДВИГУН ЕВОЛЮЦІЇ | v61.0-ELITE
  * PREDATOR Analytics — Sovereign Mutation & AZR Synthesis
  * 
  * Центр фіксації та впровадження системних мутацій AZR.
@@ -82,7 +82,7 @@ const EvolutionView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'EvolutionEngine',
-                    message: 'ДВИГУН ЕВОЛЮЦІЇ: Активовано автономний режим AZR-синтезу (EVOLUTION_NODES). Використовується локальний реєстр мутацій.',
+                    message: 'ДВИГУН ЕВОЛЮЦІЇ: Активовано автономний режим AZR-синтезу (EVOLUTION_NODES). Використовується локальний Реєстр мутацій.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'EVOLUTION_OFFLINE'
@@ -92,7 +92,7 @@ const EvolutionView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'EvolutionEngine',
-                    message: ` ЕЄСТ _AZR [${nodeSource}]: Двигун еволюції активовано. Готовність до синтезу мутацій.`,
+                    message: `РЕЄСТР_AZR [${nodeSource}]: Двигун еволюції активовано. Готовність до синтезу мутацій.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'EVOLUTION_SUCCESS'
@@ -108,7 +108,7 @@ const EvolutionView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'EvolutionEngine',
-                    message: ` ЕЄСТ _AZR [${nodeSource}]: ${isOffline ? 'Синхронізація мутацій завершена. Завантажено автономні контури.' : 'Глобальний синтез AZR успішно завершено.'}`,
+                    message: `РЕЄСТР_AZR [${nodeSource}]: ${isOffline ? 'Синхронізація мутацій завершена. Завантажено автономні контури.' : 'Глобальний синтез AZR успішно завершено.'}`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'EVOLUTION_SUCCESS'
@@ -153,7 +153,7 @@ const EvolutionView: React.FC = () => {
                                             EVOLUTIONARY_LEDGER // {isOffline ? 'MIRROR_MUTATION' : 'NEURAL_MUTATION_CORE'}
                                         </span>
                                         <div className="h-px w-16 bg-yellow-500/20" />
-                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'ELITE'}</span>
                                     </div>
                                     <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                                         ДВИГУН <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ЕВОЛЮЦІЇ</span>
@@ -197,7 +197,7 @@ const EvolutionView: React.FC = () => {
                         {[
                             { label: 'ЦИКЛИ СИНТЕЗУ', value: '2,847', sub: 'Активні AZR ітерації', icon: RefreshCw, color: '#D4AF37' },
                             { label: 'ТОПОЛОГІЯ МЕЖІ', value: '98.7%', sub: 'Здоров\'я ядра AZR', icon: ShieldCheck, color: '#D4AF37' },
-                            { label: 'МУТАЦІЙНІ РИЗИКИ', value: '0.0001', sub: ' івень системної ентропії', icon: Activity, color: '#F59E0B' },
+                            { label: 'МУТАЦІЙНІ РИЗИКИ', value: '0.0001', sub: 'рівень системної ентропії', icon: Activity, color: '#F59E0B' },
                         ].map((m, i) => (
                             <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
                                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
@@ -273,7 +273,7 @@ const EvolutionView: React.FC = () => {
                                                             { label: 'АЛГО ИТМІЧНА ШВИДКІСТЬ', val: '+24%', color: '#D4AF37', icon: Zap },
                                                             { label: 'НЕЙ ОННА ТОЧНІСТЬ', val: '99.92%', color: '#D4AF37', icon: Target },
                                                             { label: 'ЕНТ ОПІЯ БЕЗПЕКИ', val: '0.0001', color: '#F59E0B', icon: ShieldCheck },
-                                                            { label: 'СИНЕ ГІЯ  ЕСУ СІВ', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
+                                                            { label: 'СИНЕ ГІЯ РЕСУРСІВ', val: 'OPTIMAL', color: '#D4AF37', icon: Gauge },
                                                         ].map(m => (
                                                             <div key={m.label} className="flex items-center justify-between p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] group/metric hover:border-white/10 transition-all shadow-inset">
                                                                 <div className="flex items-center gap-5">
@@ -307,11 +307,11 @@ const EvolutionView: React.FC = () => {
                                                 </h4>
                                                 <div className="space-y-6 pt-4 max-h-[500px] overflow-y-auto no-scrollbar custom-scrollbar italic pr-4">
                                                     {[
-                                                        { version: 'v58.2-WRAITH.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
+                                                        { version: 'v61.0-ELITE.1', date: 'СЬОГОДНІ', changes: 5, type: 'critical' },
                                                         { version: 'v58.2.9', date: 'ВЧО А', changes: 12, type: 'feature' },
                                                         { version: 'v58.2.0', date: '2 ДНІ ТОМУ', changes: 18, type: 'major' },
-                                                        { version: 'v58.2-WRAITH.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
-                                                        { version: 'v58.2-WRAITH.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
+                                                        { version: 'v61.0-ELITE.9.5', date: '4 ДНІ ТОМУ', changes: 4, type: 'security' },
+                                                        { version: 'v61.0-ELITE.0.0', date: 'ТИЖДЕНЬ ТОМУ', changes: 82, type: 'major' },
                                                     ].map((v, i) => (
                                                         <div key={i} className="p-6 bg-white/[0.01] rounded-[2rem] border-2 border-white/[0.03] flex items-center justify-between group/v hover:bg-white/[0.04] hover:border-white/10 transition-all cursor-pointer shadow-sm">
                                                             <div className="flex items-center gap-5">

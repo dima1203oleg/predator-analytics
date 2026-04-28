@@ -110,7 +110,7 @@ describe('ExecutiveBoardView', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/PREDATOR v58.2-WRAITH/i)).toBeInTheDocument();
+    expect(screen.getByText(/PREDATOR v61.0-ELITE/i)).toBeInTheDocument();
     
     await waitFor(() => {
       expect(screen.getByText(/ОПЕ АТИВНИЙ КОНТУ /i)).toBeInTheDocument();

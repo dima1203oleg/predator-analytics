@@ -154,7 +154,7 @@ const AgentCascadeManager: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <TacticalCard title="КОНТ ОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="КОНТРОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
                     <div className="space-y-6 pt-4">
                         <div className="flex justify-between items-end">
                             <div>

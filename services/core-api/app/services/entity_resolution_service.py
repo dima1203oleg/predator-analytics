@@ -1,4 +1,4 @@
-"""Entity Resolution Service — PREDATOR Analytics v58.2-WRAITH.
+"""Entity Resolution Service — PREDATOR Analytics v61.0-ELITE.
 
 Сервіс для розв'язання сутностей (Entity Resolution) на рівні Core API.
 Обгортка над predator_common.entity_resolution з доступом до БД.

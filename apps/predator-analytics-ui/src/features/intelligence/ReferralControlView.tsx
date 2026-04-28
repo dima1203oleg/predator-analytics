@@ -153,7 +153,7 @@ export default function ReferralControlView() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'ReferralControl',
-          message: ' ЕФЕ АЛЬНИЙ КОНТ ОЛЬ: Активовано автономний режим. Перевірка прихованих зв\'язків проводиться через MIRROR_OSINT_NODE.',
+          message: ' ЕФЕ АЛЬНИЙ КОНТРОЛЬ: Активовано автономний режим. Перевірка прихованих зв\'язків проводиться через MIRROR_OSINT_NODE.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'REFERRAL_SCAN_OFFLINE'
@@ -164,7 +164,7 @@ export default function ReferralControlView() {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'ReferralControl',
-        message: ` ЕФЕ АЛЬНИЙ_КОНТ ОЛЬ [${nodeSource}]: Синхронізацію прихованих зв'язків успішно завершено. Платформа контролю стабілізована.`,
+        message: ` ЕФЕ АЛЬНИЙ_КОНТРОЛЬ [${nodeSource}]: Синхронізацію прихованих зв'язків успішно завершено. Платформа контролю стабілізована.`,
         severity: 'info',
         timestamp: new Date().toISOString(),
         code: 'REFERRAL_SUCCESS'
@@ -203,7 +203,7 @@ export default function ReferralControlView() {
           breadcrumbs={['Аналітика', ' еферальний Контроль']}
           badges={[
             { label: isOffline ? 'MIRROR_MONITORING' : 'CENTRAL_CONTROL', color: isOffline ? 'warning' : 'primary' },
-            { label: 'v58.2-WRAITH', color: 'danger' }
+            { label: 'v61.0-ELITE', color: 'danger' }
           ]}
           actions={
             <Button 
@@ -367,7 +367,7 @@ export default function ReferralControlView() {
                 <Input
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Пошук за назвою або ЄД ПОУ..."
+                  placeholder="Пошук за назвою або ЄДРПОУ..."
                   className="pl-10 bg-slate-900/50 border-white/5 focus:border-yellow-500/50 text-xs"
                 />
               </div>
@@ -494,7 +494,7 @@ export default function ReferralControlView() {
                    </CardHeader>
                    <CardContent className="space-y-6">
                       {[
-                        { date: '2026-03-22', type: 'referral', title: 'Виявлено нового клієнта', detail: 'ТОВ "Аркада-М" (ЄД ПОУ 44332211). Зв\'язок через спільний контактний телефон у Telegram.', hidden: true },
+                        { date: '2026-03-22', type: 'referral', title: 'Виявлено нового клієнта', detail: 'ТОВ "Аркада-М" (ЄДРПОУ 44332211). Зв\'язок через спільний контактний телефон у Telegram.', hidden: true },
                         { date: '2026-02-15', type: 'voluntary', title: 'Самостійне подання об\'єкта', detail: 'Об\'єкт "Ангар Б-34". Система зафіксувала появу в реєстрі за 3 місяці до звіту партнера.', hidden: false },
                         { date: '2025-10-15', type: 'system', title: 'Взяття на контроль', detail: 'Користувач ініціював моніторинг.', hidden: false },
                       ].map((fact, i) => (
@@ -614,7 +614,7 @@ export default function ReferralControlView() {
                         <Input className="bg-slate-900/50 border-white/5 focus:border-yellow-500/50 text-xs" placeholder="ТОВ 'Назва'..." />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">ЄД ПОУ / ІПН</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">ЄДРПОУ / ІПН</label>
                         <Input className="bg-slate-900/50 border-white/5 focus:border-yellow-500/50 text-xs" placeholder="00000000" />
                       </div>
                     </div>

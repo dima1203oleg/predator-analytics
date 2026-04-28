@@ -1,5 +1,5 @@
 /**
- * 🚨 AML SCORING VIEW // КОГНІТИВНИЙ AML-МОНІТОРИНГ | v58.2-WRAITH
+ * 🚨 AML SCORING VIEW // КОГНІТИВНИЙ AML-МОНІТОРИНГ | v61.0-ELITE
  * PREDATOR Analytics — Advanced Compliance & Anti-Money Laundering Array
  * 
  * © 2026 PREDATOR Analytics — HR-04 compliant, тільки українська
@@ -19,7 +19,7 @@ import { analyticsService, AMLResult, AMLFactor, BatchResultData } from '@/servi
 import { RiskLevelValue } from '@/types/intelligence';
 import { AxiosError } from 'axios';
 
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -48,7 +48,7 @@ interface RiskLevelInfo {
 }
 
 // ========================
-// Константи WRAITH
+// Константи ELITE
 // ========================
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
@@ -86,7 +86,7 @@ const FACTOR_ICONS: Record<string, React.ReactNode> = {
 };
 
 // ========================
-// Підкомпоненти WRAITH
+// Підкомпоненти ELITE
 // ========================
 
 const RiskBadge: React.FC<{ level: string }> = ({ level }) => {
@@ -150,7 +150,7 @@ const RadarChart: React.FC<{ factors: AMLFactor[] }> = ({ factors }) => {
 // Background Scanning HUD
 // ========================
 
-const WRAITH_Overlay: React.FC = () => (
+const ELITE_Overlay: React.FC = () => (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden mix-blend-overlay opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
         <div className="absolute inset-0 animate-scanline bg-[linear-gradient(to_bottom,transparent_0%,rgba(225,29,72,0.02)_50%,transparent_100%)] bg-[length:100%_4px]" />
@@ -189,15 +189,15 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
                     {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯДРО_ТЕМП: 42°C'}
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
-                <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕ А: 99.8%</span>
-                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_П ОТОКОЛ: SOVEREIGN_v58.2_WRAITH</span>
+                <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕРА: 99.8%</span>
+                <span className="uppercase tracking-[0.3em] font-black">АКТИВНИЙ_ПРОТОКОЛ: SOVEREIGN_v61.0_ELITE</span>
             </div>
         </div>
     );
 };
 
 // ========================
-// Live Cognitive Terminal v58.2-WRAITH
+// Live Cognitive Terminal v61.0-ELITE
 // ========================
 
 const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; mode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD' }> = ({ active, targetName, mode }) => {
@@ -205,19 +205,21 @@ const CognitiveParsingTerminal: React.FC<{ active: boolean; targetName: string; 
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const CHUNKS_SOVEREIGN = [
-        "NEMOTRON: ПЕ ЕВІ КА_ЛОКАЛЬНИХ_ ЕЄСТ ІВ...",
-        "SURGICAL_CODER: ВАЛІДАЦІЯ_ХЕШІВ_ЄД ПОУ",
+        "NEMOTRON: ПЕРЕВІРКА_ЛОКАЛЬНИХ_РЕЄСТРІВ...",
+        "SURGICAL_CODER: ВАЛІДАЦІЯ_ХЕШІВ_ЄДРПОУ",
         "БЕЗПЕКА: AIR_GAPPED_АНАЛІЗ_АКТИВНО",
         "ОБМЕЖЕННЯ: VRAM_LIMIT_GUARD",
-        "СИНТЕЗ: ЛОКАЛЬНА_ ЕКОНСТ УКЦІЯ..."
+        "QA_AUDIT: ПЕРЕВІРКА_ЛОГІКИ_ВЕРДИКТУ [ОК]",
+        "СИНТЕЗ: ЛОКАЛЬНА_РЕКОНСТРУКЦІЯ..."
     ];
 
     const CHUNKS_CLOUD = [
-        "GLM-5.1: СИНТЕЗ_К ИМІНАЛІСТИЧНИХ_ЗВ'ЯЗКІВ...",
-        "LEAD_ARCHITECT: ГЛИБОКИЙ_OSINT_Т АВЕ САЛ",
-        "CLOUD_CORE: МУЛЬТИ_Т АНС_ША ОВИЙ_ДЕКОДЕ ",
-        "AI_COORD: О КЕСТ АЦІЯ_ВУЗЛІВ_ZAI",
-        "ВЕ ДИКТ: ГЕНЕ УВАННЯ_ЕЛІТНОГО_ЗВІТУ..."
+        "GLM-5.1: СИНТЕЗ_КРИМІНАЛІСТИЧНИХ_ЗВ'ЯЗКІВ...",
+        "LEAD_ARCHITECT: ГЛИБОКИЙ_OSINT_ТРАВЕРСАЛ",
+        "VISUAL_VALIDATION: АНАЛІЗ_ОБ'ЄКТІВ_GEMINI_V",
+        "CLOUD_CORE: МУЛЬТИ_ТРАНС_ШАРОВИЙ_ДЕКОДЕР",
+        "AI_COORD: ОРКЕСТРАЦІЯ_ВУЗЛІВ_ZAI",
+        "ВЕРДИКТ: ГЕНЕРУВАННЯ_ЕЛІТНОГО_ЗВІТУ..."
     ];
 
     const chunks = mode === 'SOVEREIGN' ? CHUNKS_SOVEREIGN : CHUNKS_CLOUD;
@@ -384,7 +386,7 @@ const ScoreMeter: React.FC<{ score: number; level: string }> = ({ score, level }
 };
 
 // ========================
-// Головний компонент WRAITH
+// Головний компонент ELITE
 // ========================
 
 const AMLScoringView: React.FC = () => {
@@ -466,7 +468,7 @@ const AMLScoringView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'AML_Scoring',
-                    message: `СКО ІНГ_ВЕ ДИКТ [${nodeSource}]: ${entityName} (${entityId}) проаналізовано.  івень: ${data.risk_level.toUpperCase()}.`,
+                    message: `СКО ІНГ_ВЕ ДИКТ [${nodeSource}]: ${entityName} (${entityId}) проаналізовано. рівень: ${data.risk_level.toUpperCase()}.`,
                     severity: data.total_score > 70 ? 'critical' : 'info',
                     timestamp: new Date().toISOString(),
                     code: 'AML_SCAN_SUCCESS'
@@ -540,14 +542,14 @@ const AMLScoringView: React.FC = () => {
     return (
         <PageTransition>
             <div className="min-h-screen p-12 flex flex-col gap-12 relative overflow-hidden bg-[#020202]">
-                <WRAITH_Overlay />
+                <ELITE_Overlay />
                 <AdvancedBackground />
                 <ScanningHUD vramStatus={vramMetrics.status} />
                 <CyberGrid color="rgba(225, 29, 72, 0.04)" />
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225,29,72,0.06),transparent_70%)] pointer-events-none" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(225,29,72,0.03),transparent_60%)] pointer-events-none" />
 
-                {/* === ViewHeader WRAITH === */}
+                {/* === ViewHeader ELITE === */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-10">
@@ -560,10 +562,10 @@ const AMLScoringView: React.FC = () => {
                             <div className="space-y-2">
                                 <div className="flex items-center gap-4">
                                     <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                                        МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКО ІНГ
+                                        МЕХАНІЗМ_КОМПЛАЄНСУ // AML_СКОРИНГ
                                     </span>
                                     <div className="h-px w-12 bg-rose-500/20" />
-                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v58.2-WRAITH</span>
+                                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">версія v61.0-ELITE</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     AML <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СКО ІНГ</span>
@@ -573,7 +575,7 @@ const AMLScoringView: React.FC = () => {
                     }
                     breadcrumbs={['БЕЗПЕКА', 'КОМПЛАЄНС', 'AML_COGNITIVE_ARRAY']}
                     badges={[
-                        { label: 'SOVEREIGN_WRAITH_v58.2', color: 'rose', icon: <Zap size={10} /> },
+                        { label: 'SOVEREIGN_ELITE_v61.0', color: 'rose', icon: <Zap size={10} /> },
                         { label: 'CLASSIFIED_T1_ACCESS', color: 'primary', icon: <Lock size={10} /> },
                     ]}
                     stats={[
@@ -590,20 +592,20 @@ const AMLScoringView: React.FC = () => {
                     ]}
                 />
 
-                {/* === Статус-бар WRAITH === */}
+                {/* === Статус-бар ELITE === */}
                 <div className="z-10 flex items-center gap-6 py-4 px-8 bg-black border-2 border-white/5 rounded-[2rem] shadow-4xl backdrop-blur-3xl w-fit">
                     <div className="flex items-center gap-3">
                         <span className="w-3 h-3 rounded-full bg-rose-600 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.6)]" />
                         <span className="text-[11px] font-black text-rose-500 uppercase tracking-[0.5em] font-mono italic">
-                            СТАТУС_ЯД А: НОМІНАЛЬНИЙ //  ЕЖИМ: ГЛИБОКИЙ_СКАН // {liveTime}
+                            СТАТУС_ЯД А: НОМІНАЛЬНИЙ // РЕЖИМ: ГЛИБОКИЙ_СКАН // {liveTime}
                         </span>
                     </div>
                 </div>
 
-                {/* === режими WRAITH === */}
+                {/* === режими ELITE === */}
                 <div className="z-10 flex gap-6">
                     {[
-                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_WRAITH',    icon: <Target size={18} /> },
+                        { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_ELITE',    icon: <Target size={18} /> },
                         { id: true,  label: 'ПАКЕТНИЙ_ДЕПЛОЙ_CSV', icon: <Upload size={18} /> },
                     ].map(({ id, label, icon }) => (
                         <button
@@ -622,7 +624,7 @@ const AMLScoringView: React.FC = () => {
                 </div>
 
                 <div className="z-10 grid grid-cols-12 gap-12">
-                    {/* ===== ЛІВА ПАНЕЛЬ: форма WRAITH ===== */}
+                    {/* ===== ЛІВА ПАНЕЛЬ: форма ELITE ===== */}
                     <div className="col-span-12 lg:col-span-4 flex flex-col gap-10">
 
                         {!batchMode ? (
@@ -761,7 +763,7 @@ const AMLScoringView: React.FC = () => {
                             </TacticalCard>
                         )}
 
-                        {/* Шкала ризику WRAITH */}
+                        {/* Шкала ризику ELITE */}
                         <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] border-white/5 bg-black/40 shadow-inner">
                             <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
                                 <Info size={16} className="text-rose-600/40" /> МАТ ИЦЯ_ОЦІНКИ_ РИЗИКІВ
@@ -786,11 +788,11 @@ const AMLScoringView: React.FC = () => {
                         </TacticalCard>
                     </div>
 
-                    {/* ===== П АВА ПАНЕЛЬ: результати WRAITH ===== */}
+                    {/* ===== П АВА ПАНЕЛЬ: результати ELITE ===== */}
                     <div className="col-span-12 lg:col-span-8 flex flex-col gap-10">
                         <AnimatePresence mode="wait">
 
-                            {/* --- Batch результат WRAITH --- */}
+                            {/* --- Batch результат ELITE --- */}
                             {batchMode && batchResult && (
                                 <motion.div
                                     key="batch-result"
@@ -849,7 +851,7 @@ const AMLScoringView: React.FC = () => {
                                 </motion.div>
                             )}
 
-                            {/* --- Одиночний результат WRAITH --- */}
+                            {/* --- Одиночний результат ELITE --- */}
                             {!batchMode && result && (
                                 <motion.div
                                     key="single-result"
@@ -863,7 +865,7 @@ const AMLScoringView: React.FC = () => {
                                                 <Radar size={400} className="text-rose-500 animate-spin-slow" />
                                             </div>
                                             <h3 className="text-[14px] font-black text-white uppercase tracking-[0.6em] mb-12 italic font-serif flex items-center gap-6 relative z-10">
-                                                <Target size={20} className="text-rose-500" />  РЕЗУЛЬТАТ_WRAITH_SCAN
+                                                <Target size={20} className="text-rose-500" />  РЕЗУЛЬТАТ_ELITE_SCAN
                                             </h3>
                                             <div className="relative z-10 w-full flex justify-center">
                                                 <ScoreMeter score={result.total_score} level={result.risk_level} />
@@ -896,13 +898,13 @@ const AMLScoringView: React.FC = () => {
                                                 </div>
                                                 <div className="p-6 bg-black/60 border-2 border-white/5 rounded-3xl flex items-center justify-between italic">
                                                     <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest italic">TIER_ОЦІНКИ</span>
-                                                    <span className="text-2xl font-black text-white font-mono italic">WRAITH</span>
+                                                    <span className="text-2xl font-black text-white font-mono italic">ELITE</span>
                                                 </div>
                                             </div>
                                         </TacticalCard>
                                     </div>
 
-                                    {/* Список факторів WRAITH */}
+                                    {/* Список факторів ELITE */}
                                     <div className="space-y-8">
                                         <h3 className="text-2xl font-black text-white italic uppercase tracking-[0.4em] flex items-center gap-6 pl-4 font-serif">
                                             <Fingerprint size={28} className="text-rose-500" /> ДЕТАЛІЗАЦІЯ_ЗНАЙДЕНИХ_А ТЕФАКТІВ
@@ -914,7 +916,7 @@ const AMLScoringView: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Footer дії WRAITH */}
+                                    {/* Footer дії ELITE */}
                                     <div className="flex gap-8 mt-4">
                                         <button className="flex-1 py-10 bg-rose-600 text-white rounded-[3rem] font-black italic uppercase text-[12px] tracking-[0.5em] transition-all shadow-4xl hover:scale-[1.02] active:scale-95 border-4 border-rose-500/20">
                                             ЗГЕНЕ УВАТИ_VIP_AML_REPORT
@@ -926,7 +928,7 @@ const AMLScoringView: React.FC = () => {
                                 </motion.div>
                             )}
 
-                            {/* --- Empty State WRAITH --- */}
+                            {/* --- Empty State ELITE --- */}
                             {!result && !batchResult && !loading && !batchLoading && (
                                 <motion.div
                                     key="empty-state"
@@ -942,7 +944,7 @@ const AMLScoringView: React.FC = () => {
                                     <div className="text-center space-y-4 max-w-2xl px-12">
                                         <h3 className="text-4xl font-black text-slate-800 italic uppercase tracking-tighter group-hover:text-white transition-colors duration-1000">ОЧІКУВАННЯ_ВВОДУ_DATA</h3>
                                         <p className="text-[11px] text-slate-900 font-bold uppercase tracking-[0.6em] italic leading-relaxed">
-                                            ВВЕДІТЬ ІДЕНТИФІКАТО  АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-П ОТОКОЛУ v58.2-WRAITH
+                                            ВВЕДІТЬІДЕНТИФІКАТОР АБО ЗАВАНТАЖТЕ МАСИВ ДЛЯ ЗАПУСКУ КОГНІТИВНОГО AML-П ОТОКОЛУ v61.0-ELITE
                                         </p>
                                     </div>
                                     <div className="flex gap-6 mt-8">
@@ -952,7 +954,7 @@ const AMLScoringView: React.FC = () => {
                                         </div>
                                         <div className="flex items-center gap-3 px-6 py-2 bg-black border border-white/5 rounded-xl">
                                             <Lock size={14} className="text-rose-900" />
-                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">LEVEL: UNLIMITED_WRAITH</span>
+                                            <span className="text-[9px] font-black text-slate-900 uppercase italic">LEVEL: UNLIMITED_ELITE</span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -961,10 +963,10 @@ const AMLScoringView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* DiagnosticsTerminal WRAITH */}
+                {/* DiagnosticsTerminal ELITE */}
                 <DiagnosticsTerminal />
 
-                {/* Внутрішній стиль для WRAITH */}
+                {/* Внутрішній стиль для ELITE */}
                 <style dangerouslySetInnerHTML={{ __html: `
                     .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(225,29,72,0.02); }
                     .animate-scanline { animation: scanline 4s linear infinite; }

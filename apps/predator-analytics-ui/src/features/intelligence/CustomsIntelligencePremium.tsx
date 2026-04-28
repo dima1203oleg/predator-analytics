@@ -1,5 +1,5 @@
 /**
- * 💎 CUSTOMS PREMIUM // МИТНИЙ П О | v58.2-WRAITH
+ * 💎 CUSTOMS PREMIUM // МИТНИЙПРО | v61.0-ELITE
  * PREDATOR Analytics — Commercial Intelligence & Deep Market Analysis
  * 
  * Глибока аналітика для бізнесу: Аналіз конкурентів, ринкові ніші,
@@ -53,7 +53,7 @@ export default function CustomsIntelligencePremium() {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'CustomsPremium',
-                message: `МИТНИЙ П О: Вузол NVIDIA недоступний. Працюємо через автономне дзеркало (COMMERCIAL_NODES).`,
+                message: `МИТНИЙПРО: Вузол NVIDIA недоступний. Працюємо через автономне дзеркало (COMMERCIAL_NODES).`,
                 severity: 'warning',
                 timestamp: new Date().toISOString(),
                 code: 'COMMERCIAL_NODES'
@@ -90,7 +90,7 @@ export default function CustomsIntelligencePremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-          {/* HEADER WRAITH HUD */}
+          {/* HEADER ELITE HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -109,7 +109,7 @@ export default function CustomsIntelligencePremium() {
                       {isOffline ? 'SOVEREIGN_EMERGENCY' : 'PREMIUM_MARKET_INTEL'} // SOVEREIGN_QUOTA
                     </span>
                     <div className="h-px w-16 bg-rose-500/20" />
-                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     МИТНИЙ <span className={cn("underline decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter", isOffline ? "text-rose-500 decoration-rose-500/20" : "text-rose-600 decoration-rose-600/30")}>PROJECT</span>
@@ -117,7 +117,7 @@ export default function CustomsIntelligencePremium() {
                 </div>
               </div>
             }
-            breadcrumbs={['INTEL', 'COMMERCIAL', 'PROJECT_WRAITH']}
+            breadcrumbs={['INTEL', 'COMMERCIAL', 'PROJECT_ELITE']}
             badges={[
               { label: 'SOVEREIGN_ACCESS', color: 'gold', icon: <Crown size={10} /> },
               { label: 'CLASSIFIED_T1', color: 'primary', icon: <Fingerprint size={10} /> },
@@ -269,7 +269,7 @@ export default function CustomsIntelligencePremium() {
                      <Lock className="text-rose-500 animate-pulse" size={40} />
                   </div>
                   <h4 className="text-xl font-black text-white italic tracking-tighter uppercase">БЕЗПЕКА_ДАННИХ_S1</h4>
-                  <p className="text-[10px] text-slate-700 uppercase tracking-widest leading-relaxed">ВЕСЬ АНАЛІЗ П ОВОДИТЬСЯ В ІЗОЛЬОВАНОМУ КВАНТОВОМУ СЕ ЕДОВИЩІ PREDATOR QUANTUM</p>
+                  <p className="text-[10px] text-slate-700 uppercase tracking-widest leading-relaxed">ВЕСЬ АНАЛІЗПРОВОДИТЬСЯ В ІЗОЛЬОВАНОМУ КВАНТОВОМУ СЕ ЕДОВИЩІ PREDATOR QUANTUM</p>
                </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 /**
- * 🗺️ TRADE FLOW MAP // КА ТА ТО ГОВИХ ПОТОКІВ | v58.2-WRAITH
+ * 🗺️ TRADE FLOW MAP // КА ТА ТО ГОВИХ ПОТОКІВ | v61.0-ELITE
  * PREDATOR Analytics — Global Trade & Logistics Intelligence
  * 
  * Візуалізація імпорту/експорту в реальному часі.
@@ -89,7 +89,7 @@ export default function TradeFlowMapPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'GeoIntel',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ  ЕЖИМ ГЕОП ОСТО ОВОЇ  ОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕОП ОСТО ОВОЇ  ОЗВІДКИ (GEOSPATIAL_NODES). Візуалізація на базі локальних дзеркал.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'GEOSPATIAL_NODES'
@@ -141,7 +141,7 @@ export default function TradeFlowMapPremium() {
                            TRADE_MATRIX // FLOW_GEOSPATIAL
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         КА ТА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ПОТОКІВ</span>
@@ -151,7 +151,7 @@ export default function TradeFlowMapPremium() {
               }
               breadcrumbs={['INTEL', 'TRADE', 'GLOBAL_FLOW_v58']}
               badges={[
-                { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
                 { label: 'GEOSPATIAL_T1', color: 'primary', icon: <Navigation size={10} /> },
               ]}
               stats={[

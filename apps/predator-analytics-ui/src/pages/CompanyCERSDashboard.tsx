@@ -523,7 +523,7 @@ export function CompanyCERSDashboard({ isTab = false }: { isTab?: boolean }) {
                                             <div className="flex flex-wrap gap-4 mt-6">
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
                                                     <Fingerprint className="w-4 h-4 text-rose-500" />
-                                                    <span className="text-xs font-mono text-slate-300">ЄД ПОУ: {profile.edrpou || "Н/Д"}</span>
+                                                    <span className="text-xs font-mono text-slate-300">ЄДРПОУ: {profile.edrpou || "Н/Д"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-950/60 rounded-xl border border-white/5">
                                                     <Boxes className="w-4 h-4 text-rose-400" />

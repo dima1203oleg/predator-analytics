@@ -220,7 +220,7 @@ const DataView: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-            <Database className="text-cyan-400" /> ДАНІ ТА  ЕЄСТ И
+            <Database className="text-cyan-400" /> ДАНІ ТА РЕЄСТРИ
           </h1>
           <p className="text-slate-400 mt-2 font-mono text-sm uppercase tracking-widest">
             Перетягніть файл сюди або натисніть кнопку • Excel • CSV • PDF

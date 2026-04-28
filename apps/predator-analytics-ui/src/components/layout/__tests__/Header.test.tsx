@@ -49,7 +49,7 @@ vi.mock('../../../config/navigation', async () => {
       },
       section: {
         id: 'command',
-        label: 'КОМАНДНИЙ ЦЕНТ ',
+        label: 'КОМАНДНИЙ ЦЕНТР',
         description: 'Операційний огляд платформи.',
         outcome: 'Дає короткий стратегічний зріз для старту роботи.',
         accent: 'amber',
@@ -70,7 +70,7 @@ describe('Header', () => {
     );
 
     expect(screen.getAllByText('Огляд системи').length).toBeGreaterThan(0);
-    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ ')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
     expect(screen.getByText('Ключові показники, сигнали та стан інфраструктури.')).toBeInTheDocument();
     expect(screen.getByText('Преміум-аналітика')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Пошук модулів та дій...')).toBeInTheDocument();

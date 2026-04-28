@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v58.2 — EXECUTIVE BOARD (WRAITH CORE)
+ * 🦅 PREDATOR v58.2 — EXECUTIVE BOARD (ELITE CORE)
  * Головна панель CEO:  изики, Гроші, Стратегія — за 3 секунди.
  * 
  *  озділ I.1 — Командний Центр
@@ -138,7 +138,7 @@ export default function ExecutiveBoardView() {
         <div className="relative z-10 flex flex-wrap items-center gap-2.5 mb-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-[10px] font-black tracking-[0.2em] text-rose-500 uppercase italic">
             <div className="h-1.5 w-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)] animate-pulse" />
-            PREDATOR v58.2-WRAITH
+            PREDATOR v61.0-ELITE
           </div>
           <div className={cn(
             "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[10px] font-black tracking-[0.15em] uppercase italic text-rose-600 border-rose-500/20 bg-rose-500/10",

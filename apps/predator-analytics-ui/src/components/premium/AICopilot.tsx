@@ -1,5 +1,5 @@
 /**
- * 🎯 PREDATOR AI Copilot - v58.2-WRAITH
+ * 🎯 PREDATOR AI Copilot - v61.0-ELITE
  * -------------------------------------------------------------
  * Sovereign AI Assistant with Neuro-Voice Integration.
  * Focused on Strategic Customs Analytics and Threat Intelligence.
@@ -79,7 +79,7 @@ export const Predator: React.FC = () => {
           dynamicSuggestions.push({
             id: `stat-${Date.now()}`,
             type: 'insight',
-            title: 'АНАЛІТИКА GLM-5.1 WRAITH',
+            title: 'АНАЛІТИКА GLM-5.1 ELITE',
             description: `СУВЕ ЕННЕ ЯДРО: ${stats.total_patterns} паттернів. ZROK Tunnel: ${backendStatus.nodeSource}.`,
             confidence: 0.99,
             impact: 'high'
@@ -92,7 +92,7 @@ export const Predator: React.FC = () => {
             id: `gold-${Date.now()}`,
             type: 'action',
             title: 'АҐЕНТНИЙ АНАЛІЗ GLM-5.1',
-            description: `Виявлено критичну аномалію "${topPattern.name}". рекомендовано SWE-Bench перевірку.`,
+            description: `Виявлено критичну аномалію "${topPattern.name}".рекомендовано SWE-Bench перевірку.`,
             confidence: 0.98,
             impact: 'high'
           });
@@ -117,7 +117,7 @@ export const Predator: React.FC = () => {
             message: `СИНХ ОНІЗАЦІЯ GLM-5.1 [${backendStatus.nodeSource}]: АКТИВНО. ${stats?.total_patterns || 0} ПАТТЕ НІВ.`,
             severity: 'info',
             timestamp: new Date().toISOString(),
-            code: 'AI_SYNC_WRAITH'
+            code: 'AI_SYNC_ELITE'
           }
         }));
       } catch (error: any) {
@@ -288,7 +288,7 @@ export const Predator: React.FC = () => {
                   </h3>
                   <div className="flex items-center gap-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping shadow-[0_0_10px_#e11d48]" />
-                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_WRAITH_v58.2_GLM-5.1</p>
+                    <p className="text-[10px] text-rose-500/60 font-black uppercase tracking-[0.4em] font-mono">SOVEREIGN_ELITE_v58.2_GLM-5.1</p>
                     <div className="flex items-center gap-2 mt-1">
                        <span className={cn("text-[8px] font-black px-2 py-0.5 rounded border", backendStatus.isOffline ? "border-rose-500/40 text-rose-500 bg-rose-500/5" : (backendStatus.activeFailover ? "border-emerald-500/40 text-emerald-500 bg-emerald-500/5" : "border-rose-500/40 text-rose-500 bg-rose-500/5"))}>
                           ВУЗОЛ: {backendStatus.isOffline ? "ВІДНОВЛЕННЯ" : (backendStatus.activeFailover ? "ZROK_FAILOVER" : "PRIMARY_CLUSTER")}
@@ -315,7 +315,7 @@ export const Predator: React.FC = () => {
 
                <div className="space-y-6 relative z-10">
                   <h4 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.5em] italic flex items-center gap-4">
-                    <Layers size={16} className="text-rose-500" /> СТРАТЕГІЧНИЙ_ФІД_WRAITH
+                    <Layers size={16} className="text-rose-500" /> СТРАТЕГІЧНИЙ_ФІД_ELITE
                   </h4>
                   {suggestions.map((s) => (
                     <motion.div 

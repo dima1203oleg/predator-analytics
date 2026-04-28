@@ -1,4 +1,4 @@
-"""Neo4j Driver Wrapper — PREDATOR Analytics v55.1 Ironclad.
+"""Neo4j Driver Wrapper — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Graph persistence and relationship queries.
 """

@@ -108,7 +108,7 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   // ─── BUSINESS_INTEL ────────────────────────────────────────────────────────
-  { id: 'brief',        category: 'BUSINESS_INTEL', label: ' АНКОВИЙ_ЗВІТ', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
+  { id: 'brief',        category: 'BUSINESS_INTEL', label: 'РАНКОВИЙ_ЗВІТ', badge: 'ГД',      icon: TrendingUp,    component: ExecutiveBrief },
   { id: 'risk-admin',   category: 'BUSINESS_INTEL', label: 'РИЗИКИ_ПО ТФЕЛЯ', badge: 'ФІН',    icon: PieChart,      component: PortfolioRiskView },
   { id: 'ma-scanner',   category: 'BUSINESS_INTEL', label: 'СКАНЕ _M&A',     badge: 'УГОДА',   icon: Target,        component: MATargetScannerView },
   { id: 'market-entry', category: 'BUSINESS_INTEL', label: 'АНАЛІЗ_ ИНКУ',    badge: 'ЕКСПАНСІЯ', icon: Globe,        component: MarketEntryView },
@@ -123,7 +123,7 @@ const TABS: TabConfig[] = [
   { id: 'security',     category: 'SYSTEM_CORE', label: 'НУЛЬОВА_ДОВІ А',   badge: 'БЕЗПЕКА',      icon: ShieldAlert,   component: ZeroTrustSecTab    },
   { id: 'dataops',      category: 'SYSTEM_CORE', label: 'ЦЕНТ _DATAOPS',                   icon: Database,      component: DataOpsTab         },
   { id: 'chaos',        category: 'SYSTEM_CORE', label: 'ОПЕ АЦІЇ_ХАОСУ',    badge: 'НЕБЕЗПЕКА',   icon: Zap,           component: ChaosControlHub    },
-  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'ЗАХИСТ_ ЕСУ СІВ', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
+  { id: 'res-guard',    category: 'SYSTEM_CORE', label: 'ЗАХИСТ_РЕСУРСІВ', badge: 'В-ПАМ',       icon: Shield,        component: ResourceGuardTab   },
   { id: 'pty',          category: 'SYSTEM_CORE', label: 'PTY_ТЕ МІНАЛ',    badge: 'КЛЮЧ',     icon: Terminal,      component: PtyTerminal        },
   
   // ─── AI_LAB ────────────────────────────────────────────────────────────────
@@ -150,7 +150,7 @@ const TABS: TabConfig[] = [
   { id: 'intelligence', category: 'INTEL_OSINT', label: 'РОЗВІДКА',     badge: 'П ИВИД',   icon: Eye,           component: CustomsIntelligenceView },
   { id: 'fin-sigint',   category: 'INTEL_OSINT', label: 'ФІН_SIGINT',   badge: 'Г ОШІ',    icon: BarChart3,     component: FinancialSigintView },
   { id: 'due-diligence', category: 'INTEL_OSINT', label: 'ОБАЧНІСТЬ', badge: 'ЗК',       icon: ShieldCheck,   component: DueDiligenceView },
-  { id: 'timeline',     category: 'INTEL_OSINT', label: 'Х ОНОГ АФ',    badge: 'ІСТО ІЯ',      icon: Activity,      component: TimelineBuilderView },
+  { id: 'timeline',     category: 'INTEL_OSINT', label: 'Х ОНОГРАФ',    badge: 'ІСТО ІЯ',      icon: Activity,      component: TimelineBuilderView },
   { id: 'supply-chain', category: 'INTEL_OSINT', label: 'ЛАНЦЮГИ_ПОСТАВОК', badge: 'ЛОГІСТИКА', icon: Box,        component: SupplyChainAnalyticsView },
   { id: 'entity-resolver', category: 'INTEL_OSINT', label: ' ЕЗОЛВЕ ', badge: 'СПІВПАДІННЯ', icon: Fingerprint, component: EntityResolverView },
   { id: 'clients',      category: 'INTEL_OSINT', label: 'ХАБ_КЛІЄНТІВ', badge: 'CRM',       icon: Globe,         component: ClientsHubView },
@@ -161,13 +161,13 @@ const TABS: TabConfig[] = [
   { id: 'entity-radar', category: 'INTEL_OSINT', label: ' АДА _ОБ\'ЄКТІВ', badge: 'Т ЕК',    icon: Target,        component: EntityRadarView },
   { id: 'evolution',    category: 'INTEL_OSINT', label: 'ЕВОЛЮЦІЯ_АКТИВУ',     badge: 'АГЕНТ',    icon: TrendingUp,    component: EvolutionView },
   { id: 'osint',        category: 'INTEL_OSINT', label: 'КОНСОЛЬ_ОСІНТ', badge: 'ПОШУК',    icon: Search,        component: SearchConsole },
-  { id: 'zrada',        category: 'INTEL_OSINT', label: 'КОНТ ОЛЬ_З АДИ', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
+  { id: 'zrada',        category: 'INTEL_OSINT', label: 'КОНТРОЛЬ_З АДИ', badge: 'ЕЛІТА',    icon: ShieldAlert,   component: ZradaControlView },
   { id: 'aml',          category: 'INTEL_OSINT', label: 'СКО ИНГ_АМЛ',   badge: 'РИЗИК',     icon: Activity,      component: AMLScoringView },
   { id: 'sanctions',    category: 'INTEL_OSINT', label: 'САНКЦІЇ',       badge: 'ГЛОБАЛЬНО',   icon: Lock,          component: SanctionsScreening },
   { id: 'conv-intel',   category: 'INTEL_OSINT', label: 'СОЦ_РОЗВІДКА', badge: 'СОЦІАЛЬНО',   icon: MessageSquare, component: ConversationIntelView },
   { id: 'maritime',     category: 'INTEL_OSINT', label: 'МО СЬКИЙ_Т ЕК', badge: 'СУДНО',   icon: Anchor,        component: MaritimeView },
   { id: 'tenders',      category: 'INTEL_OSINT', label: 'ТЕНДЕ И_PROZORRO',      badge: 'PROZORRO', icon: FileText,      component: TendersView },
-  { id: 'registries',   category: 'INTEL_OSINT', label: ' ЕЄСТ И_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
+  { id: 'registries',   category: 'INTEL_OSINT', label: 'РЕЄСТРИ_БД',      badge: 'БД',       icon: Database,      component: RegistriesView },
   { id: 'open-data',    category: 'INTEL_OSINT', label: 'ВІДК ИТІ_ДАНІ', badge: 'ДЕ Ж',      icon: Globe,         component: DataGovView },
   
   // ─── PLATFORM ──────────────────────────────────────────────────────────────
@@ -345,7 +345,7 @@ const SystemStatusHeader: React.FC = () => {
                   <span className={cn("font-black text-2xl tracking-tighter italic leading-none glint-elite", threatLevel > 70 ? "text-rose-500" : "text-white/70")}>
                     {threatLevel.toFixed(0)}% <span className="text-[10px] opacity-40 ml-2 not-italic font-black">РИЗИК</span>
                   </span>
-                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 uppercase font-black italic">{threatLevel > 70 ? 'К ИТИЧНА_ЗАГ ОЗА' : 'БЕЗПЕЧНИЙ_ ЕЖИМ'}</span>
+                  <span className="text-white/10 text-[8px] tracking-[0.4em] mt-2 uppercase font-black italic">{threatLevel > 70 ? 'К ИТИЧНА_ЗАГ ОЗА' : 'БЕЗПЕЧНИЙ_РЕЖИМ'}</span>
                 </div>
               </div>
             </div>
@@ -447,7 +447,7 @@ const TabLoader: React.FC = () => (
       <div className="grid grid-cols-2 gap-x-20 gap-y-3 opacity-40 max-w-lg">
         {[
           "НЕЙРОННИЙ_ЗВ'ЯЗОК: 10.4 GB/S",
-          " УКОСТИСКАННЯ_ЯД А: ПІДТВЕ ДЖЕНО",
+          " УКОСТИСКАННЯ_ЯД А: ПІДТВЕРДЖЕНО",
           "ША _ДЕШИФ УВАННЯ: AES-256-GCM",
           "СУВЕ ЕННА_АВТЕНТИФІКАЦІЯ: OK",
           "РОЗПОДІЛ_VRAM: 8GB_GUARD_АКТИВНИЙ",
@@ -482,7 +482,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
   );
 
   const CATEGORIES: { id: TabCategory; label: string; subLabel: string; icon: any; color: string }[] = [
-    { id: 'BUSINESS_INTEL', label: 'БІЗНЕС-АНАЛІТИКА', subLabel: ' АНКОВИЙ_ЗВІТ_&_KPI', icon: TrendingUp, color: 'emerald' },
+    { id: 'BUSINESS_INTEL', label: 'БІЗНЕС-АНАЛІТИКА', subLabel: 'РАНКОВИЙ_ЗВІТ_&_KPI', icon: TrendingUp, color: 'emerald' },
     { id: 'SYSTEM_CORE', label: 'ЯДРО_СИСТЕМИ', subLabel: 'ІНФ АСТРУКТУРА_&_CONTROL', icon: Shield, color: 'rose' },
     { id: 'AI_LAB',      label: 'AI_ЛАБО АТО ІЯ', subLabel: 'НАВЧАННЯ_&_АВТОЗАВОД', icon: BrainCircuit, color: 'rose' },
     { id: 'INTEL_OSINT', label: 'РОЗВІДКА_&_OSINT', subLabel: 'ГЛОБАЛЬНИЙ_АНАЛІЗ_L7', icon: Eye, color: 'rose' },
@@ -700,7 +700,7 @@ export const AdminHub: React.FC = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-[1px] bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
-            <span>СТАБІЛЬНІСТЬ_ЯД А: WRAITH_v61.0_ELITE_СТАБІЛЬНО</span>
+            <span>СТАБІЛЬНІСТЬ_ЯД А: ELITE_v61.0_ELITE_СТАБІЛЬНО</span>
           </div>
           <div className="mt-4 flex gap-2">
             {Array.from({ length: 16 }).map((_, i) => (

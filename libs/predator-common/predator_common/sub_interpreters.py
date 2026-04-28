@@ -1,4 +1,4 @@
-"""Sub-Interpreter Agent Orchestrator — PREDATOR Analytics v55.1 Ironclad.
+"""Sub-Interpreter Agent Orchestrator — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Реалізує AOIES (Agent Orchestrator with Isolated Execution Spaces),
 де кожен агент виконується в ізольованому суб-інтерпретаторі Python 3.12.

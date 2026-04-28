@@ -1,9 +1,9 @@
 /**
- * 🎯 Sovereign Intelligence Hub | v58.2-WRAITH
+ * 🎯 Sovereign Intelligence Hub | v61.0-ELITE
  * PREDATOR — Центральний Вузол Когнітивної  озвідки
  * 
  * Інтерактивний інтерфейс для взаємодії з Оракулом та аналізу нейронних потоків.
- * Sovereign Power Design System · WRAITH Crimson Palette · Tier-1 Access
+ * Sovereign Power Design System · ELITE Crimson Palette · Tier-1 Access
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -31,7 +31,7 @@ import { DiagnosticsTerminal } from '@/components/intelligence/DiagnosticsTermin
 
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
-// --- MOCK DATA FOR WRAITH ---
+// --- MOCK DATA FOR ELITE ---
 const MOCK_THOUGHTS: AIThought[] = [
     { id: '1', stage: 'observation', content: '[GLM-5.1] Виявлено критичне відхилення у ланцюгу постачання пального. Джерело: NVIDIA-CLUSTER.', confidence: 0.99, timestamp: new Date().toISOString() },
     { id: '2', stage: 'analysis', content: 'Активація SWE-Bench Pro для аудиту аномальних транзакцій. Кореляція з ZROK-трафіком позитивна.', confidence: 0.97, timestamp: new Date().toISOString() },
@@ -59,7 +59,7 @@ export default function SovereignIntelHub() {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SovereignHub',
-                    message: 'СИНХ ОНІЗАЦІЯ З О АКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
+                    message: 'СИНХ ОНІЗАЦІЯ З ОРАКУЛОМ УСПІШНА (SOVEREIGN_SUCCESS). Прямий доступ до NVIDIA-кластера.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'SOVEREIGN_SUCCESS'

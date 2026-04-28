@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR v58.2-WRAITH — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
+ * 🦅 PREDATOR v61.0-ELITE — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
  *  озділ I.3 — ШІ-керований звіт для вищого керівництва.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -81,10 +81,10 @@ export default function ExecutiveBriefView() {
   // Live Stream Simulation
   useEffect(() => {
     const messages = [
-      'Г АФ: Виявлено нову афіліацію першого рівня в офшорній зоні',
+      'ГРАФ: Виявлено нову афіліацію першого рівня в офшорній зоні',
       'OSINT: Виявлено 14 нових згадок суб\'єкта в закритих реєстрах',
       'Т ИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
-      'СИНХ ОНІЗАЦІЯ: Оновлено санкційні списки  НБО та OFAC/EU',
+      'СИНХ ОНІЗАЦІЯ: Оновлено санкційні списки РНБО та OFAC/EU',
       'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГ О" підвищено до 98.9% (АГЕНТСЬКА_СИНХ ОНІЗАЦІЯ)',
       'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною — Тунель ZROK активний',
       'ФІНАНСИ: Виявлено ознаки кругової торгівлі у секторі палива'
@@ -136,7 +136,7 @@ export default function ExecutiveBriefView() {
               СУВЕ ЕННЕ <span className="text-red-600">СТ АТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-             ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТ АЛЬНОГО ЯД А | v58.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
+             ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТ АЛЬНОГО ЯД А | v61.0-ELITE (АГЕНТСЬКИЙ_ПУЛ)
             </p>
           </div>
           
@@ -221,7 +221,7 @@ export default function ExecutiveBriefView() {
                 <Target size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white uppercase italic tracking-tight">П ІО ИТЕТНІ ОБ'ЄКТИ</h2>
+                <h2 className="text-lg font-black text-white uppercase italic tracking-tight">ПРІОРИТЕТНІ ОБ'ЄКТИ</h2>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Критичний рівень ризику — аналіз AI</p>
               </div>
             </div>
@@ -367,7 +367,7 @@ export default function ExecutiveBriefView() {
             </div>
             <div className="text-left">
               <div className="text-sm font-black text-white uppercase italic">ВЕ ИФІКУВАТИ ДАНІ</div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">КВАНТОВЕ ПІДТВЕ ДЖЕННЯ  ЕЄСТ ІВ</div>
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">КВАНТОВЕ ПІДТВЕ ДЖЕННЯ РЕЄСТРІВ</div>
             </div>
           </div>
           <Zap size={18} className="text-yellow-400/40 group-hover:text-yellow-400 transition-colors" />
@@ -379,7 +379,7 @@ export default function ExecutiveBriefView() {
               <AlertOctagon size={20} />
             </div>
             <div className="text-left">
-              <div className="text-sm font-black text-white uppercase italic">ЗВІТ ДЛЯ  НБО</div>
+              <div className="text-sm font-black text-white uppercase italic">ЗВІТ ДЛЯ РНБО</div>
               <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">ЕКСПОРТ П АВОВОГО ДОСЬЄ</div>
             </div>
           </div>

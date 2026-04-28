@@ -1,4 +1,4 @@
-"""AI Maintenance Tasks — PREDATOR Analytics v56.5-ELITE.
+"""AI Maintenance Tasks — PREDATOR Analytics v61.0-ELITE.
 
 Фонові задачі для моніторингу ML-моделей та обслуговування AI-інфраструктури.
 """

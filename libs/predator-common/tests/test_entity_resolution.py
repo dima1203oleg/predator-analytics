@@ -1,4 +1,4 @@
-"""Тести Entity Resolution — PREDATOR Analytics v58.2-WRAITH.
+"""Тести Entity Resolution — PREDATOR Analytics v61.0-ELITE.
 
 Покриття:
 - normalize_company_name: видалення ОПФ, транслітерація, нормалізація

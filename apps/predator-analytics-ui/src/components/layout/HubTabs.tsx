@@ -18,7 +18,7 @@ interface HubTabsProps {
 }
 
 /**
- * HubTabs - Тактичні таби у стилі WRAITH для навігації всередині хабів.
+ * HubTabs - Тактичні таби у стилі ELITE для навігації всередині хабів.
  * Використовує Framer Motion для плавних переходів індикатора.
  */
 export const HubTabs: React.FC<HubTabsProps> = ({ 

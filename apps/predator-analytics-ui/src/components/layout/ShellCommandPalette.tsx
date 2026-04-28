@@ -264,7 +264,7 @@ export const ShellCommandPalette: React.FC = () => {
               </div>
               <div className="inline-flex items-center gap-2 text-slate-400">
                 <Sparkles className="h-3.5 w-3.5" />
-                Shell v58.2-WRAITH
+                Shell v61.0-ELITE
               </div>
             </div>
           </motion.div>

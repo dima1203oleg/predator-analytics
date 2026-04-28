@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 const MOCK_SANCTIONS = [
   { id: 1, name: 'ТОВ "Вектор Плюс"', type: 'Юридична особа', list: 'OFAC SDN', date: '2024-03-12', reason: 'Сприяння обходу санкцій', risk: 'Critical' },
-  { id: 2, name: 'Іванов Сергій Петрович', type: 'Фізична особа', list: ' НБО', date: '2023-11-05', reason: 'Фінансування тероризму', risk: 'High' },
+  { id: 2, name: 'Іванов Сергій Петрович', type: 'Фізична особа', list: 'РНБО', date: '2023-11-05', reason: 'Фінансування тероризму', risk: 'High' },
   { id: 3, name: 'Банк Євразія', type: 'Юридична особа', list: 'EU Consolidated', date: '2024-01-20', reason: 'Секторальні санкції', risk: 'Medium' },
 ];
 
@@ -41,7 +41,7 @@ export const SanctionsTab: React.FC = () => {
             <div className="space-y-3">
               <label className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">реєстри Моніторингу</label>
               <div className="space-y-1.5">
-                {['OFAC SDN', 'EU Consolidated', ' НБО (Україна)', 'ООН (UNSC)'].map(reg => (
+                {['OFAC SDN', 'EU Consolidated', 'РНБО (Україна)', 'ООН (UNSC)'].map(reg => (
                   <label key={reg} className="flex items-center gap-3 p-2.5 hover:bg-white/5 rounded-xl cursor-pointer transition-all group border border-transparent hover:border-white/5">
                     <input type="checkbox" className="w-4 h-4 rounded border-white/10 bg-slate-950 text-rose-500 focus:ring-rose-500/30" defaultChecked />
                     <span className="text-xs font-bold text-slate-400 group-hover:text-slate-200 transition-colors uppercase tracking-tight">{reg}</span>
@@ -63,7 +63,7 @@ export const SanctionsTab: React.FC = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 z-10" />
             <input 
               type="text" 
-              placeholder="Пошук за назвою, ЄД ПОУ або ПІБ..."
+              placeholder="Пошук за назвою, ЄДРПОУ або ПІБ..."
               className="w-full bg-slate-900/80 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500/50 transition-all shadow-2xl backdrop-blur-xl relative z-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -97,7 +97,7 @@ export const SanctionsTab: React.FC = () => {
                             <span className="text-[10px] font-bold text-slate-300 uppercase">{item.type}</span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest"> ЕЄСТ :</span>
+                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">РЕЄСТР:</span>
                             <span className="text-[10px] font-bold text-rose-500 uppercase">{item.list}</span>
                           </div>
                           <div className="flex items-center gap-1.5">

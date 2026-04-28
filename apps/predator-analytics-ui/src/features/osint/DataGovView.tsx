@@ -1,5 +1,5 @@
 /**
- * 🌐 OPEN DATA MATRIX // МАТ ИЦЯ ВІДК ИТИХ ДАНИХ | v58.2-WRAITH
+ * 🌐 OPEN DATA MATRIX // МАТ ИЦЯ ВІДК ИТИХ ДАНИХ | v61.0-ELITE
  * PREDATOR Analytics — Governance OSINT & Dataset Discovery
  * 
  * Модуль інтеграції з порталом data.gov.ua: пошук та аналіз датасетів.
@@ -67,7 +67,7 @@ export default function DataGovView() {
             console.error(e);
             // Mock
             setDatasets([
-                { id: 'ds-001', title: ' ЕЄСТ  ОБ\'ЄКТІВ П АВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
+                { id: 'ds-001', title: 'РЕЄСТР ОБ\'ЄКТІВ П АВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
                 { id: 'ds-002', title: 'ПЕ ЕЛІК ПІДП ИЄМСТВ З ОЗНАКАМИ САНКЦІЙ', organizationTitle: 'МНС УК АЇНИ', metadataModified: '2026-04-11', resources: [{ format: 'JSON', sizeLabel: '12 MB', name: 'SANCTIONS_UA', url: '#' }] }
             ]);
         } finally {
@@ -100,10 +100,10 @@ export default function DataGovView() {
                                   OPEN_DATA_MATRIX // GOVERNMENT_SCAN
                                 </span>
                                 <div className="h-px w-10 bg-blue-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                               ДЕ ЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase"> ЕЄСТ И</span>
+                               ДЕ ЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">РЕЄСТРИ</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
                                 МОНІТО ИНГ ТА АНАЛІЗ ВІДК ИТИХ ДЕ ЖАВНИХ ДАТАСЕТІВ (DATA.GOV.UA)
@@ -112,7 +112,7 @@ export default function DataGovView() {
                        </div>
                      }
                      stats={[
-                       { label: ' ЕЄСТ ІВ_ЗНАЙДЕНО', value: totalCount.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
+                       { label: 'РЕЄСТРІВ_ЗНАЙДЕНО', value: totalCount.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
                        { label: 'СТАТУС_КАНАЛУ', value: 'ACTIVE', icon: <Satellite size={14} />, color: 'success' },
                        { label: 'ДЖЕРЕЛО_OSINT', value: 'DATA.GOV.UA', icon: <Globe size={14} />, color: 'warning' }
                      ]}
@@ -139,7 +139,7 @@ export default function DataGovView() {
                             <input 
                                type="text" 
                                value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                               placeholder="ПОШУК_ПО_МІЛЬЙОНАХ_ДЕ ЖАВНИХ_ ЕЄСТ ІВ..."
+                               placeholder="ПОШУК_ПО_МІЛЬЙОНАХ_ДЕ ЖАВНИХ_РЕЄСТРІВ..."
                                className="w-full bg-transparent py-10 text-3xl font-black text-white focus:outline-none placeholder:text-slate-800 tracking-tighter italic uppercase"
                             />
                          </form>
@@ -191,7 +191,7 @@ export default function DataGovView() {
                                  <div className="flex justify-between items-start">
                                     <div className="space-y-2">
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>
-                                       <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПО Т <span className="text-blue-500"> ЕЄСТ У</span></h2>
+                                       <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПО Т <span className="text-blue-500">РЕЄСТРУ</span></h2>
                                     </div>
                                     <button onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-amber-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></button>
                                  </div>

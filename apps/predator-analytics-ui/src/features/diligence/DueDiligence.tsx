@@ -1,5 +1,5 @@
 /**
- * ✅ DUE DILIGENCE WORKFLOW | v58.2-WRAITH
+ * ✅ DUE DILIGENCE WORKFLOW | v61.0-ELITE
  * PREDATOR Analytics — Tactical Compliance Auditing
  * 
  * Багатоетапний процес перевірки контрагентів із застосуванням
@@ -34,9 +34,9 @@ interface ChecklistItem {
 
 // --- MOCK DATA ---
 const DEFAULT_CHECKLIST: ChecklistItem[] = [
-  { id: 'l1', title: '🏢 Статус реєстрації', description: 'Аналіз CERS/ЄД  на предмет активності', category: 'legal', status: 'completed', auto: true },
+  { id: 'l1', title: '🏢 Статус реєстрації', description: 'Аналіз CERS/ЄДРна предмет активності', category: 'legal', status: 'completed', auto: true },
   { id: 'l2', title: '⚖️ Судові Навантаження', description: 'Перевірка активних кримінальних проваджень', category: 'legal', status: 'in_progress', auto: true },
-  { id: 'c1', title: ' ️ Санкційні Хвилі', description: ' НБО, OFAC, ЄС шлюзи', category: 'compliance', status: 'completed', auto: true },
+  { id: 'c1', title: ' ️ Санкційні Хвилі', description: 'РНБО, OFAC, ЄС шлюзи', category: 'compliance', status: 'completed', auto: true },
   { id: 'c2', title: '🔍 AML / UBO Scan', description: 'Пошук кінцевих бенефіціарів та PEP-зв\'язків', category: 'compliance', status: 'pending', auto: true },
   { id: 'f1', title: '💰 Податкова Дисципліна', description: 'Аналіз заборгованостей та звітності', category: 'financial', status: 'pending', auto: true },
   { id: 'f2', title: '📊 Фінансовий Стан', description: 'Manual: Оцінка ліквідності за 24 міс.', category: 'financial', status: 'pending', auto: false },
@@ -47,7 +47,7 @@ const categoryNames = {
   legal: { label: 'Ю ИДИЧНИЙ АУДИТ', color: 'text-yellow-400', border: 'border-yellow-500/30', bg: 'bg-yellow-600/10' },
   financial: { label: 'ФІНАНСОВИЙ АУДИТ', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
   compliance: { label: 'COMPLIANCE / AML', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
-  operational: { label: 'ОПЕРАЦІЙНИЙ КОНТ ОЛЬ', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-600/10' },
+  operational: { label: 'ОПЕРАЦІЙНИЙ КОНТРОЛЬ', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-600/10' },
 };
 
 export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = ({
@@ -94,7 +94,7 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                        DUE_DILIGENCE // COMPLIANCE_SHIELD
                      </span>
                      <div className="h-px w-10 bg-sky-600/20" />
-                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                     <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                     ВЕ ИФІКАЦІЯ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8">КОНТ АГЕНТА</span>

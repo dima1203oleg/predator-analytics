@@ -163,7 +163,7 @@ export const TacticalCard: React.FC<TacticalCardProps> = ({
                   )}>
                     {priority === 'critical' ? 'К ИТИЧНО' : 
                      priority === 'high' ? 'ВИСОКИЙ' : 
-                     priority === 'medium' ? 'СЕ ЕДНІЙ' : 'НИЗЬКИЙ'}
+                     priority === 'medium' ? 'СЕРЕДНІЙ' : 'НИЗЬКИЙ'}
                   </span>
                 )}
              </div>

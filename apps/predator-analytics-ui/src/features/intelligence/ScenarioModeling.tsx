@@ -1,5 +1,5 @@
 /**
- * 🔮 PREDATOR ANALYTICS v58.2-WRAITH — Моделювання Сценаріїв (What-If Analysis)
+ * 🔮 PREDATOR ANALYTICS v61.0-ELITE — Моделювання Сценаріїв (What-If Analysis)
  * =========================================================================
  * Ультрапреміальний інструмент бізнес-прогнозування з 3D HUD та голографічними графіками
  */
@@ -61,7 +61,7 @@ const ScenarioModeling: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'ScenarioModeling',
-                    message: 'МОДЕЛЮВАННЯ СЦЕНА ІЇВ: Вузол NVIDIA недоступний. Використовується локальний двигун N5.PREDICTIVE-WRAITH.',
+                    message: 'МОДЕЛЮВАННЯ СЦЕНА ІЇВ: Вузол NVIDIA недоступний. Використовується локальний двигун N5.PREDICTIVE-ELITE.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'SCENARIO_ENGINE_OFFLINE'
@@ -158,7 +158,7 @@ const ScenarioModeling: React.FC = () => {
                 axisPointer: { type: 'cross', label: { backgroundColor: '#8b5cf6' } }
             },
             legend: {
-                data: ['Історичний Факт', 'ШІ Прогноз (WRAITH)'],
+                data: ['Історичний Факт', 'ШІ Прогноз (ELITE)'],
                 textStyle: { color: '#64748b', fontFamily: 'Inter', fontWeight: 700 },
                 top: 0
             },
@@ -186,7 +186,7 @@ const ScenarioModeling: React.FC = () => {
                     data: baseData.map((v: any, i: number) => i <= 5 ? v : null)
                 },
                 {
-                    name: 'ШІ Прогноз (WRAITH)',
+                    name: 'ШІ Прогноз (ELITE)',
                     type: 'line',
                     smooth: true,
                     symbol: 'circle',
@@ -205,8 +205,8 @@ const ScenarioModeling: React.FC = () => {
         <PageTransition className="min-h-screen bg-slate-950 relative pb-24 overflow-hidden">
             <ViewHeader 
                 title="МОДЕЛЮВАННЯ СЦЕНА ІЇВ"
-                subtitle="WHAT-IF ANALYSIS CORE v58.2-WRAITH"
-                badges={[{ label: isOffline ? 'MIRROR_SIMULATION' : 'SIMULATION_WRAITH', color: isOffline ? 'warning' : 'primary' }]}
+                subtitle="WHAT-IF ANALYSIS CORE v61.0-ELITE"
+                badges={[{ label: isOffline ? 'MIRROR_SIMULATION' : 'SIMULATION_ELITE', color: isOffline ? 'warning' : 'primary' }]}
                 stats={[
                     { label: 'П ОГНОЗ  УХУ', value: '$12.4M', color: 'success' },
                     { label: 'РИЗИК СЦЕНА ІЮ', value: '42/100', color: 'warning' },
@@ -311,7 +311,7 @@ const ScenarioModeling: React.FC = () => {
                                     <div className="relative z-10">
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Активна AI Модель</p>
                                         <p className="text-sm font-black text-white font-mono flex items-center gap-2">
-                                            {isOffline ? 'N5.MIRROR-PREDICTIVE' : 'N5.PREDICTIVE-WRAITH'}
+                                            {isOffline ? 'N5.MIRROR-PREDICTIVE' : 'N5.PREDICTIVE-ELITE'}
                                             <span className="text-emerald-400 text-[9px] px-1.5 py-0.5 border border-emerald-500/20 bg-emerald-500/10 rounded">94.8% ТОЧНІСТЬ</span>
                                         </p>
                                     </div>
@@ -328,7 +328,7 @@ const ScenarioModeling: React.FC = () => {
                             {[
                                 { label: 'Прогнозована Виручка', value: '$12.4M', diff: '+14.2%', up: true, color: '#10b981' },
                                 { label: 'Відхилення Маржі', value: `${marginChange > 0 ? '+' : ''}${marginChange.toFixed(1)}%`, diff: 'до бази', up: marginChange >= 0, color: marginChange >= 0 ? '#10b981' : '#ef4444' },
-                                { label: 'Індекс  изику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
+                                { label: 'Індекс ризику', value: '42/100', diff: '-5.1 vs сер.', up: true, color: '#06b6d4' }
                             ].map((kpi, i) => (
                                 <div key={i} className="p-5 rounded-3xl bg-slate-900/60 border border-white/5 backdrop-blur-xl relative overflow-hidden">
                                     <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-white/5 to-transparent rounded-bl-full pointer-events-none" />

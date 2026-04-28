@@ -1,9 +1,9 @@
 /**
- * 🌀 Omni-Data Ingestion Nexus | v58.2-WRAITH Premium Matrix
+ * 🌀 Omni-Data Ingestion Nexus | v61.0-ELITE Premium Matrix
  * PREDATOR Цитадель Захоплення та Обробки Даних
  * 
  * Керування потоками інформації, підключення джерел та моніторинг ETL.
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -49,7 +49,7 @@ const SOURCE_TYPES = [
   { id: 'tax', tier: 1, label: 'ПОДАТКОВІ_ДАНІ', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
   { id: 'logistics', tier: 1, label: 'ЛОГІСТИКА_CARGO', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   { id: 'energy', tier: 1, label: 'ЕНЕ ГОПОТОКИ', icon: CloudLightning, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-  { id: 'edr', tier: 2, label: ' ЕЄСТ И_ЄД ', icon: Database, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+  { id: 'edr', tier: 2, label: 'РЕЄСТРИ_ЄД ', icon: Database, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
   { id: 'court', tier: 2, label: 'СУДОВІ_ ЕШЕННЯ', icon: ShieldAlert, color: 'text-amber-400', bg: 'bg-amber-500/10' },
   { id: 'tender', tier: 2, label: 'PROZORRO_ДЕ Ж', icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'media', tier: 3, label: 'OSINT_TELEGRAM', icon: MessageSquare, color: 'text-purple-400', bg: 'bg-purple-500/10' },
@@ -226,7 +226,7 @@ const DataIngestionHub: React.FC = () => {
                     <div className="flex items-center justify-between border-b border-white/5 pb-6">
                         <div className="flex items-center gap-4">
                             <Workflow size={20} className="text-blue-400" />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНІ_КОНЕКТО И_ ЕЄСТ У</h3>
+                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНІ_КОНЕКТО И_РЕЄСТРУ</h3>
                         </div>
                         <div className="flex gap-4">
                             <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 font-black uppercase tracking-widest px-4 py-1">TOTAL_NODES: {sources.length}</Badge>
@@ -330,7 +330,7 @@ const DataIngestionHub: React.FC = () => {
                         Нейронний моніторинг інформаційного простору 24/7. Включає Telegram, новинні стрічки та офіційні урядові бюлетені.
                     </p>
                     <button className="w-full py-5 bg-amber-500 text-black font-black rounded-2xl text-[10px] uppercase tracking-[0.3em] shadow-xl hover:bg-amber-400 transition-all flex items-center justify-center gap-3 active:scale-95">
-                        <Search size={16} /> ІНІЦІЮВАТИ_ ЕЖИМ_ТИШІ
+                        <Search size={16} /> ІНІЦІЮВАТИ_РЕЖИМ_ТИШІ
                     </button>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 bg-black/40 rounded-xl border border-white/5 flex flex-col items-center gap-2">
@@ -458,7 +458,7 @@ const DataIngestionHub: React.FC = () => {
 
                         <div className="p-12 border-t border-white/5 bg-slate-900/40 flex items-center justify-between">
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v58.2-WRAITH
+                                <ShieldCheck size={16} className="text-emerald-500" /> СЕАНС_ЗАХИЩЕНО_v61.0-ELITE
                             </div>
                             <div className="flex gap-6">
                                 <button onClick={() => setIsModalOpen(false)} className="px-12 py-6 bg-white/5 border border-white/10 rounded-[2rem] text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] hover:text-white transition-all">

@@ -11,13 +11,13 @@ describe('navigation', () => {
 
     expect(sections).toHaveLength(7);
     expect(sections.map((section) => section.label)).toEqual([
-      'КОМАНДНИЙ ЦЕНТ ',
+      'КОМАНДНИЙ ЦЕНТР',
       'РОЗВІДКА КОНТ АГЕНТІВ',
       'ФІНАНСОВА РОЗВІДКА',
       'ЛАНЦЮГИ ПОСТАЧАННЯ',
       'БІЗНЕС-МОЖЛИВОСТІ',
       'ШІ-ЛАБО АТО ІЯ',
-      'МІСІЯ-КОНТ ОЛЬ',
+      'МІСІЯ-КОНТРОЛЬ',
     ]);
     expect(sections[0]?.groups?.map((group) => group.title)).toContain('Оперативний огляд');
     expect(sections[1]?.groups?.map((group) => group.title)).toContain('OSINT та розслідування');

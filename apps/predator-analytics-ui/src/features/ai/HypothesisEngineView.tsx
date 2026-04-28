@@ -1,5 +1,5 @@
 /**
- *   AI HYPOTHESIS ENGINE | v58.2-WRAITH
+ *   AI HYPOTHESIS ENGINE | v61.0-ELITE
  * PREDATOR Analytics — Autonomous Intelligence Hypothesis Generation
  *
  * Автоматична генерація слідчих гіпотез на базі аномалій, патернів
@@ -64,14 +64,14 @@ const HYPOTHESES: Hypothesis[] = [
     createdAt: '04:12:34',
     entities: ['МЕТАЛУ Г-ІНВЕСТ', 'Kyoto Holdings Ltd (BVI)', 'Ткаченко В.М.'],
     evidence: [
-      { source: 'ЄД  / Фінансова звітність', description: 'Активи зменшились з $31.2M до $12.8M за 3 місяці', weight: 95, timestamp: '2025-01-15' },
+      { source: 'ЄДР/ Фінансова звітність', description: 'Активи зменшились з $31.2M до $12.8M за 3 місяці', weight: 95, timestamp: '2025-01-15' },
       { source: 'SWIFT-монітор', description: '3 трансфери $4.1M, $8.7M, $5.6M → Kyoto Holdings', weight: 98, timestamp: '2024-11-03' },
       { source: 'YouControl', description: 'Kyoto Holdings — повʼязана особа: Ткаченко В.М. (PEP)', weight: 87, timestamp: '2024-12-21' },
       { source: 'Судовий реєстр', description: 'Справа про банкрутство відкрита через 91 день після трансферів', weight: 91, timestamp: '2025-02-01' },
     ],
     nextActions: [
       'ПОДАТИ ЗАЯВУ ДО НАБУ — СТ. 199 ККУ',
-      'КЛОПОТАННЯ П О ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
+      'КЛОПОТАННЯПРО ВИЗНАННЯ УГОД НЕДІЙСНИМИ',
       'ЗАПИТ ДО КІП СЬКОГО  ЕГУЛЯТО А НА  ОЗК ИТТЯ UBO',
     ],
     aiModel: 'PREDATOR-SIGINT-7B',
@@ -90,12 +90,12 @@ const HYPOTHESES: Hypothesis[] = [
     entities: ['ТОВ "ЗАХИСТ-Т ЕЙД"', 'ФОП Бойченко І.В.', 'БФ "ПЕ ЕМОГА"'],
     evidence: [
       { source: 'ProZorro API', description: '47 тендерів — переморогавці ротуються за схемою 1-2-3', weight: 88, timestamp: '2024-08-01' },
-      { source: 'ЄД  Граф', description: 'Спільний директор в 2 з 3 компаній: Гнатюк О. .', weight: 79, timestamp: '2025-01-20' },
+      { source: 'ЄДРГраф', description: 'Спільний директор в 2 з 3 компаній: Гнатюк О. .', weight: 79, timestamp: '2025-01-20' },
       { source: 'ContactData', description: 'Однакові контактні дані та IP-адреси заявок у ProZorro', weight: 85, timestamp: '2025-03-12' },
     ],
     nextActions: [
-      'ЗАПИТ ДО АМКУ — АНТИМОНОПОЛЬНЕ П ОВАДЖЕННЯ',
-      'АНАЛІЗ IP-АД ЕС ПОДАЧІ ТЕНДЕ НИХ П ОПОЗИЦІЙ',
+      'ЗАПИТ ДО АМКУ — АНТИМОНОПОЛЬНЕПРОВАДЖЕННЯ',
+      'АНАЛІЗ IP-АД ЕС ПОДАЧІ ТЕНДЕ НИХПРОПОЗИЦІЙ',
       'ПО ІВНЯЛЬНИЙ АНАЛІЗ СПЕЦИФІКАЦІЙ ЗА 47 ЛОТАМИ',
     ],
     aiModel: 'PREDATOR-GRAPH-4B',
@@ -104,7 +104,7 @@ const HYPOTHESES: Hypothesis[] = [
 ];
 
 const STATUS_CFG = {
-  confirmed: { label: 'ПІДТВЕ ДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
+  confirmed: { label: 'ПІДТВЕРДЖЕНО', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-800/40', icon: CheckCircle },
   probable:  { label: 'ЙМОВІ НО',    color: '#D4AF37', bg: 'bg-yellow-900/15',  border: 'border-yellow-800/30', icon: AlertTriangle },
   possible:  { label: 'МОЖЛИВО',     color: '#475569', bg: 'bg-slate-900/15',   border: 'border-slate-800/30',  icon: Eye },
   refuted:   { label: 'СП ОСТОВАНО', color: '#F59E0B', bg: 'bg-rose-900/15',    border: 'border-rose-800/30',   icon: Lock },
@@ -138,7 +138,7 @@ const HypothesisEngineView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'HypothesisEngine',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ  ЕЖИМ ГЕНЕ АЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ ГЕНЕ АЦІЇ ГІПОТЕЗ (COGNITIVE_NODES). Використовується локальна нейромережа.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'COGNITIVE_NODES'
@@ -198,7 +198,7 @@ const HypothesisEngineView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК WRAITH ── */}
+        {/* ── ЗАГОЛОВОК ELITE ── */}
         <ViewHeader
           title={
             <div className="flex items-center gap-8">
@@ -217,7 +217,7 @@ const HypothesisEngineView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <Sparkles size={12} className="text-yellow-600 animate-pulse" />
                   <span className="text-[10px] font-black text-yellow-500/70 uppercase tracking-[0.6em]">
-                    СУВЕ ЕННЕ ЯДРО ГІПОТЕЗ · v58.2-WRAITH
+                    СУВЕ ЕННЕ ЯДРО ГІПОТЕЗ · v61.0-ELITE
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -260,18 +260,18 @@ const HypothesisEngineView: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Вузол обчислень</p>
-                  <p className="text-xl font-black text-yellow-500 font-mono italic">{isOffline ? 'WRAITH_LOCAL' : 'PREDATOR_SIGINT'}</p>
+                  <p className="text-xl font-black text-yellow-500 font-mono italic">{isOffline ? 'ELITE_LOCAL' : 'PREDATOR_SIGINT'}</p>
                 </div>
               </div>
               <button className="px-12 py-5 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black text-[11px] font-black uppercase tracking-[0.3em] hover:brightness-110 transition-all rounded-2xl shadow-3xl flex items-center gap-4 italic font-bold">
                 <Download size={20} />
-                СТРАТЕГІЧНИЙ_ЗВІТ_WRAITH
+                СТРАТЕГІЧНИЙ_ЗВІТ_ELITE
               </button>
             </div>
           }
         />
 
-        {/* ── МЕТ ИКИ WRAITH ── */}
+        {/* ── МЕТ ИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'ГІПОТЕЗ СФО МОВАНО', v: '47',    sub: 'Активний векторний скан',       c: '#D4AF37' },
@@ -292,7 +292,7 @@ const HypothesisEngineView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ГЕНЕ АТО  ЗАПИТІВ WRAITH ── */}
+        {/* ── ГЕНЕ АТО  ЗАПИТІВ ELITE ── */}
         <div className="bg-black border-2 border-yellow-500/10 p-10 space-y-8 rounded-[4rem] shadow-4xl relative overflow-hidden backdrop-blur-3xl">
           <div className="absolute top-0 right-0 p-20 opacity-[0.02] pointer-events-none">
              <Brain size={400} className="text-yellow-500" />
@@ -328,7 +328,7 @@ const HypothesisEngineView: React.FC = () => {
             </motion.button>
           </div>
 
-          {/* Термінал WRAITH */}
+          {/* Термінал ELITE */}
           <div
             ref={terminalRef}
             className="h-[180px] overflow-y-auto bg-black/80 border-2 border-white/5 p-8 font-mono space-y-2 custom-scrollbar rounded-3xl shadow-inner relative z-10"
@@ -356,13 +356,13 @@ const HypothesisEngineView: React.FC = () => {
                   animate={{ opacity: [0, 1, 0] }}
                   transition={{ duration: 0.7, repeat: Infinity }}
                   className="text-yellow-500 font-black"
-                >_ОЧІКУВАННЯ_КОМАНДИ_WRAITH</motion.span>
+                >_ОЧІКУВАННЯ_КОМАНДИ_ELITE</motion.span>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ WRAITH ── */}
+        {/* ── СПИСОК ГІПОТЕЗ + ДЕТАЛІ ELITE ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
           {/* Список гіпотез */}
@@ -459,7 +459,7 @@ const HypothesisEngineView: React.FC = () => {
             </div>
           </div>
 
-          {/* Деталі гіпотези WRAITH */}
+          {/* Деталі гіпотези ELITE */}
           <div className="lg:col-span-12 xl:col-span-7">
             <AnimatePresence mode="wait">
               {selected ? (
@@ -533,7 +533,7 @@ const HypothesisEngineView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Докази WRAITH */}
+                  {/* Докази ELITE */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-yellow-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic">
                       <FileText size={20} className="text-yellow-500" />
@@ -576,7 +576,7 @@ const HypothesisEngineView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/*  ЕКОМЕНДОВАНИ ДІЇ WRAITH */}
+                  {/*  ЕКОМЕНДОВАНИ ДІЇ ELITE */}
                   <div className="bg-black/60 border-2 border-white/5 p-10 rounded-[3.5rem] shadow-3xl">
                     <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.5em] mb-8 flex items-center gap-4 italic font-bold">
                       <Target size={20} className="text-rose-500 animate-pulse" />

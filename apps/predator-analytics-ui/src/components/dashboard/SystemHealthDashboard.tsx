@@ -261,7 +261,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
                 <h3 className="text-lg font-bold text-white">Статус Guardian (v45.2)</h3>
             </div>
             <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono border border-emerald-500/30">
-                 ЕЖИМ: {mode || 'AUTO'}
+                РЕЖИМ: {mode || 'AUTO'}
             </div>
         </div>
 

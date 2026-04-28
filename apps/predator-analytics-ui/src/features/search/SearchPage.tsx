@@ -1,5 +1,5 @@
 /**
- * 🔍 PREDATOR Semantic Search | v58.2-WRAITH
+ * 🔍 PREDATOR Semantic Search | v61.0-ELITE
  * НЕЙ ОФО МНИЙ ПОШУКОВИЙ ДВИГУН (INTEL NEXUS SEARCH)
  * 
  * Гібридний OSINT-пошук: реєстри, Митниця, Медіа, Санкції, Graph.
@@ -77,7 +77,7 @@ const SearchPage: React.FC = () => {
                                          TITAN_OSINT // SEARCH_DEEP
                                        </span>
                                        <div className="h-px w-10 bg-red-600/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                                         ПОШУК <span className="text-red-600 underline decoration-red-600/20 decoration-8">П ЕДАТО А</span>

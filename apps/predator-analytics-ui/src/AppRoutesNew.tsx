@@ -76,7 +76,7 @@ const NetworkGraph = lazy(() => import('./features/network/NetworkGraph'));
 const DueDiligence = lazy(() => import('./features/diligence/DueDiligence'));
 const ForecastingEngine = lazy(() => import('./features/ai/ForecastView'));
 
-// ✅ Бізнес-розвідувальні модулі v58.2-WRAITH
+// ✅ Бізнес-розвідувальні модулі v61.0-ELITE
 const FinancialSigintView    = lazy(() => import('./features/intelligence/FinancialSigintView'));
 const UBOMapView             = lazy(() => import('./features/intelligence/UBOMapView'));
 const GeopoliticalRadarView  = lazy(() => import('./features/intelligence/GeopoliticalRadarView'));
@@ -190,7 +190,7 @@ export const AppRoutesNew = () => {
       <Suspense fallback={<LoadingSkeleton />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            {/* 1. КОМАНДНИЙ ЦЕНТ  (GOLD HUB) */}
+            {/* 1. КОМАНДНИЙ ЦЕНТР (GOLD HUB) */}
             <Route path="/" element={<Navigate to="/command?tab=board" replace />} />
             <Route path="/command" element={<CommandHub />} />
             <Route path="/morning-brief" element={<Navigate to="/command?tab=brief" replace />} />

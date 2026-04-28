@@ -1,8 +1,8 @@
 /**
- * 📂 REGISTRIES // СКАНЕ   ЕЄСТ ІВ | v58.2-WRAITH
+ * 📂 REGISTRIES // СКАНЕ  РЕЄСТРІВ | v61.0-ELITE
  * PREDATOR Analytics — Business Intelligence & Registry Forensic
  *
- * Глибоке сканування юридичних осіб: ЄД ПОУ, Бенефіціари,  изики.
+ * Глибоке сканування юридичних осіб: ЄДРПОУ, Бенефіціари,  изики.
  * Моніторинг з'єднання з державними базами даних в реальному часі.
  *
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -65,11 +65,11 @@ export const RegistriesTab = () => {
                 setRegistries([
                     {
                         id: 'STATE_CORE',
-                        name: 'ДЕ ЖАВНІ_ ЕЄСТ И',
+                        name: 'ДЕ ЖАВНІ_РЕЄСТРИ',
                         icon: 'Database',
                         color: '#10b981',
                         registries: [
-                            { id: 'edr', name: 'ЄД  (Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
+                            { id: 'edr', name: 'ЄДР(Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
                             { id: 'tax', name: 'Державна Податкова Служба', status: 'online', records: '4.2M', latency: '32ms' },
                             { id: 'customs', name: 'Митна база (HS-CORE)', status: 'online', records: '115M', latency: '28ms' }
                         ]
@@ -150,13 +150,13 @@ export const RegistriesTab = () => {
                                     REGISTRY_FORENSIC // OSINT_CORE
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                             </div>
                             <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                                СКАНЕ  <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase"> ЕЄСТ ІВ</span>
+                                СКАНЕ  <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">РЕЄСТРІВ</span>
                             </h1>
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                ГЛИБИННИЙ АНАЛІЗ ЄД ПОУ • БЕНЕФІЦІА И • CERS_RISK_SCORE
+                                ГЛИБИННИЙ АНАЛІЗ ЄДРПОУ • БЕНЕФІЦІА И • CERS_RISK_SCORE
                             </p>
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export const RegistriesTab = () => {
                 stats={[
                     { label: 'ОБ\'ЄКТІВ_У_БАЗІ', value: '4.2M+', icon: <Database size={14} />, color: 'primary' },
                     { label: 'ТОЧНІСТЬ_VERIFIED', value: '98.4%', icon: <ShieldCheck size={14} />, color: 'success', animate: true },
-                    { label: 'АКТИВНІ_ ЕЄСТ И', value: '38', icon: <Satellite size={14} />, color: 'warning' }
+                    { label: 'АКТИВНІ_РЕЄСТРИ', value: '38', icon: <Satellite size={14} />, color: 'warning' }
                 ]}
                 actions={
                     <div className="flex gap-4">
@@ -186,7 +186,7 @@ export const RegistriesTab = () => {
                     </div>
                     <div className="space-y-10 relative z-10">
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ВВЕДІТЬ КОД ЄД ПОУ АБО ПОВНУ НАЗВУ СУБ'ЄКТА</label>
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ВВЕДІТЬ КОД ЄДРПОУ АБО ПОВНУ НАЗВУ СУБ'ЄКТА</label>
                             <div className="relative group/input">
                                 <div className="absolute inset-y-0 left-8 flex items-center">
                                     <Search className="w-8 h-8 text-slate-800 group-focus-within/input:text-emerald-500 transition-colors" />
@@ -195,7 +195,7 @@ export const RegistriesTab = () => {
                                     type="text"
                                     value={query} onChange={(e) => setQuery(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    placeholder="ЄД ПОУ АБО НАЗВА..."
+                                    placeholder="ЄДРПОУ АБО НАЗВА..."
                                     className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-8 pl-20 rounded-[2.5rem] text-3xl font-black text-white italic tracking-tighter placeholder:text-slate-900 outline-none focus:border-emerald-500/40 focus:bg-emerald-500/[0.02] transition-all uppercase"
                                 />
                             </div>
@@ -211,7 +211,7 @@ export const RegistriesTab = () => {
                                                 <Fingerprint size={16} className="text-slate-800 group-hover/it:text-emerald-500 transition-colors" />
                                             </div>
                                             <h4 className="text-sm font-black text-white italic uppercase truncate mb-1">{res.name}</h4>
-                                            <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄД ПОУ: {res.edrpou}</p>
+                                            <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄДРПОУ: {res.edrpou}</p>
                                         </motion.div>
                                     ))}
                                 </motion.div>
@@ -265,7 +265,7 @@ export const RegistriesTab = () => {
                             </div>
 
                             <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center leading-tight mb-5 italic skew-x-[-2deg]">{selectedCompany.name}</h2>
-                            <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">ЄД ПОУ: {selectedCompany.edrpou}</Badge>
+                            <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">ЄДРПОУ: {selectedCompany.edrpou}</Badge>
 
                             <div className="w-full space-y-8">
                                 <div className="p-8 bg-black/60 rounded-[3rem] border border-white/[0.04] text-center space-y-6">
@@ -391,8 +391,8 @@ export const RegistriesTab = () => {
             <section className="bg-black border-2 border-white/[0.03] p-12 rounded-[4rem] shadow-3xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-12">
                     <div className="space-y-2">
-                        <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg]">ПІДКЛЮЧЕНІ_ ЕЄСТ И_ТА_ДЖЕ ЕЛА</h3>
-                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТО ИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В  ЕАЛЬНОМУ ЧАСІ</p>
+                        <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg]">ПІДКЛЮЧЕНІ_РЕЄСТРИ_ТА_ДЖЕ ЕЛА</h3>
+                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТО ИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В РЕАЛЬНОМУ ЧАСІ</p>
                     </div>
                     <div className="px-6 py-3 bg-emerald-600/10 border border-emerald-600/40 rounded-full flex items-center gap-4 text-emerald-500 shadow-2xl">
                         <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />

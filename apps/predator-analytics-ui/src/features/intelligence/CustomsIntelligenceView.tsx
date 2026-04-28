@@ -1,11 +1,11 @@
 /**
- * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v58.2-WRAITH
+ * 🚢 CUSTOMS INTELLIGENCE // МИТНА АНАЛІТИКА | v61.0-ELITE
  * PREDATOR Analytics — Logistics & Trade Flow Intelligence
  * 
  * Моніторинг митних декларацій, аналіз контрагентів (ЗЕД),
  * трекінг товарних груп та виявлення митних ризиків.
  * 
- * PREDATOR_WRATH v58.2 · Classified · Tier-1
+ * PREDATOR_ELITE v61.0 · Sovereign Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -26,7 +26,7 @@ import {
   ResponsiveContainer, AreaChart, Area, PieChart as RePieChart,
   Pie, Cell
 } from 'recharts';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/utils';
 import { analyticsService } from '@/services/unified/analytics.service';
 import { PageTransition } from '@/components/layout/PageTransition';
 import { TacticalCard } from '@/components/ui/TacticalCard';
@@ -36,7 +36,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 import { SovereignAudio } from '@/utils/sovereign-audio';
 
 // ========================
-// Background Scanning HUD v58.2
+// Background Scanning HUD v61.0-ELITE
 // ========================
 
 const ScanningHUD: React.FC = () => {
@@ -48,9 +48,9 @@ const ScanningHUD: React.FC = () => {
                 className="absolute left-0 w-full h-[1px] bg-rose-500/40 shadow-[0_0_15px_rgba(225,29,72,0.3)]"
             />
             <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic font-bold">
-                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_WRAITH_SOVEREIGN</span>
-                <span>ДЖЕРЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX</span>
-                <span>ЯДРО_WRAITH: АКТИВНЕ</span>
+                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_ELITE_SOVEREIGN</span>
+                <span>ДЖЕРЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX_L7</span>
+                <span>ЯДРО_PREDATOR: АКТИВНЕ</span>
             </div>
         </div>
     );
@@ -74,7 +74,9 @@ const ManifestXrayTerminal: React.FC = () => {
         "ШИФРУВАННЯ_ЛОГУ_АУДИТУ...",
         "РОЗПІЗНАВАННЯ_HS_CODE: 8517.13.00.00",
         "КОГНІТИВНА_АНАЛІТИКА: ПАТЕРН_ВСТАНОВЛЕНО",
-        "СКАНУВАННЯ_WRAITH: ЦІЛЬ_ЗАХОПЛЕНО"
+        "СКАНУВАННЯ_ELITE: ЦІЛЬ_ЗАХОПЛЕНО",
+        "VISUAL_AUDIT: ПЕРЕВІРКА_СЕРТИФІКАТІВ_В_SANDBOX [ОК]",
+        "QA_VALIDATION: ВАЛІДАЦІЯ_ЛОГІКИ_OODA..."
     ];
 
     useEffect(() => {
@@ -256,24 +258,24 @@ export default function CustomsIntelligenceView() {
                   <div className="space-y-2">
                      <div className="flex items-center gap-4">
                         <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-                          WRAITH_MANIFEST_XRAY // {isOffline ? 'OFFLINE_CACHE' : 'LIVE_FEED'}
+                          ELITE_MANIFEST_XRAY // {isOffline ? 'OFFLINE_CACHE' : 'LIVE_FEED'}
                         </span>
                         <div className="h-px w-12 bg-rose-500/20" />
-                        <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                        МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РОЗВІДКА</span>
                      </h1>
                      <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-rose-500/30 pl-8 opacity-90 max-w-2xl">
-                        КОНТРОЛЬ ЗЕД, ТОВАРНИХ ПОТОКІВ ТА ПРЕДИКЦІЯ МИТНИХ РИЗИКІВ WRAITH_INTELLIGENCE
+                        КОНТРОЛЬ ЗЕД, ТОВАРНИХ ПОТОКІВ ТА ПРЕДИКЦІЯ МИТНИХ РИЗИКІВ ELITE_INTELLIGENCE
                      </p>
                   </div>
                </div>
              }
              badges={[
-               { label: 'WRAITH_T1', color: 'primary', icon: <Anchor size={10} /> },
+               { label: 'ELITE_T1', color: 'primary', icon: <Anchor size={10} /> },
                { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Database size={10} /> },
-               { label: 'v58.2-WRAITH', color: 'rose', icon: <Crown size={10} /> }
+               { label: 'v61.0-ELITE', color: 'rose', icon: <Crown size={10} /> }
              ]}
              stats={[
                { label: 'ДІЮЧИХ_ЗЕД', value: '12.8K', icon: <Box size={14} />, color: 'primary' },
@@ -298,7 +300,7 @@ export default function CustomsIntelligenceView() {
              }
            />
 
-           {/* ANALYTICS TABS WRAITH */}
+           {/* ANALYTICS TABS ELITE */}
            <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               {[
                 { id: 'analytics', label: 'ОБСЯГИ_ТА_ДИНАМІКА', i: Activity },
@@ -335,7 +337,7 @@ export default function CustomsIntelligenceView() {
                <ManifestXrayTerminal />
            </motion.div>
 
-           {/* MAIN DISPLAY HUB WRAITH */}
+           {/* MAIN DISPLAY HUB ELITE */}
            <div className="grid grid-cols-12 gap-10">
               <AnimatePresence mode="wait">
                  {activeTab === 'analytics' && (

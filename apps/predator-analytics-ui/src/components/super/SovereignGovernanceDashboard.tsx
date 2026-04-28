@@ -211,7 +211,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-3xl font-black text-white tracking-tight uppercase">Суверенне Управління</h1>
-                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v58.2-WRAITH-S</span>
+                            <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-400 text-[10px] font-black rounded-md border border-indigo-500/30 tracking-tighter">v61.0-ELITE-S</span>
                         </div>
                         <p className="text-slate-500 text-sm font-medium mt-1">Конституційний Нагляд та Інтерфейс Людського Суверенітету</p>
                     </div>
@@ -510,7 +510,7 @@ export const SovereignGovernanceDashboard: React.FC = () => {
                             <div>
                                 <h3 className="text-2xl font-black text-white uppercase tracking-tight">Перевизначення Суверенітету</h3>
                                 <p className="text-slate-400 text-sm mt-2">
-                                    Ви збираєтеся активувати **Протокол Екстреної Ізоляції  івня 2**. Це заморозить усі автономні оптимізації та переведе агентів у детерміноване блокування.
+                                    Ви збираєтеся активувати **Протокол Екстреної Ізоляції рівня 2**. Це заморозить усі автономні оптимізації та переведе агентів у детерміноване блокування.
                                 </p>
                             </div>
 

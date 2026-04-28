@@ -1,5 +1,5 @@
 /**
- * PREDATOR v58.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТ  КЕ УВАННЯ ДЖЕ ЕЛАМИ
+ * PREDATOR v61.0-ELITE | Data Nexus Ingestion Hub — ЦЕНТ  КЕ УВАННЯ ДЖЕ ЕЛАМИ
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
@@ -163,7 +163,7 @@ const ParsersView: React.FC = () => {
 
             <div className="max-w-[1700px] mx-auto space-y-12 relative z-10 w-full pb-20">
                 
-                {/* View Header v58.2-WRAITH */}
+                {/* View Header v61.0-ELITE */}
                 <ViewHeader
                     title={
                         <div className="flex items-center gap-6">
@@ -222,7 +222,7 @@ const ParsersView: React.FC = () => {
                         onClick={() => setIsModalOpen(true)}
                         className="px-10 py-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-[28px] text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_20px_50px_-15px_rgba(16,185,129,0.5)] border border-white/20 transition-all flex items-center gap-4 group italic"
                     >
-                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗА ЕЄСТ УВАТИ_НОВЕ_ДЖЕРЕЛО
+                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗАРЕЄСТРУВАТИ_НОВЕ_ДЖЕРЕЛО
                     </motion.button>
                 </div>
 

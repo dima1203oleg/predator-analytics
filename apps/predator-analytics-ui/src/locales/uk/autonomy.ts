@@ -143,7 +143,7 @@ export const autonomyLocales = {
   metrics: {
     title: 'Метрики Самодіагностики',
     latency: 'Затримка P99',
-    errorRate: ' івень Помилок',
+    errorRate: 'рівень Помилок',
     cpuUsage: 'Використання CPU',
     memoryUsage: 'Використання Памяті',
     modelAccuracy: 'Точність Моделі',
@@ -165,7 +165,7 @@ export const autonomyLocales = {
 export const componentsLocales = {
   // Header
   header: {
-    title: 'реєстр Компонентів',
+    title: 'Реєстр Компонентів',
     subtitle: '190+ open-source компонентів, що формують Predator v45 | Neural Analytics',
   },
 
@@ -194,7 +194,7 @@ export const componentsLocales = {
 
   // License
   license: {
-    title: ' озподіл Ліцензій',
+    title: 'розподіл Ліцензій',
     description: 'Всі компоненти на 100% open-source без ліцензійних витрат. Повне комерційне використання дозволено.',
   },
 
@@ -330,7 +330,7 @@ export const knowledgeLocales = {
   explainability: {
     title: 'Пояснюваність та Аудит',
     decision: ' ішення',
-    riskScore: 'Оцінка  изику',
+    riskScore: 'Оцінка ризику',
     factors: 'Фактори',
     graphPaths: 'Шляхи в Графі',
     auditTrail: 'Аудит-трейл',

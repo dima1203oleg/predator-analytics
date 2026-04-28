@@ -1,4 +1,4 @@
-"""Admin Chaos Router — PREDATOR Analytics v56.5-ELITE.
+"""Admin Chaos Router — PREDATOR Analytics v61.0-ELITE.
 
 Керування експериментами Хаосу. Тільки для ролі ADMIN.
 """

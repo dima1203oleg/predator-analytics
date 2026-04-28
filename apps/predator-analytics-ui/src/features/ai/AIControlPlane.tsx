@@ -1,5 +1,5 @@
 /**
- * 🕹️ AI Sovereign Control Plane | v58.2-WRAITH
+ * 🕹️ AI Sovereign Control Plane | v61.0-ELITE
  * PREDATOR — Контур Суверенного Керування Інтелектом
  * 
  * Моніторинг та налаштування нейронних рушіїв, телеметрія та управління політиками.
@@ -214,7 +214,7 @@ export default function AIControlPlane() {
   const backendStatus = useBackendStatus();
   const [activeTab, setActiveTab] = useState<TabId>('engines');
 
-  // TanStack Query Hooks (v56.5-ELITE Integration)
+  // TanStack Query Hooks (v61.0-ELITE Integration)
   const { data: statusData, isLoading: statusLoading, refetch: refetchStatus, isRefetching: statusRefetching } = useSystemStatus();
   const { data: statsData, refetch: refetchStats, isRefetching: statsRefetching } = useSystemStats();
   const { data: enginesData, isLoading: enginesLoading, refetch: refetchEngines, isRefetching: enginesRefetching } = useAIEngines();
@@ -282,7 +282,7 @@ export default function AIControlPlane() {
                   </div>
                   <div className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/70">
                     <Zap size={12} className="animate-pulse" />
-                    v58.2-WRAITH · МОНІТО ИНГ СУВЕ ЕННИХ  УШІЇВ
+                    v61.0-ELITE · МОНІТО ИНГ СУВЕ ЕННИХ  УШІЇВ
                   </div>
                 </div>
               </div>
@@ -388,7 +388,7 @@ export default function AIControlPlane() {
 
           {activeTab === 'engines' && (
             <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-              <TacticalCard variant="holographic" title="реєстр рушіїв" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
+              <TacticalCard variant="holographic" title="Реєстр рушіїв" className="rounded-[40px] border-[#D4AF37]/20 bg-slate-950/50 p-8">
                 {snapshot.engines.length > 0 ? (
                   <div className="space-y-4">
                     {snapshot.engines.map((engine) => (

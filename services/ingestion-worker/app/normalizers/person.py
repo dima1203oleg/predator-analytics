@@ -1,4 +1,4 @@
-"""Person Normalizer — PREDATOR Analytics v55.1 Ironclad.
+"""Person Normalizer — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Standardization of individual names (PIB) and identification numbers (INN).
 """

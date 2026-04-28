@@ -30,7 +30,7 @@ const DatasetsStudioView = () => {
       detail: {
         service: 'Datasets_Studio',
         message: isOffline 
-          ? 'ДАТАСЕТ-ЦЕНТ :  ЕЖИМ ЛОКАЛЬНОГО КЕШУ (DATA_OFFLINE).' 
+          ? 'ДАТАСЕТ-ЦЕНТ : РЕЖИМ ЛОКАЛЬНОГО КЕШУ (DATA_OFFLINE).' 
           : 'СИНХ ОНІЗАЦІЯ ДАТАСЕТІВ: NVIDIA-GRID ACTIVE.',
         severity: isOffline ? 'warning' : 'info',
         timestamp: new Date().toISOString(),
@@ -47,7 +47,7 @@ const DatasetsStudioView = () => {
 
   const datasets = [
     { id: 'DS-001', name: 'Митні декларації 2024-2026', source: 'ДМСУ (API)', size: '1.2 GB', status: 'АКТИВНО', quality: 99 },
-    { id: 'DS-002', name: 'реєстр бенефіціарів (EDR)', source: 'МінЮст', size: '450 MB', status: 'МОНІТО ИНГ', quality: 94 },
+    { id: 'DS-002', name: 'Реєстр бенефіціарів (EDR)', source: 'МінЮст', size: '450 MB', status: 'МОНІТО ИНГ', quality: 94 },
     { id: 'DS-003', name: 'Судові рішення OSINT', source: 'Crawler-v4', size: '2.8 GB', status: 'ОБ ОБКА', quality: 87 },
     { id: 'DS-004', name: 'Санкційні списки OFAC/ЄС', source: 'Global Sync', size: '12 MB', status: 'АКТИВНО', quality: 100 },
   ];
@@ -156,7 +156,7 @@ const DatasetsStudioView = () => {
                 </div>
               </TacticalCard>
 
-              <TacticalCard variant="holographic" title="ЗДО ОВ'Я_СХОВИЩА" className="bg-black/40 border-white/5">
+              <TacticalCard variant="holographic" title="ЗДОРОВ'Я_СХОВИЩА" className="bg-black/40 border-white/5">
                 <div className="mt-4 space-y-4">
                    <div className="flex justify-between text-[8px] font-mono font-black text-white/20 tracking-widest uppercase">
                       <span>NVMe_POOL_X1</span>
@@ -183,7 +183,7 @@ const DatasetsStudioView = () => {
                          <Box size={18} className="text-rose-500" /> 
                          {activeTab === 'sources' && 'АКТИВНІ_ПОТОКИ_ДАНИХ'}
                          {activeTab === 'cleaning' && 'КОНВЕЄ _ОЧИСТКИ_ETL'}
-                         {activeTab === 'annotation' && 'МЕНЕДЖЕ _НЕЙ ОННОЇ_АНОТАЦІЇ'}
+                         {activeTab === 'annotation' && 'МЕНЕДЖЕР _НЕЙ ОННОЇ_АНОТАЦІЇ'}
                          {activeTab === 'quality' && 'АНАЛІТИКА_ЯКОСТІ_ДАНИХ'}
                       </h3>
                       <div className="h-0.5 w-24 bg-rose-500/40" />

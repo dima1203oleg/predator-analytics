@@ -16,7 +16,7 @@ import { api, apiClient, v45Client } from './api';
 const logError = (service: string, operation: string, error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   console.error(`[${service}] ${operation} failed:`, message);
-  // TRACE: v8.0-WRAITH Error Protocol
+  // TRACE: v8.0-ELITE Error Protocol
   if (window.dispatchEvent) {
     window.dispatchEvent(new CustomEvent('predator-error', { 
       detail: { 
@@ -349,7 +349,7 @@ class CatalogService {
 }
 
 // ============================================================================
-// INTELLIGENCE & OSINT - v58.2-WRAITH Core
+// INTELLIGENCE & OSINT - v61.0-ELITE Core
 // ============================================================================
 
 class IntelligenceService {
@@ -445,7 +445,7 @@ class IntelligenceService {
    */
   async getSignalFeed() {
     try {
-      // Trace: v58.2-WRAITH Signal Acquisition
+      // Trace: v61.0-ELITE Signal Acquisition
       const res = await apiClient.get('/telegram/feed');
       return Array.isArray(res.data) ? res.data : [];
     } catch (error) {

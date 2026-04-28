@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { analyticsService, FrozenAsset } from '@/services/unified/analytics.service';
 
 const MOCK_FROZEN = [
-  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: ' НБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
+  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: 'РНБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
 ];
@@ -42,7 +42,7 @@ export const AssetTrackerTab: React.FC = () => {
               <div className="p-3 bg-emerald-600/10 border border-emerald-600/20 rounded-xl text-emerald-500">
                 <Lock size={20} className="animate-pulse" />
               </div>
-               ЕЄСТ _ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
+              РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
             </h2>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic border-l-2 border-emerald-500/40 pl-4">
               ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА

@@ -1,5 +1,5 @@
 /**
- * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v58.2-WRAITH (AGENTIC)
+ * 🛡️ MAIN LAYOUT // ГОЛОВНИЙ ШЕЛЛ | v61.0-ELITE (AGENTIC)
  * Підтримка гібридного вузла та суверенного дизайну.
  */
 import React, { useEffect, useState } from 'react';
@@ -171,7 +171,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-1.5 shrink-0 px-2 py-0.5 rounded bg-black/40 border border-white/5 shadow-inner">
             <div className={cn("h-1.5 w-1.5 rounded-full animate-pulse", isOffline ? "bg-amber-600 shadow-[0_0_6px_#d97706]" : "bg-yellow-500 shadow-[0_0_6px_#f59e0b]")} />
             <span className={cn("text-[8px] font-black uppercase tracking-[0.2em]", isOffline ? "text-amber-600/80" : "text-yellow-500/80")}>
-              {isOffline ? 'СИСТЕМА_В_ ЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
+              {isOffline ? 'СИСТЕМА_В_РЕЖИМІ_ВІДНОВЛЕННЯ' : 'СИСТЕМА_ОПТИМАЛЬНА'}
             </span>
           </div>
           <div className="h-3.5 w-px bg-white/10 shrink-0" />
@@ -224,7 +224,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <div className="flex items-center gap-2 px-2 py-0.5 rounded border border-rose-500/20 bg-rose-500/5">
             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.8)]" />
             <div className="text-[8px] font-black uppercase tracking-[0.25em] text-white/50">
-              PREDATOR <span className="text-rose-500 font-bold">WRAITH</span> <span className="text-white/30 ml-1">v58.2</span>
+              PREDATOR <span className="text-rose-500 font-bold">ELITE</span> <span className="text-white/30 ml-1">v58.2</span>
             </div>
           </div>
         </div>

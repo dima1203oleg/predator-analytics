@@ -50,7 +50,7 @@ const ChatBot = () => {
       const botResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Отримано запит: "${userText}". Аналізую дані Predator Analytics v58.2-WRAITH... \n\nЯ бачу, що за останній період вашарефективність зросла на 14%. Всі системи працюють стабільно.`,
+        content: `Отримано запит: "${userText}". Аналізую дані Predator Analytics v61.0-ELITE... \n\nЯ бачу, що за останній період вашарефективність зросла на 14%. Всі системи працюють стабільно.`,
         timestamp: format(new Date(), 'HH:mm')
       };
       setMessages(prev => [...prev, botResponse]);
@@ -171,7 +171,7 @@ const ChatBot = () => {
               <Terminal className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
               <ChevronDown className="w-3.5 h-3.5 cursor-pointer hover:opacity-100 transition-opacity" />
             </div>
-            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">PREDATOR AI ENGINE v58.2-WRAITH</div>
+            <div className="text-[10px] font-mono tracking-tighter uppercase font-bold text-primary/60">PREDATOR AI ENGINE v61.0-ELITE</div>
           </div>
         </div>
       </div>

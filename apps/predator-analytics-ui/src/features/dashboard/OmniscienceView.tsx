@@ -1,5 +1,5 @@
 /**
- * 🌌 Hyper-Omniscience Nexus | v58.2-WRAITH Premium Matrix
+ * 🌌 Hyper-Omniscience Nexus | v61.0-ELITE Premium Matrix
  * PREDATOR Omniscience - Центр всеосяжного контролю та нейронного управління.
  * 
  * Включає:
@@ -9,7 +9,7 @@
  * - 🛡️ Тіньовий Контроль (Shadow Control)
  * - 🧬  еволюція AZR (AZR Evolution)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -237,14 +237,14 @@ const OmniscienceView: React.FC = () => {
                 Нексус Всезнання
               </h1>
               <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mt-2">
-                ЯДРО_СИСТЕМИ_V56.5-WRAITH // ГЛОБАЛЬНА_МАТ ИЦЯ_ЗНАНЬ
+                ЯДРО_СИСТЕМИ_V56.5-ELITE // ГЛОБАЛЬНА_МАТ ИЦЯ_ЗНАНЬ
               </p>
             </div>
           </div>
         }
-        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-WRAITH']}
+        breadcrumbs={['PREDATOR', 'OMNISCIENCE', 'CORE_V56.5-ELITE']}
         stats={[
-          { label: 'ЗДО ОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
+          { label: 'ЗДОРОВ\'Я', value: `${metrics.health}%`, icon: <Activity size={14} />, color: 'success' },
           { label: 'ВУЗЛИ', value: metrics.knowledgeNodes.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
           { label: 'АГЕНТИ', value: metrics.activeAgents.toString(), icon: <Users size={14} />, color: 'purple' },
         ]}

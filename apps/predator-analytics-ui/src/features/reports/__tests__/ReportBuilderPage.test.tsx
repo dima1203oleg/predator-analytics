@@ -86,7 +86,7 @@ describe('ReportBuilderPage', () => {
     it('рендерить заголовок і основні елементи керування', () => {
         render(<ReportBuilderPage />);
 
-        expect(screen.getByRole('heading', { name: /КОНСТ УКТО  ЗВІТІВ/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /КОНСТРУКТОР ЗВІТІВ/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Одиничний/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Пакетний/i })).toBeInTheDocument();
     });

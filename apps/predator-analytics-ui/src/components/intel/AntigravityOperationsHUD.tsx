@@ -100,7 +100,7 @@ const AntigravityOperationsHUD: React.FC = () => {
           <span className="text-rose-500 font-bold uppercase">Sovereign AGI Audit Stream</span>
         </div>
         <div className="space-y-1 h-32 overflow-y-auto scrollbar-hide">
-          <div className="text-white/40">{`[${new Date().toISOString()}] SYSTEM: PREDATOR Antigravity v56.5-ELITE initialized.`}</div>
+          <div className="text-white/40">{`[${new Date().toISOString()}] SYSTEM: PREDATOR Antigravity v61.0-ELITE initialized.`}</div>
           <div className="text-emerald-400/60">{`[${new Date().toISOString()}] SUCCESS: Neural core synchronized with PostgreSQL WORM.`}</div>
           <div className="text-rose-400/60">{`[${new Date().toISOString()}] WARN: High latency detected on OFAC registry scraper.`}</div>
           <div className="text-white/60">{`[${new Date().toISOString()}] INFO: Agent 'Forensic-AI' assigned to Task #UA-883.`}</div>

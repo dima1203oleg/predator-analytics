@@ -163,7 +163,7 @@ const PipelineManagerView: React.FC = () => {
                             ) : (
                                 <ShieldAlert className="w-5 h-5 mr-2" />
                             )}
-                            {rescoreEntity.isPending ? 'ПЕ Е АХУНОК...' : 'ПЕ Е АХУВАТИ'}
+                            {rescoreEntity.isPending ? 'ПЕ РЕ АХУНОК...' : 'ПЕ РЕ АХУВАТИ'}
                         </Button>
 
                         {rescoreEntity.isSuccess && rescoreEntity.data && (

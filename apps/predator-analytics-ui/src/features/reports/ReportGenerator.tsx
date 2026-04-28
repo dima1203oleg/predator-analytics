@@ -227,7 +227,7 @@ const ReportGenerator: React.FC = () => {
             }
           />
 
-          {/* TABS WRAITH/GOLD */}
+          {/* TABS ELITE/GOLD */}
           <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'templates', label: 'ШАБЛОНИ_ЗВІТІВ', icon: Layers },

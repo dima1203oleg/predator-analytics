@@ -87,7 +87,7 @@ describe('PremiumHubView', () => {
     it('відображає інтерфейс преміум-хабу та завантажує віджети TITAN', () => {
         render(<PremiumHubView />);
         
-        expect(screen.getByText(/П ЕМІУМ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ПРЕМІУМ/i)).toBeInTheDocument();
         expect(screen.getByText(/TITAN/i)).toBeInTheDocument();
         expect(screen.getByTestId('live-alerts')).toBeInTheDocument();
         expect(screen.getByTestId('exec-briefing')).toBeInTheDocument();

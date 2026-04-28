@@ -1,5 +1,5 @@
 /**
- * 📋 Report Builder | v58.2-WRAITH
+ * 📋 Report Builder | v61.0-ELITE
  * PREDATOR Analytics — Конструктор звітів
  * Sovereign Power Design · Classified · Tier-1
  */
@@ -41,7 +41,7 @@ interface Report {
 const AVAILABLE_SECTIONS = [
   { id: 'title', name: '📌 ЗАГОЛОВОК_H1', icon: <FileText size={16} /> },
   { id: 'kpi', name: '📊 KPI_МЕТ ИКА', icon: <BarChart3 size={16} /> },
-  { id: 'chart', name: '📈 Г АФІК_ALPHA', icon: <PieChart size={16} /> },
+  { id: 'chart', name: '📈 ГРАФІК_ALPHA', icon: <PieChart size={16} /> },
   { id: 'table', name: '📋 ТАБЛИЦЯ_DATA', icon: <TableIcon size={16} /> },
   { id: 'text', name: '📝 ТЕКСТ_ANALYTICS', icon: <Layout size={16} /> },
   { id: 'page_break', name: '📄  ОЗ ИВ_СТО ІНКИ', icon: <FileCode size={16} /> }
@@ -156,7 +156,7 @@ export const ReportBuilder: React.FC = () => {
                     INTEL_REPORT_v58.2
                   </span>
                   <div className="h-px w-8 bg-amber-500/20" />
-                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic">WRAITH_CONSTRUCTOR</span>
+                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic">ELITE_CONSTRUCTOR</span>
                 </div>
                 <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg]">
                   ЗВІТ <span className="text-amber-500 underline decoration-amber-500/20">BUILDER</span>
@@ -166,7 +166,7 @@ export const ReportBuilder: React.FC = () => {
           }
           breadcrumbs={['INTEL', 'REPORTS', 'BUILDER_v58.2']}
           badges={[
-            { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <ShieldCheck size={10} /> },
+            { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <ShieldCheck size={10} /> },
             { label: 'PDF_ENGINE_v4', color: 'primary', icon: <Cpu size={10} /> },
           ]}
           actions={
@@ -279,7 +279,7 @@ export const ReportBuilder: React.FC = () => {
                 <h2 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 italic">📚 ТИТАН_ШАБЛОНИ</h2>
                 <div className="space-y-3">
                   {[
-                    { name: '🏢 П ОФІЛЬ_КОМПАНІЇ', id: 'company' },
+                    { name: '🏢ПРОФІЛЬ_КОМПАНІЇ', id: 'company' },
                     { name: '📊 ФІНАНСОВИЙ_ЗВІТ', id: 'financial' },
                     { name: ' ️ ОЦІНКА_РИЗИКІВ', id: 'risk' },
                     { name: '🔍 DUE_DILIGENCE', id: 'dd' }

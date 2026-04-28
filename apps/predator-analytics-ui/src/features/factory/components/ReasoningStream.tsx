@@ -105,7 +105,7 @@ export const ReasoningStream: React.FC<ReasoningStreamProps> = ({ steps, activeA
           </div>
           <div>Всер_Впевненість: {(steps.reduce((acc, s) => acc + s.confidence, 0) / (steps.length || 1) * 100).toFixed(1)}%</div>
         </div>
-        <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Протокол: WRAITH_COGNITION_v5.0</div>
+        <div className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Протокол: ELITE_COGNITION_v5.0</div>
       </div>
     </div>
   );

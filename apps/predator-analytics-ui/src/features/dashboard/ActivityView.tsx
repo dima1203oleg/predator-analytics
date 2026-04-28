@@ -1,5 +1,5 @@
 /**
- * Predator v58.2-WRAITH | Sovereign Activity Ledger — Журнал Подій
+ * Predator v61.0-ELITE | Sovereign Activity Ledger — Журнал Подій
  * Хронологічна матриця всіх системних маневрів та нейронних зсувів.
  */
 

@@ -1,5 +1,5 @@
 /**
- * 🏢 FIRM DOSSIER // КОМП ОМАТ НА ФІ МУ | v58.2-WRAITH
+ * 🏢 FIRM DOSSIER // КОМП ОМАТ НА ФІ МУ | v61.0-ELITE
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
  * Повний збір даних про суб'єкта: реєстри, Митниця, Податки,
@@ -39,7 +39,7 @@ export default function FirmDossierView() {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'CorporateIntel',
-            message: ' ЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
+            message: 'РЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
             severity: 'warning',
             timestamp: new Date().toISOString(),
             code: 'CORPORATE_OFFLINE'
@@ -111,13 +111,13 @@ export default function FirmDossierView() {
                           CORPORATE_INTEL // DOSSIER_360
                         </span>
                         <div className="h-px w-10 bg-sky-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІ МИ</span>
                      </h1>
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        ГЛИБИННИЙ АНАЛІЗ: ЄД ПОУ • МИТНИЦЯ • БЕНЕФІЦІА И • СУДИ
+                        ГЛИБИННИЙ АНАЛІЗ: ЄДРПОУ • МИТНИЦЯ • БЕНЕФІЦІА И • СУДИ
                      </p>
                   </div>
                </div>
@@ -131,7 +131,7 @@ export default function FirmDossierView() {
                   color: isOffline ? 'warning' : 'gold', 
                   animate: isOffline 
                 },
-                { label: 'СТАН_ ЕЄСТ У', value: isOffline ? 'OFFLINE' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
+                { label: 'СТАН_РЕЄСТРУ', value: isOffline ? 'OFFLINE' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
               ]}
              actions={
                <div className="flex gap-4">
@@ -139,7 +139,7 @@ export default function FirmDossierView() {
                      <RefreshCcw size={24} />
                   </button>
                   <button onClick={handleSearch} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4">
-                     <Radar size={18} /> СКАНУВАТИ_ ЕЄСТ И
+                     <Radar size={18} /> СКАНУВАТИ_РЕЄСТРИ
                   </button>
                </div>
              }
@@ -153,7 +153,7 @@ export default function FirmDossierView() {
                 </div>
                 <form onSubmit={handleSearch} className="space-y-10 relative z-10">
                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ЄД ПОУ АБО НАЗВА СУБ'ЄКТА</label>
+                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ЄДРПОУ АБО НАЗВА СУБ'ЄКТА</label>
                       <div className="relative group/input">
                          <div className="absolute inset-y-0 left-8 flex items-center">
                             <Search className="w-8 h-8 text-slate-700 group-focus-within/input:text-sky-500 transition-colors" />
@@ -210,7 +210,7 @@ export default function FirmDossierView() {
                                <Badge className="bg-emerald-600/20 text-emerald-500 border-emerald-500/30 uppercase italic font-black px-4 py-1 text-[10px]">{result.status}</Badge>
                             </div>
                             <div className="flex items-center gap-4 text-[12px] font-black text-slate-500 uppercase tracking-widest font-mono italic">
-                               <span>ЄД ПОУ: {result.edrpou}</span>
+                               <span>ЄДРПОУ: {result.edrpou}</span>
                                <span className="text-slate-800">|</span>
                                <span className="text-emerald-500 flex items-center gap-2">
                                   <ShieldCheck size={16} /> VALIDATED_ENTITY
@@ -236,7 +236,7 @@ export default function FirmDossierView() {
                             <Lock size={20} /> БЛОКУВАТИ_В_МИТНОМУ_КОНТУ І
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
-                            <Share2 size={20} /> Г АФ_ЗВ'ЯЗКІВ
+                            <Share2 size={20} /> ГРАФ_ЗВ'ЯЗКІВ
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
                             <FileText size={20} /> PDF_ЗВІТ

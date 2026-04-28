@@ -85,12 +85,12 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
               <Factory size={32} className="animate-pulse" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-xl font-black uppercase tracking-[0.2em] text-white">ПУЛЬТ УП АВЛІННЯ ЦИКЛОМ</h3>
+              <h3 className="text-xl font-black uppercase tracking-[0.2em] text-white">ПУЛЬТ УПРАВЛІННЯ ЦИКЛОМ</h3>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 font-mono text-[10px] uppercase">
                 <span className={cn(infiniteRunning ? "text-emerald-400" : "text-rose-500", "flex items-center gap-1.5")}>
                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                    <span className="opacity-50 text-slate-400">СТАТУС:</span>
-                   {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : ' ЕЖИМ ОЧІКУВАННЯ'}
+                   {infiniteRunning ? 'АКТИВНИЙ ЦИКЛ' : 'РЕЖИМ ОЧІКУВАННЯ'}
                 </span>
                 <span className="text-slate-700">|</span>
                 <span className="text-rose-400">
@@ -296,7 +296,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
                 <div>
                    <div className="flex items-center justify-between mb-3">
-                     <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙ П ОГ ЕС ЦИКЛУ</span>
+                     <span className="text-[11px] font-black uppercase tracking-wider text-rose-400">ПОТОЧНИЙПРОГ ЕС ЦИКЛУ</span>
                      <span className="font-mono text-2xl font-black text-white">{improvementProgress}%</span>
                    </div>
                    <Progress value={improvementProgress} variant="holographic" className="h-4 shadow-[0_0_20px_rgba(244,63,94,0.1)]" />
@@ -364,7 +364,7 @@ export const FactoryImprovementPanel: React.FC<FactoryImprovementPanelProps> = (
                         <tr className="bg-white/5 rounded-xl transition-all hover:bg-white/10">
                           <td className="p-3 text-rose-400 font-bold border-l-2 border-rose-500">Аналітична</td>
                           <td className="p-3 text-slate-200">Gold patterns і bug queue</td>
-                          <td className="p-3 text-emerald-400 font-bold">{goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕ ДЖЕНО' : 'Н/Д'}</td>
+                          <td className="p-3 text-emerald-400 font-bold">{goldPatterns.length > 0 || bugs.length > 0 ? 'ПІДТВЕРДЖЕНО' : 'Н/Д'}</td>
                         </tr>
                       </tbody>
                     </table>

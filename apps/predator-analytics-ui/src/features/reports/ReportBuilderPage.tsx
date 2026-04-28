@@ -177,7 +177,7 @@ const extractGeneratedAt = (payload: unknown): string => {
 const buildCopilotPrompt = (templateId: TemplateId, ueid: string, report: string): string => {
     const tasks: Record<Exclude<TemplateId, 'sovereign'>, string> = {
         executive:
-            'Стисло перепиши цей звіт для керівника. Залиш лише 4-6 найважливіших висновків, ризики й рекомендовані дії. Відповідь дай українською у Markdown.',
+            'Стисло перепиши цей звіт для керівника. Залиш лише 4-6 найважливіших висновків, ризики йрекомендовані дії. Відповідь дай українською у Markdown.',
         customs:
             'На основі цього звіту виділи саме митні, торгові та логістичні ризики. Додай короткий блок "Що перевірити далі". Відповідь дай українською у Markdown.',
         cartel:
@@ -516,7 +516,7 @@ const ReportBuilderPage: React.FC = () => {
                         <div>
                             <div className="mb-2 flex flex-wrap items-center gap-3">
                                 <span className="text-[10px] font-black uppercase tracking-[0.35em] text-amber-300">
-                                    КОНСТ УКТО _ЗВІТІВ
+                                    КОНСТРУКТОР_ЗВІТІВ
                                 </span>
                                 <Badge className="border-none bg-amber-500/10 px-2 py-0 text-[8px] tracking-widest text-amber-300">
                                     П АВДИВІ ДАНІ
@@ -524,7 +524,7 @@ const ReportBuilderPage: React.FC = () => {
                             </div>
 
                             <h1 className="text-4xl font-black uppercase tracking-tight text-white">
-                                КОНСТ УКТО  <span className="text-amber-300">ЗВІТІВ</span>
+                                КОНСТРУКТОР <span className="text-amber-300">ЗВІТІВ</span>
                             </h1>
                             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
                                 Формує звіти тільки через підтверджені маршрути бекенду. Без фейкового прогресу, статичних архівів і демонстраційних даних.

@@ -120,7 +120,7 @@ const OperatorShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
           <div className="p-4 border-t border-emerald-900/30 space-y-3 bg-emerald-950/10">
             <div className="flex items-center justify-between text-[10px] font-black">
               <span className="opacity-50 tracking-widest">UNIT_STATUS:</span>
-              <span className="text-emerald-400">НО МА</span>
+              <span className="text-emerald-400">НОРМА</span>
             </div>
             <div className="space-y-2">
               {[

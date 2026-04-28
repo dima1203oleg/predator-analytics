@@ -16,7 +16,7 @@ router = APIRouter(prefix="/antigravity", tags=["AGI Orchestrator"])
 
 @router.on_event("startup")
 async def startup_event():
-    """Запуск циклу оркестрації при старті додатку (WRAITH Phase)."""
+    """Запуск циклу оркестрації при старті додатку (ELITE Phase)."""
     await orchestrator.start()
 
 @router.get("/status", response_model=AntigravityOrchestratorStatus)

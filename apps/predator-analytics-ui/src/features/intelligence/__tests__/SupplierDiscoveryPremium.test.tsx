@@ -165,7 +165,7 @@ describe('SupplierDiscoveryPremium', () => {
             fireEvent.click(card)
         })
 
-        // Мають з'явитися деталі (WRAITH)
+        // Мають з'явитися деталі (ELITE)
         expect(screen.getByText(/Г УПИ_ТОВА ІВ/i)).toBeInTheDocument()
         expect(screen.getByText(/ЛОГІСТИЧНИЙ_СЛІД/i)).toBeInTheDocument()
         expect(screen.getByText(/СТВО ИТИ_ЗАПИТ_RFI/i)).toBeInTheDocument()

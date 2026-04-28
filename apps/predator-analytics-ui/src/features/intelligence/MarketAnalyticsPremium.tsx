@@ -1,5 +1,5 @@
 /**
- * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v58.2-WRAITH
+ * 📊 MARKET ANALYTICS PREMIUM // РИНКОВА АНАЛІТИКА | v61.0-ELITE
  * PREDATOR Analytics — Advanced Market Intelligence & Strategic Forecasting
  * 
  * Глобальний моніторинг ринків, аналіз трендів та виявлення прихованих можливостей.
@@ -126,7 +126,7 @@ export default function MarketAnalyticsPremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* WRAITH HEADER HUD */}
+          {/* ELITE HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -139,10 +139,10 @@ export default function MarketAnalyticsPremium() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-[#D4AF37] px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      MARKET_INTEL_WRAITH // QUORUM_SCAN
+                      MARKET_INTEL_ELITE // QUORUM_SCAN
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                      РИНКОВА <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">АНАЛІТИКА</span>
@@ -175,7 +175,7 @@ export default function MarketAnalyticsPremium() {
             </button>
           </div>
 
-          {/* METRICS GRID WRAITH */}
+          {/* METRICS GRID ELITE */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { label: 'ОБСЯГ_РИНКУ', value: formatCurrency(stats.volume), icon: Boxes, color: '#D4AF37' },
@@ -305,7 +305,7 @@ export default function MarketAnalyticsPremium() {
                   </button>
                </div>
 
-               {/* QUICK ACTIONS WRAITH */}
+               {/* QUICK ACTIONS ELITE */}
                <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                   <h3 className="text-[14px] font-black text-slate-700 italic uppercase tracking-[0.6em] border-b border-white/[0.03] pb-8 relative z-10 flex items-center justify-between">
                      ТАКТИЧНІ_МАНЕВРИ <Crosshair size={18} />
@@ -337,7 +337,7 @@ export default function MarketAnalyticsPremium() {
           </div>
         </div>
 
-        {/* WRAITH CUSTOM STYLES */}
+        {/* ELITE CUSTOM STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
             .animate-spin-slow { animation: spin 20s linear infinite; }

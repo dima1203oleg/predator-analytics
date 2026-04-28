@@ -1,4 +1,4 @@
-"""Qdrant Sink — PREDATOR Analytics v55.1 Ironclad.
+"""Qdrant Sink — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Векторне сховище для семантичного пошуку.
 """

@@ -1,5 +1,5 @@
 /**
- * PREDATOR Analytics v58.2-WRAITH — Admin API Service
+ * PREDATOR Analytics v61.0-ELITE — Admin API Service
  * Integration with /api/v2/admin/*
  */
 

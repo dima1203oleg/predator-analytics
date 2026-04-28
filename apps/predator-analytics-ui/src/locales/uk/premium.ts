@@ -24,7 +24,7 @@ export const premiumLocales = {
     actions: {
       dashboard: { label: 'Дашборд', desc: 'Головна панель керування' },
       documents: { label: 'Документи', desc: 'Перегляд та керування документами' },
-      analytics: { label: 'Аналітика', desc: ' озширена аналітика та звіти' },
+      analytics: { label: 'Аналітика', desc: 'розширена аналітика та звіти' },
       search: { label: 'Пошук', desc: 'Глобальний пошук по системі' },
       security: { label: 'Безпека', desc: 'Налаштування безпеки' },
       monitoring: { label: 'Моніторинг', desc: 'Стан системи в реальному часі' },
@@ -55,9 +55,9 @@ export const premiumLocales = {
   },
 
   agentsView: {
-    title: 'МЕНЕДЖЕ  ФЛОТУ АГЕНТІВ',
-    cascadeTitle: 'УП АВЛІННЯ КАСКАДАМИ',
-    workflowTitle: 'КОНТ ОЛЬ ВО КФЛОУ',
+    title: 'МЕНЕДЖЕР ФЛОТУ АГЕНТІВ',
+    cascadeTitle: 'УПРАВЛІННЯ КАСКАДАМИ',
+    workflowTitle: 'КОНТРОЛЬ ВОРКФЛОУ',
     tabs: {
       telemetry: 'Телеметрія',
       cascades: 'Каскади',
@@ -70,9 +70,9 @@ export const premiumLocales = {
       viewLogs: 'Логи'
     },
     panels: {
-      resourceUsage: 'ВИКО ИСТАННЯ  ЕСУ СІВ',
+      resourceUsage: 'ВИКОРИСТАННЯ РЕСУРСІВ',
       fleetAlerts: 'СПОВІЩЕННЯ ФЛОТУ',
-      healthIndex: 'ІНДЕКС ЗДО ОВ\'Я',
+      healthIndex: 'ІНДЕКС ЗДОРОВ\'Я',
       uptime: 'Аптайм'
     }
   },
@@ -82,7 +82,7 @@ export const premiumLocales = {
   // ============================================
   dashboardBuilder: {
     title: 'Конструктор Дашбордів',
-    breadcrumbs: ['PREDATOR', 'П ЕМІУМ', 'КОНСТ УКТО '],
+    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'КОНСТРУКТОР'],
 
     // Modes
     modes: {
@@ -116,7 +116,7 @@ export const premiumLocales = {
       bar_chart: 'Стовпчаста діаграма',
       pie_chart: 'Кругова діаграма',
       line_chart: 'Лінійна діаграма',
-      radar_chart: ' адарна діаграма',
+      radar_chart: 'радарна діаграма',
       treemap: 'Деревоподібна карта',
       heatmap: 'Теплова карта',
       gauge: 'Індикатор',
@@ -147,7 +147,7 @@ export const premiumLocales = {
       bar_chart: 'Стовпчаста діаграма для порівнянь',
       pie_chart: 'Кругова діаграма для розподілу',
       line_chart: 'Лінійний графік для часових рядів',
-      radar_chart: ' адарна діаграма для багатовимірного аналізу',
+      radar_chart: 'радарна діаграма для багатовимірного аналізу',
       treemap: 'Деревоподібна карта для ієрархічних даних',
       heatmap: 'Теплова карта для щільності даних',
       gauge: 'Індикатор для KPI метрик',
@@ -173,11 +173,11 @@ export const premiumLocales = {
     dataSources: {
       customs_registry: 'Митний реєстр',
       tax_data: 'Податкові дані',
-      company_registry: 'реєстр компаній',
+      company_registry: 'Реєстр компаній',
       court_decisions: 'Судові рішення',
       sanctions_lists: 'Санкційні списки',
-      property_registry: 'реєстр майна',
-      vehicle_registry: 'реєстр транспорту',
+      property_registry: 'Реєстр майна',
+      vehicle_registry: 'Реєстр транспорту',
       beneficial_owners: 'Бенефіціарні власники',
       financial_statements: 'Фінансова звітність',
       pep_database: 'База ПЕП',
@@ -194,9 +194,9 @@ export const premiumLocales = {
     dataSourceDescriptions: {
       customs_registry: 'Вантажні митні декларації (ВМД)',
       tax_data: 'Звітність та податкові борги',
-      company_registry: 'Дані ЄД  (засновники, директори)',
-      court_decisions: 'Єдиний реєстр судових рішень',
-      sanctions_lists: ' НБО, OFAC, ЄС санкції',
+      company_registry: 'Дані ЄДР(засновники, директори)',
+      court_decisions: 'Єдиний Реєстр судових рішень',
+      sanctions_lists: 'РНБО, OFAC, ЄС санкції',
       property_registry: 'Права власності на нерухомість',
       vehicle_registry: 'реєстрація автотранспорту',
       beneficial_owners: 'Кінцеві бенефіціари (UBO)',
@@ -205,7 +205,7 @@ export const premiumLocales = {
       media_mentions: 'Моніторинг новин та соцмереж',
       social_connections: 'Аналіз зв\'язків у соцмережах',
       contracts: 'Prozorro тендери та контракти',
-      court_cases: ' озклад засідань та стан справ',
+      court_cases: 'розклад засідань та стан справ',
       real_estate: 'Деталі про об\'єкти та оцінку',
       vehicles: 'Детальна інформація про авто',
       sanctions: 'Списки санкцій UA/EU/US/UN',
@@ -223,7 +223,7 @@ export const premiumLocales = {
     // Templates
     templates: {
       titan: 'Шаблон TITAN - Бізнес-аналітика',
-      inquisitor: 'Шаблон INQUISITOR -  озслідування',
+      inquisitor: 'Шаблон INQUISITOR - розслідування',
       sovereign: 'Шаблон SOVEREIGN - Державний контроль',
       analyst: 'Шаблон ANALYST - Глибокий аналіз',
     },
@@ -261,7 +261,7 @@ export const premiumLocales = {
       duplicateWidget: 'Дублювати віджет',
       configureWidget: 'Налаштувати віджет',
       refreshWidget: 'Оновити дані',
-      expandWidget: ' озгорнути',
+      expandWidget: 'розгорнути',
       startBuilding: 'Почніть будувати дашборд',
       selectWidgets: 'Оберіть віджети з бібліотеки зліва або скористайтесь AI-рекомендаціями',
       addKpi: 'Додати KPI',
@@ -274,7 +274,7 @@ export const premiumLocales = {
 
     // Paywall
     paywall: {
-      title: 'КОНСТ УКТО  ДАШБО ДІВ',
+      title: 'КОНСТРУКТОР ДАШБО ДІВ',
       description: 'Створюйте власні інтелектуальні дашборди з drag & drop інтерфейсом, AI-рекомендаціями та автоматичним завантаженням даних.',
       features: [
         'Drag & Drop конструктор',
@@ -331,7 +331,7 @@ export const premiumLocales = {
   // Executive Morning Brief
   // ============================================
   executiveBrief: {
-    title: ' АНКОВИЙ Б ИФІНГ',
+    title: 'РАНКОВИЙБРИФІНГ',
 
     // Greetings
     greetings: {
@@ -347,8 +347,8 @@ export const premiumLocales = {
     metrics: {
       activeAlerts: 'Активних алертів',
       opportunities: 'Можливостей',
-      marketScore: ' инковий бал',
-      riskLevel: ' івень ризику',
+      marketScore: 'ринковий бал',
+      riskLevel: 'рівень ризику',
       documents: 'Документів',
       systemHealth: 'Здоров\'я системи',
       activeModels: 'Активних моделей',
@@ -358,13 +358,13 @@ export const premiumLocales = {
     // Risk levels
     riskLevels: {
       low: 'НИЗЬКИЙ',
-      medium: 'СЕ ЕДНІЙ',
+      medium: 'СЕРЕДНІЙ',
       high: 'ВИСОКИЙ',
     },
 
     // Premium Paywall
     premium: {
-      title: ' АНКОВИЙ Б ИФІНГ КЕ ІВНИКА',
+      title: 'РАНКОВИЙБРИФІНГ КЕРІВНИКА',
       description: 'Персоналізований щоденний дайджест з AI-інсайтами, критичними алертами та ринковими можливостями.',
       upgrade: 'ОНОВИТИ ДОПРЕМІУМ',
     },
@@ -372,21 +372,21 @@ export const premiumLocales = {
     // Sections
     sections: {
       critical: '🚨 Критичні алерти',
-      opportunities: '📈  инкові можливості',
+      opportunities: '📈 ринкові можливості',
       insights: '🔮 AI Інсайти та прогнози',
-      actions: '✅ рекомендовані дії',
+      actions: '✅рекомендовані дії',
       industryForecasts: 'Галузеві Прогнози (AI)',
       keyEvents: 'Ключові події дня',
       tradeFlow: '1️⃣ ТО ГОВІ ПОТОКИ (Торгівля)',
-      registers: '2️⃣ ІНСТИТУЦІЙНІ  ЕЄСТ И',
+      registers: '2️⃣ ІНСТИТУЦІЙНІ РЕЄСТРИ',
       osint: '3️⃣ КОНТЕКСТНИЙ OSINT',
     },
 
     // Personas
     personas: {
       business: 'БІЗНЕС ТА КО ПО АЦІЇ',
-      government: 'ДЕ ЖАВА ТА  ЕГУЛЯТО И',
-      intelligence: 'РОЗВІДКА ТА П АВООХО ОНЦІ',
+      government: 'ДЕ ЖАВА ТА РЕГУЛЯТОРИ',
+      intelligence: 'РОЗВІДКА ТАПРАВООХОРОНЦІ',
       banking: 'БАНКИ ТА КОМПЛАЄНС',
       media: 'МЕДІА ТА РОЗСЛІДУВАННЯ',
     },
@@ -396,7 +396,7 @@ export const premiumLocales = {
       expandAnalytics: 'Відкрити Прогнози',
       collapseAnalytics: 'Згорнути Аналітику',
       liveData: 'ЖИВІ ДАНІ',
-      footer: 'PREDATOR ANALYTICS v58.2-WRAITH • NEXUS STRATEGIC CORE',
+      footer: 'PREDATOR ANALYTICS v61.0-ELITE • NEXUS STRATEGIC CORE',
       confidence: 'Впевненість',
       growth: 'Зростання',
       decline: 'Спад',
@@ -460,7 +460,7 @@ export const premiumLocales = {
             {
               title: 'Виявлено демпінг конкурента',
               summary: 'Бета Імпорт Груп знизила ціни на електроніку на 18%',
-              detail: 'Аналіз показує можливу демпінгову стратегію. рекомендуємо провести аналіз маржі та розглянути контрзаходи.',
+              detail: 'Аналіз показує можливу демпінгову стратегію.рекомендуємо провести аналіз маржі та розглянути контрзаходи.',
               impact: 'Потенційна втрата 5-8% ринкової частки',
               source: 'AI Моніторинг Цін',
             },
@@ -480,7 +480,7 @@ export const premiumLocales = {
               summary: 'Дефіцит постачання сировини в секторі хімії',
               detail: 'Збільшення попиту на 25% при зменшенні пропозиції. Ідеальний час для розширення ринкової присутності.',
               impact: 'Потенційний ріст обороту +15-20%',
-              source: ' инковий Сканер',
+              source: 'ринковий Сканер',
             },
             {
               title: 'Новий торговий маршрут доступний',
@@ -522,7 +522,7 @@ export const premiumLocales = {
           ]
         }
       },
-      summary: 'Сьогодні виявлено {alerts} критичні алерти та {opportunities} ринкові можливості. Загальна оцінка ситуації: {status}. рекомендуємо звернути увагу на цінову активність конкурентів.',
+      summary: 'Сьогодні виявлено {alerts} критичні алерти та {opportunities} ринкові можливості. Загальна оцінка ситуації: {status}.рекомендуємо звернути увагу на цінову активність конкурентів.',
       statusPositive: 'ПОЗИТИВНА',
     },
 
@@ -590,7 +590,7 @@ export const premiumLocales = {
 
     // Paywall
     paywall: {
-      title: ' АНКОВИЙ Б ИФІНГ КЕ ІВНИКА',
+      title: 'РАНКОВИЙБРИФІНГ КЕРІВНИКА',
       description: 'Персоналізований щоденний дайджест з AI-інсайтами, критичними алертами та ринковими можливостями.',
       upgradeButton: 'ОНОВИТИ ДОПРЕМІУМ',
     },
@@ -601,19 +601,19 @@ export const premiumLocales = {
   // ============================================
   dashboard: {
     intelBriefing: '{persona}_INTEL_BRIEFING',
-    commandCenter: 'КОМАНДНИЙ ЦЕНТ ',
-    situationCommandCenter: 'СИТУАЦІЙНИЙ КОМАНДНИЙ ЦЕНТ ',
-    godModeActive: 'v58.2-WRAITH NEXUS  ЕЖИМ БОГА АКТИВОВАНО',
+    commandCenter: 'КОМАНДНИЙ ЦЕНТР',
+    situationCommandCenter: 'СИТУАЦІЙНИЙ КОМАНДНИЙ ЦЕНТР',
+    godModeActive: 'v61.0-ELITE NEXUS РЕЖИМ БОГА АКТИВОВАНО',
     sovereigntyProtocol: 'Протокол Суверенітету NEXUS в реальному часі активовано',
     systemMap: 'Карта Системи',
     pulseSync: 'Синхронізація Пульсу',
     autonomousObservation: 'Система функціонує в режимі автономного стратегічного спостереження.',
     neuralIngesting: 'НЕЙРОННИЙ ІНДЖЕСТИНГ',
     axiomStatus: 'Статус Аксіом',
-    confirmed: 'ПІДТВЕ ДЖЕНО',
-    computationalCortex: 'ОБЧИСЛЮВАЛЬНИЙ КО ТЕКС',
+    confirmed: 'ПІДТВЕРДЖЕНО',
+    computationalCortex: 'ОБЧИСЛЮВАЛЬНИЙ КОРТЕКС',
     targetIdentification: 'ВИЯВЛЕННЯ ЦІЛЕЙ',
-    focusPriority: 'П ІО ИТЕТ ФОКУСУ',
+    focusPriority: 'ПРІОРИТЕТ ФОКУСУ',
     highIntelligence: 'ВИСОКИЙ ІНТЕЛЕКТ',
     fleetReady: 'ФЛОТ ГОТОВИЙ',
     arbitrationStream: 'Потік Арбітражу Мультимоделей',
@@ -621,29 +621,29 @@ export const premiumLocales = {
     activeStatus: 'АКТИВНО',
     cognitiveNodes: 'КОГНІТИВНІ ВУЗЛИ',
     syntheticEvidence: 'СИНТЕТИЧНІ ДОКАЗИ',
-    storageUsage: 'ВИКО ИСТАННЯ СХОВИЩА',
+    storageUsage: 'ВИКОРИСТАННЯ СХОВИЩА',
     activeModels: 'АКТИВНІ NEXUS-AZR МОДЕЛІ',
     informationEntropy: 'Аналітика Інформаційної Ентропії',
-    crossCorrelation: 'Крос-кореляція та Патерни  изику',
+    crossCorrelation: 'Крос-кореляція та Патерни ризику',
     waitingTelemetry: 'Очікування телеметричних даних...',
     accessRestricted: 'ДОСТУП ОБМЕЖЕНО',
-    accessRestrictedDesc: ' озширена матриця кореляції та аналіз загроз вимагають доступу  івня 3.',
-    getTrialAccess: 'ОТ ИМАТИ ТЕСТОВИЙ ДОСТУП',
+    accessRestrictedDesc: 'розширена матриця кореляції та аналіз загроз вимагають доступу рівня 3.',
+    getTrialAccess: 'ОТРИМАТИ ТЕСТОВИЙ ДОСТУП',
     fleetLiveStream: 'ЖИВИЙ ПОТІК ФЛОТУ',
     noIncomingSignals: 'Немає вхідних сигналів',
     channelLoad: 'НАВАНТАЖЕННЯ КАНАЛУ',
-    normal: 'НО МА',
+    normal: 'НОРМА',
     briefingText: {
-      titan: " инкова перевага: Аналіз конкурентів виявив критичну слабкість у логістичному ланцюгу опонента. Час для стратегічного розширення — СЬОГОДНІ.",
+      titan: "ринкова перевага: Аналіз конкурентів виявив критичну слабкість у логістичному ланцюгу опонента. Час для стратегічного розширення — СЬОГОДНІ.",
       inquisitor: "Верифікація доказів: Виявлено нетипові транзакції в тендері #4021. Зв'язок з офшорами підтверджено. Готуйте ордер на виїмку.",
-      sovereign: "Державна безпека: Моніторинг настроїв у регіонах показує ріст впливу опозиційних груп. рекомендовано інформаційне втручання в секторі 'A8'."
+      sovereign: "Державна безпека: Моніторинг настроїв у регіонах показує ріст впливу опозиційних груп.рекомендовано інформаційне втручання в секторі 'A8'."
     },
     metrics: {
       sovereigntyScore: 'Бал Активного Суверенітету',
       throughput: 'Пропускна Здатність',
       neuralNodes: 'Нейронні Вузли',
-      securityLevel: ' івень Безпеки',
-      aiAutonomy: ' івень Автономності ШІ',
+      securityLevel: 'рівень Безпеки',
+      aiAutonomy: 'рівень Автономності ШІ',
       ioPipeline: 'Навантаження IO Каналу',
       clustersActive: 'Активні Кластери',
       noThreats: 'Загроз не виявлено',
@@ -657,7 +657,7 @@ export const premiumLocales = {
       engine: 'ДВИГУН'
     },
     agents: {
-      title: 'СУВЕ ЕННІ АГЕНТИ',
+      title: 'СУВЕРЕННІ АГЕНТИ',
       subtitle: 'Автономне Самовідновлення',
       active: 'Активний',
       standby: 'Очікування',
@@ -672,8 +672,8 @@ export const premiumLocales = {
   // Entity Relationship Graph
   // ============================================
   entityGraph: {
-    title: 'Г АФ ЗВ\'ЯЗКІВ',
-    breadcrumbs: ['PREDATOR', 'П ЕМІУМ', 'Г АФ_ЗВ\'ЯЗКІВ'],
+    title: 'ГРАФ ЗВ\'ЯЗКІВ',
+    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'ГРАФ_ЗВ\'ЯЗКІВ'],
 
     // Stats
     stats: {
@@ -687,7 +687,7 @@ export const premiumLocales = {
       company: 'Компанія',
       person: 'Особа',
       address: 'Адреса',
-      account: ' ахунок',
+      account: 'рахунок',
       vehicle: 'Транспорт',
       property: 'Нерухомість',
     },
@@ -759,7 +759,7 @@ export const premiumLocales = {
 
     // Detail panel
     detail: {
-      riskLevel: ' івень ризику',
+      riskLevel: 'рівень ризику',
       connections: 'Зв\'язків',
       address: 'Адреса',
       status: 'Статус',
@@ -767,7 +767,7 @@ export const premiumLocales = {
       ownershipStructure: 'Структура власності',
       recentActivity: 'Остання активність',
       generateDossier: 'Згенерувати досьє',
-      expandNetwork: ' озгорнути мережу',
+      expandNetwork: 'розгорнути мережу',
     },
 
     // Status
@@ -787,8 +787,8 @@ export const premiumLocales = {
 
     // Paywall
     paywall: {
-      title: 'Г АФ ЗВ\'ЯЗКІВ',
-      description: ' озкрийте приховані зв\'язки між компаніями, бенефіціарами та особами. Ідеальний інструмент для розслідувань та due diligence.',
+      title: 'ГРАФ ЗВ\'ЯЗКІВ',
+      description: 'розкрийте приховані зв\'язки між компаніями, бенефіціарами та особами. Ідеальний інструмент для розслідувань та due diligence.',
       features: [
         'Візуалізація мережі зв\'язків',
         'Аналіз бенефіціарів',
@@ -796,7 +796,7 @@ export const premiumLocales = {
         'Виявлення прихованих схем',
       ],
       upgradeButton: 'ОНОВИТИ ДОПРЕМІУМ',
-      descriptionStart: ' озкрийте',
+      descriptionStart: 'розкрийте',
       descriptionHighlight: 'приховані зв\'язки',
       descriptionEnd: 'між компаніями, бенефіціарами та особами. Ідеальний інструмент для розслідувань та due diligence.',
       featuresList: [
@@ -832,7 +832,7 @@ export const premiumLocales = {
       historical: 'Історичні Дані',
       forecast: 'Прогноз AI',
       growth: 'Очікуваний  іст',
-      riskFactor: 'Фактор  изику',
+      riskFactor: 'Фактор ризику',
       riskLevels: {
         low: 'Низький',
         medium: 'Середній',
@@ -910,7 +910,7 @@ export const premiumLocales = {
     authorize: 'Авторизувати доступ',
     offlineBanner: {
       title: 'СИСТЕМА ОФЛАЙН',
-      mode: ' ЕЖИМ АВТОНОМНОЇ СТІЙКОСТІ',
+      mode: 'РЕЖИМ АВТОНОМНОЇ СТІЙКОСТІ',
       desc: 'З\'єднання з PREDATOR Core v45 втрачено. Інтерфейс працює в автономному режимі. Дані можуть бути неактуальні.',
     },
   },
@@ -968,7 +968,7 @@ export const premiumLocales = {
     title: 'ЦЕНТ  КОМПЛАЄНСУ ТА АУДИТУ',
     breadcrumbs: ['СИСТЕМА', 'БЕЗПЕКА', 'АУДИТ'],
     stats: {
-      trustLevel: ' івень Довіри',
+      trustLevel: 'рівень Довіри',
       lastAudit: 'Останній Аудит',
       regulatorStatus: 'Статус регулятора',
       auditTime: '{time} тому',
@@ -995,7 +995,7 @@ export const premiumLocales = {
         financial: 'Звіт фінансового моніторингу (NBU #417)',
         privacy: 'Аудит доступу до персональних даних',
         integrity: 'Перевірка цілісності транзакцій',
-        sar: 'реєстр підозрілої активності (SAR)',
+        sar: 'Реєстр підозрілої активності (SAR)',
       }
     },
     auditTrail: {
@@ -1051,9 +1051,9 @@ export const premiumLocales = {
       cpuRealtime: 'Навантаження ЦП (реальний час)',
       queriesPerMin: 'Запити за хвилину',
       latencyRequests: 'Затримка запитів',
-      storageDistribution: ' озподіл Сховищ Даних',
+      storageDistribution: 'розподіл Сховищ Даних',
       activityDynamics: 'Динаміка активності',
-      resourceDistribution: ' озподіл ресурсів',
+      resourceDistribution: 'розподіл ресурсів',
       utilization: 'Використання',
     },
 
@@ -1065,7 +1065,7 @@ export const premiumLocales = {
   // Semantic Radar (Analytics View)
   // ============================================
   semanticRadar: {
-    title: "СЕМАНТИЧНИЙ  АДА  ЗВ'ЯЗКІВ WRAITH",
+    title: "СЕМАНТИЧНИЙ  АДА  ЗВ'ЯЗКІВ ELITE",
     breadcrumbs: ['PREDATOR', 'АНАЛІТИКА', 'GLOBAL_COGNITION v58.2'],
     stats: {
       nodes: 'Вузли',
@@ -1088,7 +1088,7 @@ export const premiumLocales = {
     },
     entityHud: {
       params: 'ПА АМЕТ И ОБ\'ЄКТА',
-      aiInsight: 'AI ІНСАЙТ WRAITH-2026',
+      aiInsight: 'AI ІНСАЙТ ELITE-2026',
       safe: 'БЕЗПЕЧНО',
       risk: 'РИЗИК',
       selectNode: 'Виберіть вузол для аналізу',
@@ -1103,9 +1103,9 @@ export const premiumLocales = {
   // ============================================
   monitoring: {
     titles: {
-      commander: 'МОНІТО  НЕЙ ОННОГО КО ТЕКСУ',
+      commander: 'МОНІТО  НЕЙ ОННОГО КОРТЕКСУ',
       operator: 'ТАКТИЧНА СПОСТЕ ЕЖНІСТЬ',
-      explorer: 'ЗДО ОВ\'Я СИСТЕМИ',
+      explorer: 'ЗДОРОВ\'Я СИСТЕМИ',
     },
     breadcrumbs: ['СИНАПСИС', 'СИСТЕМА', 'МОНІТО ИНГ'],
     tabs: {
@@ -1126,7 +1126,7 @@ export const premiumLocales = {
     },
     pulse: {
       title: 'АГ ЕГАТО  ПУЛЬСУ СИСТЕМИ',
-      optimal: 'ОПТИМАЛЬНИЙ  ЕЖИМ',
+      optimal: 'ОПТИМАЛЬНИЙ РЕЖИМ',
     },
     topology: {
       neural: 'НЕЙ ОННА ТОПОЛОГІЯ',
@@ -1161,7 +1161,7 @@ export const premiumLocales = {
       autoOptimization: 'Автономна Оптимізація',
     },
     neuralTraceView: {
-      registryTitle: ' ЕЄСТ  НЕЙ ОННИХ КОМАНД',
+      registryTitle: 'РЕЄСТР НЕЙ ОННИХ КОМАНД',
       visualizeTitle: 'ВІЗУАЛІЗАЦІЯ НЕЙ ОННОГО МИСЛЕННЯ',
       intent: 'ДИНАМІЧНИЙ НАМІ ',
       planTitle: 'План Стратега (Gemini)',
@@ -1169,14 +1169,14 @@ export const premiumLocales = {
       coderOutput: 'Вихід Кодера (Mistral/Groq)',
       securityAudit: 'Аудит Безпеки (Aider/Copilot)',
       executionTime: 'Виконання',
-      riskLevel: ' івень  изику',
+      riskLevel: 'рівень ризику',
       high: 'ВИСОКИЙ',
-      medium: 'СЕ ЕДНІЙ',
+      medium: 'СЕРЕДНІЙ',
       low: 'НИЗЬКИЙ',
       selectTrace: 'Оберіть запис для візуалізації мислення',
     },
     sagaView: {
-      registryTitle: ' ЕЄСТ  SAGA Т АНЗАКЦІЙ',
+      registryTitle: 'РЕЄСТР SAGA Т АНЗАКЦІЙ',
       visualizeTitle: 'ВІЗУАЛІЗАЦІЯ РОЗПОДІЛЕНОГО Т ЕЙСУ',
       completed: 'ЗАВЕ ШЕНО',
       compensated: 'ВІДКОЧЕНО',
@@ -1193,7 +1193,7 @@ export const premiumLocales = {
   // ============================================
   competitorIntelligence: {
     title: 'КОНКУ ЕНТНА РОЗВІДКА',
-    breadcrumbs: ['PREDATOR', 'П ЕМІУМ', 'КОНКУ ЕНТИ'],
+    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'КОНКУ ЕНТИ'],
     premium: {
       title: 'КОНКУ ЕНТНА РОЗВІДКА',
       descriptionStart: 'Отримайте доступ до',
@@ -1201,7 +1201,7 @@ export const premiumLocales = {
       descriptionEnd: 'інструменту конкурентної розвідки. Аналізуйте ціни, ринкові частки, стратегії та слабкі місця ваших конкурентів.',
       upgrade: 'ОНОВИТИ ДОПРЕМІУМ',
       forgeView: {
-        title: 'КУЗНЯ ЕВОЛЮЦІЇ WRAITH',
+        title: 'КУЗНЯ ЕВОЛЮЦІЇ ELITE',
         subtitle: 'Ковальський Цех Нейронних Моделей v58.2',
         liveActive: 'АКТИВНЕ КУВАННЯ',
       },
@@ -1216,7 +1216,7 @@ export const premiumLocales = {
       overview: 'Огляд',
       competitors: 'Конкуренти',
       prices: 'Цінова розвідка',
-      insights: ' инкові інсайти',
+      insights: 'ринкові інсайти',
     },
     stats: {
       tracked: 'Відстежується',
@@ -1224,7 +1224,7 @@ export const premiumLocales = {
       opportunities: 'Можливостей',
     },
     charts: {
-      marketShare: ' озподіл ринкової частки',
+      marketShare: 'розподіл ринкової частки',
       importTrends: 'Тренди обсягів імпорту (6 місяців)',
       radar: ' адар конкурентного позиціонування',
       prices: 'Цінова розвідка по продуктам',
@@ -1292,7 +1292,7 @@ export const premiumLocales = {
       market: ' инок',
       scanningGlobalVectors: 'Сканування глобальних векторів...',
       connectingKnowledgeGraph: 'Підключення до Графу Знань...',
-      targetRegistry: 'реєстр Цілей',
+      targetRegistry: 'Реєстр Цілей',
       sectorAnalysis: 'Аналіз Секторів',
       scanControls: 'Керування Скануванням',
       dbSize: ' озмір БД',
@@ -1305,7 +1305,7 @@ export const premiumLocales = {
       noTargetsIdentified: 'Цілей не ідентифіковано',
       radarScanNotice: 'Сканування семантичного радару не повернуло сутностей, категорія яких "Організація" або "Конкурент". Запустіть глибше сканування або додайте джерела через ETL.',
       forceRescan: 'Примусове Пересканування',
-      riskScore: ' івень  изику',
+      riskScore: 'рівень ризику',
       status: 'Статус',
       source: 'Джерело',
       unknownSector: 'НЕВІДОМИЙ_СЕКТО ',
@@ -1329,7 +1329,7 @@ export const premiumLocales = {
         error: 'ПОМИЛКА',
       },
     },
-    breadcrumbs: ['КОМАНДНИЙ ЦЕНТ ', 'МОНІТО ИНГ', 'СВІДОМІСТЬ'],
+    breadcrumbs: ['КОМАНДНИЙ ЦЕНТР', 'МОНІТО ИНГ', 'СВІДОМІСТЬ'],
     stats: {
       connection: 'З\'єднання',
       system: 'Стан Системи',
@@ -1355,7 +1355,7 @@ export const premiumLocales = {
         restartInit: '[SYSTEM] Ініціалізація екстреного перезавантаження сервісів...',
         restartStatus: '[SYSTEM] СТАТУС: ПЕ ЕЗАПУСК. Звіт: {report}',
         restartError: '[SYSTEM] ПОМИЛКА: Не вдалося ініціювати перезавантаження.',
-        lockdownToggle: '[БЕЗПЕКА]  ЕЖИМ БЛОКУВАННЯ: {status}',
+        lockdownToggle: '[БЕЗПЕКА] РЕЖИМ БЛОКУВАННЯ: {status}',
         lockdownError: '[БЕЗПЕКА] ПОМИЛКА: Не вдалося змінити режим блокування.',
         rollbackInit: '[GIT] Ініціалізація відкату кодової бази...',
         rollbackStatus: '[GIT] СТАТУС: ВІДКОЧЕНО. Звіт: {report}',
@@ -1458,7 +1458,7 @@ export const premiumLocales = {
       metricsVoice: 'Нейронне ядро активне. Модель: {model}. VRAM: {vram} ГБ.',
     },
     apiKeys: {
-      title: 'УП АВЛІННЯ КЛЮЧАМИ API',
+      title: 'УПРАВЛІННЯ КЛЮЧАМИ API',
       vault: {
         title: 'СХОВИЩЕ КЛЮЧІВ',
         description: 'Управління доступом до зовнішніх LLM провайдерів.'
@@ -1515,7 +1515,7 @@ export const premiumLocales = {
       router: {
         title: 'Конфігурація  оутера Моделей',
         active: 'АКТИВНО',
-        standby: ' ЕЖИМ ОЧІКУВАННЯ',
+        standby: 'РЕЖИМ ОЧІКУВАННЯ',
         stable: 'стабільно',
       }
     },
@@ -1526,7 +1526,7 @@ export const premiumLocales = {
       initRequest: '[INIT] Запит на запуск тренування...',
       initialize: 'Ініціалізувати Навчання',
       matrix: 'Стан Матриці AutoML',
-      experiment: 'Експеримент  озширення',
+      experiment: 'Експеримент розширення',
       target: 'Цільовий кластер',
       convergence: 'ЗБІЖНІСТЬ',
       synthesize: 'Синтезувати Новий Шлях',
@@ -1575,7 +1575,7 @@ export const premiumLocales = {
   // Evolution Engine
   // ============================================
   evolution: {
-    title: 'ДВИГУН ЕВОЛЮЦІЇ WRAITH',
+    title: 'ДВИГУН ЕВОЛЮЦІЇ ELITE',
     subtitle: 'Цикл Автономного Самовдосконалення v58.2_Активний',
     stats: {
       azrCycles: 'AZR_CYCLES',
@@ -1607,7 +1607,7 @@ export const premiumLocales = {
       potentialResponse: 'Потенційний результат',
       optimal: 'ОПТИМАЛЬНО',
       impact: 'Вплив',
-      confidenceScore: ' івень Впевненості',
+      confidenceScore: 'рівень Впевненості',
       safeExecution: 'Безпечне Виконання: Підтверджено',
       policyAlignment: 'Відповідність Політиці: 100%',
       verifyDecision: 'Верифікувати  ішення',
@@ -1694,7 +1694,7 @@ export const premiumLocales = {
     title: 'ВІЗУАЛЬНА АНАЛІТИКА',
     subtitle: 'Комплексне візуальне дослідження даних, трендів та геополітичних потоків у реальному часі.',
     charts: {
-      dynamics: 'ДИНАМІКА П ОГНОЗУ',
+      dynamics: 'ДИНАМІКАПРОГНОЗУ',
       structure: 'СТРУКТУРА  ИНКУ',
       totalVolume: 'ЗАГАЛЬНИЙ ОБСЯГ',
       regional: ' ЕГІОНАЛЬНА АКТИВНІСТЬ',
@@ -1775,7 +1775,7 @@ export const premiumLocales = {
         },
         diversifyChips: {
           title: 'Диверсифікуйте постачальників чіпів',
-          summary: '78% ваших напівпровідників надходять від одного постачальника. рекомендуємо розподілити ризики.',
+          summary: '78% ваших напівпровідників надходять від одного постачальника.рекомендуємо розподілити ризики.',
           timeframe: 'Стратегічно важливо',
           factors: [
             'Високий ризик перебоїв поставок',
@@ -1829,7 +1829,7 @@ export const premiumLocales = {
         },
         strategicReserve: {
           title: 'Створіть стратегічний резерв критичних компонентів',
-          summary: 'На основі аналізу ланцюгів поставок рекомендуємо формування 90-денного буферного запасу.',
+          summary: 'На основі аналізу ланцюгів поставокрекомендуємо формування 90-денного буферного запасу.',
           timeframe: 'рекомендація на Q2',
           factors: [
             'Оптимальний розмір резерву: 90 днів',
@@ -1881,11 +1881,11 @@ export const premiumLocales = {
     title: 'Щоденний Брифінг',
     archive: 'Архів',
     greetings: 'Доброго ранку, Титан.',
-    intro: 'Система PREDATOR проаналізувала 14,200 подій за ніч.  инкова ситуація сприятлива, але вимагає уваги до логістики.',
+    intro: 'Система PREDATOR проаналізувала 14,200 подій за ніч. ринкова ситуація сприятлива, але вимагає уваги до логістики.',
     opportunities: 'Можливості',
     opportunitiesDesc: ' ізкий стрибок попиту на Автозапчастини в Одеському регіоні (+34%). Ваші запаси дозволяють покрити дефіцит.',
     risks: ' изики',
-    risksDesc: 'Затримки на кордоні "Ягодин". рекомендуємо перенаправити контейнер MSKU8821 через Констанцу.',
+    risksDesc: 'Затримки на кордоні "Ягодин".рекомендуємо перенаправити контейнер MSKU8821 через Констанцу.',
     recommendedActions: 'рекомендовані дії',
     actions: {
       confirmPurchase: 'Підтвердити закупівлю партії 8507',
@@ -1902,7 +1902,7 @@ export const premiumLocales = {
     subtitle: 'Останнє оновлення даних: {time}',
     lastUpdated: 'Останнє оновлення даних: 2 хв тому',
     entityType: 'Юридична Особа',
-    riskLevel: ' івень  изику',
+    riskLevel: 'рівень ризику',
     highRisk: 'Високий',
     normalRisk: 'Нормальний',
     founded: 'Засновано',
@@ -1968,7 +1968,7 @@ export const premiumLocales = {
     severity: {
       critical: 'К ИТИЧНО',
       high: 'ВИСОКИЙ',
-      medium: 'СЕ ЕДНІЙ',
+      medium: 'СЕРЕДНІЙ',
       low: 'НИЗЬКИЙ',
       info: 'ІНФО',
     },
@@ -2161,7 +2161,7 @@ export const premiumLocales = {
       },
       logisticsTrend: {
         title: 'Логістичний Тренд',
-        desc: 'Зниження вартості фрахту з Китаю. рекомендовано збільшити закупівлі.',
+        desc: 'Зниження вартості фрахту з Китаю.рекомендовано збільшити закупівлі.',
       },
       priceArbitrage: {
         title: 'Арбітраж Ціни',
@@ -2202,8 +2202,8 @@ export const premiumLocales = {
       eu: 'ЄС',
       turkey: 'Туреччина',
     },
-    riskIndicator: 'Індикатор  изику',
-    riskWarning: 'Можливе коригування митної вартості. рекомендовано підготувати експортну декларацію.',
+    riskIndicator: 'Індикатор ризику',
+    riskWarning: 'Можливе коригування митної вартості.рекомендовано підготувати експортну декларацію.',
     noRisks: ' изиків не виявлено. Зелений коридор.',
   },
 
@@ -2253,12 +2253,12 @@ export const premiumLocales = {
       subtitle: 'Відхилення від ринкових цін',
       detected: 'виявлено',
       declared: 'Декларовано',
-      market: ' инкова',
+      market: 'ринкова',
       companies: 'Компаній',
     },
     tradeFlow: {
       title: 'Географія Торгівлі',
-      subtitle: ' озподіл імпорту по країнах',
+      subtitle: 'розподіл імпорту по країнах',
     },
     competitorRadar: {
       title: ' адар Конкурентів',
@@ -2272,11 +2272,11 @@ export const premiumLocales = {
       }
     },
     riskScore: {
-      title: 'Оцінка  изику',
+      title: 'Оцінка ризику',
       levels: {
         critical: 'К ИТИЧНИЙ',
         high: 'ВИСОКИЙ',
-        medium: 'СЕ ЕДНІЙ',
+        medium: 'СЕРЕДНІЙ',
         low: 'НИЗЬКИЙ',
       },
       factors: {
@@ -2331,7 +2331,7 @@ export const premiumLocales = {
     scanningMessage: 'Сканування баз даних МВФ, ЄС, OFAC...',
     noResults: "результати перевірки з'являться тут",
     warningTitle: 'Автоматичне попередження',
-    warningMessage: "Виявлено ланцюжок імовірного зв'язку вашого контрагента з директором ТОВ 'Альфа', що перебуває у списку  НБО.",
+    warningMessage: "Виявлено ланцюжок імовірного зв'язку вашого контрагента з директором ТОВ 'Альфа', що перебуває у списку РНБО.",
     fullReportButton: 'Сформувати повний звіт ризиків',
     statusClear: 'Чисто',
     statusMatch: 'Збіг знайдено',
@@ -2380,7 +2380,7 @@ export const premiumLocales = {
   tradeCorridor: {
     title: 'Аналітика Торгових Коридорів',
     subtitle: 'Оптимізація маршрутів та витрат',
-    marketIntelligence: ' инкова  озвідка',
+    marketIntelligence: 'ринкова  озвідка',
     risk: ' изик',
     riskLevels: {
       low: 'Низький',
@@ -2445,7 +2445,7 @@ export const premiumLocales = {
     exciseRate: 'Ставка Акцизу (%)',
     marginImpact: 'Вплив на Маржу',
     aiTip: 'Порада ШІ',
-    aiAdvice: 'При поточному тренді, корекція ціни на 5% у Травні збільшить вашу частку ринку на +12.4%. рекомендуємо перескладування.',
+    aiAdvice: 'При поточному тренді, корекція ціни на 5% у Травні збільшить вашу частку ринку на +12.4%.рекомендуємо перескладування.',
     forecastModel: 'Модель Прогнозування',
     historicalData: 'Історичні Дані',
     aiForecast: 'Прогноз ШІ',
@@ -2472,7 +2472,7 @@ export const premiumLocales = {
   },
 
   apiKeys: {
-    title: 'API КЛЮЧІ ТА П ОВАЙДЕ И ШІ (V45)',
+    title: 'API КЛЮЧІ ТАПРОВАЙДЕ И ШІ (V45)',
     vault: {
       title: 'Сховище Секретів (Active)',
       description: 'Всі ключі шифруються за допомогою AES-256 та зберігаються у захищеному сховищі Predator. Вони ніколи не передаються на фронтенд у відкритому вигляді.',
@@ -2511,7 +2511,7 @@ export const premiumLocales = {
   // ============================================
   customsIntelligence: {
     title: 'МИТНА РОЗВІДКА v45',
-    breadcrumbs: ['PREDATOR', 'П ЕМІУМ', 'CUSTOMS v45'],
+    breadcrumbs: ['PREDATOR', 'ПРЕМІУМ', 'CUSTOMS v45'],
     stats: {
       declarations: 'Декларацій',
       anomalies: 'Аномалій',
@@ -2525,7 +2525,7 @@ export const premiumLocales = {
     personas: {
       TITAN: {
         title: 'TITAN: КО ПО АТИВНИЙ ХАБ',
-        focus: ' инкові частки та витік цін конкурентів',
+        focus: 'ринкові частки та витік цін конкурентів',
         leads: {
           spike: {
             title: 'Стрибок імпорту конкурента "X"',
@@ -2533,7 +2533,7 @@ export const premiumLocales = {
           },
           logistics: {
             title: 'Аналіз заблокованої логістики',
-            desc: 'Середня затримка на кордоні "Ягодин" зросла. рекомендуємо перенаправити потоки через " ава- уська".',
+            desc: 'Середня затримка на кордоні "Ягодин" зросла.рекомендуємо перенаправити потоки через " ава- уська".',
           }
         },
         presets: ['Частка ринку по HQ', 'Тренди обсягів імпорту', 'Індекс цін конкурентів']
@@ -2576,7 +2576,7 @@ export const premiumLocales = {
       pro: 'Про-Моделювання',
       selectedPerspective: 'Вибрана перспектива',
       tradeVolume: 'Векторний аналіз обсягів торгівлі',
-      riskDistribution: ' озподіл величини ризиків',
+      riskDistribution: 'розподіл величини ризиків',
       xTime: 'Вісь X: Час',
       yValue: 'Вісь Y: Вартість',
       filterHq: 'Фільтр: HQ',
@@ -2601,7 +2601,7 @@ export const premiumLocales = {
     },
     ui: {
       searchPlaceholder: 'Пошук у реєстрі...',
-      emptyRegistry: 'реєстр порожній. Дані завантажуються...',
+      emptyRegistry: 'Реєстр порожній. Дані завантажуються...',
       accessingPort: 'Вхід у захищений порт...',
       declared: 'Задекларовано',
       intelSignal: 'СИГНАЛ_ ОЗВІДКИ',
@@ -2623,7 +2623,7 @@ export const premiumLocales = {
     },
     paywall: {
       title: 'НЕОБХІДНИЙПРЕМІУМ ДОСТУП',
-      desc: 'реєстр митних декларацій та їх семантичний аналіз доступні лише для передплатників рівня PREMIUM. Цей розділ надає доступ до інсайдів про вантажопотоки, цінові маніпуляції та приховані зв\'язки імпортерів.',
+      desc: 'Реєстр митних декларацій та їх семантичний аналіз доступні лише для передплатників рівня PREMIUM. Цей розділ надає доступ до інсайдів про вантажопотоки, цінові маніпуляції та приховані зв\'язки імпортерів.',
       upgrade: 'ОНОВИТИ ДОПРЕМІУМ'
     }
   },
@@ -2714,7 +2714,7 @@ export const premiumLocales = {
       },
       values: {
         basic: 'Базовий',
-        advanced: ' озширений',
+        advanced: 'розширений',
         full: 'Повний + Custom',
         unlimited: 'Необмежено',
         limit100: '100 записів',
@@ -2870,7 +2870,7 @@ export const premiumLocales = {
       metrics: {
         revenue: 'Потенційний дохід',
         savings: 'Можлива економія',
-        risk: ' івень загрози',
+        risk: 'рівень загрози',
       }
     }
   },
@@ -2990,7 +2990,7 @@ export const premiumLocales = {
         features: {
           compAnalysis: 'Конкурентний Аналіз',
           compAnalysisDesc: 'Хто що імпортує, по якій ціні',
-          marketForecast: ' инкові Прогнози',
+          marketForecast: 'ринкові Прогнози',
           marketForecastDesc: 'Передбачення попиту та цін',
           supplierInsights: 'Інсайди Постачальників',
           supplierInsightsDesc: 'Виявлення нових джерел',
@@ -3008,7 +3008,7 @@ export const premiumLocales = {
           evasionSchemesDesc: 'Патерни маніпуляцій',
           profiling: 'Профілювання',
           profilingDesc: 'Досьє на суб\'єктів',
-          riskScoring: 'Оцінка  изику',
+          riskScoring: 'Оцінка ризику',
           riskScoringDesc: 'Скоринг декларацій',
         }
       },

@@ -1,4 +1,4 @@
-"""Graph Intelligence Router — PREDATOR Analytics v56.5-ELITE.
+"""Graph Intelligence Router — PREDATOR Analytics v61.0-ELITE.
 
 Розширена графова аналітика: пошук бенефіціарів (UBO), виявлення прихованих зв'язків.
 """

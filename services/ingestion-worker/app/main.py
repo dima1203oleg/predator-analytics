@@ -1,4 +1,4 @@
-"""Ingestion Worker Main Logic — PREDATOR Analytics v55.1 Ironclad.
+"""Ingestion Worker Main Logic — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Слухає Kafka події та запускає пайплайни обробки даних:
 1. File Ingestion Pipeline — обробка завантажених файлів з MinIO

@@ -109,7 +109,7 @@ export const AdminLicenseModal: React.FC<AdminLicenseModalProps> = ({ isOpen, on
                                         </div>
 
                                         <div>
-                                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2"> івень Доступу</label>
+                                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">рівень Доступу</label>
                                             <div className="grid grid-cols-3 gap-4">
                                                 {['client', 'premium', 'admin'].map((r) => (
                                                     <button

@@ -283,7 +283,7 @@ export const DecisionsJournal: React.FC = () => {
             }
           />
 
-          {/* ФІЛЬТ И WRAITH */}
+          {/* ФІЛЬТ И ELITE */}
           <div className="flex flex-wrap gap-8 items-center p-4 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             <div className="flex items-center gap-6 bg-black border-2 border-white/5 px-10 py-4 rounded-2xl group focus-within:border-rose-500/40 transition-all">
               <Search size={22} className="text-slate-700 group-hover:text-rose-500 transition-colors" />
@@ -343,7 +343,7 @@ export const DecisionsJournal: React.FC = () => {
             )}
           </div>
 
-          {/* FOOTER WRAITH */}
+          {/* FOOTER ELITE */}
           <div className="p-8 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3rem] flex items-center gap-8">
              <div className="p-5 bg-rose-500/20 rounded-[2rem] text-rose-500 shadow-2xl">
                 <ShieldAlert size={32} />

@@ -191,7 +191,7 @@ export const DataReactorCore: React.FC<ReactorProps> = ({
                             <span className={`text-sm font-black tracking-[0.2em] ${hasError ? 'text-red-400' : isActive ? 'text-blue-400' : 'text-slate-400'}`}>
                                 ЯДРО МА Ш УТИЗАЦІЇ
                             </span>
-                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний  озподілювач</div>
+                            <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">Багатовимірний розподілювач</div>
                         </div>
                     </motion.div>
 

@@ -1,4 +1,4 @@
-"""Тести Event Schemas — PREDATOR Analytics v58.2-WRAITH.
+"""Тести Event Schemas — PREDATOR Analytics v61.0-ELITE.
 
 Перевірка серіалізації/десеріалізації Kafka подій.
 """

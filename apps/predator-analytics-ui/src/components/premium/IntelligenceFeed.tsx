@@ -12,9 +12,9 @@ interface IntelEvent {
 }
 
 const events: IntelEvent[] = [
-  { id: '1', time: '12:45', type: 'sanction', title: 'Зміни в санкційному списку  НБО: +12 суб\'єктів', sender: 'Державна Служба Моніторингу', severity: 'critical' },
+  { id: '1', time: '12:45', type: 'sanction', title: 'Зміни в санкційному списку РНБО: +12 суб\'єктів', sender: 'Державна Служба Моніторингу', severity: 'critical' },
   { id: '2', time: '11:20', type: 'customs_anomaly', title: 'Аномальне заниження митної вартості (Код: 8517)', sender: 'Митний Сканер v2', severity: 'high' },
-  { id: '3', time: '10:05', type: 'registry_change', title: 'Зміна бенефіціара у ТОВ "Нафта-Груп" (ЄД ПОУ: 12345678)', sender: 'YouControl Monitor', severity: 'medium' },
+  { id: '3', time: '10:05', type: 'registry_change', title: 'Зміна бенефіціара у ТОВ "Нафта-Груп" (ЄДРПОУ: 12345678)', sender: 'YouControl Monitor', severity: 'medium' },
   { id: '4', time: '09:12', type: 'high_risk', title: 'Виявлено зв\'язок з офшорною зоною (Панама) у тендері #45123', sender: 'RiskEngine AI', severity: 'high' },
 ];
 

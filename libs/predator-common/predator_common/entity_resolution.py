@@ -1,4 +1,4 @@
-"""Entity Resolution Engine — PREDATOR Analytics v55.1 Ironclad.
+"""Entity Resolution Engine — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Об'єднує різні написання однієї компанії/особи в єдиний UEID.
 Використовує: нормалізацію → векторний пошук → fuzzy matching.

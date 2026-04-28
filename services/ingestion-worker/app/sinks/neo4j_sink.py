@@ -1,4 +1,4 @@
-"""Neo4j Sink — PREDATOR Analytics v55.1 Ironclad.
+"""Neo4j Sink — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Запис вузлів та зв'язків у Neo4j для графової аналітики.
 """

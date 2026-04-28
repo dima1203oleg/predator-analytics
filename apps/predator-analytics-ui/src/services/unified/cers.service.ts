@@ -6,7 +6,7 @@ import { CERSCompany, CERSScoreSegment } from '@/types';
  */
 export const cersService = {
     /**
-     * Отримує повний або частковий профіль компанії по коду ЄД ПОУ
+     * Отримує повний або частковий профіль компанії по коду ЄДРПОУ
      */
     getCompanyProfile: async (edrpou: string): Promise<CERSCompany> => {
         const response = await apiClient.get(`/cers/company/${edrpou}`);

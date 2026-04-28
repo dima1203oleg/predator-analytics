@@ -1,4 +1,4 @@
-"""Forecast Router — PREDATOR Analytics v56.5-ELITE.
+"""Forecast Router — PREDATOR Analytics v61.0-ELITE.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel

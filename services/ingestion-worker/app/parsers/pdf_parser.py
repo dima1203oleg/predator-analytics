@@ -1,4 +1,4 @@
-"""PDF Parser — PREDATOR Analytics v55.1 Ironclad.
+"""PDF Parser — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Text extraction and OCR for customs documents.
 """

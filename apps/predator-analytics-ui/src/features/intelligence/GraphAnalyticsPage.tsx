@@ -1,6 +1,6 @@
 /**
- * 🕸️ PREDATOR Topology Sanctum | v58.2-WRAITH
- * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙ ОФО МНОЇ Г АФ ОПТИМІЗАЦІЇ
+ * 🕸️ PREDATOR Topology Sanctum | v61.0-ELITE
+ * МОДУЛЬ ТОПОЛОГІЧНОГО СВЯТИЛИЩА ТА НЕЙ ОФО МНОЇ ГРАФ ОПТИМІЗАЦІЇ
  * 
  * Глибинний аналіз зв'язків (Neo4j), детекція картелів та аномалій.
  * 
@@ -140,7 +140,7 @@ const GraphAnalyticsPage: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'GraphTopology',
-                    message: `АВТОНОМНИЙ  ЕЖИМ Г АФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
+                    message: `АВТОНОМНИЙ РЕЖИМ ГРАФА [${backendStatus.nodeSource}]: Використовується локальна кеш-модель (MIRROR_VAULT).`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'GRAPH_OFFLINE'
@@ -151,7 +151,7 @@ const GraphAnalyticsPage: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'GraphTopology',
-                message: `Г АФ_СЯЙВО [${backendStatus.nodeSource}]: Нейронні зв'язки Neo4j активовано.`,
+                message: `ГРАФ_СЯЙВО [${backendStatus.nodeSource}]: Нейронні зв'язки Neo4j активовано.`,
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'GRAPH_SUCCESS'
@@ -177,7 +177,7 @@ const GraphAnalyticsPage: React.FC = () => {
                         <div style="padding: 24px; min-width: 280px; border-radius: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; border-bottom: 2px solid rgba(212, 175, 55, 0.1); padding-bottom: 16px;">
                                 <div>
-                                    <p style="font-size: 9px; font-weight: 900; color: #D4AF37; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 6px;">TOPOLOGY_NODE_WRAITH</p>
+                                    <p style="font-size: 9px; font-weight: 900; color: #D4AF37; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 6px;">TOPOLOGY_NODE_ELITE</p>
                                     <b style="font-size: 16px; font-weight: 900; color: #fff; text-transform: uppercase; font-style: italic; tracking: -0.02em;">${data.name}</b>
                                 </div>
                                 <div style="height: 12px; width: 12px; border-radius: 50%; background: ${data.risk > 70 ? '#D97706' : '#D4AF37'}; box-shadow: 0 0 15px ${data.risk > 70 ? '#D97706' : '#D4AF37'};"></div>
@@ -235,7 +235,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                          SOVEREIGN_GRAPH // TOPOLOGY_SANCTUM
                                        </span>
                                        <div className="h-px w-12 bg-yellow-500/20" />
-                                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                                       <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                         МАПИ <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОГНІЦІЇ</span>
@@ -260,7 +260,7 @@ const GraphAnalyticsPage: React.FC = () => {
                     />
 
                     <div className="grid grid-cols-12 gap-12 flex-1 min-h-0">
-                        {/* MAIN GRAPH WRAITH */}
+                        {/* MAIN GRAPH ELITE */}
                         <section className="col-span-12 xl:col-span-8 flex flex-col rounded-[4rem] bg-black border-2 border-white/[0.04] p-2 shadow-4xl overflow-hidden relative group">
                             <div className="absolute top-12 left-12 z-20 flex items-center gap-8 pointer-events-none italic">
                                 <div className="p-5 rounded-[1.5rem] bg-yellow-500/10 text-yellow-500 border-2 border-yellow-500/20 shadow-xl">
@@ -287,7 +287,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                 )}
                             </div>
                             
-                            {/* HUD Overlays WRAITH */}
+                            {/* HUD Overlays ELITE */}
                             <div className="absolute bottom-10 left-10 z-20 flex flex-col gap-4">
                                 <div className="p-5 bg-black/60 border-2 border-white/5 rounded-2xl backdrop-blur-xl flex items-center gap-6 italic">
                                     <div className="flex items-center gap-3"><div className="w-2.5 h-2.5 rounded-full bg-amber-600 shadow-[0_0_10px_#d97706]"/><span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">HIGH_RISK_VECTOR</span></div>
@@ -298,14 +298,14 @@ const GraphAnalyticsPage: React.FC = () => {
                         </section>
 
                         <aside className="col-span-12 xl:col-span-4 flex flex-col gap-12 overflow-y-auto custom-scrollbar pr-4">
-                            {/* МЕТ ИКИ WRAITH */}
+                            {/* МЕТ ИКИ ELITE */}
                             <section className="p-10 rounded-[3.5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-10 relative overflow-hidden group">
                                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none" />
                                 <div className="flex items-center gap-8 mb-4 border-b border-white/[0.04] pb-8">
                                    <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-yellow-500 transform group-hover:rotate-12 transition-transform">
                                       <TrendingUp size={28} />
                                    </div>
-                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙ О_МЕТ ИКИ_Г АФА</h4>
+                                   <h4 className="text-[16px] font-black text-white italic uppercase tracking-[0.4em] font-serif">НЕЙ О_МЕТ ИКИ_ГРАФА</h4>
                                 </div>
                                 <div className="grid grid-cols-2 gap-10">
                                    {[
@@ -322,7 +322,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                 </div>
                             </section>
 
-                            {/* КАРТЕЛІ WRAITH */}
+                            {/* КАРТЕЛІ ELITE */}
                             <section className="p-10 rounded-[3.5rem] bg-black border-2 border-amber-950/20 shadow-4xl flex-1 flex flex-col relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover:opacity-[0.1] transition-all rotate-12 duration-[10s]">
                                    <Skull size={300} className="text-amber-600" />

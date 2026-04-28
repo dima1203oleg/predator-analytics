@@ -1,5 +1,5 @@
 /**
- * 👤 PERSON DOSSIER // КОМП ОМАТ НА ОСОБУ | v58.2-WRAITH
+ * 👤 PERSON DOSSIER // КОМП ОМАТ НА ОСОБУ | v61.0-ELITE
  * PREDATOR Analytics — 360° Personal Intelligence
  * 
  * Глибинний аналіз персони: Суди, Борги, Кримінал, Санкції,
@@ -54,7 +54,7 @@ export default function ComprompatPersonView() {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'PersonalIntel',
-            message: 'АКТИВОВАНО  ЕЖИМ ЛОКАЛЬНОГО Т АСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
+            message: 'АКТИВОВАНО РЕЖИМ ЛОКАЛЬНОГО Т АСУВАННЯ (PERSON_OFFLINE). Синхронізація з центральним реєстром призупинена.',
             severity: 'warning',
             timestamp: new Date().toISOString(),
             code: 'PERSON_OFFLINE'
@@ -139,7 +139,7 @@ export default function ComprompatPersonView() {
                           PERSON_INTEL // DOSSIER_DETECTION
                         </span>
                         <div className="h-px w-10 bg-orange-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ДОСЬЄ <span className="text-orange-500 underline decoration-orange-600/20 decoration-8 italic uppercase">ОСОБИ</span>
@@ -351,7 +351,7 @@ export default function ComprompatPersonView() {
                           <Activity size={18} /> ОПЕ АТИВНИЙ_СТАН
                        </h3>
                        <div className="p-8 rounded-[2.5rem] bg-amber-600/5 border border-amber-600/20 space-y-6">
-                          <p className="text-[14px] font-bold text-amber-300 italic leading-snug">ВИЯВЛЕНО НЕПОВ'ЯЗАНІ АКТИВИ В КІП СЬКИХ  ЕЄСТ АХ ЧЕ ЕЗ АНОМАЛЬНЕ СПІВПАДІННЯ ДА Т-СПЕКТ ІВ.</p>
+                          <p className="text-[14px] font-bold text-amber-300 italic leading-snug">ВИЯВЛЕНО НЕПОВ'ЯЗАНІ АКТИВИ В КІП СЬКИХ РЕЄСТРАХ ЧЕ ЕЗ АНОМАЛЬНЕ СПІВПАДІННЯ ДА Т-СПЕКТ ІВ.</p>
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-3">
                                 <ShieldAlert size={16} className="text-amber-500" />

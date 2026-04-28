@@ -1,4 +1,4 @@
-"""Security Utils — PREDATOR Analytics v58.2-WRAITH.
+"""Security Utils — PREDATOR Analytics v61.0-ELITE.
 
 JWT validation, tenant extraction, RBAC helpers.
 Канонічний модуль безпеки для всіх сервісів.

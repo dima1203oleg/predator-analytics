@@ -1,6 +1,6 @@
 /**
  * 🤖 AntigravityAgiTab — Модуль автономного AGI-оркестратора
- * PREDATOR Factory v58.2-WRAITH
+ * PREDATOR Factory v61.0-ELITE
  *
  * реалізує ТЗ "Google Antigravity Coder v1.0 Enterprise MVP":
  *   - Статус оркестратора (LLM Gateway, Sandbox, бюджет)

@@ -1,6 +1,6 @@
 /**
  * EntityResolverView — де-дублікація та злиття записів.
- * Confidence-based entity resolution з WRAITH UI.
+ * Confidence-based entity resolution з ELITE UI.
  * Фаза 3 v59.0-NEXUS.
  */
 
@@ -59,14 +59,14 @@ const MOCK_MATCHES: EntityMatch[] = [
     confidence: 97,
     status: 'high',
     suggestedAction: 'merge',
-    matchedFields: ['ЄД ПОУ', 'Назва', 'Адреса'],
+    matchedFields: ['ЄДРПОУ', 'Назва', 'Адреса'],
     primaryRecord: {
       id: 'ENT-001',
-      source: 'ЄД  України',
+      source: 'ЄДРУкраїни',
       name: 'ТОВ "ГОЛДЕН Т ЕЙД"',
       type: 'company',
       identifiers: [
-        { key: 'ЄД ПОУ', value: '44891234' },
+        { key: 'ЄДРПОУ', value: '44891234' },
         { key: 'МФО', value: '320478' },
       ],
       lastSeen: '2025-04-20',
@@ -77,7 +77,7 @@ const MOCK_MATCHES: EntityMatch[] = [
       name: 'ТОВ ГОЛДЕН Т ЕЙД',
       type: 'company',
       identifiers: [
-        { key: 'ЄД ПОУ', value: '44891234' },
+        { key: 'ЄДРПОУ', value: '44891234' },
         { key: 'Декларант', value: 'UA80E0' },
       ],
       lastSeen: '2025-04-18',
@@ -120,11 +120,11 @@ const MOCK_MATCHES: EntityMatch[] = [
     matchedFields: ['Адреса', 'Телефон'],
     primaryRecord: {
       id: 'ENT-005',
-      source: 'ЄД  України',
+      source: 'ЄДРУкраїни',
       name: 'АГ О-П АЙМ ТОВ',
       type: 'company',
       identifiers: [
-        { key: 'ЄД ПОУ', value: '38012345' },
+        { key: 'ЄДРПОУ', value: '38012345' },
         { key: 'Директор', value: 'Петренко М.О.' },
       ],
       lastSeen: '2025-03-15',
@@ -135,7 +135,7 @@ const MOCK_MATCHES: EntityMatch[] = [
       name: 'ТОВ АГ ОП АЙМ',
       type: 'company',
       identifiers: [
-        { key: 'ЄД ПОУ', value: '38012345' },
+        { key: 'ЄДРПОУ', value: '38012345' },
         { key: 'Позивач', value: 'АП-2024-1234' },
       ],
       lastSeen: '2024-11-20',

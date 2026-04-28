@@ -1,5 +1,5 @@
 /**
- * 🛰️ БАНЕ   ЕЗЕ ВНОГО КОПІЮВАННЯ ІНФ АСТ УКТУ И v5.0 // СТАТУС КЛАСТЕ А | v58.2-WRAITH
+ * 🛰️ БАНЕ   ЕЗЕ ВНОГО КОПІЮВАННЯ ІНФ АСТ УКТУ И v5.0 // СТАТУС КЛАСТЕ А | v61.0-ELITE
  * PREDATOR Analytics — Master/Mirror Infrastructure Coordination
  */
 
@@ -117,7 +117,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
               </div>
             </div>
             <h4 className={cn("text-2xl font-black italic tracking-tighter uppercase leading-none font-serif mt-1", mode.color)}>
-              {isMirror ? 'ДЗЕ КАЛО GOOGLE COLAB' : isOffline ? 'АВТОНОМНИЙ  ЕЖИМ' : 'NVIDIA PROD КЛАСТЕ '}
+              {isMirror ? 'ДЗЕ КАЛО GOOGLE COLAB' : isOffline ? 'АВТОНОМНИЙ РЕЖИМ' : 'NVIDIA PROD КЛАСТЕ '}
             </h4>
           </div>
         </div>

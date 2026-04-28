@@ -1,5 +1,5 @@
 /**
- * 📡 ГЕОПОЛІТИЧНИЙ СЕЙСМОГ АФ | v58.2-WRAITH
+ * 📡 ГЕОПОЛІТИЧНИЙ СЕЙСМОГРАФ | v61.0-ELITE
  * PREDATOR Analytics — Geopolitical Risk Intelligence
  *
  * Real-time геополітичні тренди, санкції, конфлікти,
@@ -195,7 +195,7 @@ const GeopoliticalRadarView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'GeoRadar',
-          message: ` ЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано резервний супутник (ГЕОП ОСТО ОВІ_ВУЗЛИ).`,
+          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано резервний супутник (ГЕОП ОСТО ОВІ_ВУЗЛИ).`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'GEO_OFFLINE'
@@ -237,7 +237,7 @@ const GeopoliticalRadarView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1850px] mx-auto p-4 sm:p-12 space-y-12">
 
-        {/* ── HEADER SECTION WRAITH ── */}
+        {/* ── HEADER SECTION ELITE ── */}
         <ViewHeader
           title={
             <div className="flex items-center gap-10">
@@ -253,10 +253,10 @@ const GeopoliticalRadarView: React.FC = () => {
                     ГЕОПОЛІТИЧНА_SIGINT // АКТИВНИЙ_МАСИВ
                   </span>
                   <div className="h-px w-12 bg-amber-500/20" />
-                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                  <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                  ГЕОПОЛІТИЧНИЙ <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СЕЙСМОГ АФ</span>
+                  ГЕОПОЛІТИЧНИЙ <span className="text-amber-600 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СЕЙСМОГРАФ</span>
                 </h1>
               </div>
             </div>
@@ -284,7 +284,7 @@ const GeopoliticalRadarView: React.FC = () => {
           ]}
         />
 
-        {/* ── LIVE SEISMOGRAPH VISUALIZATION WRAITH ── */}
+        {/* ── LIVE SEISMOGRAPH VISUALIZATION ELITE ── */}
         <section className="rounded-[4rem] bg-black border-2 border-amber-900/20 p-12 shadow-4xl relative overflow-hidden group/sei">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.03),transparent_60%)] pointer-events-none" />
            <div className="flex items-center justify-between mb-12 relative z-10">
@@ -341,10 +341,10 @@ const GeopoliticalRadarView: React.FC = () => {
            </div>
         </section>
 
-        {/* ── CORE INTELLIGENCE GRID WRAITH ── */}
+        {/* ── CORE INTELLIGENCE GRID ELITE ── */}
         <div className="grid grid-cols-12 gap-12">
 
-          {/* LEFT: HOTSPOTS SELECTOR WRAITH (3/12) */}
+          {/* LEFT: HOTSPOTS SELECTOR ELITE (3/12) */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
              <div className="flex items-center justify-between mb-4 px-4 py-2 border-l-4 border-amber-600/30">
                 <h3 className="text-[13px] font-black text-slate-700 uppercase tracking-[0.5em] italic flex items-center gap-4 font-serif">
@@ -398,7 +398,7 @@ const GeopoliticalRadarView: React.FC = () => {
              </div>
           </div>
 
-          {/* CENTER: DETAILED INTELLIGENCE HUD WRAITH (6/12) */}
+          {/* CENTER: DETAILED INTELLIGENCE HUD ELITE (6/12) */}
           <div className="col-span-12 lg:col-span-6">
             <AnimatePresence mode="wait">
               <motion.div
@@ -406,7 +406,7 @@ const GeopoliticalRadarView: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }}
                 className="space-y-10"
               >
-                 {/* REGION OVERVIEW CARD WRAITH */}
+                 {/* REGION OVERVIEW CARD ELITE */}
                  <div className="rounded-[4rem] bg-black border-2 border-white/[0.04] p-12 relative overflow-hidden shadow-4xl group/hub">
                     <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none group-hover/hub:scale-125 transition-transform duration-[15s] rotate-12">
                        <Globe size={300} style={{ color: selectedRegion.color }} />
@@ -452,7 +452,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     </div>
                  </div>
 
-                 {/* ACTIONABLE FACTORS LIST WRAITH */}
+                 {/* ACTIONABLE FACTORS LIST ELITE */}
                  <div className="rounded-[4rem] bg-black/60 border-2 border-white/[0.04] p-12 shadow-4xl relative overflow-hidden group/fact">
                     <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-amber-600/20 to-transparent" />
                     <div className="flex items-center justify-between mb-10 pb-8 border-b border-white/[0.04]">
@@ -490,7 +490,7 @@ const GeopoliticalRadarView: React.FC = () => {
                     </div>
                  </div>
 
-                 {/* TREND ANALYSIS CHART WRAITH */}
+                 {/* TREND ANALYSIS CHART ELITE */}
                  <div className="rounded-[4rem] bg-black border-2 border-white/[0.04] p-12 shadow-4xl relative overflow-hidden">
                     <div className="absolute inset-s-0 top-0 h-1 bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
                     <h3 className="text-xl font-black text-white uppercase italic tracking-[0.4em] flex items-center gap-6 mb-12 leading-none font-serif">
@@ -521,14 +521,14 @@ const GeopoliticalRadarView: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT: LIVE FEED WRAITH (3/12) */}
+          {/* RIGHT: LIVE FEED ELITE (3/12) */}
           <div className="col-span-12 lg:col-span-3 space-y-10">
             
-             {/* RADAR PROFILE HUB WRAITH */}
+             {/* RADAR PROFILE HUB ELITE */}
              <div className="rounded-[3.5rem] bg-black/60 border-2 border-white/[0.04] p-10 shadow-4xl space-y-10 relative overflow-hidden group/radar">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/[0.02] to-transparent pointer-events-none" />
                 <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.6em] italic leading-none font-serif flex items-center gap-4">
-                    <Radar size={18} className="text-yellow-600 animate-pulse" /> ГЛОБАЛЬНИЙ П ОФІЛЬ РИЗИКУ
+                    <Radar size={18} className="text-yellow-600 animate-pulse" /> ГЛОБАЛЬНИЙПРОФІЛЬ РИЗИКУ
                 </h3>
                 <div className="h-[280px] flex items-center justify-center p-4 bg-black rounded-[4rem] border-2 border-white/5 shadow-inner">
                    <ResponsiveContainer width="100%" height="100%">
@@ -551,7 +551,7 @@ const GeopoliticalRadarView: React.FC = () => {
                 </div>
              </div>
 
-             {/* LIVE INTEL FEED WRAITH */}
+             {/* LIVE INTEL FEED ELITE */}
              <div className="rounded-[3.5rem] bg-black border-2 border-white/[0.04] overflow-hidden shadow-4xl group/feed">
                 <div className="p-10 border-b-2 border-white/[0.04] flex items-center justify-between bg-white/[0.01]">
                    <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.5em] italic flex items-center gap-5 leading-none font-serif">
@@ -589,7 +589,7 @@ const GeopoliticalRadarView: React.FC = () => {
                 </button>
              </div>
 
-             {/* SOVEREIGN VERDICT WRAITH */}
+             {/* SOVEREIGN VERDICT ELITE */}
              <div className="p-10 rounded-[3.5rem] bg-gradient-to-br from-yellow-600/10 to-transparent border-2 border-yellow-500/10 shadow-4xl relative overflow-hidden group/verdict">
                   <div className="absolute -right-8 -bottom-8 p-12 opacity-5 rotate-12 group-hover/verdict:rotate-0 transition-all duration-[10s]">
                       <Cpu size={180} className="text-yellow-600" />

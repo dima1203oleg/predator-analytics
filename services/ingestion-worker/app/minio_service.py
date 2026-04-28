@@ -1,4 +1,4 @@
-"""MinIO Service — PREDATOR Analytics v55.1 Ironclad.
+"""MinIO Service — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Сервіс для роботи з об'єктним сховищем MinIO/S3.
 """

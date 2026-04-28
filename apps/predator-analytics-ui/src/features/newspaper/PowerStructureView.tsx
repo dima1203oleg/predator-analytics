@@ -1,5 +1,5 @@
 /**
- * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v58.2-WRAITH
+ * 🏛️ POWER STRUCTURE // МАПА ВПЛИВУ | v61.0-ELITE
  * PREDATOR Analytics — Tactical Influence Mapping
  * 
  * Хто під ким стоїть? Карта реального впливу, бенефіціарів та "акціонерів" українського ринку.
@@ -75,7 +75,7 @@ const PowerNodeCard = ({ node, color }: { node: PowerNode; color?: string }) => 
             </div>
             <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{node.role}</p>
             <div className="flex items-center gap-4 text-[9px] text-slate-700 font-black uppercase italic">
-                <span>ЄД ПОУ: {node.edrpou}</span>
+                <span>ЄДРПОУ: {node.edrpou}</span>
                 <span>РИЗИК: <span className={cn(node.riskScore > 70 ? 'text-amber-500' : 'text-emerald-500')}>{node.riskScore}%</span></span>
             </div>
             
@@ -147,7 +147,7 @@ export default function PowerStructureView() {
            window.dispatchEvent(new CustomEvent('predator-error', {
               detail: {
                 service: 'PowerNexus',
-                message: ' ЕЖИМ АВТОНОМНОГО КА ТОГ АФУВАННЯ (POWER_OFFLINE). Тіньові зв\'язки базуються на локальних кеш-вузлах.',
+                message: 'РЕЖИМ АВТОНОМНОГО КА ТОГРАФУВАННЯ (POWER_OFFLINE). Тіньові зв\'язки базуються на локальних кеш-вузлах.',
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'POWER_OFFLINE'
@@ -185,7 +185,7 @@ export default function PowerStructureView() {
                                   POWER_NEXUS // INFLUENCE_MAPPING
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                МАПА <span className="text-cyan-500 underline decoration-cyan-600/20 decoration-8 italic uppercase">ВПЛИВУ</span>
@@ -308,7 +308,7 @@ export default function PowerStructureView() {
                                 ))}
                              </div>
                              <button className="w-full py-6 bg-yellow-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-yellow-600 shadow-3xl transition-all">
-                                ПЕ ЕГЛЯНУТИ_Г АФ_ВПЛИВУ
+                                ПЕ ЕГЛЯНУТИ_ГРАФ_ВПЛИВУ
                              </button>
                          </section>
 

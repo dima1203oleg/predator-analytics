@@ -49,7 +49,7 @@ const sessionCols: VirtualColumn<Session>[] = [
     render: (v) => {
       const s = String(v);
       const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
-      const label = s === 'admin' ? 'АДМІНІСТ АТО ' : s === 'client_premium' ? 'КЛІЄНТ_П ЕМІУМ' : s.toUpperCase();
+      const label = s === 'admin' ? 'АДМІНІСТ АТО ' : s === 'client_premium' ? 'КЛІЄНТ_ПРЕМІУМ' : s.toUpperCase();
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', color)}>
            <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]' : 'bg-current')} />

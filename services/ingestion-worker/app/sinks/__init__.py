@@ -1,4 +1,4 @@
-"""Sinks package — PREDATOR Analytics v55.1 Ironclad."""
+"""Sinks package — PREDATOR Analytics v61.0-ELITE Ironclad."""
 from app.sinks.neo4j_sink import Neo4jSink
 from app.sinks.opensearch_sink import OpenSearchSink
 from app.sinks.postgres_sink import PostgresSink

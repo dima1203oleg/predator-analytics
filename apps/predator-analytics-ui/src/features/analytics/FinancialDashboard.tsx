@@ -136,7 +136,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({ ueid: pr
           <div>
             <div className="flex items-center gap-3 mb-2">
               <Badge variant="outline" className={cn("border-amber-500/30 text-amber-500 font-black")}>
-                {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v58.2-WRAITH'}
+                {isOffline ? 'SOVEREIGN_EMERGENCY' : 'FINANCE_CORE_v61.0-ELITE'}
               </Badge>
               <span className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">NODE: {sourceLabel} // ID: {ueid}</span>
               {activeFailover && <Badge className="bg-amber-600 text-black text-[8px] animate-pulse">FAILOVER_MIRROR</Badge>}

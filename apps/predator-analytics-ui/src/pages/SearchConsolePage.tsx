@@ -1,9 +1,9 @@
 /**
- * PREDATOR v58.2-WRAITH | Sovereign Power Edition | Synaptic Discovery Matrix
+ * PREDATOR v61.0-ELITE | Sovereign Power Edition | Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
  * - Величезний пошуковий рядок з градієнтним бордером та внутрішнім світінням
- * - Нейронний Listening Visualizer (Хвильова форма) у стилі WRAITH
+ * - Нейронний Listening Visualizer (Хвильова форма) у стилі ELITE
  * - XAI пояснення (GNN Interpretability) з інтеграцією Gold/Rose палітри
  * - Truth-Only Filter Mode (Індекс Істини) — тактичний Rose режим
  * - Динамічні частинки семантичного поля Gold
@@ -60,7 +60,7 @@ interface XAIExplanation {
 // ========================
 
 /**
- * Neural Waveform Visualizer for Voice (WRAITH Gold/Rose Style)
+ * Neural Waveform Visualizer for Voice (ELITE Gold/Rose Style)
  */
 const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
     <div className="flex items-center gap-1.5 h-10 px-6">
@@ -85,7 +85,7 @@ const NeuralWaveform: React.FC<{ active: boolean }> = ({ active }) => (
 );
 
 /**
- * Animated Particle Background for Search results (WRAITH Gold)
+ * Animated Particle Background for Search results (ELITE Gold)
  */
 const SemanticFieldParticles: React.FC = () => {
     return (
@@ -163,7 +163,7 @@ export const SearchConsolePage: React.FC = () => {
             });
 
             const processed = apiResults.length > 0 ? apiResults : [
-                { id: '1', title: 'ДП "АНТОНОВ" — реєстр Експортних Операцій', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ'] },
+                { id: '1', title: 'ДП "АНТОНОВ" — Реєстр Експортних Операцій', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ'] },
                 { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — Аномальна активність', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['РИЗИК', 'ФІНАНСИ'] },
                 { id: '3', title: 'Аналіз санкційних списків — Пакет №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0, tags: ['САНКЦІЇ', 'ВПК'] }
             ];
@@ -194,7 +194,7 @@ export const SearchConsolePage: React.FC = () => {
                 
                 <div className="relative z-10 max-w-[1900px] mx-auto p-4 sm:p-8 lg:p-12 space-y-16">
                     
-                    {/* View Header v58.2-WRAITH */}
+                    {/* View Header v61.0-ELITE */}
                     <ViewHeader
                         title={
                             <div className="flex items-center gap-8">
@@ -210,7 +210,7 @@ export const SearchConsolePage: React.FC = () => {
                                     </h1>
                                     <p className="text-[10px] font-mono font-black text-[#D4AF37]/70 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                         <Atom size={12} className="animate-spin-slow" /> 
-                                        НЕЙ О_ПОШУК_v58.2-WRAITH
+                                        НЕЙ О_ПОШУК_v61.0-ELITE
                                     </p>
                                 </div>
                             </div>
@@ -224,7 +224,7 @@ export const SearchConsolePage: React.FC = () => {
                         ]}
                     />
 
-                    {/* Massive Search Console Input (v58.2-WRAITH UX) */}
+                    {/* Massive Search Console Input (v61.0-ELITE UX) */}
                     <div className="max-w-6xl mx-auto space-y-12 relative">
                         <motion.div 
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -302,11 +302,11 @@ export const SearchConsolePage: React.FC = () => {
                             </div>
                         </motion.div>
 
-                        {/* Search Modes (v58.2-WRAITH Visuals) */}
+                        {/* Search Modes (v61.0-ELITE Visuals) */}
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ ПОШУК', icon: Sparkles, color: '#D4AF37' },
-                                { id: 'rerank', label: 'НЕЙ О- Е ЕЙТИНГ', icon: TrendingUp, color: '#D4AF37', premium: true },
+                                { id: 'rerank', label: 'НЕЙ О- РЕ ЕЙТИНГ', icon: TrendingUp, color: '#D4AF37', premium: true },
                                 { id: 'chat', label: 'ШІ-АСИСТЕНТ', icon: MessageSquare, color: '#D4AF37', premium: true },
                                 { id: 'truth', label: 'ТІЛЬКИ ІСТИНА', icon: ShieldCheck, color: '#E11D48', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
@@ -454,7 +454,7 @@ export const SearchConsolePage: React.FC = () => {
                                 {[
                                     { title: 'ГЛОБАЛЬНА ТО ГІВЛЯ', icon: Globe, desc: 'Аналіз морських та наземних шляхів' },
                                     { title: 'ФІНАНСОВІ ПОТОКИ', icon: Key, desc: 'Детекція офшорних аномалій' },
-                                    { title: 'ВПК СТ АТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
+                                    { title: 'ВПКСТРАТЕГІЯ', icon: Target, desc: 'Моніторинг критичного імпорту' }
                                 ].map((item, i) => (
                                     <div key={i} className="p-10 border border-[#D4AF37]/10 rounded-[40px] bg-[#0a0a0a] space-y-6 group hover:border-[#D4AF37]/30 transition-all shadow-xl">
                                         <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">

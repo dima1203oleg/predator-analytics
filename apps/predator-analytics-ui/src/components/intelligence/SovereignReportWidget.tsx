@@ -1,5 +1,5 @@
 /**
- * 👁️ Sovereign Intelligence Advisor | v58.2-WRAITH Premium Matrix
+ * 👁️ Sovereign Intelligence Advisor | v61.0-ELITE Premium Matrix
  * PREDATOR Глибокий експертний висновок.
  * 
  * Генерація та візуалізація суверенних аналітичних звітів з ШІ-підтримкою.
@@ -93,7 +93,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                     </div>
                     <div>
                         <div className="flex items-center gap-3 mb-1.5">
-                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v58.2-WRAITH</span>
+                            <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] animate-pulse italic">SOVEREIGN_ADVISOR // v61.0-ELITE</span>
                             <Badge className="bg-[#D4AF37]/10 text-[#D4AF37] border-none text-[8px] tracking-widest px-2 py-0">VERIFIED</Badge>
                         </div>
                         <h3 className="text-2xl font-black text-white italic tracking-tighter leading-tight uppercase">СУВЕ ЕННИЙ_ЗВІТ_ІНТЕЛЕКТУ</h3>
@@ -204,7 +204,7 @@ export const SovereignReportWidget: React.FC<SovereignReportWidgetProps> = ({ ue
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">ЦІЛІСНІСТЬ</span>
-                            <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-tight italic">ВЕ ИФІКОВАНО_WRAITH</span>
+                            <span className="text-[11px] font-black text-[#D4AF37] uppercase tracking-tight italic">ВЕ ИФІКОВАНО_ELITE</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">

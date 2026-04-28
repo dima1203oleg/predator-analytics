@@ -8,7 +8,7 @@ describe('dataGovView.utils', () => {
             results: [
                 {
                     id: 'ds-customs',
-                    title: 'реєстр митних декларацій',
+                    title: 'Реєстр митних декларацій',
                     description: 'Опис набору',
                     organization: 'Державна митна служба України',
                     modified: '2026-03-30',
@@ -31,7 +31,7 @@ describe('dataGovView.utils', () => {
             datasets: [
                 {
                     id: 'ds-customs',
-                    title: 'реєстр митних декларацій',
+                    title: 'Реєстр митних декларацій',
                     notes: 'Опис набору',
                     organizationTitle: 'Державна митна служба України',
                     metadataModified: '2026-03-30',

@@ -418,13 +418,13 @@ export const AddSourceModal: React.FC<AddSourceModalProps> = ({
                                         <div>
                                             <label className="block text-sm font-medium text-slate-300 mb-2">
                                                 <Clock size={14} className="inline mr-2" />
-                                                 озклад оновлення
+                                                розклад оновлення
                                             </label>
                                             <select
                                                 value={config.schedule || ''}
                                                 onChange={(e) => handleConfigChange('schedule', e.target.value)}
                                                 className="w-full bg-slate-800 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-cyan-500 outline-none transition-colors"
-                                                title=" озклад оновлення"
+                                                title="розклад оновлення"
                                             >
                                                 {SCHEDULE_OPTIONS.map(opt => (
                                                     <option key={opt.value} value={opt.value}>{opt.label}</option>

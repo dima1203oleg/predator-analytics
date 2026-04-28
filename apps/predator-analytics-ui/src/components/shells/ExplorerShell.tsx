@@ -59,7 +59,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
             </div>
             <div>
               <h1 className="font-black text-xl tracking-tight text-white">PREDATOR</h1>
-              <p className="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest leading-none">КЛІЄНТСЬКИЙ  ЕЖИМ</p>
+              <p className="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest leading-none">КЛІЄНТСЬКИЙ РЕЖИМ</p>
             </div>
           </div>
 

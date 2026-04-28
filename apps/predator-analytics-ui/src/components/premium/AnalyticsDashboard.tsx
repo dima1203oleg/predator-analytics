@@ -1,10 +1,10 @@
 /**
- * Аналітичний Дашборд Predator v58.2-WRAITH | Neural Analytics Matrix
+ * Аналітичний Дашборд Predator v61.0-ELITE | Neural Analytics Matrix
  *
  * Інтегровані графіки з реальними даними OpenSearch/Prometheus/Qdrant
  * Прямий моніторинг когнітивної матриці та інфраструктурного шару.
  *
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -58,7 +58,7 @@ interface TimeSeriesPoint {
   label?: string;
 }
 
-// Покращений компонент швидкої статистики v58.2-WRAITH
+// Покращений компонент швидкої статистики v61.0-ELITE
 const QuickStatCard: React.FC<{
   icon: React.ElementType;
   label: string;
@@ -141,7 +141,7 @@ const QuickStatCard: React.FC<{
   );
 };
 
-// Прогресивний графік v58.2-WRAITH
+// Прогресивний графік v61.0-ELITE
 const NeuralChart: React.FC<{
   title: string;
   subtitle: string;
@@ -236,7 +236,7 @@ const NeuralChart: React.FC<{
   );
 };
 
-// Головний компонент дашборду v58.2-WRAITH
+// Головний компонент дашборду v61.0-ELITE
 export const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -426,7 +426,7 @@ export const AnalyticsDashboard: React.FC = () => {
         />
       </div>
 
-      {/* 🌐  ЕЄСТ И ТА ІНТЕЛІДЖЕНС (UA REGISTRY HUB) */}
+      {/* 🌐 РЕЄСТРИ ТА ІНТЕЛІДЖЕНС (UA REGISTRY HUB) */}
       <div className="grid grid-cols-1 gap-8 mb-12">
            <PremiumRegistryMonitor />
       </div>
@@ -536,7 +536,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
           <div>
             <div className="text-[11px] font-black text-white uppercase tracking-widest mb-1">Architecture_Integrity</div>
-            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v58.2-WRAITH.1</div>
+            <div className="text-[9px] text-slate-600 font-bold uppercase tracking-widest">Global Matrix Verified v61.0-ELITE.1</div>
           </div>
         </div>
 

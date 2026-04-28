@@ -26,7 +26,7 @@ export interface JobStatusResponse {
 
 export const ingestionApi = {
     /**
-     * Завантаження файлу для інгестування (v58.2-WRAITH API)
+     * Завантаження файлу для інгестування (v61.0-ELITE API)
      */
     uploadFile: async (file: File, datasetName?: string, description?: string): Promise<UploadResponse> => {
         const formData = new FormData();

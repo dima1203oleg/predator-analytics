@@ -21,7 +21,7 @@ import { ToastProvider } from './context/ToastContext';
 
 // Components
 import { AppRoutesNew as AppRoutes } from './AppRoutesNew';
-import BootSequenceWRAITH from './components/BootSequenceWRAITH';
+import BootSequenceELITE from './components/BootSequenceELITE';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LoginScreen from './components/LoginScreen';
 import { Predator } from './components/premium/AICopilot';
@@ -143,7 +143,7 @@ function App() {
                               <AdvancedBackground />
                               <NeuralPulse />
                               {appState === 'BOOTING' && (
-                                <BootSequenceWRAITH onComplete={handleBootComplete} />
+                                <BootSequenceELITE onComplete={handleBootComplete} />
                               )}
 
                               {appState === 'LOGIN' && (

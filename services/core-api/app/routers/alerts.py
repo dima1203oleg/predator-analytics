@@ -1,4 +1,4 @@
-"""Alerts Router — PREDATOR Analytics v55.1.
+"""Alerts Router — PREDATOR Analytics v61.0-ELITE.
 
 Ендпоінти для роботи з алертами та сповіщеннями.
 """

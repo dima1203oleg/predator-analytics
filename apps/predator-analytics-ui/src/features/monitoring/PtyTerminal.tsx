@@ -1,5 +1,5 @@
 /**
- * 💻 PTY TERMINAL // ПУЛЬТ УП АВЛІННЯ | v61.0-ELITE
+ * 💻 PTY TERMINAL // ПУЛЬТ УПРАВЛІННЯ | v61.0-ELITE
  * Інтерфейс для прямої взаємодії з кластером.
  */
 
@@ -19,7 +19,7 @@ export const PtyTerminal: React.FC = () => {
         { text: 'PREDATOR OS v61.0-ELITE (Build 2026.04.26-MASTER)', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'ВСТАНОВЛЕННЯ_ЗВ’ЯЗКУ_З_КЛАСТЕ ОМ_IMAC... [192.168.0.199]', type: 'system', timestamp: new Date().toLocaleTimeString() },
         { text: 'PTY_SUBSYSTEM: READY [QUANTUM_LINK_ESTABLISHED]', type: 'system', timestamp: new Date().toLocaleTimeString() },
-        { text: 'ВІТАЄМО, SENIOR ENGINEER. ЯДРО СУВЕ ЕННОГО УП АВЛІННЯ ГОТОВЕ ДО ДИ ЕКТИВ.', type: 'system', timestamp: new Date().toLocaleTimeString() },
+        { text: 'ВІТАЄМО, SENIOR ENGINEER. ЯДРО СУВЕ ЕННОГОРУПРАВЛІННЯ ГОТОВЕ ДО ДИ ЕКТИВ.', type: 'system', timestamp: new Date().toLocaleTimeString() },
     ]);
     const [inputValue, setInputValue] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);

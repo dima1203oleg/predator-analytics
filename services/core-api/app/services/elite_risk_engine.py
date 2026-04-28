@@ -1,4 +1,4 @@
-"""Elite Risk Engine — PREDATOR Analytics v56.5-ELITE.
+"""Elite Risk Engine — PREDATOR Analytics v61.0-ELITE.
 
 Повний цикл обчислення CERS v55.2 з урахуванням 5 шарів:
 1. Behavioral (Поведінковий) — Аналіз транзакцій та декларацій.

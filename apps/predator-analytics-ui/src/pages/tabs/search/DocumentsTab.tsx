@@ -1,5 +1,5 @@
 /**
- * 📂 DOCUMENT REPOSITORY // СЕМАНТИЧНИЙ А ХІВ | v58.2-WRAITH
+ * 📂 DOCUMENT REPOSITORY // СЕМАНТИЧНИЙ А ХІВ | v61.0-ELITE
  * PREDATOR Analytics — Knowledge Mining & Forensic Archiving
  * 
  *  епозиторій семантичних знань: PDF, Excel, JSON.
@@ -79,7 +79,7 @@ export const DocumentsTab = () => {
                                     KNOWLEDGE_MINE // SEMANTIC_ARCHIVE
                                 </span>
                                 <div className="h-px w-10 bg-yellow-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                             </div>
                             <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                 А ХІВ <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">ЗНАНЬ</span>
@@ -140,7 +140,7 @@ export const DocumentsTab = () => {
                         className="bg-black border border-white/[0.04] rounded-2xl px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic outline-none focus:border-yellow-500/40 cursor-pointer"
                     >
                         <option value="all">УСІ_КАТЕГО ІЇ</option>
-                        <option value="customs">МИТНІ_ ЕЄСТ И</option>
+                        <option value="customs">МИТНІ_РЕЄСТРИ</option>
                         <option value="legal">Ю ИДИЧНІ_ДОСЬЄ</option>
                         <option value="technical">ТЕХ_СФЕ А</option>
                     </select>

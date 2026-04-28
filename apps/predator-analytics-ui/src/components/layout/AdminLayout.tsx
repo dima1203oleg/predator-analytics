@@ -44,18 +44,18 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'datasets',   label: 'Datasets Studio',       path: '/admin/command?tab=datasets',    icon: Database,                       group: 'ШІ Студія' },
   { id: 'prompts',    label: 'System Prompts',        path: '/admin/command?tab=prompts',     icon: FileText,                       group: 'ШІ Студія' },
   
-  //  озширена Аналітика
-  { id: 'nexus',      label: 'Predictive Nexus',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: ' озширена Аналітика' },
-  { id: 'ai-insights',label: 'AI Insights Hub',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: ' озширена Аналітика' },
-  { id: 'hypothesis', label: 'Гіпотези & NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: ' озширена Аналітика' },
-  { id: 'forecast',   label: 'Прогнози & Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: ' озширена Аналітика' },
+  // розширена Аналітика
+  { id: 'nexus',      label: 'Predictive Nexus',      path: '/admin/command?tab=nexus',       icon: Zap,            badge: 'PREDICT',group: 'розширена Аналітика' },
+  { id: 'ai-insights',label: 'AI Insights Hub',       path: '/admin/command?tab=ai-insights', icon: BrainCircuit,   badge: 'DEEP',  group: 'розширена Аналітика' },
+  { id: 'hypothesis', label: 'Гіпотези & NAS',        path: '/admin/command?tab=hypothesis',  icon: Cpu,                            group: 'розширена Аналітика' },
+  { id: 'forecast',   label: 'Прогнози & Тренди',     path: '/admin/command?tab=forecast',    icon: Activity,                       group: 'розширена Аналітика' },
   
   // Агенти та Безпека
   { id: 'agents-ops', label: 'Оркестрація Агентів',   path: '/admin/command?tab=agents-ops',  icon: Bot,                            group: 'Агенти та Безпека' },
   { id: 'security',   label: 'Zero Trust Security',   path: '/admin/command?tab=security',    icon: Lock,                           group: 'Агенти та Безпека' },
   
   // Intelligence & OSINT
-  { id: 'intelligence',label: 'Митна  озвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'WRAITH',group: ' озвідка & OSINT' },
+  { id: 'intelligence',label: 'Митна  озвідка',       path: '/admin/command?tab=intelligence',icon: Eye,            badge: 'ELITE',group: ' озвідка & OSINT' },
   { id: 'osint',      label: 'Search Console',        path: '/admin/command?tab=osint',       icon: Search,         badge: 'OSINT', group: ' озвідка & OSINT' },
   { id: 'zrada',      label: 'Zrada Control',         path: '/admin/command?tab=zrada',       icon: ShieldAlert,    badge: 'ELITE', group: ' озвідка & OSINT' },
   { id: 'aml',        label: 'AML Scoring',           path: '/admin/command?tab=aml',         icon: Activity,       badge: 'RISK',  group: ' озвідка & OSINT' },
@@ -66,7 +66,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { id: 'api-docs',   label: 'API Документація',      path: '/api-docs',                      icon: FileText,                       group: 'Конфігурація' },
 ];
 
-const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', ' озширена Аналітика', ' озвідка & OSINT', 'Агенти та Безпека', 'Конфігурація'];
+const GROUPS = ['Моніторинг', 'Пайплайни', 'Ядро ШІ', 'ШІ Студія', 'розширена Аналітика', ' озвідка & OSINT', 'Агенти та Безпека', 'Конфігурація'];
 
 // ─── Компонент бічної панелі ──────────────────────────────────────────────────
 

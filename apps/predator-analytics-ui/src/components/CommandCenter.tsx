@@ -19,7 +19,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
       id: 'init',
       command: 'nexus --version',
       output: <span className="text-cyan-500 font-black tracking-widest uppercase">
-        PREDATOR v58.2-WRAITH NEXUS | ЯДРО СТ АТЕГІЧНОЇ АНАЛІТИКИ<br />
+        PREDATOR v61.0-ELITE NEXUS | ЯДРО СТ АТЕГІЧНОЇ АНАЛІТИКИ<br />
         <span className="text-white/40 text-[10px]">КЕ НЕЛЬ: NEXUS-OS 1.0.4-PREDATOR (x86_64)</span><br />
         <span className="text-white/40 text-[10px]">ВУЗОЛ: NEXUS-PRIME-01 [ACTIVE]</span><br />
         <span className="text-white/40 text-[10px]">МОВА: uk_UA.UTF-8</span><br />
@@ -197,7 +197,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
 
     switch (cmd) {
       case 'help': return <span className="text-cyan-500 font-bold uppercase tracking-widest text-[10px]">
-        ДОСТУПНІ П ОТОКОЛИ NEXUS:<br />
+        ДОСТУПНІПРОТОКОЛИ NEXUS:<br />
         - go [target]: СТ АТЕГІЧНА НАВІГАЦІЯ (напр., 'go analytics')<br />
         - status: АУДИТ ЯД А ТА СИСТЕМИ<br />
         - scan: ГЛИБИННЕ ПОШУКОВЕ СКАНУВАННЯ<br />
@@ -208,7 +208,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({ isOpen, onClose, onLock, 
       case 'status': return <span className="text-cyan-400 font-black tracking-widest uppercase">БОЙОВА ГОТОВНІСТЬ 100%. ВСІ МОДУЛІ NEXUS ПІДКЛЮЧЕНО.</span>;
       case 'lock': onLock && onLock(); onClose(); return "Блокування...";
       case 'reboot': onReboot && onReboot(); onClose(); return "Перезавантаження...";
-      default: return <span className="text-red-500 font-black uppercase tracking-widest">ПОМИЛКА: НЕВІДОМИЙ П ОТОКОЛ {cmd}</span>;
+      default: return <span className="text-red-500 font-black uppercase tracking-widest">ПОМИЛКА: НЕВІДОМИЙПРОТОКОЛ {cmd}</span>;
     }
   };
 

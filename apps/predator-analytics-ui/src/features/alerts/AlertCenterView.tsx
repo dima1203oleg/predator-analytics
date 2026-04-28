@@ -213,7 +213,7 @@ export const AlertCenterView: React.FC = () => {
             }
           />
 
-          {/* TABS WRAITH/GOLD */}
+          {/* TABS ELITE/GOLD */}
           <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'ALL', label: 'УСІ_СИГНАЛИ', icon: Inbox },
@@ -259,12 +259,12 @@ export const AlertCenterView: React.FC = () => {
              </AnimatePresence>
           </div>
 
-          {/* DIAGNOSTICS WRAITH */}
+          {/* DIAGNOSTICS ELITE */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
              <div className="lg:col-span-2 p-10 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3.5rem] flex items-center gap-8 shadow-inner">
                 <ShieldAlert size={40} className="text-rose-500" />
                 <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">
-                   ЦЕНТ  МОНІТО ИНГУ П АЦЮЄ В  ЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ  ІШЕНЬ.
+                   ЦЕНТ  МОНІТО ИНГУ П АЦЮЄ В РЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ  ІШЕНЬ.
                 </p>
              </div>
              <div className="p-10 bg-amber-500/5 border-2 border-amber-500/10 rounded-[3.5rem] flex items-center justify-between">

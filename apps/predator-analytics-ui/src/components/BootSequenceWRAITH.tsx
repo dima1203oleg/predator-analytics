@@ -222,7 +222,7 @@ const RAW_SOURCES = [
   "GLOBAL:REWRITE-PROTOCOL // ВСТАНОВЛЕННЯ_ДИКТАТУ И_ДАНИХ",
 ];
 
-export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+export const BootSequenceELITE: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
   const [phase, setPhase] = useState(0);
   const [bootLogs, setBootLogs] = useState<string[]>([]);
   const [targetLabel, setTargetLabel] = useState("ІНІЦІАЛІЗАЦІЯ...");
@@ -248,7 +248,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
         
         <div className="flex flex-col gap-20">
           <div className="space-y-6">
-             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60"> івень_Суверенної_Авторизації</div>
+             <div className="text-[#D4AF37] font-black text-xs tracking-[1.5em] uppercase opacity-60">рівень_Суверенної_Авторизації</div>
              <h2 className="text-white text-7xl font-light tracking-[0.2em] uppercase leading-tight">
                Правовий <span className="text-[#D4AF37] font-medium">Суверенітет</span>
              </h2>
@@ -258,7 +258,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
             <div className="text-white/40 font-mono text-sm leading-relaxed space-y-6">
               <p>
                 ДОСТУП ДО <span className="text-[#D4AF37]">PREDATOR ELITE</span> ОБМЕЖЕНИЙ. 
-                ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУ П ОЗО ИСТЬ ВАШИХ ДІЙ ПЕ ЕД АВТОНОМНИМ ЯДРОМ.
+                ВИ ПОГОДЖУЄТЕСЬ НА ПОВНУПРОЗО ИСТЬ ВАШИХ ДІЙ ПЕ ЕД АВТОНОМНИМ ЯДРОМ.
               </p>
               <div className="h-[1px] w-48 bg-[#D4AF37]/30" />
               <p className="text-[10px] tracking-widest text-white/20 uppercase italic">
@@ -304,7 +304,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
       "CORE: П ИЄДНАННЯ_НЕЙ ОННИХ_СИНАПСІВ_v60",
       "SIGINT: СКАНУВАННЯ_ГЛОБАЛЬНИХ_ ЕЗЕ ВІВ [КИЇВ_СИНХ О]",
       "AUTH: ВСТАНОВЛЕНО_ДОПУСК_ОМЕГА",
-      "STATUS: П ОБУДЖЕННЯ_П ЕДАТО А [СУВЕ ЕННИЙ_ ЕЖИМ]",
+      "STATUS:ПРОБУДЖЕННЯ_П ЕДАТО А [СУВЕ ЕННИЙ_РЕЖИМ]",
     ];
     let i = 0;
     const interval = setInterval(() => {
@@ -452,7 +452,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
           }}
           className="absolute bottom-32 right-16 px-6 py-2 border border-[#D4AF37]/30 text-[#D4AF37]/40 hover:text-[#D4AF37] hover:border-[#D4AF37] text-[10px] tracking-[0.4em] uppercase transition-all z-50 pointer-events-auto bg-black/50 backdrop-blur-md"
         >
-          П ОПУСТИТИ ЗАСТАВКУ
+         ПРОПУСТИТИ ЗАСТАВКУ
         </button>
       </div>
 
@@ -577,7 +577,7 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
                 <div className="absolute top-0 right-0 w-1.5 h-full bg-[#D4AF37]/60 shadow-[0_0_30px_#D4AF37]" />
                 <div className="text-[#D4AF37] font-black tracking-[0.8em] text-[12px] uppercase opacity-40 italic"> [ ВЕ ИФІКОВАНІ_ДАНІ ] </div>
                 <div className="text-white font-mono text-2xl leading-[2.5] h-80 overflow-hidden space-y-4 opacity-40 italic">
-                  {["АНАЛІЗ Т АНЗАКЦІЙ: П ІО ИТЕТ 1", "МОНІТО ИНГ КО ДОНІВ: АКТИВНО", "ПОШУК АНОМАЛІЙ: 0.042ms", "РИЗИК-П ОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
+                  {["АНАЛІЗ Т АНЗАКЦІЙ: ПРІОРИТЕТ 1", "МОНІТО ИНГ КО ДОНІВ: АКТИВНО", "ПОШУК АНОМАЛІЙ: 0.042ms", "РИЗИК-П ОФІЛЮВАННЯ: ОМЕГА"].map((entry, idx) => (
                     <motion.div 
                       key={idx} 
                       initial={{ opacity: 0, x: 20 }}
@@ -699,4 +699,4 @@ export const BootSequenceWRAITH: React.FC<{ onComplete: () => void }> = ({ onCom
   );
 };
 
-export default BootSequenceWRAITH;
+export default BootSequenceELITE;

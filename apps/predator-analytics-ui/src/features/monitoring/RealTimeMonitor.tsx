@@ -167,7 +167,7 @@ export const RealTimeMonitor: React.FC = () => {
                     МОНІТО ИНГ <span className="text-rose-500">ПОДІЙ</span>
                   </h1>
                   <p className="text-[13px] text-white/40 font-black uppercase tracking-[0.6em] italic leading-none border-l-4 border-rose-900/50 pl-8">
-                    П ЯМИЙ_ЕФІ _Т АНЗАКЦІЙ_ТА_ОНОВЛЕНЬ_ГЛОБАЛЬНИХ_ ЕЄСТ ІВ_L7
+                    П ЯМИЙ_ЕФІ _Т АНЗАКЦІЙ_ТА_ОНОВЛЕНЬ_ГЛОБАЛЬНИХ_РЕЄСТРІВ_L7
                   </p>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export const RealTimeMonitor: React.FC = () => {
                                 <Eye size={18} /> ПЕ ЕГЛЯНУТИ_СУТНІСТЬ
                               </button>
                               <button className="flex items-center gap-3 text-[10px] font-black text-rose-500 uppercase tracking-widest italic hover:text-white transition-colors">
-                                <Target size={18} /> ВІДСТЕЖИТИ_В_Г АФІ
+                                <Target size={18} /> ВІДСТЕЖИТИ_В_ГРАФІ
                               </button>
                            </div>
                         </motion.div>

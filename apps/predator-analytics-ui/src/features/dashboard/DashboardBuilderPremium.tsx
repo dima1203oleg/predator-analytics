@@ -203,7 +203,7 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ widget, onRemove, onSettings, i
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1.5 rounded-lg hover:bg-white/5 text-slate-500 hover:text-white transition-colors"
-            title={isExpanded ? 'Згорнути' : ' озгорнути'}
+            title={isExpanded ? 'Згорнути' : 'розгорнути'}
           >
             {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>

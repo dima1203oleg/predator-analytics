@@ -22,7 +22,7 @@ export const GraphDBView: React.FC<GraphDBViewProps> = ({ cypherQuery, onCypherQ
             <div className="lg:col-span-2">
                 <TacticalCard
                     variant="holographic"
-                    title="NEO4J KNOWLEDGE TOPOLOGY v58.2-WRAITH"
+                    title="NEO4J KNOWLEDGE TOPOLOGY v61.0-ELITE"
                     className="h-[600px] panel-3d overflow-hidden group"
                     action={
                         <div className="flex items-center gap-3">

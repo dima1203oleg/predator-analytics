@@ -62,7 +62,7 @@ const fetchGraphData = async (isOffline: boolean = false): Promise<{ nodes: Node
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'GraphIntel',
-        message: isOffline ? 'ВУЗОЛ Г АФУ П АЦЮЄ В АВТОНОМНОМУ  ЕЖИМІ (GRAPH_NODES). API недоступний.' : 'ПОМИЛКА ДОСТУПУ ДО ВУЗЛА Г АФУ. Перевірте з\'єднання (GRAPH_NODES).',
+        message: isOffline ? 'ВУЗОЛ ГРАФУ П АЦЮЄ В АВТОНОМНОМУ РЕЖИМІ (GRAPH_NODES). API недоступний.' : 'ПОМИЛКА ДОСТУПУ ДО ВУЗЛА ГРАФУ. Перевірте з\'єднання (GRAPH_NODES).',
         severity: isOffline ? 'warning' : 'critical',
         timestamp: new Date().toISOString(),
         code: 'GRAPH_NODES'
@@ -393,7 +393,7 @@ const EntityGraphView = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'GraphIntel',
-            message: "Г АФ ОБ'ЄКТІВ: Використовується локальна топологія (GRAPH_NODES).",
+            message: "ГРАФ ОБ'ЄКТІВ: Використовується локальна топологія (GRAPH_NODES).",
             severity: 'warning',
             timestamp: new Date().toISOString(),
             code: 'GRAPH_NODES'

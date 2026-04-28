@@ -1,5 +1,5 @@
 /**
- * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v58.2-WRAITH
+ * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v61.0-ELITE
  * PREDATOR Analytics — Суверенна Транзакційна та Офшорна  озвідка
  * 
  * Власність: ДЕ ЖАВНА МИТНА СЛУЖБА УК АЇНИ
@@ -54,7 +54,7 @@ const ScanningHUD: React.FC = () => {
             <div className="absolute top-1/2 left-4 flex flex-col gap-2 font-mono text-[7px] text-yellow-500/30 uppercase italic -rotate-90">
                 <span>СКАН_ІНТЕЛЕКТУ: АКТИВНИЙ</span>
                 <span>ЧАСТОТА_SIGINT: 14.2ГГЦ</span>
-                <span>ЯДРО_WRAITH: ВКЛ</span>
+                <span>ЯДРО_ELITE: ВКЛ</span>
             </div>
         </div>
     );
@@ -70,13 +70,13 @@ const FinancialInterceptorTerminal: React.FC = () => {
     const txPool = [
         "ПЕ ЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
         "ДЕШИФ УВАННЯ: ОСОБА_ВІДП АВНИКА_ОТ ИМАНА",
-        "ПЕ ЕВІ КА_ ЕЄСТ У: ЗБІГ_З_OFFSHORE_LEAKS",
+        "ПЕ ЕВІ КА_РЕЄСТРУ: ЗБІГ_З_OFFSHORE_LEAKS",
         "ВАЛІДАЦІЯ: ШЛЯХ_БАНКУ_КО ЕСПОНДЕНТА",
         "ЗБІГ_ЗНАЙДЕНО: [ЗВ'ЯЗОК_ІЗ_САНКЦІЯМИ]",
         "ШИФ УВАННЯ: ДАМП_АУДИТО СЬКОГО_СЛІДУ",
         "Т АСУВАННЯ: ВИЯВЛЕНО_ВИХІД_З_К ИПТО_МІКСЕ А",
         "СТАТУС: ЦІЛЬ_ЗАК ІПЛЕНА_НА_КІП І",
-        "WRAITH_АНАЛІТИКА: ГЛИБИННИЙ_ХВИЛЬОВИЙ_ЗБІГ",
+        "ELITE_АНАЛІТИКА: ГЛИБИННИЙ_ХВИЛЬОВИЙ_ЗБІГ",
         "П ОГНОЗ_КОГНІТИВНОГО_ЗБОЮ: 0.002%"
     ];
 
@@ -135,14 +135,14 @@ const MOCK_OFFSHORE = [
 ];
 
 const MOCK_SUSPICIOUS_TX = [
-  { id: 'TX-WRAITH-8821', from: 'ТОВ "АГ О-ЛІДЕ "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
-  { id: 'TX-WRAITH-7203', from: 'БФ "ВІД ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
-  { id: 'TX-WRAITH-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
-  { id: 'TX-WRAITH-4412', from: 'ТОВ "МЕТАЛ-Г УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
+  { id: 'TX-ELITE-8821', from: 'ТОВ "АГ О-ЛІДЕ "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
+  { id: 'TX-ELITE-7203', from: 'БФ "ВІД ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
+  { id: 'TX-ELITE-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
+  { id: 'TX-ELITE-4412', from: 'ТОВ "МЕТАЛ-Г УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
 ];
 
 const MOCK_FROZEN = [
-  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: ' НБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
+  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: 'РНБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
 ];
@@ -256,7 +256,7 @@ export default function FinancialSigintView() {
     { id: 'offshore',  label: 'ОФШО НИЙ_ АДА ',        icon: Globe,       count: '247',      badge: 'ГПС' },
     { id: 'contracts', label: 'АУДИТ_ЦІН',             icon: BarChart3,   count: '18' },
     { id: 'frozen',    label: 'ЗАМО ОЖЕНИХ_АКТИВИ',    icon: Lock,      count: frozenAssets.length },
-    { id: 'aml',       label: 'СКО ИНГ_ORACLE',        icon: ShieldCheck, badge: 'WRAITH' },
+    { id: 'aml',       label: 'СКО ИНГ_ORACLE',        icon: ShieldCheck, badge: 'ELITE' },
   ], [liveAlerts]);
 
   return (
@@ -269,7 +269,7 @@ export default function FinancialSigintView() {
         
         <div className="relative z-10 max-w-[1850px] mx-auto p-4 sm:p-12 space-y-16 flex flex-col items-stretch">
            
-           {/* HEADER WRAITH HUD */}
+           {/* HEADER ELITE HUD */}
            <ViewHeader
              title={
                <div className="flex items-center gap-12">
@@ -285,7 +285,7 @@ export default function FinancialSigintView() {
                           ГЕОПОЛІТИЧНИЙ_SIGINT // НЕЙ О_ АДА _КАПІТАЛУ
                         </span>
                         <div className="h-px w-16 bg-yellow-500/20" />
-                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                      </div>
                      <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                        ФІНАНСОВА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">РОЗВІДКА</span>
@@ -296,7 +296,7 @@ export default function FinancialSigintView() {
              breadcrumbs={['РОЗВІДКА', 'ФІНАНСИ', 'МАСИВ_SIGINT']}
              badges={[
                { label: 'ТАЄМНО_T1', color: 'primary', icon: <Lock size={10} /> },
-               { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Landmark size={10} /> },
+               { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Landmark size={10} /> },
              ]}
              stats={[
                { label: 'ЗАГ ОЗИ_НАЖИВО', value: liveAlerts.toString(), icon: <Siren />, color: 'gold', animate: true },
@@ -307,7 +307,7 @@ export default function FinancialSigintView() {
                    color: isOffline ? 'warning' : 'gold',
                    animate: isOffline
                },
-               { label: 'СТАН_СТАБІЛЬНОСТІ', value: isOffline ? 'АВТОНОМНИЙ_ ЕЖИМ' : 'СТАБІЛЬНО', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
+               { label: 'СТАН_СТАБІЛЬНОСТІ', value: isOffline ? 'АВТОНОМНИЙ_РЕЖИМ' : 'СТАБІЛЬНО', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
                { label: 'БЛОКОВАНО_АКТИВІВ', value: '$41.8M', icon: <Lock />, color: 'gold' },
              ]}
            />
@@ -328,7 +328,7 @@ export default function FinancialSigintView() {
               <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                  <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
-                    <Wallet size={24} /> ГЕНЕ УВАТИ_ ЕЄСТ _SIGINT
+                    <Wallet size={24} /> ГЕНЕ УВАТИ_РЕЄСТР_SIGINT
                  </div>
                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
               </button>
@@ -377,7 +377,7 @@ export default function FinancialSigintView() {
               ))}
            </div>
 
-           {/* CONTENT WRAITH HUB */}
+           {/* CONTENT ELITE HUB */}
            <div className="grid grid-cols-12 gap-12">
               <AnimatePresence mode="wait">
                  {activeModule === 'swift' && (
@@ -398,7 +398,7 @@ export default function FinancialSigintView() {
                             <div className="flex items-center gap-8">
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-slate-800" />
-                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НО МАЛЬНИЙ_ПОТІК</span>
+                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НОРМАЛЬНИЙ_ПОТІК</span>
                                </div>
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_15px_#d4af37]" />
@@ -543,11 +543,11 @@ export default function FinancialSigintView() {
                          </h2>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 overflow-y-auto no-scrollbar pr-2 h-[800px] custom-scrollbar">
                              {[
-                                { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
+                                { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕРДЖЕНО', color: '#D97706' },
                                 { name: 'Sunrise Capital Ltd', jur: 'Кіпр', links: 8, risk: 89, amount: '$21M', ubo: 'ЧАСТКОВО', color: '#D4AF37' },
-                                { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
+                                { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕРДЖЕНО', color: '#D97706' },
                                 { name: 'Belize Trust Corp', jur: 'Белізе', links: 5, risk: 82, amount: '$18M', ubo: 'НЕВІДОМО', color: '#D4AF37' },
-                                { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
+                                { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕРДЖЕНО', color: '#D97706' },
                                 { name: 'Zodiac Nexus FZ', jur: 'Панама', links: 7, risk: 85, amount: '$12M', ubo: 'НЕВІДОМО', color: '#D4AF37' },
                              ].map((s, i) => (
                                <div key={i} className="p-10 rounded-[3.5rem] bg-white/[0.01] border-2 border-white/[0.03] hover:border-yellow-500/30 transition-all group flex flex-col justify-between h-[340px] shadow-2xl relative overflow-hidden">
@@ -567,7 +567,7 @@ export default function FinancialSigintView() {
                                         <div className="flex items-center gap-4">
                                            <span className={cn(
                                               "text-[9px] font-black italic tracking-[0.2em] uppercase px-4 py-1.5 rounded-xl border",
-                                              s.ubo === 'ПІДТВЕ ДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
+                                              s.ubo === 'ПІДТВЕРДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
                                               s.ubo === 'ЧАСТКОВО' ? "bg-amber-600/10 border-amber-600/30 text-amber-500" : 
                                               "bg-slate-700/10 border-slate-700/30 text-slate-700"
                                            )}>КБВ: {s.ubo}</span>
@@ -616,7 +616,7 @@ export default function FinancialSigintView() {
                                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 11, fontWeight: '900', fontStyle: 'italic' }} />
                                   <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
                                   <RechartsRadar name="ОБ'ЄКТ_X" dataKey="A" stroke="#D97706" strokeWidth={4} fill="#D97706" fillOpacity={0.5} />
-                                  <RechartsRadar name="НО МА_SOVEREIGN" dataKey="B" stroke="#D4AF37" strokeWidth={2} fill="#D4AF37" fillOpacity={0.1} />
+                                  <RechartsRadar name="НОРМА_SOVEREIGN" dataKey="B" stroke="#D4AF37" strokeWidth={2} fill="#D4AF37" fillOpacity={0.1} />
                                </RadarChart>
                             </ResponsiveContainer>
                          </div>
@@ -680,7 +680,7 @@ export default function FinancialSigintView() {
                                <div className="p-5 bg-amber-600/10 border-2 border-amber-600/20 rounded-[2rem] text-amber-600">
                                   <Lock size={32} className="animate-pulse" />
                                </div>
-                                ЕЄСТ _ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_ ЕСУ СІВ
+                               РЕЄСТР_ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_РЕСУРСІВ
                             </h2>
                             <p className="text-[12px] text-slate-700 font-bold uppercase tracking-[0.4em] italic border-l-4 border-amber-600/40 pl-6">
                                ПОВНИЙ ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА

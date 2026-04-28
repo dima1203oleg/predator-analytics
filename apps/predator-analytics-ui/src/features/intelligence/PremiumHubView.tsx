@@ -1,5 +1,5 @@
 /**
- * PREDATOR v58.2-WRAITH | Sovereign Intelligence Sanctum — Хаб Комерційної  озвідки
+ * PREDATOR v61.0-ELITE | Sovereign Intelligence Sanctum — Хаб Комерційної  озвідки
  * 
  * Персоналізований хаб для VIP-аналітики та стратегічного аналізу:
  * - TITAN (Market Sovereignty): Конкуренти, ринкові прогнози, інсайди
@@ -86,7 +86,7 @@ const PERSONA_CONFIG = {
     glow: 'rgba(225, 29, 72, 0.4)',
     features: [
       { icon: Eye, label: 'АНАЛІЗ КОНКУ ЕНТІВ', desc: 'Глибоке сканування кожної декларації опонентів у реальному часі' },
-      { icon: TrendingUp, label: ' ИНКОВІ П ОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
+      { icon: TrendingUp, label: ' ИНКОВІПРОГНОЗИ', desc: 'Прогнозування цінових хвиль та дефіциту товарних груп' },
       { icon: Briefcase, label: 'ІНСАЙДИ ПОСТАЧАЛЬНИКІВ', desc: 'Виявлення прямих заводів та прихованих ланцюгів' },
       { icon: DollarSign, label: 'ЦІНОВА ОПТИМІЗАЦІЯ', desc: 'Benchmark кожної транзакції проти ринкового медіанного значення' },
     ],
@@ -180,7 +180,7 @@ const HolographicAccessGate: React.FC = () => {
               </h1>
               <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto italic">
                 Вхід у Комерційний Хаб потребує авторизації рівня "СУВЕ ЕН". 
-                Виявлено обмежений доступ. Активуйте статус v58.2-WRAITH для розблокування протоколів.
+                Виявлено обмежений доступ. Активуйте статус v61.0-ELITE для розблокування протоколів.
               </p>
             </div>
 
@@ -197,7 +197,7 @@ const HolographicAccessGate: React.FC = () => {
                 АКТИВУВАТИ ПОВНИЙ ДОСТУП <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </span>
             </button>
-            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v58.2-WRAITH | SOVEREIGN_POWER</p>
+            <p className="text-[10px] font-mono text-slate-700 uppercase tracking-[0.4em]">ENCRYPTED_AUTH_v61.0-ELITE | SOVEREIGN_POWER</p>
           </div>
         </div>
       </motion.div>
@@ -237,7 +237,7 @@ const PremiumHubView: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'PremiumHub',
-            message: `П ЕМІУМ_ХАБ [${nodeSource}]: Суверенні протоколи аналітики успішно активовано. Готовність до операцій TITAN/INQUISITOR.`,
+            message: `ПРЕМІУМ_ХАБ [${nodeSource}]: Суверенні протоколи аналітики успішно активовано. Готовність до операцій TITAN/INQUISITOR.`,
             severity: 'info',
             timestamp: new Date().toISOString(),
             code: 'PREMIUM_SUCCESS'
@@ -310,7 +310,7 @@ const PremiumHubView: React.FC = () => {
                             </h1>
                             <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.6em] mt-3 flex items-center gap-3">
                                 <Gem size={12} className="text-[#E11D48] hover:scale-125 transition-transform" /> 
-                                КОМЕ ЦІЙНА_РОЗВІДКА_v58.2_WRAITH
+                                КОМЕ ЦІЙНА_РОЗВІДКА_v58.2_ELITE
                             </p>
                         </div>
                     </div>
@@ -320,7 +320,7 @@ const PremiumHubView: React.FC = () => {
                 badges={[
                     { label: 'SOVEREIGN_ACCESS', color: 'danger', icon: <Crown size={10} /> },
                     { label: isOffline ? 'MIRROR_NODE' : 'CENTRAL_NVIDIA', color: isOffline ? 'warning' : 'primary', icon: <Radio size={10} className={isOffline ? 'animate-pulse' : ''} /> },
-                    { label: 'v58.2-WRAITH', color: 'danger', icon: <Shield size={10} /> }
+                    { label: 'v61.0-ELITE', color: 'danger', icon: <Shield size={10} /> }
                 ]}
                 stats={[
                     { label: 'ДАНІ_В_ОБ ОБЦІ', value: '1.2M', color: 'primary', icon: <Database size={14} />, animate: true },
@@ -340,7 +340,7 @@ const PremiumHubView: React.FC = () => {
                 <div className="flex items-center gap-3 p-1.5 bg-black/40 rounded-[28px]">
                     <div className="px-10 py-4 flex items-center gap-3 text-[#E11D48]">
                         <Crown size={18} />
-                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕ ЕННИЙ  ЕЖИМ</span>
+                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">СУВЕ ЕННИЙ РЕЖИМ</span>
                     </div>
                 </div>
 
@@ -352,7 +352,7 @@ const PremiumHubView: React.FC = () => {
                         { id: 'analytics', label: 'АНАЛІТИКА', icon: BarChart3 },
                         { id: 'modeling', label: 'МОДЕЛЮВАННЯ', icon: Activity },
                         { id: 'reports', label: 'ЗВІТИ', icon: FileText },
-                        { id: 'builder', label: 'КОНСТ УКТО ', icon: Settings },
+                        { id: 'builder', label: 'КОНСТРУКТОР', icon: Settings },
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -408,7 +408,7 @@ const PremiumHubView: React.FC = () => {
                                         </h2>
                                         <div className="flex items-center gap-6">
                                             <Badge className="bg-[#E11D48]/20 text-[#E11D48] border-[#E11D48]/30 py-1.5 px-4 font-black shadow-[0_0_15px_rgba(225,29,72,0.3)] italic">АКТИВНІ_П ОТОКОЛИ</Badge>
-                                            <span className="text-xs text-slate-500 font-mono">v58.2-WRAITH.1-stable</span>
+                                            <span className="text-xs text-slate-500 font-mono">v61.0-ELITE.1-stable</span>
                                         </div>
                                     </div>
                                 </div>
@@ -512,7 +512,7 @@ const PremiumHubView: React.FC = () => {
                             <div className="text-center space-y-4">
                                 <h3 className="text-2xl font-black text-white uppercase tracking-[0.4em] italic">МОДУЛЬ_В_ОБ ОБЦІ</h3>
                                 <p className="text-xs text-slate-500 italic max-w-md mx-auto">
-                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v58.2-WRAITH.
+                                    Даний сегмент матриці знаходиться у стадії фінального квантового навчання. Очікуйте розгортання у v61.0-ELITE.
                                 </p>
                             </div>
                         </div>

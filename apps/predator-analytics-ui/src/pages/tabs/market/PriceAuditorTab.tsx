@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE AUDITOR TAB // П АЙС-АУДИТО  | v58.2-WRAITH
+ * 💰 PRICE AUDITOR TAB // П АЙС-АУДИТО  | v61.0-ELITE
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  */
 
@@ -80,7 +80,7 @@ export const PriceAuditorTab: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[500px] gap-4">
         <Loader2 className="w-12 h-12 text-[#D4AF37] animate-spin" />
         <p className="text-[#D4AF37] font-black uppercase tracking-widest text-xs animate-pulse">
-          АНАЛІЗ ЦІНОВИХ П ОПОЗИЦІЙ...
+          АНАЛІЗ ЦІНОВИХПРОПОЗИЦІЙ...
         </p>
       </div>
     );

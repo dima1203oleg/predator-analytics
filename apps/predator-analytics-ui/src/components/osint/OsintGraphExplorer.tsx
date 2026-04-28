@@ -156,7 +156,7 @@ export function OsintGraphExplorer() {
         }
     }, [nodes, edges, isExpanding]);
 
-    // СКЛОНОВАНИЙ Г АФ (ОЧИЩЕННЯ)
+    // СКЛОНОВАНИЙ ГРАФ (ОЧИЩЕННЯ)
     const resetGraph = useCallback(() => {
         setNodes([]);
         setEdges([]);
@@ -298,7 +298,7 @@ export function OsintGraphExplorer() {
                 <div className="p-4 border-b border-slate-800/60 bg-slate-900/50">
                     <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                         <History className="w-4 h-4 text-rose-500" />
-                        Ваші  озслідування
+                        Ваші розслідування
                     </h2>
                 </div>
                 <div className="flex-1 overflow-y-auto p-3 space-y-2">
@@ -346,7 +346,7 @@ export function OsintGraphExplorer() {
                 </div>
             </div>
 
-            {/* ─── ЦЕНТ АЛЬНА ЗОНА: Г АФ & ПОШУК ───────────────────── */}
+            {/* ─── ЦЕНТ АЛЬНА ЗОНА: ГРАФ & ПОШУК ───────────────────── */}
             <div className="flex-1 flex flex-col relative bg-slate-950 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                    <AdvancedBackground />
@@ -382,7 +382,7 @@ export function OsintGraphExplorer() {
                             onBlur={() => setIsSearchActive(false)}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             disabled={isSearching}
-                            placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄД ПОУ, ПІБ, IBAN або адресу..."}
+                            placeholder={isSearching ? "ВИКОНУЄТЬСЯ ГЛОБАЛЬНИЙ ПОШУК..." : "Введіть ЄДРПОУ, ПІБ, IBAN або адресу..."}
                             className="flex-1 bg-transparent py-4 px-4 text-sm text-white placeholder-slate-500 focus:outline-none disabled:opacity-50"
                         />
                         <button type="submit" disabled={isSearching} className="p-2 mr-2 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white rounded-xl shadow-lg transition-colors flex items-center justify-center">
@@ -508,7 +508,7 @@ export function OsintGraphExplorer() {
                             <div className="flex bg-slate-900/50 p-1 rounded-xl border border-slate-800 shrink-0 mt-6 mb-4">
                                 {[
                                     { id: 'overview', icon: Activity, label: 'ОГЛЯД' },
-                                    { id: 'docs', icon: FileText, label: ' ЕЄСТ И' },
+                                    { id: 'docs', icon: FileText, label: 'РЕЄСТРИ' },
                                     { id: 'relations', icon: Network, label: "ЗВ'ЯЗКИ" }
                                 ].map(tab => (
                                     <button
@@ -638,7 +638,7 @@ export function OsintGraphExplorer() {
                                     </motion.div>
                                 )}
 
-                                {/* Вкладка  ЕЄСТ И (Імітація з можливим API підключенням) */}
+                                {/* Вкладка РЕЄСТРИ (Імітація з можливим API підключенням) */}
                                 {profileTab === 'docs' && (
                                     <motion.div
                                         key="docs"
@@ -652,7 +652,7 @@ export function OsintGraphExplorer() {
                                                 <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-4">
                                                     <div className="p-2 bg-slate-800 rounded-lg shrink-0 mt-0.5"><Building2 className="w-4 h-4 text-rose-400" /></div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-white mb-1">Державний реєстр (ЄД )</div>
+                                                        <div className="text-sm font-bold text-white mb-1">Державний Реєстр (ЄД )</div>
                                                         <div className="text-xs text-slate-400 mb-2">Натисніть для запиту до API Мінюсту</div>
                                                         <button className="text-[10px] font-bold text-rose-400 uppercase tracking-widest hover:text-rose-300">Оновити Витяг →</button>
                                                     </div>
@@ -660,7 +660,7 @@ export function OsintGraphExplorer() {
                                                 <div className="p-4 bg-slate-900 border border-red-900/50 bg-red-950/20 rounded-xl flex items-start gap-4">
                                                     <div className="p-2 bg-red-900/50 rounded-lg shrink-0 mt-0.5"><ShieldAlert className="w-4 h-4 text-red-500" /></div>
                                                     <div>
-                                                        <div className="text-sm font-bold text-red-200 mb-1">реєстр Боржників / Суди</div>
+                                                        <div className="text-sm font-bold text-red-200 mb-1">Реєстр Боржників / Суди</div>
                                                         <div className="text-xs text-red-400/80 mb-2">Моніторинг Opendatabot API</div>
                                                         <button className="text-[10px] font-bold text-red-400 uppercase tracking-widest hover:text-red-300">Перевірити Борги →</button>
                                                     </div>

@@ -1,4 +1,4 @@
-"""OpenSearch Sink — PREDATOR Analytics v55.1 Ironclad.
+"""OpenSearch Sink — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Індексація документів для повнотекстового пошуку OSINT.
 """

@@ -119,7 +119,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
             <h3 className="text-xl font-bold text-white mb-4">Машина Станів Пайплайну</h3>
             <div className="grid grid-cols-6 gap-2">
               {['СТВО ЕНО', 'ДЖЕРЕЛО_ПЕ ЕВІ ЕНО', 'ІНГЕСТІЯ', 'ПА СИНГ', 'ВАЛІДАЦІЯ',
-                'Т АНСФО МАЦІЯ', 'ОБ’ЄКТИ_ВИ ІШЕНІ', 'ЗАВАНТАЖЕНО', 'Г АФ_ПОБУДОВАНО',
+                'Т АНСФО МАЦІЯ', 'ОБ’ЄКТИ_ВИ ІШЕНІ', 'ЗАВАНТАЖЕНО', 'ГРАФ_ПОБУДОВАНО',
                 'ІНДЕКСОВАНО', 'ВЕКТО ОВАНО', 'ГОТОВО'].map((state, i) => (
                   <motion.div
                     key={state}
@@ -166,10 +166,10 @@ export const KnowledgeEngineeringView: React.FC = () => {
                   <div className="flex-1 w-full p-6 bg-slate-950/50 rounded-2xl border border-rose-500/20">
                     <span className="text-[10px] text-rose-400 uppercase font-black tracking-[0.2em] block mb-3">Об'єкт А (Тір 1/2)</span>
                     <h4 className="text-xl font-bold text-white uppercase tracking-tight">ТОВ " ОМАШКА ІНВЕСТ"</h4>
-                    <p className="text-xs text-slate-500 mt-2 font-mono">ЄД ПОУ: 12345678</p>
+                    <p className="text-xs text-slate-500 mt-2 font-mono">ЄДРПОУ: 12345678</p>
                     <div className="mt-4 flex gap-2">
                       <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 text-[9px] font-bold border border-rose-500/20 uppercase">ТО ГОВІ ДАНІ АКТИВНІ</span>
-                      <span className="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[9px] font-bold border border-yellow-500/20 uppercase"> ЕЄСТ  ВЕ ИФІКОВАНО</span>
+                      <span className="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 text-[9px] font-bold border border-yellow-500/20 uppercase">РЕЄСТР ВЕ ИФІКОВАНО</span>
                     </div>
                   </div>
 
@@ -185,7 +185,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                     <h4 className="text-xl font-bold text-white uppercase tracking-tight">ROMASHKA INVESTMENT LLC</h4>
                     <p className="text-xs text-slate-500 mt-2 font-mono">LEI: 549300V55...</p>
                     <div className="mt-4 flex gap-2">
-                      <span className="px-2 py-0.5 rounded bg-rose-900/20 text-rose-300 text-[9px] font-bold border border-rose-500/20 uppercase">OSINT П ОФІЛЬ ЗБІГАЄТЬСЯ</span>
+                      <span className="px-2 py-0.5 rounded bg-rose-900/20 text-rose-300 text-[9px] font-bold border border-rose-500/20 uppercase">OSINTПРОФІЛЬ ЗБІГАЄТЬСЯ</span>
                     </div>
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export const KnowledgeEngineeringView: React.FC = () => {
                       <Database size={16} />
                       <span className="text-[10px] font-black uppercase tracking-wider">2️⃣ Тір: Інституційні реєстри</span>
                     </div>
-                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Ідентичний склад бенефіціарів у реєстрах ЄД  та зв'язок через судові провадження (Court/EDR Match)</p>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">Ідентичний склад бенефіціарів у реєстрах ЄДРта зв'язок через судові провадження (Court/EDR Match)</p>
                   </div>
 
                   <div className="p-5 bg-rose-900/20 rounded-2xl border border-rose-500/20 hover:bg-rose-900/30 transition-colors">

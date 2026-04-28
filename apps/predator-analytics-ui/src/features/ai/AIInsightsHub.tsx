@@ -61,7 +61,7 @@ const TYPE_CONFIG: Record<string, { icon: any, color: string, label: string }> =
 const PRIORITY_CONFIG: Record<string, { color: string; label: string }> = {
   critical: { color: '#9f1239', label: 'К ИТИЧНО' },
   high:     { color: '#be123c', label: 'ВИСОКИЙ' },
-  medium:   { color: '#e11d48', label: 'СЕ ЕДНІЙ' },
+  medium:   { color: '#e11d48', label: 'СЕРЕДНІЙ' },
   low:      { color: '#475569', label: 'НИЗЬКИЙ' },
 };
 
@@ -97,7 +97,7 @@ const ConfidenceTrend = ({ color }: { color: string }) => {
   );
 };
 
-// ── НЕЙРОННИЙ_Г АФ_V61 ──
+// ── НЕЙРОННИЙ_ГРАФ_V61 ──
 const NeuralGraph = ({ color }: { color: string }) => (
   <div className="relative w-full h-80 glass-wraith border-2 border-white/5 rounded-[3rem] overflow-hidden group shadow-4xl">
     <div className="absolute inset-0 bg-cyber-grid opacity-[0.03]" />
@@ -166,7 +166,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
   const stats = useMemo(() => [
     { label: 'СТРАТЕГІЧНИЙ ВПЛИВ', value: overview?.summary ? `$${(overview.summary.total_value_usd / 1e6).toFixed(1)}M` : '...', sub: 'П ОЕКЦІЯ_ЕФЕКТУ_L7', icon: DollarSign, color: '#e11d48' },
     { label: 'СИНЕ ГІЯ МОДЕЛЕЙ', value: '99.9%', sub: 'ГІПЕ _УЗГОДЖЕННЯ', icon: Cpu, color: '#9f1239' },
-    { label: 'СУВЕ ЕННИЙ Г АФ', value: overview?.summary?.vectors ? (overview.summary.vectors / 1e3).toFixed(1) + 'K' : '...', sub: 'ВУЗЛІВ_КА ТОВАНО', icon: Network, color: '#e11d48' },
+    { label: 'СУВЕ ЕННИЙ ГРАФ', value: overview?.summary?.vectors ? (overview.summary.vectors / 1e3).toFixed(1) + 'K' : '...', sub: 'ВУЗЛІВ_КА ТОВАНО', icon: Network, color: '#e11d48' },
     { label: 'АВТОНОМНІСТЬ ЯД А', value: 'TIER-1', sub: 'S-РІВЕНЬ_П ОТОКОЛУ', icon: ShieldCheck, color: '#9f1239' },
   ], [overview]);
 
@@ -272,7 +272,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                      </div>
                      <div className="p-10 glass-wraith border-2 border-white/5 rounded-[3rem] font-mono text-[11px] text-emerald-500/60 space-y-3 shadow-inner">
                         <p className="text-rose-500/40 font-black italic mb-4 uppercase tracking-widest border-b border-rose-500/10 pb-2">ЛОГ_СИНТЕЗУ_ЯД А:</p>
-                        <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ІНІЦІАЛІЗАЦІЯ_ОБХОДУ_Г АФА..._УСПІШНО</span></p>
+                        <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ІНІЦІАЛІЗАЦІЯ_ОБХОДУ_ГРАФА..._УСПІШНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">ВЕ ИФІКАЦІЯ_ГІПОТЕЗИ_0x9F43..._П ОЙДЕНО</span></p>
                         <p className="flex items-center gap-3">&gt; <span className="text-emerald-500">СТАТУС: ГОТОВО_ДО_ ІШЕННЯ_L7</span></p>
                         <p className="flex items-center gap-3 animate-pulse">&gt; <span className="text-rose-500/40">ОЧІКУВАННЯ_ПІДТВЕ ДЖЕННЯ_СУВЕ ЕНУ...</span></p>
@@ -431,7 +431,7 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                     </p>
 
                     <div className="absolute bottom-10 right-16 flex items-center gap-6 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-x-10 group-hover:translate-x-0">
-                       <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">ДЕТАЛЬНИЙ_АНАЛІЗ_Г АФА</span>
+                       <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic">ДЕТАЛЬНИЙ_АНАЛІЗ_ГРАФА</span>
                        <div className="p-4 bg-rose-600 text-white rounded-full shadow-4xl border-2 border-rose-400/50">
                           <Target size={24} />
                        </div>
@@ -452,9 +452,9 @@ const AIInsightsHub: React.FC<{ isWidgetMode?: boolean }> = ({ isWidgetMode = fa
                       <Atom size={80} className="text-rose-500 animate-pulse" />
                    </div>
                 </div>
-                <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter glint-elite">СИНТЕЗ_WRAITH</h3>
+                <h3 className="text-5xl font-black text-white italic uppercase tracking-tighter glint-elite">СИНТЕЗ_ELITE</h3>
                 <p className="text-[13px] text-white/30 font-black uppercase tracking-[0.5em] mt-6 italic max-w-xs leading-relaxed font-mono">
-                   ГЕНЕ УЄМО_СТ АТЕГІЧНІ_ВІКТО _ДЛЯ_ДЕ ЖАВНОГО_УП АВЛІННЯ_L7
+                   ГЕНЕ УЄМО_СТ АТЕГІЧНІ_ВІКТО _ДЛЯ_ДЕ ЖАВНОГО_УПРАВЛІННЯ_L7
                 </p>
                 <div className="mt-12 w-48 h-1 bg-white/5 rounded-full relative overflow-hidden">
                    <motion.div 

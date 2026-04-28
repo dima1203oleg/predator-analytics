@@ -66,7 +66,7 @@ export interface BackendStatusSnapshot {
     sourceType: 'local' | 'remote';
     /** Три-позиційний режим ШІ (SOVEREIGN | HYBRID | CLOUD) */
     llmTriStateMode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD';
-    /**  івень каскаду LLM (1-4) */
+    /** рівень каскаду LLM (1-4) */
     llmLevel: 1 | 2 | 3 | 4;
     /** Назва активного шару LLM */
     llmLayerName: string;

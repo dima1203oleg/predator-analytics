@@ -1,4 +1,4 @@
-"""Address Normalizer — PREDATOR Analytics v55.1 Ironclad.
+"""Address Normalizer — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Standardization of Ukrainian addresses and geocoding placeholder.
 """

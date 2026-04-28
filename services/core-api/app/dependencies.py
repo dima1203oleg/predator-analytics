@@ -1,4 +1,4 @@
-"""Dependencies Module — PREDATOR Analytics v55.1 Ironclad.
+"""Dependencies Module — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Common dependencies for FastAPI routes.
 """

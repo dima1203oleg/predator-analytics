@@ -184,7 +184,7 @@ describe('CasesView', () => {
             fireEvent.click(newCaseBtn);
         });
 
-        expect(screen.getByText('Нове  озслідування')).toBeInTheDocument();
+        expect(screen.getByText('Нове розслідування')).toBeInTheDocument();
     });
 
     it('повинен викликати API для архівації кейсу', async () => {

@@ -1,4 +1,4 @@
-"""Configuration — PREDATOR Analytics v55.1 Ironclad (Worker)."""
+"""Configuration — PREDATOR Analytics v61.0-ELITE Ironclad (Worker)."""
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict

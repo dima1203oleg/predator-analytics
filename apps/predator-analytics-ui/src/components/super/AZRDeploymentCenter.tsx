@@ -184,8 +184,8 @@ export const AZRDeploymentCenter: React.FC = () => {
                         className="mt-10 p-6 bg-black rounded-3xl border border-blue-500/30 font-mono text-[10px] text-blue-400/80 space-y-1"
                     >
                         <div>[SYSTEM] ІНІЦІАЛІЗАЦІЯ GITOPS  УКОСТИСКАННЯ...</div>
-                        <div>[K8S]  ЕЗЕ ВУВАННЯ CANARY П ОСТО У ІМЕН: predator-canary-v45...</div>
-                        <div>[SCAN] ПЕ ЕВІ КА ПОЛІТИКИ БЕЗПЕКИ: П ОЙДЕНО (VULN: 0)</div>
+                        <div>[K8S]  ЕЗЕ ВУВАННЯ CANARYПРОСТОРУ ІМЕН: predator-canary-v45...</div>
+                        <div>[SCAN] ПЕ ЕВІ КА ПОЛІТИКИ БЕЗПЕКИ:ПРОЙДЕНО (VULN: 0)</div>
                         {progress > 40 && <div>[NEURAL] СИНХ ОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
                         {progress > 70 && <div>[DEPLOY] ПОЧАТО ROLL-OUT: 1 З 12 ПОДІВ ЗАПУЩЕНО...</div>}
                         <div className="animate-pulse">_</div>

@@ -78,7 +78,7 @@ describe('EntityGraphView', () => {
         await waitFor(() => {
             expect(screen.queryByText(/ЗАВАНТАЖЕННЯ/i)).not.toBeInTheDocument();
             expect(screen.getByTestId('three-canvas')).toBeInTheDocument();
-            expect(screen.getByText(/Г АФ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ГРАФ/i)).toBeInTheDocument();
             expect(screen.getByText(/ОБ'ЄКТІВ/i)).toBeInTheDocument();
         });
     });
@@ -135,7 +135,7 @@ describe('EntityGraphView', () => {
                 expect.objectContaining({
                     detail: expect.objectContaining({
                         severity: 'critical',
-                        message: expect.stringContaining('ПОМИЛКА ДОСТУПУ ДО ВУЗЛА Г АФУ')
+                        message: expect.stringContaining('ПОМИЛКА ДОСТУПУ ДО ВУЗЛА ГРАФУ')
                     })
                 })
             );

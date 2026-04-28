@@ -1,4 +1,4 @@
-"""WarRoom Service — PREDATOR Analytics v55.1 Ironclad.
+"""WarRoom Service — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Situation reports, attack plans, and strategic insights.
 """

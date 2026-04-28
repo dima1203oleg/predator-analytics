@@ -1,5 +1,5 @@
 /**
- * ⏳ TIMELINE BUILDER //  ЕКОНСТ УКТО  Х ОНОЛОГІЇ | v58.2-WRAITH
+ * ⏳ TIMELINE BUILDER //  ЕКОНСТРУКТОР Х ОНОЛОГІЇ | v61.0-ELITE
  * PREDATOR Analytics — Temporal Forensic & Event Reconstruction Array
  *
  * Глибока хронологічна реконструкція подій: Фінанси, Право, OSINT.
@@ -69,7 +69,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         category: 'financial',
         title: 'ВІДК ИТТЯ_ АХУНКУ_MONOBANK',
         description: 'Відкрито поточний рахунок UA213206490000026007233566001. Первісний депозит 50,000 UAH.',
-        source: 'БАНКІВСЬКІ_ ЕЄСТ И',
+        source: 'БАНКІВСЬКІ_РЕЄСТРИ',
         confidence: 98,
         relatedEntities: ['Марченко  .Г.', 'Monobank'],
         caseId: 'CASE-2026-089',
@@ -79,7 +79,7 @@ const MOCK_EVENTS: TimelineEvent[] = [
         id: 'EVT-002',
         date: '2026-02-03',
         category: 'legal',
-        title: ' ЕЄСТ АЦІЯ_ТОВ_ГОЛДЕН_Т ЕЙД',
+        title: 'РЕЄСТРАЦІЯ_ТОВ_ГОЛДЕН_Т ЕЙД',
         description: 'Зареєстровано нову юридичну особу. КВЕДи: 46.39, 46.90. Статутний капітал 1,000 UAH.',
         source: 'ЄД _УК АЇНИ',
         confidence: 100,
@@ -275,10 +275,10 @@ const TimelineBuilderView: React.FC = () => {
                                             TEMPORAL_FORENSIC // TIMELINE_BUILDER
                                         </span>
                                         <div className="h-px w-10 bg-indigo-600/20" />
-                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                                         ЕКОНСТ УКТО  <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">Х ОНОЛОГІЇ</span>
+                                         ЕКОНСТРУКТОР <span className="text-indigo-500 underline decoration-indigo-600/20 decoration-8 italic uppercase">Х ОНОЛОГІЇ</span>
                                     </h1>
                                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.5em] italic mt-2 opacity-80 leading-none">
                                         ГЛИБИННИЙ АНАЛІЗ ЧАСОВИХ ВЕКТО ІВ ТАПРИХОВАНИХ ЗВ'ЯЗКІВ

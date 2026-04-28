@@ -78,7 +78,7 @@ describe('ActiveJobsPanel', () => {
         render(<ActiveJobsPanel />);
 
         expect(await screen.findByText(/Немає підтверджених ingestion jobs/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Митний реєстр 2024/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Митний Реєстр 2024/i)).not.toBeInTheDocument();
         expect(screen.queryByText(/LIVE/i)).not.toBeInTheDocument();
     });
 

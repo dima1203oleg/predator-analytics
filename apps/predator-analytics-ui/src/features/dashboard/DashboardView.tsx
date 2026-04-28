@@ -1,6 +1,6 @@
 /**
  * 🦅 PREDATOR STRATEGIC NEXUS | v58.2.0-TITAN
- * ГОЛОВНА ПАНЕЛЬ УП АВЛІННЯ (SOVEREIGN DASHBOARD)
+ * ГОЛОВНА ПАНЕЛЬ УПРАВЛІННЯ (SOVEREIGN DASHBOARD)
  * 
  * Центральний вузол моніторингу митних ризиків та торговельних потоків.
  * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
@@ -247,7 +247,7 @@ const DashboardView: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'DashboardNexus',
-                message: `АВТОНОМНИЙ  ЕЖИМ [${nodeSource}]: Платформа перейшла на MIRROR_CLUSTER. Аналітика оновлюється з резервного сховища NVME.`,
+                message: `АВТОНОМНИЙ РЕЖИМ [${nodeSource}]: Платформа перейшла на MIRROR_CLUSTER. Аналітика оновлюється з резервного сховища NVME.`,
                 severity: 'warning',
                 timestamp: new Date().toISOString(),
                 code: 'DASHBOARD_OFFLINE'
@@ -257,7 +257,7 @@ const DashboardView: React.FC = () => {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'DashboardNexus',
-                message: `КОМАНДНИЙ ЦЕНТ  [${nodeSource}]: Зв'язок з ядром стабільний. Аналітичні потоки активні.`,
+                message: `КОМАНДНИЙ ЦЕНТР [${nodeSource}]: Зв'язок з ядром стабільний. Аналітичні потоки активні.`,
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'DASHBOARD_SUCCESS'
@@ -384,7 +384,7 @@ const DashboardView: React.FC = () => {
                   { label: 'ІМПОРТ_ВВЕЗЕННЯ', value: formatNumber(overview!.summary.import_count), icon: <Ship size={24} />, color: 'cyan', sub: 'Вантажні судна' },
                   { label: 'ЕКСПОРТ_ВИВЕЗЕННЯ', value: formatNumber(overview!.summary.export_count), icon: <Package size={24} />, color: 'emerald', sub: 'Логістичні партії' },
                   { label: 'ЗОНА_К ИТИЧНОСТІ', value: String(overview!.summary.high_risk_count), icon: <ShieldAlert size={24} />, color: 'amber', sub: 'Високий ризик' },
-                  { label: 'СЕМАНТИЧНИЙ_Г АФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
+                  { label: 'СЕМАНТИЧНИЙ_ГРАФ', value: formatNumber(overview!.summary.graph_nodes), icon: <Network size={24} />, color: 'purple', sub: 'Вузли системи' },
                   { label: 'НЕЙ О_МАТ ИЦЯ', value: formatNumber(overview!.summary.vectors), icon: <Brain size={24} />, color: 'amber', sub: 'Векторні індекси' },
                 ].map((m, i) => (
                   <motion.div
@@ -651,7 +651,7 @@ const DashboardView: React.FC = () => {
                              </div>
                              <div className="grid grid-cols-2 gap-4 relative z-10">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v58.2-WRAITH</span>
+                                   <span className="text-[8px] text-slate-600 font-black uppercase tracking-widest block mb-1">МАСШТАБ_v61.0-ELITE</span>
                                    <span className="text-sm font-black text-white italic">{company.count} ДЕКЛ.</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
@@ -732,8 +732,8 @@ const DashboardView: React.FC = () => {
               className="flex items-center gap-32 whitespace-nowrap"
             >
               {[
-                `СИСТЕМА: v58.2.0 WRAITH NEXUS | СТАТУС: ОПТИМАЛЬНО |  ЕЖИМ: СУВЕ ЕННИЙ`,
-                `Г АФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
+                `СИСТЕМА: v58.2.0 ELITE NEXUS | СТАТУС: ОПТИМАЛЬНО | РЕЖИМ: СУВЕ ЕННИЙ`,
+                `ГРАФ: ${formatNumber(overview?.summary.graph_nodes ?? 0)} ВУЗЛІВ | ${formatNumber(overview?.summary.graph_edges ?? 0)} ЗВ'ЯЗКІВ`,
                 `ТОП РИЗИК: ${stats?.topRisk ?? 0}% [${overview?.top_risk_companies?.[0]?.name ?? 'Н/Д'}]`,
                 `ПОШУКОВИЙ ІНДЕКС: ${formatNumber(overview?.summary.search_documents ?? 0)} ДОКУМЕНТІВ`,
                 `НЕЙ О-АКТИВНІСТЬ: 78% | ЗАТ ИМКА_OODA: 5.8мс`,

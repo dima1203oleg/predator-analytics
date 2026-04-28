@@ -1,4 +1,4 @@
-"""Тести для File Ingestion Pipeline — PREDATOR Analytics v55.1 Ironclad.
+"""Тести для File Ingestion Pipeline — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Тестування валідації, дедуплікації та обробки файлів.
 """

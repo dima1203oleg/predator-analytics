@@ -1,4 +1,4 @@
-"""RAG Service — PREDATOR Analytics v58.2-WRAITH.
+"""RAG Service — PREDATOR Analytics v61.0-ELITE.
 
 Retrieval-Augmented Generation pipeline:
 1. Document chunking (512 tokens, 50 token overlap)

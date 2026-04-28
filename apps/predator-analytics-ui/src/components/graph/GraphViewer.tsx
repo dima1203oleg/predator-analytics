@@ -30,7 +30,7 @@ export type NodeType = 'Person' | 'Organization' | 'Location' | 'Event' | 'Asset
 // Типи зв'язків
 export type EdgeType = 'OWNS' | 'MANAGES' | 'CONTROLS' | 'REGISTERED_AT' | 'INVOLVED_IN' | 'RELATED_TO';
 
-//  івні ризику
+// рівні ризику
 // export type RiskLevel = 'critical' | 'high' | 'medium' | 'low' | 'minimal';
 
 // Інтерфейс вузла

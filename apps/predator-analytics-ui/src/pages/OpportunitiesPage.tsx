@@ -191,7 +191,7 @@ export default function OpportunitiesPage() {
                     <div className="flex-1 space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="badge-v2 badge-v2-amber">
-                                <span className="relative z-10">PREDATOR v58.2-WRAITH | МОЖЛИВОСТІ</span>
+                                <span className="relative z-10">PREDATOR v61.0-ELITE | МОЖЛИВОСТІ</span>
                                 <div className="badge-v2-glimmer" />
                             </div>
                             <div className={cn(
@@ -223,7 +223,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-amber-400/80 transition-colors">Стратегічний Вузол</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">Активні сигнали: {insights.length}</div>
-                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v58.2-WRAITH OSINT-ХАБ</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">Вузол v61.0-ELITE OSINT-ХАБ</div>
                             </div>
 
                             <div className="card-depth group rounded-[28px] border border-white/[0.08] bg-black/40 p-5 transition-all hover:bg-black/60 shadow-xl">
@@ -232,7 +232,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Хаб розвідки</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
-                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase"> івень 4 Сертифіковано</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">рівень 4 Сертифіковано</div>
                             </div>
 
                             <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
@@ -504,7 +504,7 @@ function ExecutiveTab({
                 
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between relative z-10">
                     <div>
-                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові  инкові Сигнали</h3>
+                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові ринкові Сигнали</h3>
                         <p className="mt-1 text-sm text-slate-500 font-medium italic">
                             Пріоритетні вектори розвитку, виявлені нейронним ядром.
                         </p>

@@ -145,7 +145,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                             )}
                         </div>
                         <div className="flex gap-3 text-[10px] font-mono text-slate-400">
-                            <span>ЄД ПОУ: <span className="text-slate-200">{company.edrpou}</span></span>
+                            <span>ЄДРПОУ: <span className="text-slate-200">{company.edrpou}</span></span>
                             <span>СТАТУС: <span className="text-emerald-400">{company.status}</span></span>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                             className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors disabled:opacity-50"
                         >
                             <RefreshCw size={10} className={cn(isRecalculating && "animate-spin")} />
-                            ПЕ Е АХУНОК
+                            ПЕ РЕ АХУНОК
                         </button>
                     </div>
 

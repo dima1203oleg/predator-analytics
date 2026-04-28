@@ -1,5 +1,5 @@
 /**
- * Predator v45 | Neural Analytics- реєстр Компонентів (CU-PIE Engine Managed)
+ * Predator v45 | Neural Analytics- Реєстр Компонентів (CU-PIE Engine Managed)
  *
  * Component Utilization & Pipeline Integrity Engine
  * Відображає реальний статус 200+ компонентів, базуючись на їх фактичному залученні в пайплайнах.
@@ -286,7 +286,7 @@ export const ComponentsRegistryView: React.FC = () => {
                                   <span>Нульова Утилізація</span>
                                 </div>
                                 <p className="text-[10px] text-slate-400">
-                                  Компонент визначено, але не підключено до жодного активного пайплайну даних. рекомендовано до видалення або активації.
+                                  Компонент визначено, але не підключено до жодного активного пайплайну даних.рекомендовано до видалення або активації.
                                 </p>
                               </div>
                             )}

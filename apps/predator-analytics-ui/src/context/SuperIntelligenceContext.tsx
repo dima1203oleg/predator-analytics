@@ -59,7 +59,7 @@ const INITIAL_SCORES: ArbitrationScore[] = [
 
 // Початкові логи для візалізації потоку
 const INITIAL_LOGS: SIContextLog[] = [
-    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v58.2-WRAITH...' },
+    { id: 'init-0', timestamp: '09:59:55', type: 'INFO', source: 'KERNEL', message: 'Завантаження Singularity Core v61.0-ELITE...' },
     { id: 'init-1', timestamp: '10:00:01', type: 'INFO', source: 'SYSTEM', message: 'Нейронне ядро ініціалізовано. Квантові зв\'язки встановлено.' },
     { id: 'init-2', timestamp: '10:00:02', type: 'INFO', source: 'RAG', message: 'Векторна база даних підключена (Шард 0-5). Індексація 14.2 млн векторів.' },
     { id: 'init-3', timestamp: '10:00:05', type: 'DEBATE', source: 'GEMINI', message: 'Архітектура системи стабільна. Очікую нових векторів загроз для аналізу.' },
@@ -78,7 +78,7 @@ const INITIAL_ARTIFACTS: RAGArtifact[] = [
 
 // Rich Boot Code for the Typewriter Effect
 const INITIAL_NAS_BOOT_CODE = `
-// KERNEL: SINGULARITY v58.2-WRAITH
+// KERNEL: SINGULARITY v61.0-ELITE
 // TARGET: OPTIMIZATION_MATRIX
 // -----------------------------------
 import torch
@@ -210,7 +210,7 @@ export const SuperIntelligenceProvider: React.FC<{ children: React.ReactNode }> 
     const [isActive, setIsActive] = useState(false);
     const [stage, setStage] = useState<SuperLoopStage>('IDLE');
     const [logs, setLogs] = useState<SIContextLog[]>([
-        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Підключено до Predator v58.2-WRAITH | Нейронна Аналітика. Очікування потоку...' }
+        { id: 'boot', timestamp: new Date().toLocaleTimeString(), type: 'INFO', source: 'KERNEL', message: 'Підключено до Predator v61.0-ELITE | Нейронна Аналітика. Очікування потоку...' }
     ]);
     const [brainNodes, setBrainNodes] = useState<BrainNodeState[]>(INITIAL_BRAIN_NODES);
     const [activeAgents, setActiveAgents] = useState<UnifiedAgentState[]>(INITIAL_AGENTS);

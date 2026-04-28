@@ -49,19 +49,19 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
     { id: TabView.OVERVIEW, label: 'ОГЛЯД', icon: <Activity size={18} />, color: 'text-rose-500' },
     { id: TabView.OMNISCIENCE, label: 'ВСЕВИДЯЧЕ ОКО', icon: <Eye size={18} />, color: 'text-purple-500' },
     { id: TabView.SEARCH, label: 'ГЛИБОКИЙ ПОШУК', icon: <Zap size={18} />, color: 'text-rose-400' },
-    { id: TabView.AGENTS, label: 'УП АВЛІННЯ  ОЄМ', icon: <Sparkles size={18} />, color: 'text-emerald-500' },
+    { id: TabView.AGENTS, label: 'УПРАВЛІННЯ  ОЄМ', icon: <Sparkles size={18} />, color: 'text-emerald-500' },
   ];
 
   const sideNavItems = [
     { id: TabView.DATABASES, icon: <Database size={24} />, label: 'ЦЕНТ  ДАНИХ' },
-    { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'КО ТЕКС' },
+    { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'КОРТЕКС' },
     { id: TabView.SECURITY, icon: <Shield size={24} />, label: 'БЕЗПЕКА' },
     { id: TabView.SETTINGS, icon: <Settings size={24} />, label: 'НАЛАШТУВАННЯ' },
   ];
 
   return (
     <div className="flex h-screen bg-[#02040a] text-slate-100 font-sans selection:bg-rose-500/30 overflow-hidden">
-      {/* WRAITH Ambient Effects */}
+      {/* ELITE Ambient Effects */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {/* Crimson Aura */}
         <div
@@ -114,7 +114,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
             </div>
             <div>
               <div className="text-xs font-black tracking-[0.3em] text-white">PREDATOR</div>
-              <div className="text-[9px] font-bold text-rose-500/80 tracking-widest uppercase">V58.2 WRAITH ELITE</div>
+              <div className="text-[9px] font-bold text-rose-500/80 tracking-widest uppercase">V58.2 ELITE ELITE</div>
             </div>
           </div>
 

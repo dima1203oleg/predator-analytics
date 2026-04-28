@@ -1,4 +1,4 @@
-"""Autonomous Agent Trigger — PREDATOR Analytics v56.5-ELITE.
+"""Autonomous Agent Trigger — PREDATOR Analytics v61.0-ELITE.
 
 Запускає автономні AGI-розслідування на основі результатів інгестії.
 """

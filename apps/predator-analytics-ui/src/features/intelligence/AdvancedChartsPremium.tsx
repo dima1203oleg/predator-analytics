@@ -1,5 +1,5 @@
 /**
- * 📊 ADVANCED CHARTS WRAITH //  ОЗШИ ЕНА АНАЛІТИКА | v58.2-WRAITH
+ * 📊 ADVANCED CHARTS ELITE //  ОЗШИ ЕНА АНАЛІТИКА | v61.0-ELITE
  * PREDATOR Analytics — High-Fidelity Data Visualization
  * 
  * Потужні графіки для аналітики товарних потоків, ринків та ризиків.
@@ -38,7 +38,7 @@ interface ChartData {
 }
 
 // ========================
-// Chart Components (WRAITH)
+// Chart Components (ELITE)
 // ========================
 
 interface BarChartProps {
@@ -68,7 +68,7 @@ const AnimatedBarChart: React.FC<BarChartProps> = ({ data, height, showLabels = 
                 >
                   <div className="absolute inset-0 bg-yellow-500/5 blur-xl group-hover/bar:bg-yellow-500/20 transition-all" />
                   
-                  {/* Hover tooltip WRAITH */}
+                  {/* Hover tooltip ELITE */}
                   <div className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover/bar:flex flex-col items-center bg-black border border-yellow-500/40 px-3 py-1.5 rounded-xl z-20 shadow-4xl min-w-[80px]">
                     <span className="text-[10px] font-black text-white font-mono">${item.value}M</span>
                     {item.trend && (
@@ -220,7 +220,7 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
           </filter>
         </defs>
 
-        {/* Grid lines WRAITH */}
+        {/* Grid lines ELITE */}
         {[0, 25, 50, 75, 100].map((y) => (
           <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="rgba(255, 255, 255, 0.03)" strokeWidth="0.5" />
         ))}
@@ -263,7 +263,7 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
           style={{ filter: `drop-shadow(0 0 8px ${glowColor})` }}
         />
 
-        {/* Points WRAITH */}
+        {/* Points ELITE */}
         {points.map((p, i) => (
           <motion.g key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.5 + i * 0.05 }}>
             <circle cx={p.x} cy={p.y} r="2.5" fill="black" stroke={color} strokeWidth="1" />
@@ -278,7 +278,7 @@ const AnimatedLineChart: React.FC<LineChartComponentProps> = ({
 import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 // ========================
-// Main Component (WRAITH)
+// Main Component (ELITE)
 // ========================
 
 const AdvancedChartsPremium: React.FC = () => {
@@ -336,7 +336,7 @@ const AdvancedChartsPremium: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* WRAITH HEADER HUD */}
+          {/* ELITE HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -349,20 +349,20 @@ const AdvancedChartsPremium: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-[#D4AF37] px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      ANALYTICS_WRAITH // QUANTUM_VIEW
+                      ANALYTICS_ELITE // QUANTUM_VIEW
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                    АНАЛІТИЧНІ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">Г АФІКИ</span>
+                    АНАЛІТИЧНІ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ГРАФІКИ</span>
                   </h1>
                 </div>
               </div>
             }
             breadcrumbs={['INTEL_POOL', 'QUANT_LAB', 'VISUAL_ARRAY']}
             badges={[
-              { label: 'SOVEREIGN_WRAITH_v58.2', color: 'gold', icon: <Crown size={10} /> },
+              { label: 'SOVEREIGN_ELITE_v58.2', color: 'gold', icon: <Crown size={10} /> },
               { label: 'LIVE_TELEMETRY', color: 'primary', icon: <Activity size={10} /> },
             ]}
             stats={[
@@ -373,7 +373,7 @@ const AdvancedChartsPremium: React.FC = () => {
             ]}
           />
 
-          {/* CONTROL HUD WRAITH */}
+          {/* CONTROL HUD ELITE */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-8 z-20">
              <div className="flex gap-4 p-3 bg-black border-2 border-white/5 rounded-[3rem] shadow-4xl backdrop-blur-3xl">
                 {(['week', 'month', 'quarter', 'year'] as const).map((r) => (
@@ -405,7 +405,7 @@ const AdvancedChartsPremium: React.FC = () => {
              </div>
           </div>
 
-          {/* MAIN CHARTS GRID WRAITH */}
+          {/* MAIN CHARTS GRID ELITE */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {loading ? (
               Array(6).fill(0).map((_, i) => (
@@ -497,7 +497,7 @@ const AdvancedChartsPremium: React.FC = () => {
             )}
           </div>
 
-          {/* AI NEURAL INSIGHTS HUD WRAITH */}
+          {/* AI NEURAL INSIGHTS HUD ELITE */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}

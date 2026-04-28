@@ -61,12 +61,12 @@ describe('OsintGraphExplorer', () => {
 
     it('renders the left panel with history title', () => {
         render(<OsintGraphExplorer />);
-        expect(screen.getByText('Ваші  озслідування')).toBeInTheDocument();
+        expect(screen.getByText('Ваші розслідування')).toBeInTheDocument();
     });
 
     it('executes global search correctly', async () => {
         render(<OsintGraphExplorer />);
-        const searchInput = screen.getByPlaceholderText(/Введіть ЄД ПОУ/i);
+        const searchInput = screen.getByPlaceholderText(/Введіть ЄДРПОУ/i);
         const searchForm = searchInput.closest('form');
         expect(searchForm).not.toBeNull();
         

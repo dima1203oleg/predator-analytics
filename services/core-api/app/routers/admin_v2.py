@@ -1,4 +1,4 @@
-"""Admin V2 Router — PREDATOR Analytics v58.2-WRAITH.
+"""Admin V2 Router — PREDATOR Analytics v61.0-ELITE.
 
 Цей роутер обслуговує Wraith-інтерфейс адмін-панелі (префікс /api/v2).
 """

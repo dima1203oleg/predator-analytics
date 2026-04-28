@@ -117,7 +117,7 @@ describe('TendersView', () => {
 
     it('повинен рендерити базові елементи інтерфейсу', () => {
         render(<TendersView />);
-        expect(screen.getByRole('heading', { name: / ЕЄСТ  ЗАКУПІВЕЛЬ/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /РЕЄСТР ЗАКУПІВЕЛЬ/i })).toBeInTheDocument();
         expect(screen.getByPlaceholderText(/ПОШУК ТЕНДЕ ІВ ЗА НАЗВОЮ АБО ЗАМОВНИКОМ/i)).toBeInTheDocument();
         expect(screen.getByTestId('advanced-bg')).toBeInTheDocument();
     });

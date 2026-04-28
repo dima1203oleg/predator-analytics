@@ -17,7 +17,7 @@ const REPORTS = [
     { id: 1, name: 'Звіт фінансового моніторингу (NBU #417)', standard: 'FATF/NBU', date: 'Сьогодні, 09:00', status: 'ready', icon: Landmark, color: 'text-yellow-400' },
     { id: 2, name: 'Аудит доступу до персональних даних', standard: 'GDPR / 2297-VI', date: 'Вчора, 18:30', status: 'ready', icon: Lock, color: 'text-emerald-400' },
     { id: 3, name: 'Перевірка цілісності транзакцій', standard: 'SOC2 Type II', date: 'Вчора, 12:00', status: 'review', icon: Scale, color: 'text-amber-400' },
-    { id: 4, name: 'реєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-amber-400' },
+    { id: 4, name: 'Реєстр підозрілої активності (SAR)', standard: 'AML', date: '28.01.2026', status: 'ready', icon: AlertTriangle, color: 'text-amber-400' },
 ];
 
 export const ComplianceView = () => {
@@ -84,7 +84,7 @@ export const ComplianceView = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'ComplianceIntel',
-                    message: 'АКТИВОВАНО АВТОНОМНИЙ  ЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
+                    message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ КОМПЛАЄНСУ (COMPLIANCE_NODES). Моніторинг локального контуру.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'COMPLIANCE_NODES'
@@ -116,7 +116,7 @@ export const ComplianceView = () => {
                                         COMPLIANCE_WATCH // {isOffline ? 'АВТОНОМНИЙ_КОМПЛАЄНС' : 'ЖУ НАЛ_АУДИТУ_v58'}
                                     </span>
                                     <div className="h-px w-12 bg-emerald-500/20" />
-                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                                    <span className="text-[10px] font-black text-emerald-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'ELITE'}</span>
                                 </div>
                                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                                     ЦЕНТ  <span className="text-emerald-400 underline decoration-emerald-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">КОМПЛАЄНСУ</span>
@@ -124,7 +124,7 @@ export const ComplianceView = () => {
                             </div>
                         </div>
                     }
-                    breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_WRAITH']}
+                    breadcrumbs={['SYSTEM', 'SECURITY', 'AUDIT_LOG_ELITE']}
                     badges={[
                         { label: 'НЕЗМІННІ_ЛОГИ', color: 'success', icon: <Lock size={10} /> },
                         { label: 'СУВЕ ЕННА_СИСТЕМА', color: 'primary', icon: <CheckCircle size={10} /> },

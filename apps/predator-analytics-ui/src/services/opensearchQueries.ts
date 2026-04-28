@@ -94,7 +94,7 @@ export const TITAN_QUERIES: OpenSearchQuery[] = [
   {
     id: 'titan-supplier-countries',
     name: 'Країни Походження',
-    description: ' озподіл імпорту за країнами походження',
+    description: 'розподіл імпорту за країнами походження',
     persona: 'TITAN',
     category: 'Географія',
     query: {
@@ -114,7 +114,7 @@ export const TITAN_QUERIES: OpenSearchQuery[] = [
   {
     id: 'titan-market-share',
     name: 'Частка  инку Конкурентів',
-    description: ' озподіл ринку між основними гравцями',
+    description: 'розподіл ринку між основними гравцями',
     persona: 'TITAN',
     category: 'Конкуренти',
     query: {
@@ -221,7 +221,7 @@ export const INQUISITOR_QUERIES: OpenSearchQuery[] = [
   },
   {
     id: 'inq-risk-scoring',
-    name: 'Скоринг  изику Компаній',
+    name: 'Скоринг ризику Компаній',
     description: 'рейтинг компаній за ризиком порушень',
     persona: 'INQUISITOR',
     category: ' изики',

@@ -1,5 +1,5 @@
 /**
- * 🦅 PREDATOR Analytics // INTELLIGENCE TYPES | v58.2-WRAITH
+ * 🦅 PREDATOR Analytics // INTELLIGENCE TYPES | v61.0-ELITE
  * Centralized type definitions for intelligence modules.
  */
 

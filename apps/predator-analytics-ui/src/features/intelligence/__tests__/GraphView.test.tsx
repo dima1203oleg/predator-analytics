@@ -90,7 +90,7 @@ describe('GraphView', () => {
             expect(screen.queryByText(/ЗАВАНТАЖЕННЯ/i)).not.toBeInTheDocument()
         })
 
-        expect(screen.getByText(/Г АФ ЗНАНЬ/i)).toBeInTheDocument()
+        expect(screen.getByText(/ГРАФ ЗНАНЬ/i)).toBeInTheDocument()
         
         // Перевірка статистики в хедері
         expect(screen.getByText(/Вузлів: 1,500/i)).toBeInTheDocument()
@@ -102,7 +102,7 @@ describe('GraphView', () => {
         expect(screen.getByText('Organization')).toBeInTheDocument()
     })
 
-    test('повинен відображати стан "Г АФ ПО ОЖНІЙ", якщо даних немає', async () => {
+    test('повинен відображати стан "ГРАФ ПО ОЖНІЙ", якщо даних немає', async () => {
         (api.graph.getSummary as any).mockResolvedValue({
             total_nodes: 0,
             total_edges: 0,
@@ -114,7 +114,7 @@ describe('GraphView', () => {
         })
 
         await waitFor(() => {
-            expect(screen.getByText(/Г АФ ПО ОЖНІЙ/i)).toBeInTheDocument()
+            expect(screen.getByText(/ГРАФ ПО ОЖНІЙ/i)).toBeInTheDocument()
         })
     })
 
@@ -126,7 +126,7 @@ describe('GraphView', () => {
         })
 
         await waitFor(() => {
-            expect(screen.getByText(/Г АФ ПО ОЖНІЙ/i)).toBeInTheDocument()
+            expect(screen.getByText(/ГРАФ ПО ОЖНІЙ/i)).toBeInTheDocument()
         })
     })
 })

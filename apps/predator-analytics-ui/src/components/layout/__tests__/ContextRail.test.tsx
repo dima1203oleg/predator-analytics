@@ -68,7 +68,7 @@ describe('ContextRail', () => {
               entityId: 'entity-1',
               entityType: 'контрагент',
               title: 'ТОВ Орбіта',
-              subtitle: 'ЄД ПОУ 12345678',
+              subtitle: 'ЄДРПОУ 12345678',
               status: { label: ' изик: Підвищений', tone: 'warning' },
               actions: [],
               insights: [],
@@ -84,7 +84,7 @@ describe('ContextRail', () => {
     );
 
     expect(await screen.findByText('ТОВ Орбіта')).toBeInTheDocument();
-    expect(screen.getByText('ЄД ПОУ 12345678')).toBeInTheDocument();
+    expect(screen.getByText('ЄДРПОУ 12345678')).toBeInTheDocument();
     expect(screen.getByText(' изик: Підвищений')).toBeInTheDocument();
   });
 });

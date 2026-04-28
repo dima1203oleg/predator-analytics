@@ -56,7 +56,7 @@ class AgentStatus(BaseModel):
 
 
 class AntigravityOrchestratorStatus(BaseModel):
-    """Загальний стан системи Antigravity Coder (WRAITH-Stabilized)"""
+    """Загальний стан системи Antigravity Coder (ELITE-Stabilized)"""
     is_running: bool = False
     active_tasks: int = 0
     completed_tasks: int = 0

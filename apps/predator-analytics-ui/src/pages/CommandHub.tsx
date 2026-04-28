@@ -41,7 +41,7 @@ const CommandHub: React.FC = () => {
 
   return (
     <HubLayout
-      title="КОМАНДНИЙ ЦЕНТ "
+      title="КОМАНДНИЙ ЦЕНТР"
       subtitle="Центральний штаб управління та стратегічного планування"
       icon={<LayoutDashboard size={24} />}
       tabs={hubTabs}

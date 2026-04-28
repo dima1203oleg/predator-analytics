@@ -1,4 +1,4 @@
-"""Orchestrator Service — PREDATOR Analytics v56.5-ELITE.
+"""Orchestrator Service — PREDATOR Analytics v61.0-ELITE.
 
 Управління життєвим циклом системних компонентів (pods, containers).
 """

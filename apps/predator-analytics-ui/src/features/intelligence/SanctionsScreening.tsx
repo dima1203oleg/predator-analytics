@@ -1,9 +1,9 @@
 /**
- * 🛡️ САНКЦІЙНА МАТ ИЦЯ | v58.2-WRAITH
+ * 🛡️ САНКЦІЙНА МАТ ИЦЯ | v61.0-ELITE
  * PREDATOR Analytics — Sanctions Screening & Compliance
  *
  * Перевірка сутностей за міжнародними санкційними списками
- * (OFAC, EU, UN, UK,  НБО) та PEP-статусом.
+ * (OFAC, EU, UN, UK, РНБО) та PEP-статусом.
  * Sovereign Power Design · Classified · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -55,9 +55,9 @@ import {
     type ScreeningResult,
 } from './sanctionsScreening.utils';
 
-type SelectableListType = 'OFAC' | 'EU' | 'UN' | 'UK' | ' НБО' | 'PEP';
+type SelectableListType = 'OFAC' | 'EU' | 'UN' | 'UK' | 'РНБО' | 'PEP';
 
-const SELECTABLE_LISTS: SelectableListType[] = ['OFAC', 'EU', 'UN', 'UK', ' НБО', 'PEP'];
+const SELECTABLE_LISTS: SelectableListType[] = ['OFAC', 'EU', 'UN', 'UK', 'РНБО', 'PEP'];
 
 const severityConfig: Record<SanctionSeverity, { bg: string; border: string; text: string; label: string }> = {
     high: {
@@ -121,7 +121,7 @@ const listConfigs: Record<string, { color: string; flag: string }> = {
     EU: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇪🇺' },
     UN: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🌐' },
     UK: { color: 'bg-white/5 text-slate-300 border-white/10', flag: '🇬🇧' },
-    ' НБО': { color: 'bg-rose-600/20 text-rose-500 border-rose-600/40', flag: '🇺🇦' },
+    'РНБО': { color: 'bg-rose-600/20 text-rose-500 border-rose-600/40', flag: '🇺🇦' },
     PEP: { color: 'bg-rose-600/10 text-rose-500 border-rose-600/20', flag: '👤' },
     PREDATOR: { color: 'bg-rose-500/10 text-rose-500 border-rose-500/40 font-black', flag: '🦅' },
 };
@@ -288,7 +288,7 @@ const SanctionsScreening: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SanctionsHub',
-                    message: ` ЕЖИМ АВТОНОМНОГО СК ИНІНГУ [${backendStatus.nodeSource}]: Доступ до глобальних списків обмежено. Використовується MIRROR_VAULT.`,
+                    message: `РЕЖИМ АВТОНОМНОГО СК ИНІНГУ [${backendStatus.nodeSource}]: Доступ до глобальних списків обмежено. Використовується MIRROR_VAULT.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'COMPLIANCE_OFFLINE'
@@ -400,7 +400,7 @@ const SanctionsScreening: React.FC = () => {
                                             САНКЦІЙНИЙ_ХАБ // MATRIX_ARRAY
                                         </span>
                                         <div className="h-px w-12 bg-rose-500/20" />
-                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                                        <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                                      </div>
                                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none font-serif">
                                         САНКЦІЙНА <span className="text-rose-600 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">МАТ ИЦЯ</span>
@@ -410,7 +410,7 @@ const SanctionsScreening: React.FC = () => {
                         }
                         breadcrumbs={['OSINT-HUB', 'САНКЦІЇ', 'GLOBAL_SCREENING_v58.2']}
                         badges={[
-                            { label: 'SOVEREIGN_WRAITH_FORCE', color: 'amber', icon: <Zap size={10} /> },
+                            { label: 'SOVEREIGN_ELITE_FORCE', color: 'amber', icon: <Zap size={10} /> },
                             { label: 'SENTINEL_SHIELD_ACTIVE', color: 'success', icon: <ShieldCheck size={10} /> },
                         ]}
                         stats={[
@@ -469,7 +469,7 @@ const SanctionsScreening: React.FC = () => {
                     ))}
                 </div>
 
-                {/* SEARCH SECTION WRAITH */}
+                {/* SEARCH SECTION ELITE */}
                 <TacticalCard variant="holographic" className="relative mb-16 overflow-hidden p-16 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl group/search">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(225,29,72,0.03),transparent_70%)] pointer-events-none" />
                     <CyberOrb color="rose" size="lg" intensity="low" className="right-0 top-0 opacity-[0.05]" />
@@ -555,7 +555,7 @@ const SanctionsScreening: React.FC = () => {
                 </TacticalCard>
 
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-5 h-full min-h-[800px]">
-                    {/* LEFT: SESSION LOG WRAITH */}
+                    {/* LEFT: SESSION LOG ELITE */}
                     <div className="space-y-6 lg:col-span-2 flex flex-col">
                         <div className="mb-6 flex items-center gap-6 px-10 py-5 bg-black/40 border-l-4 border-rose-500 rounded-r-3xl">
                             <History className="text-rose-600" size={22} />
@@ -595,7 +595,7 @@ const SanctionsScreening: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* RIGHT: DETAILED ANALYSIS WRAITH */}
+                    {/* RIGHT: DETAILED ANALYSIS ELITE */}
                     <div className="lg:col-span-3 flex flex-col">
                         <AnimatePresence mode="wait">
                             {selected ? (
@@ -667,7 +667,7 @@ const SanctionsScreening: React.FC = () => {
                                                         </motion.div>
                                                         <h3 className="text-4xl font-black uppercase tracking-tighter text-white font-serif italic mb-6">NULL_RISK_DETECTED</h3>
                                                         <p className="max-w-md text-[13px] text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-relaxed border-t border-white/5 pt-8">
-                                                            СУТНІСТЬ ВІДСУТНЯ В АКТИВНІЙ МАПІ ТЕ О ИЗМУ ТА САНКЦІЙ. СТАТУС — <span className="font-bold text-emerald-500 underline decoration-emerald-500/20 decoration-8">ЧИСТО</span>.
+                                                            СУТНІСТЬ ВІДСУТНЯ В АКТИВНІЙ МАПІ ТЕ ОРИЗМУ ТА САНКЦІЙ. СТАТУС — <span className="font-bold text-emerald-500 underline decoration-emerald-500/20 decoration-8">ЧИСТО</span>.
                                                         </p>
                                                     </div>
                                                 )}
@@ -677,7 +677,7 @@ const SanctionsScreening: React.FC = () => {
                                                 <div className="rounded-[2.5rem] border-2 border-white/[0.04] bg-black p-10 shadow-4xl group/lists relative overflow-hidden">
                                                     <div className="absolute inset-0 bg-rose-500/[0.02] opacity-0 group-hover/lists:opacity-100 transition-opacity" />
                                                     <div className="text-[12px] font-black uppercase tracking-[0.5em] text-slate-800 italic font-serif flex items-center gap-4 mb-8 underline decoration-rose-600/20 underline-offset-8">
-                                                        <Boxes size={18} className="text-rose-600" /> ПЕ ЕВІ ЕНІ  ЕЄСТ И
+                                                        <Boxes size={18} className="text-rose-600" /> ПЕ ЕВІ ЕНІ РЕЄСТРИ
                                                     </div>
                                                     <div className="flex flex-wrap gap-4 relative z-10">
                                                         {(selected.listsChecked.length > 0 ? selected.listsChecked : selectedRegistrySet).map((list) => {
@@ -700,7 +700,7 @@ const SanctionsScreening: React.FC = () => {
                                                         <FileText size={18} className="text-rose-600" /> ОБМЕЖЕННЯ_ДОСТУПУ
                                                     </div>
                                                     <p className="text-[13px] leading-relaxed text-slate-600 font-bold italic uppercase tracking-tight relative z-10 border-l-4 border-rose-900/30 pl-8">
-                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг потребують доступу рівня <span className="text-rose-500">TITAN_WRAITH</span>.
+                                                        Цей екран показує тільки підтверджені збіги та метадані `/sanctions/screen`. PDF, графове досьє та окремий моніторинг потребують доступу рівня <span className="text-rose-500">TITAN_ELITE</span>.
                                                     </p>
                                                 </div>
                                             </div>
@@ -710,7 +710,7 @@ const SanctionsScreening: React.FC = () => {
                             ) : (
                                 <EmptyPanel
                                     title="AWAITING_ENTITY_VETTING"
-                                    description="ДЕТАЛІЗАЦІЯ САНКЦІЙНОГО П ОФІЛЮ МОЖЛИВА ТІЛЬКИ ПІСЛЯ ПІДТВЕ ДЖЕНОЇ ВІДПОВІДІ API_CORE.  ЕЗУЛЬТАТИ ВІДОБ АЖАЮТЬСЯ В  ЕАЛЬНОМУ ЧАСІ."
+                                    description="ДЕТАЛІЗАЦІЯ САНКЦІЙНОГОПРОФІЛЮ МОЖЛИВА ТІЛЬКИ ПІСЛЯ ПІДТВЕРДЖЕНОЇ ВІДПОВІДІ API_CORE.  ЕЗУЛЬТАТИ ВІДОБ АЖАЮТЬСЯ В РЕАЛЬНОМУ ЧАСІ."
                                 />
                             )}
                         </AnimatePresence>

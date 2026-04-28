@@ -15,7 +15,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 /**
  * 🦅 Resource Guard (VRAM/CPU Guard) | v61.0-ELITE
- * СТРАТЕГІЧНИЙ_ЗАХИСТ_ ЕСУ СІВ: Управління навантаженням та VRAM.
+ * СТРАТЕГІЧНИЙ_ЗАХИСТ_РЕСУРСІВ: Управління навантаженням та VRAM.
  */
 
 // ─── Допоміжні компоненти ──────────────────────────────────────────────────────
@@ -150,7 +150,7 @@ export const ResourceGuardTab: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
                <Shield size={14} />
-               <span>РІВЕНЬ_ГА ДУ: ELITE_WRAITH_v3</span>
+               <span>РІВЕНЬ_ГА ДУ: ELITE_ELITE_v3</span>
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export const ResourceGuardTab: React.FC = () => {
             </div>
             
             <div className="space-y-6">
-              <GuardMeter label="ЗАГАЛЬНЕ_ВИКО ИСТАННЯ_VRAM" value={currentVram} total={VRAM_TOTAL_LIMIT} unit="GB" color="rose" />
+              <GuardMeter label="ЗАГАЛЬНЕ_ВИКОРИСТАННЯ_VRAM" value={currentVram} total={VRAM_TOTAL_LIMIT} unit="GB" color="rose" />
               
               <div className="p-8 glass-wraith border-2 border-white/5 rounded-[2.5rem] space-y-8 relative overflow-hidden shadow-4xl group">
                  <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
@@ -325,7 +325,7 @@ export const ResourceGuardTab: React.FC = () => {
                  {toggleFailover.isPending ? (
                    <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                  ) : (
-                   llmTriStateMode === 'SOVEREIGN' ? 'СУВЕ ЕННИЙ_ ЕЖИМ_АКТИВОВАНО' : 'АКТИВУВАТИ_СУВЕ ЕННИЙ_ОФЛОАД'
+                   llmTriStateMode === 'SOVEREIGN' ? 'СУВЕ ЕННИЙ_РЕЖИМ_АКТИВОВАНО' : 'АКТИВУВАТИ_СУВЕ ЕННИЙ_ОФЛОАД'
                  )}
                </button>
             </div>

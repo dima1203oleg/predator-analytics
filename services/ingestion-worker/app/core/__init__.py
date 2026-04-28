@@ -1,1 +1,1 @@
-"""Core package — PREDATOR Analytics v55.1 Ironclad."""
+"""Core package — PREDATOR Analytics v61.0-ELITE Ironclad."""

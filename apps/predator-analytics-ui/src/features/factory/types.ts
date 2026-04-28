@@ -44,7 +44,7 @@ export interface LlmModeState {
 
 // ─── VRAM Scheduler ──────────────────────────────────────────────────────────
 
-/**  озподіл VRAM (GTX 1080, 8GB) */
+/** розподіл VRAM (GTX 1080, 8GB) */
 export interface VramAllocation {
   llm_gb: number;
   rendering_gb: number;
@@ -103,7 +103,7 @@ export interface FitnessMetrics {
 
 // ─── Risk Engine ─────────────────────────────────────────────────────────────
 
-/**  івень ризику зміни */
+/** рівень ризику зміни */
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
 
 /** Подія ризику */

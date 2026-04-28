@@ -1,4 +1,4 @@
-"""Kafka Event Schemas — PREDATOR Analytics v58.2-WRAITH.
+"""Kafka Event Schemas — PREDATOR Analytics v61.0-ELITE.
 
 Канонічні Pydantic v2 схеми для всіх подій Kafka Event Bus.
 Топіки: tenant.{id}.{category}.{name} (TZ §5.1)

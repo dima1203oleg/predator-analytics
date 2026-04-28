@@ -110,7 +110,7 @@ describe('MarketPage Component', () => {
         fireEvent.click(declarationsTab);
 
         // Перевіряємо заголовок вкладки
-        expect(await screen.findByText('реєстр митних декларацій')).toBeInTheDocument();
+        expect(await screen.findByText('Реєстр митних декларацій')).toBeInTheDocument();
         
         // Перевіряємо дані з моків
         expect(await screen.findByText('Company A')).toBeInTheDocument();

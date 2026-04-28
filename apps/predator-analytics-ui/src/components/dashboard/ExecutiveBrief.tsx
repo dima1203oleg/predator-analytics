@@ -1,9 +1,9 @@
 /**
- * 📊 EXECUTIVE BRIEF //  АНКОВИЙ ЗВІТ CEO | v60.0-ELITE
+ * 📊 EXECUTIVE BRIEF // РАНКОВИЙ ЗВІТ CEO | v60.0-ELITE
  * PREDATOR Analytics — Strategic Intelligence Dashboard
  * 
  * Перший екран, який бачить бізнесмен: ключові метрики, ШІ-аналіз та сигнали.
- * Elite WRAITH Design: Glassmorphism, Cinematic HUD, Dynamic Insights.
+ * Elite ELITE Design: Glassmorphism, Cinematic HUD, Dynamic Insights.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -73,13 +73,13 @@ export const ExecutiveBrief: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-4">
             <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-              СТ АТЕГІЧНА_РОЗВІДКА //  АНКОВИЙ_ЗВІТ
+              СТ АТЕГІЧНА_РОЗВІДКА // РАНКОВИЙ_ЗВІТ
             </span>
             <div className="h-px w-12 bg-emerald-500/20" />
             <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">КОНФІДЕНЦІЙНО</span>
           </div>
           <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-             АНКОВИЙ <span className="text-emerald-500 underline decoration-emerald-500/20 decoration-[10px] underline-offset-8">ЗВІТ</span>
+            РАНКОВИЙ <span className="text-emerald-500 underline decoration-emerald-500/20 decoration-[10px] underline-offset-8">ЗВІТ</span>
           </h2>
         </div>
         <div className="text-right">

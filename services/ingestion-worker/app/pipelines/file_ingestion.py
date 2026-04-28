@@ -1,4 +1,4 @@
-"""File Ingestion Pipeline — PREDATOR Analytics v55.1 Ironclad.
+"""File Ingestion Pipeline — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Повний пайплайн обробки завантажених файлів згідно TZ §2.2.3:
 upload → validate_format → detect_encoding → chunk(50k) → parse_headers →

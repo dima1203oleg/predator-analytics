@@ -1,5 +1,5 @@
 /**
- * 🧪 E2E Verification Citadel | v58.2-WRAITH Testing & Integrity
+ * 🧪 E2E Verification Citadel | v61.0-ELITE Testing & Integrity
  * System Verification Suite - Контрольний стенд перевірки цілісності даних.
  * 
  * Відповідає вимогам "Control Case":
@@ -7,7 +7,7 @@
  * 2. Перевірка кластерів MinIO, PG, Graph, Qdrant
  * 3. Виконання контрольних аналітичних запитів (HS-Code)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -241,7 +241,7 @@ const SystemVerificationSuite: React.FC = () => {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'ETL_Pipeline',
-        message: 'Ініціалізація повного циклу верифікації (v58.2-WRAITH).',
+        message: 'Ініціалізація повного циклу верифікації (v61.0-ELITE).',
         severity: 'info',
         timestamp: new Date().toISOString(),
         code: 'PIPELINE_START'
@@ -251,7 +251,7 @@ const SystemVerificationSuite: React.FC = () => {
     try {
       const job = await api.ingestion.startJob({
         source_type: 'file',
-        config: { note: 'Control Case March Data v58.2-WRAITH' }
+        config: { note: 'Control Case March Data v61.0-ELITE' }
       });
       if (job && job.job_id) {
         setJobId(job.job_id);

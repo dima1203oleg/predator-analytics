@@ -21,7 +21,7 @@ describe('searchView.utils', () => {
                     address: 'Київ, вул. Тестова, 1',
                     capital: '1 000 000 грн',
                     type: 'ТОВ',
-                    source: 'ЄД ПОУ',
+                    source: 'ЄДРПОУ',
                     beneficiaries: ['Петренко П.П.'],
                     connections_count: 4,
                 },
@@ -35,7 +35,7 @@ describe('searchView.utils', () => {
         expect(company.riskLabel).toBe('Під наглядом');
         expect(company.matchScore).toBe(91);
         expect(company.beneficiaries).toEqual(['Петренко П.П.']);
-        expect(company.tags).toContain('ЄД ПОУ');
+        expect(company.tags).toContain('ЄДРПОУ');
     });
 
     it('залишає порожні поля порожніми, а не підміняє вигаданими значеннями', () => {

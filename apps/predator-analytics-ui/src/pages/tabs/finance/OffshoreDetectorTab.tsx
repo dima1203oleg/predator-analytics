@@ -106,11 +106,11 @@ export const OffshoreDetectorTab: React.FC = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto custom-scrollbar pr-2 flex-1">
           {[
-            { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#10b981' },
+            { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕРДЖЕНО', color: '#10b981' },
             { name: 'Sunrise Capital Ltd', jur: 'Кіпр', links: 8, risk: 89, amount: '$21M', ubo: 'ЧАСТКОВО', color: '#059669' },
-            { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#10b981' },
+            { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕРДЖЕНО', color: '#10b981' },
             { name: 'Belize Trust Corp', jur: 'Белізе', links: 5, risk: 82, amount: '$18M', ubo: 'НЕВІДОМО', color: '#059669' },
-            { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#10b981' },
+            { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕРДЖЕНО', color: '#10b981' },
             { name: 'Zodiac Nexus FZ', jur: 'Панама', links: 7, risk: 85, amount: '$12M', ubo: 'НЕВІДОМО', color: '#059669' },
           ].map((s, i) => (
             <div key={i} className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/[0.03] hover:border-emerald-500/30 transition-all group flex flex-col justify-between h-[300px] shadow-2xl relative overflow-hidden">
@@ -128,7 +128,7 @@ export const OffshoreDetectorTab: React.FC = () => {
                   <p className="text-4xl font-black italic font-mono text-white leading-none tracking-tighter">{s.amount}</p>
                   <span className={cn(
                     "text-[8px] font-black italic tracking-widest uppercase px-3 py-1 rounded-lg border inline-block",
-                    s.ubo === 'ПІДТВЕ ДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
+                    s.ubo === 'ПІДТВЕРДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
                     s.ubo === 'ЧАСТКОВО' ? "bg-amber-600/10 border-amber-600/30 text-amber-500" : 
                     "bg-slate-700/10 border-slate-700/30 text-slate-700"
                   )}>КБВ: {s.ubo}</span>

@@ -57,7 +57,7 @@ export const CustomsMonitorTab: React.FC = () => {
           <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter flex items-center gap-4">
             <Anchor size={32} className="text-yellow-500" /> Митний моніторинг
           </h2>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] pl-12 border-l-2 border-yellow-500/20">WRAITH_MANIFEST_XRAY // LIVE_FEED</p>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] pl-12 border-l-2 border-yellow-500/20">ELITE_MANIFEST_XRAY // LIVE_FEED</p>
         </div>
         <div className="flex gap-3">
           {['analytics', 'risks'].map((t) => (

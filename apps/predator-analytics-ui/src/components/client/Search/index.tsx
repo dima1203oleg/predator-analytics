@@ -1,5 +1,5 @@
 /**
- * 🛰️ GLOBAL OSINT SEARCH // ГЛОБАЛЬНИЙ ПОШУК | v58.2-WRAITH
+ * 🛰️ GLOBAL OSINT SEARCH // ГЛОБАЛЬНИЙ ПОШУК | v61.0-ELITE
  * PREDATOR Analytics — High-Fidelity Retrieval Engine
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -78,7 +78,7 @@ export const Search: React.FC = () => {
                   ГЛОБАЛЬНИЙ <span className="text-blue-600 underline decoration-blue-600/20 decoration-8 italic uppercase">ПОШУК</span>
                 </h1>
                 <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                  ПОШУК КОМПАНІЙ ТА ФІЗИЧНИХ ОСІБ В  ЕЄСТ АХ CERS
+                  ПОШУК КОМПАНІЙ ТА ФІЗИЧНИХ ОСІБ В РЕЄСТРАХ CERS
                 </p>
               </div>
             </div>
@@ -97,7 +97,7 @@ export const Search: React.FC = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Введіть код ЄД ПОУ, назву компанії або об'єкта..."
+              placeholder="Введіть код ЄДРПОУ, назву компанії або об'єкта..."
               className="w-full bg-black/60 border-2 border-white/[0.04] group-focus-within:border-blue-600/40 rounded-[2.5rem] px-10 py-8 pl-20 text-xl font-black italic text-white placeholder:text-slate-700 outline-none shadow-3xl backdrop-blur-3xl transition-all"
             />
             <SearchIcon className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-blue-500 transition-colors" size={32} />
@@ -163,7 +163,7 @@ export const Search: React.FC = () => {
                           <h3 className="text-3xl font-black text-white group-hover:text-blue-400 transition-colors uppercase italic tracking-tighter leading-none">{result.name}</h3>
                           <div className="flex items-center gap-6">
                              <div className="flex items-center gap-2 px-3 py-1 bg-white/[0.03] border border-white/[0.05] rounded-xl text-[10px] font-black text-slate-500 italic uppercase">
-                                <Fingerprint size={12} className="text-blue-600" /> ЄД ПОУ: {result.edrpou || result.id || 'N/A'}
+                                <Fingerprint size={12} className="text-blue-600" /> ЄДРПОУ: {result.edrpou || result.id || 'N/A'}
                              </div>
                              <div className="h-1 w-1 rounded-full bg-slate-800" />
                              <div className="flex items-center gap-2 text-[10px] font-black text-amber-500 uppercase tracking-widest italic">
@@ -199,7 +199,7 @@ export const Search: React.FC = () => {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-40 bg-black border-2 border-dashed border-white/[0.02] rounded-[4rem] shadow-3xl">
                 <SearchIcon size={64} className="mx-auto text-slate-800 mb-8" />
                 <p className="text-slate-500 font-black italic text-xl uppercase tracking-widest">ОБʼЄКТІВ_НЕ_ЗНАЙДЕНО</p>
-                <p className="text-slate-700 text-xs mt-4 uppercase font-bold tracking-[0.3em]">Спробуйте змінити ключові слова або ЄД ПОУ.</p>
+                <p className="text-slate-700 text-xs mt-4 uppercase font-bold tracking-[0.3em]">Спробуйте змінити ключові слова або ЄДРПОУ.</p>
               </motion.div>
             ) : (
               <div className="text-center py-64 opacity-[0.03]">

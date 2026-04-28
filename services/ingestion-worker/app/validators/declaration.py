@@ -1,4 +1,4 @@
-"""Declaration Validator — PREDATOR Analytics v55.1 Ironclad.
+"""Declaration Validator — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Валідація митних декларацій згідно TZ §2.2.3.
 """

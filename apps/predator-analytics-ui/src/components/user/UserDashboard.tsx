@@ -187,7 +187,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ privacyMode, onSel
                     <AssetMap />
                 </TacticalCard>
 
-                <TacticalCard title="Ваш Профіль  изику (360°)" className="h-[300px] panel-3d">
+                <TacticalCard title="Ваш Профіль ризику (360°)" className="h-[300px] panel-3d">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={RISK_RADAR_DATA}>
                             <PolarGrid stroke="#334155" />

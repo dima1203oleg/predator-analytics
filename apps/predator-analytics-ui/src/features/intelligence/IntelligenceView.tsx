@@ -1,5 +1,5 @@
 /**
- *   SOVEREIGN INTELLIGENCE NEXUS | v58.2-WRAITH
+ *   SOVEREIGN INTELLIGENCE NEXUS | v61.0-ELITE
  * PREDATOR СТРАТЕГІЧНИЙ ОСІНТ-ХАБ (INTEL NEXUS)
  * 
  * Центральна точка розвідувального циклу:
@@ -121,7 +121,7 @@ const IntelligenceView: React.FC = () => {
                                          {isOffline ? 'MIRROR_NEXUS' : 'INTEL_NEXUS'} // GLOBAL_RECON
                                        </span>
                                        <div className="h-px w-10 bg-[#D4AF37]/20" />
-                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v58.2-WRAITH</span>
+                                       <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic font-bold">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
                                         ЦЕНТ  <span className="text-[#D4AF37] underline decoration-[#D4AF37]/20 decoration-8"> ОЗВІДКИ</span>
@@ -251,7 +251,7 @@ const IntelligenceView: React.FC = () => {
                                     {[
                                         { label: 'ЗАТ ИМКА_СИНАПСІВ', value: '4.2ms', sub: 'ОПТИМІЗОВАНО', c: 'text-[#D4AF37]' },
                                         { label: 'ІНДЕКС_ЕНТ ОПІЇ', value: '0.084', sub: 'СТАБІЛЬНО', c: 'text-[#D4AF37]' },
-                                        { label: 'ДОВІ А_ ОЗВІДКИ', value: 'SURPLUS', sub: 'WRAITH-01', c: 'text-[#D4AF37]' },
+                                        { label: 'ДОВІ А_ ОЗВІДКИ', value: 'SURPLUS', sub: 'ELITE-01', c: 'text-[#D4AF37]' },
                                         { label: 'АКТИВНІ_АГЕНТИ', value: '14/14', sub: 'РОЗГОРНУТО', c: 'text-[#D4AF37]' },
                                     ].map((s, i) => (
                                         <div key={i} className="text-left font-black italic">
@@ -330,7 +330,7 @@ const IntelligenceView: React.FC = () => {
                                    {[
                                       { l: 'ШАНСИ  ИНКУ', v: '12 АКТИВНИХ', c: 'text-[#D4AF37]', icon: BarChart3 },
                                       { l: 'П ИХОВАНІ РИЗИКИ', v: '04 ВИЯВЛЕНО', c: 'text-[#D97706]', icon: AlertCircle },
-                                      { l: 'П ІО ИТЕТИ_CEO', v: '03 К ИТИЧНІ', c: 'text-white', icon: Star },
+                                      { l: 'ПРІОРИТЕТИ_CEO', v: '03 К ИТИЧНІ', c: 'text-white', icon: Star },
                                    ].map((m, i) => (
                                       <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:border-[#D4AF37]/20 transition-all cursor-pointer group">
                                          <div className="flex items-center gap-4">

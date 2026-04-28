@@ -136,7 +136,7 @@ const normalizeLevel = (value: string | null): { label: string; tone: AIControlT
       return { label: 'УВАГА', tone: 'amber' };
     case 'ok':
     case 'success':
-      return { label: 'НО МА', tone: 'emerald' };
+      return { label: 'НОРМА', tone: 'emerald' };
     default:
       return { label: 'ІНФО', tone: 'sky' };
   }

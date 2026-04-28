@@ -11,7 +11,7 @@ const EconomicGraphExplorer: React.FC = () => {
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Імітація роботи з Neo4j / Graph API v58.2-WRAITH
+    // Імітація роботи з Neo4j / Graph API v61.0-ELITE
     const mockNodes = [
         { id: '1', label: 'ТОВ "Метінвест"', type: 'company', risk: 'stable' },
         { id: '2', label: 'Ахметов  .Л.', type: 'person', risk: 'watchlist' },
@@ -34,7 +34,7 @@ const EconomicGraphExplorer: React.FC = () => {
                                 {t('graph.title')}
                             </CardTitle>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                                Neural Relations Engine v58.2-WRAITH
+                                Neural Relations Engine v61.0-ELITE
                             </p>
                         </div>
                     </div>

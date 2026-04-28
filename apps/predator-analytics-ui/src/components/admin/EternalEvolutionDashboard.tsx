@@ -105,7 +105,7 @@ export const EternalEvolutionDashboard: React.FC = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
               <div>
-                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1"> івень Автономії</div>
+                <div className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-1">рівень Автономії</div>
                 <div className="text-3xl font-black text-white">{status?.autonomy_level.toFixed(1)}</div>
               </div>
               <div>

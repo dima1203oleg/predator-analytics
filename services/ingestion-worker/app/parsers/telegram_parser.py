@@ -1,4 +1,4 @@
-"""Telegram Parser — PREDATOR Analytics v55.1 Ironclad.
+"""Telegram Parser — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Extracting intelligence from Telegram channels and groups.
 """

@@ -1,4 +1,4 @@
-"""AI Service — PREDATOR Analytics v58.2-WRAITH.
+"""AI Service — PREDATOR Analytics v61.0-ELITE.
 
 LiteLLM MCP Router з підтримкою:
 - Tri-State Routing: SOVEREIGN (Local) → HYBRID → CLOUD

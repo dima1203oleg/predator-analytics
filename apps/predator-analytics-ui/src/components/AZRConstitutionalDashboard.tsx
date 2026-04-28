@@ -1,6 +1,6 @@
 /**
- * 🏛️ AZR Constitutional Sovereign Controller | v58.2-WRAITH Premium Matrix
- * Predator v58.2-WRAITH | Neural Analytics*
+ * 🏛️ AZR Constitutional Sovereign Controller | v61.0-ELITE Premium Matrix
+ * Predator v61.0-ELITE | Neural Analytics*
  * 
  * Автономна система управління конституційними аксіомами (AZR Runtime):
  * - Моніторинг та енфорсмент аксіом ядра
@@ -8,7 +8,7 @@
  * - Детекція парадигмальних порушень
  * - Візуалізація ризикової експозиції через Truth Ledger
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -125,7 +125,7 @@ const AxiomCard: React.FC<{ axiom: typeof AXIOMS[0]; violations: number }> = ({ 
           {isViolated ? (
             <div className="flex items-center gap-2 px-3 py-1 bg-rose-500/20 rounded-full border border-rose-500/30 animate-pulse">
               <AlertTriangle size={12} className="text-rose-400" />
-              <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{violations} ПО УШЕНЬ</span>
+              <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">{violations} ПОРУШЕНЬ</span>
             </div>
           ) : (
             <div className="p-1 px-2 bg-emerald-500/10 rounded-full border border-emerald-500/20 flex items-center gap-2">
@@ -283,7 +283,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-3 px-4 py-1.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">
                 <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest font-mono">AZR_RUNTIME_v58.2-WRAITH.1_STABLE</span>
+                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest font-mono">AZR_RUNTIME_v61.0-ELITE.1_STABLE</span>
               </div>
               {constitution?.active && (
                 <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">
@@ -483,7 +483,7 @@ export const AZRConstitutionalDashboard: React.FC = () => {
           <div className="flex items-center gap-8 pt-8 border-t border-white/5 w-full justify-center">
             <div className="flex items-center gap-3">
               <Lock size={14} className="text-indigo-500" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">SOVEREIGN_MANDATE_v58.2-WRAITH</span>
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">SOVEREIGN_MANDATE_v61.0-ELITE</span>
             </div>
             <div className="flex items-center gap-3">
               <Hexagon size={14} className="text-cyan-500" />

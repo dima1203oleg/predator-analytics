@@ -106,7 +106,7 @@ describe('EvolutionView', () => {
         render(<EvolutionView />);
         
         // Ledger tab
-        const ledgerTab = screen.getByText(/ ЕЄСТ /i);
+        const ledgerTab = screen.getByText(/РЕЄСТР/i);
         fireEvent.click(ledgerTab);
         expect(screen.getByTestId('truth-ledger')).toBeInTheDocument();
 

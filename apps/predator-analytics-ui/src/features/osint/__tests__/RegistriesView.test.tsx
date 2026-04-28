@@ -93,7 +93,7 @@ describe('RegistriesView', () => {
     it('повинен рендерити базові елементи інтерфейсу', () => {
         render(<RegistriesView />);
         expect(screen.getByText('БІЗНЕС ДОСЬЄ')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/ВВЕДІТЬ ЄД ПОУ АБО НАЗВУ КОМПАНІЇ/i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/ВВЕДІТЬ ЄДРПОУ АБО НАЗВУ КОМПАНІЇ/i)).toBeInTheDocument();
     });
 
     it('повинен оновлювати живий годинник', () => {
@@ -104,7 +104,7 @@ describe('RegistriesView', () => {
             vi.advanceTimersByTime(1000);
         });
         
-        expect(screen.getByText(/ ЕЄСТ _ОНЛАЙН/)).toBeInTheDocument();
+        expect(screen.getByText(/РЕЄСТР_ОНЛАЙН/)).toBeInTheDocument();
         vi.useRealTimers();
     });
 
@@ -118,7 +118,7 @@ describe('RegistriesView', () => {
 
         render(<RegistriesView />);
         
-        const input = screen.getByPlaceholderText(/ВВЕДІТЬ ЄД ПОУ АБО НАЗВУ КОМПАНІЇ/i);
+        const input = screen.getByPlaceholderText(/ВВЕДІТЬ ЄДРПОУ АБО НАЗВУ КОМПАНІЇ/i);
         const searchBtn = screen.getByRole('button', { name: /ШУКАТИ/i });
 
         fireEvent.change(input, { target: { value: 'test' } });
@@ -140,7 +140,7 @@ describe('RegistriesView', () => {
             edrpou: '12345678',
             name: 'TEST COMPANY 1',
             address: 'Test Address 123',
-            status: 'ЗА ЕЄСТ ОВАНО',
+            status: 'ЗАРЕЄСТРОВАНО',
             authorized_capital: '100,000 UAH',
             activities: ['Activity 1', 'Activity 2'],
             risk_factors: ['Risk 1'],
@@ -156,7 +156,7 @@ describe('RegistriesView', () => {
 
         render(<RegistriesView />);
         
-        const input = screen.getByPlaceholderText(/ВВЕДІТЬ ЄД ПОУ АБО НАЗВУ КОМПАНІЇ/i);
+        const input = screen.getByPlaceholderText(/ВВЕДІТЬ ЄДРПОУ АБО НАЗВУ КОМПАНІЇ/i);
         fireEvent.change(input, { target: { value: '12345678' } });
         fireEvent.click(screen.getByRole('button', { name: /ШУКАТИ/i }));
 
@@ -177,7 +177,7 @@ describe('RegistriesView', () => {
 
         render(<RegistriesView />);
         
-        fireEvent.change(screen.getByPlaceholderText(/ВВЕДІТЬ ЄД ПОУ АБО НАЗВУ КОМПАНІЇ/i), { target: { value: 'error' } });
+        fireEvent.change(screen.getByPlaceholderText(/ВВЕДІТЬ ЄДРПОУ АБО НАЗВУ КОМПАНІЇ/i), { target: { value: 'error' } });
         fireEvent.click(screen.getByRole('button', { name: /ШУКАТИ/i }));
 
         // Wait for fallback results
@@ -199,7 +199,7 @@ describe('RegistriesView', () => {
 
         render(<RegistriesView />);
         
-        fireEvent.change(screen.getByPlaceholderText(/ВВЕДІТЬ ЄД ПОУ АБО НАЗВУ КОМПАНІЇ/i), { target: { value: '12345678' } });
+        fireEvent.change(screen.getByPlaceholderText(/ВВЕДІТЬ ЄДРПОУ АБО НАЗВУ КОМПАНІЇ/i), { target: { value: '12345678' } });
         fireEvent.click(screen.getByRole('button', { name: /ШУКАТИ/i }));
 
         const resultCard = await screen.findByText('TEST COMPANY 1');

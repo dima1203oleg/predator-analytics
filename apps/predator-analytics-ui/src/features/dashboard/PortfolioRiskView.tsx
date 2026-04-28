@@ -1,5 +1,5 @@
 /**
- * 💼 P&L РИЗИКІВ ПО ТФЕЛЮ | v58.2-WRAITH
+ * 💼 P&L РИЗИКІВ ПО ТФЕЛЮ | v61.0-ELITE
  * PREDATOR Analytics — Portfolio Risk Management
  *
  * Скільки $ у зоні ризику прямо зараз:
@@ -137,7 +137,7 @@ const RISK_COLOR: Partial<Record<RiskLevelValue, string>> = {
 const RISK_LABEL: Partial<Record<RiskLevelValue, string>> = {
   critical: 'К ИТИЧНИЙ',
   high:     'ВИСОКИЙ',
-  medium:   'СЕ ЕДНІЙ',
+  medium:   'СЕРЕДНІЙ',
   low:      'НИЗЬКИЙ',
 };
 
@@ -153,7 +153,7 @@ const PortfolioRiskView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'PortfolioRisk',
-          message: ` ЕЖИМ АВТОНОМНОЇ РИЗИК-ФО ЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
+          message: `РЕЖИМ АВТОНОМНОЇ РИЗИК-ФО ЕНЗИКИ [${nodeSource}]: Використовується локальна база RISK_NODES.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'RISK_OFFLINE'
@@ -212,7 +212,7 @@ const PortfolioRiskView: React.FC = () => {
                   <div className="flex items-center gap-4 mb-3">
                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#e11d48]" />
                     <span className="text-[10px] font-black text-red-500/80 uppercase tracking-[0.6em]">
-                      ЦЕНТ  ПО ТФЕЛЬНИХ РИЗИКІВ · v58.2-WRAITH
+                      ЦЕНТ  ПО ТФЕЛЬНИХ РИЗИКІВ · v61.0-ELITE
                     </span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg]">
@@ -261,7 +261,7 @@ const PortfolioRiskView: React.FC = () => {
             }
           />
 
-          {/* ── KPI GRID WRAITH ── */}
+          {/* ── KPI GRID ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { l: 'К ИТИЧНІ ЛОТИ',    v: '2',          sub: 'POS-001, POS-002',       c: '#E11D48' },
@@ -448,7 +448,7 @@ const PortfolioRiskView: React.FC = () => {
                        </div>
                     </TacticalCard>
 
-                    {/* ── ТАЙМЛАЙН WRAITH ── */}
+                    {/* ── ТАЙМЛАЙН ELITE ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl">
                        <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-10 flex items-center gap-4 italic relative">
                           <Activity size={18} className="text-red-600 animate-pulse" />
@@ -477,7 +477,7 @@ const PortfolioRiskView: React.FC = () => {
                        </div>
                     </TacticalCard>
 
-                    {/* ── СЕКТО НИЙ РОЗПОДІЛ WRAITH ── */}
+                    {/* ── СЕКТО НИЙ РОЗПОДІЛ ELITE ── */}
                     <TacticalCard className="p-10 bg-black/60 border-2 border-white/5 rounded-[3.5rem] shadow-3xl overflow-hidden relative">
                        <div className="absolute top-0 right-0 p-8 opacity-5">
                           <Radar size={100} className="text-red-500" />

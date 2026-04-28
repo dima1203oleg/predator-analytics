@@ -33,7 +33,7 @@ const SuperIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SuperIntelligence',
-                    message: 'АВТОНОМНИЙ  ЕЖИМ ЯД А (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
+                    message: 'АВТОНОМНИЙ РЕЖИМ ЯД А (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'CORE_DECOUPLING'
@@ -43,10 +43,10 @@ const SuperIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SuperIntelligence',
-                    message: 'ПОТОКОВА СИНХ ОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_WRAITH). Повний доступ до GPU-ферми.',
+                    message: 'ПОТОКОВА СИНХ ОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_ELITE). Повний доступ до GPU-ферми.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
-                    code: 'CORE_SYNC_WRAITH'
+                    code: 'CORE_SYNC_ELITE'
                 }
             }));
         }
@@ -85,7 +85,7 @@ const SuperIntelligenceView: React.FC = () => {
                             icon: <Server size={14} />,
                             color: isOffline ? 'warning' : 'gold'
                         },
-                        { label: 'Версія WRAITH', value: 'v58.2', icon: <Cpu size={14} />, color: 'primary' },
+                        { label: 'Версія ELITE', value: 'v58.2', icon: <Cpu size={14} />, color: 'primary' },
                     ]}
                     actions={
                         <div className="flex flex-wrap gap-4 w-full sm:w-auto">

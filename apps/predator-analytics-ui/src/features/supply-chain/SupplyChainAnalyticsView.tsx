@@ -1,5 +1,5 @@
 /**
- * 🔗 SUPPLY CHAIN MATRIX // ЦИФ ОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v58.2-WRAITH
+ * 🔗 SUPPLY CHAIN MATRIX // ЦИФ ОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v61.0-ELITE
  * PREDATOR Analytics — Supply Chain Risk & Logistics Intelligence
  * 
  * Моніторинг логістичних ланцюгів, AIS-трекінг суден та аналіз маршрутів.
@@ -68,7 +68,7 @@ const getRiskMeta = (value?: number | null) => {
     if (value == null || !Number.isFinite(value)) return { label: 'Н/д', tone: 'text-slate-500', border: 'border-white/10' };
     if (value >= 80) return { label: 'К ИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
     if (value >= 60) return { label: 'ВИСОКИЙ', tone: 'text-amber-500', border: 'border-amber-500/30' };
-    return { label: 'НО МА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
+    return { label: 'НОРМА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
 };
 
 export default function SupplyChainAnalyticsView() {
@@ -104,7 +104,7 @@ export default function SupplyChainAnalyticsView() {
            window.dispatchEvent(new CustomEvent('predator-error', {
               detail: {
                 service: 'SupplyChainMatrix',
-                message: ' ЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
+                message: 'РЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'LOGISTICS_OFFLINE'
@@ -152,7 +152,7 @@ export default function SupplyChainAnalyticsView() {
                                   SUPPLY_CHAIN_MATRIX // DIGITAL_TWINS
                                 </span>
                                 <div className="h-px w-10 bg-cyan-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                                ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase"> АДА </span>

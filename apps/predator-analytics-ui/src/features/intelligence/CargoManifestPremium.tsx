@@ -1,5 +1,5 @@
 /**
- * 📦 CARGO MANIFEST FORENSIC // МИТНА ФО ЕНЗИКА | v58.2-WRAITH
+ * 📦 CARGO MANIFEST FORENSIC // МИТНА ФО ЕНЗИКА | v61.0-ELITE
  * PREDATOR Analytics — Deep Manifest Analysis & Fraud Detection
  * 
  * Аналіз митних декларацій, вантажних маніфестів та виявлення невідповідностей.
@@ -98,7 +98,7 @@ export default function CargoManifestPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CargoForensic',
-          message: ` ЕЖИМ АВТОНОМНОЇ МИТНОЇ ФО ЕНЗИКИ [${nodeSource}]: Доступ до центральної бази обмежено. Використовується MIRROR_VAULT.`,
+          message: `РЕЖИМ АВТОНОМНОЇ МИТНОЇ ФО ЕНЗИКИ [${nodeSource}]: Доступ до центральної бази обмежено. Використовується MIRROR_VAULT.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'MANIFEST_OFFLINE'
@@ -154,7 +154,7 @@ export default function CargoManifestPremium() {
                       MANIFEST_FORENSIC // DEEP_SCAN_SYSTEM
                     </span>
                     <div className="h-px w-16 bg-amber-600/20" />
-                    <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-amber-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none text-shadow-wraith">
                     МИТНА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">ФО ЕНЗИКА</span>
@@ -171,7 +171,7 @@ export default function CargoManifestPremium() {
             badges={[
               { label: 'FORENSIC_T1', color: 'warning', icon: <Fingerprint size={10} /> },
               { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Database size={10} /> },
-              { label: 'v58.2-WRAITH', color: 'danger', icon: <ShieldCheck size={10} /> }
+              { label: 'v61.0-ELITE', color: 'danger', icon: <ShieldCheck size={10} /> }
             ]}
           />
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 /**
- * 🧬 NEURAL BACKGROUND // НЕЙРОННИЙ ФОН | v58.2-WRAITH
+ * 🧬 NEURAL BACKGROUND // НЕЙРОННИЙ ФОН | v61.0-ELITE
  * Високопродуктивний фон з ефектом інтерактивної нейронної мережі та цифрового дощу.
  */
 export const NeuralBackground: React.FC = () => {

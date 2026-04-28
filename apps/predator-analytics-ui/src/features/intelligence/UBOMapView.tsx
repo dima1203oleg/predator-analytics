@@ -1,5 +1,5 @@
 /**
- * 🗺️ БЕНЕФІЦІА НА КА ТА (UBO MAP) | v58.2-WRAITH
+ * 🗺️ БЕНЕФІЦІА НА КА ТА (UBO MAP) | v61.0-ELITE
  * PREDATOR Analytics — Ultimate Beneficial Owner Intelligence
  *
  * Граф кінцевих бенефіціарів, ланцюги власності,
@@ -249,7 +249,7 @@ const UBOMapView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'UBONexus',
-          message: ` ЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
+          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Активовано MIRROR_VAULT. Дані бенефіціарів доступні в автономному режимі.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'UBO_OFFLINE'
@@ -354,7 +354,7 @@ const UBOMapView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1800px] mx-auto p-12 space-y-12">
 
-        {/* ── ЗАГОЛОВОК WRAITH ── */}
+        {/* ── ЗАГОЛОВОК ELITE ── */}
         <ViewHeader
           title={
             <div className="flex items-center gap-10">
@@ -369,7 +369,7 @@ const UBOMapView: React.FC = () => {
                 <div className="flex items-center gap-4 mb-3">
                   <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full animate-pulse shadow-[0_0_8px_#d4af37]" />
                   <span className="text-[10px] font-black text-yellow-500/80 uppercase tracking-[0.6em]">
-                    UBO · SOVEREIGN BENEFICIAL INTEL · v58.2-WRAITH
+                    UBO · SOVEREIGN BENEFICIAL INTEL · v61.0-ELITE
                   </span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
@@ -378,7 +378,7 @@ const UBOMapView: React.FC = () => {
               </div>
             </div>
           }
-          breadcrumbs={['ІНТЕЛЕКТ', 'УП АВЛІННЯ', 'UBO_ВУЗОЛ']}
+          breadcrumbs={['ІНТЕЛЕКТ', 'УПРАВЛІННЯ', 'UBO_ВУЗОЛ']}
           badges={[
             { label: 'СЕК ЕТНО_T1', color: 'primary', icon: <Lock size={10} /> },
             { label: 'СУВЕ ЕННИЙ_П ИВИД', color: 'gold', icon: <Star size={10} /> },
@@ -408,7 +408,7 @@ const UBOMapView: React.FC = () => {
             <input
               value={company}
               onChange={e => setCompany(e.target.value)}
-              placeholder="ЄД ПОУ / НАЗВА..."
+              placeholder="ЄДРПОУ / НАЗВА..."
               className="bg-transparent text-xl font-black text-white outline-none placeholder:text-slate-800 font-mono w-64 italic uppercase"
             />
           </div>
@@ -418,7 +418,7 @@ const UBOMapView: React.FC = () => {
           </button>
         </div>
 
-        {/* ── МЕТ ИКИ WRAITH ── */}
+        {/* ── МЕТ ИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { label: ' ІВНІВ СТ УКТУ И', value: '4_TIERS',   icon: Network,      color: '#D4AF37' },
@@ -441,7 +441,7 @@ const UBOMapView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ВИБІ  МОДУЛЮ WRAITH ── */}
+        {/* ── ВИБІ  МОДУЛЮ ELITE ── */}
         <div className="flex gap-3 p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
           {views.map(v => (
             <button
@@ -463,7 +463,7 @@ const UBOMapView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── КОНТЕНТ МОДУЛЮ WRAITH ── */}
+        {/* ── КОНТЕНТ МОДУЛЮ ELITE ── */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeView}
@@ -502,7 +502,7 @@ const UBOMapView: React.FC = () => {
                       {[
                         { name: 'Ткаченко В.М.', share: '60%', risk: 91, pep: true,  controlled: 'BVI_STRUCT_INDIRECT' },
                         { name: 'Ковальчук І.С.', share: '15%', risk: 45, pep: false, controlled: 'DIRECT_EQUITY_L1' },
-                        { name: 'Петренко М.О.', share: '15%', risk: 88, pep: true,  controlled: 'SHADOW_PROXY_WRAITH' },
+                        { name: 'Петренко М.О.', share: '15%', risk: 88, pep: true,  controlled: 'SHADOW_PROXY_ELITE' },
                         { name: 'State Share',        share: '10%', risk: 20, pep: false, controlled: 'GOV_RETAINED' },
                       ].map((ubo, i) => (
                         <div key={i} className="flex items-center justify-between p-6 border-2 border-white/5 hover:border-yellow-500/20 transition-all bg-white/[0.01] rounded-3xl group cursor-default">
@@ -547,7 +547,7 @@ const UBOMapView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* PEP статус WRAITH */}
+                  {/* PEP статус ELITE */}
                   <div className="bg-[#0f0a02] border-2 border-yellow-500/10 p-10 rounded-[3.5rem] shadow-4xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-6 opacity-10">
                        <Zap size={40} className="text-yellow-600 animate-pulse" />
@@ -575,7 +575,7 @@ const UBOMapView: React.FC = () => {
               </div>
             )}
 
-            {/* PEP Т ЕКЕ  WRAITH */}
+            {/* PEP Т ЕКЕ  ELITE */}
             {activeView === 'pep-tracker' && (
               <div className="bg-black/80 backdrop-blur-3xl border-2 border-white/5 rounded-[4rem] shadow-4xl overflow-hidden relative">
                 <div className="p-10 border-b border-white/5 flex items-center justify-between relative z-10">
@@ -646,7 +646,7 @@ const UBOMapView: React.FC = () => {
               </div>
             )}
 
-            {/* SHADOW DIRECTOR WRAITH */}
+            {/* SHADOW DIRECTOR ELITE */}
             {activeView === 'shadow-director' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {[

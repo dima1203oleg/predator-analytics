@@ -1,4 +1,4 @@
-"""XML Parser — PREDATOR Analytics v55.1 Ironclad.
+"""XML Parser — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Fast XML parsing for structured OSINT data using lxml or ElementTree.
 """

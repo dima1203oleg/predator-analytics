@@ -66,7 +66,7 @@ describe('PriceComparisonPremium', () => {
         vi.clearAllMocks()
     })
 
-    test('відмальовує заголовок та WRAITH статистику', async () => {
+    test('відмальовує заголовок та ELITE статистику', async () => {
         render(
             <MemoryRouter>
                 <PriceComparisonPremium />

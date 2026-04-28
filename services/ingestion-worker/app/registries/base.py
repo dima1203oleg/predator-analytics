@@ -10,7 +10,7 @@ import httpx
 logger = logging.getLogger(__name__)
 
 class БазовийРеєстрКлієнт(ABC):
-    """Абстрактний клас для всіх клієнтів державних реєстрів (ЄДР, Судовий реєстр тощо)."""
+    """Абстрактний клас для всіх клієнтів державних реєстрів (ЄДР, Судовий Реєстр тощо)."""
 
     def __init__(self, base_url: str, api_key: str | None = None) -> None:
         self.base_url = base_url

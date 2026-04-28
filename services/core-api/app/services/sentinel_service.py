@@ -1,4 +1,4 @@
-"""PREDATOR Intelligence Sentinel — v58.2-WRAITH.
+"""PREDATOR Intelligence Sentinel — v61.0-ELITE.
 
 Глобальний моніторинг цілісності інфраструктури та сервісів AI.
 Sentinel перевіряє кожен компонент і повертає production-ready

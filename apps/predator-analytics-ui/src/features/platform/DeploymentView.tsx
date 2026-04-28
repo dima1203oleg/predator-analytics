@@ -83,7 +83,7 @@ const DeploymentView: React.FC = () => {
     const tabConfig = [
         { id: 'OVERVIEW', label: 'Огляд Флоту', icon: LayoutGrid },
         { id: 'LIVE', label: 'Телеметричний Монітор', icon: MonitorPlay },
-        { id: 'CICD', label: 'реєстр Пайплайнів', icon: GitCommit },
+        { id: 'CICD', label: 'Реєстр Пайплайнів', icon: GitCommit },
     ];
 
     return (
@@ -94,7 +94,7 @@ const DeploymentView: React.FC = () => {
             <ViewHeader
                 title="Командний Центр Деплою"
                 icon={<Rocket size={20} className="icon-3d-blue"/>}
-                breadcrumbs={['СИСТЕМА', 'ДЕПЛОЙ', 'КОНТ ОЛЬ']}
+                breadcrumbs={['СИСТЕМА', 'ДЕПЛОЙ', 'КОНТРОЛЬ']}
                 stats={[
                     { label: 'Стан Флоту', value: 'ОПТИМАЛЬНО', icon: <ShieldCheck size={14}/>, color: 'success' },
                     { label: 'Версія', value: 'v45.0.0', icon: <GitBranch size={14}/>, color: 'primary' },
@@ -151,7 +151,7 @@ const DeploymentView: React.FC = () => {
                             </div>
 
                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <TacticalCard variant="holographic"  title="реєстр  елізів Ядра" className="glass-morphism panel-3d">
+                                <TacticalCard variant="holographic"  title="Реєстр  елізів Ядра" className="glass-morphism panel-3d">
                                     <div className="flex items-center gap-8 p-4">
                                         <motion.div animate={{ rotate: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="p-6 bg-blue-600/10 rounded-2xl border border-blue-500/20 text-blue-500 shadow-xl shadow-blue-500/5">
                                             <GitBranch size={48} />

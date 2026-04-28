@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE COMPARISON // ПО ІВНЯННЯ ЦІН | v58.2-WRAITH
+ * 💰 PRICE COMPARISON // ПО ІВНЯННЯ ЦІН | v61.0-ELITE
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  * 
  * Знаходження найкращих пропозицій від глобальних постачальників.
@@ -129,7 +129,7 @@ export default function PriceComparisonPremium() {
                            MARKET_SIGINT // PRICE_DYNAMICS
                          </span>
                          <div className="h-px w-12 bg-[#D4AF37]/20" />
-                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                         ПО ІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>
@@ -139,7 +139,7 @@ export default function PriceComparisonPremium() {
               }
               breadcrumbs={['INTEL', 'MARKET', 'PRICE_MATRIX_v3']}
               badges={[
-                { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Crown size={10} /> },
+                { label: 'SOVEREIGN_ELITE', color: 'gold', icon: <Crown size={10} /> },
                 { label: 'CLASSIFIED_T1', color: 'primary', icon: <Target size={10} /> },
               ]}
               stats={[

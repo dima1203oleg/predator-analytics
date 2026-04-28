@@ -99,7 +99,7 @@ describe('ReferralControlView', () => {
         fireEvent.click(allRecordsBtn);
         
         expect(screen.getByText(/База Контрольованих/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/Пошук за назвою або ЄД ПОУ.../i)).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/Пошук за назвою або ЄДРПОУ.../i)).toBeInTheDocument();
     });
 
     it('відкриває деталізацію конкретного клієнта DETAILS', () => {

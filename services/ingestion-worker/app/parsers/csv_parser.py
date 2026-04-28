@@ -1,4 +1,4 @@
-"""CSV Parser — PREDATOR Analytics v55.1 Ironclad.
+"""CSV Parser — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Efficient CSV parsing for large datasets using streaming.
 """

@@ -1,4 +1,4 @@
-"""Graph Service — PREDATOR Analytics v55.1 Ironclad.
+"""Graph Service — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Logic for graph analysis, carousels of influence, and relationship discovery.
 """

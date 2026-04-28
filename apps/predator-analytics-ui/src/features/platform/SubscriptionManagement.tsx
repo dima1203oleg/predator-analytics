@@ -104,7 +104,7 @@ const plans: Plan[] = [
     color: 'cyan',
     icon: Building2,
     features: [
-      { name: ' озширений пошук', included: true },
+      { name: 'розширений пошук', included: true },
       { name: '5,000 запитів/день', included: true },
       { name: 'Історія 1 рік', included: true },
       { name: 'API доступ', included: true },

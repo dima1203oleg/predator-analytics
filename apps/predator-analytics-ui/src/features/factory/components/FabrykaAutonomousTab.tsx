@@ -1,6 +1,6 @@
 /**
  * 🔥 FabrykaAutonomousTab — FABRYKA v2.0 AUTONOMOUS CORE
- * PREDATOR Factory v58.2-WRAITH
+ * PREDATOR Factory v61.0-ELITE
  *
  *  Реалізує ТЗ «FABRYKA v2.0 – AUTONOMOUS CORE»:
  *   - Перемикач режимів AUTONOMOUS ↔ API

@@ -1,4 +1,4 @@
-"""Search Service — PREDATOR Analytics v56.5-ELITE.
+"""Search Service — PREDATOR Analytics v61.0-ELITE.
 
 Гібридний пошук: PostgreSQL ILIKE + OpenSearch (Фаза 2: Qdrant vector).
 КРИТИЧНО: кожен запит фільтрується за tenant_id (TZ v5.0 §3.1).

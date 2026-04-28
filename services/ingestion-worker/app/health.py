@@ -1,4 +1,4 @@
-"""Health Check Server — PREDATOR Analytics v55.1 Ironclad.
+"""Health Check Server — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Простий HTTP сервер для Kubernetes health checks.
 """

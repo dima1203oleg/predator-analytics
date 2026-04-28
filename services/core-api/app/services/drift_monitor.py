@@ -1,4 +1,4 @@
-"""Drift Detection Service — PREDATOR Analytics v56.5-ELITE.
+"""Drift Detection Service — PREDATOR Analytics v61.0-ELITE.
 
 Моніторинг стабільності ML-моделей та аналіз розподілу ризиків.
 Виявляє суттєві зміни в статистичних показниках (Score Drift).

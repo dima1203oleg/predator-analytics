@@ -60,14 +60,14 @@ const SEARCH_MODES: Array<{
     {
         id: 'neural',
         label: 'Гібридний пошук',
-        description: 'Назва, ЄД ПОУ, бенефіціар або довільний опис.',
+        description: 'Назва, ЄДРПОУ, бенефіціар або довільний опис.',
         icon: BrainCircuit,
         color: 'text-cyan-400',
     },
     {
         id: 'exact',
         label: 'Точний збіг',
-        description: 'Для точного ЄД ПОУ або повної назви.',
+        description: 'Для точного ЄДРПОУ або повної назви.',
         icon: Target,
         color: 'text-amber-400',
     },
@@ -82,7 +82,7 @@ const SEARCH_MODES: Array<{
 
 const QUICK_QUERIES = [
     '42883391',
-    'Санкції  НБО',
+    'Санкції РНБО',
     'Офшорні структури',
     'Паливні тендери',
     'Експорт зерна',
@@ -662,7 +662,7 @@ export const SearchView = () => {
         >
             <div className="relative mb-20 pt-10">
                 <ViewHeader
-                    title={isConsoleMode ? '>  ЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО  ЕЄСТ АХ І ВІДК ИТИХ ДЖЕ ЕЛАХ'}
+                    title={isConsoleMode ? '> РЕЖИМ_КОНСОЛІ_ПОШУКУ' : 'ПОШУК ПО РЕЄСТРАХ І ВІДК ИТИХ ДЖЕ ЕЛАХ'}
                     icon={isConsoleMode ? <SearchCode className="text-emerald-400" /> : <Radar className="text-primary-500" />}
                     breadcrumbs={['ВІДК ИТІ_ДЖЕ ЕЛА', 'ПОШУК', 'ПІДТВЕ ДЖЕНІ_ДАНІ']}
                     stats={[
@@ -763,8 +763,8 @@ export const SearchView = () => {
                                     autoFocus
                                     placeholder={
                                         isConsoleMode
-                                            ? 'ВВЕДІТЬ_ЄД ПОУ_АБО_ЗАПИТ'
-                                            : 'Введіть код ЄД ПОУ, назву компанії або опис ризикової схеми'
+                                            ? 'ВВЕДІТЬ_ЄДРПОУ_АБО_ЗАПИТ'
+                                            : 'Введіть код ЄДРПОУ, назву компанії або опис ризикової схеми'
                                     }
                                     className={cn(
                                         'min-w-0 flex-1 bg-transparent px-6 py-7 text-xl font-black tracking-tight text-white outline-none placeholder:text-slate-600 lg:text-2xl',
@@ -908,7 +908,7 @@ export const SearchView = () => {
                             <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-500">
                                 {searchError
                                     ? 'Спробуйте повторити запит пізніше або перевірте доступність джерела даних.'
-                                    : 'Поточний бекенд не повернув результатів для цього запиту. Спробуйте точний режим або уточніть ЄД ПОУ.'}
+                                    : 'Поточний бекенд не повернув результатів для цього запиту. Спробуйте точний режим або уточніть ЄДРПОУ.'}
                             </p>
 
                             {searchMode !== 'exact' && (

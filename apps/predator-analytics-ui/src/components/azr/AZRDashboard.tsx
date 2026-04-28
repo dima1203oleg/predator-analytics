@@ -401,7 +401,7 @@ export const AZRDashboard: React.FC = () => {
 
       {/* Footer */}
       <div className="azr-footer">
-        <span className="azr-risk"> івень ризику: {status.risk_level}</span>
+        <span className="azr-risk">рівень ризику: {status.risk_level}</span>
         <span className="azr-violations">
           ⚖️ Порушень Конституції: {status.metrics.constitutional_violations}
         </span>

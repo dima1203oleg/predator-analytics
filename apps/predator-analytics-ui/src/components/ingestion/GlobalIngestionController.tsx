@@ -294,7 +294,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         </div>
                         {!isDone && !isFailed && (
                             <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap text-[9px]">
-                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НО МА`}
+                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НОРМА`}
                             </div>
                         )}
                     </div>

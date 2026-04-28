@@ -150,7 +150,7 @@ const BootSequenceV8: React.FC<{ onComplete: () => void }> = ({ onComplete }) =>
   const LOG_ENTRIES = [
     "[✓] IDENTITY LOCKED: ОБ'ЄКТ 'В' (ПО-БАТЬКОВІ: ВАСИЛЬОВИЧ)",
     "[✓] FINANCIAL FOOTPRINT MAPPED (14 BANKS)",
-    "[✓] PARSING RELATIVES: Б АТ (О. ВАСИЛЬОВИЧ) -> ТОП-МЕНЕДЖЕ  БАНКУ",
+    "[✓] PARSING RELATIVES: Б АТ (О. ВАСИЛЬОВИЧ) -> ТОП-МЕНЕДЖЕР  БАНКУ",
     "[!] ANOMALY DETECTED: ТЕНДЕ  №481516",
     "[✓] NETWORK GRAPH CONSTRUCTED (47 ACTIVE CONNECTIONS)",
     "[✓] PREDICTIVE BEHAVIOR MODEL: 99.9% ACCURACY",

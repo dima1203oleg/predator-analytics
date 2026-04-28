@@ -62,7 +62,7 @@ export const AutonomousLearningStack: React.FC = () => {
                     </div>
                     <div>
                         <h2 className="text-xl font-black text-white tracking-widest uppercase italic">{premiumLocales.evolution.learningStack.title}</h2>
-                        <p className="text-[10px] text-rose-600/60 font-black uppercase tracking-[0.3em] font-mono">WRAITH_DEEP_LEARNING_v58.2</p>
+                        <p className="text-[10px] text-rose-600/60 font-black uppercase tracking-[0.3em] font-mono">ELITE_DEEP_LEARNING_v58.2</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 rounded-full border border-rose-500/20">
@@ -136,7 +136,7 @@ export const AutonomousLearningStack: React.FC = () => {
                                 <div className="flex gap-3 font-mono items-center">
                                     <span className="text-emerald-400 font-black">+{job.metrics?.accuracy ? (job.metrics.accuracy * 100).toFixed(1) : "0.0"}%</span>
                                     <div className="w-[1px] h-3 bg-slate-800" />
-                                    <span className="text-rose-500/60 font-black tracking-tighter uppercase text-[9px]">{job.status === 'succeeded' ? 'WRAITH' : 'SYNC'}</span>
+                                    <span className="text-rose-500/60 font-black tracking-tighter uppercase text-[9px]">{job.status === 'succeeded' ? 'ELITE' : 'SYNC'}</span>
                                 </div>
                             </div>
                         ))}

@@ -1,5 +1,5 @@
 /**
- * 📱 Mobile Command Center | v58.2-WRAITH Orbital Matrix
+ * 📱 Mobile Command Center | v61.0-ELITE Orbital Matrix
  * PREDATOR Mobile - Цитадель оперативного управління у вашій кишені.
  * 
  * Включає:
@@ -8,7 +8,7 @@
  * - 🛡️ Моніторинг ризиків (Risk Watch)
  * - 🛰️ Супутниковий зв'язок (Orbital Link)
  * 
- * © 2026 PREDATOR Analytics - Повна українізація v58.2-WRAITH
+ * © 2026 PREDATOR Analytics - Повна українізація v61.0-ELITE
  */
 
 import React, { useState, useEffect } from 'react';
@@ -41,7 +41,7 @@ interface QuickStat {
 
 const quickStats: QuickStat[] = [
   { label: 'Імпорт (24h)', value: '$2.48M', change: '+12.5%', icon: Package, color: '#3b82f6', isPositive: true },
-  { label: 'Алерти  івня А', value: '7', change: '-42%', icon: AlertTriangle, color: '#f43f5e', isPositive: false },
+  { label: 'Алерти рівня А', value: '7', change: '-42%', icon: AlertTriangle, color: '#f43f5e', isPositive: false },
   { label: 'Нові об\'єкти', value: '14', change: '+5.2%', icon: Building2, color: '#a78bfa', isPositive: true },
   { label: 'Економія AZR', value: '18.4%', change: '+2.1%', icon: Zap, color: '#f59e0b', isPositive: true },
 ];
@@ -187,7 +187,7 @@ const MobileCommandCenter: React.FC = () => {
                 </div>
                 <h4 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Цінова аномалія</h4>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії. рекомендуємо перегляд контракту протягом 2 годин.
+                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії.рекомендуємо перегляд контракту протягом 2 годин.
                 </p>
               </div>
             </div>

@@ -94,11 +94,11 @@ const DatasetStudio: React.FC = () => {
     };
 
     const TABS: { id: StudioTab; label: string; icon: React.ReactNode }[] = [
-        { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТ ', icon: <Radar size={16} /> },
-        { id: 'osint-graph', label: 'OSINT Г АФ', icon: <Network size={16} className="text-cyan-400" /> },
+        { id: 'osint', label: 'OSINT КОМАНДНИЙ ЦЕНТР', icon: <Radar size={16} /> },
+        { id: 'osint-graph', label: 'OSINT ГРАФ', icon: <Network size={16} className="text-cyan-400" /> },
         { id: 'datasets', label: 'ДАТАСЕТИ & МОДЕЛІ', icon: <Database size={16} /> },
         { id: 'ml-studio', label: 'ML STUDIO', icon: <BrainCircuit size={16} className="text-purple-400" /> },
-        { id: 'graph', label: 'CERS П ОФІЛЬ', icon: <Activity size={16} className="text-yellow-400" /> },
+        { id: 'graph', label: 'CERSПРОФІЛЬ', icon: <Activity size={16} className="text-yellow-400" /> },
     ];
 
     return (
@@ -108,7 +108,7 @@ const DatasetStudio: React.FC = () => {
                 <CyberGrid color="rgba(16, 185, 129, 0.03)" />
 
             <ViewHeader
-                title="OSINT КОМАНДНИЙ ЦЕНТ "
+                title="OSINT КОМАНДНИЙ ЦЕНТР"
                 subtitle=" озвідувальне ядро: 250+ реєстрів • 12 OSINT-інструментів • Граф-аналіз"
                 icon={<Radar size={20} className="text-emerald-400" />}
                 breadcrumbs={['СИНАПСИС', 'РОЗВІДКА', 'OSINT ЦЕНТ ']}

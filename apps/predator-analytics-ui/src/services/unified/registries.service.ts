@@ -5,7 +5,7 @@ import { apiClient } from '../api/config';
  */
 export const registriesService = {
     /**
-     * Пошук по всіх доступних реєстрах за ключовим словом (ПІБ, Назва, ЄД ПОУ)
+     * Пошук по всіх доступних реєстрах за ключовим словом (ПІБ, Назва, ЄДРПОУ)
      */
     globalSearch: async (query: string): Promise<any> => {
         const response = await apiClient.get(`/registries/search`, { params: { q: query } });
@@ -13,7 +13,7 @@ export const registriesService = {
     },
 
     /**
-     * Отримання виписки з ЄД  по компанії
+     * Отримання виписки з ЄДРпо компанії
      */
     getEDRData: async (edrpou: string): Promise<any> => {
         const response = await apiClient.get(`/registries/edr/${edrpou}`);

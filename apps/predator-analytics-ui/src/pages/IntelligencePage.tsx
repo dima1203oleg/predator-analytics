@@ -313,7 +313,7 @@ const IntelligencePage: React.FC = () => {
                                      </div>
                                      <div>
                                          <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">СТ АТЕГІЧНІ_ЦІЛІ</h4>
-                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">П ІО ИТЕТ_ЦІЛЕЙ_v62.7</p>
+                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ПРІОРИТЕТ_ЦІЛЕЙ_v62.7</p>
                                      </div>
                                  </div>
 

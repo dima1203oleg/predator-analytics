@@ -15,7 +15,7 @@ export const uk = {
   breadcrumbs: {
     nebula: ['ГОЛОВНА', 'ОГЛЯД'],
     cortex: ['МОНІТО ИНГ', 'ТАКТИЧНИЙ ВИД'],
-    nexus: ['КОМАНДНИЙ ЦЕНТ ', 'ПОВНИЙ КОНТ ОЛЬ'],
+    nexus: ['КОМАНДНИЙ ЦЕНТР', 'ПОВНИЙ КОНТРОЛЬ'],
   },
 
   // User Roles
@@ -45,7 +45,7 @@ export const uk = {
     learnMore: 'Дізнатись більше',
     dataHidden: 'Інформація Приховано',
     confidentialData: 'Конфіденційні дані',
-    sensitivityLevel: ' івень чутливості',
+    sensitivityLevel: 'рівень чутливості',
   },
 
   // Dashboard - Nebula (Explorer)

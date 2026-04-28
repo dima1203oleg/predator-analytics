@@ -64,7 +64,7 @@ const datasets = [
   },
   {
     id: "2",
-    name: "реєстр компаній UA",
+    name: "Реєстр компаній UA",
     type: "companies",
     format: "JSONL",
     records: 500000,

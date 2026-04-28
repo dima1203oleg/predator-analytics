@@ -237,7 +237,7 @@ const AgentHexCard: React.FC<{
                 {/* Efficiency bar */}
                 <div className="space-y-2 mb-3">
                     <div className="flex justify-between text-[8px] font-bold uppercase tracking-widest">
-                        <span className="text-slate-600">ІНДЕКС ЗДО ОВ'Я</span>
+                        <span className="text-slate-600">ІНДЕКС ЗДОРОВ'Я</span>
                         <span className="font-mono" style={{ color: statusColor }}>{healthLabel}</span>
                     </div>
                     <div className="h-1 bg-slate-950 rounded-full overflow-hidden border border-white/5">
@@ -516,7 +516,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'NEXUS v58.2-WRAITH', 'МЕНЕДЖЕ  ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v61.0-ELITE', 'МЕНЕДЖЕР ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },
@@ -646,7 +646,7 @@ const AgentsView: React.FC = () => {
                             </motion.div>
                         )}
 
-                        {/* ВО КФЛОУ */}
+                        {/* ВОРКФЛОУ */}
                         {activeTab === 'workflow' && (
                             <motion.div
                                 key="workflow-view"

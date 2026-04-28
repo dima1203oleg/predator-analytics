@@ -1,4 +1,4 @@
-"""Cleanup & Data Retention Tasks — PREDATOR Analytics v56.5-ELITE.
+"""Cleanup & Data Retention Tasks — PREDATOR Analytics v61.0-ELITE.
 
 Забезпечує відповідність GDPR та очищення застарілих даних.
 TZ v5.0 §15.

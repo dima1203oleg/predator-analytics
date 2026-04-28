@@ -1,5 +1,5 @@
 /**
- * 🏭 Sovereign Auto-Factory | v58.2-WRAITH
+ * 🏭 Sovereign Auto-Factory | v61.0-ELITE
  * PREDATOR —  обочий Центр Автономного Вдосконалення
  * 
  * Контроль OODA-циклу, патч-менеджмент та еволюція нейронних архітектур.
@@ -393,7 +393,7 @@ export default function AutoFactoryView() {
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-[#D4AF37]/75">
                     <Sparkles size={12} className="animate-pulse" />
-                    v58.2-WRAITH · МОДУЛЬ НЕЙ ОННОЇ ЕВОЛЮЦІЇ
+                    v61.0-ELITE · МОДУЛЬ НЕЙ ОННОЇ ЕВОЛЮЦІЇ
                   </p>
                 </div>
               </div>

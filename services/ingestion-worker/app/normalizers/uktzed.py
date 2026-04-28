@@ -1,4 +1,4 @@
-"""UKTZED Normalizer — PREDATOR Analytics v55.1 Ironclad.
+"""UKTZED Normalizer — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Standardization of customs codes (UKTZED) and hierarchical validation.
 """

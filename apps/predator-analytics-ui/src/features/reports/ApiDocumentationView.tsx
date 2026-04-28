@@ -89,12 +89,12 @@ const endpoints: ApiEndpoint[] = [
     method: 'GET',
     path: '/api/v1/companies/{edrpou}',
     title: 'Отримати дані компанії',
-    description: 'Детальна інформація про компанію за ЄД ПОУ.',
+    description: 'Детальна інформація про компанію за ЄДРПОУ.',
     category: 'Компанії',
     auth: 'api_key',
     rateLimit: '60/хв',
     params: [
-      { name: 'edrpou', type: 'string', required: true, description: '8-значний код ЄД ПОУ' },
+      { name: 'edrpou', type: 'string', required: true, description: '8-значний код ЄДРПОУ' },
     ],
     response: {
       id: '...', name: '...', edrpou: '...', address: '...', status: '...',
@@ -174,7 +174,7 @@ const endpoints: ApiEndpoint[] = [
     auth: 'token',
     rateLimit: '30/хв',
     params: [
-      { name: 'edrpou', type: 'string', required: true, description: 'ЄД ПОУ компанії' },
+      { name: 'edrpou', type: 'string', required: true, description: 'ЄДРПОУ компанії' },
     ],
     response: {
       score: 0, level: '...', flags: ['...'], details: { }

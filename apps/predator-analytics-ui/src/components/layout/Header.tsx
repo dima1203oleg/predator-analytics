@@ -169,7 +169,7 @@ const Header: React.FC = () => {
                   className="text-[1.75rem] font-black tracking-tight leading-none truncate italic text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                   style={{ letterSpacing: '-0.03em' }}
                 >
-                  {item?.label ?? 'ПАНЕЛЬ УП АВЛІННЯ'}
+                  {item?.label ?? 'ПАНЕЛЬ УПРАВЛІННЯ'}
                 </h1>
               </div>
               

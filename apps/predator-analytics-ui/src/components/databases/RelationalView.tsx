@@ -26,7 +26,7 @@ export const RelationalView: React.FC<RelationalViewProps> = ({ tables, onOpenQu
                 <div className="flex gap-4">
                     <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center gap-3">
                         <Database size={14} className="text-blue-400" />
-                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Master Node: rds-v58.2-WRAITH-primary</span>
+                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Master Node: rds-v61.0-ELITE-primary</span>
                     </div>
                 </div>
             </div>

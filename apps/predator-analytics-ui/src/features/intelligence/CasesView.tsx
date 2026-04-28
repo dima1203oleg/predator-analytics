@@ -1,5 +1,5 @@
 /**
- * 💼 CASE GOVERNANCE // УП АВЛІННЯ КЕЙСАМИ | v58.2-WRAITH
+ * 💼 CASE GOVERNANCE // УПРАВЛІННЯ КЕЙСАМИ | v61.0-ELITE
  * PREDATOR Analytics — Sovereign Investigative Framework
  * 
  * Модуль керування оперативними розслідуваннями та чергою подій.
@@ -162,10 +162,10 @@ const CasesView: React.FC = () => {
                     <span className="bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-1 text-[9px] font-black tracking-[0.3em] uppercase italic rounded-lg">
                       INSPECT_OPS // ТЕ МІНАЛ КЕЙСІВ
                     </span>
-                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-blue-900 italic tracking-widest uppercase shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    {isCommanderShell ? 'УП АВЛІННЯ' : isOperatorShell ? 'ОПЕ АТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
+                    {isCommanderShell ? 'УПРАВЛІННЯ' : isOperatorShell ? 'ОПЕ АТИВНА' : 'INVESTIGATION'} <span className="text-blue-500">QUEUE</span>
                   </h1>
                 </div>
               </div>
@@ -233,12 +233,12 @@ const CasesView: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-2">
-                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // П ІО ИТЕТ 0</span>
+                    <span className="text-[11px] font-black text-amber-500 uppercase tracking-[0.5em] italic">AI_DECISION_ENGINE // ПРІОРИТЕТ 0</span>
                     <div className="h-px w-20 bg-amber-600/20" />
                   </div>
                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-tight">
                     ВИЯВЛЕНО <span className="text-amber-500 underline decoration-amber-600/30 underline-offset-8 decoration-4">{cases.filter(c => c.status === 'К ИТИЧНО').length} КЕЙСІВ</span> З К ИТИЧНИМ  ІВНЕМ РИЗИКУ. 
-                    <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручання рекомендовано для стабілізації контуру.</span>
+                    <span className="text-slate-500 block text-lg font-bold mt-2 not-italic">Негайне втручаннярекомендовано для стабілізації контуру.</span>
                   </h3>
                 </div>
                 <button 
@@ -295,7 +295,7 @@ const CasesView: React.FC = () => {
           </div>
         </div>
 
-        {/* CREATE MODAL WRAITH */}
+        {/* CREATE MODAL ELITE */}
         <AnimatePresence>
           {isCreateModalOpen && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-12">
@@ -359,7 +359,7 @@ const CasesView: React.FC = () => {
 
                    <div className="space-y-6">
                       <label className="text-[12px] font-black text-slate-500 uppercase tracking-[0.4em] italic flex items-center gap-4">
-                        <Siren size={16} /> П ІО ИТЕТ ОПЕ АЦІЇ // PRIORITY_LVL
+                        <Siren size={16} /> ПРІОРИТЕТ ОПЕ АЦІЇ // PRIORITY_LVL
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {['low', 'medium', 'high'].map(p => (
@@ -376,7 +376,7 @@ const CasesView: React.FC = () => {
                                 : 'bg-white/[0.02] border-white/[0.05] text-slate-700 hover:border-white/10'
                             )}
                           >
-                            {p === 'high' ? 'К ИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕ ЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
+                            {p === 'high' ? 'К ИТИЧНИЙ (S1)' : p === 'medium' ? 'СЕРЕДНІЙ (S2)' : 'ПЛАНОВИЙ (S3)'}
                           </button>
                         ))}
                       </div>
@@ -388,7 +388,7 @@ const CasesView: React.FC = () => {
                      className="w-full py-10 bg-blue-600 hover:bg-blue-500 text-white font-black text-2xl italic tracking-widest uppercase rounded-[3rem] shadow-4xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-6 group/submit"
                    >
                      {createLoading ? <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" /> : <ShieldCheck size={32} className="group-hover/submit:scale-125 transition-transform" />}
-                     ЗА ЕЄСТ УВАТИ КЕЙС У КОНТУ І
+                     ЗАРЕЄСТРУВАТИ КЕЙС У КОНТУ І
                    </button>
                  </form>
               </motion.div>

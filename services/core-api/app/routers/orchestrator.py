@@ -1,4 +1,4 @@
-"""Orchestrator Router — PREDATOR Analytics v56.5-ELITE.
+"""Orchestrator Router — PREDATOR Analytics v61.0-ELITE.
 
 API для управління інфраструктурними компонентами.
 """

@@ -1,4 +1,4 @@
-"""OpenSearch Service — PREDATOR Analytics v58.2-WRAITH.
+"""OpenSearch Service — PREDATOR Analytics v61.0-ELITE.
 
 Повнотекстовий пошук, індексація декларацій та компаній.
 Tenant-ізоляція через окремі індекси: {entity}-{tenant_id}.

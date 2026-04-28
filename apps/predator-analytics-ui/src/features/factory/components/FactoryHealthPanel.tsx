@@ -58,7 +58,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/20"
             : "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-rose-500/20"
         )}>
-          {totalCount === 0 ? 'СТАТУС_Н/Д' : isAllHealthy ? 'СТАТУС_НО МА' : 'СТАТУС_ДЕГ АДАЦІЯ'}
+          {totalCount === 0 ? 'СТАТУС_Н/Д' : isAllHealthy ? 'СТАТУС_НОРМА' : 'СТАТУС_ДЕГ АДАЦІЯ'}
         </div>
       </div>
 
@@ -111,7 +111,7 @@ export const FactoryHealthPanel: React.FC<FactoryHealthPanelProps> = ({
                       "text-[10px] font-black uppercase tracking-widest italic",
                       hc.status === 'healthy' ? 'text-emerald-500/60' : 'text-rose-500/60'
                     )}>
-                      {hc.status === 'healthy' ? 'НО МА' : hc.status === 'degraded' ? 'ДЕГ АД' : 'ОФЛАЙН'}
+                      {hc.status === 'healthy' ? 'НОРМА' : hc.status === 'degraded' ? 'ДЕГ АД' : 'ОФЛАЙН'}
                     </span>
                   </div>
                 </div>

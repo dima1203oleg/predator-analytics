@@ -30,7 +30,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
             <div className="absolute inset-0 bg-rose-500/20 blur-2xl rounded-full" />
           </div>
           <div>
-            <h4 className="text-[16px] font-black text-white uppercase tracking-[0.6em] italic chromatic-elite">ФІНАНСОВІ_ПОТОКИ_WRAITH</h4>
+            <h4 className="text-[16px] font-black text-white uppercase tracking-[0.6em] italic chromatic-elite">ФІНАНСОВІ_ПОТОКИ_ELITE</h4>
             <div className="flex items-center gap-4 mt-2">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
@@ -50,7 +50,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
             </div>
             <div className="flex items-center gap-4 px-6 py-3 bg-rose-500/20 border border-rose-500/40 rounded-xl shadow-[0_0_20px_rgba(244,63,94,0.1)]">
                 <ShieldCheck size={20} className="text-rose-500" />
-                <span className="text-[11px] font-black text-rose-500 font-mono italic uppercase tracking-widest">WRAITH_ACTIVE</span>
+                <span className="text-[11px] font-black text-rose-500 font-mono italic uppercase tracking-widest">ELITE_ACTIVE</span>
             </div>
         </div>
       </div>
@@ -250,7 +250,7 @@ export const FinancialFlowPanel: React.FC<FinancialFlowPanelProps> = ({ flows })
                           <p className="text-[14px] font-black text-rose-500 uppercase tracking-[0.4em] italic chromatic-elite">К ИТИЧНА_АНОМАЛІЯ_ВИЯВЛЕНА</p>
                           <span className="px-3 py-1 bg-rose-500 text-black text-[10px] font-black rounded-lg uppercase shadow-lg">SEVERE_THREAT</span>
                         </div>
-                        <p className="text-[12px] text-rose-500/90 font-bold mt-2 uppercase tracking-[0.1em] max-w-md">ВИЯВЛЕНО ПАТЕ Н ВІЙСЬКОВОЇ Т АНЗАКЦІЇ. ВЕКТО : ОФШО НИЙ МОНІТО ИНГ. СТАТУС: ПЕ ЕХОПЛЕННЯ.</p>
+                        <p className="text-[12px] text-rose-500/90 font-bold mt-2 uppercase tracking-[0.1em] max-w-md">ВИЯВЛЕНО ПАТЕ Н ВІЙСЬКОВОЇТРАНЗАКЦІЇ. ВЕКТО : ОФШО НИЙ МОНІТО ИНГ. СТАТУС: ПЕ ЕХОПЛЕННЯ.</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-6 relative z-10">

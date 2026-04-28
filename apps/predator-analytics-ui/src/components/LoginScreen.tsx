@@ -1,7 +1,7 @@
 /**
  * LoginScreen — SOVEREIGN NEXUS TERMINAL v61.0-ELITE
  * Екран авторизації глобальної розвідувальної платформи.
- * Атмосфера: суверенітет, абсолютний контроль, міць WRAITH.
+ * Атмосфера: суверенітет, абсолютний контроль, міць ELITE.
  */
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -313,7 +313,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                     ))}
                 </div>
 
-                {/*  івень загрози */}
+                {/* рівень загрози */}
                 <motion.div
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
@@ -420,7 +420,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                     <div className="h-[1.5px] w-24 bg-gradient-to-l from-transparent via-rose-600 to-transparent opacity-60" />
                                 </div>
                                 <p className="text-[10px] text-rose-600 font-black tracking-[0.55em] uppercase italic group-hover:text-rose-400 transition-colors">
-                                    ГЛОБАЛЬНИЙ_ТЕ МІНАЛ_УП АВЛІННЯ_WRAITH v61.0-ELITE · ТІ -1_СЕК ЕТНО
+                                    ГЛОБАЛЬНИЙ_ТЕ МІНАЛ_УПРАВЛІННЯ_ELITE v61.0-ELITE · ТІ -1_СЕК ЕТНО
                                 </p>
                             </div>
 
@@ -515,7 +515,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 </div>
                                 <div className="flex justify-between text-[8px] text-rose-600/60 font-black tracking-widest uppercase">
                                     <span>АВТЕНТИФІКАЦІЯ</span>
-                                    <span>ГОТОВИЙ_ДО_УП АВЛІННЯ</span>
+                                    <span>ГОТОВИЙ_ДО_УПРАВЛІННЯ</span>
                                 </div>
                             </div>
                         </motion.div>
@@ -675,7 +675,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
                                 [OK] СИНХ ОНІЗАЦІЯ З СЕ ВЕ АМИ МИТНИЦІ ПІДТВЕ ДЖЕНА (NODE: КИЇВ-ЯДРО-03 · ПОЛІГОН-7)
                             </span>
                             <span className="text-[9px] text-rose-500 font-bold tracking-widest">
-                                [КОНТ ОЛЬ] UEID-9472-BX: БЕНЕФІЦІА А ВИЯВЛЕНО — $12.4M НЕОДЕКЛА ОВАНИХ АКТИВІВ — ЗАМО ОЖЕННЯ ІНІЦІЙОВАНО
+                                [КОНТРОЛЬ] UEID-9472-BX: БЕНЕФІЦІА А ВИЯВЛЕНО — $12.4M НЕОДЕКЛА ОВАНИХ АКТИВІВ — ЗАМО ОЖЕННЯ ІНІЦІЙОВАНО
                             </span>
                             <span className="text-[9px] text-rose-600 font-bold tracking-widest">
                                 [УВАГА] ЧЕ ВОНА_КА ТКА_ІНТЕ ПОЛУ: 3 ОБ'ЄКТІВ У СИСТЕМІ — МІСЦЕЗНАХОДЖЕННЯ НЕВІДОМО — МОНІТО ИНГ

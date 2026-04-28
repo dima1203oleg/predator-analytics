@@ -136,7 +136,7 @@ export default function PredictiveNexusView() {
                     className="relative z-10 h-full w-full flex flex-col p-6"
                 >
                     <ViewHeader 
-                        title="PREDICTIVE NEXUS v58.2-WRAITH"
+                        title="PREDICTIVE NEXUS v61.0-ELITE"
                         subtitle="Квантовий Контур Стратегічного Прогнозування (NVIDIA GLM-5.1 Sovereign)"
                         icon={Brain}
                         badges={[
@@ -173,7 +173,7 @@ export default function PredictiveNexusView() {
 
                             <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-md flex-1">
                                 <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <TrendingUp size={16} /> П ОГНОЗ  ЕСУ СІВ
+                                    <TrendingUp size={16} />ПРОГНОЗ РЕСУРСІВ
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="p-4 bg-white/5 rounded-lg border border-white/10">

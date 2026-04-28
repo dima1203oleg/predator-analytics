@@ -81,7 +81,7 @@ describe('GeopoliticalRadarView', () => {
         render(<GeopoliticalRadarView />);
         
         expect(screen.getByText(/ГЕОПОЛІТИЧНИЙ/i)).toBeInTheDocument();
-        expect(screen.getByText(/СЕЙСМОГ АФ/i)).toBeInTheDocument();
+        expect(screen.getByText(/СЕЙСМОГРАФ/i)).toBeInTheDocument();
         expect(screen.getByText(/ГЛОБАЛЬНИЙ ІНДЕКС ТЕКТОНІЧНОГО РИЗИКУ/i)).toBeInTheDocument();
     });
 

@@ -501,7 +501,7 @@ export const SOMDashboard: React.FC = () => {
           {status && (
             <div className={`status-badge ${status.emergency_level ? 'emergency' : 'operational'}`}>
               {status.emergency_level ? (
-                <>🚨 ЕКСТ ЕНИЙ  ЕЖИМ</>
+                <>🚨 ЕКСТ ЕНИЙ РЕЖИМ</>
               ) : (
                 <>{status.operational ? '✅ Операційний' : ' ️ Деградований'}</>
               )}
@@ -701,7 +701,7 @@ export const SOMDashboard: React.FC = () => {
           transition={{ delay: 0.5 }}
         >
           <div className="som-card-header">
-            <div className="som-card-title">📜 Truth Ledger (реєстр Правди)</div>
+            <div className="som-card-title">📜 Truth Ledger (Реєстр Правди)</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
              {ledgerEntries.length === 0 ? (

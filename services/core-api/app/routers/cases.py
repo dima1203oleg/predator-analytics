@@ -1,4 +1,4 @@
-"""Cases Router — PREDATOR Analytics v55.1.
+"""Cases Router — PREDATOR Analytics v61.0-ELITE.
 
 Ендпоінти для роботи з кейсами/справами.
 """

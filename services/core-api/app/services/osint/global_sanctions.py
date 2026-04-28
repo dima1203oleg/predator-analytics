@@ -1,4 +1,4 @@
-"""Global Sanctions Service — PREDATOR Analytics v56.5-ELITE.
+"""Global Sanctions Service — PREDATOR Analytics v61.0-ELITE.
 
 Забезпечує перевірку суб'єктів за міжнародними списками санкцій (OFAC, EU, UK).
 """

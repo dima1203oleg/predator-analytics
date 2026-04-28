@@ -1,4 +1,4 @@
-"""Base Pipeline — PREDATOR Analytics v55.1 Ironclad.
+"""Base Pipeline — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Abstract base class for all ingestion pipelines.
 """

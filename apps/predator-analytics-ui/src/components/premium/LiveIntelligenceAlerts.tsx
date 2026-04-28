@@ -306,7 +306,7 @@ export const LiveIntelligenceAlerts: React.FC<{
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            title={isExpanded ? 'Згорнути' : ' озгорнути'}
+            title={isExpanded ? 'Згорнути' : 'розгорнути'}
             className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white transition-all"
           >
             <ChevronRight size={16} className={cn("transition-transform", isExpanded && "rotate-90")} />

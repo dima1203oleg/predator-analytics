@@ -13,7 +13,7 @@ export const BrainTrainerConfig: React.FC<BrainTrainerConfigProps> = ({
     onScheduleChange
 }) => {
     return (
-        <TacticalCard variant="holographic" title="Тренування Мозку (Cron  озклад)" className="panel-3d border-slate-800/50">
+        <TacticalCard variant="holographic" title="Тренування Мозку (Cron розклад)" className="panel-3d border-slate-800/50">
             <div className="flex flex-col md:flex-row gap-6 items-start">
                 <div className="p-4 bg-purple-900/20 border border-purple-500/30 rounded-xl icon-3d-purple self-center md:self-start">
                     <BrainCircuit size={32} className="text-purple-400" />

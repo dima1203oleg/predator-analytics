@@ -94,7 +94,7 @@ describe('AdvancedChartsPremium', () => {
         )
 
         expect(screen.getByText(/АНАЛІТИЧНІ/i)).toBeInTheDocument()
-        expect(screen.getByText(/Г АФІКИ/i)).toBeInTheDocument()
+        expect(screen.getByText(/ГРАФІКИ/i)).toBeInTheDocument()
         expect(screen.getByText(/30 ДНІВ/i)).toBeInTheDocument()
         expect(screen.getByText(/ ІК_2026/i)).toBeInTheDocument()
     })

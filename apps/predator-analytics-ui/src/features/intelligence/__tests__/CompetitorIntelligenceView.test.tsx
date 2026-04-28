@@ -134,7 +134,7 @@ describe('CompetitorIntelligenceView', () => {
         const card = screen.getByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i);
         fireEvent.click(card);
         
-        expect(screen.getByText(/ГЕОГ АФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ГЕОГРАФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
         expect(screen.getByText(/ВУЗЛИ ПОСТАЧАННЯ/i)).toBeInTheDocument();
         expect(screen.getByText(/Supplier Alpha/i)).toBeInTheDocument();
     });

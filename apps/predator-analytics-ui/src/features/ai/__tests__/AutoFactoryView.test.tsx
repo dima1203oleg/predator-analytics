@@ -51,7 +51,7 @@ describe('AutoFactoryView Component', () => {
     
     expect(screen.getByText(/Автономний/i)).toBeDefined();
     expect(screen.getByText(/завод/i)).toBeDefined();
-    expect(screen.getByText(/v58.2-WRAITH/i)).toBeDefined();
+    expect(screen.getByText(/v61.0-ELITE/i)).toBeDefined();
   });
 
   it('відправляє подію FACTORY_SUCCESS після завантаження даних в онлайн режимі', async () => {

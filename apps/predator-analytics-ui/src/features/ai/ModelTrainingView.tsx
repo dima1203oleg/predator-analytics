@@ -379,7 +379,7 @@ export default function ModelTrainingView() {
                                 </div>
                             </TacticalCard>
 
-                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_ ЕСУ СІВ" className="bg-black/40 border-white/5">
+                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_РЕСУРСІВ" className="bg-black/40 border-white/5">
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     {[
                                         { label: 'CPU_POWER', value: snapshot.resources.cpuLabel, icon: Activity },

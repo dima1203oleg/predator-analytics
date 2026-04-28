@@ -78,8 +78,8 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ ')).toBeInTheDocument();
-    expect(screen.getByText('МІСІЯ-КОНТ ОЛЬ')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТР')).toBeInTheDocument();
+    expect(screen.getByText('МІСІЯ-КОНТРОЛЬ')).toBeInTheDocument();
     expect(screen.getByText('ШІ-рекомендації')).toBeInTheDocument();
     expect(screen.getByText('ШІ-асистент')).toBeInTheDocument();
     expect(screen.getByText('Оперативний огляд')).toBeInTheDocument();

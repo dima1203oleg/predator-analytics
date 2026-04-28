@@ -24,7 +24,7 @@ export const LiveAgentTerminal: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const modules = ['NEURAL_CORE', 'OSINT_SPIDER', 'CERS_ENGINE', 'WRAITH_SCANNER', 'OODA_LOOP', 'SYST_KERNEL'];
+  const modules = ['NEURAL_CORE', 'OSINT_SPIDER', 'CERS_ENGINE', 'ELITE_SCANNER', 'OODA_LOOP', 'SYST_KERNEL'];
   const messages = [
     'Аналіз графа звʼязків завершено',
     'Виявлено новий офшорний вузол у зоні BVI',
@@ -101,10 +101,10 @@ export const LiveAgentTerminal: React.FC = () => {
       const val = args[1];
       if (val === 'on') {
         setHighVisibility(true);
-        addLog(' ЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ АКТИВОВАНО', 'success');
+        addLog('РЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ АКТИВОВАНО', 'success');
       } else if (val === 'off') {
         setHighVisibility(false);
-        addLog(' ЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ ДЕАКТИВОВАНО', 'info');
+        addLog('РЕЖИМ ВИСОКОЇ КОНТ АСТНОСТІ ДЕАКТИВОВАНО', 'info');
       } else {
         addLog('ПОМИЛКА: ВИКО ИСТОВУЙТЕ "highvis on" або "highvis off"', 'error');
       }
@@ -118,7 +118,7 @@ export const LiveAgentTerminal: React.FC = () => {
         addLog(`ПОМИЛКА: НЕВАЛІДНА ПЕ СОНА. ДОСТУПНІ: ${validPersonas.join(', ')}`, 'error');
       }
     } else if (cmd === 'scan') {
-      addLog('ЗАПУСК ГЛИБИННОГО СКАНУВАННЯ ВУЗЛІВ WRAITH...', 'process');
+      addLog('ЗАПУСК ГЛИБИННОГО СКАНУВАННЯ ВУЗЛІВ ELITE...', 'process');
       let i = 0;
       const scanInterval = setInterval(() => {
         addLog(`СКАНУВАННЯ ВУЗЛА ${Math.floor(Math.random() * 9999)}... OK`, 'success', 'SCANNER');
@@ -249,7 +249,7 @@ export const LiveAgentTerminal: React.FC = () => {
                     <div className="absolute inset-0 bg-rose-500 blur-2xl animate-pulse -z-10" />
                   </div>
                   <div className="flex flex-col items-center">
-                    <p className="uppercase tracking-[1em] font-black italic text-rose-500/80 mb-2">WRAITH_STANDBY</p>
+                    <p className="uppercase tracking-[1em] font-black italic text-rose-500/80 mb-2">ELITE_STANDBY</p>
                     <p className="text-[9px] text-slate-500 font-mono italic">ЯДРО ГОТОВЕ ДО П ИЙОМУ КОМАНД...</p>
                   </div>
                 </div>

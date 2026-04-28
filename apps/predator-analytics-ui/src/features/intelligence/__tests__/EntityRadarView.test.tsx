@@ -114,7 +114,7 @@ describe('EntityRadarView', () => {
         expect(screen.getByTestId('echarts-radar')).toBeInTheDocument();
     });
 
-    it('виконує пошук за назвою або ЄД ПОУ', async () => {
+    it('виконує пошук за назвою або ЄДРПОУ', async () => {
         render(<EntityRadarView />);
         
         await waitFor(() => {

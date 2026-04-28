@@ -1,4 +1,4 @@
-"""predator_common — спільні бібліотеки PREDATOR Analytics v58.2-WRAITH.
+"""predator_common — спільні бібліотеки PREDATOR Analytics v61.0-ELITE.
 
 Модулі:
 - models: ORM-моделі (канонічні, вирівняні з init.sql)

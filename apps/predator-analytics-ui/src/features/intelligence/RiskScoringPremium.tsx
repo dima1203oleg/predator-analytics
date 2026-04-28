@@ -1,9 +1,9 @@
 /**
- * 🚨 RISK SCORING PREMIUM // МОНІТО ИНГ РИЗИКІВ | v58.2-WRAITH
+ * 🚨 RISK SCORING PREMIUM // МОНІТО ИНГ РИЗИКІВ | v61.0-ELITE
  * PREDATOR Analytics — Advanced Risk Assessment & Forensic Investigation
  * 
  * Система виявлення схем, санкційного комплаєнсу та глибокої перевірки суб'єктів.
- * PREDATOR_WRAITH v58.2 · Tactical · Tier-1
+ * PREDATOR_ELITE v58.2 · Tactical · Tier-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -47,7 +47,7 @@ interface Investigation {
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string; icon: any }> = {
   critical: { label: 'К ИТИЧНИЙ', color: '#E11D48', bg: 'bg-rose-950/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]', icon: XCircle },
   high: { label: 'ВИСОКИЙ', color: '#BE123C', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(190,18,60,0.2)]', icon: AlertTriangle },
-  medium: { label: 'СЕ ЕДНІЙ', color: '#FB7185', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(251,113,133,0.2)]', icon: AlertCircle },
+  medium: { label: 'СЕРЕДНІЙ', color: '#FB7185', bg: 'bg-rose-900/20', border: 'border-rose-500/40', glow: 'shadow-[0_0_30px_rgba(251,113,133,0.2)]', icon: AlertCircle },
   low: { label: 'НИЗЬКИЙ', color: '#22c55e', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
   minimal: { label: 'МІНІМАЛЬНИЙ', color: '#64748b', bg: 'bg-slate-900/20', border: 'border-slate-500/40', glow: 'shadow-none', icon: CheckCircle },
   stable: { label: 'СТАБІЛЬНИЙ', color: '#10b981', bg: 'bg-emerald-900/20', border: 'border-emerald-500/40', glow: 'shadow-none', icon: CheckCircle },
@@ -70,7 +70,7 @@ const ScanningHUD: React.FC = () => {
             <div className="absolute top-40 left-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic">
                 <span>ARRAY_STATUS: ACTIVE</span>
                 <span>FAILOVER_READY: STANDBY</span>
-                <span>COGNITIVE_ENGINE: WRAITH_58.2</span>
+                <span>COGNITIVE_ENGINE: ELITE_58.2</span>
             </div>
             <div className="absolute bottom-40 right-10 flex flex-col gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic text-right">
                 <span>РИЗИК_МАТ ИЦЯ_ОТЛАДКА: ON</span>
@@ -148,7 +148,7 @@ export default function RiskScoringPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'RiskProtocol',
-          message: `ВУЗОЛ [${nodeSource}]: АВТОНОМНИЙ  ЕЖИМ. Сканування реєстру проводиться через локалізований кеш NVIDIA.`,
+          message: `ВУЗОЛ [${nodeSource}]: АВТОНОМНИЙ РЕЖИМ. Сканування реєстру проводиться через локалізований кеш NVIDIA.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'RISK_ENGINE_OFFLINE'
@@ -170,7 +170,7 @@ export default function RiskScoringPremium() {
         edrpou: e.edrpou,
         riskScore: Math.round(e.risk_score * 100) || 42,
         riskLevel: (e.risk_score >= 0.8 ? 'critical' : e.risk_score >= 0.6 ? 'high' : e.risk_score >= 0.4 ? 'medium' : 'low') as RiskLevelValue,
-        flags: e.sanctions?.length > 0 ? ['САНКЦІЇ', 'ВІЙСЬКОВИЙ_ЛОГ'] : ['КВО УМ', 'БО Г'],
+        flags: e.sanctions?.length > 0 ? ['САНКЦІЇ', 'ВІЙСЬКОВИЙ_ЛОГ'] : ['КВОРУМ', 'БО Г'],
         lastActivity: '12:45 UTC',
         totalOperations: Math.floor(Math.random() * 1000),
         suspiciousAmount: Math.random() * 5000000,
@@ -198,7 +198,7 @@ export default function RiskScoringPremium() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'RiskProtocol',
-          message: `ПОМИЛКА СКАНУВАННЯ RISK_PROTOCOL_WRAITH: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
+          message: `ПОМИЛКА СКАНУВАННЯ RISK_PROTOCOL_ELITE: ${err instanceof Error ? err.message : 'Unknown error'}. Перевірте вузол ${nodeSource}.`,
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'RISK_PROTOCOL_CRITICAL'
@@ -241,7 +241,7 @@ export default function RiskScoringPremium() {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch">
           
-          {/* WRAITH HEADER HUD */}
+          {/* ELITE HEADER HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -254,10 +254,10 @@ export default function RiskScoringPremium() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      WRAITH_COGNITIVE_SCAN // {isOffline ? 'FAILOVER_ACTIVE' : 'COGNITIVE_SYNC'}
+                      ELITE_COGNITIVE_SCAN // {isOffline ? 'FAILOVER_ACTIVE' : 'COGNITIVE_SYNC'}
                     </span>
                     <div className="h-px w-16 bg-rose-500/20" />
-                    <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                     РИЗИК <span className="text-rose-500 underline decoration-rose-500/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СКО ИНГ</span>
@@ -268,13 +268,13 @@ export default function RiskScoringPremium() {
             breadcrumbs={['INTEL', 'RISK', 'COG_PROTOCOL_ARRAY']}
             badges={[
               { label: 'CLASSIFIED_T1', color: 'rose', icon: <Lock size={10} /> },
-              { label: 'WRAITH_CORE', color: 'rose', icon: <Crown size={10} /> },
+              { label: 'ELITE_CORE', color: 'rose', icon: <Crown size={10} /> },
               { label: nodeSource, color: isOffline ? 'warning' : 'primary', icon: <Database size={10} /> },
             ]}
             stats={[
               { label: 'К ИТИЧНО', value: String(stats.critical), icon: <XCircle />, color: 'rose', animate: stats.critical > 0 },
               { label: 'ВИСОКИЙ', value: String(stats.high), icon: <AlertTriangle />, color: 'danger' },
-              { label: 'СЕ ЕДНІЙ', value: String(stats.medium), icon: <AlertCircle />, color: 'primary' },
+              { label: 'СЕРЕДНІЙ', value: String(stats.medium), icon: <AlertCircle />, color: 'primary' },
               { label: 'ОБІГ_ПІДОЗ ', value: `₴${(stats.totalSuspicious / 1000000).toFixed(1)}M`, icon: <DollarSign />, color: 'rose' },
             ]}
           />
@@ -287,7 +287,7 @@ export default function RiskScoringPremium() {
               <div className="col-span-12 xl:col-span-4 flex items-center justify-end">
                   <div className="text-right space-y-2">
                       <p className="text-[10px] font-black text-rose-500/40 uppercase tracking-[0.4em] italic">MONITOR_STATUS</p>
-                      <p className="text-3xl font-black text-white italic tracking-tighter uppercase">WRAITH_ACTIVE</p>
+                      <p className="text-3xl font-black text-white italic tracking-tighter uppercase">ELITE_ACTIVE</p>
                   </div>
               </div>
           </div>
@@ -311,12 +311,12 @@ export default function RiskScoringPremium() {
             </button>
           </div>
 
-          {/* METRICS GRID WRAITH */}
+          {/* METRICS GRID ELITE */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
               {[
                 { label: 'К ИТИЧНИЙ_РИЗИК', value: stats.critical, level: 'critical', icon: XCircle },
                 { label: 'ВИСОКИЙ_РИЗИК', value: stats.high, level: 'high', icon: AlertTriangle },
-                { label: 'СЕ ЕДНІЙ_РИЗИК', value: stats.medium, level: 'medium', icon: AlertCircle },
+                { label: 'СЕРЕДНІЙ_РИЗИК', value: stats.medium, level: 'medium', icon: AlertCircle },
                 { label: 'НИЗЬКИЙ_РИЗИК', value: stats.low, level: 'low', icon: CheckCircle },
                 { label: 'ПІДОЗ ІЛІ_СУМИ', value: `₴${(stats.totalSuspicious / 1000000).toFixed(1)}M`, level: 'critical', icon: DollarSign, special: true },
               ].map((m, i) => (
@@ -348,7 +348,7 @@ export default function RiskScoringPremium() {
                   <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-700" size={24} />
                   <input 
                     type="text" 
-                    placeholder="ПОШУК СУБ'ЄКТА ЗА НАЗВОЮ АБО ЄД ПОУ // [ЄД ПОУ_IDENT]"
+                    placeholder="ПОШУК СУБ'ЄКТА ЗА НАЗВОЮ АБО ЄДРПОУ // [ЄДРПОУ_IDENT]"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-20 pr-10 py-8 bg-black border-2 border-white/[0.04] rounded-[2.5rem] text-xl font-black italic text-white placeholder:text-slate-900 focus:outline-none focus:border-rose-500/30 transition-all shadow-inner tracking-tighter"
@@ -365,7 +365,7 @@ export default function RiskScoringPremium() {
                   </div>
                   <div className="flex items-center justify-between border-b-2 border-white/[0.04] pb-10 relative z-10">
                      <h3 className="text-2xl font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
-                        <Database size={32} className="text-rose-500" />  ЕЄСТ _СУБ'ЄКТІВ_ПІД_КВО УМОМ
+                        <Database size={32} className="text-rose-500" /> РЕЄСТР_СУБ'ЄКТІВ_ПІД_КВОРУМОМ
                      </h3>
                      <div className="flex gap-4">
                         <button className="p-4 bg-white/[0.02] border-2 border-white/5 rounded-2xl text-slate-700 hover:text-white transition-all"><Filter size={20} /></button>
@@ -417,7 +417,7 @@ export default function RiskScoringPremium() {
                                         <span className={cn("px-4 py-1 rounded-xl text-[9px] font-black italic uppercase tracking-widest border border-white/10", RISK_CONFIG[entity.riskLevel]?.bg, RISK_CONFIG[entity.riskLevel]?.border)} style={{ color: RISK_CONFIG[entity.riskLevel]?.color }}>{RISK_CONFIG[entity.riskLevel]?.label}</span>
                                      </div>
                                      <div className="flex gap-10 text-[11px] font-black text-slate-800 uppercase italic tracking-widest leading-none">
-                                        <span className="flex items-center gap-2">ЄД ПОУ: <span className="text-slate-400 font-mono">{entity.edrpou}</span></span>
+                                        <span className="flex items-center gap-2">ЄДРПОУ: <span className="text-slate-400 font-mono">{entity.edrpou}</span></span>
                                         <span className="flex items-center gap-2 pb-1 border-b border-rose-500/20"><Activity size={12} className="text-rose-500" /> ОПЕРАЦІЙ: {entity.totalOperations}</span>
                                      </div>
                                   </div>
@@ -479,11 +479,11 @@ export default function RiskScoringPremium() {
                   </div>
                   
                   <button className="w-full py-8 bg-rose-600 text-white rounded-[2.5rem] text-[12px] font-black uppercase tracking-[0.5em] italic shadow-4xl hover:bg-rose-500 hover:scale-[1.02] active:scale-95 transition-all duration-500 relative z-10 border-4 border-rose-400/20">
-                     СТВО ИТИ_НОВЕ_ДО УЧЕННЯ
+                     СТВО ИТИ_НОВЕ_ДОРУЧЕННЯ
                   </button>
                </div>
 
-               {/* QUICK ACTIONS WRAITH */}
+               {/* QUICK ACTIONS ELITE */}
                <div className="p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                   <h3 className="text-[14px] font-black text-slate-700 italic uppercase tracking-[0.6em] border-b border-white/[0.03] pb-8 relative z-10 flex items-center justify-between">
                      ТАКТИЧНІ_МАНЕВ И <Crosshair size={18} />
@@ -515,7 +515,7 @@ export default function RiskScoringPremium() {
           </div>
         </div>
 
-        {/* DETAILS SIDE PANEL WRAITH */}
+        {/* DETAILS SIDE PANEL ELITE */}
         <AnimatePresence>
           {selectedEntity && (
             <>
@@ -539,7 +539,7 @@ export default function RiskScoringPremium() {
                       <div>
                          <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none mb-3 font-serif">{selectedEntity.name}</h2>
                          <div className="flex items-center gap-6">
-                            <span className="text-rose-500 font-mono text-[14px] font-black uppercase tracking-widest italic">ЄД ПОУ: {selectedEntity.edrpou}</span>
+                            <span className="text-rose-500 font-mono text-[14px] font-black uppercase tracking-widest italic">ЄДРПОУ: {selectedEntity.edrpou}</span>
                             <span className="text-slate-800 mx-2">|</span>
                             <span className="text-[10px] font-black text-slate-400 bg-white/5 px-4 py-1 rounded-xl border border-white/5 uppercase tracking-[0.3em] font-mono italic">TI_NODE_TRUST_0.02</span>
                          </div>
@@ -598,7 +598,7 @@ export default function RiskScoringPremium() {
 
         <DiagnosticsTerminal />
 
-        {/* WRAITH CUSTOM STYLES */}
+        {/* ELITE CUSTOM STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(225,29,72,0.02); }
             .animate-spin-slow { animation: spin 20s linear infinite; }

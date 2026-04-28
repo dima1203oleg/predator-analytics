@@ -169,7 +169,7 @@ const SRView: React.FC = () => {
   };
 
   const exportCsv = () => {
-    const headers: string[] = ['ID', 'ЄД ПОУ', 'Назва'];
+    const headers: string[] = ['ID', 'ЄДРПОУ', 'Назва'];
     if (settings.showPlatform) headers.push('Платформа');
     if (settings.showStatus) headers.push('Статус');
     if (settings.showCreatedAt) headers.push('Створено');
@@ -197,7 +197,7 @@ const SRView: React.FC = () => {
   return (
     <div className="space-y-6">
       <ViewHeader
-        title="SR — реєстр Продавців"
+        title="SR — Реєстр Продавців"
         icon={<UserCheck className="w-6 h-6" />}
         breadcrumbs={['Дані', 'SR']}
         stats={[
@@ -211,7 +211,7 @@ const SRView: React.FC = () => {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Пошук за ID, ЄД ПОУ, назвою…"
+                placeholder="Пошук за ID, ЄДРПОУ, назвою…"
                 className="pl-9 bg-slate-950/40 border-slate-700/60"
               />
             </div>
@@ -283,7 +283,7 @@ const SRView: React.FC = () => {
         {isCreateOpen && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div className="lg:col-span-3 space-y-2">
-              <Label htmlFor="sr-edrpou">ЄД ПОУ</Label>
+              <Label htmlFor="sr-edrpou">ЄДРПОУ</Label>
               <Input
                 id="sr-edrpou"
                 value={draft.edrpou}
@@ -329,7 +329,7 @@ const SRView: React.FC = () => {
             <TableHeader>
               <TableRow className="border-white/5 hover:bg-white/5 bg-slate-950/40">
                 <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500 py-4">ID</TableHead>
-                <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">ЄД ПОУ</TableHead>
+                <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">ЄДРПОУ</TableHead>
                 <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">Назва</TableHead>
                 {settings.showPlatform && (
                   <TableHead className="text-xs uppercase font-black tracking-widest text-slate-500">Платформа</TableHead>

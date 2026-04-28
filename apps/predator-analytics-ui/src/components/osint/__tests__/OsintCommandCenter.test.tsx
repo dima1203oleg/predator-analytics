@@ -4,7 +4,7 @@
  * Тести покривають:
  * -  ендеринг стану завантаження
  * - Відображення OSINT інструментів
- * - Перемикання вкладок (ІНСТ УМЕНТИ,  ЕЄСТ И, СТ ІЧКА ПОДІЙ, АНАЛІТИКА)
+ * - Перемикання вкладок (ІНСТ УМЕНТИ, РЕЄСТРИ, СТ ІЧКА ПОДІЙ, АНАЛІТИКА)
  * - Пошук реєстрів
  * - Фільтрація стрічки подій за severity
  * - Запуск сканування
@@ -103,14 +103,14 @@ const mockRegistries = {
         {
             id: 'EDR', name: 'Держреєстрація', icon: 'Building2', color: '#10b981', count: 42,
             registries: [
-                { id: 'edr-1', name: 'Єдиний Державний реєстр (ЄД )', status: 'ACTIVE', records: 3200000, lastSync: '2024-03-01', api: 'REST' },
-                { id: 'edr-2', name: 'реєстр ФОП', status: 'ACTIVE', records: 1800000, lastSync: '2024-03-01', api: 'REST' },
+                { id: 'edr-1', name: 'Єдиний Державний Реєстр (ЄД )', status: 'ACTIVE', records: 3200000, lastSync: '2024-03-01', api: 'REST' },
+                { id: 'edr-2', name: 'Реєстр ФОП', status: 'ACTIVE', records: 1800000, lastSync: '2024-03-01', api: 'REST' },
             ],
         },
         {
             id: 'TAX', name: 'Податкова', icon: 'Receipt', color: '#f59e0b', count: 35,
             registries: [
-                { id: 'tax-1', name: 'реєстр платників ПДВ', status: 'ACTIVE', records: 450000, lastSync: '2024-03-01', api: 'SOAP' },
+                { id: 'tax-1', name: 'Реєстр платників ПДВ', status: 'ACTIVE', records: 450000, lastSync: '2024-03-01', api: 'SOAP' },
             ],
         },
     ],
@@ -128,7 +128,7 @@ const mockRegistries = {
 const mockFeed = [
     { id: 'f1', source: 'SpiderFoot', type: 'alert', severity: 'CRITICAL', target: 'ТОВ "МЕГА"', finding: 'Email у витоку', timestamp: new Date().toISOString(), category: 'breach' },
     { id: 'f2', source: 'Sherlock', type: 'find', severity: 'MEDIUM', target: 'Іванов І.І.', finding: '14 профілів', timestamp: new Date().toISOString(), category: 'social' },
-    { id: 'f3', source: ' НБО', type: 'alert', severity: 'HIGH', target: 'Offshore Ltd.', finding: 'Санкційний список', timestamp: new Date().toISOString(), category: 'sanctions' },
+    { id: 'f3', source: 'РНБО', type: 'alert', severity: 'HIGH', target: 'Offshore Ltd.', finding: 'Санкційний список', timestamp: new Date().toISOString(), category: 'sanctions' },
 ];
 
 const mockStats = {
@@ -223,19 +223,19 @@ describe('OsintCommandCenter', () => {
             await waitFor(() => {
                 expect(screen.getByText('ІНСТ УМЕНТИ')).toBeInTheDocument();
             });
-            expect(screen.getByText(' ЕЄСТ И')).toBeInTheDocument();
+            expect(screen.getByText('РЕЄСТРИ')).toBeInTheDocument();
             expect(screen.getByText('СТ ІЧКА ПОДІЙ')).toBeInTheDocument();
             expect(screen.getByText('АНАЛІТИКА')).toBeInTheDocument();
         });
 
-        it('повинен перемикати на вкладку  ЕЄСТ И', async () => {
+        it('повинен перемикати на вкладку РЕЄСТРИ', async () => {
             render(<OsintCommandCenter />);
 
             await waitFor(() => {
-                expect(screen.getByText(' ЕЄСТ И')).toBeInTheDocument();
+                expect(screen.getByText('РЕЄСТРИ')).toBeInTheDocument();
             });
 
-            fireEvent.click(screen.getByText(' ЕЄСТ И'));
+            fireEvent.click(screen.getByText('РЕЄСТРИ'));
 
             await waitFor(() => {
                 expect(screen.getByText('Держреєстрація')).toBeInTheDocument();
@@ -253,7 +253,7 @@ describe('OsintCommandCenter', () => {
             fireEvent.click(screen.getByText('СТ ІЧКА ПОДІЙ'));
 
             await waitFor(() => {
-                expect(screen.getByText(/СТ ІЧКА ПОДІЙ У  ЕАЛЬНОМУ ЧАСІ/i)).toBeInTheDocument();
+                expect(screen.getByText(/СТ ІЧКА ПОДІЙ У РЕАЛЬНОМУ ЧАСІ/i)).toBeInTheDocument();
             });
         });
 
@@ -280,10 +280,10 @@ describe('OsintCommandCenter', () => {
             render(<OsintCommandCenter />);
 
             await waitFor(() => {
-                expect(screen.getByText(' ЕЄСТ И')).toBeInTheDocument();
+                expect(screen.getByText('РЕЄСТРИ')).toBeInTheDocument();
             });
 
-            fireEvent.click(screen.getByText(' ЕЄСТ И'));
+            fireEvent.click(screen.getByText('РЕЄСТРИ'));
 
             await waitFor(() => {
                 expect(screen.getByPlaceholderText('Пошук реєстрів...')).toBeInTheDocument();
@@ -301,10 +301,10 @@ describe('OsintCommandCenter', () => {
             render(<OsintCommandCenter />);
 
             await waitFor(() => {
-                expect(screen.getByText(' ЕЄСТ И')).toBeInTheDocument();
+                expect(screen.getByText('РЕЄСТРИ')).toBeInTheDocument();
             });
 
-            fireEvent.click(screen.getByText(' ЕЄСТ И'));
+            fireEvent.click(screen.getByText('РЕЄСТРИ'));
 
             await waitFor(() => {
                 expect(screen.getByPlaceholderText('Пошук реєстрів...')).toBeInTheDocument();
@@ -418,7 +418,7 @@ describe('OsintCommandCenter', () => {
                 expect(screen.getByText('К ИТИЧНИХ')).toBeInTheDocument();
                 expect(screen.getByText('ІНСТ УМЕНТІВ')).toBeInTheDocument();
                 expect(screen.getByText('СКАНУЮТЬСЯ')).toBeInTheDocument();
-                expect(screen.getByText(' ЕЄСТ ІВ')).toBeInTheDocument();
+                expect(screen.getByText('РЕЄСТРІВ')).toBeInTheDocument();
                 expect(screen.getByText('СВІЖІСТЬ')).toBeInTheDocument();
             });
         });
@@ -428,7 +428,7 @@ describe('OsintCommandCenter', () => {
 
             await waitFor(() => {
                 expect(screen.getByText('ІНСТ УМЕНТИ')).toBeInTheDocument();
-                expect(screen.getByText(' ЕЄСТ И')).toBeInTheDocument();
+                expect(screen.getByText('РЕЄСТРИ')).toBeInTheDocument();
                 expect(screen.getByText('СТ ІЧКА ПОДІЙ')).toBeInTheDocument();
                 expect(screen.getByText('АНАЛІТИКА')).toBeInTheDocument();
             });

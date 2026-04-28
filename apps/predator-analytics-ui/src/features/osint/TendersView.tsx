@@ -1,5 +1,5 @@
 /**
- * 🏛️ PROZORRO INTELLIGENCE // КОНТУ  ЗАКУПІВЕЛЬ | v58.2-WRAITH
+ * 🏛️ PROZORRO INTELLIGENCE // КОНТУ  ЗАКУПІВЕЛЬ | v61.0-ELITE
  * PREDATOR Analytics — Anti-Corruption OSINT Matrix
  * 
  * Антикорупційний моніторинг публічних закупівель Prozorro у реальному часі.
@@ -40,7 +40,7 @@ import { SovereignAudio } from '@/utils/sovereign-audio';
 const RISK_CONFIG: Record<RiskLevelValue, { cls: string; label: string }> = {
     critical:  { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'К ИТИЧНО' },
     high:      { cls: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'ВИСОКИЙ_РИЗИК' },
-    medium:    { cls: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30', label: 'СЕ ЕДНІЙ' },
+    medium:    { cls: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/30', label: 'СЕРЕДНІЙ' },
     low:       { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'БЕЗПЕЧНО' },
     minimal:   { cls: 'bg-slate-500/10 text-slate-500 border-slate-500/30', label: 'МІНІМАЛЬНИЙ' },
     stable:    { cls: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'СТАБІЛЬНО' },
@@ -215,13 +215,13 @@ export default function TendersView() {
                                   ANTICORRUPTION_CORE // PROZORRO_OSINT
                                 </span>
                                 <div className="h-px w-10 bg-emerald-600/20" />
-                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                                ЕЄСТ  <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЗАКУПІВЕЛЬ</span>
+                               РЕЄСТР <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">ЗАКУПІВЕЛЬ</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                               АНТИКО УПЦІЙНИЙ МОНІТО ИНГ ДЕ ЖАВНОГО КОНТУ У В  ЕАЛЬНОМУ ЧАСІ
+                               АНТИКОРУПЦІЙНИЙ МОНІТО ИНГ ДЕ ЖАВНОГО КОНТУ У В РЕАЛЬНОМУ ЧАСІ
                              </p>
                           </div>
                        </div>
@@ -249,7 +249,7 @@ export default function TendersView() {
                             <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-800 group-focus-within:text-emerald-500 transition-colors" size={24} />
                             <input 
                                type="text" 
-                               placeholder="ПОШУК_ЗАКУПІВЕЛЬ_ЗА_НАЗВОЮ_АБО_ЄД ПОУ..."
+                               placeholder="ПОШУК_ЗАКУПІВЕЛЬ_ЗА_НАЗВОЮ_АБО_ЄДРПОУ..."
                                value={search} onChange={e => setSearch(e.target.value)}
                                className="w-full bg-white/[0.02] border border-white/[0.04] rounded-2xl pl-20 pr-8 py-6 text-xl font-black text-white italic uppercase placeholder:text-slate-800 outline-none focus:border-emerald-500/40 transition-all font-mono"
                             />

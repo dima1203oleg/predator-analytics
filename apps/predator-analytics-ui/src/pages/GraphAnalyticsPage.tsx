@@ -1,6 +1,6 @@
 /**
  * 🕸️ PREDATOR Cognitive Graph Analytics | v62.7-ELITE
- * СИСТЕМА ГЛИБИННОГО Г АФОВОГО АНАЛІЗУ (GNN)
+ * СИСТЕМА ГЛИБИННОГО ГРАФОВОГО АНАЛІЗУ (GNN)
  * 
  * Візуалізація та аналіз складних взаємозв'язків між суб'єктами.
  * Sovereign Elite Design System · Crimson-Noir Palette · Tier-1 Strategic Access
@@ -106,7 +106,7 @@ const NodeDetailPanel: React.FC<{ node: GraphNode | null; onClose: () => void }>
 
                 <div className="space-y-6">
                     <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic flex items-center gap-3 border-l-2 border-red-600 pl-4">
-                        СТРАТЕГІЧНИЙ П ОФІЛЬ
+                        СТРАТЕГІЧНИЙПРОФІЛЬ
                     </h4>
                     <pre className="p-8 bg-black/60 border border-white/5 rounded-[2.5rem] text-[12px] text-red-500 font-mono italic leading-relaxed whitespace-pre-wrap shadow-[inset_0_0_20px_rgba(220,38,38,0.05)]">
                         {`{
@@ -167,7 +167,7 @@ const GraphAnalyticsPage: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'GraphGNN',
-                    message: `АВТОНОМНИЙ Г АФ [${nodeSource}]: Виявлення зв'язків через локальний Mirror Vault. Аналіз GNN обмежений.`,
+                    message: `АВТОНОМНИЙ ГРАФ [${nodeSource}]: Виявлення зв'язків через локальний Mirror Vault. Аналіз GNN обмежений.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'GRAPH_OFFLINE'
@@ -177,7 +177,7 @@ const GraphAnalyticsPage: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'GraphGNN',
-                    message: `Г АФОВИЙ_ВУЗОЛ [${nodeSource}]: Нейронну топологію синхронізовано. Готовність до обчислень L5.`,
+                    message: `ГРАФОВИЙ_ВУЗОЛ [${nodeSource}]: Нейронну топологію синхронізовано. Готовність до обчислень L5.`,
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'GRAPH_SUCCESS'
@@ -228,7 +228,7 @@ const GraphAnalyticsPage: React.FC = () => {
                             { label: 'NODE_SOURCE', value: nodeSource, color: isOffline ? 'warning' : 'success', icon: <Cpu size={14} /> },
                             { label: 'LATENCY (OODA)', value: '8ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['ЯДРО', 'Г АФОВА_МАТ ИЦЯ', 'STRATEGIC_OSINT']}
+                        breadcrumbs={['ЯДРО', 'ГРАФОВА_МАТ ИЦЯ', 'STRATEGIC_OSINT']}
                     />
 
                     <div className="grid grid-cols-12 gap-10">
@@ -419,7 +419,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                              <div className="p-3 bg-amber-500/20 rounded-xl">
                                                  <Terminal size={20} className="text-amber-400" />
                                              </div>
-                                             <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">ЛОГ_Г АФОВИХ_ОПЕРАЦІЙ</h3>
+                                             <h3 className="text-sm font-black text-white uppercase tracking-[0.4em] italic leading-none">ЛОГ_ГРАФОВИХ_ОПЕРАЦІЙ</h3>
                                          </div>
                                          <span className="text-amber-500 animate-pulse"><Radio size={18} /></span>
                                      </div>
@@ -427,10 +427,10 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="space-y-6 font-mono text-[11px] flex-1 overflow-y-auto no-scrollbar pr-4 text-emerald-500/80 italic">
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ПЕ ЕВІ КА ВУЗЛА 1234:5678... [OK]</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} ВИЯВЛЕНОПРИХОВАНУ ОБЛАСТЬ ЗВ'ЯЗКІВ L2</p>
-                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v58.2-WRAITH</p>
+                                         <p className="border-l border-indigo-500 pl-4 py-1 text-indigo-400 font-black uppercase">{">> "} ЗАПУСК PAGERANK_OPTIMIZED_v61.0-ELITE</p>
                                          <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} МОДЕЛЬ_GNN: ВАХ_СКО  = 0.9984</p>
                                          <p className="border-l border-amber-500 pl-4 py-1 text-amber-500">{">> "} УВАГА: АНОМАЛЬНИЙ Т АФІК У КЛАСТЕ І "B-12"</p>
-                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} А ХІВАЦІЯ СНАПШОТУ Г АФА... [ЗАВЕ ШЕНО]</p>
+                                         <p className="border-l border-white/10 pl-4 py-1 hover:text-white transition-colors">{">> "} А ХІВАЦІЯ СНАПШОТУ ГРАФА... [ЗАВЕ ШЕНО]</p>
                                      </div>
                                      
                                      <div className="absolute -right-20 -bottom-20 opacity-[0.03] group-hover/ops:opacity-[0.08] transition-opacity">
@@ -517,7 +517,7 @@ const GraphAnalyticsPage: React.FC = () => {
                                      <div className="p-6 bg-indigo-500/5 border border-indigo-500/20 rounded-[2rem] flex items-center justify-between">
                                           <div className="flex items-center gap-4">
                                                <Cpu size={18} className="text-indigo-400" />
-                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v58.2-WRAITH</span>
+                                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">CPU_THREADS_v61.0-ELITE</span>
                                           </div>
                                           <span className="text-xl font-mono font-black text-white italic tracking-tighter">X256</span>
                                      </div>

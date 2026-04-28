@@ -428,7 +428,7 @@ export const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* ──  ЕЖИМИ + ПОШУК (тільки у відкритому стані) ── */}
+      {/* ── РЕЖИМИ + ПОШУК (тільки у відкритому стані) ── */}
       {isOpen && (
         <div
           className="shrink-0 border-b px-3 py-2"
@@ -857,7 +857,7 @@ export const Sidebar: React.FC = () => {
           e.currentTarget.style.color = '#64748b';
           e.currentTarget.style.boxShadow = '0 0 16px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03)';
         }}
-        title={isOpen ? 'Згорнути навігацію' : ' озгорнути навігацію'}
+        title={isOpen ? 'Згорнути навігацію' : 'розгорнути навігацію'}
       >
         {isOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
       </button>

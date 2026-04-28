@@ -1,5 +1,5 @@
 /**
- * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТ  | v58.2-WRAITH
+ * 🛰️ WAR ROOM // СИТУАЦІЙНИЙ ЦЕНТ  | v61.0-ELITE
  * PREDATOR Analytics — Tactical Multi-Screen Command Center
  * 
  * Єдиний віртуальний простір для CEO з агрегацією всіх критичних потоків.
@@ -60,7 +60,7 @@ export default function WarRoomView() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'WarRoom',
-          message: 'АКТИВОВАНО  ЕЖИМ СИТУАЦІЙНОГО ВІДКЛЮЧЕННЯ (WAR_ROOM_ALPHA). Дані агрегуються з MIRROR-вузлів.',
+          message: 'АКТИВОВАНО РЕЖИМ СИТУАЦІЙНОГО ВІДКЛЮЧЕННЯ (WAR_ROOM_ALPHA). Дані агрегуються з MIRROR-вузлів.',
           severity: 'error',
           timestamp: new Date().toISOString(),
           code: 'WAR_ROOM_ALPHA'
@@ -90,7 +90,7 @@ export default function WarRoomView() {
                     <div className="flex items-center gap-4 mb-2">
                       <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse shadow-[0_0_10px_currentColor]", isOffline ? "bg-amber-500 text-amber-500" : "bg-red-600 text-red-600")} />
                       <span className={cn("text-[10px] font-black uppercase tracking-[0.8em]", isOffline ? "text-amber-500/80" : "text-red-500/80")}>
-                        {isOffline ? 'СУВЕ ЕННИЙ_ ЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТ '} · v58.2-WRAITH
+                        {isOffline ? 'СУВЕ ЕННИЙ_РЕЖИМ_НС' : 'ТАКТИЧНИЙ КОМАНДНИЙ ЦЕНТР'} · v61.0-ELITE
                       </span>
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">
@@ -100,7 +100,7 @@ export default function WarRoomView() {
               </div>
             }
             badges={[
-              { label: 'CLASSIFIED_WRAITH', color: 'amber', icon: <Lock size={10} /> },
+              { label: 'CLASSIFIED_ELITE', color: 'amber', icon: <Lock size={10} /> },
               { label: 'WAR_ROOM_ALPHA', color: 'primary', icon: <Target size={10} /> },
               { 
                 label: nodeSource, 
@@ -118,7 +118,7 @@ export default function WarRoomView() {
                 animate: isOffline
               },
               { label: ' ЕЗЕ В', value: activeFailover ? 'ТУНЕЛЬ_ZROK' : isOffline ? 'АВТОНОМНО' : 'ОЧІКУВАННЯ', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
-              { label: 'PROTOCOL', value: isOffline ? 'EMERGENCY' : 'WRAITH', icon: <Shield />, color: isOffline ? 'warning' : 'success' }
+              { label: 'PROTOCOL', value: isOffline ? 'EMERGENCY' : 'ELITE', icon: <Shield />, color: isOffline ? 'warning' : 'success' }
             ]}
             actions={
               <div className="flex items-center gap-6">
@@ -135,7 +135,7 @@ export default function WarRoomView() {
             }
           />
 
-          {/* ── QUADRANTS GRID WRAITH ── */}
+          {/* ── QUADRANTS GRID ELITE ── */}
           <div className="flex-1 grid grid-cols-12 grid-rows-2 gap-8 overflow-hidden pb-10">
              
              {/* Q1: GLOBAL INTEL (Radar/Globe) */}
@@ -342,7 +342,7 @@ export default function WarRoomView() {
                             </div>
                             <div>
                                <h4 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none mb-3 font-serif">СЦЕНА ІЙ: ОМЕГА-4</h4>
-                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">П ЕДИКТИВНА МОДЕЛЬ ВЕКТО У  ОЗШИ ЕННЯ КОНФЛІКТУ</p>
+                               <p className="text-[11px] font-black text-slate-800 uppercase tracking-[0.4em] leading-none italic">П ЕДИКТИВНА МОДЕЛЬ ВЕКТОРУ  ОЗШИ ЕННЯ КОНФЛІКТУ</p>
                             </div>
                          </div>
                          <div className="space-y-4 flex-1">
@@ -361,20 +361,20 @@ export default function WarRoomView() {
                             ))}
                          </div>
                          <button className="w-full py-8 bg-gradient-to-r from-yellow-600 to-yellow-400 text-black rounded-[2.5rem] text-[13px] font-black uppercase tracking-[0.4em] italic shadow-4xl hover:scale-[1.02] transition-all border-4 border-yellow-400/20">
-                            ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_WRAITH
+                            ЗАПУСТИТИ_СИМУЛЯЦІЮ_РИЗИКУ_ELITE
                          </button>
                       </div>
                       <div className="col-span-5 flex flex-col space-y-8 h-full overflow-hidden">
                          <div className="flex items-center justify-between text-[11px] font-black text-slate-900 uppercase tracking-[0.6em] italic mb-4">
                             <span>АКТИВНІ АЛЕ ТИ</span>
-                            <span className="text-yellow-600"> ЕЖИМ_ХИЖАКА</span>
+                            <span className="text-yellow-600">РЕЖИМ_ХИЖАКА</span>
                          </div>
                          <div className="space-y-4 flex-1 overflow-y-auto pr-4 custom-scrollbar pb-10">
                             {[
                                { msg: 'Виявлено збіг КБВ (POS-001)', type: 'error' },
                                { msg: 'Нова реєстрація шелл-компанії (БВО)', type: 'warning' },
                                { msg: 'Аномальна транзакція: Абу-Дабі', type: 'warning' },
-                               { msg: 'Оновлено реєстр ПЕП Україна', type: 'info' },
+                               { msg: 'Оновлено Реєстр ПЕП Україна', type: 'info' },
                                { msg: 'Детектовано новий паттерн відмивання', type: 'error' },
                             ].map((a, i) => (
                                <motion.div 

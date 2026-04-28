@@ -39,7 +39,7 @@ const SystemPromptsView = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'Prompt_Engine',
-          message: 'ЯДРО П ОМПТІВ ПЕ ЕЙШЛО В АВТОНОМНИЙ  ЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
+          message: 'ЯДРОПРОМПТІВ ПЕ ЕЙШЛО В АВТОНОМНИЙ РЕЖИМ (PROMPT_OFFLINE). Використовуються закешовані версії.',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'PROMPT_OFFLINE'
@@ -60,7 +60,7 @@ const SystemPromptsView = () => {
       <AdvancedBackground mode="sovereign" />
       
       <ViewHeader 
-        title="СИСТЕМНІ П ОМПТІ ШІ"
+        title="СИСТЕМНІПРОМПТІ ШІ"
         subtitle="Керування інструкціями для нейромереж та системної логіки PREDATOR"
         icon={<Terminal size={24} className="text-rose-400" />}
         breadcrumbs={['П ЕДАТО ', 'ЗАВОД', 'П ОМПТИ']}
@@ -106,7 +106,7 @@ const SystemPromptsView = () => {
         {/* Middle Column: Prompts List */}
         <div className="lg:col-span-4 space-y-6">
            <div className="flex items-center justify-between px-2 mb-4">
-              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИ ЕКТИВИ_v58.2-WRAITH</h3>
+              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-0">ДИ ЕКТИВИ_v61.0-ELITE</h3>
               <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-500 hover:text-rose-400" onClick={() => refetch()}>
                  <RefreshCw size={14} className={listLoading ? 'animate-spin' : ''} />
               </Button>
@@ -181,7 +181,7 @@ const SystemPromptsView = () => {
                  ) : selectedTemplate ? (
                     <div className="space-y-6">
                        <div className="space-y-2">
-                          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ШАБЛОН // СИСТЕМНА ІНСТ УКЦІЯ</p>
+                          <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ШАБЛОН // СИСТЕМНАІНСТРУКЦІЯ</p>
                           <div className="p-4 bg-black/40 border border-white/5 rounded-xl text-slate-300 whitespace-pre-wrap leading-loose italic">
                             {selectedTemplate.template}
                           </div>
@@ -225,7 +225,7 @@ const SystemPromptsView = () => {
                        СКО : {selectedTemplate?.score || 'Н/Д'}
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
-                       П ИКЛАДИ: {selectedTemplate?.examples?.length || 0}
+                      ПРИКЛАДИ: {selectedTemplate?.examples?.length || 0}
                     </div>
                  </div>
                  <Button 

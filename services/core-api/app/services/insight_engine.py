@@ -1,4 +1,4 @@
-"""Insight Engine — PREDATOR Analytics v56.5-ELITE.
+"""Insight Engine — PREDATOR Analytics v61.0-ELITE.
 
 Генерація інтелектуальних висновків та пояснень для аналітиків.
 Використовує AIService для інтерпретації складних графових та статистичних даних.

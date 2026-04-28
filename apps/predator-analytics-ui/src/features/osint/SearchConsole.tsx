@@ -1,5 +1,5 @@
 /**
- * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v58.2-WRAITH
+ * 🔍 SEARCH CONSOLE // КОНСОЛЬ НАДГЛИБИННОГО ПОШУКУ | v61.0-ELITE
  * PREDATOR Analytics — Synaptic Discovery Matrix
  * 
  * Еволюційний інтерфейс для глибокого семантичного аналізу та пошуку.
@@ -118,7 +118,7 @@ export default function SearchConsole() {
 
             // Fallback for demo
             const processed = apiResults?.length > 0 ? apiResults : [
-                { id: '1', title: 'ДП "АНТОНОВ" —  ЕЄСТ  ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
+                { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-03-14', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
                 { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-03-12', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] },
                 { id: '3', title: 'АНАЛІЗ САНКЦІЙНИХ СПИСКІВ — ПАКЕТ №14', snippet: 'Порівняння поточних баз імпортерів з оновленими списками санкцій ЄС та США. 3 збіги серед підприємств ВПК.', score: 0.85, source: 'САНКЦІЙНИЙ_ДЕП', searchType: 'keyword', date: '2026-03-10', category: 'БЕЗПЕКА', truthScore: 1.0, tags: ['САНКЦІЇ', 'ВПК', 'БЕЗПЕКА'] }
             ];
@@ -129,7 +129,7 @@ export default function SearchConsole() {
             console.error("Discovery error:", error);
             // Fallback for mock environment
             setResults([
-                { id: '1', title: 'ДП "АНТОНОВ" —  ЕЄСТ  ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-04-12', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
+                { id: '1', title: 'ДП "АНТОНОВ" — РЕЄСТР ЕКСПОРТНИХ ОПЕРАЦІЙ', snippet: 'Аналіз ланцюгів постачання компонентів для літаків серії АН. Виявлено 12 нових контрагентів в ЄС за останній квартал.', score: 0.98, source: 'МИТНИЦЯ_UA', searchType: 'hybrid', date: '2026-04-12', category: 'АВІАЦІЯ', truthScore: 0.99, tags: ['АВІАЦІЯ', 'ЕКСПОРТ', 'АНТОНОВ'] },
                 { id: '2', title: 'ТОВ "ЕНЕ ГО-ПОТІК" — АНОМАЛЬНА АКТИВНІСТЬ', snippet: 'Система зафіксувала різке зростання транзакцій з офшорними зонами. Індекс ризику CERS піднявся до 85/100.', score: 0.92, source: 'ФІНМОНІТО ИНГ', searchType: 'semantic', date: '2026-04-11', category: 'ЕНЕ ГЕТИКА', truthScore: 0.88, tags: ['ЕНЕ ГЕТИКА', 'ОФШО И', 'РИЗИК'] }
             ]);
         } finally {
@@ -165,7 +165,7 @@ export default function SearchConsole() {
                                           СИНАПТИЧНИЙ_ПОШУК // ВСЕВІДЕННЯ_v58.2
                                         </span>
                                         <div className="h-px w-10 bg-yellow-600/20" />
-                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                                     </div>
                                     <h1 className="text-6xl font-black text-white tracking-widest uppercase leading-none italic skew-x-[-4deg]">
                                         СИНАПТИЧНИЙ <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">ПОШУК</span>
@@ -245,7 +245,7 @@ export default function SearchConsole() {
                         <div className="flex flex-wrap justify-center gap-8">
                             {[
                                 { id: 'semantic', label: 'СЕМАНТИЧНИЙ_ПОШУК', icon: Sparkles, color: '#6366f1' },
-                                { id: 'rerank', label: 'НЕЙ О_ Е ЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
+                                { id: 'rerank', label: 'НЕЙ О_ РЕ ЕЙТИНГ', icon: TrendingUp, color: '#10b981', premium: true },
                                 { id: 'chat', label: 'NEXUS_КО_ПІЛОТ', icon: MessageSquare, color: '#f59e0b', premium: true },
                                 { id: 'truth', label: 'ТІЛЬКИ_ІСТИНА', icon: ShieldCheck, color: '#ec4899', active: truthMode, onToggle: () => setTruthMode(!truthMode) }
                             ].map((mode) => (
@@ -341,7 +341,7 @@ export default function SearchConsole() {
                                                             </div>
                                                             <div className="flex gap-4">
                                                                 <button className="px-8 py-4 bg-yellow-700/10 hover:bg-yellow-700 border border-yellow-500/30 text-yellow-400 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic transition-all flex items-center gap-3">
-                                                                    <Brain size={18} /> СЕМАНТИЧНИЙ_Г АФ
+                                                                    <Brain size={18} /> СЕМАНТИЧНИЙ_ГРАФ
                                                                 </button>
                                                                 <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-slate-500 hover:text-white transition-all shadow-xl">
                                                                     <Share2 size={18} />

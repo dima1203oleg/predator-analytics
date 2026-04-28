@@ -266,7 +266,7 @@ const inferLogMeta = (message: string): { levelLabel: string; tone: AutoFactoryT
   }
 
   if (upper.includes('OK') || upper.includes('SUCCESS') || upper.includes('FIXED')) {
-    return { levelLabel: 'НО МА', tone: 'emerald' };
+    return { levelLabel: 'НОРМА', tone: 'emerald' };
   }
 
   return { levelLabel: 'ІНФО', tone: 'sky' };
@@ -287,7 +287,7 @@ const normalizeLogLevelLabel = (value: string | null, fallback: string): string 
     case 'success':
     case 'fixed':
     case 'healthy':
-      return 'НО МА';
+      return 'НОРМА';
     case 'info':
       return 'ІНФО';
     default:

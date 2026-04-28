@@ -14,9 +14,9 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
     return (
         <div className="space-y-6">
             <ViewHeader
-                title="реєстр Чемпіонів SOTA"
+                title="Реєстр Чемпіонів SOTA"
                 icon={<Trophy size={20} className="icon-3d-amber" />}
-                breadcrumbs={['ІНТЕЛЕКТ', 'NAS', ' ЕЄСТ  SOTA']}
+                breadcrumbs={['ІНТЕЛЕКТ', 'NAS', 'РЕЄСТР SOTA']}
                 stats={[
                     { label: 'Підтверджено SOTA', value: '12', color: 'primary' },
                     { label: 'Середня Точність', value: '94.2%', color: 'success' }
@@ -71,7 +71,7 @@ export const NasLeaderboardView: React.FC<NasLeaderboardViewProps> = ({ models }
                             {models.length === 0 && (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-8 text-center text-slate-300 text-xs font-mono">
-                                        реєстр порожній.  озпочніть турнір для генерації SOTA кандидатів.
+                                        Реєстр порожній.  озпочніть турнір для генерації SOTA кандидатів.
                                     </td>
                                 </tr>
                             )}

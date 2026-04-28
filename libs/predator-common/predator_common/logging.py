@@ -1,4 +1,4 @@
-"""Structured JSON Logging — для PREDATOR Analytics v55.1.
+"""Structured JSON Logging — для PREDATOR Analytics v61.0-ELITE.
 
 Надає структуроване JSON логування через structlog.
 Кожен лог включає: timestamp, level, logger, message,

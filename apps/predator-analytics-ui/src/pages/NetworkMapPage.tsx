@@ -183,7 +183,7 @@ const NetworkMapPage: React.FC = () => {
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v58.2-WRAITH-ELITE</span>
+                            <span className="text-[10px] font-black text-rose-500/60 uppercase tracking-[0.4em] italic">TOPOLOGY_VISUALIZER // v61.0-ELITE-ELITE</span>
                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                         </div>
                         <h1 className="text-3xl font-black tracking-tighter italic uppercase text-white skew-x-[-4deg]">МЕ ЕЖЕВИЙ <span className="text-rose-500">АНАЛІЗ_ЗВʼЯЗКІВ</span></h1>
@@ -207,7 +207,7 @@ const NetworkMapPage: React.FC = () => {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/search:text-rose-500 transition-colors" size={20} />
                         <input 
                             type="text" 
-                            placeholder="ВВЕДІТЬ_ЄД ПОУ_АБО_ПІБ"
+                            placeholder="ВВЕДІТЬ_ЄДРПОУ_АБО_ПІБ"
                             className="bg-black border-2 border-white/5 rounded-[2rem] pl-16 pr-8 py-5 text-sm w-96 focus:outline-none focus:border-rose-500/40 focus:bg-rose-500/5 transition-all font-mono italic uppercase tracking-widest placeholder:text-slate-800"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}

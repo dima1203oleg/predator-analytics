@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 import { useNavigate } from 'react-router-dom';
 
 /**
- *  ️ TACTICAL SEARCH WIDGET | v58.2-WRAITH (PREDATOR_CORE)
+ *  ️ TACTICAL SEARCH WIDGET | v61.0-ELITE (PREDATOR_CORE)
  * ВІДЖЕТ ШВИДКОГО ПОШУКУ (ШВИДКИЙ ДОСТУП ДО СВЯТИЛИЩА)
  * 
  * Тепер у "Sovereign Gold" елітарному тактичному стилі.
@@ -109,7 +109,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                         <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ІСТО ІЯ_ЗАПИТІВ</span>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        {['ТОВ "ОФШО -МИТО"', 'ЄД ПОУ 44923412', 'Микола Верес'].map(item => (
+                                        {['ТОВ "ОФШО -МИТО"', 'ЄДРПОУ 44923412', 'Микола Верес'].map(item => (
                                             <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors uppercase font-bold italic tracking-tight">
                                                 {item}
                                             </button>
@@ -122,7 +122,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                         <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ГА ЯЧІ_Т ЕНДИ_РИЗИКУ</span>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        {['ПСЕНИЦЯ_ЕКСПОРТ', 'САНКЦІЇ_ Ф', 'ТИЛОВА_КО УПЦІЯ'].map(item => (
+                                        {['ПСЕНИЦЯ_ЕКСПОРТ', 'САНКЦІЇ_ Ф', 'ТИЛОВА_КОРУПЦІЯ'].map(item => (
                                             <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors flex items-center justify-between group/trend uppercase font-bold italic tracking-tight">
                                                 <span>{item}</span>
                                                 <Zap size={12} className="text-amber-500 opacity-0 group-hover/trend:opacity-100 transition-opacity" />

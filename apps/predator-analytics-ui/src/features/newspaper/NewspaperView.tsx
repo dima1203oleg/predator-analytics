@@ -1,5 +1,5 @@
 /**
- * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v58.2-WRAITH
+ * 📰 PREDATOR NEWS // АНАЛІТИКА НОВИН | v61.0-ELITE
  * PREDATOR Analytics — Tactical OSINT Media Parser
  * 
  * Автоматичний дайджест: Компромат, Тренди, Митниця та ШІ-алерти.
@@ -58,11 +58,11 @@ export default function NewspaperView() {
           date: '2026-04-13'
         },
         compromat: [
-          { id: '1', title: 'ОЛЕКСІЙ КОВАЛЬОВ (ЗАМ.МИТНИЦІ)', subtitle: 'Невідповідність доходів: придбано 3 авто Bentley в січні', risk: '92%', hook: 'ДЕТЕКЦІЯ PEP АНОМАЛІЇ', riskLevel: 'high', source: ' ЕЄСТ _ДПС' },
+          { id: '1', title: 'ОЛЕКСІЙ КОВАЛЬОВ (ЗАМ.МИТНИЦІ)', subtitle: 'Невідповідність доходів: придбано 3 авто Bentley в січні', risk: '92%', hook: 'ДЕТЕКЦІЯ PEP АНОМАЛІЇ', riskLevel: 'high', source: 'РЕЄСТР_ДПС' },
           { id: '2', title: 'ТОВ "МИТНИЙ-Б ОКЕ "', subtitle: 'Систематичне заниження ваги на 40% для HS-72', risk: '78%', hook: 'СХЕМА "ПЕ ЕВАНТАЖЕННЯ"', riskLevel: 'high', source: 'МИТНИЦЯ_UA' }
         ],
         trends: [
-          { id: 't1', title: 'ІМПОРТ ЕЛЕКТ ОНІКИ', subtitle: 'HS-85: Критичне зростання потоку з Китаю', hook: 'СЕ ЕДНІЙ РИЗИК: +142%', direction: 'up', percent: 142, hsCode: '8517', count: 1240, totalValue: 42000000 },
+          { id: 't1', title: 'ІМПОРТ ЕЛЕКТ ОНІКИ', subtitle: 'HS-85: Критичне зростання потоку з Китаю', hook: 'СЕРЕДНІЙ РИЗИК: +142%', direction: 'up', percent: 142, hsCode: '8517', count: 1240, totalValue: 42000000 },
           { id: 't2', title: 'ЕКСПОРТ ЗЕ НОВИХ', subtitle: 'HS-10: Сезонне зниження активності', hook: 'СТАБІЛЬНИЙ СЕКТО : -12%', direction: 'down', percent: 12, hsCode: '1001', count: 4500, totalValue: 128000000 }
         ],
         customs: [
@@ -152,7 +152,7 @@ export default function NewspaperView() {
                           TACTICAL_OSINT // MEDIA_PARSER
                         </span>
                         <div className="h-px w-10 bg-yellow-600/20" />
-                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
+                        <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v61.0-ELITE</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
                        ГАЗЕТА <span className="text-yellow-500 underline decoration-yellow-600/20 decoration-8 italic uppercase">PREDATOR</span>

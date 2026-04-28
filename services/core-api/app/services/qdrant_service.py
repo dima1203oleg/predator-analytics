@@ -1,4 +1,4 @@
-"""Qdrant Vector Store Service — PREDATOR Analytics v58.2-WRAITH.
+"""Qdrant Vector Store Service — PREDATOR Analytics v61.0-ELITE.
 
 Семантичний пошук та RAG (Retrieval-Augmented Generation).
 

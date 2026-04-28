@@ -1,5 +1,5 @@
 /**
- * 🎯 MA TARGET SCANNER // СКАНЕ  ЦІЛЬОВИХ  ИНКІВ | v58.2-WRAITH
+ * 🎯 MA TARGET SCANNER // СКАНЕ  ЦІЛЬОВИХ  ИНКІВ | v61.0-ELITE
  * PREDATOR Analytics — Mergers & Acquisitions Intelligence
  *
  * Компанії у фінансових труднощах — можливості:
@@ -147,7 +147,7 @@ const MATargetScannerView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto p-12 space-y-12 pt-12">
 
-          {/* ── ЗАГОЛОВОК WRAITH ── */}
+          {/* ── ЗАГОЛОВОК ELITE ── */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -160,10 +160,10 @@ const MATargetScannerView: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                      UBO · SOVEREIGN TARGET SCAN · v58.2-WRAITHNG
+                      UBO · SOVEREIGN TARGET SCAN · v61.0-ELITENG
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     TARGET <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">SCANNER</span>
@@ -203,13 +203,13 @@ const MATargetScannerView: React.FC = () => {
                 </div>
                 <button className="px-14 py-6 bg-yellow-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
                   <Download size={22} />
-                  ACQUISITION_PACK_WRAITH
+                  ACQUISITION_PACK_ELITE
                 </button>
               </div>
             }
           />
 
-          {/* ── МЕТ ИКИ WRAITH ── */}
+          {/* ── МЕТ ИКИ ELITE ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { label: 'ЦІЛЕЙ ЗНАЙДЕНО',       value: '127',   icon: Target,      color: '#D4AF37', sub: 'Detected In-Network' },
@@ -233,12 +233,12 @@ const MATargetScannerView: React.FC = () => {
             ))}
           </div>
 
-          {/* ── ОСНОВНИЙ КОНТЕНТ WRAITH ── */}
+          {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
             {/* Список цілей */}
             <div className="lg:col-span-7 space-y-8">
-              {/* Фільтри WRAITH */}
+              {/* Фільтри ELITE */}
               <div className="flex flex-wrap gap-4 items-center p-3 bg-black/40 backdrop-blur-2xl border-2 border-white/5 rounded-[2.5rem] w-fit shadow-2xl">
                 <div className="flex items-center gap-4 bg-black border-2 border-white/5 px-8 py-3 rounded-2xl group focus-within:border-yellow-500/40 transition-all">
                   <Search size={18} className="text-slate-700 group-hover:text-yellow-500 transition-colors" />

@@ -152,7 +152,7 @@ export const DataOpsTab: React.FC = () => {
         <Database size={80} className="text-rose-600/40 mb-12 animate-pulse" />
         <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">К ИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ А</div>
         <p className="text-[14px] font-black text-white/30 max-w-2xl mb-16 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА НЕ ЗМОГЛА ОТ ИМАТИ СТАН ВУЗЛІВ ОБ ОБКИ. <br/>
+          СИСТЕМА НЕ ЗМОГЛА ОТРИМАТИ СТАН ВУЗЛІВ ОБ ОБКИ. <br/>
           ПЕ ЕВІ ТЕ З'ЄДНАННЯ З КОНТ ОЛЕ ОМ ДАНИХ <span className="text-rose-500">PREDATOR_LAKE_MASTER_L7</span>.
         </p>
         <button 
@@ -169,7 +169,7 @@ export const DataOpsTab: React.FC = () => {
 
   const tabs = [
     { id: 'kafka'    as const, label: `ШИНА_ПОДІЙ_KAFKA`,   count: kafkaTopics.length,    icon: Upload },
-    { id: 'datasets' as const, label: `СХОВИЩА_ ЕЄСТ ІВ`,    count: datasets.length,       icon: Layers },
+    { id: 'datasets' as const, label: `СХОВИЩА_РЕЄСТРІВ`,    count: datasets.length,       icon: Layers },
     { id: 'factory'  as const, label: `ДАТА_ФАБ ИКА_Ω`, count: factoryModules.length, icon: Factory },
   ];
 
@@ -187,7 +187,7 @@ export const DataOpsTab: React.FC = () => {
         <div className="space-y-5">
            <div className="flex items-center gap-8">
              <h2 className="text-5xl font-black text-white uppercase tracking-tighter italic glint-elite chromatic-elite leading-tight">
-               УП АВЛІННЯ ДАНИМИ & <span className="text-rose-500">ПОТОКОВА АНАЛІТИКА</span>
+               УПРАВЛІННЯ ДАНИМИ & <span className="text-rose-500">ПОТОКОВА АНАЛІТИКА</span>
              </h2>
              <div className="px-5 py-1.5 bg-rose-600/10 border-2 border-rose-600/30 rounded-xl text-[11px] font-black text-rose-500 tracking-[0.4em] uppercase italic shadow-2xl">
                ELITE_DATA_v61.0

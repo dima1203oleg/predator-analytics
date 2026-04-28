@@ -1,4 +1,4 @@
-"""Entity Resolution Engine (ERE) — PREDATOR Analytics v56.5-ELITE.
+"""Entity Resolution Engine (ERE) — PREDATOR Analytics v61.0-ELITE.
 
 Забезпечує дедуплікацію та пошук схожих сутностей (компаній, осіб) за допомогою векторних ембедінгів Qdrant.
 TZ v5.0 §10.1 (ERE).

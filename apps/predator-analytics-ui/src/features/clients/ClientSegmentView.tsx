@@ -26,7 +26,7 @@ type SegmentConfig = {
 const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
   business: {
     title: 'Бізнес та Корпорації',
-    subtitle: ' инкова розвідка, конкуренти, ланцюги постачання та прогнозування попиту.',
+    subtitle: 'ринкова розвідка, конкуренти, ланцюги постачання та прогнозування попиту.',
     icon: <Building2 className="w-6 h-6" />,
     typicalTasks: [
       'Перевірка контрагентів та ризиків співпраці',
@@ -35,7 +35,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
       'Прогноз попиту, імпорту та цін',
     ],
     shortcuts: [
-      { label: ' инкова Аналітика', path: '/market', icon: <TrendingUp className="w-4 h-4" /> },
+      { label: 'ринкова Аналітика', path: '/market', icon: <TrendingUp className="w-4 h-4" /> },
       { label: 'Глобальний Пошук', path: '/search-v2', icon: <FileSearch className="w-4 h-4" /> },
       { label: 'Можливості', path: '/opportunities', icon: <TrendingUp className="w-4 h-4" /> },
       { label: 'Прогнозування', path: '/forecast', icon: <TrendingUp className="w-4 h-4" /> },
@@ -77,7 +77,7 @@ const SEGMENTS: Record<SegmentKey, SegmentConfig> = {
   },
   law: {
     title: 'Правоохоронні Органи',
-    subtitle: ' озслідування, граф звʼязків, справи, доказова база та часові лінії.',
+    subtitle: 'розслідування, граф звʼязків, справи, доказова база та часові лінії.',
     icon: <ShieldAlert className="w-6 h-6" />,
     typicalTasks: [
       'Аналіз звʼязків між компаніями/особами',
@@ -205,7 +205,7 @@ type BusinessSignal = {
   detail: string;
 };
 
-type BusinessSignalStatus = 'НОВЕ' | 'ПІДТВЕ ДЖЕНО' | 'ІГНО ОВАНО';
+type BusinessSignalStatus = 'НОВЕ' | 'ПІДТВЕРДЖЕНО' | 'ІГНО ОВАНО';
 type BusinessSignalState = Record<string, BusinessSignalStatus | undefined>;
 const BUSINESS_SIGNAL_STATE_KEY = 'predator-business-signal-state-v1';
 
@@ -376,7 +376,7 @@ const ClientSegmentView: React.FC = () => {
     lines.push('5) рекомендація: що завозити, коли, в яких обсягах, які KPI моніторити щотижня.');
     lines.push('');
     lines.push('ШВИДКІ ДІЇ В ІНТЕ ФЕЙСІ:');
-    lines.push('-  инкова Аналітика → /market');
+    lines.push('- ринкова Аналітика → /market');
     lines.push('- Прогнозування → /forecast');
     lines.push('- Можливості → /opportunities');
     lines.push('- Пошук → /search-v2');
@@ -642,7 +642,7 @@ const ClientSegmentView: React.FC = () => {
       {
         key: 'common_risk_summary',
         title: 'Короткий ризик-профіль',
-        text: 'Сформуй короткий ризик-профіль компанії за ЄД ПОУ/UEID: ключові фактори, рівень впевненості, що перевірити вручну, і які дані ще потрібні.',
+        text: 'Сформуй короткий ризик-профіль компанії за ЄДРПОУ/UEID: ключові фактори, рівень впевненості, що перевірити вручну, і які дані ще потрібні.',
       },
       {
         key: 'common_sources',
@@ -823,12 +823,12 @@ const ClientSegmentView: React.FC = () => {
                 <CardTitle className="text-slate-100 text-base">Швидка Перевірка Контрагента</CardTitle>
               </div>
               <CardDescription className="text-slate-300">
-                Введіть ЄД ПОУ/UEID і відкрийте ризик-панель (CERS) одним кліком.
+                Введіть ЄДРПОУ/UEID і відкрийте ризик-панель (CERS) одним кліком.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label htmlFor="quick-ueid">ЄД ПОУ / UEID</Label>
+                <Label htmlFor="quick-ueid">ЄДРПОУ / UEID</Label>
                 <Input
                   id="quick-ueid"
                   value={quickUeid}
@@ -1008,7 +1008,7 @@ const ClientSegmentView: React.FC = () => {
                   {copiedKey === 'biz_plan' ? 'План скопійовано' : 'Копіювати план аналізу'}
                 </Button>
                 <Button variant="outline" className="bg-slate-950/40 border-slate-700/60" onClick={() => navigate('/market')}>
-                   инкова аналітика
+                  ринкова аналітика
                 </Button>
                 <Button variant="outline" className="bg-slate-950/40 border-slate-700/60" onClick={() => navigate('/forecast')}>
                   Прогнозування
@@ -1166,7 +1166,7 @@ const ClientSegmentView: React.FC = () => {
               )}
               {signals.map(sig => {
                 const st = signalState[sig.id] ?? 'НОВЕ';
-                const badgeVariant = st === 'ПІДТВЕ ДЖЕНО' ? 'secondary' : st === 'ІГНО ОВАНО' ? 'outline' : 'default';
+                const badgeVariant = st === 'ПІДТВЕРДЖЕНО' ? 'secondary' : st === 'ІГНО ОВАНО' ? 'outline' : 'default';
                 const levelColor = sig.level === 'К ИТИЧНО' ? 'text-red-400' : sig.level === 'ПОПЕ ЕДЖЕННЯ' ? 'text-amber-300' : 'text-slate-300';
                 return (
                   <div key={sig.id} className="rounded-xl border border-slate-700/60 bg-slate-950/30 p-4">
@@ -1186,7 +1186,7 @@ const ClientSegmentView: React.FC = () => {
                         <Button
                           variant="outline"
                           className="bg-slate-950/40 border-slate-700/60 gap-2"
-                          onClick={() => updateSignalStatus(sig.id, 'ПІДТВЕ ДЖЕНО')}
+                          onClick={() => updateSignalStatus(sig.id, 'ПІДТВЕРДЖЕНО')}
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           Підтвердити
@@ -1309,7 +1309,7 @@ const ClientSegmentView: React.FC = () => {
                 <CardTitle className="text-slate-100 text-base">Профіль Конкурента</CardTitle>
               </div>
               <CardDescription className="text-slate-300">
-                Додайте конкурентів (ЄД ПОУ/UEID) і використовуйте готовий легальний план порівняння.
+                Додайте конкурентів (ЄДРПОУ/UEID) і використовуйте готовий легальний план порівняння.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -1325,7 +1325,7 @@ const ClientSegmentView: React.FC = () => {
                   />
                 </div>
                 <div className="lg:col-span-3 space-y-2">
-                  <Label htmlFor="comp-id">ЄД ПОУ / UEID</Label>
+                  <Label htmlFor="comp-id">ЄДРПОУ / UEID</Label>
                   <Input
                     id="comp-id"
                     value={competitorDraft.edrpouOrUeid}

@@ -122,7 +122,7 @@ export function AIResponse({
         {/* Confidence Indicator */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs font-medium">
-            <span className="text-muted-foreground"> івень впевненості</span>
+            <span className="text-muted-foreground">рівень впевненості</span>
             <span className={`capitalize ${config.textColor}`}>{confidenceLevel === 'high' ? 'Високий' : confidenceLevel === 'medium' ? 'Середній' : 'Низький'}</span>
           </div>
           <Progress value={confidenceScore * 100} className="h-2" indicatorClassName={config.color} />

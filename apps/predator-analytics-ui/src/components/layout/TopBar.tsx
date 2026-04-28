@@ -131,7 +131,7 @@ export const TopBar = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 <GlobalSearch />
             </div>
 
-            {/* П АВА ЧАСТИНА: МЕТ ИКИ ТА П ОФІЛЬ */}
+            {/* П АВА ЧАСТИНА: МЕТ ИКИ ТАПРОФІЛЬ */}
             <div className="flex items-center gap-8">
                 <div className="hidden lg:flex items-center gap-8 px-8 py-3 bg-white/[0.03] glass-wraith border border-white/5 rounded-full shadow-2xl">
                     <div className="flex items-center gap-4">

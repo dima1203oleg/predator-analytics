@@ -1,4 +1,4 @@
-"""Telegram Pipeline Wrapper — PREDATOR Analytics v55.1 Ironclad.
+"""Telegram Pipeline Wrapper — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 Integrates existing Telethon-based telegram_channel_connector and
 TelegramIntelligencePipeline into the new ingestion-worker structure.

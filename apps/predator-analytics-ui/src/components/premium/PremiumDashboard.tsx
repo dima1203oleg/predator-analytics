@@ -90,7 +90,7 @@ export function PremiumDashboard({ userId, isPremium = true }: PremiumDashboardP
              озширені модулі аналітики (Sankey потоки, граф розпізнавання сутностей, геопросторова інтелектика) вимагають рівня доступу <span className="text-amber-400">КОМАНДИ А</span>.
           </p>
           <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:scale-105">
-            Оновити  івень Доступу
+            Оновити рівень Доступу
           </Button>
         </div>
       </div>

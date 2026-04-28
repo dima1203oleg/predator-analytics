@@ -76,7 +76,7 @@ const ChaosControlHub: React.FC = () => {
 
   const experimentConfigs = [
     { id: 'db_latency', name: 'ІН\'ЄКЦІЯ_ЗАТ ИМКИ_БД', desc: 'ДОДАЄ_ВИПАДКОВУ_ЗАТ ИМКУ_2-5с_ДО_SQL_ЗАПИТІВ', icon: <Clock /> },
-    { id: 'cache_failure', name: 'ОБХІД_КЕШУ_REDIS', desc: 'ІГНО УЄ_КЕШ_ТА_ЗМУШУЄ_СИСТЕМУ_ЙТИ_В_DB', icon: <ZapOff /> },
+    { id: 'cache_failure', name: 'ОБХІД_КЕШУ_REDIS', desc: 'ІГНОРУЄ_КЕШ_ТА_ЗМУШУЄ_СИСТЕМУ_ЙТИ_В_DB', icon: <ZapOff /> },
     { id: 'random_errors', name: 'ВИПАДКОВІ_ПОМИЛКИ_500', desc: 'ВКИДАЄ_ПОМИЛКИ_HTTP_З_ІМОВІ НІСТЮ_20%', icon: <AlertTriangle /> },
     { id: 'llm_hallucination', name: 'ГАЛЮЦИНАЦІЯ_ШІ', desc: 'СИМУЛЮЄ_НЕКО ЕКТНІ_АБО_ТОКСИЧНІ_ВІДПОВІДІ_LLM', icon: <Wind /> },
     { id: 'agent_timeout', name: 'Д ЕЙФ_ШІ_АГЕНТА', desc: 'БЛОКУЄ_ВИКОНАННЯ_ЗАДАЧ_AGI-АГЕНТАМИ_ПО_TTL', icon: <Skull /> },
@@ -114,7 +114,7 @@ const ChaosControlHub: React.FC = () => {
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
                <ShieldAlert size={14} />
-               <span> ЕЖИМ: АГ ЕСИВНИЙ_СТ ЕС_ТЕСТ</span>
+               <span>РЕЖИМ: АГ ЕСИВНИЙ_СТ ЕС_ТЕСТ</span>
             </div>
           </div>
         </div>

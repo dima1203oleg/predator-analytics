@@ -81,7 +81,7 @@ describe('CompanyCERSDashboard', () => {
     it('renders dashboard with company information', async () => {
         renderDashboard();
         
-        expect(screen.getByText(/CERS КОМАНДНИЙ ЦЕНТ /i)).toBeInTheDocument();
+        expect(screen.getByText(/CERS КОМАНДНИЙ ЦЕНТР/i)).toBeInTheDocument();
         
         await waitFor(() => {
             expect(diligenceApi.searchCompanies).toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe('CompanyCERSDashboard', () => {
         });
 
         expect(screen.getByText(/ТОВ ЕНЕ ГО- ЕСУ С/i)).toBeInTheDocument();
-        expect(screen.getByText(/ЄД ПОУ: 41829391/i)).toBeInTheDocument();
+        expect(screen.getByText(/ЄДРПОУ: 41829391/i)).toBeInTheDocument();
         expect(screen.getByText('B-')).toBeInTheDocument();
         expect(screen.getByText('68 / 100')).toBeInTheDocument();
     });
@@ -97,7 +97,7 @@ describe('CompanyCERSDashboard', () => {
     it('shows loading state during search', async () => {
         renderDashboard();
         
-        const input = screen.getByPlaceholderText(/Введіть ЄД ПОУ або Назву.../i);
+        const input = screen.getByPlaceholderText(/Введіть ЄДРПОУ або Назву.../i);
         fireEvent.change(input, { target: { value: 'New Company' } });
         fireEvent.submit(input);
         

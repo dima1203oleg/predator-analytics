@@ -1,5 +1,5 @@
 /**
- * 🛰️ ENTITY RADAR //  АДА  СУБ'ЄКТІВ | v58.2-WRAITH
+ * 🛰️ ENTITY RADAR //  АДА  СУБ'ЄКТІВ | v61.0-ELITE
  * PREDATOR Analytics — Sovereign Intelligence & Network Analysis
  * 
  * Модуль глобального моніторингу та радарного виявлення аномальних
@@ -114,7 +114,7 @@ const getRadarOption = (entity: EntityRadarItem) => {
         { name: ' ЕПУТАЦІЯ', max: 100 },
         { name: 'ФІНАНСИ', max: 100 },
         { name: 'ЗВ\'ЯЗКИ', max: 100 },
-        { name: ' ЕГУЛЯТО И', max: 100 },
+        { name: 'РЕГУЛЯТОРИ', max: 100 },
         { name: 'МЕДІА', max: 100 }
       ],
       shape: 'circle',
@@ -270,7 +270,7 @@ const EntityRadarView: React.FC = () => {
 
         <div className="relative z-10 max-w-[1850px] mx-auto space-y-16 flex flex-col items-stretch pt-12">
           
-          {/* HEADER WRAITH HUD */}
+          {/* HEADER ELITE HUD */}
           <ViewHeader
             title={
               <div className="flex items-center gap-12">
@@ -286,7 +286,7 @@ const EntityRadarView: React.FC = () => {
                       PREDATOR_RADAR // {isOffline ? 'MIRROR_SCAN' : 'NEURAL_ENTITY_SCANNER'}
                     </span>
                     <div className="h-px w-16 bg-yellow-500/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'ELITE'}</span>
                   </div>
                   <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
                      АДА  <span className="text-yellow-500 underline decoration-yellow-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">СУБ'ЄКТІВ</span>
@@ -334,7 +334,7 @@ const EntityRadarView: React.FC = () => {
                 <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-yellow-500 transition-colors" size={24} />
                 <input
                   type="text"
-                  placeholder="ПОШУК СЕ ЕД К ИТИЧНИХ СУБ'ЄКТІВ (ЄД ПОУ / НАЗВА)..."
+                  placeholder="ПОШУК СЕ ЕД К ИТИЧНИХ СУБ'ЄКТІВ (ЄДРПОУ / НАЗВА)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-20 pr-10 py-7 bg-black/60 border-2 border-white/[0.04] rounded-[2.2rem] text-white placeholder-slate-800 focus:outline-none focus:border-yellow-500/50 transition-all font-black text-lg italic tracking-tight"
@@ -362,7 +362,7 @@ const EntityRadarView: React.FC = () => {
             </div>
           </div>
 
-          {/* LIST WRAITH HUB */}
+          {/* LIST ELITE HUB */}
           <div className="space-y-12">
             {loading ? (
               <div className="py-40 flex flex-col items-center justify-center gap-10">
@@ -498,7 +498,7 @@ const EntityRadarView: React.FC = () => {
                                   <Sparkles size={16} /> ВЕ ДИКТ_PREDATOR_AI
                                 </h4>
                                 <p className="text-[16px] font-black text-white leading-relaxed italic border-l-8 border-yellow-500/30 pl-8 py-2">
-                                  "ВУЗОЛ ВИЯВЛЕНО ЯК К ИТИЧНИЙ. ФАКТО  РИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА П ЯМИХ ЗВ'ЯЗКАХ ПО СЕ ВЕ НИХ ЛОГАХ ТА ОФШО НИХ П ОВІДНИКАХ.  ЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
+                                  "ВУЗОЛ ВИЯВЛЕНО ЯК К ИТИЧНИЙ. ФАКТО  РИЗИКУ {entity.cers_score}% БАЗУЄТЬСЯ НА П ЯМИХ ЗВ'ЯЗКАХ ПО СЕ ВЕ НИХ ЛОГАХ ТА ОФШО НИХПРОВІДНИКАХ.  ЕКОМЕНДОВАНО ПОВНИЙ SIGINT-АУДИТ."
                                 </p>
                              </div>
                           </div>
@@ -586,7 +586,7 @@ const EntityRadarView: React.FC = () => {
           </div>
         </div>
 
-        {/* CUSTOM WRAITH STYLES */}
+        {/* CUSTOM ELITE STYLES */}
         <style dangerouslySetInnerHTML={{ __html: `
             .shadow-4xl { box-shadow: 0 80px 150px -40px rgba(0,0,0,0.95), 0 0 100px rgba(212,175,55,0.02); }
             .shadow-inset { box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), inset 0 0 100px rgba(212,175,55,0.01); }

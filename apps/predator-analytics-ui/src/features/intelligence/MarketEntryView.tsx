@@ -1,5 +1,5 @@
 /**
- * 🌍 MARKET ENTRY SCORE | v58.2-WRAITH
+ * 🌍 MARKET ENTRY SCORE | v61.0-ELITE
  * PREDATOR Analytics — Оцінка ринкового входу
  *
  * Скоринг привабливості ринків для входу:
@@ -163,7 +163,7 @@ const MarketEntryView: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'MarketEntry',
-          message: ` ЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Дані про ринки завантажено з локального кешу Mirror Vault.`,
+          message: `РЕЖИМ АВТОНОМНОЇ  ОЗВІДКИ [${nodeSource}]: Дані про ринки завантажено з локального кешу Mirror Vault.`,
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'OPPORTUNITY_OFFLINE'
@@ -241,7 +241,7 @@ const MarketEntryView: React.FC = () => {
                     {isOffline ? 'SOVEREIGN_EMERGENCY' : 'MARKET_ENTRY_SIGINT'} // ACTIVE_CORE
                   </span>
                   <div className="h-px w-12 bg-rose-500/20" />
-                  <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
+                  <span className="text-[10px] font-black text-rose-800 font-mono tracking-widest uppercase italic shadow-sm">v61.0-ELITE</span>
                 </div>
                 <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                   MARKET ENTRY <span className={cn("underline decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter", isOffline ? "text-rose-500 decoration-rose-500/20" : "text-rose-500 decoration-rose-600/30")}>SCORE</span>
@@ -251,7 +251,7 @@ const MarketEntryView: React.FC = () => {
           }
           breadcrumbs={['INTEL', 'MARKET_ENTRY', 'GLOBAL_SCORE_v58.2']}
           badges={[
-            { label: 'SOVEREIGN_WRAITH', color: 'rose', icon: <Lock size={10} /> },
+            { label: 'SOVEREIGN_ELITE', color: 'rose', icon: <Lock size={10} /> },
             { label: 'PREDICTIVE_CORE_v5', color: 'primary', icon: <Cpu size={10} /> },
           ]}
           stats={[
@@ -268,12 +268,12 @@ const MarketEntryView: React.FC = () => {
           actions={
             <button className="px-14 py-6 bg-rose-500 text-white text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 font-bold">
               <Download size={24} />
-              MARKET_STRATEGY_WRAITH
+              MARKET_STRATEGY_ELITE
             </button>
           }
         />
 
-        {/* ── МЕТ ИКИ WRAITH ── */}
+        {/* ── МЕТ ИКИ ELITE ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { l: 'АКТИВНИЙ ВХІД',    v: `${markets.filter(m => m.recommendation === 'strong-buy').length}`, sub: 'High Opportunity Hubs', c: '#e11d48' },
@@ -294,12 +294,12 @@ const MarketEntryView: React.FC = () => {
           ))}
         </div>
 
-        {/* ── ОСНОВНИЙ КОНТЕНТ WRAITH ── */}
+        {/* ── ОСНОВНИЙ КОНТЕНТ ELITE ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-          {/* Список ринків WRAITH */}
+          {/* Список ринків ELITE */}
           <div className="lg:col-span-5 space-y-8">
-            {/* Фільтри WRAITH */}
+            {/* Фільтри ELITE */}
             <div className="flex flex-wrap gap-4 items-center p-3 bg-black border-2 border-white/5 rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               <div className="flex gap-2 bg-black border-2 border-white/5 p-2 rounded-2xl shadow-inner">
                 {(['all', 'strong-buy', 'buy', 'hold'] as const).map(r => (
@@ -416,7 +416,7 @@ const MarketEntryView: React.FC = () => {
             </div>
           </div>
 
-          {/* Деталі ринку WRAITH */}
+          {/* Деталі ринку ELITE */}
           <div className="lg:col-span-7">
             <AnimatePresence mode="wait">
               {selected ? (
@@ -425,7 +425,7 @@ const MarketEntryView: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                 className="space-y-8"
               >
-                {/* Заголовок WRAITH */}
+                {/* Заголовок ELITE */}
                 <div className="bg-black/80 backdrop-blur-3xl border-2 border-rose-500/10 p-12 rounded-[4rem] shadow-4xl relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-32 opacity-[0.03] pointer-events-none">
                      <Globe size={400} className="text-rose-500" />
@@ -469,7 +469,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/*  адар + Можливості +  изики WRAITH */}
+                {/*  адар + Можливості +  изики ELITE */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                   <div className="bg-black/60 backdrop-blur-3xl border-2 border-white/5 p-10 rounded-[4rem] shadow-3xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-12 opacity-5">
@@ -497,7 +497,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
 
                   <div className="space-y-8">
-                    {/* Можливості WRAITH */}
+                    {/* Можливості ELITE */}
                     <div className="bg-black/60 border-2 border-rose-500/10 p-10 rounded-[3.5rem] group hover:border-rose-500/30 transition-all shadow-3xl relative overflow-hidden">
                        <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-500 opacity-20" />
                       <h3 className="text-[11px] font-black text-rose-500/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
@@ -514,7 +514,7 @@ const MarketEntryView: React.FC = () => {
                       </div>
                     </div>
 
-                    {/*  изики WRAITH */}
+                    {/*  изики ELITE */}
                     <div className="bg-black/60 border-2 border-rose-700/10 p-10 rounded-[3.5rem] group hover:border-rose-700/30 transition-all shadow-3xl relative overflow-hidden">
                        <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-700 opacity-20" />
                       <h3 className="text-[11px] font-black text-rose-700/60 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic font-bold">
@@ -533,7 +533,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Партнери + режим входу WRAITH */}
+                {/* Партнери + режим входу ELITE */}
                 <div className="bg-black/60 border-2 border-white/5 p-12 rounded-[4rem] shadow-4xl grid grid-cols-1 xl:grid-cols-2 gap-12 backdrop-blur-3xl">
                   <div>
                     <h3 className="text-[11px] font-black text-slate-700 uppercase tracking-[0.6em] mb-8 flex items-center gap-4 italic">
@@ -566,7 +566,7 @@ const MarketEntryView: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 🤖 Sovereign AI Verdict WRAITH */}
+                {/* 🤖 Sovereign AI Verdict ELITE */}
                 <div className="relative group overflow-hidden rounded-[5rem] border-2 border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-black/40 to-[#020202] p-12 shadow-4xl backdrop-blur-3xl">
                     <div className="absolute top-0 right-0 p-16 opacity-10 pointer-events-none group-hover:scale-125 transition-transform duration-[10s]">
                         <Zap size={300} className="text-rose-500" />
@@ -580,7 +580,7 @@ const MarketEntryView: React.FC = () => {
                                 <h3 className="text-3xl font-black text-white uppercase tracking-tighter italic font-serif">PREDATIVE_ENTRY_VERDICT</h3>
                                 <div className="flex items-center gap-3 mt-2">
                                     <Cpu size={14} className="text-rose-500 animate-pulse" />
-                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v58.2-WRAITH</span>
+                                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">SOVEREIGN_ENGINE_v61.0-ELITE</span>
                                 </div>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-"""Persons Router — PREDATOR Analytics v55.1 Ironclad.
+"""Persons Router — PREDATOR Analytics v61.0-ELITE Ironclad.
 
 CRUD and analytics for physical persons.
 """

@@ -70,7 +70,7 @@ const OperationalModeSwitch: React.FC = () => {
       {/* Текст режиму */}
       <div className="flex flex-col items-start">
         <span className="text-[7px] text-slate-600 uppercase tracking-[0.2em] font-bold leading-none">
-           ЕЖИМ
+          РЕЖИМ
         </span>
         <span className="text-[10px] font-black tracking-[0.15em] text-white/90 leading-none mt-0.5">
           {modeInfo.label}

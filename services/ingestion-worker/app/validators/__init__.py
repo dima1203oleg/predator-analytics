@@ -1,4 +1,4 @@
-"""Validators package — PREDATOR Analytics v55.1 Ironclad."""
+"""Validators package — PREDATOR Analytics v61.0-ELITE Ironclad."""
 from app.validators.declaration import (
     DeclarationValidator,
     Severity,

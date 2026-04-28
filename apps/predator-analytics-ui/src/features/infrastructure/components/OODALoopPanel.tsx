@@ -41,7 +41,7 @@ export function OODALoopPanel({
       <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Activity className="w-4 h-4 text-rose-500" />
-            <h4 className="text-[10px] font-black text-white uppercase tracking-widest">WRAITH ДВИГУН • OODA ЦИКЛ</h4>
+            <h4 className="text-[10px] font-black text-white uppercase tracking-widest">ELITE ДВИГУН • OODA ЦИКЛ</h4>
           </div>
           <div className={cn(
             "flex items-center gap-2 px-3 py-1 rounded-md border text-[8px] font-black tracking-[0.2em] uppercase",
@@ -50,7 +50,7 @@ export function OODALoopPanel({
             "bg-slate-500/10 border-slate-500/20 text-slate-400"
           )}>
             <Bell className="w-3 h-3" />
-            {alertLevel === 'NORMAL' ? 'НО МАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'К ИТИЧНИЙ'}
+            {alertLevel === 'NORMAL' ? 'НОРМАЛЬНИЙ' : alertLevel === 'ELEVATED' ? 'ПІДВИЩЕНИЙ' : 'К ИТИЧНИЙ'}
           </div>
       </div>
 

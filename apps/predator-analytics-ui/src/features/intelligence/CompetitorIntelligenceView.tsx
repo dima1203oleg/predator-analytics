@@ -1,6 +1,6 @@
 
 /**
- * 🎯 Competitor Intelligence View v58.2-WRAITH
+ * 🎯 Competitor Intelligence View v61.0-ELITE
  * "Strategic Competitor Nexus Matrix"
  * Sovereign Power Design · Tactical Market Domination · Tier-1
  *
@@ -35,14 +35,14 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 // --- LOCALIZATION ---
 const localLocales = {
   title: 'СТРАТЕГІЧНИЙ НЕКСУС КОНКУ ЕНТІВ',
-  breadcrumbs: ['РОЗВІДКА', 'МАТ ИЦЯ  ИНКУ', 'v58.2.WRAITH'],
+  breadcrumbs: ['РОЗВІДКА', 'МАТ ИЦЯ  ИНКУ', 'v58.2.ELITE'],
   stats: {
     database: 'БАЗА ДАНИХ',
     monitoring: 'МОНІТО ИНГ',
     risk: 'РІВЕНЬ ЗАГ ОЗ',
   },
   filters: {
-    placeholder: 'Пошук сутностей за назвою, ЄД ПОУ або доменом...',
+    placeholder: 'Пошук сутностей за назвою, ЄДРПОУ або доменом...',
     sort: {
       volume: 'ЗА ОБСЯГОМ',
       share: 'ЗА ЧАСТКОЮ',
@@ -53,11 +53,11 @@ const localLocales = {
   card: {
     tracked: 'ПЕ ЕБУВАЄ ПІД НАГЛЯДОМ',
     highRisk: 'ВИСОКИЙ РИЗИК СИНЕ ГІЇ',
-    geography: 'ГЕОГ АФІЯ ЕКСПАНСІЇ',
+    geography: 'ГЕОГРАФІЯ ЕКСПАНСІЇ',
     suppliers: 'ВУЗЛИ ПОСТАЧАННЯ',
     actions: {
       analytics: 'ГЛИБОКА АНАЛІТИКА',
-      report: 'ЕКСПОРТ П ОФІЛЮ (PDF)',
+      report: 'ЕКСПОРТПРОФІЛЮ (PDF)',
       share: 'ПЕ ЕДАТИ ДАНІ',
     }
   },
@@ -66,7 +66,7 @@ const localLocales = {
     subtitle: 'Параметри пошуку не збігаються з жодним активним суб\'єктом ринку',
   },
   aiInsights: {
-    title: 'НЕЙРОННИЙ П ОГНОЗ  ИНКУ',
+    title: 'НЕЙРОННИЙПРОГНОЗ  ИНКУ',
     subtitle: 'Аналіз конкурентного ландшафту в реальному часі',
   }
 };
@@ -91,7 +91,7 @@ interface Competitor {
 
 // --- COMPONENTS ---
 
-const CompetitorCardWRAITH: React.FC<{
+const CompetitorCardELITE: React.FC<{
   competitor: Competitor;
   isExpanded: boolean;
   onToggle: () => void;
@@ -386,7 +386,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                       COMPETITOR_SIGINT // {isOffline ? 'OFFLINE_MIRROR' : 'HUB_MATRIX'}
                     </span>
                     <div className="h-px w-12 bg-[#D4AF37]/20" />
-                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'WRAITH'}</span>
+                    <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-{isOffline ? 'MIRROR' : 'ELITE'}</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
                     {localLocales.title}
@@ -470,7 +470,7 @@ const CompetitorIntelligenceView: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.05, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
                       >
-                        <CompetitorCardWRAITH
+                        <CompetitorCardELITE
                           competitor={competitor}
                           isExpanded={expandedId === competitor.id}
                           onToggle={() => setExpandedId(expandedId === competitor.id ? null : competitor.id)}

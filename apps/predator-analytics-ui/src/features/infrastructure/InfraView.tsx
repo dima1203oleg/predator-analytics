@@ -114,7 +114,7 @@ export default function InfraView() {
           <div className="p-6 border-b border-rose-500/10 bg-black/60 backdrop-blur-2xl flex items-center justify-between">
             <ViewHeader
               title="Інфраструктура"
-              subtitle="v58.2-WRAITH • Моніторинг NVIDIA Server, MacBook та Google Colab"
+              subtitle="v61.0-ELITE • Моніторинг NVIDIA Server, MacBook та Google Colab"
               icon={Server}
             />
             
@@ -124,7 +124,7 @@ export default function InfraView() {
               <div className="h-10 w-px bg-white/5" />
 
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1"> ЕЖИМ АВТОМАТИЗАЦІЇ</span>
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">РЕЖИМ АВТОМАТИЗАЦІЇ</span>
                 <div 
                   onClick={() => setIsFullyAutomated(!isFullyAutomated)}
                   className={cn(
@@ -221,7 +221,7 @@ export default function InfraView() {
                   <div className="lg:col-span-2 space-y-6">
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-black text-white mb-2 flex items-center gap-2 uppercase tracking-tight">
-                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА  ЕСУ СІВ (24г)
+                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА РЕСУРСІВ (24г)
                       </h3>
                       <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
                       <ResourceDynamicsChart />

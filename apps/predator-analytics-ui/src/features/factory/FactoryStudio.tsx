@@ -367,7 +367,7 @@ export default function FactoryStudio() {
                           <div className="flex items-center justify-between">
                             <label className="text-xs text-slate-400 uppercase font-bold">
                               {metric === 'coverage' ? 'Покриття' : 
-                               metric === 'pass_rate' ? ' івень Проходження' :
+                               metric === 'pass_rate' ? 'рівень Проходження' :
                                metric === 'performance' ? 'Продуктивність' :
                                metric === 'chaos_resilience' ? 'Стійкість до Хаосу' :
                                'Бізнес KPI'}
