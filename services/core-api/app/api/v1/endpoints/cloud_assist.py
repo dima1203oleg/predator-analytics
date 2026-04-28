@@ -1,8 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import Dict, Any
 from app.services.gemini_agent_service import gemini_service
+from app.services.cloud_bridge import cloud_bridge
 from app.config import get_settings, Settings
 
 router = APIRouter(prefix="/cloud-assist", tags=["cloud-assist"])
+
+@router.post("/sync-colab")
+async def sync_colab(payload: Dict[str, Any]):
+    """Реєстрація та синхронізація з вузлом Google Colab."""
+    tunnel_url = payload.get("url")
+    if not tunnel_url:
+        return {"status": "error", "message": "URL не надано"}
+    
+    success = await cloud_bridge.check_colab_status(tunnel_url)
+    return {
+        "status": "success" if success else "failed",
+        "node": "google-colab-hybrid",
+        "url": tunnel_url,
+        "is_active": success
+    }
 
 @router.get("/audit/{project_id}")
 async def get_cloud_audit(project_id: str, settings: Settings = Depends(get_settings)):
