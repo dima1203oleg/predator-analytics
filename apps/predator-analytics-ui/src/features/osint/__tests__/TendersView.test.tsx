@@ -15,7 +15,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
         isTruthOnly: true,
-        modeLabel: '� ежим правдивих даних',
+        modeLabel: 'режим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
         sourceType: 'local',
         statusLabel: 'Зʼєднання активне',
@@ -117,8 +117,8 @@ describe('TendersView', () => {
 
     it('повинен рендерити базові елементи інтерфейсу', () => {
         render(<TendersView />);
-        expect(screen.getByRole('heading', { name: /� ЕЄСТ�  ЗАКУПІВЕЛЬ/i })).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/ПОШУК ТЕНДЕ� ІВ ЗА НАЗВОЮ АБО ЗАМОВНИКОМ/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: / ЕЄСТ  ЗАКУПІВЕЛЬ/i })).toBeInTheDocument();
+        expect(screen.getByPlaceholderText(/ПОШУК ТЕНДЕ ІВ ЗА НАЗВОЮ АБО ЗАМОВНИКОМ/i)).toBeInTheDocument();
         expect(screen.getByTestId('advanced-bg')).toBeInTheDocument();
     });
 
@@ -126,7 +126,7 @@ describe('TendersView', () => {
         vi.useFakeTimers();
         render(<TendersView />);
         
-        const statusElement = screen.getByText(/КОНТУ�  PROZORRO/i);
+        const statusElement = screen.getByText(/КОНТУ  PROZORRO/i);
         const initialText = statusElement.textContent;
 
         act(() => {
@@ -162,7 +162,7 @@ describe('TendersView', () => {
 
         render(<TendersView />);
 
-        expect(await screen.findByText('НЕМАЄ ПІДТВЕ� ДЖЕНИХ ДАНИХ')).toBeInTheDocument();
+        expect(await screen.findByText('НЕМАЄ ПІДТВЕ ДЖЕНИХ ДАНИХ')).toBeInTheDocument();
         expect(
             screen.getByText('Маршрути Prozorro не повернули підтверджених даних. Екран не підмінює їх локальними тендерами.'),
         ).toBeInTheDocument();
@@ -185,7 +185,7 @@ describe('TendersView', () => {
             expect(screen.getByText('Tender 2')).toBeInTheDocument();
         });
 
-        const searchInput = screen.getByPlaceholderText(/ПОШУК ТЕНДЕ� ІВ ЗА НАЗВОЮ АБО ЗАМОВНИКОМ/i);
+        const searchInput = screen.getByPlaceholderText(/ПОШУК ТЕНДЕ ІВ ЗА НАЗВОЮ АБО ЗАМОВНИКОМ/i);
         fireEvent.change(searchInput, { target: { value: 'Entity A' } });
 
         expect(screen.getByText('Tender 1')).toBeInTheDocument();
@@ -207,7 +207,7 @@ describe('TendersView', () => {
         });
 
         // Click high risk button
-        const highRiskBtn = screen.getByRole('button', { name: /� ИЗИК 60%\+/i });
+        const highRiskBtn = screen.getByRole('button', { name: /РИЗИК 60%\+/i });
         fireEvent.click(highRiskBtn);
 
         // Tender 1 has 50 risk, should be hidden. Tender 2 has 90, should be visible.
@@ -215,7 +215,7 @@ describe('TendersView', () => {
         expect(screen.getByText('Tender 2')).toBeInTheDocument();
         
         // Click critical risk button
-        const criticalBtn = screen.getByRole('button', { name: /К� ИТИЧНІ 80%\+/i });
+        const criticalBtn = screen.getByRole('button', { name: /К ИТИЧНІ 80%\+/i });
         fireEvent.click(criticalBtn);
         expect(screen.queryByText('Tender 1')).not.toBeInTheDocument();
         expect(screen.getByText('Tender 2')).toBeInTheDocument();

@@ -98,7 +98,7 @@ export function ResourceNodeCard({ node, onClick }: { node: NodeHardwareProps, o
 
       <div className="space-y-5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">П� ИСКО� ЮВАЧІ NVIDIA / GPU</span>
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">П ИСКО ЮВАЧІ NVIDIA / GPU</span>
           <span className="text-[10px] text-slate-700 font-mono font-black">{node.gpu.length} ОДИНИЦЬ</span>
         </div>
         

@@ -86,7 +86,7 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
                     <div className="text-sm font-black text-slate-100 italic tracking-wide">{task.component}</div>
                     <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-0.5">
                       {task.type === 'aesthetic' ? 'ЕСТЕТИЧНЕ' : 
-                       task.type === 'performance' ? 'П� ОДУКТИВНІСТЬ' : 'ФУНКЦІОНАЛЬНЕ'} СУВЕ� ЕНІЗАЦІЯ
+                       task.type === 'performance' ? 'П ОДУКТИВНІСТЬ' : 'ФУНКЦІОНАЛЬНЕ'} СУВЕ ЕНІЗАЦІЯ
                     </div>
                   </div>
                 </div>
@@ -95,9 +95,9 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
                   task.status === 'crafting' ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
                   'bg-slate-800 text-slate-400 border-slate-700'
                 }`}>
-                  {task.status === 'deployed' ? 'ВП� ОВАДЖЕНО' : 
+                  {task.status === 'deployed' ? 'ВП ОВАДЖЕНО' : 
                    task.status === 'crafting' ? 'КУВАННЯ' : 
-                   task.status === 'scanning' ? 'СКАНУВАННЯ' : 'ПЕ� ЕВІ� КА'}
+                   task.status === 'scanning' ? 'СКАНУВАННЯ' : 'ПЕ ЕВІ КА'}
                 </div>
               </div>
 
@@ -124,7 +124,7 @@ const EvolutionForge: React.FC<EvolutionForgeProps> = ({ status }) => {
 
       <button className="w-full mt-8 py-5 bg-yellow-500/5 hover:bg-yellow-500/10 rounded-[28px] border border-yellow-500/20 text-[11px] font-black text-yellow-500 uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all hover:tracking-[0.4em] relative">
         <RefreshCcw size={16} /> 
-        А� ХІВ ЕВОЛЮЦІЇ СИСТЕМИ
+        А ХІВ ЕВОЛЮЦІЇ СИСТЕМИ
         <div className="absolute right-6 opacity-40">
             <Diamond size={12} />
         </div>

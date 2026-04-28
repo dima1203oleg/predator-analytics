@@ -3,7 +3,7 @@
  * FABRYKA v2.0 – AUTONOMOUS CORE
  *
  * Відповідає за:
- *   - Аналіз трендів ефективності компонентів
+ *   - Аналіз трендіврефективності компонентів
  *   - Виявлення деградацій у часі
  *   - Пропозиції рефакторингу
  *   - Глобальна оптимізація архітектурних рішень
@@ -218,7 +218,7 @@ export function EvolutionAgentPanel() {
       {/* ── Тренди компонентів ── */}
       <div>
         <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 px-1 mb-3">
-          Тренди ефективності · {agentState.trends.length} компонентів
+          Трендирефективності · {agentState.trends.length} компонентів
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
           {agentState.trends.map((trend, idx) => {

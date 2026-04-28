@@ -1,8 +1,8 @@
 /**
- * 🏢 FIRM DOSSIER // КОМП� ОМАТ НА ФІ� МУ | v58.2-WRAITH
+ * 🏢 FIRM DOSSIER // КОМП ОМАТ НА ФІ МУ | v58.2-WRAITH
  * PREDATOR Analytics — 360° Corporate Intelligence
  * 
- * Повний збір даних про суб'єкта: � еєстри, Митниця, Податки,
+ * Повний збір даних про суб'єкта: реєстри, Митниця, Податки,
  * Судові справи та ШІ-оцінка ризиків.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -39,7 +39,7 @@ export default function FirmDossierView() {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'CorporateIntel',
-            message: '� ЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
+            message: ' ЕЖИМ АВТОНОМНОГО АНАЛІЗУ (CORPORATE_OFFLINE). Дані бенефіціарів можуть бути несинхронізовані з ДПС.',
             severity: 'warning',
             timestamp: new Date().toISOString(),
             code: 'CORPORATE_OFFLINE'
@@ -70,12 +70,12 @@ export default function FirmDossierView() {
     } catch (err) {
       // Mock data for demo
       setResult({
-        name: query.toUpperCase() || 'ТОВ "ЗАВОД ТИТАН-Т� ЕЙД"',
+        name: query.toUpperCase() || 'ТОВ "ЗАВОД ТИТАН-Т ЕЙД"',
         edrpou: query.match(/^\d{8}$/) ? query : '40012921',
         status: 'АКТИВНО',
         riskScore: 92,
         threats: [
-           'Виявлено непрямий зв\'язок з ВТБ (� Ф) через кіпрський офшор',
+           'Виявлено непрямий зв\'язок з ВТБ ( Ф) через кіпрський офшор',
            'Аномальне заниження митної вартості (-45%) в 26 деклараціях',
            'Керівник фігурує в базі PEP (колишній заступник митниці)'
         ],
@@ -114,10 +114,10 @@ export default function FirmDossierView() {
                         <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                       ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІ� МИ</span>
+                       ДОСЬЄ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8 italic uppercase">ФІ МИ</span>
                      </h1>
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                        ГЛИБИННИЙ АНАЛІЗ: ЄД� ПОУ • МИТНИЦЯ • БЕНЕФІЦІА� И • СУДИ
+                        ГЛИБИННИЙ АНАЛІЗ: ЄД ПОУ • МИТНИЦЯ • БЕНЕФІЦІА И • СУДИ
                      </p>
                   </div>
                </div>
@@ -131,7 +131,7 @@ export default function FirmDossierView() {
                   color: isOffline ? 'warning' : 'gold', 
                   animate: isOffline 
                 },
-                { label: 'СТАН_� ЕЄСТ� У', value: isOffline ? 'OFFLINE' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
+                { label: 'СТАН_ ЕЄСТ У', value: isOffline ? 'OFFLINE' : 'LIVE', icon: <Zap size={14} />, color: isOffline ? 'warning' : 'success' }
               ]}
              actions={
                <div className="flex gap-4">
@@ -139,7 +139,7 @@ export default function FirmDossierView() {
                      <RefreshCcw size={24} />
                   </button>
                   <button onClick={handleSearch} className="px-8 py-5 bg-sky-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-2xl transition-all flex items-center gap-4">
-                     <Radar size={18} /> СКАНУВАТИ_� ЕЄСТ� И
+                     <Radar size={18} /> СКАНУВАТИ_ ЕЄСТ И
                   </button>
                </div>
              }
@@ -153,7 +153,7 @@ export default function FirmDossierView() {
                 </div>
                 <form onSubmit={handleSearch} className="space-y-10 relative z-10">
                    <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ЄД� ПОУ АБО НАЗВА СУБ'ЄКТА</label>
+                      <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ЄД ПОУ АБО НАЗВА СУБ'ЄКТА</label>
                       <div className="relative group/input">
                          <div className="absolute inset-y-0 left-8 flex items-center">
                             <Search className="w-8 h-8 text-slate-700 group-focus-within/input:text-sky-500 transition-colors" />
@@ -171,7 +171,7 @@ export default function FirmDossierView() {
                       disabled={isSearching}
                       className="w-full py-8 bg-sky-700 text-white rounded-2xl text-[12px] font-black uppercase tracking-[0.4em] italic hover:bg-sky-600 transition-all shadow-3xl flex items-center justify-center gap-6"
                    >
-                      <Zap size={28} /> ІНІЦІЮВАТИ_ПОВНИЙ_СПЕКТ� _АНАЛІЗУ
+                      <Zap size={28} /> ІНІЦІЮВАТИ_ПОВНИЙ_СПЕКТ _АНАЛІЗУ
                    </button>
                 </form>
              </motion.section>
@@ -182,7 +182,7 @@ export default function FirmDossierView() {
              <div className="py-32 flex flex-col items-center justify-center space-y-12">
                         <CyberOrb size={130} color="#D4AF37" />
                 <div className="space-y-4 text-center">
-                   <p className="text-2xl font-black text-sky-500 uppercase italic tracking-[0.8em] animate-pulse">ЗБІ�  КО� ПО� АТИВНИХ ДАНИХ...</p>
+                   <p className="text-2xl font-black text-sky-500 uppercase italic tracking-[0.8em] animate-pulse">ЗБІ  КО ПО АТИВНИХ ДАНИХ...</p>
                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">TARGET: {query.toUpperCase()}</p>
                 </div>
              </div>
@@ -210,7 +210,7 @@ export default function FirmDossierView() {
                                <Badge className="bg-emerald-600/20 text-emerald-500 border-emerald-500/30 uppercase italic font-black px-4 py-1 text-[10px]">{result.status}</Badge>
                             </div>
                             <div className="flex items-center gap-4 text-[12px] font-black text-slate-500 uppercase tracking-widest font-mono italic">
-                               <span>ЄД� ПОУ: {result.edrpou}</span>
+                               <span>ЄД ПОУ: {result.edrpou}</span>
                                <span className="text-slate-800">|</span>
                                <span className="text-emerald-500 flex items-center gap-2">
                                   <ShieldCheck size={16} /> VALIDATED_ENTITY
@@ -221,7 +221,7 @@ export default function FirmDossierView() {
 
                       <div className="space-y-6 mb-12 relative z-10">
                          <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
-                            <ShieldAlert size={18} /> К� ИТИЧНІ_ЗАГ� ОЗИ_ТА_АНОМАЛІЇ
+                            <ShieldAlert size={18} /> К ИТИЧНІ_ЗАГ ОЗИ_ТА_АНОМАЛІЇ
                          </h4>
                          {result.threats.map((t: string, i: number) => (
                            <div key={i} className="p-8 rounded-[2rem] bg-amber-600/5 border border-amber-600/20 text-[15px] font-bold text-amber-200 italic flex items-start gap-5 transition-all hover:bg-amber-600/10">
@@ -233,10 +233,10 @@ export default function FirmDossierView() {
 
                       <div className="flex flex-wrap items-center gap-6 pt-10 border-t border-white/[0.04] relative z-10">
                          <button className="px-10 py-5 bg-amber-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-amber-600 shadow-2xl flex items-center gap-4">
-                            <Lock size={20} /> БЛОКУВАТИ_В_МИТНОМУ_КОНТУ� І
+                            <Lock size={20} /> БЛОКУВАТИ_В_МИТНОМУ_КОНТУ І
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
-                            <Share2 size={20} /> Г� АФ_ЗВ'ЯЗКІВ
+                            <Share2 size={20} /> Г АФ_ЗВ'ЯЗКІВ
                          </button>
                          <button className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] italic hover:bg-white/10 transition-all flex items-center gap-4">
                             <FileText size={20} /> PDF_ЗВІТ
@@ -247,7 +247,7 @@ export default function FirmDossierView() {
                    {/* DETAIL GRID */}
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-8">
-                         <h4 className="text-[11px] font-black text-sky-500 uppercase tracking-[0.4em] italic border-b border-sky-500/10 pb-6">БЕНЕФІЦІА� НА_СТ� УКТУ� А</h4>
+                         <h4 className="text-[11px] font-black text-sky-500 uppercase tracking-[0.4em] italic border-b border-sky-500/10 pb-6">БЕНЕФІЦІА НА_СТРУКТУРА</h4>
                          <div className="space-y-4">
                             {result.owners.map((o: string, i: number) => (
                               <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-white/[0.02] border border-white/[0.04] hover:bg-sky-600/5 transition-all">
@@ -296,7 +296,7 @@ export default function FirmDossierView() {
                          </div>
                          <div className="space-y-4">
                             <div className="flex justify-between items-center text-[12px] font-black text-white italic uppercase tracking-tight">
-                               <span>ДИНАМІКА_ІМПО� ТУ</span>
+                               <span>ДИНАМІКА_ІМПОРТУ</span>
                                <span className="text-emerald-500">+142% Vol.</span>
                             </div>
                             <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
@@ -305,17 +305,17 @@ export default function FirmDossierView() {
                          </div>
                       </div>
                       <button className="w-full py-6 bg-sky-700/10 border border-sky-700/40 text-sky-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 hover:text-white transition-all shadow-3xl">
-                         � ОЗГО� НУТИ_ЖУ� НАЛ_МИТНИЦІ
+                         РОЗГОРНУТИ_ЖУ НАЛ_МИТНИЦІ
                       </button>
                    </section>
 
                    <section className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8 relative overflow-hidden">
                        <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] italic mb-6 flex items-center gap-4">
-                          <History size={18} /> ІСТО� ІЯ_ПЕ� ЕВІ� ОК
+                          <History size={18} /> ІСТО ІЯ_ПЕ ЕВІ ОК
                        </h3>
                        <div className="space-y-6 opacity-40">
                           {[
-                            { d: '12.02.26', t: 'ТЕНДЕ� НИЙ_АУДИТ' },
+                            { d: '12.02.26', t: 'ТЕНДЕ НИЙ_АУДИТ' },
                             { d: '01.02.26', t: 'OSINT_SCREENING' },
                             { d: '14.01.26', t: 'UBO_RECON' },
                           ].map((h, i) => (

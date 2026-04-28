@@ -2,7 +2,7 @@
  * 🔥 FabrykaAutonomousTab — FABRYKA v2.0 AUTONOMOUS CORE
  * PREDATOR Factory v58.2-WRAITH
  *
- * � еалізує ТЗ «FABRYKA v2.0 – AUTONOMOUS CORE»:
+ *  Реалізує ТЗ «FABRYKA v2.0 – AUTONOMOUS CORE»:
  *   - Перемикач режимів AUTONOMOUS ↔ API
  *   - VRAM Scheduler HUD (GTX 1080, 8GB)
  *   - Fitness / KPI Engine (оцінка кожного коміту)
@@ -58,6 +58,7 @@ import { E2BSandboxFeed } from './E2BSandboxFeed';
 import { JulesIntelBridge } from './JulesIntelBridge';
 import { ChromeOrchestrator } from './ChromeOrchestrator';
 import { GeminiTerminal } from './GeminiTerminal';
+import { ModelGardenExplorer } from './ModelGardenExplorer';
 
 import type {
   ChaosLogEntry,
@@ -122,7 +123,7 @@ const INITIAL_FEATURE_FLAGS: FeatureFlag[] = [];
 
 const INITIAL_RISK_EVENTS: RiskEvent[] = [];
 
-// ─── � ежим Кодера ──────────────────────────────────────────────────────────────
+// ─── Режим Кодера ──────────────────────────────────────────────────────────────
 
 /** Джерело виконання коду */
 type CoderSource = 'ollama' | 'api';
@@ -151,7 +152,7 @@ const CODER_MODELS: CoderModel[] = [
   { id: 'groq-llama4-scout', name: '🛡️ Llama 4 Scout (17B)', source: 'api', tag: 'llama4-17b-scout', specialty: 'Agentic / Logic (1000 RPD)', online: true, cost_per_1k: 'FREE (1k RPD)', context_k: 64 },
   { id: 'groq-llama3-instant', name: '🚀 Llama 3.1 8B Instant', source: 'api', tag: 'llama-3.1-8b-instant', specialty: 'Massive Vol. (14,400 RPD)', online: true, cost_per_1k: 'FREE (14k RPD)', context_k: 128 },
   { id: 'gemini-2.5-flash',   name: '💎 Gemini 2.5 Flash', source: 'api', tag: 'gemini-2.5-flash', specialty: 'Stable / Multimodal (1500 RPD)', online: true, cost_per_1k: 'FREE (AI Studio)', context_k: 1048 },
-  { id: 'gemini-2.5-pro',     name: '�  Gemini 2.5 Pro', source: 'api', tag: 'gemini-2.5-pro', specialty: 'Deep Logic (Best Effort)', online: true, cost_per_1k: 'FREE (Trial)', context_k: 2048 },
+  { id: 'gemini-2.5-pro',     name: '  Gemini 2.5 Pro', source: 'api', tag: 'gemini-2.5-pro', specialty: 'Deep Logic (Best Effort)', online: true, cost_per_1k: 'FREE (Trial)', context_k: 2048 },
   { id: 'deepseek-v3',        name: '🐳 DeepSeek V3 (Code)', source: 'api', tag: 'deepseek-coder', specialty: 'Advanced Coding / No RPD Limit', online: true, cost_per_1k: 'Free Quota', context_k: 128 },
   { id: 'vertex-model-garden', name: '🔍 Model Garden / Vertex', source: 'api', tag: 'google/vertex-search', specialty: 'Enterprise OSINT / Search', online: true, cost_per_1k: 'FREE', context_k: 128 },
 
@@ -197,7 +198,7 @@ const getRoleLabel = (role: LlmCascadeEntry['role']) => {
 const getRiskActionLabel = (action: RiskEvent['action']) => {
   if (action === 'auto_merge') return 'Авто-мердж';
   if (action === 'canary') return 'Canary Deploy';
-  return '� учна перевірка';
+  return 'Ручна перевірка';
 };
 
 // ─── Кругова VRAM діаграма ────────────────────────────────────────────────────
@@ -351,11 +352,15 @@ export function FabrykaAutonomousTab() {
               setSteps(prev => [data.latest_step, ...prev.slice(0, 19)]);
             }
             if (data.vram) {
-              setVram({
+              setVram(prev => ({
+                ...prev,
                 used_percent: (data.vram.used / data.vram.total) * 100,
-                warning: data.vram.critical,
-                total_gb: data.vram.total
-              });
+                warning: !!data.vram.critical,
+                allocation: {
+                  ...prev.allocation,
+                  total_gb: data.vram.total
+                }
+              }));
 
               // Dispatch Global Telemetry for Infrastructure Banner
               window.dispatchEvent(new CustomEvent('predator-vram-update', {
@@ -485,21 +490,21 @@ export function FabrykaAutonomousTab() {
           </div>
           {isCritical && (
             <Badge className="bg-rose-500 text-white animate-pulse border-none text-[8px] font-black italic">
-              VRAM_ПЕ� ЕВАНТАЖЕННЯ_АКТИВНО
+              VRAM_ПЕ ЕВАНТАЖЕННЯ_АКТИВНО
             </Badge>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
-            <div className="text-[8px] font-black text-emerald-400 uppercase mb-2">Local LLM � озділ</div>
+            <div className="text-[8px] font-black text-emerald-400 uppercase mb-2">Local LLM  озділ</div>
             <div className="text-xl font-black italic text-white">{localReserve} GB</div>
-            <div className="text-[8px] text-slate-500 mt-1">ЗАБ� ОНЬОВАНО ДЛЯ OLLAMA</div>
+            <div className="text-[8px] text-slate-500 mt-1">ЗАБ ОНЬОВАНО ДЛЯ OLLAMA</div>
           </div>
           <div className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20">
             <div className="text-[8px] font-black text-rose-400 uppercase mb-2">Sovereign OS / UI</div>
             <div className="text-xl font-black italic text-white">{uiReserve} GB</div>
-            <div className="text-[8px] text-slate-500 mt-1">ЗАБ� ОНЬОВАНО ДЛЯ THREE.JS</div>
+            <div className="text-[8px] text-slate-500 mt-1">ЗАБ ОНЬОВАНО ДЛЯ THREE.JS</div>
           </div>
         </div>
 
@@ -521,7 +526,7 @@ export function FabrykaAutonomousTab() {
           </div>
           <div className="flex items-center justify-between text-[8px] text-slate-600 font-mono italic">
             <span>0.0 GB</span>
-            <span>7.6 GB (FAILOVER_ХМА� И)</span>
+            <span>7.6 GB (FAILOVER_ХМАРИ)</span>
             <span>8.0 GB</span>
           </div>
         </div>
@@ -557,11 +562,11 @@ export function FabrykaAutonomousTab() {
                 FABRYKA v2.0 — Поточний режим
               </div>
               <div className={cn('text-2xl font-black uppercase tracking-widest', isAutonomous ? 'text-emerald-400' : 'text-rose-400')}>
-                {isAutonomous ? 'AUTONOMOUS (АВТОНОМНО)' : 'API � ЕЖИМ'}
+                {isAutonomous ? 'AUTONOMOUS (АВТОНОМНО)' : 'API РЕЖИМ'}
               </div>
               <div className="text-[10px] font-mono text-slate-500 mt-1 uppercase tracking-tighter">
                 {llmTriStateMode === 'SOVEREIGN' 
-                  ? 'Суверенний � ежим (Nemotron 30B MoE) · 100% Локально · Air-Gapped' 
+                  ? 'Суверенний режим (Nemotron 30B MoE) · 100% Локально · Air-Gapped' 
                   : llmTriStateMode === 'HYBRID'
                     ? 'Гібридний Інтелект · Баланс Local Edge + Cloud Pool'
                     : 'Хмарний Override (GLM-5.1 + Azure) · Екстремальна Швидкість · VRAM Звільнено'}
@@ -621,7 +626,7 @@ export function FabrykaAutonomousTab() {
         </div>
       </div>
 
-      {/* ══ � ЕЖИМ КОДЕ� А — Перемикач ══════════════════════════════════════════ */}
+      {/* ══ РЕЖИМ КОДЕРА — Перемикач ══════════════════════════════════════════ */}
       <div className="rounded-[28px] border border-white/8 bg-slate-950/70 overflow-hidden">
         {/* Заголовок */}
         <div className="flex items-center justify-between gap-4 px-5 py-4 border-b border-white/5 bg-black/30">
@@ -630,7 +635,7 @@ export function FabrykaAutonomousTab() {
               <Terminal size={16} className="text-[#D4AF37]" />
             </div>
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">� ежим виконання · Кодер</div>
+              <div className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Режим виконання · Кодер</div>
               <div className="text-xs font-black text-white">
                 {coderSource === 'ollama' ? '🖥️ Локальний сервер (Ollama)' : '☁️ Зовнішні API (Cloud)'}
               </div>
@@ -788,7 +793,7 @@ export function FabrykaAutonomousTab() {
             <div className="text-[10px] font-mono text-slate-600 ml-auto">Cost: <span className="text-emerald-500">$0.000</span></div>
           )}
           {coderSource === 'api' && (
-            <div className="text-[10px] font-mono text-slate-600 ml-auto">Статус: <span className="text-emerald-400">БЕЗКОШТОВНИЙ � ІВЕНЬ (FREE TIER)</span></div>
+            <div className="text-[10px] font-mono text-slate-600 ml-auto">Статус: <span className="text-emerald-400">БЕЗКОШТОВНИЙ РІВЕНЬ (FREE TIER)</span></div>
           )}
 
         </div>
@@ -800,7 +805,7 @@ export function FabrykaAutonomousTab() {
           { id: 'mode', label: 'LLM Каскад', icon: BrainCircuit },
           { id: 'vram', label: 'Планувальник VRAM', icon: Cpu },
           { id: 'fitness', label: 'Двигун Фітнесу (Fitness)', icon: Activity },
-          { id: 'risk', label: 'Двигун � изиків (Risk)', icon: Shield },
+          { id: 'risk', label: 'Двигун  изиків (Risk)', icon: Shield },
           { id: 'flags', label: 'Прапорці функцій', icon: Sliders },
           { id: 'chaos', label: 'Хаос-інженерія', icon: Flame },
         ] as const).map(({ id, label, icon: Icon }) => (
@@ -838,7 +843,7 @@ export function FabrykaAutonomousTab() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-black/40 rounded-3xl border border-white/5 p-5 flex items-center justify-between group hover:border-rose-500/20 transition-colors">
                 <div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Навантаження_� ою</div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Навантаження_ ою</div>
                   <div className="text-xl font-black text-white italic">{(swarm.reduce((acc, a) => acc + a.vram_usage_gb, 0)).toFixed(1)} ГБ VRAM</div>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:scale-110 transition-transform">
@@ -1002,7 +1007,7 @@ export function FabrykaAutonomousTab() {
                     {fitness.score.toFixed(2)}
                   </div>
                   <div className="text-[10px] font-mono text-slate-500 mt-1">
-                    Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ П� ИЙНЯТО' : '❌ ВІДХИЛЕНО'}
+                    Поріг: {fitness.threshold.toFixed(1)} · {fitness.passed ? '✅ П ИЙНЯТО' : '❌ ВІДХИЛЕНО'}
                   </div>
                   <div className="mt-3 text-[10px] text-slate-600 font-mono">
                     score = (perf_gain × 2 + stability_gain) / (cpu_cost + vram_cost + latency_cost)
@@ -1069,10 +1074,10 @@ export function FabrykaAutonomousTab() {
               {(['LOW', 'MEDIUM', 'HIGH'] as RiskLevel[]).map((level) => {
                 const c = getRiskColors(level);
                 const RIcon = getRiskIcon(level);
-                const actionMap = { LOW: 'Авто-мердж', MEDIUM: 'Canary Deploy', HIGH: '� учна перевірка' };
+                const actionMap = { LOW: 'Авто-мердж', MEDIUM: 'Canary Deploy', HIGH: ' учна перевірка' };
                 const descMap = {
                   LOW: 'Автоматично мержиться після успішного CI. Score > 1.2 + всі тести зелені.',
-                  MEDIUM: '� озгортається на 5% трафіку через canary. Чекає підтвердження метрик 30хв.',
+                  MEDIUM: ' озгортається на 5% трафіку через canary. Чекає підтвердження метрик 30хв.',
                   HIGH: 'Блокується до ручного ревʼю відповідального інженера. Сповіщення у Slack.',
                 };
                 return (
@@ -1207,7 +1212,7 @@ export function FabrykaAutonomousTab() {
             <div className="rounded-[28px] border border-rose-500/20 bg-rose-950/10 px-5 py-4 flex items-center gap-3">
               <AlertTriangle size={18} className="text-rose-400 shrink-0" />
               <div className="text-[11px] text-rose-300 leading-5">
-                <strong>� ️ УВАГА:</strong> Chaos Engineering запускає � ЕАЛЬНІ деструктивні сценарії на кластері. Переконайтеся, що у вас є rollback-план і достатньо ресурсів. Кожен запуск логується.
+                <strong> ️ УВАГА:</strong> Chaos Engineering запускає  ЕАЛЬНІ деструктивні сценарії на кластері. Переконайтеся, що у вас є rollback-план і достатньо ресурсів. Кожен запуск логується.
               </div>
             </div>
 

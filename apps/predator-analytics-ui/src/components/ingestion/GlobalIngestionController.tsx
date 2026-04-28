@@ -144,11 +144,11 @@ export function GlobalIngestionController() {
                         <div className="p-6 border-t border-white/5 bg-black/40 flex items-center justify-between text-[10px] uppercase font-black tracking-widest text-slate-600">
                             <div className="flex items-center gap-4">
                                 <span>OODA_ID: PRD-HUB-832</span>
-                                <span className="text-emerald-500/50">КОЕФІЦІЄНТ_ДОВІ� И: 0.9994</span>
+                                <span className="text-emerald-500/50">КОЕФІЦІЄНТ_ДОВІ И: 0.9994</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-                                СИНХ� ОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
+                                СИНХ ОНІЗАЦІЯ_СИСТЕМИ_АКТИВНА
                             </div>
                         </div>
                     </motion.div>
@@ -283,7 +283,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                             <div className="w-1 h-1 rounded-full bg-slate-800" />
                         </div>
-                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] АВТО� ИЗАЦІЯ_PREDATOR: УСПІШНО</div>
+                        <div className="text-slate-500">[{new Date(job.startedAt).toLocaleTimeString()}] АВТО ИЗАЦІЯ_PREDATOR: УСПІШНО</div>
                         <div className="flex gap-2 text-indigo-400/80">
                             <ChevronRight size={10} className="mt-0.5" />
                             <span>ЕТАП_ВУЗЛА: {STAGE_LIBRARY[job.stage]?.label || job.stage}</span>
@@ -294,7 +294,7 @@ function JobHubItem({ job, onRemove }: { job: IngestionJob; onRemove: () => void
                         </div>
                         {!isDone && !isFailed && (
                             <div className="text-emerald-500/60 animate-pulse overflow-hidden whitespace-nowrap text-[9px]">
-                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НО� МА`}
+                                {`>> SYSTEM_TRACE_OK >> DATAPACK_OK >> СТАН_НО МА`}
                             </div>
                         )}
                     </div>

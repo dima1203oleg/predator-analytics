@@ -41,7 +41,7 @@ export const AZRStatusHUD = () => {
 
                 <div className="flex flex-col">
                     <div className="flex items-center gap-3">
-                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] glint-elite">{nodeSource || 'ЯД� О_WRAITH'}</span>
+                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] glint-elite">{nodeSource || 'ЯДРО_WRAITH'}</span>
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-rose-500/5 border border-rose-500/10 rounded-md">
                             <Zap size={10} className={cn("fill-current animate-pulse", isOffline ? "text-orange-500" : (activeFailover ? "text-rose-400" : "text-rose-500"))} />
                             <span className={cn("text-[9px] font-black font-mono tracking-tighter", isOffline ? "text-orange-500" : (activeFailover ? "text-rose-400" : "text-rose-500"))}>

@@ -231,7 +231,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
             <div className="flex items-center gap-4 text-[10px] text-slate-300 font-black uppercase tracking-[0.2em]">
               <div className="flex items-center gap-2">
                 <div className={cn("w-2 h-2 rounded-full", isConnected ? 'bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse' : 'bg-rose-500')} />
-                <span>{isConnected ? 'СИСТЕМА_В_МЕ� ЕЖІ' : 'К� ИТИЧНО_ОФЛАЙН'}</span>
+                <span>{isConnected ? 'СИСТЕМА_В_МЕ ЕЖІ' : 'К ИТИЧНО_ОФЛАЙН'}</span>
               </div>
               {lastUpdate && (
                 <div className="flex items-center gap-2 pl-4 border-l border-white/10">
@@ -308,7 +308,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
         <div className="col-span-12 xl:col-span-8 flex flex-col gap-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <MetricCard
-              label="ЦЕНТ� АЛЬНИЙ_П� ОЦЕСО� "
+              label="ЦЕНТ АЛЬНИЙ_П ОЦЕСО "
               value={metrics.cpu.toFixed(1)}
               unit="%"
               icon={Cpu}
@@ -319,7 +319,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
               trendValue={metrics.cpu > 50 ? '+4.2%' : 'STABLE'}
             />
             <MetricCard
-              label="ОПЕ� АТИВНА_ПАМ'ЯТЬ"
+              label="ОПЕ АТИВНА_ПАМ'ЯТЬ"
               value={metrics.memory.toFixed(1)}
               unit="%"
               icon={HardDrive}
@@ -339,7 +339,7 @@ export const RealTimeSystemMetrics: React.FC<{ compact?: boolean }> = ({ compact
               unit="NODES"
             />
             <MetricCard
-              label="П� ОПУСКНА_ЗДАТНІСТЬ"
+              label="П ОПУСКНА_ЗДАТНІСТЬ"
               value={metrics.requestsPerSecond}
               unit="REQ/S"
               icon={Activity}

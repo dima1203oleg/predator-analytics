@@ -48,9 +48,9 @@ const ScanningHUD: React.FC = () => {
                 className="absolute left-0 w-full h-[1px] bg-rose-500/40 shadow-[0_0_15px_rgba(225,29,72,0.3)]"
             />
             <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 font-mono text-[7px] text-rose-500/30 uppercase italic font-bold">
-                <span>ДОСТУП_СЕКТО У:  ІВЕНЬ_WRAITH_SOVEREIGN</span>
-                <span>ДЖЕ ЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX</span>
-                <span>ЯД О_WRAITH: АКТИВНЕ</span>
+                <span>ДОСТУП_СЕКТОРУ: РІВЕНЬ_WRAITH_SOVEREIGN</span>
+                <span>ДЖЕРЕЛО_ДАНИХ: МИТНИЙ_ШЛЮЗ_PROX</span>
+                <span>ЯДРО_WRAITH: АКТИВНЕ</span>
             </div>
         </div>
     );
@@ -65,15 +65,15 @@ const ManifestXrayTerminal: React.FC = () => {
     const [isActive] = useState(true);
 
     const logPool = [
-        "ОТ ИМАННЯ: RAW_CARGO_MANIFEST_ID_{ID}",
-        "СТ ІМІНГ: БЛОК_ДАТАГ АМ_МАНІФЕСТУ...",
-        "ПОШУК_ ЕЄСТ У: ПЕ ЕВІ КА_ЄД ПОУ_{EDR}",
-        "К ОС_ВЕ ІФІКАЦІЯ: ВАЛІДАЦІЯ_ЦІНИ_ОДИНИЦІ [ОК]",
-        "ВИЯВЛЕНО_АНОМАЛІЮ: ЗАНИЖЕННЯ_ВА ТОСТІ [!]",
-        "ЗБІГ_ЗНАЙДЕНО: [ВІДП АВНИК_ВЕ ИФІКОВАНО]",
-        "ШИФ УВАННЯ_ЛОГУ_АУДИТУ...",
-        " ОЗПІЗНАВАННЯ_HS_CODE: 8517.13.00.00",
-        "КОГНІТИВНА_АНАЛІТИКА: ПАТЕ Н_ВСТАНОВЛЕНО",
+        "ОТРИМАННЯ: RAW_CARGO_MANIFEST_ID_{ID}",
+        "СТРІМІНГ: БЛОК_ДАТАГРАМ_МАНІФЕСТУ...",
+        "ПОШУК_РЕЄСТРУ: ПЕРЕВІРКА_ЄДРПОУ_{EDR}",
+        "КРОС_ВЕРИФІКАЦІЯ: ВАЛІДАЦІЯ_ЦІНИ_ОДИНИЦІ [ОК]",
+        "ВИЯВЛЕНО_АНОМАЛІЮ: ЗАНИЖЕННЯ_ВАРТОСТІ [!]",
+        "ЗБІГ_ЗНАЙДЕНО: [ВІДПРАВНИК_ВЕРИФІКОВАНО]",
+        "ШИФРУВАННЯ_ЛОГУ_АУДИТУ...",
+        "РОЗПІЗНАВАННЯ_HS_CODE: 8517.13.00.00",
+        "КОГНІТИВНА_АНАЛІТИКА: ПАТЕРН_ВСТАНОВЛЕНО",
         "СКАНУВАННЯ_WRAITH: ЦІЛЬ_ЗАХОПЛЕНО"
     ];
 
@@ -130,17 +130,17 @@ const TRADE_VOLUME_DATA = [
 ];
 
 const CATEGORY_DATA = [
-  { name: 'ЕЛЕКТ ОНІКА', value: 35, color: '#e11d48' },
+  { name: 'ЕЛЕКТРОНІКА', value: 35, color: '#e11d48' },
   { name: 'МАШИНОБУДУВАННЯ', value: 25, color: '#fb7185' },
-  { name: 'АГ О-СЕКТО ', value: 20, color: '#be123c' },
+  { name: 'АГРО-СЕКТОР', value: 20, color: '#be123c' },
   { name: 'ХІМІЯ', value: 12, color: '#9f1239' },
   { name: 'ІНШЕ', value: 8, color: '#475569' },
 ];
 
 const MOCK_TOP_IMPORTERS = [
-  { name: 'ТОВ "МЕТАЛ-Т ЕЙД ОПТ"', value: '$14.2M', share: '12%', trend: 'up' },
-  { name: 'П АТ "ЕНЕ ГО-СИСТЕМИ"', value: '$9.8M', share: '8%', trend: 'up' },
-  { name: 'ТОВ "АГ О-ІМПО Т ПЛЮС"', value: '$7.4M', share: '6%', trend: 'down' },
+  { name: 'ТОВ "МЕТАЛ-ТРЕЙД ОПТ"', value: '$14.2M', share: '12%', trend: 'up' },
+  { name: 'ПАТ "ЕНЕРГО-СИСТЕМИ"', value: '$9.8M', share: '8%', trend: 'up' },
+  { name: 'ТОВ "АГРО-ІМПОРТ ПЛЮС"', value: '$7.4M', share: '6%', trend: 'down' },
   { name: 'ФОП КОВАЛЕНКО О.В.', value: '$3.1M', share: '2%', trend: 'stable' },
 ];
 
@@ -154,9 +154,9 @@ interface RiskAlert {
 }
 
 const SEVERITY_CONFIG: Record<RiskLevelValue, { label: string; color: string; bg: string }> = {
-  critical:  { label: 'К ИТИЧНА', color: '#be123c', bg: 'bg-rose-900' },
+  critical:  { label: 'КРИТИЧНА', color: '#be123c', bg: 'bg-rose-900' },
   high:      { label: 'ВИСОКА',    color: '#e11d48', bg: 'bg-rose-600' },
-  medium:    { label: 'СЕ ЕДНЯ',   color: '#fb7185', bg: 'bg-rose-500/10' },
+  medium:    { label: 'СЕРЕДНЯ',   color: '#fb7185', bg: 'bg-rose-500/10' },
   low:       { label: 'НИЗЬКА',    color: '#475569', bg: 'bg-slate-700/10' },
   minimal:   { label: 'МІНІМАЛЬНА', color: '#64748b', bg: 'bg-slate-800/10' },
   stable:    { label: 'СТАБІЛЬНА',  color: '#fda4af', bg: 'bg-rose-300/10' },
@@ -165,9 +165,9 @@ const SEVERITY_CONFIG: Record<RiskLevelValue, { label: string; color: string; bg
 };
 
 const RISK_ALERTS: RiskAlert[] = [
-  { id: 'R-702', title: 'ЗАНИЖЕННЯ_МИТНОЇ_ВА ТОСТІ', source: 'HS-8517', severity: 'critical', status: 'АКТИВНА', desc: 'Декларування iPhone 15 Pro за ціною $240/од.' },
-  { id: 'R-614', title: 'ЗМІНА_К АЇНИ_ПОХОДЖЕННЯ', source: 'UA-PL-DE', severity: 'high', status: 'ПЕ ЕВІ КА', desc: ' ізка зміна логістичного плеча через фіктивні хаби в Польщі.' },
-  { id: 'R-509', title: 'САНКЦІЙНИЙ_Т АНЗИТ', source: 'EU-SDN', severity: 'critical', status: 'БЛОКОВАНО', desc: 'Спроба ввезення комплектуючих подвійного призначення.' },
+  { id: 'R-702', title: 'ЗАНИЖЕННЯ_МИТНОЇ_ВАРТОСТІ', source: 'HS-8517', severity: 'critical', status: 'АКТИВНА', desc: 'Декларування iPhone 15 Pro за ціною $240/од.' },
+  { id: 'R-614', title: 'ЗМІНА_КРАЇНИ_ПОХОДЖЕННЯ', source: 'UA-PL-DE', severity: 'high', status: 'ПЕРЕВІРКА', desc: 'Різка зміна логістичного плеча через фіктивні хаби в Польщі.' },
+  { id: 'R-509', title: 'САНКЦІЙНИЙ_ТРАНЗИТ', source: 'EU-SDN', severity: 'critical', status: 'БЛОКОВАНО', desc: 'Спроба ввезення комплектуючих подвійного призначення.' },
 ];
 
 export default function CustomsIntelligenceView() {
@@ -185,7 +185,7 @@ export default function CustomsIntelligenceView() {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'CustomsIntel',
-          message: 'АКТИВОВАНО АВТОНОМНИЙ  ЕЖИМ МИТНИХ ВУЗЛІВ. Переключення на локальні дзеркара (CUSTOMS_NODES).',
+          message: 'АКТИВОВАНО АВТОНОМНИЙ РЕЖИМ МИТНИХ ВУЗЛІВ. Переключення на локальні дзеркара (CUSTOMS_NODES).',
           severity: 'warning',
           timestamp: new Date().toISOString(),
           code: 'CUSTOMS_NODES'
@@ -262,10 +262,10 @@ export default function CustomsIntelligenceView() {
                         <span className="text-[10px] font-black text-rose-700 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                       МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter"> ОЗВІДКА</span>
+                       МИТНА <span className="text-rose-500 underline decoration-rose-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">РОЗВІДКА</span>
                      </h1>
                      <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-rose-500/30 pl-8 opacity-90 max-w-2xl">
-                        КОНТ ОЛЬ ЗЕД, ТОВА НИХ ПОТОКІВ ТА П ЕДИКЦІЯ МИТНИХ  РИЗИКІВ WRAITH_INTELLIGENCE
+                        КОНТРОЛЬ ЗЕД, ТОВАРНИХ ПОТОКІВ ТА ПРЕДИКЦІЯ МИТНИХ РИЗИКІВ WRAITH_INTELLIGENCE
                      </p>
                   </div>
                </div>
@@ -278,7 +278,7 @@ export default function CustomsIntelligenceView() {
              stats={[
                { label: 'ДІЮЧИХ_ЗЕД', value: '12.8K', icon: <Box size={14} />, color: 'primary' },
                { 
-                 label: isOffline ? 'RECOVERY_SYNC' : ' ИЗИКОВІ_ОПЕ АЦІЇ', 
+                 label: isOffline ? 'RECOVERY_SYNC' : 'РИЗИКОВІ_ОПЕРАЦІЇ', 
                  value: isOffline ? `${Math.floor(healingProgress)}%` : '847', 
                  icon: isOffline ? <Activity /> : <Siren size={14} />, 
                  color: isOffline ? 'warning' : 'rose', 
@@ -302,9 +302,9 @@ export default function CustomsIntelligenceView() {
            <div className="flex flex-wrap gap-4 p-3 bg-black border-2 border-white/[0.03] rounded-[2.5rem] w-fit shadow-4xl backdrop-blur-3xl">
               {[
                 { id: 'analytics', label: 'ОБСЯГИ_ТА_ДИНАМІКА', i: Activity },
-                { id: 'importers', label: 'ТОП_ІМПО ТЕ ІВ', i: Truck },
-                { id: 'risks', label: 'МИТНІ_ ИЗИКИ', i: AlertTriangle },
-                { id: 'signals', label: 'СИГНАЛЬНА_ ОЗВІДКА', i: Zap },
+                { id: 'importers', label: 'ТОП_ІМПОРТЕ ІВ', i: Truck },
+                { id: 'risks', label: 'МИТНІ_РИЗИКИ', i: AlertTriangle },
+                { id: 'signals', label: 'СИГНАЛЬНА_РОЗВІДКА', i: Zap },
               ].map(tab => (
                 <button 
                   key={tab.id} onClick={() => setActiveTab(tab.id as any)}
@@ -329,7 +329,7 @@ export default function CustomsIntelligenceView() {
            >
                <div className="flex items-center gap-6 mb-4">
                    <div className="h-px flex-1 bg-rose-500/10" />
-                   <span className="text-[10px] font-black text-rose-500/40 uppercase tracking-[0.6em] italic">X-RAY_АНАЛІЗАТО  // ПОТІК_МАНІФЕСТІВ</span>
+                   <span className="text-[10px] font-black text-rose-500/40 uppercase tracking-[0.6em] italic">X-RAY_АНАЛІЗАТОР // ПОТІК_МАНІФЕСТІВ</span>
                    <div className="h-px flex-1 bg-rose-500/10" />
                </div>
                <ManifestXrayTerminal />
@@ -345,11 +345,11 @@ export default function CustomsIntelligenceView() {
                           <div className="absolute top-0 left-0 w-2 h-full bg-rose-600/20" />
                           <div className="flex items-center justify-between pb-8 border-b border-white/[0.04]">
                              <h2 className="text-[16px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6 font-serif">
-                                <Activity size={28} className="text-rose-500" /> ДИНАМІКА МИТНИХ ОПЕ АЦІЙ // CLASSIFIED
+                                <Activity size={28} className="text-rose-500" /> ДИНАМІКА МИТНИХ ОПЕРАЦІЙ // CLASSIFIED
                              </h2>
                              <div className="flex gap-10">
-                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-rose-600 shadow-[0_0_12px_#be123c]" /><span className="text-[10px] font-black text-slate-400 uppercase italic">ІМПО Т_АКТИВНИЙ</span></div>
-                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-slate-800" /><span className="text-[10px] font-black text-slate-600 uppercase italic">ЕКСПО Т_СТ ИМАНИЙ</span></div>
+                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-rose-600 shadow-[0_0_12px_#be123c]" /><span className="text-[10px] font-black text-slate-400 uppercase italic">ІМПОРТ_АКТИВНИЙ</span></div>
+                                <div className="flex items-center gap-3"><div className="w-3 h-3 rounded-full bg-slate-800" /><span className="text-[10px] font-black text-slate-600 uppercase italic">ЕКСПОРТ_СТРИМАНИЙ</span></div>
                              </div>
                           </div>
                           <div className="h-[500px]">
@@ -376,7 +376,7 @@ export default function CustomsIntelligenceView() {
                        </div>
 
                        <div className="col-span-12 xl:col-span-4 p-12 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
-                          <h2 className="text-[14px] font-black text-rose-500 italic uppercase tracking-[0.5em] pb-8 border-b border-white/[0.04] font-serif">СТ УКТУ А_ТОВА НИХ_Г УП</h2>
+                          <h2 className="text-[14px] font-black text-rose-500 italic uppercase tracking-[0.5em] pb-8 border-b border-white/[0.04] font-serif">СТРУКТУРА_ТОВАРНИХ_ГРУП</h2>
                           <div className="flex justify-center p-10 bg-black/40 rounded-[4rem] border-2 border-white/[0.02] shadow-inner">
                              <RePieChart width={320} height={320}>
                                 <Pie data={categoryData} innerRadius={80} outerRadius={130} paddingAngle={6} dataKey="value" cx="50%" cy="50%">
@@ -413,10 +413,10 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="flex items-center justify-between mb-12 border-b border-white/[0.04] pb-10 relative z-10">
                              <h2 className="text-[18px] font-black text-white italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif">
-                                <Truck size={32} className="text-rose-500" /> ТОП_ІМПО ТЕ ІВ // ЛІДЕ И_ ИНКУ
+                                <Truck size={32} className="text-rose-500" /> ТОП_ІМПОРТЕРІВ // ЛІДЕРИ_РИНКУ
                              </h2>
                              <div className="flex gap-6">
-                                <button className="px-10 py-4 bg-black border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:border-rose-500/30 transition-all font-bold">ФІЛЬТ _КАТЕГО ІЙ</button>
+                                <button className="px-10 py-4 bg-black border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest italic hover:border-rose-500/30 transition-all font-bold">ФІЛЬТР_КАТЕГОРІЙ</button>
                              </div>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 relative z-10">
@@ -432,7 +432,7 @@ export default function CustomsIntelligenceView() {
                                   </div>
                                   <div className="space-y-3">
                                      <h4 className="text-2xl font-black text-white italic uppercase leading-tight group-hover:text-rose-500 transition-colors font-serif">{comp.name}</h4>
-                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic font-mono">ІДЕНТИФІКАТО _ЄД ПОУ: {comp.edrpou || Math.floor(Math.random() * 90000000 + 10000000)}</p>
+                                     <p className="text-[12px] font-black text-slate-800 uppercase tracking-widest italic font-mono">ІДЕНТИФІКАТОР_ЄДРПОУ: {comp.edrpou || Math.floor(Math.random() * 90000000 + 10000000)}</p>
                                   </div>
                                   <div className="pt-8 border-t-2 border-white/[0.04] flex items-end justify-between">
                                      <div>
@@ -441,7 +441,7 @@ export default function CustomsIntelligenceView() {
                                      </div>
                                      <div className="text-right">
                                         <p className="text-xl font-black text-rose-500 italic font-mono">{comp.share}</p>
-                                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest">ЧАСТКА_ ИНКУ</p>
+                                        <p className="text-[8px] text-slate-800 uppercase font-black tracking-widest">ЧАСТКА_РИНКУ</p>
                                      </div>
                                   </div>
                                </div>
@@ -459,9 +459,9 @@ export default function CustomsIntelligenceView() {
                           </div>
                           <div className="flex items-center justify-between relative z-10">
                              <h3 className="text-[18px] font-black text-rose-600 italic uppercase tracking-[0.6em] flex items-center gap-8 font-serif font-bold">
-                                <AlertTriangle size={36} className="animate-pulse" />  ИЗИКОВІ_СИГНАЛИ_МИТНИЦІ // МАНІТО _ROSE_VECTOR
+                                <AlertTriangle size={36} className="animate-pulse" /> РИЗИКОВІ_СИГНАЛИ_МИТНИЦІ // МАНІТОР_ROSE_VECTOR
                              </h3>
-                             <button className="px-14 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold uppercase"> ОЗГО НУТИ_АНТИФ ОД_МАСИВ</button>
+                             <button className="px-14 py-6 bg-rose-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all font-bold uppercase">РОЗГОРНУТИ_АНТИФРОД_МАСИВ</button>
                           </div>
                           <div className="space-y-8 relative z-10">
                              {riskAlerts.map((alert, i) => (
@@ -476,7 +476,7 @@ export default function CustomsIntelligenceView() {
                                            <span className="text-[12px] font-black font-mono text-slate-800 tracking-[0.4em] bg-white/5 px-4 py-1 rounded-lg italic font-bold">СИГНАЛ_{alert.id}</span>
                                            <span className={cn("px-6 py-2 text-[10px] font-black italic rounded-full uppercase tracking-widest border-2", (alert.severity === 'critical' || alert.severity === 'high') ? "bg-rose-600 text-white border-rose-500 shadow-lg shadow-rose-900/40" : "bg-rose-500/10 text-rose-500 border-rose-500/20")}>{SEVERITY_CONFIG[alert.severity]?.label || alert.severity}</span>
                                         </div>
-                                        <span className="text-[11px] font-black text-slate-800 uppercase italic font-mono tracking-widest border-b border-slate-900 font-bold">ДЖЕ ЕЛО_ІДЕНТ: {alert.source}</span>
+                                        <span className="text-[11px] font-black text-slate-800 uppercase italic font-mono tracking-widest border-b border-slate-900 font-bold">ДЖЕРЕЛО_ІДЕНТ: {alert.source}</span>
                                      </div>
                                      <div className="space-y-3">
                                         <h4 className="text-4xl font-black text-white italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors font-serif leading-none">{alert.title}</h4>
@@ -484,8 +484,8 @@ export default function CustomsIntelligenceView() {
                                      </div>
                                   </div>
                                   <div className="flex flex-col gap-4 min-w-[220px]">
-                                     <button className="w-full py-5 bg-white/5 hover:bg-rose-600 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white font-bold tracking-widest shadow-xl">ПОЧАТИ_ ОЗСЛІДУВАННЯ</button>
-                                     <button className="w-full py-5 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase text-slate-700 italic tracking-[0.3em] font-bold">А ХІВУВАТИ_ЗВІТ</button>
+                                     <button className="w-full py-5 bg-white/5 hover:bg-rose-600 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase italic transition-all hover:text-white font-bold tracking-widest shadow-xl">ПОЧАТИ_РОЗСЛІДУВАННЯ</button>
+                                     <button className="w-full py-5 border-2 border-white/5 rounded-2xl text-[10px] font-black uppercase text-slate-700 italic tracking-[0.3em] font-bold">АРХІВУВАТИ_ЗВІТ</button>
                                   </div>
                                </div>
                              ))}
@@ -499,11 +499,11 @@ export default function CustomsIntelligenceView() {
                        <div className="col-span-12 xl:col-span-8 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                           <div className="absolute top-0 left-0 w-2 h-full bg-rose-600/20" />
                           <h2 className="text-[16px] font-black text-rose-500 italic uppercase tracking-[0.6em] pb-10 border-b border-white/[0.04] flex items-center gap-6 font-serif">
-                             <Target size={28} className="text-rose-500 animate-pulse" /> ДЕКОДУВАННЯ_ЖИВИХ_СИГНАЛІВ // СТ АТЕГІЧНИЙ_ІНТЕЛ
+                             <Target size={28} className="text-rose-500 animate-pulse" /> ДЕКОДУВАННЯ_ЖИВИХ_СИГНАЛІВ // СТРАТЕГІЧНИЙ_ІНТЕЛ
                           </h2>
                           <div className="space-y-6">
                              {[
-                                { time: '14:22:15', channel: 'МИТНИЙ_ІНФО МАТО ', msg: 'Помічено скупчення фур ТОВ "Агро-Трейд" на КПП "Краківець". Можливий дефіцит ДП.' },
+                                { time: '14:22:15', channel: 'МИТНИЙ_ІНФОРМАТОР', msg: 'Помічено скупчення фур ТОВ "Агро-Трейд" на КПП "Краківець". Можливий дефіцит ДП.' },
                                 { time: '14:20:08', channel: 'LOGISTICS_UA_TG', msg: 'Зміна тарифів на контейнерні перевезення з Гданська. +12%.' },
                                 { time: '14:15:33', channel: 'INTERNAL_AF_BOT', msg: 'Детекція аномально великої партії iPhone 15 у декларації 104/2203.' },
                              ].map((sig, i) => (
@@ -543,9 +543,9 @@ export default function CustomsIntelligenceView() {
 
                           <div className="p-10 rounded-[4rem] bg-black border-2 border-rose-500/10 shadow-4xl relative overflow-hidden group hover:border-rose-500/30 transition-all cursor-crosshair">
                              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-transparent pointer-events-none" />
-                             <h4 className="text-[10px] font-black text-rose-700 uppercase tracking-[0.6em] mb-6 italic">СУВЕ ЕННИЙ_ШІ_ВА ТОВИЙ (SENTINEL)</h4>
+                             <h4 className="text-[10px] font-black text-rose-700 uppercase tracking-[0.6em] mb-6 italic">СУВЕРЕННИЙ_ШІ_ВАРТОВИЙ (SENTINEL)</h4>
                              <p className="text-[14px] font-black text-slate-400 italic leading-relaxed uppercase tracking-tighter border-l-4 border-rose-500/30 pl-8 group-hover:text-white transition-colors">
-                                Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ.  екомендується перегляд лімітів для імпортерів електроніки категорії A.
+                                Аналіз торгових потоків свідчить про зміцнення логістичних коридорів у напрямку ЦСЄ. Рекомендується перегляд лімітів для імпортерів електроніки категорії A.
                              </p>
                           </div>
                        </div>

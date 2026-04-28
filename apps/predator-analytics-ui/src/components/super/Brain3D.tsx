@@ -212,8 +212,8 @@ const CouncilMember: React.FC<{
 };
 
 export const Brain3D: React.FC<Brain3DProps> = ({ nodes, stage }) => {
-    const arbiter = nodes.find(n => n.role === 'А� БІТ� ' || n.role === 'CHAIRMAN');
-    const members = nodes.filter(n => n.role !== 'А� БІТ� ' && n.role !== 'CHAIRMAN');
+    const arbiter = nodes.find(n => n.role === 'А БІТ ' || n.role === 'CHAIRMAN');
+    const members = nodes.filter(n => n.role !== 'А БІТ ' && n.role !== 'CHAIRMAN');
 
     const radius = 4.5;
 

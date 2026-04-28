@@ -113,7 +113,7 @@ const SEGMENTS: SegmentCardDefinition[] = [
   },
   {
     key: 'regulators',
-    title: '� егулятори та контроль',
+    title: 'Регулятори та контроль',
     subtitle: 'Технічна готовність сервісів, завершені цикли та контроль індексів.',
     persona: 'GOVERNMENT',
     icon: FileCheck,
@@ -146,9 +146,9 @@ const toneClasses: Record<ClientsHubTone, { badge: string; text: string }> = {
     badge: 'border-rose-500/20 bg-rose-500/10 text-rose-100',
     text: 'text-rose-200',
   },
-  crimson: {
-    badge: 'border-rose-700/20 bg-rose-700/10 text-rose-100',
-    text: 'text-rose-200',
+  amber: {
+    badge: 'border-amber-500/20 bg-amber-500/10 text-amber-100',
+    text: 'text-amber-200',
   },
   sky: {
     badge: 'border-sky-500/20 bg-sky-500/10 text-sky-100',
@@ -166,10 +166,10 @@ const summaryToneClasses: Record<ClientsHubTone, { border: string; panel: string
     panel: 'bg-rose-500/10',
     value: 'text-rose-200',
   },
-  crimson: {
-    border: 'border-rose-700/20',
-    panel: 'bg-rose-700/10',
-    value: 'text-rose-200',
+  amber: {
+    border: 'border-amber-500/20',
+    panel: 'bg-amber-500/10',
+    value: 'text-amber-200',
   },
   sky: {
     border: 'border-sky-500/20',
@@ -192,7 +192,7 @@ const personaLabel = (persona: string): string => {
     case 'GOVERNMENT':
       return 'Держава';
     case 'INTELLIGENCE':
-      return '� озвідка';
+      return 'Розвідка';
     default:
       return 'Змішаний режим';
   }
@@ -285,7 +285,7 @@ export default function ClientsHubView() {
       title: activeSegment.title,
       subtitle: activeSegment.subtitle,
       status: {
-        label: `� ежим: ${personaLabel(persona)}`,
+        label: `Режим: ${personaLabel(persona)}`,
         tone: (backendStatus.isOffline ? 'warning' : 'info') as any,
       },
       actions: createStandardContextActions({
@@ -351,7 +351,7 @@ export default function ClientsHubView() {
                   </h1>
                   <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.34em] text-rose-300/70">
                     <Zap size={12} className="animate-pulse" />
-                    � обочі режими без локальних лічильників
+                     Робочі режими без локальних лічильників
                   </p>
                 </div>
               </div>
@@ -360,7 +360,7 @@ export default function ClientsHubView() {
             breadcrumbs={['PREDATOR', 'Клієнти', 'Контури']}
             stats={[
               {
-                label: '� ежим',
+                label: 'Режим',
                 value: personaLabel(persona),
                 icon: <Activity size={14} />,
                 color: 'primary',
@@ -398,7 +398,7 @@ export default function ClientsHubView() {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.crimson.badge : toneClasses.sky.badge)}>
+            <Badge className={cn('border px-4 py-2 text-[11px] font-bold', backendStatus.isOffline ? toneClasses.rose.badge : toneClasses.sky.badge)}>
               {backendStatus.statusLabel}
             </Badge>
             <Badge className="border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold text-slate-200">
@@ -542,7 +542,7 @@ export default function ClientsHubView() {
                 <Radio className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-rose-100/70">� обочий принцип</div>
+                <div className="text-[10px] font-black uppercase tracking-[0.24em] text-rose-100/70">Робочий принцип</div>
                 <div className="mt-2 text-lg font-black text-white">Хаб показує сегменти доступу, а не намальовану операційну статистику.</div>
                 <div className="mt-3 text-sm leading-6 text-slate-300">
                   Кожна картка тепер бере підтверджені агрегати з API дашборду та системного API. Якщо значення відсутнє, воно позначається як `Н/д`, а не підмінюється випадковими діапазонами чи локальними таймерами.

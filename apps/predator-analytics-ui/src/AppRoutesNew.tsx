@@ -190,7 +190,7 @@ export const AppRoutesNew = () => {
       <Suspense fallback={<LoadingSkeleton />}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            {/* 1. КОМАНДНИЙ ЦЕНТ�  (GOLD HUB) */}
+            {/* 1. КОМАНДНИЙ ЦЕНТ  (GOLD HUB) */}
             <Route path="/" element={<Navigate to="/command?tab=board" replace />} />
             <Route path="/command" element={<CommandHub />} />
             <Route path="/morning-brief" element={<Navigate to="/command?tab=brief" replace />} />
@@ -199,7 +199,7 @@ export const AppRoutesNew = () => {
             <Route path="/som" element={<Navigate to="/command?tab=observer" replace />} />
             <Route path="/war-room" element={<Navigate to="/command?tab=warroom" replace />} />
 
-            {/* 2. ТО� ГОВА � ОЗВІДКА (AMBER HUB) */}
+            {/* 2. ТО ГОВА РОЗВІДКА (AMBER HUB) */}
             <Route path="/market" element={<MarketHub />} />
             <Route path="/customs-intel" element={<Navigate to="/market?tab=customs" replace />} />
             <Route path="/trade-map" element={<Navigate to="/market?tab=flows" replace />} />
@@ -213,7 +213,7 @@ export const AppRoutesNew = () => {
             <Route path="/maritime" element={<MaritimeView />} />
             <Route path="/tenders" element={<TendersView />} />
 
-            {/* 3. � ОЗВІДКА СУБ'ЄКТІВ (WARN HUB) */}
+            {/* 3. РОЗВІДКА СУБ'ЄКТІВ (WARN HUB) */}
             <Route path="/search" element={<SearchHub />} />
             <Route path="/registries" element={<Navigate to="/search?tab=registries" replace />} />
             <Route path="/documents" element={<Navigate to="/search?tab=documents" replace />} />
@@ -230,7 +230,7 @@ export const AppRoutesNew = () => {
             <Route path="/power-structure" element={<PowerStructureView />} />
             <Route path="/compliance" element={<ComplianceView />} />
 
-            {/* 4. ФІНАНСОВА � ОЗВІДКА (EMERALD HUB) */}
+            {/* 4. ФІНАНСОВА РОЗВІДКА (EMERALD HUB) */}
             <Route path="/financial" element={<FinancialHub />} />
             <Route path="/swift-monitor" element={<Navigate to="/financial?tab=swift" replace />} />
             <Route path="/offshore-detector" element={<Navigate to="/financial?tab=offshore" replace />} />
@@ -256,7 +256,7 @@ export const AppRoutesNew = () => {
             <Route path="/timeline" element={<TimelineBuilderView />} />
             <Route path="/entity-resolver" element={<EntityResolverView />} />
 
-            {/* 6. СИСТЕМНЕ ЯД� О (тільки для client-ролей) */}
+            {/* 6. СИСТЕМНЕ ЯДРО (тільки для client-ролей) */}
             <Route path="/system" element={<SystemHub />} />
             <Route path="/monitoring" element={<Navigate to="/system?tab=monitoring" replace />} />
             <Route path="/settings" element={<Navigate to="/system?tab=settings" replace />} />

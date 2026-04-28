@@ -38,7 +38,7 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                     <div className="p-8 border-b border-white/5 flex justify-between items-center bg-slate-800/50">
                         <div>
                             <h2 className="text-2xl font-black text-white flex items-center gap-3">
-                                <FileSearch className="text-indigo-400" /> ПОПЕ� ЕДНІЙ ПЕ� ЕГЛЯД
+                                <FileSearch className="text-indigo-400" /> ПОПЕ ЕДНІЙ ПЕ ЕГЛЯД
                             </h2>
                             <p className="text-slate-400 font-mono text-xs mt-1 uppercase">Файл: {selectedFile?.name}</p>
                         </div>
@@ -76,7 +76,7 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                                         СКАСУВАТИ
                                     </button>
                                     <button onClick={onConfirm} className="px-8 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-                                        <Check size={20} /> ПІДТВЕ� ДИТИ ІМПО� Т
+                                        <Check size={20} /> ПІДТВЕ ДИТИ ІМПОРТ
                                     </button>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                                 <h3 className="text-xl font-bold text-white uppercase tracking-widest mb-2">ЗАВАНТАЖЕННЯ УСПІШНЕ</h3>
                                 <p className="text-slate-400 font-mono text-center max-w-md">
                                     Файл передано на сервер. <br/>
-                                    � озпочато ETL процес обробки та індексації даних.
+                                     озпочато ETL процес обробки та індексації даних.
                                 </p>
                             </div>
                         ) : (
@@ -102,7 +102,7 @@ export const DataUploadWizard: React.FC<DataUploadWizardProps> = ({
                                         animate={{ width: `${uploadProgress}%` }}
                                     />
                                 </div>
-                                <p className="mt-4 text-indigo-400 font-mono">{uploadProgress}% ЗАВЕ� ШЕНО</p>
+                                <p className="mt-4 text-indigo-400 font-mono">{uploadProgress}% ЗАВЕ ШЕНО</p>
                             </div>
                         )}
                     </div>

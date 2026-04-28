@@ -21,7 +21,7 @@ describe('searchView.utils', () => {
                     address: 'Київ, вул. Тестова, 1',
                     capital: '1 000 000 грн',
                     type: 'ТОВ',
-                    source: 'ЄД� ПОУ',
+                    source: 'ЄД ПОУ',
                     beneficiaries: ['Петренко П.П.'],
                     connections_count: 4,
                 },
@@ -35,7 +35,7 @@ describe('searchView.utils', () => {
         expect(company.riskLabel).toBe('Під наглядом');
         expect(company.matchScore).toBe(91);
         expect(company.beneficiaries).toEqual(['Петренко П.П.']);
-        expect(company.tags).toContain('ЄД� ПОУ');
+        expect(company.tags).toContain('ЄД ПОУ');
     });
 
     it('залишає порожні поля порожніми, а не підміняє вигаданими значеннями', () => {
@@ -58,7 +58,7 @@ describe('searchView.utils', () => {
         const company = normalizeCompany(
             {
                 id: '321',
-                title: 'ТОВ "� ИЗИК"',
+                title: 'ТОВ "РИЗИК"',
                 metadata: {
                     edrpou: '87654321',
                     status: 'bankrupt',
@@ -80,7 +80,7 @@ describe('searchView.utils', () => {
 
     it('формує коректний текст рішення залежно від ризику', () => {
         const highRisk = normalizeCompany(
-            { id: '1', title: '� изик', metadata: { edrpou: '100', risk_level: 'high' } },
+            { id: '1', title: ' изик', metadata: { edrpou: '100', risk_level: 'high' } },
             0,
         );
         const lowRisk = normalizeCompany(

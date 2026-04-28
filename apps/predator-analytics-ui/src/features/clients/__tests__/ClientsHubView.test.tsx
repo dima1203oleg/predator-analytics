@@ -23,7 +23,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
   useBackendStatus: () => ({
     isOffline: false,
     isTruthOnly: true,
-    modeLabel: '� ежим правдивих даних',
+    modeLabel: 'режим правдивих даних',
     sourceLabel: 'localhost:9080/api/v1',
     sourceType: 'local',
     statusLabel: 'Зʼєднання активне',

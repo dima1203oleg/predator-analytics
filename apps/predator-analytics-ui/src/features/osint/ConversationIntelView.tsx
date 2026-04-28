@@ -1,5 +1,5 @@
 /**
- * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕ�  | v58.2-WRAITH
+ * 📡 CONVERSATION INTEL // СИГНАЛЬНИЙ ДЕКОДЕ  | v58.2-WRAITH
  * PREDATOR Analytics — Neural Signal Decoding & OSINT
  * 
  * Моніторинг Telegram каналів, ЗМІ, соцмереж та даркнет-форумів.
@@ -74,7 +74,7 @@ export default function ConversationIntelView() {
             window.dispatchEvent(new CustomEvent('predator-error', { 
                 detail: { 
                     service: 'ConversationIntel', 
-                    message: `СИГНАЛЬНИЙ ДЕКОДЕ�  [${backendStatus.nodeSource}]: � обота в автономному режимі MIRROR. Синхронізація OSINT обмежена.`,
+                    message: `СИГНАЛЬНИЙ ДЕКОДЕ  [${backendStatus.nodeSource}]:  обота в автономному режимі MIRROR. Синхронізація OSINT обмежена.`,
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'OSINT_OFFLINE'
@@ -155,10 +155,10 @@ export default function ConversationIntelView() {
                                 </span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none mb-1">
-                               СИГНАЛЬНИЙ <span className={cn("italic uppercase underline decoration-8 underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-emerald-500 decoration-emerald-500/20")}>ДЕКОДЕ� </span>
+                               СИГНАЛЬНИЙ <span className={cn("italic uppercase underline decoration-8 underline-offset-8", isOffline ? "text-amber-500 decoration-amber-500/20" : "text-emerald-500 decoration-emerald-500/20")}>ДЕКОДЕ </span>
                              </h1>
                              <p className="text-[12px] text-slate-600 font-black uppercase tracking-[0.5em] mt-6 italic border-l-4 border-emerald-500/20 pl-8 opacity-90 max-w-2xl">
-                               МОНІТО� ИНГ ТЕЛЕГ� АМ-КАНАЛІВ, ЗМІ ТА ДА� КНЕТ-ФО� УМІВ // SOVEREIGN CLOUD
+                               МОНІТО ИНГ ТЕЛЕГ АМ-КАНАЛІВ, ЗМІ ТА ДА КНЕТ-ФО УМІВ // SOVEREIGN CLOUD
                              </p>
                           </div>
                        </div>
@@ -166,7 +166,7 @@ export default function ConversationIntelView() {
                      stats={[
                        { label: 'NODE_SOURCE', value: isOffline ? 'SOVEREIGN_MIRROR' : 'NVIDIA_PROD', icon: <Cpu size={14} />, color: isOffline ? 'warning' : 'success' },
                        { label: 'FAILOVER', value: activeFailover ? 'COLAB_SHARED' : isOffline ? 'LOCAL_PROXY' : 'STANDBY', icon: <Satellite size={14} />, color: isOffline ? 'warning' : 'primary' },
-                       { label: 'СИГНАЛЬНИЙ_Т� АФІК', value: liveCount.toLocaleString(), icon: <Activity size={14} />, color: 'success' }
+                       { label: 'СИГНАЛЬНИЙ_Т АФІК', value: liveCount.toLocaleString(), icon: <Activity size={14} />, color: 'success' }
                      ]}
                      actions={
                        <div className="flex items-center gap-6">
@@ -174,7 +174,7 @@ export default function ConversationIntelView() {
                              <RefreshCcw size={24} className="group-hover:rotate-180 transition-transform duration-1000" />
                           </button>
                           <button className="px-14 py-6 bg-emerald-600 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.4em] italic hover:brightness-110 shadow-4xl transition-all flex items-center gap-5 border-4 border-emerald-500/20">
-                             <Radar size={24} className="animate-spin-slow" /> ЗАПУСТИТИ_ПЕ� ЕХОПЛЕННЯ
+                             <Radar size={24} className="animate-spin-slow" /> ЗАПУСТИТИ_ПЕ ЕХОПЛЕННЯ
                           </button>
                        </div>
                      }
@@ -197,7 +197,7 @@ export default function ConversationIntelView() {
                                           : "text-slate-600 hover:text-slate-300 border-2 border-transparent hover:border-emerald-500/10 hover:bg-white/5"
                                     )}
                                   >
-                                    {tab === 'feed' ? 'LIVE_ПОТІК' : tab === 'analytics' ? 'АНАЛІТИКА' : '� ИЗИК_СИГНАЛИ'}
+                                    {tab === 'feed' ? 'LIVE_ПОТІК' : tab === 'analytics' ? 'АНАЛІТИКА' : 'РИЗИК_СИГНАЛИ'}
                                   </button>
                                 ))}
                              </div>
@@ -210,7 +210,7 @@ export default function ConversationIntelView() {
                                         <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full scale-150 animate-pulse" />
                                         <Satellite size={80} className="relative z-10 text-emerald-500 animate-spin-slow" />
                                     </div>
-                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕ� ЕХОПЛЕННЯ_СИГНАЛІВ...</p>
+                                    <p className="text-[12px] font-black uppercase text-slate-700 tracking-[0.8em] italic animate-pulse">ІНІЦІАЛІЗАЦІЯ_ПЕ ЕХОПЛЕННЯ_СИГНАЛІВ...</p>
                                 </div>
                             ) : messages.length === 0 ? (
                                 <div className="p-40 text-center border-4 border-dashed border-white/5 rounded-[4rem] bg-black/40 h-full flex flex-col items-center justify-center">
@@ -255,7 +255,7 @@ export default function ConversationIntelView() {
                                      </div>
                                      {msg.riskLevel === 'critical' ? (
                                         <div className="px-6 py-2 bg-red-600 text-white rounded-full text-[10px] font-black uppercase italic tracking-[0.3em] shadow-4xl animate-pulse">
-                                           К� ИТИЧНИЙ_� ИЗИК
+                                           К ИТИЧНИЙ_РИЗИК
                                         </div>
                                      ) : (
                                         <div className="flex gap-2">
@@ -324,13 +324,13 @@ export default function ConversationIntelView() {
                              </div>
                              <div className="relative z-10">
                                 <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-[0.6em] italic mb-10 flex items-center gap-5 leading-none">
-                                   <Fingerprint size={24} className="text-emerald-500" /> ТОП_НА� АТИВИ_ЦИКЛУ
+                                   <Fingerprint size={24} className="text-emerald-500" /> ТОП_НА АТИВИ_ЦИКЛУ
                                 </h3>
                                 <div className="space-y-6">
                                    {[
-                                     { topic: 'ОФШО� НІ_СХЕМИ_АП', count: 1240, risk: 'high', gold: true },
+                                     { topic: 'ОФШО НІ_СХЕМИ_АП', count: 1240, risk: 'high', gold: true },
                                      { topic: 'ТИТАНОВИЙ_ЛОБІЗМ', count: 890, risk: 'critical', gold: false },
-                                     { topic: '� ЕЗЕ� В_КА� ГО_ЗЛИВ', count: 678, risk: 'medium', gold: false }
+                                     { topic: ' ЕЗЕ В_КА ГО_ЗЛИВ', count: 678, risk: 'medium', gold: false }
                                    ].map((t, i) => (
                                      <div key={i} className="flex items-center justify-between p-8 bg-black border-2 border-white/5 rounded-[2.5rem] hover:border-emerald-500/40 transition-all group/item shadow-2xl relative overflow-hidden">
                                         {t.gold && <div className="absolute inset-0 bg-emerald-500/[0.03] pointer-events-none" />}

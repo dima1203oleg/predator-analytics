@@ -33,10 +33,10 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
     }
 
     const mockResults: SearchResult[] = [
-      { id: '1', type: 'company', title: 'ТОВ "Мега-Імпорт"', subtitle: 'Військова електроніка • � изик: 78%' },
+      { id: '1', type: 'company', title: 'ТОВ "Мега-Імпорт"', subtitle: 'Військова електроніка •  изик: 78%' },
       { id: '2', type: 'product', title: 'Дрони DJI Mavic 3', subtitle: 'HS Code: 8806 • 1,204 імпортів' },
       { id: '3', type: 'insight', title: 'Схема "Карусель" (Київ)', subtitle: 'Виявлено 12 пов\'язаних осіб' },
-      { id: '4', type: 'report', title: 'Звіт: � инок Сталі Q1 2026', subtitle: 'PDF • 24 сторінки' },
+      { id: '4', type: 'report', title: 'Звіт:  инок Сталі Q1 2026', subtitle: 'PDF • 24 сторінки' },
       { id: '5', type: 'company', title: `ТОВ "${query}"`, subtitle: 'Пошук в реєстрі...' },
     ];
 
@@ -141,7 +141,7 @@ export const GlobalSearchOverlay: React.FC<{ isOpen: boolean; onClose: () => voi
             <div className="py-8 px-4">
               <div className="text-[10px] font-black uppercase text-slate-600 mb-4 tracking-wider">Швидкі запити</div>
               <div className="flex flex-wrap gap-2">
-                {['Samsung', 'ТОВ "Епіцентр"', 'Зерно 2024', 'Санкції � Ф'].map(tag => (
+                {['Samsung', 'ТОВ "Епіцентр"', 'Зерно 2024', 'Санкції  Ф'].map(tag => (
                    <button
                      key={tag}
                      onClick={() => setQuery(tag)}

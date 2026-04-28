@@ -241,7 +241,7 @@ export const AnalyticsDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  // � еальні метрики
+  // реальні метрики
   const [systemMetrics, setSystemMetrics] = useState<SystemMetrics | null>(null);
   const [searchMetrics, setSearchMetrics] = useState<SearchMetrics | null>(null);
   const [storageMetrics, setStorageMetrics] = useState<StorageMetrics | null>(null);
@@ -426,7 +426,7 @@ export const AnalyticsDashboard: React.FC = () => {
         />
       </div>
 
-      {/* 🌐 � ЕЄСТ� И ТА ІНТЕЛІДЖЕНС (UA REGISTRY HUB) */}
+      {/* 🌐  ЕЄСТ И ТА ІНТЕЛІДЖЕНС (UA REGISTRY HUB) */}
       <div className="grid grid-cols-1 gap-8 mb-12">
            <PremiumRegistryMonitor />
       </div>
@@ -524,7 +524,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </div>
         </TacticalCard>
 
-        {/* ── ЖИВА СТ� ІЧКА ПОДІЙ (REALTIME INTEL) ── */}
+        {/* ── ЖИВА СТ ІЧКА ПОДІЙ (REALTIME INTEL) ── */}
         <IntelligenceFeed />
       </div>
 

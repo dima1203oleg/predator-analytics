@@ -1,11 +1,11 @@
 /**
- * 💰 ФІНАНСОВА � ОЗВІДКА // SIGINT | v58.2-WRAITH
- * PREDATOR Analytics — Суверенна Транзакційна та Офшорна � озвідка
+ * 💰 ФІНАНСОВА РОЗВІДКА // SIGINT | v58.2-WRAITH
+ * PREDATOR Analytics — Суверенна Транзакційна та Офшорна  озвідка
  * 
- * Власність: ДЕ� ЖАВНА МИТНА СЛУЖБА УК� АЇНИ
+ * Власність: ДЕ ЖАВНА МИТНА СЛУЖБА УК АЇНИ
  * Статус: ОБМЕЖЕНИЙ ДОСТУП
  * 
- * PREDATOR_WRATH v58.2 · ТАЄМНО · � ІВЕНЬ-1
+ * PREDATOR_WRATH v58.2 · ТАЄМНО · РІВЕНЬ-1
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -54,7 +54,7 @@ const ScanningHUD: React.FC = () => {
             <div className="absolute top-1/2 left-4 flex flex-col gap-2 font-mono text-[7px] text-yellow-500/30 uppercase italic -rotate-90">
                 <span>СКАН_ІНТЕЛЕКТУ: АКТИВНИЙ</span>
                 <span>ЧАСТОТА_SIGINT: 14.2ГГЦ</span>
-                <span>ЯД� О_WRAITH: ВКЛ</span>
+                <span>ЯДРО_WRAITH: ВКЛ</span>
             </div>
         </div>
     );
@@ -68,16 +68,16 @@ const FinancialInterceptorTerminal: React.FC = () => {
     const [logs, setLogs] = useState<string[]>([]);
 
     const txPool = [
-        "ПЕ� ЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
-        "ДЕШИФ� УВАННЯ: ОСОБА_ВІДП� АВНИКА_ОТ� ИМАНА",
-        "ПЕ� ЕВІ� КА_� ЕЄСТ� У: ЗБІГ_З_OFFSHORE_LEAKS",
-        "ВАЛІДАЦІЯ: ШЛЯХ_БАНКУ_КО� ЕСПОНДЕНТА",
+        "ПЕ ЕХОПЛЕННЯ: MT103_ВХІДНИЙ_ВУЗОЛ_332",
+        "ДЕШИФ УВАННЯ: ОСОБА_ВІДП АВНИКА_ОТ ИМАНА",
+        "ПЕ ЕВІ КА_ ЕЄСТ У: ЗБІГ_З_OFFSHORE_LEAKS",
+        "ВАЛІДАЦІЯ: ШЛЯХ_БАНКУ_КО ЕСПОНДЕНТА",
         "ЗБІГ_ЗНАЙДЕНО: [ЗВ'ЯЗОК_ІЗ_САНКЦІЯМИ]",
-        "ШИФ� УВАННЯ: ДАМП_АУДИТО� СЬКОГО_СЛІДУ",
-        "Т� АСУВАННЯ: ВИЯВЛЕНО_ВИХІД_З_К� ИПТО_МІКСЕ� А",
-        "СТАТУС: ЦІЛЬ_ЗАК� ІПЛЕНА_НА_КІП� І",
+        "ШИФ УВАННЯ: ДАМП_АУДИТО СЬКОГО_СЛІДУ",
+        "Т АСУВАННЯ: ВИЯВЛЕНО_ВИХІД_З_К ИПТО_МІКСЕ А",
+        "СТАТУС: ЦІЛЬ_ЗАК ІПЛЕНА_НА_КІП І",
         "WRAITH_АНАЛІТИКА: ГЛИБИННИЙ_ХВИЛЬОВИЙ_ЗБІГ",
-        "П� ОГНОЗ_КОГНІТИВНОГО_ЗБОЮ: 0.002%"
+        "П ОГНОЗ_КОГНІТИВНОГО_ЗБОЮ: 0.002%"
     ];
 
     useEffect(() => {
@@ -93,7 +93,7 @@ const FinancialInterceptorTerminal: React.FC = () => {
         <div className="w-full h-48 bg-black/80 border-2 border-yellow-500/10 rounded-[2.5rem] p-6 font-mono text-[9px] overflow-hidden relative group">
             <div className="absolute top-4 right-8 flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_10px_#d97706]" />
-                <span className="text-amber-600 font-black italic uppercase tracking-widest">SIGINT_ПЕ� ЕХОПЛЮВАЧ_АКТИВНИЙ</span>
+                <span className="text-amber-600 font-black italic uppercase tracking-widest">SIGINT_ПЕ ЕХОПЛЮВАЧ_АКТИВНИЙ</span>
             </div>
             <div className="space-y-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
                 {logs.map((log, i) => (
@@ -127,33 +127,33 @@ const MOCK_SWIFT_FLOW = [
 ];
 
 const MOCK_OFFSHORE = [
-  { name: 'Б� ИТ. ВІ� Г. О-ВИ', value: 38, amount: '$142.5M', color: '#D97706' },
-  { name: 'КІП� ', value: 27, amount: '$98.2M',  color: '#D4AF37' },
+  { name: 'Б ИТ. ВІ Г. О-ВИ', value: 38, amount: '$142.5M', color: '#D97706' },
+  { name: 'КІП ', value: 27, amount: '$98.2M',  color: '#D4AF37' },
   { name: 'ОАЕ',  value: 18, amount: '$67.0M',  color: '#F59E0B' },
   { name: 'БЕЛІЗ', value: 11, amount: '$41.1M', color: '#D4AF37' },
   { name: 'ІНШІ', value: 6,  amount: '$22.0M',  color: '#1e293b' },
 ];
 
 const MOCK_SUSPICIOUS_TX = [
-  { id: 'TX-WRAITH-8821', from: 'ТОВ "АГ� О-ЛІДЕ� "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
-  { id: 'TX-WRAITH-7203', from: 'БФ "ВІД� ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
+  { id: 'TX-WRAITH-8821', from: 'ТОВ "АГ О-ЛІДЕ "', to: 'Kyoto Holdings Ltd (BVI)', amount: '$4.7M', currency: 'USD', time: '12:14:22', risk: 98, type: 'Фіктивна компанія', route: 'UA → BVI → ОАЕ' },
+  { id: 'TX-WRAITH-7203', from: 'БФ "ВІД ОДЖЕННЯ"', to: 'Sunrise Capital Ltd (CY)', amount: '$2.1M', currency: 'USD', time: '10:47:08', risk: 89, type: 'Шайрування', route: 'UA → CY → MT' },
   { id: 'TX-WRAITH-5509', from: 'ФОП ТКАЧЕНКО В.М.', to: 'Gulf Meridian FZCO (UAE)', amount: '$1.4M', currency: 'AED', time: '08:55:19', risk: 94, type: 'PEP експозиція', route: 'UA → AE → SA' },
-  { id: 'TX-WRAITH-4412', from: 'ТОВ "МЕТАЛ-Г� УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
+  { id: 'TX-WRAITH-4412', from: 'ТОВ "МЕТАЛ-Г УП"', to: 'Belize Trust Corp (BZ)', amount: '$3.2M', currency: 'USD', time: '07:14:55', risk: 92, type: 'Санкційний вузол', route: 'UA → BZ → PA' },
 ];
 
 const MOCK_FROZEN = [
-  { entity: 'ПУМБ � АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: '� НБО', reason: 'Санкційний список', status: 'ЗАМО� ОЖЕНО' },
-  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО� ОЖЕНО' },
+  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: ' НБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
+  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
 ];
 
 const MOCK_AML_RADAR = [
-  { subject: 'СТ� УКТУ� УВАННЯ', A: 120, B: 110 },
-  { subject: 'ШАЙ� УВАННЯ', A: 98, B: 130 },
-  { subject: 'ОФШО� ІЗАЦІЯ', A: 86, B: 130 },
-  { subject: 'PEP-� ИЗИК', A: 140, B: 100 },
+  { subject: 'СТ УКТУ УВАННЯ', A: 120, B: 110 },
+  { subject: 'ШАЙ УВАННЯ', A: 98, B: 130 },
+  { subject: 'ОФШО ІЗАЦІЯ', A: 86, B: 130 },
+  { subject: 'PEP-РИЗИК', A: 140, B: 100 },
   { subject: 'САНКЦІЇ', A: 125, B: 90 },
-  { subject: 'ТЕ�  ПОТОКИ', A: 65, B: 85 },
+  { subject: 'ТЕ  ПОТОКИ', A: 65, B: 85 },
 ];
 
 type ActiveModule = 'swift' | 'offshore' | 'contracts' | 'frozen' | 'aml';
@@ -191,7 +191,7 @@ export default function FinancialSigintView() {
        window.dispatchEvent(new CustomEvent('predator-error', {
            detail: {
                service: 'FinancialSigint',
-               message: `ПОМИЛКА_СИНХ� ОНІЗАЦІЇ_SIGINT: ${errorMsg}`,
+               message: `ПОМИЛКА_СИНХ ОНІЗАЦІЇ_SIGINT: ${errorMsg}`,
                severity: 'critical',
                timestamp: new Date().toISOString(),
                code: 'SIGINT_SYNC_ERROR'
@@ -208,7 +208,7 @@ export default function FinancialSigintView() {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'FinancialSigint',
-                message: `АВА� ІЙНИЙ ФІНАНСОВИЙ МОНІТО� ИНГ [${activeFailover ? 'ZROK' : 'MIRROR'}]: Використовується автономний вузол SIGINT_NODE. Дані можуть бути неповними.`,
+                message: `АВА ІЙНИЙ ФІНАНСОВИЙ МОНІТО ИНГ [${activeFailover ? 'ZROK' : 'MIRROR'}]: Використовується автономний вузол SIGINT_NODE. Дані можуть бути неповними.`,
                 severity: 'warning',
                 timestamp: new Date().toISOString(),
                 code: 'FINANCIAL_OFFLINE'
@@ -218,7 +218,7 @@ export default function FinancialSigintView() {
         window.dispatchEvent(new CustomEvent('predator-error', {
             detail: {
                 service: 'FinancialSigint',
-                message: `FIN_СЕ� ВЕ�  [${activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'}]: Канали SIGINT синхронізовано. Моніторинг SWIFT активний.`,
+                message: `FIN_СЕ ВЕ  [${activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'}]: Канали SIGINT синхронізовано. Моніторинг SWIFT активний.`,
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'FINANCIAL_SUCCESS'
@@ -252,11 +252,11 @@ export default function FinancialSigintView() {
   };
 
   const modules = useMemo(() => [
-    { id: 'swift',     label: 'КОНТУ� _SWIFT_SEPA',     icon: Activity,    count: liveAlerts, badge: 'АКТИВ' },
-    { id: 'offshore',  label: 'ОФШО� НИЙ_� АДА� ',        icon: Globe,       count: '247',      badge: 'ГПС' },
+    { id: 'swift',     label: 'КОНТУ _SWIFT_SEPA',     icon: Activity,    count: liveAlerts, badge: 'АКТИВ' },
+    { id: 'offshore',  label: 'ОФШО НИЙ_ АДА ',        icon: Globe,       count: '247',      badge: 'ГПС' },
     { id: 'contracts', label: 'АУДИТ_ЦІН',             icon: BarChart3,   count: '18' },
-    { id: 'frozen',    label: 'ЗАМО� ОЖЕНИХ_АКТИВИ',    icon: Lock,      count: frozenAssets.length },
-    { id: 'aml',       label: 'СКО� ИНГ_ORACLE',        icon: ShieldCheck, badge: 'WRAITH' },
+    { id: 'frozen',    label: 'ЗАМО ОЖЕНИХ_АКТИВИ',    icon: Lock,      count: frozenAssets.length },
+    { id: 'aml',       label: 'СКО ИНГ_ORACLE',        icon: ShieldCheck, badge: 'WRAITH' },
   ], [liveAlerts]);
 
   return (
@@ -282,32 +282,32 @@ export default function FinancialSigintView() {
                   <div className="space-y-4">
                      <div className="flex items-center gap-6">
                         <span className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-5 py-1.5 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-xl">
-                          ГЕОПОЛІТИЧНИЙ_SIGINT // НЕЙ� О_� АДА� _КАПІТАЛУ
+                          ГЕОПОЛІТИЧНИЙ_SIGINT // НЕЙ О_ АДА _КАПІТАЛУ
                         </span>
                         <div className="h-px w-16 bg-yellow-500/20" />
                         <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                      </div>
                      <h1 className="text-7xl font-black text-white tracking-tighter uppercase italic skew-x-[-4deg] leading-none">
-                       ФІНАНСОВА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">� ОЗВІДКА</span>
+                       ФІНАНСОВА <span className="text-amber-500 underline decoration-amber-600/30 decoration-[16px] underline-offset-[16px] italic uppercase tracking-tighter">РОЗВІДКА</span>
                      </h1>
                   </div>
                </div>
              }
-             breadcrumbs={['� ОЗВІДКА', 'ФІНАНСИ', 'МАСИВ_SIGINT']}
+             breadcrumbs={['РОЗВІДКА', 'ФІНАНСИ', 'МАСИВ_SIGINT']}
              badges={[
                { label: 'ТАЄМНО_T1', color: 'primary', icon: <Lock size={10} /> },
                { label: 'SOVEREIGN_WRAITH', color: 'gold', icon: <Landmark size={10} /> },
              ]}
              stats={[
-               { label: 'ЗАГ� ОЗИ_НАЖИВО', value: liveAlerts.toString(), icon: <Siren />, color: 'gold', animate: true },
+               { label: 'ЗАГ ОЗИ_НАЖИВО', value: liveAlerts.toString(), icon: <Siren />, color: 'gold', animate: true },
                { 
-                   label: isOffline ? 'ВІДНОВЛЕННЯ_MIRROR' : 'ВУЗОЛ_ДЖЕ� ЕЛО', 
-                   value: isOffline ? `${Math.floor(backendStatus.healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_П� ОД'), 
+                   label: isOffline ? 'ВІДНОВЛЕННЯ_MIRROR' : 'ВУЗОЛ_ДЖЕРЕЛО', 
+                   value: isOffline ? `${Math.floor(backendStatus.healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_П ОД'), 
                    icon: isOffline ? <Activity /> : <Cpu />, 
                    color: isOffline ? 'warning' : 'gold',
                    animate: isOffline
                },
-               { label: 'СТАН_СТАБІЛЬНОСТІ', value: isOffline ? 'АВТОНОМНИЙ_� ЕЖИМ' : 'СТАБІЛЬНО', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
+               { label: 'СТАН_СТАБІЛЬНОСТІ', value: isOffline ? 'АВТОНОМНИЙ_ ЕЖИМ' : 'СТАБІЛЬНО', icon: <ShieldCheck />, color: isOffline ? 'warning' : 'success' },
                { label: 'БЛОКОВАНО_АКТИВІВ', value: '$41.8M', icon: <Lock />, color: 'gold' },
              ]}
            />
@@ -328,7 +328,7 @@ export default function FinancialSigintView() {
               <button className="relative px-12 py-7 h-fit group/main overflow-hidden rounded-[2.2rem]">
                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 to-yellow-500 transition-transform duration-500 group-hover/main:scale-105" />
                  <div className="relative flex items-center gap-6 text-black font-black uppercase italic tracking-[0.3em] text-[12px]">
-                    <Wallet size={24} /> ГЕНЕ� УВАТИ_� ЕЄСТ� _SIGINT
+                    <Wallet size={24} /> ГЕНЕ УВАТИ_ ЕЄСТ _SIGINT
                  </div>
                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/main:translate-x-[100%] transition-transform duration-1000" />
               </button>
@@ -338,9 +338,9 @@ export default function FinancialSigintView() {
            <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10">
               {[
                 { label: 'ПОТІК_SWIFT', value: '14.2K', sub: 'Транзакцій за добу', icon: Activity, color: '#D4AF37', score: 88 },
-                { label: 'ОФШО� НИЙ_КАПІТАЛ', value: '$470M', sub: 'Виявлено в юрисдикціях', icon: Globe, color: '#D97706', score: 95 },
+                { label: 'ОФШО НИЙ_КАПІТАЛ', value: '$470M', sub: 'Виявлено в юрисдикціях', icon: Globe, color: '#D97706', score: 95 },
                 { label: 'АНОМАЛІЇ ЦІН', value: '18', sub: 'Відхилення > 15%', icon: BarChart3, color: '#D97706', score: 45 },
-                { label: 'ЗАМО� ОЖЕНО (Σ)', value: '$41.8M', sub: 'Деактивовані активи', icon: Lock, color: '#D4AF37', score: 92 },
+                { label: 'ЗАМО ОЖЕНО (Σ)', value: '$41.8M', sub: 'Деактивовані активи', icon: Lock, color: '#D4AF37', score: 92 },
               ].map((m, i) => (
                 <div key={i} className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.03] shadow-4xl group relative overflow-hidden transition-all hover:border-white/10">
                    <div className="absolute -top-10 -right-10 p-12 opacity-[0.03] group-hover:opacity-[0.1] transition-all duration-700 rotate-12 group-hover:rotate-0">
@@ -393,16 +393,16 @@ export default function FinancialSigintView() {
                          <div className="flex items-center justify-between mb-6 border-b-2 border-white/[0.04] pb-10">
                             <h2 className="text-[16px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
                                <Activity size={28} className="text-yellow-500 shadow-[0_0_30px_#d4af37]" />
-                               ДИНАМІКА_ПОТОКІВ_SWIFT // Т� АНЗАКЦІЙНИЙ_МОНІТО� ИНГ
+                               ДИНАМІКА_ПОТОКІВ_SWIFT // Т АНЗАКЦІЙНИЙ_МОНІТО ИНГ
                             </h2>
                             <div className="flex items-center gap-8">
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-slate-800" />
-                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НО� МАЛЬНИЙ_ПОТІК</span>
+                                  <span className="text-[10px] font-black text-slate-700 uppercase italic tracking-widest">НО МАЛЬНИЙ_ПОТІК</span>
                                </div>
                                <div className="flex items-center gap-3">
                                   <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_15px_#d4af37]" />
-                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГ� ОЗА_НАЖИВО</span>
+                                  <span className="text-[10px] font-black text-yellow-500 uppercase italic underline decoration-yellow-500/40 tracking-widest">ЗАГ ОЗА_НАЖИВО</span>
                                </div>
                             </div>
                          </div>
@@ -437,7 +437,7 @@ export default function FinancialSigintView() {
                             <Skull size={350} className="text-yellow-600" />
                          </div>
                          <h3 className="text-[14px] font-black text-amber-600 italic uppercase tracking-[0.5em] mb-10 border-b-2 border-amber-500/10 pb-10 flex items-center justify-between">
-                            <span>ЗАГ� ОЗЛИВІ_Т� АНЗАКЦІЇ</span>
+                            <span>ЗАГ ОЗЛИВІ_Т АНЗАКЦІЇ</span>
                             <div className="flex gap-2">
                                <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse" />
                                <div className="w-2 h-2 rounded-full bg-amber-600 animate-pulse delay-75" />
@@ -466,7 +466,7 @@ export default function FinancialSigintView() {
                                        <span className="text-3xl font-black italic font-mono text-white tracking-tighter">{tx.amount}</span>
                                     </div>
                                     <div className="text-right">
-                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-2">� ІВЕНЬ_� ИЗИКУ</p>
+                                       <p className="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none mb-2">РІВЕНЬ_РИЗИКУ</p>
                                        <span className="text-[11px] font-black text-white uppercase italic bg-amber-600 px-4 py-1.5 rounded-xl shadow-lg font-mono">{tx.risk}%</span>
                                     </div>
                                  </div>
@@ -494,7 +494,7 @@ export default function FinancialSigintView() {
                       <div className="col-span-12 xl:col-span-5 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                          <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-yellow-500/[0.03] to-transparent pointer-events-none" />
                          <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
-                            <Globe size={28} className="animate-spin-slow" /> � АДА� _ОФШО� НОЇ_ЛІКВІДНОСТІ
+                            <Globe size={28} className="animate-spin-slow" />  АДА _ОФШО НОЇ_ЛІКВІДНОСТІ
                          </h2>
                          <div className="flex items-center justify-center p-12 bg-black border-4 border-white/[0.02] rounded-[4rem] relative group shadow-2xl">
                             <PieChart width={360} height={360}>
@@ -539,15 +539,15 @@ export default function FinancialSigintView() {
                       <div className="col-span-12 xl:col-span-7 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden">
                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/[0.01] blur-[150px] pointer-events-none" />
                          <h2 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
-                            <Target size={28} /> ДВИГУН_ВИЯВЛЕННЯ_ФІКТИВНИХ // АНАЛІЗ_ГПС_КЛАСТЕ� ІВ
+                            <Target size={28} /> ДВИГУН_ВИЯВЛЕННЯ_ФІКТИВНИХ // АНАЛІЗ_ГПС_КЛАСТЕ ІВ
                          </h2>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 overflow-y-auto no-scrollbar pr-2 h-[800px] custom-scrollbar">
                              {[
-                                { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕ� ДЖЕНО', color: '#D97706' },
+                                { name: 'Kyoto Holdings Ltd', jur: 'BVI', links: 14, risk: 97, amount: '$47M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
                                 { name: 'Sunrise Capital Ltd', jur: 'Кіпр', links: 8, risk: 89, amount: '$21M', ubo: 'ЧАСТКОВО', color: '#D4AF37' },
-                                { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕ� ДЖЕНО', color: '#D97706' },
+                                { name: 'Gulf Meridian FZCO', jur: 'ОАЕ', links: 11, risk: 94, amount: '$31M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
                                 { name: 'Belize Trust Corp', jur: 'Белізе', links: 5, risk: 82, amount: '$18M', ubo: 'НЕВІДОМО', color: '#D4AF37' },
-                                { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕ� ДЖЕНО', color: '#D97706' },
+                                { name: 'Alpha Neptune LP', jur: 'Маршалли', links: 19, risk: 99, amount: '$82M', ubo: 'ПІДТВЕ ДЖЕНО', color: '#D97706' },
                                 { name: 'Zodiac Nexus FZ', jur: 'Панама', links: 7, risk: 85, amount: '$12M', ubo: 'НЕВІДОМО', color: '#D4AF37' },
                              ].map((s, i) => (
                                <div key={i} className="p-10 rounded-[3.5rem] bg-white/[0.01] border-2 border-white/[0.03] hover:border-yellow-500/30 transition-all group flex flex-col justify-between h-[340px] shadow-2xl relative overflow-hidden">
@@ -567,7 +567,7 @@ export default function FinancialSigintView() {
                                         <div className="flex items-center gap-4">
                                            <span className={cn(
                                               "text-[9px] font-black italic tracking-[0.2em] uppercase px-4 py-1.5 rounded-xl border",
-                                              s.ubo === 'ПІДТВЕ� ДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
+                                              s.ubo === 'ПІДТВЕ ДЖЕНО' ? "bg-emerald-600/10 border-emerald-600/30 text-emerald-500" : 
                                               s.ubo === 'ЧАСТКОВО' ? "bg-amber-600/10 border-amber-600/30 text-amber-500" : 
                                               "bg-slate-700/10 border-slate-700/30 text-slate-700"
                                            )}>КБВ: {s.ubo}</span>
@@ -576,7 +576,7 @@ export default function FinancialSigintView() {
                                   </div>
                                   <div className="space-y-3 pt-6 border-t-2 border-white/[0.03]">
                                      <div className="flex items-center justify-between text-[10px] font-black text-slate-700 uppercase italic tracking-widest leading-none">
-                                        <span>ІНДЕКС_� ИЗИКУ</span>
+                                        <span>ІНДЕКС_РИЗИКУ</span>
                                         <span style={{ color: s.color }}>{s.risk}% PIВЕНЬ</span>
                                      </div>
                                      <div className="h-2.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/5">
@@ -607,7 +607,7 @@ export default function FinancialSigintView() {
                       <div className="col-span-12 xl:col-span-6 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden flex flex-col items-center">
                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05),transparent_60%)] pointer-events-none" />
                          <h2 className="w-full text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10 flex items-center gap-6">
-                            <ShieldCheck size={28} /> AML_НЕЙ� О_� АДА�  // ШІ_СКО� ИНГ
+                            <ShieldCheck size={28} /> AML_НЕЙ О_ АДА  // ШІ_СКО ИНГ
                          </h2>
                          <div className="flex-1 w-full flex items-center justify-center p-6 lg:p-12">
                             <ResponsiveContainer width="100%" height={450}>
@@ -616,13 +616,13 @@ export default function FinancialSigintView() {
                                   <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 11, fontWeight: '900', fontStyle: 'italic' }} />
                                   <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
                                   <RechartsRadar name="ОБ'ЄКТ_X" dataKey="A" stroke="#D97706" strokeWidth={4} fill="#D97706" fillOpacity={0.5} />
-                                  <RechartsRadar name="НО� МА_SOVEREIGN" dataKey="B" stroke="#D4AF37" strokeWidth={2} fill="#D4AF37" fillOpacity={0.1} />
+                                  <RechartsRadar name="НО МА_SOVEREIGN" dataKey="B" stroke="#D4AF37" strokeWidth={2} fill="#D4AF37" fillOpacity={0.1} />
                                </RadarChart>
                             </ResponsiveContainer>
                          </div>
                       </div>
                       <div className="col-span-12 xl:col-span-6 p-12 rounded-[5rem] bg-black border-2 border-white/[0.04] shadow-4xl space-y-12 relative overflow-hidden flex flex-col">
-                         <h3 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10">ВЕ� ДИКТ_SOVEREIGN_ORACLE</h3>
+                         <h3 className="text-[14px] font-black text-yellow-500 italic uppercase tracking-[0.5em] border-b-2 border-white/[0.04] pb-10">ВЕ ДИКТ_SOVEREIGN_ORACLE</h3>
                          <div className="space-y-12 flex-1 flex flex-col justify-center">
                             <div className="flex flex-col lg:flex-row items-center gap-16 relative">
                                <div className="relative group">
@@ -633,18 +633,18 @@ export default function FinancialSigintView() {
                                 </div>
                                <div className="space-y-6 text-center lg:text-left">
                                   <div className="space-y-1">
-                                    <p className="text-[14px] font-black text-slate-800 uppercase tracking-[0.5em] leading-none mb-4 italic">КІНЦЕВИЙ_ВЕ� ДИКТ</p>
-                                    <p className="text-5xl font-black italic text-white tracking-tighter leading-none shadow-sm capitalize">ВИСОКА_ЙМОВІ� НІСТЬ</p>
+                                    <p className="text-[14px] font-black text-slate-800 uppercase tracking-[0.5em] leading-none mb-4 italic">КІНЦЕВИЙ_ВЕ ДИКТ</p>
+                                    <p className="text-5xl font-black italic text-white tracking-tighter leading-none shadow-sm capitalize">ВИСОКА_ЙМОВІ НІСТЬ</p>
                                   </div>
                                   <p className="text-8xl font-black italic text-yellow-600 font-mono leading-none tracking-tighter drop-shadow-[0_0_30px_rgba(212,175,55,0.5)] animate-pulse">94.8%</p>
                                   <div className="text-[12px] font-black text-slate-600 uppercase italic tracking-[0.4em] border-l-8 border-yellow-600/40 pl-8 leading-relaxed max-w-sm mx-auto lg:mx-0">
-                                     К� ИТИЧНА ЙМОВІ� НІСТЬ ПЕ� ЕХОВУВАННЯ КБВ ЧЕ� ЕЗ СХЕМУ "ЗВО� ОТНІХ ПОЗИК" ТА ОФШО� НІ ДЕ� ИВАТИВИ.
+                                     К ИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
                                   </div>
                                </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                                {[
-                                  { label: 'ТОПОЛОГІЯ_� ИЗИКУ', value: 'КЛАСТЕ� _АЛЬФА_IX', i: Network, color: '#D97706' },
+                                  { label: 'ТОПОЛОГІЯ_РИЗИКУ', value: 'КЛАСТЕ _АЛЬФА_IX', i: Network, color: '#D97706' },
                                   { label: 'АНАЛІЗ_ДВИГУНА', value: '6.2s // NEURAL_X', i: Cpu, color: '#D4AF37' }
                                ].map((it, i) => (
                                  <div key={i} className="p-10 rounded-[3rem] bg-white/[0.01] border-2 border-white/5 flex items-center gap-10 hover:border-white/10 transition-all cursor-default shadow-sm">
@@ -660,7 +660,7 @@ export default function FinancialSigintView() {
                             </div>
                          </div>
                          <button className="mt-4 w-full py-10 bg-yellow-500 text-black rounded-[3rem] tracking-[0.8em] text-[14px] font-black uppercase italic hover:bg-yellow-400 shadow-4xl transition-all border-4 border-yellow-700/20 active:scale-95 duration-500">
-                            ВІДК� ИТИ ПОВНУ ЕКСПЕ� ТИЗУ
+                            ВІДК ИТИ ПОВНУ ЕКСПЕ ТИЗУ
                          </button>
                       </div>
                    </motion.div>
@@ -680,21 +680,21 @@ export default function FinancialSigintView() {
                                <div className="p-5 bg-amber-600/10 border-2 border-amber-600/20 rounded-[2rem] text-amber-600">
                                   <Lock size={32} className="animate-pulse" />
                                </div>
-                               � ЕЄСТ� _ЗАМО� ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_� ЕСУ� СІВ
+                                ЕЄСТ _ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ_ ЕСУ СІВ
                             </h2>
                             <p className="text-[12px] text-slate-700 font-bold uppercase tracking-[0.4em] italic border-l-4 border-amber-600/40 pl-6">
-                               ПОВНИЙ ПЕ� ЕЛІК ПЕ� ЕК� ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
+                               ПОВНИЙ ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
                             </p>
                          </div>
                          <button className="px-12 py-6 bg-white/5 border-2 border-white/10 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-white/20 hover:border-yellow-500/50 transition-all shadow-xl group/btn">
-                            ВІДК� ИТИ_ARBITRAGE_МАТ� ИЦЮ <ArrowUpRight size={18} className="inline ml-4 transition-transform group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2" />
+                            ВІДК ИТИ_ARBITRAGE_МАТ ИЦЮ <ArrowUpRight size={18} className="inline ml-4 transition-transform group-hover/btn:translate-x-2 group-hover/btn:-translate-y-2" />
                          </button>
                       </div>
                       <div className="overflow-x-auto custom-scrollbar">
                          <table className="w-full text-left border-collapse">
                             <thead className="bg-white/[0.02]">
                                <tr>
-                                  {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА_УТ� ИМАННЯ', 'ДАТА_ФІКСАЦІЇ', 'О� ГАН_ВЛАДИ', 'СТАТУС_КЕ� УВАННЯ'].map(h => (
+                                  {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА_УТ ИМАННЯ', 'ДАТА_ФІКСАЦІЇ', 'О ГАН_ВЛАДИ', 'СТАТУС_КЕ УВАННЯ'].map(h => (
                                     <th key={h} className="px-16 py-10 text-[11px] font-black text-slate-800 uppercase tracking-[0.5em] italic font-mono border-b-2 border-white/5">{h}</th>
                                   ))}
                                </tr>
@@ -710,7 +710,7 @@ export default function FinancialSigintView() {
                                     </td>
                                     <td className="px-16 py-12 relative z-10">
                                        <div className="flex items-center gap-6">
-                                          <div className={cn("w-4 h-4 rounded-full shadow-lg", asset.status === 'ЗАМО� ОЖЕНО' ? "bg-yellow-600 animate-pulse shadow-yellow-900/50" : "bg-emerald-600 shadow-emerald-900/50")} />
+                                          <div className={cn("w-4 h-4 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-yellow-600 animate-pulse shadow-yellow-900/50" : "bg-emerald-600 shadow-emerald-900/50")} />
                                           <span className="text-[12px] font-black text-white uppercase italic tracking-[0.4em]">{asset.status}</span>
                                        </div>
                                     </td>

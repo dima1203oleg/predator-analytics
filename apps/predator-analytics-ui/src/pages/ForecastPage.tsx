@@ -150,7 +150,7 @@ const MOCK_FORECAST: ForecastResponse = {
   confidence_score: 0.94,
   mape: 0.032,
   data_points_used: 240,
-  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців. � івень стратегічної впевненості високий. � екомендовано формування резервного буфера у розмірі 12% від прогнозованого обсягу для нівелювання волатильності логістичних ланцюгів.',
+  interpretation_uk: 'Прогноз демонструє стійке зростання попиту на обчислювальну техніку протягом 6 місяців.  івень стратегічної впевненості високий. рекомендовано формування резервного буфера у розмірі 12% від прогнозованого обсягу для нівелювання волатильності логістичних ланцюгів.',
   months_ahead: 6,
   model: 'prophet',
   forecast: [
@@ -291,7 +291,7 @@ export default function ForecastPage() {
                                     <TrendingUp className="text-red-600 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]" size={52} />
                                     <div className="absolute -inset-2 bg-red-600/30 blur-2xl rounded-full animate-pulse" />
                                 </div>
-                                <span>П� ОГНОСТИЧНЕ <span className="text-red-600 font-display">ЯД� О</span></span>
+                                <span>П ОГНОСТИЧНЕ <span className="text-red-600 font-display">ЯДРО</span></span>
                             </h1>
                             <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-400/90 [text-wrap:balance]">
                                 Керуйте товарним кодом та ML-моделями під захистом <span className="text-red-500 font-bold border-b border-red-500/30">Конституційного Щита</span>. Всі сценарії базуються на верифікованих ринкових даних.
@@ -304,7 +304,7 @@ export default function ForecastPage() {
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-red-600 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">СТ� АТЕГІЧНИЙ АЛГО� ИТМ</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-red-400 transition-colors italic">СТРАТЕГІЧНИЙ АЛГО ИТМ</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">Модель: {request.model.toUpperCase()}</div>
                             <div className="text-[9px] text-slate-500 mt-2 font-mono uppercase tracking-widest bg-white/5 inline-block px-2 py-1 rounded-md">ВУЗОЛ v62 ELITE</div>
@@ -314,7 +314,7 @@ export default function ForecastPage() {
                             <div className="absolute top-0 right-0 w-24 h-px bg-gradient-to-l from-amber-500 to-transparent" />
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="h-2 w-2 rounded-full bg-amber-500 shadow-[0_0_12px_rgba(245,158,11,1)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВА НОМЕНКЛАТУ� А</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 group-hover:text-amber-400 transition-colors italic">ЦІЛЬОВА НОМЕНКЛАТУ А</span>
                             </div>
                             <div className="text-lg font-black text-white tracking-widest uppercase">{request.product_code}</div>
                             <div className="text-[9px] text-amber-400/50 mt-2 font-mono uppercase tracking-widest bg-amber-500/10 inline-block px-2 py-1 rounded-md">КОД ТН ЗЕД</div>
@@ -325,11 +325,11 @@ export default function ForecastPage() {
                             <div>
                                 <div className="flex items-center gap-3 mb-4">
                                     <ShieldCheck className="h-4 w-4 text-red-500 shadow-[0_0_10px_rgba(220,38,38,0.5)]" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500/80 italic">ВЕ� ИФІКАЦІЯ</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-red-500/80 italic">ВЕ ИФІКАЦІЯ</span>
                                 </div>
-                                <div className="text-lg font-black text-red-500 tracking-widest uppercase leading-none italic">СУВЕ� ЕННЕ ЯД� О</div>
+                                <div className="text-lg font-black text-red-500 tracking-widest uppercase leading-none italic">СУВЕ ЕННЕ ЯДРО</div>
                             </div>
-                            <div className="text-[9px] text-red-500/60 mt-3 font-mono tracking-widest uppercase bg-red-500/10 inline-block px-2 py-1 rounded-md w-max">ДОВІ� ЕНИЙ ВУЗОЛ</div>
+                            <div className="text-[9px] text-red-500/60 mt-3 font-mono tracking-widest uppercase bg-red-500/10 inline-block px-2 py-1 rounded-md w-max">ДОВІ ЕНИЙ ВУЗОЛ</div>
                         </div>
                     </div>
                 </div>
@@ -501,13 +501,13 @@ function DemandForecastTab({
             <div className="grid gap-4 md:grid-cols-4">
                 <SummaryCard
                     icon={<TrendingUp className="text-red-400" />}
-                    label="ВЕКТО�  � ОСТУ"
+                    label="ВЕКТО   ОСТУ"
                     tone="border-red-400/20 bg-red-500/10 text-red-200"
                     value={`${growth >= 0 ? '+' : ''}${growth.toFixed(0)}%`}
                 />
                 <SummaryCard
                     icon={<Target className="text-amber-400" />}
-                    label="СТ� АТЕГІЧНА ВПЕВНЕНІСТЬ"
+                    label="СТ АТЕГІЧНА ВПЕВНЕНІСТЬ"
                     tone="border-amber-400/20 bg-amber-500/10 text-amber-200"
                     value={forecast.confidence_score != null ? `${(forecast.confidence_score * 100).toFixed(0)}%` : '—'}
                 />
@@ -519,7 +519,7 @@ function DemandForecastTab({
                 />
                 <SummaryCard
                     icon={<ShieldCheck className="text-blue-400" />}
-                    label="� ІВЕНЬ � ЕЗИЛЬЄНТНОСТІ"
+                    label="РІВЕНЬ  ЕЗИЛЬЄНТНОСТІ"
                     tone="border-blue-400/20 bg-blue-500/10 text-blue-200"
                     value={`${(94.2).toFixed(1)}%`}
                 />
@@ -529,7 +529,7 @@ function DemandForecastTab({
                 <div className="lg:col-span-2 overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-6">
                     <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-5 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ГЕОМЕТ� ІЯ П� ОГНОЗУ</h3>
+                            <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ГЕОМЕТ ІЯ П ОГНОЗУ</h3>
                             <p className="mt-1 text-sm text-slate-400 font-mono">
                                 {forecast.product_name} | {forecast.product_code}
                             </p>
@@ -564,18 +564,18 @@ function DemandForecastTab({
                         </div>
                         <div className="flex items-center gap-3 mb-6">
                             <div className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
-                            <h4 className="text-sm font-black text-white uppercase tracking-widest italic">БІЗНЕС-ВЕ� ДИКТ AI</h4>
+                            <h4 className="text-sm font-black text-white uppercase tracking-widest italic">БІЗНЕС-ВЕ ДИКТ AI</h4>
                         </div>
                         <p className="text-sm leading-relaxed text-slate-300 italic border-l-2 border-red-500/40 pl-4">
                             {forecast.interpretation_uk}
                         </p>
                         <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
                             <div className="flex justify-between items-center text-[11px]">
-                                <span className="text-slate-500 uppercase font-black">� ИЗИК ДЕФІЦИТУ</span>
+                                <span className="text-slate-500 uppercase font-black">РИЗИК ДЕФІЦИТУ</span>
                                 <span className="text-red-500 font-mono">12.4% [LOW]</span>
                             </div>
                             <div className="flex justify-between items-center text-[11px]">
-                                <span className="text-slate-500 uppercase font-black">� ЕКОМ. БУФЕ� </span>
+                                <span className="text-slate-500 uppercase font-black"> ЕКОМ. БУФЕ </span>
                                 <span className="text-amber-500 font-mono">+185 ОД.</span>
                             </div>
                         </div>
@@ -585,11 +585,11 @@ function DemandForecastTab({
                         <h4 className="text-sm font-black text-white uppercase tracking-widest italic mb-4">ЕКОНОМІЧНИЙ ЕФЕКТ</h4>
                         <div className="space-y-3">
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ОЦІНОЧНА ВА� ТІСТЬ � ИНКУ</div>
+                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ОЦІНОЧНА ВА ТІСТЬ  ИНКУ</div>
                                 <div className="text-xl font-black text-white italic">~ 8.4M ₴</div>
                             </div>
                             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ПОТЕНЦІЙНИЙ П� ИБУТОК</div>
+                                <div className="text-[10px] text-slate-500 uppercase font-bold mb-1">ПОТЕНЦІЙНИЙ П ИБУТОК</div>
                                 <div className="text-xl font-black text-emerald-500 italic">+1.2M ₴</div>
                             </div>
                         </div>
@@ -599,18 +599,18 @@ function DemandForecastTab({
 
             <div className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.03]">
                 <div className="border-b border-white/[0.06] px-6 py-5 flex items-center justify-between">
-                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТ� ИЦЯ П� ОГНОЗУ</h3>
+                    <h3 className="text-lg font-black tracking-tight text-white uppercase italic">ДЕТАЛЬНА МАТ ИЦЯ П ОГНОЗУ</h3>
                     <div className="h-1 w-32 bg-gradient-to-r from-red-600 to-transparent rounded-full" />
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
                             <tr className="bg-black/20 text-left text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">
-                                <th className="px-6 py-4">ПЕ� ІОД_Т</th>
+                                <th className="px-6 py-4">ПЕ ІОД_Т</th>
                                 <th className="px-6 py-4 text-right">ОЧІКУВАНИЙ_ОБСЯГ</th>
                                 <th className="px-6 py-4 text-right">LOWER_BOUND</th>
                                 <th className="px-6 py-4 text-right">UPPER_BOUND</th>
-                                <th className="px-6 py-4 text-right">ВА� ІАТИВНІСТЬ</th>
+                                <th className="px-6 py-4 text-right">ВА ІАТИВНІСТЬ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.06]">

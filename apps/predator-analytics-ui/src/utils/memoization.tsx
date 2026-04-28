@@ -1,5 +1,5 @@
 /**
- * ðŸ§  React.memo Optimization Utilities
+ *   React.memo Optimization Utilities
  *
  * Higher-order components and utilities for optimal memoization.
  * Prevents unnecessary re-renders in complex component trees.

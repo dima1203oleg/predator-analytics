@@ -113,7 +113,7 @@ export const LLMInferenceView: React.FC<LLMInferenceViewProps> = ({
                                                 animate={{ width: `${Math.min(genMetrics.tps * 2, 100)}%` }}
                                             />
                                         </div>
-                                        <span className="text-[10px] font-mono font-bold text-blue-400">{genMetrics.tps} TPS (ОПЕ� /СЕК)</span>
+                                        <span className="text-[10px] font-mono font-bold text-blue-400">{genMetrics.tps} TPS (ОПЕ /СЕК)</span>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-1">

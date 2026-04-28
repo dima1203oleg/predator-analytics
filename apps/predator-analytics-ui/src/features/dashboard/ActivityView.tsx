@@ -36,7 +36,7 @@ interface ActivityEvent {
 const EVENT_TYPE_CONFIG = {
   case: { icon: FileText, label: 'КЕЙС', color: '#60a5fa' },
   data: { icon: Database, label: 'ДАНІ', color: '#22d3ee' },
-  user: { icon: User, label: 'КО� ИСТУВАЧ', color: '#c084fc' },
+  user: { icon: User, label: 'КО ИСТУВАЧ', color: '#c084fc' },
   ai: { icon: Bot, label: 'ШІ_СИНТЕЗ', color: '#fbbf24' },
   system: { icon: Zap, label: 'СИСТЕМА', color: '#94a3b8' },
   security: { icon: Shield, label: 'БЕЗПЕКА', color: '#f87171' },
@@ -151,7 +151,7 @@ const ActivityView: React.FC = () => {
               title: n.title,
               description: n.message,
               timestamp: n.timestamp ? new Date(n.timestamp) : new Date(),
-              actor: 'СИСТЕМНИЙ_МОНІТО� '
+              actor: 'СИСТЕМНИЙ_МОНІТО '
             });
           });
         }
@@ -162,7 +162,7 @@ const ActivityView: React.FC = () => {
               id: a.id || Math.random().toString(),
               type: 'ai',
               level: 'success',
-              title: a.intent || 'ЕВОЛЮЦІЙНИЙ_К� ОК',
+              title: a.intent || 'ЕВОЛЮЦІЙНИЙ_К ОК',
               description: a.request_text,
               timestamp: new Date(a.created_at),
               actor: 'ПУЛ_АГЕНТІВ_GLM-5.1'
@@ -202,13 +202,13 @@ const ActivityView: React.FC = () => {
 
       <div className="relative z-10 max-w-[1700px] mx-auto p-4 sm:p-10 space-y-12">
         <ViewHeader
-          title="ЛОГ_СУВЕ� ЕННОЇ_АКТИВНОСТІ"
+          title="ЛОГ_СУВЕ ЕННОЇ_АКТИВНОСТІ"
           icon={<Activity size={24} className="text-yellow-500 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)]" />}
           breadcrumbs={['PREDATOR', 'СИСТЕМА', 'АКТИВНІСТЬ']}
           stats={[
             { label: 'ПОДІЙ_СЬОГОДНІ', value: String(events.length), color: 'primary', icon: <Boxes size={14} /> },
-            { label: 'К� ИТИЧНО', value: String(events.filter(e => e.level === 'error').length), color: 'danger', icon: <AlertCircle size={14} /> },
-            { label: 'AI_ВТ� УЧАННЯ', value: String(events.filter(e => e.type === 'ai').length), color: 'primary', icon: <Bot size={14} /> }
+            { label: 'К ИТИЧНО', value: String(events.filter(e => e.level === 'error').length), color: 'danger', icon: <AlertCircle size={14} /> },
+            { label: 'AI_ВТ УЧАННЯ', value: String(events.filter(e => e.type === 'ai').length), color: 'primary', icon: <Bot size={14} /> }
           ]}
           actions={
             <button
@@ -262,7 +262,7 @@ const ActivityView: React.FC = () => {
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}>
                 <RefreshCw size={48} className="text-yellow-500 opacity-20" />
               </motion.div>
-              <p className="text-yellow-400 font-black tracking-[0.3em] uppercase text-xs animate-pulse font-mono">СКАНОГ� АМУВАННЯ_ЧАСУ...</p>
+              <p className="text-yellow-400 font-black tracking-[0.3em] uppercase text-xs animate-pulse font-mono">СКАНОГ АМУВАННЯ_ЧАСУ...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="py-40 flex flex-col items-center justify-center bg-slate-900/10 rounded-[48px] border-2 border-dashed border-white/5 relative overflow-hidden">

@@ -57,7 +57,7 @@ export const Profile: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs text-slate-500 uppercase font-bold tracking-wider flex items-center gap-2">
-                  <Shield size={12} /> � івень доступу
+                  <Shield size={12} />  івень доступу
                 </label>
                 <div className="text-slate-300">{description}</div>
               </div>

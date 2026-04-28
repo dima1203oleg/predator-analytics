@@ -30,7 +30,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
   ];
 
   const navItemsData = [
-    { id: TabView.DATA, label: 'Дані та � еєстри', icon: <Zap size={20} />, group: 'data' },
+    { id: TabView.DATA, label: 'Дані та реєстри', icon: <Zap size={20} />, group: 'data' },
     { id: TabView.SEARCH, label: 'Пошук/OSINT', icon: <Compass size={20} />, group: 'data' },
   ];
 
@@ -59,7 +59,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
             </div>
             <div>
               <h1 className="font-black text-xl tracking-tight text-white">PREDATOR</h1>
-              <p className="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest leading-none">КЛІЄНТСЬКИЙ � ЕЖИМ</p>
+              <p className="text-[10px] font-bold text-blue-400/80 uppercase tracking-widest leading-none">КЛІЄНТСЬКИЙ  ЕЖИМ</p>
             </div>
           </div>
 
@@ -102,7 +102,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               </button>
             ))}
 
-            {/* � оздільник: Дані */}
+            {/*  оздільник: Дані */}
             <div className="pt-4 pb-2">
               <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-4">📊 Дані</div>
             </div>
@@ -124,7 +124,7 @@ const ExplorerShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange,
               </button>
             ))}
 
-            {/* � оздільник: ШІ */}
+            {/*  оздільник: ШІ */}
             <div className="pt-4 pb-2">
               <div className="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-4">🤖 Інтелект</div>
             </div>

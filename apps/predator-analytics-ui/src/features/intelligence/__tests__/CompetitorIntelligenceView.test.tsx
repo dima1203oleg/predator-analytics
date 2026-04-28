@@ -29,7 +29,7 @@ vi.mock('@/services/api', () => ({
         getCompetitors: vi.fn(() => Promise.resolve([
             {
                 id: 'comp_1',
-                name: 'ГОЛОВНИЙ КОНКУ� ЕНТ',
+                name: 'ГОЛОВНИЙ КОНКУ ЕНТ',
                 edrpou: '12345678',
                 totalImport: 10000000,
                 totalExport: 5000000,
@@ -82,8 +82,8 @@ describe('CompetitorIntelligenceView', () => {
         render(<CompetitorIntelligenceView />);
         
         await waitFor(() => {
-            expect(screen.getByText(/СТ� АТЕГІЧНИЙ НЕКСУС КОНКУ� ЕНТІВ/i)).toBeInTheDocument();
-            expect(screen.getByText(/ГОЛОВНИЙ КОНКУ� ЕНТ/i)).toBeInTheDocument();
+            expect(screen.getByText(/СТРАТЕГІЧНИЙ НЕКСУС КОНКУ ЕНТІВ/i)).toBeInTheDocument();
+            expect(screen.getByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i)).toBeInTheDocument();
             expect(screen.getByText('12345678')).toBeInTheDocument();
         });
     });
@@ -91,12 +91,12 @@ describe('CompetitorIntelligenceView', () => {
     it('фільтрує список за запитом', async () => {
         render(<CompetitorIntelligenceView />);
         
-        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУ� ЕНТ/i));
+        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i));
         
         const searchInput = screen.getByPlaceholderText(/Пошук сутностей/i);
         fireEvent.change(searchInput, { target: { value: 'НЕМАЄ_ТАККОГО' } });
         
-        expect(screen.queryByText(/ГОЛОВНИЙ КОНКУ� ЕНТ/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i)).not.toBeInTheDocument();
         expect(screen.getByText(/СИГНАЛІВ НЕ ВИЯВЛЕНО/i)).toBeInTheDocument();
     });
 
@@ -129,12 +129,12 @@ describe('CompetitorIntelligenceView', () => {
     it('відображає деталі при розгортанні картки', async () => {
         render(<CompetitorIntelligenceView />);
         
-        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУ� ЕНТ/i));
+        await waitFor(() => screen.getByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i));
         
-        const card = screen.getByText(/ГОЛОВНИЙ КОНКУ� ЕНТ/i);
+        const card = screen.getByText(/ГОЛОВНИЙ КОНКУ ЕНТ/i);
         fireEvent.click(card);
         
-        expect(screen.getByText(/ГЕОГ� АФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ГЕОГ АФІЯ ЕКСПАНСІЇ/i)).toBeInTheDocument();
         expect(screen.getByText(/ВУЗЛИ ПОСТАЧАННЯ/i)).toBeInTheDocument();
         expect(screen.getByText(/Supplier Alpha/i)).toBeInTheDocument();
     });

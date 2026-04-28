@@ -117,14 +117,14 @@ export const Cers5LayerGauge: React.FC<Cers5LayerGaugeProps> = ({ factors, total
 
                 <div className="flex gap-4">
                     <div className="flex flex-col items-end">
-                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">СТАТУС_� ИЗИКУ</span>
+                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">СТАТУС_РИЗИКУ</span>
                         <span className={cn(
                             "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
                             totalScore > 0.7 ? "bg-rose-500/10 border-rose-500/30 text-rose-500" :
                                 totalScore > 0.4 ? "bg-amber-500/10 border-amber-500/30 text-amber-500" :
                                     "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
                         )}>
-                            {totalScore > 0.7 ? 'К� ИТИЧНО' : totalScore > 0.4 ? 'СЕ� ЕДНІЙ' : 'СТАБІЛЬНО'}
+                            {totalScore > 0.7 ? 'К ИТИЧНО' : totalScore > 0.4 ? 'СЕ ЕДНІЙ' : 'СТАБІЛЬНО'}
                         </span>
                     </div>
                 </div>

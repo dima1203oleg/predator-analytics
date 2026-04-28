@@ -1,9 +1,9 @@
 /**
- * PREDATOR v58.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТ�  КЕ� УВАННЯ ДЖЕ� ЕЛАМИ
+ * PREDATOR v58.2-WRAITH | Data Nexus Ingestion Hub — ЦЕНТ  КЕ УВАННЯ ДЖЕ ЕЛАМИ
  * 
  * Потужний інтерфейс для керування вхідними потоками даних (OSINT, API, Files).
  * - Візуалізація статусу конекторів та пайплайнів
- * - � еальний час моніторингу ETL процесів
+ * - реальний час моніторингу ETL процесів
  * - Преміальна кібернетична естетика з акцентами смарагдового та ціанового кольорів
  * - Повна локалізація (Українська)
  * 
@@ -108,7 +108,7 @@ const ConnectorCard: React.FC<{ connector: Connector; onSync: (id: string) => vo
 
             <div className="grid grid-cols-2 gap-4 relative z-10 pt-6 border-t border-white/5">
                 <div>
-                     <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">СИНХ� ОНІЗОВАНО</p>
+                     <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">СИНХ ОНІЗОВАНО</p>
                      <p className="text-sm font-black text-white italic">{connector.itemsCount.toLocaleString()} <span className="text-[8px] text-slate-700">OBJ</span></p>
                 </div>
                 <div className="text-right">
@@ -179,15 +179,15 @@ const ParsersView: React.FC = () => {
                                     Data <span className="text-emerald-400">Nexus</span>
                                 </h1>
                                 <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.4em] mt-2 italic">
-                                    ЦЕНТ� _ІНДЕСАЦІЇ_ДАНИХ // INGESTION_HUB
+                                    ЦЕНТ _ІНДЕСАЦІЇ_ДАНИХ // INGESTION_HUB
                                 </p>
                             </div>
                         </div>
                     }
-                    breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙН', 'ДЖЕ� ЕЛА']}
+                    breadcrumbs={['СИСТЕМА', 'ПАЙПЛАЙН', 'ДЖЕ ЕЛА']}
                     stats={[
                         { label: 'АКТИВНІ', value: '12/14', icon: <Database size={14} />, color: 'success' },
-                        { label: 'П� И� ІСТ (24г)', value: '+4.2M', icon: <ArrowUpRight size={14} />, color: 'success' },
+                        { label: 'П И ІСТ (24г)', value: '+4.2M', icon: <ArrowUpRight size={14} />, color: 'success' },
                         { label: 'ШВИДКІСТЬ', value: '422MB/s', icon: <Zap size={14} />, color: 'warning' },
                     ]}
                 />
@@ -196,9 +196,9 @@ const ParsersView: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {[
                         { label: 'ЗАГАЛЬНИЙ ОБ\'ЄМ', value: '84.2 TB', icon: Server, color: 'slate' },
-                        { label: 'ОБ� ОБЛЕНО (24г)', value: '1.4M', icon: Activity, color: 'emerald' },
+                        { label: 'ОБ ОБЛЕНО (24г)', value: '1.4M', icon: Activity, color: 'emerald' },
                         { label: 'WORKERS АКТИВНО', value: '32', icon: Cpu, color: 'sky' },
-                        { label: 'ЧЕ� ГА ІНДЕКСАЦІЇ', value: '12,402', icon: Layers, color: 'purple' },
+                        { label: 'ЧЕ ГА ІНДЕКСАЦІЇ', value: '12,402', icon: Layers, color: 'purple' },
                     ].map((m, i) => (
                         <TacticalCard key={i} variant="glass" className="p-6 rounded-[32px] flex items-center gap-6 border-white/5 bg-slate-900/40">
                             <div className="p-4 bg-slate-900 border border-white/10 rounded-2xl text-slate-400">
@@ -214,7 +214,7 @@ const ParsersView: React.FC = () => {
 
                 <div className="flex justify-between items-center px-4">
                     <h2 className="text-xl font-black text-white uppercase tracking-tighter italic flex items-center gap-4">
-                        <Network className="text-emerald-400" size={20} /> ПАНЕЛЬ_КЕ� УВАННЯ_КОНЕКТО� АМИ
+                        <Network className="text-emerald-400" size={20} /> ПАНЕЛЬ_КЕ УВАННЯ_КОНЕКТО АМИ
                     </h2>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -222,7 +222,7 @@ const ParsersView: React.FC = () => {
                         onClick={() => setIsModalOpen(true)}
                         className="px-10 py-5 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-[28px] text-[10px] font-black uppercase tracking-[0.4em] shadow-[0_20px_50px_-15px_rgba(16,185,129,0.5)] border border-white/20 transition-all flex items-center gap-4 group italic"
                     >
-                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗА� ЕЄСТ� УВАТИ_НОВЕ_ДЖЕ� ЕЛО
+                        <Plus size={20} className="group-hover:rotate-180 transition-transform duration-500" /> ЗА ЕЄСТ УВАТИ_НОВЕ_ДЖЕРЕЛО
                     </motion.button>
                 </div>
 
@@ -272,7 +272,7 @@ const ParsersView: React.FC = () => {
                         </div>
                         <div className="w-full lg:w-auto">
                             <button className="w-full lg:w-auto px-10 py-6 bg-white/5 border border-white/10 rounded-[30px] text-[10px] font-black text-white uppercase tracking-[0.4em] hover:bg-white/10 transition-all flex items-center justify-center gap-4 group italic">
-                                ПЕ� ЕГЛЯНУТИ_СИСТЕМНІ_ЛОГИ <Terminal size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                ПЕ ЕГЛЯНУТИ_СИСТЕМНІ_ЛОГИ <Terminal size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
                         </div>
                     </div>

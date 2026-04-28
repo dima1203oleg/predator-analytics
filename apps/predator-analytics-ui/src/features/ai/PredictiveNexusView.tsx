@@ -50,7 +50,7 @@ const PredictionCard = ({ scenario }: { scenario: Scenario }) => (
           ? "bg-rose-900/40 text-rose-500 border border-rose-500/30" 
           : "bg-crimson-900/40 text-crimson-500 border border-crimson-500/30"
       )}>
-        {scenario.impact === 'critical' || scenario.impact === 'high' ? 'К� ИТИЧНО' : 'ПОМІ� НО'}
+        {scenario.impact === 'critical' || scenario.impact === 'high' ? 'К ИТИЧНО' : 'ПОМІ НО'}
       </Badge>
     </div>
     <h4 className="text-md font-bold text-white mb-2">{scenario.name}</h4>
@@ -142,12 +142,12 @@ export default function PredictiveNexusView() {
                         badges={[
                             { label: `CORE: GLM-5.1`, color: 'danger', icon: <Cpu size={10} /> },
                             { label: `NODE: ${nodeSource}`, color: activeFailover ? 'danger' : 'success', icon: <Activity size={10} /> },
-                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХ� ОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
+                            { label: stats?.last_sync ? `SYNC: ${formatDistanceToNow(new Date(stats.last_sync), { locale: uk, addSuffix: true })}` : 'СИНХ ОНІЗАЦІЯ...', color: 'primary', icon: <RefreshCw size={10} /> },
                         ]}
                         actions={
                             <Button onClick={startScan} disabled={isScanning} className="bg-rose-600 hover:bg-rose-500 text-slate-950 font-black gap-2 border border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
                                 <Zap size={16} className={isScanning ? "animate-pulse" : ""} />
-                                {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ П� ЕКОГНІЦІЮ"}
+                                {isScanning ? "КВАНТУВАННЯ..." : "СИНТЕЗУВАТИ П ЕКОГНІЦІЮ"}
                             </Button>
                         }
                     />
@@ -173,7 +173,7 @@ export default function PredictiveNexusView() {
 
                             <div className="bg-black/40 border border-white/10 rounded-xl p-6 backdrop-blur-md flex-1">
                                 <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <TrendingUp size={16} /> П� ОГНОЗ � ЕСУ� СІВ
+                                    <TrendingUp size={16} /> П ОГНОЗ  ЕСУ СІВ
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="p-4 bg-white/5 rounded-lg border border-white/10">
@@ -201,7 +201,7 @@ export default function PredictiveNexusView() {
                             </div>
                             <div className="bg-black/60 border border-white/10 rounded-xl p-6 backdrop-blur-lg flex-1 overflow-hidden flex flex-col">
                                 <h3 className="text-sm font-black text-rose-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Activity size={16} /> ДИНАМІКА КЛАСТЕ� А (24г)
+                                    <Activity size={16} /> ДИНАМІКА КЛАСТЕ А (24г)
                                 </h3>
                                 <div className="flex-1 min-h-0">
                                     <ResourceDynamicsChart />
@@ -212,14 +212,14 @@ export default function PredictiveNexusView() {
                         {/* Права колонка: OSINT Scenarios */}
                         <div className="lg:col-span-1 flex flex-col gap-6 overflow-auto">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">СЦЕНА� ІЇ OSINT</h3>
+                                <h3 className="text-sm font-black text-slate-300 uppercase tracking-widest">СЦЕНА ІЇ OSINT</h3>
                                 <Badge variant="outline" className="text-[9px]">TOP PRIORITY</Badge>
                             </div>
                             <div className="space-y-4">
                                 {scenarios.map(s => <PredictionCard key={s.id} scenario={s} />)}
                             </div>
                             <Button variant="ghost" className="w-full border border-dashed border-white/10 text-[10px] font-bold py-6">
-                                ВСІ СЦЕНА� ІЇ (24)
+                                ВСІ СЦЕНА ІЇ (24)
                             </Button>
                         </div>
                     </div>

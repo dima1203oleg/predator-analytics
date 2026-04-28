@@ -104,7 +104,7 @@ const plans: Plan[] = [
     color: 'cyan',
     icon: Building2,
     features: [
-      { name: '� озширений пошук', included: true },
+      { name: ' озширений пошук', included: true },
       { name: '5,000 запитів/день', included: true },
       { name: 'Історія 1 рік', included: true },
       { name: 'API доступ', included: true },
@@ -130,7 +130,7 @@ const plans: Plan[] = [
       { name: 'Історія 5 років', included: true },
       { name: 'API доступ', included: true },
       { name: 'Всі формати експорту', included: true },
-      { name: 'AI Insights + � изики', included: true },
+      { name: 'AI Insights +  изики', included: true },
       { name: 'Real-time дані', included: true },
       { name: 'Пріоритетна підтримка', included: true },
     ]
@@ -190,7 +190,7 @@ const PlanCard: React.FC<{ plan: Plan; onSelect: () => void }> = ({ plan, onSele
     >
       {plan.popular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-amber-500 text-black text-xs font-black rounded-full">
-          ПОПУЛЯ� НИЙ
+          ПОПУЛЯ НИЙ
         </div>
       )}
 

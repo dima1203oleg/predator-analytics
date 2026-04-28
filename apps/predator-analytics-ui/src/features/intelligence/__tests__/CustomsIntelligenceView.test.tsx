@@ -87,21 +87,21 @@ describe('CustomsIntelligenceView', () => {
     it('перемикає вкладки аналітики', async () => {
         render(<CustomsIntelligenceView />);
         
-        const importersTab = screen.getByText(/ТОП_ІМПО� ТЕ� ІВ/i);
+        const importersTab = screen.getByText(/ТОП_ІМПОРТЕ ІВ/i);
         fireEvent.click(importersTab);
 
         expect(screen.getByText(/DOMINANCE_LEADERBOARD/i)).toBeInTheDocument();
-        expect(screen.getByText(/ТОВ "МЕТАЛ-Т� ЕЙД ОПТ"/i)).toBeInTheDocument();
+        expect(screen.getByText(/ТОВ "МЕТАЛ-Т ЕЙД ОПТ"/i)).toBeInTheDocument();
     });
 
     it('відображає попередження про митні ризики', async () => {
         render(<CustomsIntelligenceView />);
         
-        const risksTab = screen.getByText(/МИТНІ_� ИЗИКИ/i);
+        const risksTab = screen.getByText(/МИТНІ_РИЗИКИ/i);
         fireEvent.click(risksTab);
 
         expect(screen.getByText(/CUSTOMS_RISK_ALERTS/i)).toBeInTheDocument();
-        expect(screen.getByText(/ЗАНИЖЕННЯ_МИТНОЇ_ВА� ТОСТІ/i)).toBeInTheDocument();
+        expect(screen.getByText(/ЗАНИЖЕННЯ_МИТНОЇ_ВА ТОСТІ/i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error при автономному режимі', async () => {

@@ -111,7 +111,7 @@ const NeuralCanvas: React.FC<{ agentCount: number; activeId: string | null }> = 
             ctx.stroke();
         });
 
-        // � ухома частинка по зв'язках
+        //  ухома частинка по зв'язках
         if (nodes.length >= 2) {
             const progress = (t % 1);
             const fromNode = nodes[0];
@@ -136,7 +136,7 @@ const NeuralCanvas: React.FC<{ agentCount: number; activeId: string | null }> = 
 };
 
 // ──────────────────────────────────────────────
-// ГЕКСАГОНАЛЬНА КА� ТА АГЕНТА
+// ГЕКСАГОНАЛЬНА КА ТА АГЕНТА
 // ──────────────────────────────────────────────
 const AgentHexCard: React.FC<{
     agent: Agent;
@@ -237,7 +237,7 @@ const AgentHexCard: React.FC<{
                 {/* Efficiency bar */}
                 <div className="space-y-2 mb-3">
                     <div className="flex justify-between text-[8px] font-bold uppercase tracking-widest">
-                        <span className="text-slate-600">ІНДЕКС ЗДО� ОВ'Я</span>
+                        <span className="text-slate-600">ІНДЕКС ЗДО ОВ'Я</span>
                         <span className="font-mono" style={{ color: statusColor }}>{healthLabel}</span>
                     </div>
                     <div className="h-1 bg-slate-950 rounded-full overflow-hidden border border-white/5">
@@ -274,7 +274,7 @@ const AgentHexCard: React.FC<{
 };
 
 // ──────────────────────────────────────────────
-// OSINT TOOL � ЯДОК
+// OSINT TOOL  ЯДОК
 // ──────────────────────────────────────────────
 const osintIcons: Record<OsintToolIconKey, React.ReactNode> = {
     eye: <Eye size={14} />,
@@ -360,7 +360,7 @@ const OSINTToolRow: React.FC<{
                         border-white/10 bg-white/5 text-slate-400 hover:border-blue-500/40 hover:text-blue-400 hover:bg-blue-500/10
                     `}
                 >
-                    ВІДК� ИТИ
+                    ВІДК ИТИ
                 </motion.button>
             </div>
         </motion.div>
@@ -516,7 +516,7 @@ const AgentsView: React.FC = () => {
             <ViewHeader
                 title={premiumLocales.agentsView.title}
                 icon={<Bot size={20} className={themeColor} />}
-                breadcrumbs={['СИНАПСИС', 'NEXUS v58.2-WRAITH', 'МЕНЕДЖЕ�  ФЛОТУ']}
+                breadcrumbs={['СИНАПСИС', 'NEXUS v58.2-WRAITH', 'МЕНЕДЖЕ  ФЛОТУ']}
                 stats={[
                     { label: 'Агенти', value: String(agents.length), icon: <Bot size={14} />, color: 'primary' },
                     { label: 'Активних', value: String(workingCount), icon: <Activity size={14} />, color: 'success' },
@@ -588,7 +588,7 @@ const AgentsView: React.FC = () => {
                     <div className="hud-corner-nexus hud-corner-br !border-cyan-500/20" />
                     <AnimatePresence mode="wait">
 
-                        {/* ТЕЛЕМЕТ� ІЯ — СІТКА АГЕНТІВ */}
+                        {/* ТЕЛЕМЕТ ІЯ — СІТКА АГЕНТІВ */}
                         {activeTab === 'telemetry' && (
                             <motion.div
                                 key="telemetry-view"
@@ -646,7 +646,7 @@ const AgentsView: React.FC = () => {
                             </motion.div>
                         )}
 
-                        {/* ВО� КФЛОУ */}
+                        {/* ВО КФЛОУ */}
                         {activeTab === 'workflow' && (
                             <motion.div
                                 key="workflow-view"
@@ -748,7 +748,7 @@ const AgentsView: React.FC = () => {
                     </AnimatePresence>
                 </div>
 
-                {/* ── П� АВА ПАНЕЛЬ (1/3 ширини) ── */}
+                {/* ── П АВА ПАНЕЛЬ (1/3 ширини) ── */}
                 <div className="space-y-5">
 
                     {/* ── NEURAL NETWORK ВІЗУАЛІЗАЦІЯ + ДЕТАЛЬНИЙ СТАТУС ── */}
@@ -788,7 +788,7 @@ const AgentsView: React.FC = () => {
                                             <NeuralCanvas agentCount={agents.length} activeId={selectedAgentId} />
                                             {/* Центральний текст */}
                                             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                                <div className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">НЕЙ� ОНН. МЕ� ЕЖА</div>
+                                                <div className="text-[8px] text-slate-500 font-mono uppercase tracking-widest">НЕЙ ОНН. МЕ ЕЖА</div>
                                                 <div className="text-sm font-black text-yellow-400 font-mono">{agents.length} вузлів</div>
                                             </div>
                                         </div>
@@ -912,11 +912,11 @@ const AgentsView: React.FC = () => {
                         </div>
                     </TacticalCard>
 
-                    {/* ── АВТО� ИТЕТ АГЕНТІВ (Authority Level) ── */}
+                    {/* ── АВТО ИТЕТ АГЕНТІВ (Authority Level) ── */}
                     <div className="p-4 rounded-3xl border border-white/[0.06] bg-slate-900/40 space-y-3">
                         <div className="flex items-center gap-2 mb-1">
                             <Shield size={14} className="text-yellow-400" />
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">� ІВНІ АВТО� ИТЕТУ</span>
+                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest"> ІВНІ АВТО ИТЕТУ</span>
                         </div>
                         {[
                             { level: 'L0', label: 'Тільки читання', desc: 'Перегляд без дій', color: '#64748b' },

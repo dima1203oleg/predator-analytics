@@ -262,7 +262,7 @@ const DiagnosticsPage: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-black tracking-tight">{section.title}</h2>
                   <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
-                    � еальні відповіді від залежностей системи
+                    реальні відповіді від залежностей системи
                   </p>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import {
   AlertTriangle, Bell, CheckCheck, ChevronDown, Clock, Eye, Filter,
   Radio, Shield, ShieldX, TrendingUp, X, Zap, Activity, Database,
   ShieldAlert, Fingerprint, Search, RefreshCw, Layout, Layers, Target,
-  Inbox, Archive, CheckCircle2, AlertCircle, Info, MoreHorizontal
+  Inbox, Archive, CheckCircle2, AlertCircle, Info, MoreHorizontal, ShieldCheck
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -33,17 +33,17 @@ interface Alert {
   category?: string;
 }
 
-// ─── КОНФІГУ� АЦІЯ ────────────────────────────────────────────────────────────
+// ─── КОНФІГУ АЦІЯ ────────────────────────────────────────────────────────────
 
 const SEVERITY_CFG: Record<AlertSeverity, { label: string; color: string; bg: string; border: string; icon: any }> = {
-  CRITICAL: { label: 'К� ИТИЧНО', color: '#f43f5e', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: ShieldX },
+  CRITICAL: { label: 'КРИТИЧНО', color: '#f43f5e', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: ShieldX },
   HIGH:     { label: 'ВИСОКИЙ',  color: '#fb923c', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: AlertTriangle },
-  MEDIUM:   { label: 'СЕ� ЕДНІЙ', color: '#f59e0b', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: AlertCircle },
+  MEDIUM:   { label: 'СЕРЕДНІЙ', color: '#f59e0b', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: AlertCircle },
   LOW:      { label: 'НИЗЬКИЙ',  color: '#3b82f6', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: Info },
   INFO:     { label: 'ІНФО',     color: '#64748b', bg: 'bg-slate-500/10', border: 'border-slate-500/20', icon: Bell },
 };
 
-// ─── КОМПОНЕНТ КА� ТКИ ────────────────────────────────────────────────────────
+// ─── КОМПОНЕНТ КА ТКИ ────────────────────────────────────────────────────────
 
 const AlertRow: React.FC<{ alert: Alert; onAck: (id: string) => void }> = ({ alert, onAck }) => {
   const cfg = SEVERITY_CFG[alert.severity] || SEVERITY_CFG.INFO;
@@ -187,16 +187,16 @@ export const AlertCenterView: React.FC = () => {
                     <span className="text-[10px] font-black text-amber-900 font-mono tracking-widest uppercase italic">LIVE_FEED</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    ЦЕНТ�  <span className="text-amber-500 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СПОВІЩЕНЬ</span>
+                    ЦЕНТР <span className="text-amber-500 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">СПОВІЩЕНЬ</span>
                   </h1>
                 </div>
               </div>
             }
-            breadcrumbs={['П� ЕДАТО� ', 'МОНІТО� ИНГ', 'АЛЕ� ТИ']}
+            breadcrumbs={['ПРЕДАТОР', 'МОНІТОРИНГ', 'АЛЕРТИ']}
             stats={[
               { label: 'ВУЗОЛ', value: nodeSource, icon: <Database />, color: 'gold' },
               { label: 'АКТИВНІ', value: stats.active.toString(), icon: <Activity />, color: stats.active > 0 ? 'warning' : 'success' },
-              { label: 'К� ИТИЧНІ', value: stats.critical.toString(), icon: <ShieldAlert />, color: stats.critical > 0 ? 'danger' : 'success' },
+              { label: 'КРИТИЧНІ', value: stats.critical.toString(), icon: <ShieldAlert />, color: stats.critical > 0 ? 'danger' : 'success' },
             ]}
             actions={
               <div className="flex gap-4">
@@ -207,7 +207,7 @@ export const AlertCenterView: React.FC = () => {
                     <RefreshCw size={24} className={isLoading ? "animate-spin" : ""} />
                  </button>
                  <button className="px-14 py-6 bg-amber-500 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
-                    <CheckCheck size={22} /> П� ОЧИТАТИ_ВСЕ
+                    <CheckCheck size={22} /> ПРОЧИТАТИ_ВСЕ
                  </button>
               </div>
             }
@@ -217,8 +217,8 @@ export const AlertCenterView: React.FC = () => {
           <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'ALL', label: 'УСІ_СИГНАЛИ', icon: Inbox },
-              { id: 'ACTIVE', label: 'НЕП� ОЧИТАНІ', icon: Zap },
-              { id: 'CRITICAL', label: 'К� ИТИЧНІ_� ИЗИКИ', icon: ShieldAlert },
+              { id: 'ACTIVE', label: 'НЕПРОЧИТАНІ', icon: Zap },
+              { id: 'CRITICAL', label: 'КРИТИЧНІ_РИЗИКИ', icon: ShieldAlert },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -251,7 +251,7 @@ export const AlertCenterView: React.FC = () => {
                     className="py-40 flex flex-col items-center justify-center gap-8 opacity-20 border-2 border-dashed border-white/5 rounded-[4rem]"
                   >
                      <ShieldCheck size={100} className="text-slate-600" />
-                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[0.8em] italic">АЛЕ� ТІВ_НЕ_ВИЯВЛЕНО</p>
+                     <p className="text-2xl font-black text-slate-500 uppercase tracking-[0.8em] italic">АЛЕРТІВ_НЕ_ВИЯВЛЕНО</p>
                   </motion.div>
                ) : (
                   filtered.map(a => <AlertRow key={a.id} alert={a} onAck={handleAck} />)
@@ -264,7 +264,7 @@ export const AlertCenterView: React.FC = () => {
              <div className="lg:col-span-2 p-10 bg-rose-500/5 border-2 border-rose-500/10 rounded-[3.5rem] flex items-center gap-8 shadow-inner">
                 <ShieldAlert size={40} className="text-rose-500" />
                 <p className="text-xs text-rose-400/60 uppercase font-black italic tracking-widest leading-loose">
-                   ЦЕНТ�  МОНІТО� ИНГУ П� АЦЮЄ В � ЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ� ЕВИЩУЮТЬ ПО� ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ� НАЛ � ІШЕНЬ.
+                   ЦЕНТ  МОНІТО ИНГУ П АЦЮЄ В  ЕЖИМІ REAL-TIME. ВСІ СИГНАЛИ, ЩО ПЕ ЕВИЩУЮТЬ ПО ІГ 85 (CRITICAL), АВТОМАТИЧНО ДУБЛЮЮТЬСЯ В TELEGRAM ТА ЖУ НАЛ  ІШЕНЬ.
                 </p>
              </div>
              <div className="p-10 bg-amber-500/5 border-2 border-amber-500/10 rounded-[3.5rem] flex items-center justify-between">

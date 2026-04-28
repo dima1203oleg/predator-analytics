@@ -78,8 +78,8 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ� ')).toBeInTheDocument();
-    expect(screen.getByText('МІСІЯ-КОНТ� ОЛЬ')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ ')).toBeInTheDocument();
+    expect(screen.getByText('МІСІЯ-КОНТ ОЛЬ')).toBeInTheDocument();
     expect(screen.getByText('ШІ-рекомендації')).toBeInTheDocument();
     expect(screen.getByText('ШІ-асистент')).toBeInTheDocument();
     expect(screen.getByText('Оперативний огляд')).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe('Sidebar', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('� ОЗВІДКА КОНТ� АГЕНТІВ')).toBeInTheDocument();
+    expect(screen.getByText('РОЗВІДКА КОНТ АГЕНТІВ')).toBeInTheDocument();
     expect(screen.getByText('OSINT та розслідування')).toBeInTheDocument();
     expect(screen.queryByText('Фабрика')).toBeNull();
     expect(screen.queryByText('Центр керування ШІ')).toBeNull();

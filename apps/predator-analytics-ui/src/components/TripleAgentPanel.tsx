@@ -309,7 +309,7 @@ export const TripleAgentPanel: React.FC<TripleAgentPanelProps> = ({ isLockdown }
                                                 ))}
                                             </div>
                                         ) : (
-                                            result.summary || result.answer || result.plan || "� езультат згенеровано успішно."
+                                            result.summary || result.answer || result.plan || "результат згенеровано успішно."
                                         )}
                                     </div>
 

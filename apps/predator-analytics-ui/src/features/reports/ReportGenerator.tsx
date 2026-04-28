@@ -5,7 +5,7 @@ import {
   Trash2, Copy, Edit3, Eye, ChevronRight, Crown, Sparkles, FileSpreadsheet,
   File, CheckCircle, XCircle, Loader, Filter, Search, BarChart3, PieChart,
   TrendingUp, Building2, Package, DollarSign, Shield, Globe, Zap, Layers,
-  RefreshCw, FileDown, Clock4, ShieldCheck, Share2
+  RefreshCw, FileDown, Clock4, ShieldCheck, Share2, Database
 } from 'lucide-react';
 import { ViewHeader } from '@/components/ViewHeader';
 import { AdvancedBackground } from '@/components/AdvancedBackground';
@@ -44,7 +44,7 @@ interface GeneratedReport {
   frequency?: ReportFrequency;
 }
 
-// ─── КОНФІГУ� АЦІЯ ────────────────────────────────────────────────────────────
+// ─── КОНФІГУ АЦІЯ ────────────────────────────────────────────────────────────
 
 const TYPE_CFG = {
   pdf:   { icon: FileText,        color: '#f59e0b', label: 'PDF' },
@@ -54,7 +54,7 @@ const TYPE_CFG = {
 
 const STATUS_CFG = {
   ready:      { icon: CheckCircle,  color: '#10b981', label: 'ГОТОВИЙ',     bg: 'bg-emerald-500/10' },
-  generating: { icon: RefreshCw,   color: '#0ea5e9', label: 'ГЕНЕ� УЄТЬСЯ', bg: 'bg-sky-500/10', animate: true },
+  generating: { icon: RefreshCw,   color: '#0ea5e9', label: 'ГЕНЕРУЄТЬСЯ', bg: 'bg-sky-500/10', animate: true },
   scheduled:  { icon: Calendar,    color: '#8b5cf6', label: 'ЗАПЛАНОВАНО', bg: 'bg-purple-500/10' },
   error:      { icon: XCircle,     color: '#f43f5e', label: 'ПОМИЛКА',     bg: 'bg-rose-500/10' }
 };
@@ -169,18 +169,18 @@ const ReportGenerator: React.FC = () => {
   const { isOffline, nodeSource } = useBackendStatus();
 
   const templates: ReportTemplate[] = [
-    { id: '1', name: 'ІМПО� ТНА АНАЛІТИКА', description: 'ДЕТАЛЬНИЙ ЗВІТ П� О ІМПО� ТНІ ОПЕ� АЦІЇ', category: 'ІМПО� Т', icon: Package, color: '#f59e0b', isPremium: false },
-    { id: '2', name: 'АНАЛІЗ КОНКУ� ЕНТІВ', description: 'ПО� ІВНЯЛЬНИЙ АНАЛІЗ � ИНКОВИХ ЧАСТОК', category: 'КОНКУ� ЕНТИ', icon: Building2, color: '#8b5cf6', isPremium: false },
-    { id: '3', name: 'ФІНАНСОВИЙ МОНІТО� ИНГ', description: 'ОБСЯГИ ТА ВА� ТІСТЬ ОПЕ� АЦІЙ', category: 'ФІНАНСИ', icon: DollarSign, color: '#10b981', isPremium: false },
-    { id: '4', name: '� ИЗИК-АУДИТ ELITE', description: 'АУДИТ ПІДОЗ� ІЛИХ Т� АНЗАКЦІЙ ТА � ИЗИКІВ', category: '� ИЗИКИ', icon: Shield, color: '#f43f5e', isPremium: true },
-    { id: '5', name: 'ГЕО-КА� ТОГ� АФІЯ', description: 'АНАЛІЗ ЛАНЦЮЖКІВ ПОСТАЧАНЬ ПО К� АЇНАХ', category: 'ГЕОГ� АФІЯ', icon: Globe, color: '#3b82f6', isPremium: false },
-    { id: '6', name: 'AI Т� ЕНД-П� ОГНОЗ', description: 'ПЕ� ЕДИКТИВНА АНАЛІТИКА ТА Т� ЕНДИ', category: 'АНАЛІТИКА', icon: TrendingUp, color: '#f59e0b', isPremium: true },
+    { id: '1', name: 'ІМПОРТНА АНАЛІТИКА', description: 'ДЕТАЛЬНИЙ ЗВІТ ПРО ІМПОРТНІ ОПЕРАЦІЇ', category: 'ІМПОРТ', icon: Package, color: '#f59e0b', isPremium: false },
+    { id: '2', name: 'АНАЛІЗ КОНКУРЕНТІВ', description: 'ПОРІВНЯЛЬНИЙ АНАЛІЗ РИНКОВИХ ЧАСТОК', category: 'КОНКУРЕНТИ', icon: Building2, color: '#8b5cf6', isPremium: false },
+    { id: '3', name: 'ФІНАНСОВИЙ МОНІТОРИНГ', description: 'ОБСЯГИ ТА ВАРТІСТЬ ОПЕРАЦІЙ', category: 'ФІНАНСИ', icon: DollarSign, color: '#10b981', isPremium: false },
+    { id: '4', name: 'РИЗИК-АУДИТ ELITE', description: 'АУДИТ ПІДОЗРІЛИХ ТРАНЗАКЦІЙ ТА РИЗИКІВ', category: 'РИЗИКИ', icon: Shield, color: '#f43f5e', isPremium: true },
+    { id: '5', name: 'ГЕО-КАРТОГРАФІЯ', description: 'АНАЛІЗ ЛАНЦЮЖКІВ ПОСТАЧАНЬ ПО КРАЇНАХ', category: 'ГЕОГРАФІЯ', icon: Globe, color: '#3b82f6', isPremium: false },
+    { id: '6', name: 'AI ТРЕНД-ПРОГНОЗ', description: 'ПРЕДИКТИВНА АНАЛІТИКА ТА ТРЕНДИ', category: 'АНАЛІТИКА', icon: TrendingUp, color: '#f59e0b', isPremium: true },
   ];
 
   const reports: GeneratedReport[] = [
-    { id: '1', name: 'ІМПО� Т_СІЧЕНЬ_2026.PDF', template: 'ІМПО� ТНА АНАЛІТИКА', type: 'pdf', status: 'ready', size: '2.4 MB', createdAt: '2026-02-03T04:30:00' },
-    { id: '2', name: 'КОНКУ� ЕНТИ_Q1_FIXED.XLSX', template: 'АНАЛІЗ КОНКУ� ЕНТІВ', type: 'excel', status: 'ready', size: '1.8 MB', createdAt: '2026-02-02T18:00:00' },
-    { id: '3', name: '� ИЗИКИ_ЛЮТИЙ_AUDIT.PDF', template: '� ИЗИК-АУДИТ ELITE', type: 'pdf', status: 'generating', createdAt: '2026-02-03T04:45:00' },
+    { id: '1', name: 'ІМПОРТ_СІЧЕНЬ_2026.PDF', template: 'ІМПОРТНА АНАЛІТИКА', type: 'pdf', status: 'ready', size: '2.4 MB', createdAt: '2026-02-03T04:30:00' },
+    { id: '2', name: 'КОНКУРЕНТИ_Q1_FIXED.XLSX', template: 'АНАЛІЗ КОНКУРЕНТІВ', type: 'excel', status: 'ready', size: '1.8 MB', createdAt: '2026-02-02T18:00:00' },
+    { id: '3', name: 'РИЗИКИ_ЛЮТИЙ_AUDIT.PDF', template: 'РИЗИК-АУДИТ ELITE', type: 'pdf', status: 'generating', createdAt: '2026-02-03T04:45:00' },
   ];
 
   return (
@@ -209,16 +209,16 @@ const ReportGenerator: React.FC = () => {
                     <span className="text-[10px] font-black text-amber-900 font-mono tracking-widest uppercase italic">AUTOMATED</span>
                   </div>
                   <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                    ГЕНЕ� АТО�  <span className="text-amber-500 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗВІТІВ</span>
+                    ГЕНЕРАТОР <span className="text-amber-500 underline decoration-amber-600/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЗВІТІВ</span>
                   </h1>
                 </div>
               </div>
             }
-            breadcrumbs={['П� ЕДАТО� ', 'АНАЛІТИКА', 'ГЕНЕ� АТО� _ЗВІТІВ']}
+            breadcrumbs={['ПРЕДАТОР', 'АНАЛІТИКА', 'ГЕНЕРАТОР_ЗВІТІВ']}
             stats={[
               { label: 'ВУЗОЛ', value: nodeSource, icon: <Database />, color: 'gold' },
               { label: 'ШАБЛОНИ', value: '12_АКТИВНО', icon: <Layers />, color: 'primary' },
-              { label: 'ЧЕ� ГА', value: '0_ЗАВДАНЬ', icon: <Clock4 />, color: 'success' },
+              { label: 'ЧЕРГА', value: '0_ЗАВДАНЬ', icon: <Clock4 />, color: 'success' },
             ]}
             actions={
               <button className="px-14 py-6 bg-gradient-to-r from-amber-600 to-orange-600 text-black text-[12px] font-black uppercase tracking-[0.4em] hover:brightness-110 transition-all rounded-[2rem] shadow-4xl flex items-center gap-4 italic font-bold">
@@ -231,7 +231,7 @@ const ReportGenerator: React.FC = () => {
           <div className="flex items-center gap-6 p-3 bg-black/60 backdrop-blur-3xl border-2 border-white/5 rounded-[3rem] w-fit shadow-2xl">
             {[
               { id: 'templates', label: 'ШАБЛОНИ_ЗВІТІВ', icon: Layers },
-              { id: 'reports', label: 'МОЇ_А� ХІВИ', icon: Database },
+              { id: 'reports', label: 'МОЇ_АРХІВИ', icon: Database },
               { id: 'scheduled', label: 'АВТО_ПЛАНУВАННЯ', icon: Clock4 },
             ].map((tab) => (
               <button
@@ -282,8 +282,8 @@ const ReportGenerator: React.FC = () => {
                    <Zap size={32} />
                 </div>
                 <div className="space-y-2">
-                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">ШВИДКИЙ_ЕКСПО� Т_v60</h3>
-                   <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МИТТЄВА_ГЕНЕ� АЦІЯ_БЕЗ_ШАБЛОНУ</p>
+                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter">ШВИДКИЙ_ЕКСПОРТ_v60</h3>
+                   <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] italic">МИТТЄВА_ГЕНЕ АЦІЯ_БЕЗ_ШАБЛОНУ</p>
                 </div>
              </div>
 
@@ -296,7 +296,7 @@ const ReportGenerator: React.FC = () => {
                 ))}
                 <div className="w-px h-10 bg-white/5 my-auto mx-2" />
                 <button className="px-10 py-4 bg-amber-500 text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:brightness-110 transition-all italic">
-                   ЕКСПО� ТУВАТИ_ВСЕ
+                   ЕКСПОРТУВАТИ_ВСЕ
                 </button>
              </div>
           </div>

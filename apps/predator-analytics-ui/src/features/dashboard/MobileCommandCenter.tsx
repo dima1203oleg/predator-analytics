@@ -41,7 +41,7 @@ interface QuickStat {
 
 const quickStats: QuickStat[] = [
   { label: 'Імпорт (24h)', value: '$2.48M', change: '+12.5%', icon: Package, color: '#3b82f6', isPositive: true },
-  { label: 'Алерти � івня А', value: '7', change: '-42%', icon: AlertTriangle, color: '#f43f5e', isPositive: false },
+  { label: 'Алерти  івня А', value: '7', change: '-42%', icon: AlertTriangle, color: '#f43f5e', isPositive: false },
   { label: 'Нові об\'єкти', value: '14', change: '+5.2%', icon: Building2, color: '#a78bfa', isPositive: true },
   { label: 'Економія AZR', value: '18.4%', change: '+2.1%', icon: Zap, color: '#f59e0b', isPositive: true },
 ];
@@ -94,7 +94,7 @@ const MobileCommandCenter: React.FC = () => {
             <h1 className="text-lg font-black text-white uppercase tracking-tighter leading-none">PREDATOR</h1>
             <div className="flex items-center gap-2 mt-1">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">О� БІТАЛЬНИЙ_ЗВ'ЯЗОК_7.4</span>
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">О БІТАЛЬНИЙ_ЗВ'ЯЗОК_7.4</span>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@ const MobileCommandCenter: React.FC = () => {
             {[
               { icon: Search, label: 'Пошук', color: '#60a5fa' },
               { icon: Target, label: premiumLocales.competitorIntelligence.premium.title, color: '#a78bfa' },
-              { icon: Shield, label: '� изики', color: '#f43f5e', badge: 3 },
+              { icon: Shield, label: ' изики', color: '#f43f5e', badge: 3 },
               { icon: BarChart3, label: 'Тренди', color: '#f59e0b' },
             ].map((item, i) => (
               <button key={i} className="flex flex-col items-center gap-3 py-4 group">
@@ -187,7 +187,7 @@ const MobileCommandCenter: React.FC = () => {
                 </div>
                 <h4 className="text-lg font-black text-white uppercase tracking-tighter mb-2">Цінова аномалія</h4>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії. � екомендуємо перегляд контракту протягом 2 годин.
+                  Постачальник <span className="text-yellow-400">SunLogistics</span> знизив ціну на 30% на оптові партії. рекомендуємо перегляд контракту протягом 2 годин.
                 </p>
               </div>
             </div>
@@ -292,7 +292,7 @@ const MobileCommandCenter: React.FC = () => {
                 {[
                   { icon: BarChart3, label: 'Глобальна Аналітика', color: 'blue' },
                   { icon: Target, label: premiumLocales.competitorIntelligence.premium.title, color: 'purple', badge: '3' },
-                  { icon: Shield, label: 'Цільові � изики', color: 'amber', badge: '!' },
+                  { icon: Shield, label: 'Цільові  изики', color: 'amber', badge: '!' },
                   { icon: MapIcon, label: 'Логістична Навігатор', color: 'amber' },
                   { icon: Globe, label: 'Матриця Світу', color: 'yellow' },
                   { icon: Settings, label: 'Нейронні Параметри', color: 'slate' },

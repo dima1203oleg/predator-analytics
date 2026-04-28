@@ -68,7 +68,7 @@ describe('ZradaControlView', () => {
         render(<ZradaControlView />);
         
         expect(screen.getByText(/СИСТЕМА/i)).toBeInTheDocument();
-        expect(screen.getByText(/З� АДА/i)).toBeInTheDocument();
+        expect(screen.getByText(/З АДА/i)).toBeInTheDocument();
         expect(screen.getByText(/Ковальчук Дмитро Олексійович/i)).toBeInTheDocument();
     });
 
@@ -80,7 +80,7 @@ describe('ZradaControlView', () => {
 
         await waitFor(() => {
             expect(screen.getByText(/АСОЦІЙОВАНА_ЦІЛЬ/i)).toBeInTheDocument();
-            expect(screen.getByText(/БЕТА_Г� УП/i)).toBeInTheDocument();
+            expect(screen.getByText(/БЕТА_Г УП/i)).toBeInTheDocument();
         });
     });
 
@@ -90,7 +90,7 @@ describe('ZradaControlView', () => {
         const addBtn = screen.getByText(/ДОДАТИ_ОБ'ЄКТ/i);
         fireEvent.click(addBtn);
 
-        expect(screen.getByText(/АВТО� ИЗАЦІЯ ОБ'ЄКТА/i)).toBeInTheDocument();
+        expect(screen.getByText(/АВТО ИЗАЦІЯ ОБ'ЄКТА/i)).toBeInTheDocument();
     });
 
     it('ініціює predator-error при автономному режимі', async () => {

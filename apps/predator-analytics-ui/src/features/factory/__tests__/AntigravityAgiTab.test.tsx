@@ -125,14 +125,14 @@ describe('AntigravityAgiTab Component', () => {
     const textarea = screen.getByPlaceholderText(/Наприклад: Створити FastAPI сервіс/i);
     const submitButton = screen.getByRole('button', { name: /Запустити AGI-задачу/i });
 
-    fireEvent.change(textarea, { target: { value: '� озробка нового модуля аналітики для PREDATOR v57' } });
+    fireEvent.change(textarea, { target: { value: ' озробка нового модуля аналітики для PREDATOR v57' } });
     
     expect(submitButton).not.toBeDisabled();
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(factoryApi.createAntigravityTask).toHaveBeenCalledWith(expect.objectContaining({
-        description: '� озробка нового модуля аналітики для PREDATOR v57',
+        description: ' озробка нового модуля аналітики для PREDATOR v57',
         priority: 'medium',
       }));
     });

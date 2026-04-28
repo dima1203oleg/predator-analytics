@@ -56,7 +56,7 @@ const readNodes = (): BackendNode[] => {
 export interface BackendStatusSnapshot {
     /** Чи бекенд недоступний (переведено в Mock-режим) */
     isOffline: boolean;
-    /** � ежим "тільки реальні дані" */
+    /** режим "тільки реальні дані" */
     isTruthOnly: boolean;
     /** Мітка режиму для UI */
     modeLabel: string;
@@ -66,7 +66,7 @@ export interface BackendStatusSnapshot {
     sourceType: 'local' | 'remote';
     /** Три-позиційний режим ШІ (SOVEREIGN | HYBRID | CLOUD) */
     llmTriStateMode: 'SOVEREIGN' | 'HYBRID' | 'CLOUD';
-    /** � івень каскаду LLM (1-4) */
+    /**  івень каскаду LLM (1-4) */
     llmLevel: 1 | 2 | 3 | 4;
     /** Назва активного шару LLM */
     llmLayerName: string;
@@ -109,7 +109,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
         activeNode?.mode || 'HYBRID'
     );
     const [llmLevel, setLlmLevel] = useState<1 | 2 | 3 | 4>(1);
-    const [llmLayerName, setLlmLayerName] = useState('� ІВЕНЬ 1: АВТОНОМНИЙ ПУЛ');
+    const [llmLayerName, setLlmLayerName] = useState('РІВЕНЬ 1: АВТОНОМНИЙ ПУЛ');
     const [vramMetrics, setVramMetrics] = useState<BackendStatusSnapshot['vramMetrics']>({
         total: 8.0,
         localReserve: 5.5,
@@ -180,7 +180,7 @@ export const useBackendStatus = (): BackendStatusSnapshot => {
     return useMemo(() => ({
         isOffline,
         isTruthOnly:   IS_TRUTH_ONLY_MODE,
-        modeLabel:     isOffline ? 'Суверенний Мок-� ежим' : 'Активне З\'єднання',
+        modeLabel:     isOffline ? 'Суверенний Мок-режим' : 'Активне З\'єднання',
         sourceLabel:   getSourceLabel(),
         sourceType:    currentApiUrl.startsWith('http://localhost') || currentApiUrl.includes('9080') ? 'local' : 'remote',
         statusLabel:   isOffline

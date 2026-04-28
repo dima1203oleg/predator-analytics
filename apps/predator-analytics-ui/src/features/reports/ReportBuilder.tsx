@@ -40,11 +40,11 @@ interface Report {
 
 const AVAILABLE_SECTIONS = [
   { id: 'title', name: '📌 ЗАГОЛОВОК_H1', icon: <FileText size={16} /> },
-  { id: 'kpi', name: '📊 KPI_МЕТ� ИКА', icon: <BarChart3 size={16} /> },
-  { id: 'chart', name: '📈 Г� АФІК_ALPHA', icon: <PieChart size={16} /> },
+  { id: 'kpi', name: '📊 KPI_МЕТ ИКА', icon: <BarChart3 size={16} /> },
+  { id: 'chart', name: '📈 Г АФІК_ALPHA', icon: <PieChart size={16} /> },
   { id: 'table', name: '📋 ТАБЛИЦЯ_DATA', icon: <TableIcon size={16} /> },
   { id: 'text', name: '📝 ТЕКСТ_ANALYTICS', icon: <Layout size={16} /> },
-  { id: 'page_break', name: '📄 � ОЗ� ИВ_СТО� ІНКИ', icon: <FileCode size={16} /> }
+  { id: 'page_break', name: '📄  ОЗ ИВ_СТО ІНКИ', icon: <FileCode size={16} /> }
 ];
 
 // ──────────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@ export const ReportBuilder: React.FC = () => {
   
   const [report, setReport] = useState<Report>({
     id: 'report_' + Date.now(),
-    name: 'НОВИЙ_СУВЕ� ЕННИЙ_ЗВІТ',
+    name: 'НОВИЙ_СУВЕ ЕННИЙ_ЗВІТ',
     sections: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -114,7 +114,7 @@ export const ReportBuilder: React.FC = () => {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'ReportBuilder',
-        message: `ЕКСПО� Т_ЗВІТУ [${format.toUpperCase()}]: Файл "${report.name}" згенеровано успішно.`,
+        message: `ЕКСПОРТ_ЗВІТУ [${format.toUpperCase()}]: Файл "${report.name}" згенеровано успішно.`,
         severity: 'info',
         timestamp: new Date().toISOString(),
         code: 'REPORT_EXPORT'
@@ -126,7 +126,7 @@ export const ReportBuilder: React.FC = () => {
     window.dispatchEvent(new CustomEvent('predator-error', {
       detail: {
         service: 'ReportBuilder',
-        message: `ЗБЕ� ЕЖЕННЯ_ЗВІТУ: Конфігурацію "${report.name}" синхронізовано з Mirror Vault.`,
+        message: `ЗБЕ ЕЖЕННЯ_ЗВІТУ: Конфігурацію "${report.name}" синхронізовано з Mirror Vault.`,
         severity: 'success',
         timestamp: new Date().toISOString(),
         code: 'REPORT_SAVE'
@@ -180,13 +180,13 @@ export const ReportBuilder: React.FC = () => {
                     : "bg-black border-white/10 text-white hover:border-amber-500/40"
                 )}
               >
-                <Eye size={20} /> {previewMode ? '� ЕДАГУВАТИ' : 'ПЕ� ЕГЛЯД'}
+                <Eye size={20} /> {previewMode ? ' ЕДАГУВАТИ' : 'ПЕ ЕГЛЯД'}
               </button>
               <button
                 onClick={saveReport}
                 className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 border-2 border-emerald-400/30 rounded-3xl text-black text-[12px] font-black uppercase tracking-widest italic transition-all shadow-4xl flex items-center gap-3"
               >
-                <Save size={20} /> ЗБЕ� ЕГТИ
+                <Save size={20} /> ЗБЕ ЕГТИ
               </button>
             </div>
           }
@@ -227,7 +227,7 @@ export const ReportBuilder: React.FC = () => {
               </div>
 
               <div className="mt-24 pt-12 border-t border-slate-100 flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
-                <p>ЗГЕНЕ� ОВАНО СИСТЕМОЮ PREDATOR: {new Date(report.updatedAt).toLocaleString('uk-UA')}</p>
+                <p>ЗГЕНЕ ОВАНО СИСТЕМОЮ PREDATOR: {new Date(report.updatedAt).toLocaleString('uk-UA')}</p>
                 <div className="flex items-center gap-4">
                     <ShieldCheck size={14} className="text-amber-500" />
                     <span>CLASSIFIED_LEVEL_1_ONLY</span>
@@ -279,9 +279,9 @@ export const ReportBuilder: React.FC = () => {
                 <h2 className="text-[11px] font-black text-amber-500/60 uppercase tracking-[0.6em] mb-8 italic">📚 ТИТАН_ШАБЛОНИ</h2>
                 <div className="space-y-3">
                   {[
-                    { name: '🏢 П� ОФІЛЬ_КОМПАНІЇ', id: 'company' },
+                    { name: '🏢 П ОФІЛЬ_КОМПАНІЇ', id: 'company' },
                     { name: '📊 ФІНАНСОВИЙ_ЗВІТ', id: 'financial' },
-                    { name: '� ️ ОЦІНКА_� ИЗИКІВ', id: 'risk' },
+                    { name: ' ️ ОЦІНКА_РИЗИКІВ', id: 'risk' },
                     { name: '🔍 DUE_DILIGENCE', id: 'dd' }
                   ].map((template) => (
                     <button
@@ -311,7 +311,7 @@ export const ReportBuilder: React.FC = () => {
                       <div className="space-y-6 opacity-30">
                           <Layout size={64} className="mx-auto text-slate-300" />
                           <div>
-                              <p className="text-lg font-black text-slate-300 uppercase tracking-[0.4em] italic">ПОЛОТНО_ПО� ОЖНЄ</p>
+                              <p className="text-lg font-black text-slate-300 uppercase tracking-[0.4em] italic">ПОЛОТНО_ПО ОЖНЄ</p>
                               <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-2">ДОДАЙТЕ_КОМПОНЕНТИ_ДЛЯ_АНАЛІЗУ</p>
                           </div>
                       </div>
@@ -410,9 +410,9 @@ export const ReportBuilder: React.FC = () => {
 
 function getDefaultContent(type: string) {
   const defaults: Record<string, any> = {
-    title: 'ЯДЕ� НИЙ_АНАЛІТИЧНИЙ_ЗАГОЛОВОК',
+    title: 'ЯДЕ НИЙ_АНАЛІТИЧНИЙ_ЗАГОЛОВОК',
     text: 'Аргументуйте вашу стратегічну гіпотезу тут...',
-    kpi: { title: 'KPI_ВЕКТО� ', value: '0.00' },
+    kpi: { title: 'KPI_ВЕКТО ', value: '0.00' },
     chart: { type: 'line', data: [] },
     table: { headers: [], rows: [] },
     page_break: ''

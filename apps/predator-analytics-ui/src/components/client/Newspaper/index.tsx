@@ -39,7 +39,7 @@ export const Newspaper: React.FC = () => {
       {/* Header */}
       <div className="text-center py-8 border-b border-white/5">
         <div className="text-sm font-bold text-slate-500 uppercase tracking-[0.2em] mb-2">Щоденний Аналітичний Дайджест</div>
-        <h1 className="text-4xl md:text-5xl font-serif text-white mb-4">� анкова Газета</h1>
+        <h1 className="text-4xl md:text-5xl font-serif text-white mb-4"> анкова Газета</h1>
         <div className="text-slate-400 font-serif italic">Випуск від {new Date().toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
       </div>
 

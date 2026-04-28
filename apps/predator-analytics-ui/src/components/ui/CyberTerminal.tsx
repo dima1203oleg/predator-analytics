@@ -18,19 +18,19 @@ export const CyberTerminal: React.FC = () => {
     const navigate = useNavigate();
     const [azrStatus, setAzrStatus] = useState<any>({
         generation: 42,
-        phase_name: '� ежим � екомендацій',
+        phase_name: 'режим рекомендацій',
         active: true
     });
 
     useEffect(() => {
         const actions = [
-            "СКАНУВАННЯ_ТОПОЛОГІЇ_МЕ� ЕЖІ...",
+            "СКАНУВАННЯ_ТОПОЛОГІЇ_МЕ ЕЖІ...",
             "ІНІЦІАЛІЗАЦІЯ_ЦИКЛУ_OODA_v40",
-            "ВЕ� ИФІКАЦІЯ_ДОКАЗІВ_МЕ� КЛА_БЛОКУ_772",
-            "КО� ИГУВАННЯ_НЕЙ� ОННИХ_ВАГ_ДЛЯ_ВИЯВЛЕННЯ_АНОМАЛІЙ",
-            "УДОСКОНАЛЕННЯ_П� ОГНОСТИЧНОЇ_МОДЕЛІ_� ЕГІОНУ",
-            "СКАНУВАННЯ_ІМУННОЇ_СИСТЕМИ_ЗАВЕ� ШЕНО_ЗДО� ОВ'Я_99_8",
-            "ДОДАВАННЯ_БЛОКУ_0xFE32_ДО_� ЕЄСТ� У_П� АВДИ"
+            "ВЕ ИФІКАЦІЯ_ДОКАЗІВ_МЕ КЛА_БЛОКУ_772",
+            "КО ИГУВАННЯ_НЕЙ ОННИХ_ВАГ_ДЛЯ_ВИЯВЛЕННЯ_АНОМАЛІЙ",
+            "УДОСКОНАЛЕННЯ_П ОГНОСТИЧНОЇ_МОДЕЛІ_ ЕГІОНУ",
+            "СКАНУВАННЯ_ІМУННОЇ_СИСТЕМИ_ЗАВЕ ШЕНО_ЗДО ОВ'Я_99_8",
+            "ДОДАВАННЯ_БЛОКУ_0xFE32_ДО_ ЕЄСТ У_П АВДИ"
         ];
 
         const interval = setInterval(() => {
@@ -61,8 +61,8 @@ export const CyberTerminal: React.FC = () => {
                                     <Activity className="h-4 w-4 text-emerald-500 animate-pulse" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">АЗ� _ТЕ� МІНАЛ_v45.1</span>
-                                    <span className="text-[8px] font-mono text-emerald-500/50">ЗАХИЩЕНИЙ_ШИФ� ОВАНИЙ_КАНАЛ</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">АЗ _ТЕ МІНАЛ_v45.1</span>
+                                    <span className="text-[8px] font-mono text-emerald-500/50">ЗАХИЩЕНИЙ_ШИФ ОВАНИЙ_КАНАЛ</span>
                                 </div>
                             </div>
                             <button
@@ -76,7 +76,7 @@ export const CyberTerminal: React.FC = () => {
                             {logs.map((log, i) => (
                                 <div key={i} className="flex gap-2 leading-relaxed">
                                     <span className="text-slate-600 shrink-0">[{log.timestamp}]</span>
-                                    <span className={log.level === 'AZR' ? 'text-emerald-400 font-bold' : 'text-blue-400 opacity-80'}>{log.level === 'AZR' ? 'АЗ� ' : 'ІНФО'}</span>
+                                    <span className={log.level === 'AZR' ? 'text-emerald-400 font-bold' : 'text-blue-400 opacity-80'}>{log.level === 'AZR' ? 'АЗ ' : 'ІНФО'}</span>
                                     <span className="text-slate-300">{log.message}</span>
                                 </div>
                             ))}
@@ -98,7 +98,7 @@ export const CyberTerminal: React.FC = () => {
                 >
                     <div className="flex flex-col items-end">
                         <span className="text-[9px] font-black text-amber-400 uppercase tracking-widest flex items-center gap-1">
-                            АЗ�  СИСТЕМА <Zap size={10} className="fill-amber-400" />
+                            АЗ  СИСТЕМА <Zap size={10} className="fill-amber-400" />
                         </span>
                         <span className="text-xs font-bold text-white flex items-center gap-1">
                             ГЕН {azrStatus.generation}

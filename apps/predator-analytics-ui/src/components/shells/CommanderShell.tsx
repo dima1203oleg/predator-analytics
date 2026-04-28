@@ -49,12 +49,12 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
     { id: TabView.OVERVIEW, label: 'ОГЛЯД', icon: <Activity size={18} />, color: 'text-rose-500' },
     { id: TabView.OMNISCIENCE, label: 'ВСЕВИДЯЧЕ ОКО', icon: <Eye size={18} />, color: 'text-purple-500' },
     { id: TabView.SEARCH, label: 'ГЛИБОКИЙ ПОШУК', icon: <Zap size={18} />, color: 'text-rose-400' },
-    { id: TabView.AGENTS, label: 'УП� АВЛІННЯ � ОЄМ', icon: <Sparkles size={18} />, color: 'text-emerald-500' },
+    { id: TabView.AGENTS, label: 'УП АВЛІННЯ  ОЄМ', icon: <Sparkles size={18} />, color: 'text-emerald-500' },
   ];
 
   const sideNavItems = [
-    { id: TabView.DATABASES, icon: <Database size={24} />, label: 'ЦЕНТ�  ДАНИХ' },
-    { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'КО� ТЕКС' },
+    { id: TabView.DATABASES, icon: <Database size={24} />, label: 'ЦЕНТ  ДАНИХ' },
+    { id: TabView.SYSTEM_HEALTH, icon: <Cpu size={24} />, label: 'КО ТЕКС' },
     { id: TabView.SECURITY, icon: <Shield size={24} />, label: 'БЕЗПЕКА' },
     { id: TabView.SETTINGS, icon: <Settings size={24} />, label: 'НАЛАШТУВАННЯ' },
   ];
@@ -201,7 +201,7 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
             <button
               onClick={() => setIsZenMode(!isZenMode)}
               className="p-3 text-slate-500 hover:text-rose-500 transition-colors"
-              title="� ежим концентрації"
+              title="режим концентрації"
             >
               {isZenMode ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
             </button>
@@ -235,15 +235,15 @@ const CommanderShell: React.FC<ShellProps> = ({ children, activeTab, onTabChange
           <aside className="w-80 bg-black/40 backdrop-blur-3xl border-l border-white/5 flex flex-col p-6 gap-8 overflow-y-auto hidden 2xl:flex">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">ТЕЛЕМЕТ� ІЯ СИСТЕМИ</span>
+                <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">ТЕЛЕМЕТ ІЯ СИСТЕМИ</span>
                 <Activity size={14} className="text-rose-500 animate-pulse" />
               </div>
 
               <div className="space-y-4">
                 {[
-                  { label: 'ЯД� О AI', value: metrics.cpu, color: 'bg-rose-500', text: 'text-rose-500' },
-                  { label: 'СИНХ� ОНІЗАЦІЯ ДАНИХ', value: metrics.sync, color: 'bg-emerald-500', text: 'text-emerald-500' },
-                  { label: 'МАТ� ИЦЯ БЕЗПЕКИ', value: metrics.safety, color: 'bg-rose-400', text: 'text-rose-400' },
+                  { label: 'ЯДРО AI', value: metrics.cpu, color: 'bg-rose-500', text: 'text-rose-500' },
+                  { label: 'СИНХ ОНІЗАЦІЯ ДАНИХ', value: metrics.sync, color: 'bg-emerald-500', text: 'text-emerald-500' },
+                  { label: 'МАТ ИЦЯ БЕЗПЕКИ', value: metrics.safety, color: 'bg-rose-400', text: 'text-rose-400' },
                 ].map(stat => (
                   <div key={stat.label} className="space-y-2">
                     <div className="flex justify-between text-[9px] font-black tracking-widest uppercase">

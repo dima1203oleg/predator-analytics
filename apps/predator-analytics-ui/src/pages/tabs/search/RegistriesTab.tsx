@@ -1,8 +1,8 @@
 /**
- * 📂 REGISTRIES // СКАНЕ�  � ЕЄСТ� ІВ | v58.2-WRAITH
+ * 📂 REGISTRIES // СКАНЕ   ЕЄСТ ІВ | v58.2-WRAITH
  * PREDATOR Analytics — Business Intelligence & Registry Forensic
  *
- * Глибоке сканування юридичних осіб: ЄД� ПОУ, Бенефіціари, � изики.
+ * Глибоке сканування юридичних осіб: ЄД ПОУ, Бенефіціари,  изики.
  * Моніторинг з'єднання з державними базами даних в реальному часі.
  *
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
@@ -65,18 +65,18 @@ export const RegistriesTab = () => {
                 setRegistries([
                     {
                         id: 'STATE_CORE',
-                        name: 'ДЕ� ЖАВНІ_� ЕЄСТ� И',
+                        name: 'ДЕ ЖАВНІ_ ЕЄСТ И',
                         icon: 'Database',
                         color: '#10b981',
                         registries: [
-                            { id: 'edr', name: 'ЄД�  (Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
+                            { id: 'edr', name: 'ЄД  (Юридичні особи)', status: 'online', records: '1.4M', latency: '45ms' },
                             { id: 'tax', name: 'Державна Податкова Служба', status: 'online', records: '4.2M', latency: '32ms' },
                             { id: 'customs', name: 'Митна база (HS-CORE)', status: 'online', records: '115M', latency: '28ms' }
                         ]
                     },
                     {
                         id: 'FIN_INTEL',
-                        name: 'ФІНАНСОВА_� ОЗВІДКА',
+                        name: 'ФІНАНСОВА_РОЗВІДКА',
                         icon: 'Shield',
                         color: '#f59e0b',
                         registries: [
@@ -100,8 +100,8 @@ export const RegistriesTab = () => {
         } catch {
             // Mock Results
             setResults([
-                { edrpou: '37129321', name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК� ЕЙН"', status: 'АКТИВНО', type: 'ТОВ' },
-                { edrpou: '00192312', name: 'П� АТ "ОДЕСЬКИЙ ПО� Т"', status: 'АКТИВНО', type: 'АКЦІОНЕ� НЕ ТОВ' }
+                { edrpou: '37129321', name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК ЕЙН"', status: 'АКТИВНО', type: 'ТОВ' },
+                { edrpou: '00192312', name: 'П АТ "ОДЕСЬКИЙ ПО Т"', status: 'АКТИВНО', type: 'АКЦІОНЕ НЕ ТОВ' }
             ]);
         } finally {
             setTimeout(() => setSearching(false), 1200);
@@ -117,7 +117,7 @@ export const RegistriesTab = () => {
             // Mock Company Details
             setSelectedCompany({
                 edrpou,
-                name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК� ЕЙН"',
+                name: 'ТОВ "ГЛОБАЛ СТІЛ ЮК ЕЙН"',
                 address: 'м. Київ, вул. Металургів, буд. 12/4',
                 status: 'АКТИВНО',
                 authorized_capital: '45,000,000 UAH',
@@ -153,10 +153,10 @@ export const RegistriesTab = () => {
                                 <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                             </div>
                             <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                                СКАНЕ�  <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase">� ЕЄСТ� ІВ</span>
+                                СКАНЕ  <span className="text-emerald-500 underline decoration-emerald-600/20 decoration-8 italic uppercase"> ЕЄСТ ІВ</span>
                             </h1>
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                ГЛИБИННИЙ АНАЛІЗ ЄД� ПОУ • БЕНЕФІЦІА� И • CERS_RISK_SCORE
+                                ГЛИБИННИЙ АНАЛІЗ ЄД ПОУ • БЕНЕФІЦІА И • CERS_RISK_SCORE
                             </p>
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export const RegistriesTab = () => {
                 stats={[
                     { label: 'ОБ\'ЄКТІВ_У_БАЗІ', value: '4.2M+', icon: <Database size={14} />, color: 'primary' },
                     { label: 'ТОЧНІСТЬ_VERIFIED', value: '98.4%', icon: <ShieldCheck size={14} />, color: 'success', animate: true },
-                    { label: 'АКТИВНІ_� ЕЄСТ� И', value: '38', icon: <Satellite size={14} />, color: 'warning' }
+                    { label: 'АКТИВНІ_ ЕЄСТ И', value: '38', icon: <Satellite size={14} />, color: 'warning' }
                 ]}
                 actions={
                     <div className="flex gap-4">
@@ -172,7 +172,7 @@ export const RegistriesTab = () => {
                             <RefreshCcw size={24} />
                         </button>
                         <button onClick={handleSearch} className="px-8 py-5 bg-emerald-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 shadow-2xl transition-all flex items-center gap-4">
-                            <Radar size={18} /> СКАНУВАТИ_ВЕСЬ_КОНТУ� 
+                            <Radar size={18} /> СКАНУВАТИ_ВЕСЬ_КОНТУ 
                         </button>
                     </div>
                 }
@@ -186,7 +186,7 @@ export const RegistriesTab = () => {
                     </div>
                     <div className="space-y-10 relative z-10">
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ВВЕДІТЬ КОД ЄД� ПОУ АБО ПОВНУ НАЗВУ СУБ'ЄКТА</label>
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic ml-4">ВВЕДІТЬ КОД ЄД ПОУ АБО ПОВНУ НАЗВУ СУБ'ЄКТА</label>
                             <div className="relative group/input">
                                 <div className="absolute inset-y-0 left-8 flex items-center">
                                     <Search className="w-8 h-8 text-slate-800 group-focus-within/input:text-emerald-500 transition-colors" />
@@ -195,7 +195,7 @@ export const RegistriesTab = () => {
                                     type="text"
                                     value={query} onChange={(e) => setQuery(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    placeholder="ЄД� ПОУ АБО НАЗВА..."
+                                    placeholder="ЄД ПОУ АБО НАЗВА..."
                                     className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-8 pl-20 rounded-[2.5rem] text-3xl font-black text-white italic tracking-tighter placeholder:text-slate-900 outline-none focus:border-emerald-500/40 focus:bg-emerald-500/[0.02] transition-all uppercase"
                                 />
                             </div>
@@ -211,7 +211,7 @@ export const RegistriesTab = () => {
                                                 <Fingerprint size={16} className="text-slate-800 group-hover/it:text-emerald-500 transition-colors" />
                                             </div>
                                             <h4 className="text-sm font-black text-white italic uppercase truncate mb-1">{res.name}</h4>
-                                            <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄД� ПОУ: {res.edrpou}</p>
+                                            <p className="text-[9px] font-black text-slate-700 italic uppercase">ЄД ПОУ: {res.edrpou}</p>
                                         </motion.div>
                                     ))}
                                 </motion.div>
@@ -239,7 +239,7 @@ export const RegistriesTab = () => {
                 <div className="py-32 flex flex-col items-center justify-center space-y-12">
                     <CyberOrb size={80} color="#10b981" />
                     <div className="space-y-4 text-center">
-                        <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТ� ИЦІ...</p>
+                        <p className="text-2xl font-black text-emerald-500 uppercase italic tracking-[0.8em] animate-pulse">ДЕКОДУВАННЯ_БІЗНЕС_МАТ ИЦІ...</p>
                         <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">EDRPOU: {query.toUpperCase()}</p>
                     </div>
                 </div>
@@ -265,7 +265,7 @@ export const RegistriesTab = () => {
                             </div>
 
                             <h2 className="text-4xl font-black text-white uppercase tracking-tighter text-center leading-tight mb-5 italic skew-x-[-2deg]">{selectedCompany.name}</h2>
-                            <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">ЄД� ПОУ: {selectedCompany.edrpou}</Badge>
+                            <Badge className="bg-emerald-600/10 text-emerald-500 border-emerald-500/30 mb-12 uppercase text-xs font-mono font-black italic px-6 py-2 rounded-xl">ЄД ПОУ: {selectedCompany.edrpou}</Badge>
 
                             <div className="w-full space-y-8">
                                 <div className="p-8 bg-black/60 rounded-[3rem] border border-white/[0.04] text-center space-y-6">
@@ -288,12 +288,12 @@ export const RegistriesTab = () => {
                                             <span className="text-[10px] text-slate-700 font-black uppercase">/ 100</span>
                                         </div>
                                     </div>
-                                    <p className="text-[11px] font-black text-slate-400 uppercase italic opacity-60 leading-relaxed px-4">В� АХОВАНО 40+ ФАКТО� ІВ � ИЗИКУ, ВКЛЮЧАЮЧИ PEP ТА ВЕ� ТИКАЛЬ ПОШУКУ</p>
+                                    <p className="text-[11px] font-black text-slate-400 uppercase italic opacity-60 leading-relaxed px-4">В АХОВАНО 40+ ФАКТО ІВ РИЗИКУ, ВКЛЮЧАЮЧИ PEP ТА ВЕ ТИКАЛЬ ПОШУКУ</p>
                                 </div>
 
                                 <div className="p-8 bg-black/60 rounded-[2.5rem] border border-white/[0.04] space-y-2 group">
                                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic leading-none mb-4 flex items-center gap-2">
-                                        <MapPin size={14} className="group-hover:text-emerald-500 transition-colors" /> Ю� ИДИЧНА_АД� ЕСА
+                                        <MapPin size={14} className="group-hover:text-emerald-500 transition-colors" /> Ю ИДИЧНА_АД ЕСА
                                     </p>
                                     <p className="text-sm font-black text-slate-300 italic uppercase leading-relaxed">{selectedCompany.address}</p>
                                 </div>
@@ -314,11 +314,11 @@ export const RegistriesTab = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <TacticalCard variant="cyber" className="p-10 rounded-[3.5rem] space-y-10">
                                 <h3 className="text-[12px] font-black text-emerald-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/[0.04] pb-6 mb-2">
-                                    <Users size={18} /> БЕНЕФІЦІА� НА_МАТ� ИЦЯ
+                                    <Users size={18} /> БЕНЕФІЦІА НА_МАТ ИЦЯ
                                 </h3>
                                 <div className="space-y-8">
                                     <div className="space-y-4">
-                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КЕ� ІВНИЦТВО (MANAGEMENT)</p>
+                                        <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic ml-2">КЕ ІВНИЦТВО (MANAGEMENT)</p>
                                         {selectedCompany.directors.map(d => (
                                             <div key={d} className="flex items-center gap-6 p-6 bg-white/[0.01] border border-white/[0.04] rounded-[2rem] hover:border-emerald-500/40 transition-all group">
                                                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-all">
@@ -344,7 +344,7 @@ export const RegistriesTab = () => {
 
                             <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] bg-amber-600/[0.01] border-amber-500/20 space-y-8">
                                 <h3 className="text-[12px] font-black text-amber-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-amber-500/10 pb-6">
-                                    <ShieldAlert size={20} /> ФАКТО� И_� ИЗИКУ_DETECTED
+                                    <ShieldAlert size={20} /> ФАКТО И_РИЗИКУ_DETECTED
                                 </h3>
                                 <div className="space-y-4">
                                     {selectedCompany.risk_factors.map((risk, i) => (
@@ -365,7 +365,7 @@ export const RegistriesTab = () => {
                                 <Layout size={300} className="text-emerald-500" />
                             </div>
                             <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/[0.04] pb-6">
-                                <ClipboardList size={20} className="text-emerald-500" /> СЕМАНТИЧНИЙ_КЛАСИФІКАТО� _КВЕД
+                                <ClipboardList size={20} className="text-emerald-500" /> СЕМАНТИЧНИЙ_КЛАСИФІКАТО _КВЕД
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                                 {selectedCompany.activities.map(act => (
@@ -380,7 +380,7 @@ export const RegistriesTab = () => {
                         <div className="flex items-center gap-6 px-10 py-5 bg-black border border-white/[0.04] rounded-[2.5rem] w-fit shadow-2xl">
                             <CheckCircle size={18} className="text-emerald-500" />
                             <span className="text-[11px] font-black text-slate-600 uppercase tracking-[0.4em] italic">
-                                ОСТАННЯ_СИНХ� ОНІЗАЦІЯ_З_ЄД� : {new Date(selectedCompany.last_updated).toLocaleString('uk-UA')}
+                                ОСТАННЯ_СИНХ ОНІЗАЦІЯ_З_ЄД : {new Date(selectedCompany.last_updated).toLocaleString('uk-UA')}
                             </span>
                         </div>
                     </motion.div>
@@ -391,8 +391,8 @@ export const RegistriesTab = () => {
             <section className="bg-black border-2 border-white/[0.03] p-12 rounded-[4rem] shadow-3xl relative overflow-hidden">
                 <div className="flex items-center justify-between mb-12">
                     <div className="space-y-2">
-                        <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg]">ПІДКЛЮЧЕНІ_� ЕЄСТ� И_ТА_ДЖЕ� ЕЛА</h3>
-                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТО� ИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В � ЕАЛЬНОМУ ЧАСІ</p>
+                        <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase skew-x-[-2deg]">ПІДКЛЮЧЕНІ_ ЕЄСТ И_ТА_ДЖЕ ЕЛА</h3>
+                        <p className="text-[11px] text-slate-700 font-black uppercase tracking-[0.3em] italic">МОНІТО ИНГ З'ЄДНАННЯ ТА СКАНУВАННЯ В  ЕАЛЬНОМУ ЧАСІ</p>
                     </div>
                     <div className="px-6 py-3 bg-emerald-600/10 border border-emerald-600/40 rounded-full flex items-center gap-4 text-emerald-500 shadow-2xl">
                         <motion.div animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />
@@ -424,7 +424,7 @@ export const RegistriesTab = () => {
                                                 <p className="text-base font-black text-emerald-400 font-mono tracking-tighter italic">{reg.records}</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[9px] font-black text-slate-800 uppercase italic leading-none mb-2">ЛОГГЕ� </p>
+                                                <p className="text-[9px] font-black text-slate-800 uppercase italic leading-none mb-2">ЛОГГЕ </p>
                                                 <p className="text-base font-black text-cyan-400 font-mono tracking-tighter italic">{reg.latency || '24ms'}</p>
                                             </div>
                                         </div>

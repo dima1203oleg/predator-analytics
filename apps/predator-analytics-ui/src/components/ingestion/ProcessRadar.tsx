@@ -88,7 +88,7 @@ export const ProcessRadar = () => {
                                     <Zap size={14} className="text-emerald-400" />
                                     <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Інтелект Процесів</span>
                                 </div>
-                                <div className="text-[9px] font-mono text-slate-500">ЖИВА_ТЕЛЕМЕТ� ІЯ</div>
+                                <div className="text-[9px] font-mono text-slate-500">ЖИВА_ТЕЛЕМЕТ ІЯ</div>
                             </div>
 
                             <div className="space-y-4">

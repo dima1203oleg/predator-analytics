@@ -51,9 +51,9 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
       {/* Real-time Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { icon: Cpu, label: 'ЦП_ОБ� ОБКА', value: metrics.cpu, unit: '%', color: 'cyan', desc: 'Завантаження ядер' },
+          { icon: Cpu, label: 'ЦП_ОБ ОБКА', value: metrics.cpu, unit: '%', color: 'cyan', desc: 'Завантаження ядер' },
           { icon: HardDrive, label: 'MEM_КЕШ', value: metrics.memory, unit: '%', color: 'blue', desc: 'Використання VRAM' },
-          { icon: Network, label: 'NET_Т� АФІК', value: metrics.network, unit: '%', color: 'purple', desc: 'Вхідні пакети' },
+          { icon: Network, label: 'NET_Т АФІК', value: metrics.network, unit: '%', color: 'purple', desc: 'Вхідні пакети' },
           { icon: Activity, label: 'SYS_HEALTH', value: metrics.health, unit: '%', color: 'green', desc: 'Загальна стабільність' },
         ].map((metric, idx) => (
           <TacticalCard key={idx} variant="holographic" className="p-0 overflow-hidden" title={metric.label}>
@@ -85,7 +85,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
 
       {/* Active Operations & Alerts Split */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <TacticalCard variant="holographic" title="🔄 АКТИВНІ_ОПЕ� АЦІЇ_ЯД� А">
+        <TacticalCard variant="holographic" title="🔄 АКТИВНІ_ОПЕ АЦІЇ_ЯД А">
           <div className="space-y-4 p-2">
             {activeProcesses.length === 0 ? (
               <div className="p-10 text-center border border-dashed border-slate-800 rounded-[2rem] bg-slate-900/20">
@@ -135,7 +135,7 @@ export const OperatorShell: React.FC<OperatorShellProps> = ({
           </div>
         </TacticalCard>
 
-        <TacticalCard variant="holographic" title="� ️ ТЕ� МІНОВІ_СПОВІЩЕННЯ">
+        <TacticalCard variant="holographic" title=" ️ ТЕ МІНОВІ_СПОВІЩЕННЯ">
           <div className="space-y-3 p-2 max-h-[400px] overflow-y-auto pr-4 custom-scrollbar">
             {alerts.length === 0 ? (
               <div className="p-10 text-center border border-dashed border-slate-800 rounded-[2rem] bg-green-500/5">

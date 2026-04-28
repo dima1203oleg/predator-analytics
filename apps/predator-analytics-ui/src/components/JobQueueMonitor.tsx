@@ -70,9 +70,9 @@ const getStatusColor = (status: JobInfo['status']) => {
 const StatusBadge: React.FC<{ status: JobInfo['status'] }> = ({ status }) => {
   const colorClass = getStatusColor(status);
   const statusLabels: Record<JobInfo['status'], string> = {
-    queued: 'В ЧЕ� ЗІ',
+    queued: 'В ЧЕ ЗІ',
     running: 'ВИКОНУЄТЬСЯ',
-    completed: 'ЗАВЕ� ШЕНО',
+    completed: 'ЗАВЕ ШЕНО',
     failed: 'ПОМИЛКА'
   };
 

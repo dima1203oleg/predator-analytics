@@ -1,6 +1,6 @@
 /**
  * 🦅 PREDATOR v58.2-WRAITH — STRATEGIC MORNING BRIEFING (AGENTIC CORE)
- * � озділ I.3 — ШІ-керований звіт для вищого керівництва.
+ *  озділ I.3 — ШІ-керований звіт для вищого керівництва.
  * 
  * © 2026 PREDATOR Analytics — HR-04 (100% українська)
  */
@@ -81,11 +81,11 @@ export default function ExecutiveBriefView() {
   // Live Stream Simulation
   useEffect(() => {
     const messages = [
-      'Г� АФ: Виявлено нову афіліацію першого рівня в офшорній зоні',
+      'Г АФ: Виявлено нову афіліацію першого рівня в офшорній зоні',
       'OSINT: Виявлено 14 нових згадок суб\'єкта в закритих реєстрах',
-      'Т� ИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
-      'СИНХ� ОНІЗАЦІЯ: Оновлено санкційні списки � НБО та OFAC/EU',
-      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГ� О" підвищено до 98.9% (АГЕНТСЬКА_СИНХ� ОНІЗАЦІЯ)',
+      'Т ИВОГА: Спроба анонімізації транзакції через вузол "ОАЕ-Транзит"',
+      'СИНХ ОНІЗАЦІЯ: Оновлено санкційні списки  НБО та OFAC/EU',
+      'GLM-5.1 АНАЛІЗ: Прогноз ризику для ТОВ "АГ О" підвищено до 98.9% (АГЕНТСЬКА_СИНХ ОНІЗАЦІЯ)',
       'МИТНИЦЯ: Перехоплено декларацію з аномальною ціною — Тунель ZROK активний',
       'ФІНАНСИ: Виявлено ознаки кругової торгівлі у секторі палива'
     ];
@@ -107,9 +107,9 @@ export default function ExecutiveBriefView() {
 
   const targets = useMemo(() => {
     return overview?.top_risk_companies?.slice(0, 5) || [
-      { edrpou: '4592', name: 'ТОВ "АГ� О-ІМПЕКС"', maxRisk: 94, totalValue: 45000000 },
-      { edrpou: '1102', name: 'БФ "ВІД� ОДЖЕННЯ-ПЛЮС"', maxRisk: 88, totalValue: 12000000 },
-      { edrpou: '9938', name: 'П� АТ "СХІД-ЛОГІСТИК"', maxRisk: 72, totalValue: 8000000 },
+      { edrpou: '4592', name: 'ТОВ "АГ О-ІМПЕКС"', maxRisk: 94, totalValue: 45000000 },
+      { edrpou: '1102', name: 'БФ "ВІД ОДЖЕННЯ-ПЛЮС"', maxRisk: 88, totalValue: 12000000 },
+      { edrpou: '9938', name: 'П АТ "СХІД-ЛОГІСТИК"', maxRisk: 72, totalValue: 8000000 },
     ];
   }, [overview]);
 
@@ -128,15 +128,15 @@ export default function ExecutiveBriefView() {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
                <div className="badge-v2 badge-v2-amber px-3 py-1 text-[10px] font-black tracking-[0.2em] uppercase">
-                  ЦІЛКОМ ТАЄМНО // КОНТУ� -S
+                  ЦІЛКОМ ТАЄМНО // КОНТУ -S
                </div>
                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse shadow-[0_0_10px_rgba(220,38,38,0.8)]" />
             </div>
             <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg]">
-              СУВЕ� ЕННЕ <span className="text-red-600">СТ� АТЕГІЧНЕ ЗВЕДЕННЯ</span>
+              СУВЕ ЕННЕ <span className="text-red-600">СТ АТЕГІЧНЕ ЗВЕДЕННЯ</span>
             </h1>
             <p className="text-slate-500 font-mono text-[11px] tracking-[0.3em] uppercase">
-              П� ЕДИКТИВНИЙ АНАЛІЗ ЦЕНТ� АЛЬНОГО ЯД� А | v58.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
+             ПРЕДИКТИВНИЙ АНАЛІЗ ЦЕНТ АЛЬНОГО ЯД А | v58.2-WRAITH (АГЕНТСЬКИЙ_ПУЛ)
             </p>
           </div>
           
@@ -146,7 +146,7 @@ export default function ExecutiveBriefView() {
                 {overview?.summary ? (overview.summary.total_declarations / 1000).toFixed(1) + 'k' : '14.2k'}
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mt-1 italic">
-                ОБ'ЄКТІВ ОБ� ОБЛЕНО
+                ОБ'ЄКТІВ ОБ ОБЛЕНО
               </div>
             </div>
             <div className="w-px h-12 bg-white/10 hidden md:block" />
@@ -155,7 +155,7 @@ export default function ExecutiveBriefView() {
                 {overview?.summary ? '$' + (overview.summary.total_value_usd / 1000000000).toFixed(1) + 'B' : '$12.4B'}
               </div>
               <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600 mt-1 italic">
-                ОПЕ� АЦІЙНИЙ ОБСЯГ
+                ОПЕРАЦІЙНИЙ ОБСЯГ
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function ExecutiveBriefView() {
                   <Network size={20} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-white uppercase italic tracking-tight">АКТИВНІСТЬ ЗАГ� ОЗ МЕ� ЕЖІ</h2>
+                  <h2 className="text-lg font-black text-white uppercase italic tracking-tight">АКТИВНІСТЬ ЗАГ ОЗ МЕ ЕЖІ</h2>
                   <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Останні 24 години управління</p>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function ExecutiveBriefView() {
                 <Target size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-black text-white uppercase italic tracking-tight">П� ІО� ИТЕТНІ ОБ'ЄКТИ</h2>
+                <h2 className="text-lg font-black text-white uppercase italic tracking-tight">П ІО ИТЕТНІ ОБ'ЄКТИ</h2>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Критичний рівень ризику — аналіз AI</p>
               </div>
             </div>
@@ -230,10 +230,10 @@ export default function ExecutiveBriefView() {
               <table className="w-full text-left">
                 <thead className="bg-white/[0.02] text-slate-500 uppercase tracking-[0.2em] text-[10px] font-black italic">
                   <tr>
-                    <th className="px-6 py-4">ID_СЕ� ТИФІКАТ</th>
-                    <th className="px-6 py-4">СУБ'ЄКТ_� ОЗВІДКИ</th>
+                    <th className="px-6 py-4">ID_СЕ ТИФІКАТ</th>
+                    <th className="px-6 py-4">СУБ'ЄКТ_ ОЗВІДКИ</th>
                     <th className="px-6 py-4">ОБСЯГ_USD</th>
-                    <th className="px-6 py-4 text-center">ІНДЕКС_� ИЗИКУ</th>
+                    <th className="px-6 py-4 text-center">ІНДЕКС_РИЗИКУ</th>
                     <th className="px-6 py-4 text-right">ДІЯ</th>
                   </tr>
                 </thead>
@@ -279,13 +279,13 @@ export default function ExecutiveBriefView() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest lowercase">О� БІТАЛЬНА_ФАЗА: АКТИВНО</span>
+                <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest lowercase">О БІТАЛЬНА_ФАЗА: АКТИВНО</span>
               </div>
             </div>
             
             <div className="absolute bottom-5 right-5 z-10 flex flex-col items-end">
               <div className="text-2xl font-black text-white tracking-widest italic tabular-nums">
-                194 <span className="text-[10px] text-slate-500">К� АЇНИ</span>
+                194 <span className="text-[10px] text-slate-500">К АЇНИ</span>
               </div>
             </div>
           </section>
@@ -297,7 +297,7 @@ export default function ExecutiveBriefView() {
                 <div className="p-2.5 rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                   <Terminal size={18} />
                 </div>
-                <h2 className="text-lg font-black text-white italic uppercase tracking-tight">ЯД� О ТЕ� МІНАЛУ</h2>
+                <h2 className="text-lg font-black text-white italic uppercase tracking-tight">ЯДРО ТЕ МІНАЛУ</h2>
               </div>
               <div className="h-2 w-2 rounded-full bg-red-600 animate-ping" />
             </div>
@@ -366,8 +366,8 @@ export default function ExecutiveBriefView() {
               <ShieldCheck size={20} />
             </div>
             <div className="text-left">
-              <div className="text-sm font-black text-white uppercase italic">ВЕ� ИФІКУВАТИ ДАНІ</div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">КВАНТОВЕ ПІДТВЕ� ДЖЕННЯ � ЕЄСТ� ІВ</div>
+              <div className="text-sm font-black text-white uppercase italic">ВЕ ИФІКУВАТИ ДАНІ</div>
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">КВАНТОВЕ ПІДТВЕ ДЖЕННЯ  ЕЄСТ ІВ</div>
             </div>
           </div>
           <Zap size={18} className="text-yellow-400/40 group-hover:text-yellow-400 transition-colors" />
@@ -379,8 +379,8 @@ export default function ExecutiveBriefView() {
               <AlertOctagon size={20} />
             </div>
             <div className="text-left">
-              <div className="text-sm font-black text-white uppercase italic">ЗВІТ ДЛЯ � НБО</div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">ЕКСПО� Т П� АВОВОГО ДОСЬЄ</div>
+              <div className="text-sm font-black text-white uppercase italic">ЗВІТ ДЛЯ  НБО</div>
+              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">ЕКСПОРТ П АВОВОГО ДОСЬЄ</div>
             </div>
           </div>
           <ArrowRight size={18} className="text-red-500/40 group-hover:text-red-500 transition-all group-hover:translate-x-1" />

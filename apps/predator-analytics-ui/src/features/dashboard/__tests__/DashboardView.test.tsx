@@ -145,7 +145,7 @@ const overviewFixture = {
     {
       id: 'alert-1',
       type: 'trade',
-      message: '� ізкий стрибок митної вартості',
+      message: ' ізкий стрибок митної вартості',
       severity: 'critical' as const,
       timestamp: new Date().toISOString(),
       sector: 'Електроніка',
@@ -197,10 +197,10 @@ describe('DashboardView', () => {
       expect(screen.getByText(/ГОЛОВНИЙ/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/СИНХ� ОНІЗАЦІЯ_ЯД� А/i)).toBeInTheDocument();
+    expect(screen.getByText(/СИНХ ОНІЗАЦІЯ_ЯД А/i)).toBeInTheDocument();
     expect(screen.getByText(/ДВИГУНИ_АНАЛІЗУ/i)).toBeInTheDocument();
-    expect(screen.getByText(/ВЕ� ТИКАЛЬ_� ИЗИКІВ/i)).toBeInTheDocument();
-    expect(screen.getByText(/� ізкий стрибок митної вартості/i)).toBeInTheDocument();
+    expect(screen.getByText(/ВЕ ТИКАЛЬ_РИЗИКІВ/i)).toBeInTheDocument();
+    expect(screen.getByText(/ ізкий стрибок митної вартості/i)).toBeInTheDocument();
     expect(screen.getAllByTestId('mock-echart').length).toBeGreaterThan(0);
   });
 

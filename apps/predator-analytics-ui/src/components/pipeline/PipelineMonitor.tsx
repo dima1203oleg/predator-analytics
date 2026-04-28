@@ -148,7 +148,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                     </div>
                     <div>
                         <h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter flex items-center gap-3">
-                            {status?.state === 'READY' ? 'ЗНАННЯ СИНТЕЗОВАНО' : 'ДВИГУН ОБ� ОБКИ АКТИВНО'}
+                            {status?.state === 'READY' ? 'ЗНАННЯ СИНТЕЗОВАНО' : 'ДВИГУН ОБ ОБКИ АКТИВНО'}
                             {status?.state !== 'READY' && status?.state !== 'FAILED' && (
                                 <motion.div
                                     animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
@@ -170,7 +170,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                 </div>
             </div>
 
-            {/* �  CENTRAL VISUALIZER: Dynamic Mode Engine */}
+            {/*   CENTRAL VISUALIZER: Dynamic Mode Engine */}
             <div className="mb-12 relative">
                 <div className="h-[650px] bg-slate-900/40 rounded-[32px] border border-white/5 relative overflow-hidden ring-1 ring-white/5">
                     <NeuralPulse color={pipelineConfig.accentColor + '20'} size={1000} />
@@ -260,7 +260,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                             style={{ borderColor: layerActive ? pipelineConfig.accentColor : 'rgba(255,255,255,0.05)' }}
                                         >
                                             <div className="text-[10px] font-black uppercase text-white/40 tracking-widest">
-                                                {i === 0 ? 'СИ� І_ДАНІ' : i === 1 ? 'ПОТІК_OCR' : i === 2 ? 'СЕМАНТИЧНІ_ВЕКТО� И' : 'ВЕ� ШИНА_ЗНАНЬ'}
+                                                {i === 0 ? 'СИ І_ДАНІ' : i === 1 ? 'ПОТІК_OCR' : i === 2 ? 'СЕМАНТИЧНІ_ВЕКТО И' : 'ВЕ ШИНА_ЗНАНЬ'}
                                             </div>
                                             {layerActive && i === 3 && <Brain size={24} className="text-emerald-400 animate-bounce" />}
                                             {layerActive && i < 3 && <div className="w-1/2 h-1 bg-white/10 rounded-full overflow-hidden self-center mt-2"><motion.div className="h-full bg-white/20" animate={{ x: ['-100%', '100%'] }} transition={{ duration: 1, repeat: Infinity }} /></div>}
@@ -397,10 +397,10 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                             <Zap size={10} /> {pipelineConfig.visualMode}_ДВИГУН
                         </div>
                         <div className="space-y-1">
-                            <p>ЯД� О: {pipelineConfig.visualMode}</p>
-                            <p>СИНХ� ОНІЗАЦІЯ: ПА� АЛЕЛЬНА</p>
+                            <p>ЯДРО: {pipelineConfig.visualMode}</p>
+                            <p>СИНХ ОНІЗАЦІЯ: ПА АЛЕЛЬНА</p>
                             <p>СТАТУС_V3.5: АКТИВНО</p>
-                            <p>БУФЕ� : OODA_PRIMARY</p>
+                            <p>БУФЕ : OODA_PRIMARY</p>
                         </div>
                     </div>
                 </div>
@@ -473,7 +473,7 @@ export const PipelineMonitor: React.FC<PipelineMonitorProps> = ({ jobId, pipelin
                                         <div className="flex items-center gap-3">
                                             <span className="text-slate-600 font-bold text-[8px]">[SYSEVENT_{100 + i}]</span>
                                             <span className="group-hover:text-emerald-300 transition-colors uppercase">
-                                                {(status?.progress?.details ?? 'СИНХ� ОНІЗАЦІЯ_МАНІФЕСТУ...')}
+                                                {(status?.progress?.details ?? 'СИНХ ОНІЗАЦІЯ_МАНІФЕСТУ...')}
                                             </span>
                                         </div>
                                         <span className="text-slate-700 text-[8px]">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>

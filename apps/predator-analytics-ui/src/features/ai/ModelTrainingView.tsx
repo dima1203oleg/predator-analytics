@@ -373,13 +373,13 @@ export default function ModelTrainingView() {
                                             className="h-14 rounded-sm bg-white/5 border-white/10 hover:border-white/30 text-white/60 hover:text-white font-black tracking-[0.3em] uppercase text-[11px]"
                                         >
                                             <RefreshCw className={cn("mr-3", refreshing && "animate-spin")} size={16} />
-                                            СИНХ� ОНІЗУВАТИ_ЯД� О
+                                            СИНХ ОНІЗУВАТИ_ЯДРО
                                         </Button>
                                     </div>
                                 </div>
                             </TacticalCard>
 
-                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_� ЕСУ� СІВ" className="bg-black/40 border-white/5">
+                            <TacticalCard variant="holographic" title="СПОЖИВАННЯ_ ЕСУ СІВ" className="bg-black/40 border-white/5">
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     {[
                                         { label: 'CPU_POWER', value: snapshot.resources.cpuLabel, icon: Activity },
@@ -401,7 +401,7 @@ export default function ModelTrainingView() {
 
                         {/* Middle Column: Visualization & History */}
                         <div className="col-span-12 xl:col-span-5 space-y-8">
-                            <TacticalCard variant="cyber" title="ПОТІК_НЕЙ� ОННОЇ_ТОЧНОСТІ" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
+                            <TacticalCard variant="cyber" title="ПОТІК_НЕЙ ОННОЇ_ТОЧНОСТІ" className="bg-black/40 border-white/5 h-[400px] flex flex-col">
                                 <div className="flex-1 min-h-0 mt-8">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <AreaChart data={snapshot.metrics}>
@@ -443,9 +443,9 @@ export default function ModelTrainingView() {
                                 <div className="p-4 border-t border-white/5 flex items-center justify-between text-[8px] font-mono tracking-widest text-white/20 uppercase">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,1)]" />
-                                        <span>ЖИВА_ТЕЛЕМЕТ� ІЯ_СИНХ� ОНІЗАЦІЯ_ФАЗИ</span>
+                                        <span>ЖИВА_ТЕЛЕМЕТ ІЯ_СИНХ ОНІЗАЦІЯ_ФАЗИ</span>
                                     </div>
-                                    <span>З� АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
+                                    <span>З АЗКИ: {snapshot.metrics.length} ЦИКЛІВ</span>
                                 </div>
                             </TacticalCard>
 
@@ -475,7 +475,7 @@ export default function ModelTrainingView() {
 
                         {/* Right Column: Terminal Logs */}
                         <div className="col-span-12 xl:col-span-3">
-                            <TacticalCard variant="holographic" title="ПОТІК_НЕЙ� ОННИХ_ЛОГІВ" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
+                            <TacticalCard variant="holographic" title="ПОТІК_НЕЙ ОННИХ_ЛОГІВ" className="bg-black/60 border-white/5 h-full flex flex-col min-h-[600px]">
                                 <div className="flex-1 overflow-auto p-4 font-mono text-[9px] space-y-3 custom-scrollbar">
                                     {snapshot.logs.length > 0 ? (
                                         snapshot.logs.map((log, i) => (

@@ -95,7 +95,7 @@ export const ValueScreen: React.FC<ValueScreenProps> = ({
                 
                 <div className="mt-6 flex flex-col items-center">
                   <div className={cn("text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2")}>
-                    {type === 'earned' ? 'ЗГЕНЕ� ОВАНИЙ ДОХІД' : 'СУМА ЗАОЩАДЖЕННЯ'}
+                    {type === 'earned' ? 'ЗГЕНЕ ОВАНИЙ ДОХІД' : 'СУМА ЗАОЩАДЖЕННЯ'}
                   </div>
                   <div className={cn("flex items-baseline gap-1 text-5xl md:text-7xl font-black tracking-tighter", accentColor)}>
                     <span className="text-3xl md:text-5xl font-bold opacity-70">{currency}</span>

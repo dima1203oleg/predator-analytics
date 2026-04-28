@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { cn } from '@/utils/cn';
 
 export type SystemStatus = 'idle' | 'active' | 'processing' | 'alert' | 'critical' | 'quantum';
 type OrbSizeAlias = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

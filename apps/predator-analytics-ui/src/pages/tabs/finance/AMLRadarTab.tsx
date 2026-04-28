@@ -21,12 +21,12 @@ import { CyberOrb } from '@/components/CyberOrb';
 import { analyticsService } from '@/services/unified/analytics.service';
 
 const MOCK_AML_RADAR = [
-  { subject: 'СТ� УКТУ� УВАННЯ', A: 120, B: 110 },
-  { subject: 'ШАЙ� УВАННЯ', A: 98, B: 130 },
-  { subject: 'ОФШО� ІЗАЦІЯ', A: 86, B: 130 },
-  { subject: 'PEP-� ИЗИК', A: 140, B: 100 },
+  { subject: 'СТ УКТУ УВАННЯ', A: 120, B: 110 },
+  { subject: 'ШАЙ УВАННЯ', A: 98, B: 130 },
+  { subject: 'ОФШО ІЗАЦІЯ', A: 86, B: 130 },
+  { subject: 'PEP-РИЗИК', A: 140, B: 100 },
   { subject: 'САНКЦІЇ', A: 125, B: 90 },
-  { subject: 'ТЕ�  ПОТОКИ', A: 65, B: 85 },
+  { subject: 'ТЕ  ПОТОКИ', A: 65, B: 85 },
 ];
 
 export const AMLRadarTab: React.FC = () => {
@@ -52,7 +52,7 @@ export const AMLRadarTab: React.FC = () => {
       <div className="col-span-12 xl:col-span-6 p-8 rounded-[3rem] bg-black/40 border border-white/5 shadow-2xl space-y-8 relative overflow-hidden flex flex-col items-center">
         <h2 className="w-full text-sm font-black text-emerald-500 italic uppercase tracking-[0.4em] border-b border-white/10 pb-6 flex items-center gap-4">
           <ShieldCheck size={20} className="text-emerald-500" /> 
-          AML_НЕЙ� О_� АДА�  // ШІ_СКО� ИНГ
+          AML_НЕЙ О_ АДА  // ШІ_СКО ИНГ
         </h2>
         
         <div className="flex-1 w-full flex items-center justify-center min-h-[400px]">
@@ -62,7 +62,7 @@ export const AMLRadarTab: React.FC = () => {
               <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 10, fontWeight: '900', fontStyle: 'italic' }} />
               <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
               <RechartsRadar name="ОБ'ЄКТ" dataKey="A" stroke="#10b981" strokeWidth={3} fill="#10b981" fillOpacity={0.4} />
-              <RechartsRadar name="НО� МА" dataKey="B" stroke="#064e3b" strokeWidth={1} fill="#064e3b" fillOpacity={0.1} />
+              <RechartsRadar name="НО МА" dataKey="B" stroke="#064e3b" strokeWidth={1} fill="#064e3b" fillOpacity={0.1} />
             </RadarChart>
           </ResponsiveContainer>
         </div>
@@ -71,7 +71,7 @@ export const AMLRadarTab: React.FC = () => {
       {/* Права колонка: Вердикт */}
       <div className="col-span-12 xl:col-span-6 p-8 rounded-[3rem] bg-black/40 border border-white/5 shadow-2xl space-y-10 relative overflow-hidden flex flex-col">
         <h3 className="text-sm font-black text-emerald-500 italic uppercase tracking-[0.4em] border-b border-white/10 pb-6">
-          ВЕ� ДИКТ_SOVEREIGN_ORACLE
+          ВЕ ДИКТ_SOVEREIGN_ORACLE
         </h3>
         
         <div className="flex-1 flex flex-col justify-center space-y-12">
@@ -85,19 +85,19 @@ export const AMLRadarTab: React.FC = () => {
             
             <div className="space-y-4 text-center lg:text-left">
               <div>
-                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-2 italic">КІНЦЕВИЙ_ВЕ� ДИКТ</p>
-                <p className="text-4xl font-black italic text-white tracking-tighter leading-none uppercase">ВИСОКА_ЙМОВІ� НІСТЬ</p>
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-2 italic">КІНЦЕВИЙ_ВЕ ДИКТ</p>
+                <p className="text-4xl font-black italic text-white tracking-tighter leading-none uppercase">ВИСОКА_ЙМОВІ НІСТЬ</p>
               </div>
               <p className="text-7xl font-black italic text-emerald-500 font-mono leading-none tracking-tighter drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">94.8%</p>
               <p className="text-[10px] font-bold text-slate-500 uppercase italic tracking-wide border-l-4 border-emerald-500/20 pl-4 leading-relaxed max-w-sm">
-                К� ИТИЧНА ЙМОВІ� НІСТЬ ПЕ� ЕХОВУВАННЯ КБВ ЧЕ� ЕЗ СХЕМУ "ЗВО� ОТНІХ ПОЗИК" ТА ОФШО� НІ ДЕ� ИВАТИВИ.
+                К ИТИЧНА ЙМОВІ НІСТЬ ПЕ ЕХОВУВАННЯ КБВ ЧЕ ЕЗ СХЕМУ "ЗВО ОТНІХ ПОЗИК" ТА ОФШО НІ ДЕ ИВАТИВИ.
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
-              { label: 'ТОПОЛОГІЯ_� ИЗИКУ', value: 'КЛАСТЕ� _АЛЬФА_IX', icon: Network, color: '#10b981' },
+              { label: 'ТОПОЛОГІЯ_РИЗИКУ', value: 'КЛАСТЕ _АЛЬФА_IX', icon: Network, color: '#10b981' },
               { label: 'АНАЛІЗ_ДВИГУНА', value: '6.2s // NEURAL_X', icon: Cpu, color: '#059669' }
             ].map((it, i) => (
               <div key={i} className="p-6 rounded-[2rem] bg-white/[0.01] border border-white/[0.05] flex items-center gap-6 hover:border-white/10 transition-all cursor-default">
@@ -114,7 +114,7 @@ export const AMLRadarTab: React.FC = () => {
         </div>
 
         <button className="w-full py-6 bg-emerald-600 text-slate-950 rounded-[2rem] tracking-[0.6em] text-[12px] font-black uppercase italic hover:bg-emerald-500 shadow-xl transition-all border border-emerald-400/20 active:scale-95">
-          ВІДК� ИТИ ПОВНУ ЕКСПЕ� ТИЗУ
+          ВІДК ИТИ ПОВНУ ЕКСПЕ ТИЗУ
         </button>
       </div>
     </div>

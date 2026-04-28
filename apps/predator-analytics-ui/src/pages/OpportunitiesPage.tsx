@@ -43,7 +43,7 @@ interface MarketInsight {
 
 const tabs: Array<{ key: OpportunityTab; label: string; icon: JSX.Element }> = [
     { key: 'insights', label: 'Інсайти', icon: <Sparkles size={18} /> },
-    { key: 'recommendations', label: '� екомендації', icon: <Star size={18} /> },
+    { key: 'recommendations', label: 'рекомендації', icon: <Star size={18} /> },
     { key: 'executive', label: 'Виконавчий огляд', icon: <FileBarChart size={18} /> },
 ];
 
@@ -57,7 +57,7 @@ const typeConfig: Record<
         badge: 'border-emerald-400/20 bg-emerald-500/10 text-emerald-200',
     },
     risk: {
-        label: '� изик',
+        label: ' изик',
         icon: <Zap size={18} className="text-rose-300" />,
         badge: 'border-rose-400/20 bg-rose-500/10 text-rose-200',
     },
@@ -232,7 +232,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-cyan-400/80 transition-colors">Хаб розвідки</span>
                                 </div>
                                 <div className="text-base font-bold text-white tracking-tight">{tabs.find((tab) => tab.key === activeTab)?.label}</div>
-                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase">� івень 4 Сертифіковано</div>
+                                <div className="text-[10px] text-slate-500 mt-1 font-mono uppercase"> івень 4 Сертифіковано</div>
                             </div>
 
                             <div className="card-depth rounded-[28px] border border-emerald-400/10 bg-emerald-500/[0.03] p-5 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] col-span-2 sm:col-span-1">
@@ -241,7 +241,7 @@ export default function OpportunitiesPage() {
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60">Верифікація</span>
                                 </div>
                                 <div className="text-base font-black text-emerald-400 tracking-tighter uppercase leading-none">Ядро можливостей</div>
-                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">ДОВІ� ЕНИЙ СЕКТО� </div>
+                                <div className="text-[10px] text-emerald-500/40 mt-1 font-mono group-hover:animate-pulse">ДОВІ ЕНИЙ СЕКТО </div>
                             </div>
                     </div>
                 </div>
@@ -407,7 +407,7 @@ function RecommendationsTab({
         return (
             <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.03] p-12 text-center">
                 <Star size={48} className="mx-auto mb-4 text-slate-600" />
-                <h3 className="text-lg font-semibold text-white">� екомендацій поки немає</h3>
+                <h3 className="text-lg font-semibold text-white">рекомендацій поки немає</h3>
                 <p className="mt-2 text-sm text-slate-500">
                     Поточний потік інсайтів не містить дій, які можна впевнено винести в рекомендації.
                 </p>
@@ -424,7 +424,7 @@ function RecommendationsTab({
                 >
                     <div className="flex items-center justify-between gap-3">
                         <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                            � екомендована дія
+                            рекомендована дія
                         </div>
                         <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
                             {recommendation.confidence.toFixed(0)}% впевненості
@@ -504,7 +504,7 @@ function ExecutiveTab({
                 
                 <div className="flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between relative z-10">
                     <div>
-                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові � инкові Сигнали</h3>
+                        <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Ключові  инкові Сигнали</h3>
                         <p className="mt-1 text-sm text-slate-500 font-medium italic">
                             Пріоритетні вектори розвитку, виявлені нейронним ядром.
                         </p>
@@ -575,7 +575,7 @@ function StrategicROIMatrix({ insights }: { insights: MarketInsight[] }) {
                 </div>
 
                 {/* Axis Labels */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full py-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Складність � еалізації</div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full py-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Складність реалізації</div>
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 -translate-x-full px-4 text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Потенційний Прибуток</div>
 
                 {/* Plotted Opportunities */}
@@ -608,7 +608,7 @@ function StrategicROIMatrix({ insights }: { insights: MarketInsight[] }) {
                                         <div className="text-[10px] font-black text-slate-500 uppercase mb-2">Об'єкт: #{insight.id.slice(0, 8)}</div>
                                         <div className="text-xs font-bold text-white mb-2">{insight.title}</div>
                                         <div className="flex justify-between items-center text-[9px] font-black uppercase">
-                                            <span className="text-emerald-400">� ВД (ROI): {insight.priority === 'high' ? 'Екстремальний' : 'Стабільний'}</span>
+                                            <span className="text-emerald-400"> ВД (ROI): {insight.priority === 'high' ? 'Екстремальний' : 'Стабільний'}</span>
                                             <span className="text-slate-400">{insight.impact}</span>
                                         </div>
                                     </div>
@@ -633,12 +633,12 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
         <div className="h-full rounded-[40px] border border-white/[0.08] bg-gradient-to-br from-emerald-500/[0.03] to-cyan-500/[0.03] backdrop-blur-3xl p-8 relative overflow-hidden group flex flex-col">
             <div className="flex items-center gap-3 mb-8">
                 <Target className="text-emerald-400" size={24} />
-                <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Симулятор � инкової Частки</h3>
+                <h3 className="text-xl font-black text-white uppercase tracking-tight italic">Симулятор  инкової Частки</h3>
             </div>
 
             <div className="space-y-10 flex-1 flex flex-col justify-center">
                 <div className="text-center space-y-2">
-                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Прогнозований � ічний Дохід</div>
+                    <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Прогнозований  ічний Дохід</div>
                     <div className="text-5xl font-black text-white tracking-tighter tabular-nums drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                         {formatMoney(estimatedRev)}
                     </div>
@@ -647,7 +647,7 @@ function MarketCaptureSimulator({ monetaryImpact }: { monetaryImpact: number }) 
 
                 <div className="space-y-6">
                     <div className="flex justify-between items-end">
-                        <span className="text-[11px] font-black text-white uppercase tracking-widest">Цільова Частка � инку</span>
+                        <span className="text-[11px] font-black text-white uppercase tracking-widest">Цільова Частка  инку</span>
                         <span className="text-2xl font-black text-emerald-400">{marketShare}%</span>
                     </div>
                     

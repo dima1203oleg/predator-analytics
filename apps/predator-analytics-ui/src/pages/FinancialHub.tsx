@@ -33,13 +33,13 @@ const FinancialHub: React.FC = () => {
   const hubTabs = [
     { id: 'swift', label: 'Транзакційний монітор', icon: <Activity size={16} /> },
     { id: 'offshore', label: 'Офшорний детектор', icon: <Globe size={16} /> },
-    { id: 'aml', label: 'AML � адар', icon: <ShieldCheck size={16} /> },
+    { id: 'aml', label: 'AML  адар', icon: <ShieldCheck size={16} /> },
     { id: 'assets', label: 'Трекер активів', icon: <Lock size={16} /> },
   ];
 
   return (
     <HubLayout
-      title="ФІНАНСОВА � ОЗВІДКА"
+      title="ФІНАНСОВА РОЗВІДКА"
       subtitle="Фінансова розвідка та моніторинг капіталу"
       icon={<Landmark size={24} />}
       tabs={hubTabs}

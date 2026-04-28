@@ -51,7 +51,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 'md', animate
 
             {/* Version Badge - Elite style */}
             <div className={`absolute ${s.badge} bg-rose-950/90 px-2 py-0.5 text-rose-500 border border-rose-600/50 rounded-sm font-mono font-black tracking-widest text-[8px] backdrop-blur-md shadow-2xl group-hover:border-rose-400 transition-colors uppercase`}>
-                СУВЕ� ЕН v57.3-ELITE
+                СУВЕ ЕН v57.3-ELITE
             </div>
         </div>
     );

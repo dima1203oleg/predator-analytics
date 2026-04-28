@@ -386,13 +386,13 @@ export const RedButton: React.FC<RedButtonProps> = ({
           className="active-emergency"
         >
           <div className="active-emergency-title">
-            🚨 АКТИВНИЙ ЕКСТ� ЕНИЙ � ЕЖИМ
+            🚨 АКТИВНИЙ ЕКСТ ЕНИЙ  ЕЖИМ
           </div>
           <div className="active-emergency-level">
             {EMERGENCY_LEVELS[currentEmergencyLevel as 1 | 2 | 3].icon}
           </div>
           <div style={{ color: '#fca5a5', fontSize: '16px', marginBottom: '8px' }}>
-            � івень {currentEmergencyLevel}: {EMERGENCY_LEVELS[currentEmergencyLevel as 1 | 2 | 3].nameUk}
+             івень {currentEmergencyLevel}: {EMERGENCY_LEVELS[currentEmergencyLevel as 1 | 2 | 3].nameUk}
           </div>
           <div style={{ color: '#94a3b8', fontSize: '14px' }}>
             {EMERGENCY_LEVELS[currentEmergencyLevel as 1 | 2 | 3].description}
@@ -427,7 +427,7 @@ export const RedButton: React.FC<RedButtonProps> = ({
                 </div>
                 <div className="level-info">
                   <div className="level-name">
-                    � івень {level}: {config.nameUk}
+                     івень {level}: {config.nameUk}
                   </div>
                   <div className="level-description">{config.description}</div>
                 </div>
@@ -463,12 +463,12 @@ export const RedButton: React.FC<RedButtonProps> = ({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="confirm-title">
-                � ️ ПІДТВЕ� ДЖЕННЯ ЕКСТ� ЕНОГО П� ОТОКОЛУ
+                 ️ ПІДТВЕ ДЖЕННЯ ЕКСТ ЕНОГО П ОТОКОЛУ
               </div>
 
               <div className="confirm-warning">
                 <p>
-                  Ви збираєтесь активувати <strong>� івень {selectedLevel}: {EMERGENCY_LEVELS[selectedLevel].nameUk}</strong>.
+                  Ви збираєтесь активувати <strong> івень {selectedLevel}: {EMERGENCY_LEVELS[selectedLevel].nameUk}</strong>.
                   <br /><br />
                   {EMERGENCY_LEVELS[selectedLevel].description}.
                   <br /><br />

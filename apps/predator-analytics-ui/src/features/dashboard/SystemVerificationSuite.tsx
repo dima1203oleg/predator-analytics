@@ -138,7 +138,7 @@ const StorageMiniCard: React.FC<{ check: StorageCheck }> = ({ check }) => (
         {check.type === 'redis' && <Zap size={20} />}
       </div>
       {check.status === 'verified' ? (
-        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[8px] font-black px-2 py-0.5">ВЕ� ИФІКОВАНО</Badge>
+        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[8px] font-black px-2 py-0.5">ВЕ ИФІКОВАНО</Badge>
       ) : check.status === 'checking' ? (
         <RefreshCw size={16} className="text-cyan-400 animate-spin" />
       ) : (
@@ -169,7 +169,7 @@ const SystemVerificationSuite: React.FC = () => {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'VerificationCitadel',
-            message: `К� ИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
+            message: `К ИТИЧНА ПОМИЛКА: Вузол ${nodeSource} недоступний. Автоматичне перемикання на FAILOVER (NODE_OFFLINE).`,
             severity: 'critical',
             timestamp: new Date().toISOString(),
             code: 'NODE_OFFLINE'
@@ -179,7 +179,7 @@ const SystemVerificationSuite: React.FC = () => {
        window.dispatchEvent(new CustomEvent('predator-error', {
           detail: {
             service: 'VerificationCitadel',
-            message: `ЦИТАДЕЛЬ_ВЕ� ИФІКАЦІЇ [${nodeSource}]: Зв'язок з ядром встановлено. Системи цілісності в нормі.`,
+            message: `ЦИТАДЕЛЬ_ВЕ ИФІКАЦІЇ [${nodeSource}]: Зв'язок з ядром встановлено. Системи цілісності в нормі.`,
             severity: 'info',
             timestamp: new Date().toISOString(),
             code: 'VERIFICATION_SUCCESS'
@@ -353,7 +353,7 @@ const SystemVerificationSuite: React.FC = () => {
 
       const displayResult = res && res.length > 0 ? res : [
         {
-          company: "ООО 'УЛЬТ� А-МА� КЕТ'",
+          company: "ООО 'УЛЬТ А-МА КЕТ'",
           hsCode: "8542310000",
           goods: "Процесори та контролери, електронні інтегральні схеми",
           origins: ["Китай", "Тайвань", "В'єтнам"],
@@ -388,7 +388,7 @@ const SystemVerificationSuite: React.FC = () => {
       window.dispatchEvent(new CustomEvent('predator-error', {
         detail: {
           service: 'SearchEngine',
-          message: 'К� ИТИЧНО: Відмова контрольного запиту HS-Code.',
+          message: 'К ИТИЧНО: Відмова контрольного запиту HS-Code.',
           severity: 'critical',
           timestamp: new Date().toISOString(),
           code: 'QUERY_FAILED'
@@ -548,7 +548,7 @@ const SystemVerificationSuite: React.FC = () => {
                 <div className="flex items-center justify-between p-4 bg-slate-900 rounded-2xl border border-white/5">
                   <div className="flex gap-4">
                     <span className="text-[10px] font-black text-slate-500 uppercase">ЧАС: <span className="text-amber-400 font-mono">{controlQueryResult.executionTime}</span></span>
-                    <span className="text-[10px] font-black text-slate-500 uppercase">ДЖЕ� ЕЛА: <span className="text-white">{controlQueryResult.sources.join(', ')}</span></span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase">ДЖЕ ЕЛА: <span className="text-white">{controlQueryResult.sources.join(', ')}</span></span>
                   </div>
                   <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black uppercase tracking-widest">УСПІШНО</Badge>
                 </div>
@@ -615,15 +615,15 @@ const SystemVerificationSuite: React.FC = () => {
           <TacticalCard variant="glass" className="p-8 min-h-[400px] flex flex-col">
             <div className="flex items-center gap-3 mb-8">
               <Terminal size={18} className="text-slate-500" />
-              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">ІНТЕГ� ОВАНА ДІАГНОСТИКА</h3>
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">ІНТЕГ ОВАНА ДІАГНОСТИКА</h3>
             </div>
             <div className="space-y-6 flex-1">
               {[
                 { label: 'Backend API Шлюз', state: 'ОНЛАЙН', val: '12ms', color: '#10b981' },
-                { label: 'Postgres Master-DB', state: 'СИНХ� ОННО', val: 'ЗДО� ОВИЙ', color: '#10b981' },
+                { label: 'Postgres Master-DB', state: 'СИНХ ОННО', val: 'ЗДО ОВИЙ', color: '#10b981' },
                 { label: 'MinIO Сховище', state: 'ПІДКЛЮЧЕНО', val: 'ГОТОВО', color: '#10b981' },
                 { label: 'Вузол Графових Обчислень', state: 'АКТИВНО', val: 'НАВАНТ: 4%', color: '#3b82f6' },
-                { label: 'OpenSearch Інгестер', state: 'ОЧІКУВАННЯ', val: 'П� ОСТІЙ', color: '#64748b' },
+                { label: 'OpenSearch Інгестер', state: 'ОЧІКУВАННЯ', val: 'П ОСТІЙ', color: '#64748b' },
               ].map((sys, i) => (
                 <div key={i} className="flex justify-between items-center p-4 bg-black/40 border border-white/5 rounded-2xl group/diag hover:border-white/10">
                   <div>

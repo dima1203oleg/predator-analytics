@@ -1,5 +1,5 @@
 /**
- * 🕵️ DILIGENCE TAB //  ОЗШИ ЕНА ПЕ ЕВІ КА | v60.1-ELITE
+ * 🕵️ DILIGENCE TAB // РОЗШИРЕНА ПЕРЕВІРКА | v60.1-ELITE
  * PREDATOR Analytics — OSINT & Due Diligence Core
  */
 
@@ -47,7 +47,7 @@ export const DiligenceTab: React.FC = () => {
 
     const riskFilters: { label: string; value: RiskFilter }[] = [
         { label: 'ВСІ', value: 'all' },
-        { label: 'К ИТИЧНИЙ', value: 'critical' },
+        { label: 'КРИТИЧНИЙ', value: 'critical' },
         { label: 'ВИСОКИЙ', value: 'high' },
         { label: 'СЕРЕДНІЙ', value: 'medium' },
         { label: 'НИЗЬКИЙ', value: 'low' },
@@ -83,7 +83,7 @@ export const DiligenceTab: React.FC = () => {
                         </div>
 
                         <div className="pt-4 border-t border-white/5 space-y-3">
-                            <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">АКТИВНІ СКАНЕ И</h4>
+                            <h4 className="text-[9px] font-black text-slate-600 uppercase tracking-widest">АКТИВНІ СКАНЕРИ</h4>
                             {[
                                 { name: 'OSINT_SPIDER', status: 'АКТИВНО', color: 'text-emerald-500' },
                                 { name: 'CORP_REGISTRY', status: 'АКТИВНО', color: 'text-emerald-500' },
@@ -99,7 +99,7 @@ export const DiligenceTab: React.FC = () => {
                     </div>
                 </TacticalCard>
 
-                <TacticalCard title="ОПЕ АТИВНИЙ ЖУ НАЛ" icon={<Activity size={16} className="text-rose-500" />} className="flex-1 overflow-hidden">
+                <TacticalCard title="ОПЕРАТИВНИЙ ЖУРНАЛ" icon={<Activity size={16} className="text-rose-500" />} className="flex-1 overflow-hidden">
                     <div className="space-y-3 font-mono text-[9px] overflow-y-auto max-h-full custom-scrollbar pr-2">
                         {[1,2,3,4,5,6,7,8].map(i => (
                             <div key={i} className="border-l border-rose-500/20 pl-3 py-1">
@@ -123,7 +123,7 @@ export const DiligenceTab: React.FC = () => {
                                 type="text" 
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="ВВЕДІТЬ НАЗВУ, ЄД ПОУ АБО UEID ДЛЯ ГЛИБОКОГО СКАНУВАННЯ..."
+                                placeholder="ВВЕДІТЬ НАЗВУ, ЄДРПОУ АБО UEID ДЛЯ ГЛИБОКОГО СКАНУВАННЯ..."
                                 className="w-full bg-slate-950/80 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-mono text-xs tracking-widest focus:outline-none focus:border-rose-500/50 transition-all relative z-10"
                             />
                         </div>
@@ -140,7 +140,7 @@ export const DiligenceTab: React.FC = () => {
                     <div className="flex items-center gap-6 mt-4 px-2">
                         <div className="flex items-center gap-2">
                             <Filter className="w-3 h-3 text-slate-500" />
-                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ФІЛЬТ   ИЗИКУ:</span>
+                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">ФІЛЬТР РИЗИКУ:</span>
                         </div>
                         <div className="flex gap-2">
                             {riskFilters.map(filter => (
@@ -179,8 +179,8 @@ export const DiligenceTab: React.FC = () => {
                                     <div className="absolute inset-4 border-b-2 border-rose-600 rounded-full animate-spin-reverse" />
                                     <Target className="absolute inset-0 m-auto w-10 h-10 text-rose-500 animate-pulse" />
                                 </div>
-                                <h3 className="text-2xl font-black text-white uppercase italic tracking-[0.4em] animate-pulse">ІНІЦІАЛІЗАЦІЯ СКАНЕ А...</h3>
-                                <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">ОБ ОБКА ВЕКТОРІВ ОСІНТ-ВУЗЛА #{Math.floor(Math.random() * 999)}</p>
+                                <h3 className="text-2xl font-black text-white uppercase italic tracking-[0.4em] animate-pulse">ІНІЦІАЛІЗАЦІЯ СКАНЕРА...</h3>
+                                <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-4">ОБРОБКА ВЕКТОРІВ ОСІНТ-ВУЗЛА #{Math.floor(Math.random() * 999)}</p>
                             </motion.div>
                         ) : results.length > 0 ? (
                             <motion.div 
@@ -231,14 +231,14 @@ export const DiligenceTab: React.FC = () => {
                                                         <FileText className="w-4 h-4 text-rose-400" />
                                                     </div>
                                                     <div>
-                                                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЄД ПОУ / ІПН</div>
+                                                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest">ЄДРПОУ / ІПН</div>
                                                         <div className="text-xs font-mono font-bold text-slate-200">{entity.edrpou || entity.inn || 'Н/Д'}</div>
                                                     </div>
                                                 </div>
 
                                                 <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
                                                     <div className="flex flex-col">
-                                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">СКО ИНГ  ИЗИКУ</span>
+                                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">СКОРИНГ РИЗИКУ</span>
                                                         <div className="flex items-center gap-2">
                                                             <div className="flex gap-0.5">
                                                                 {[1,2,3,4,5].map(star => (
@@ -270,7 +270,7 @@ export const DiligenceTab: React.FC = () => {
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-700 uppercase italic tracking-[0.4em]">ОЧІКУВАННЯ ОБ'ЄКТА...</h3>
                                 <p className="text-[11px] font-mono text-slate-600 uppercase tracking-widest mt-4 max-w-md leading-relaxed">
-                                    П ЕДАТО  ГОТОВИЙ ДО ГЛИБОКОГО ОСІНТ-АНАЛІЗУ. ВВЕДІТЬ ДАНІ ОБ'ЄКТА ДЛЯ ПОЧАТКУ СКАНУВАННЯ ЦИФ ОВОГО СЛІДУ.
+                                    ПРЕДАТОР ГОТОВИЙ ДО ГЛИБОКОГО ОСІНТ-АНАЛІЗУ. ВВЕДІТЬ ДАНІ ОБ'ЄКТА ДЛЯ ПОЧАТКУ СКАНУВАННЯ ЦИФРОВОГО СЛІДУ.
                                 </p>
                             </motion.div>
                         )}

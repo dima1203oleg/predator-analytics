@@ -20,8 +20,8 @@ describe('SRView', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('SR — � еєстр Продавців')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Пошук за ID, ЄД� ПОУ, назвою…')).toBeInTheDocument();
+    expect(screen.getByText('SR — реєстр Продавців')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Пошук за ID, ЄД ПОУ, назвою…')).toBeInTheDocument();
     expect(screen.getByText('Експорт CSV')).toBeInTheDocument();
     expect(screen.getByText('Колонки')).toBeInTheDocument();
   });

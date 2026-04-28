@@ -34,9 +34,9 @@ interface ChecklistItem {
 
 // --- MOCK DATA ---
 const DEFAULT_CHECKLIST: ChecklistItem[] = [
-  { id: 'l1', title: '🏢 Статус � еєстрації', description: 'Аналіз CERS/ЄД�  на предмет активності', category: 'legal', status: 'completed', auto: true },
+  { id: 'l1', title: '🏢 Статус реєстрації', description: 'Аналіз CERS/ЄД  на предмет активності', category: 'legal', status: 'completed', auto: true },
   { id: 'l2', title: '⚖️ Судові Навантаження', description: 'Перевірка активних кримінальних проваджень', category: 'legal', status: 'in_progress', auto: true },
-  { id: 'c1', title: '� ️ Санкційні Хвилі', description: '� НБО, OFAC, ЄС шлюзи', category: 'compliance', status: 'completed', auto: true },
+  { id: 'c1', title: ' ️ Санкційні Хвилі', description: ' НБО, OFAC, ЄС шлюзи', category: 'compliance', status: 'completed', auto: true },
   { id: 'c2', title: '🔍 AML / UBO Scan', description: 'Пошук кінцевих бенефіціарів та PEP-зв\'язків', category: 'compliance', status: 'pending', auto: true },
   { id: 'f1', title: '💰 Податкова Дисципліна', description: 'Аналіз заборгованостей та звітності', category: 'financial', status: 'pending', auto: true },
   { id: 'f2', title: '📊 Фінансовий Стан', description: 'Manual: Оцінка ліквідності за 24 міс.', category: 'financial', status: 'pending', auto: false },
@@ -44,10 +44,10 @@ const DEFAULT_CHECKLIST: ChecklistItem[] = [
 ];
 
 const categoryNames = {
-  legal: { label: 'Ю� ИДИЧНИЙ АУДИТ', color: 'text-yellow-400', border: 'border-yellow-500/30', bg: 'bg-yellow-600/10' },
+  legal: { label: 'Ю ИДИЧНИЙ АУДИТ', color: 'text-yellow-400', border: 'border-yellow-500/30', bg: 'bg-yellow-600/10' },
   financial: { label: 'ФІНАНСОВИЙ АУДИТ', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
   compliance: { label: 'COMPLIANCE / AML', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-600/10' },
-  operational: { label: 'ОПЕ� АЦІЙНИЙ КОНТ� ОЛЬ', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-600/10' },
+  operational: { label: 'ОПЕРАЦІЙНИЙ КОНТ ОЛЬ', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-600/10' },
 };
 
 export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = ({
@@ -97,22 +97,22 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                      <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                   </div>
                   <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-                    ВЕ� ИФІКАЦІЯ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8">КОНТ� АГЕНТА</span>
+                    ВЕ ИФІКАЦІЯ <span className="text-sky-500 underline decoration-sky-600/20 decoration-8">КОНТ АГЕНТА</span>
                   </h1>
                   <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                     {companyName} • UEID:{ueid} • ПЕ� ЕВІ� КА ЦІЛІСНОСТІ
+                     {companyName} • UEID:{ueid} • ПЕ ЕВІ КА ЦІЛІСНОСТІ
                   </p>
                </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-6 bg-black/40 p-5 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
                <div className="text-center px-6">
-                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">П� ОГ� ЕС</p>
+                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">П ОГ ЕС</p>
                   <p className="text-2xl font-black text-white italic font-mono leading-none tracking-tighter">{Math.round(stats.progress)}%</p>
                </div>
                <div className="h-10 w-px bg-white/5" />
                <div className="text-center px-6">
-                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">� ИЗИК-СКО� </p>
+                  <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest mb-1 italic">РИЗИК-СКО </p>
                   <p className={cn("text-2xl font-black italic font-mono leading-none tracking-tighter", stats.risk > 60 ? 'text-red-500' : stats.risk > 30 ? 'text-amber-500' : 'text-emerald-500')}>
                     {stats.risk}/100
                   </p>
@@ -139,8 +139,8 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                           <AlertTriangle size={24} />
                        </div>
                        <div>
-                          <h4 className="text-lg font-black text-white uppercase italic tracking-tighter">К� ИТИЧНИЙ � ЕНТГЕН-� ИЗИК</h4>
-                          <p className="text-[10px] font-bold text-red-400 uppercase tracking-[0.2em] italic">ВИЯВЛЕНО НЕВІДПОВІДНОСТІ В СТ� УКТУ� І UBO ТА САНКЦІЙНИХ СПИСКАХ</p>
+                          <h4 className="text-lg font-black text-white uppercase italic tracking-tighter">К ИТИЧНИЙ  ЕНТГЕН-РИЗИК</h4>
+                          <p className="text-[10px] font-bold text-red-400 uppercase tracking-[0.2em] italic">ВИЯВЛЕНО НЕВІДПОВІДНОСТІ В СТ УКТУ І UBO ТА САНКЦІЙНИХ СПИСКАХ</p>
                        </div>
                     </div>
                     <ArrowRight size={20} className="text-red-600 group-hover:translate-x-2 transition-transform" />
@@ -239,14 +239,14 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                             <Fingerprint size={24} />
                          </div>
                          <div>
-                            <h3 className="text-lg font-black text-white italic uppercase tracking-tighter leading-none mb-1">ДЕТАЛІ ПЕ� ЕВІ� КИ</h3>
+                            <h3 className="text-lg font-black text-white italic uppercase tracking-tighter leading-none mb-1">ДЕТАЛІ ПЕ ЕВІ КИ</h3>
                             <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{selectedId.toUpperCase()}</p>
                          </div>
                       </div>
 
                       <div className="space-y-6">
                          <div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic mb-4">ВСТАНОВИТИ ВЕ� ДИКТ</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic mb-4">ВСТАНОВИТИ ВЕ ДИКТ</p>
                             <div className="grid grid-cols-2 gap-3">
                                {[
                                   { id: 'completed', l: 'VALID', c: 'bg-emerald-600/10 text-emerald-500 border-emerald-600/20' },
@@ -269,35 +269,35 @@ export const DueDiligence: React.FC<{ ueid?: string; companyName?: string }> = (
                          </div>
 
                          <div className="space-y-3">
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic leading-none">КОМЕНТА�  АУДИТО� А</p>
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic leading-none">КОМЕНТА  АУДИТО А</p>
                             <textarea
                                className="w-full bg-black border-2 border-white/5 rounded-2xl p-6 text-[13px] font-bold text-slate-300 italic focus:border-sky-500/40 outline-none transition-all placeholder:text-slate-800"
-                               placeholder="ДОДАЙТЕ П� ИМІТКУ..."
+                               placeholder="ДОДАЙТЕПРИМІТКУ..."
                                rows={4}
                             />
                          </div>
 
                          <button className="w-full py-5 bg-sky-700 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] italic hover:bg-sky-600 shadow-xl flex items-center justify-center gap-4">
-                            <Save size={18} /> ЗБЕ� ЕГТИ_СТАТУС
+                            <Save size={18} /> ЗБЕ ЕГТИ_СТАТУС
                          </button>
                       </div>
                    </motion.section>
                  ) : (
                    <div className="rounded-[3rem] bg-black/40 border-2 border-dashed border-white/5 p-16 flex flex-col items-center justify-center text-center space-y-6">
                       <Eye size={48} className="text-slate-800" />
-                      <p className="text-[11px] font-bold text-slate-700 uppercase tracking-[0.4em] italic">ВИБЕ� ІТЬ ПУНКТ<br/>ДЛЯ � ЕДАГУВАННЯ</p>
+                      <p className="text-[11px] font-bold text-slate-700 uppercase tracking-[0.4em] italic">ВИБЕ ІТЬ ПУНКТ<br/>ДЛЯ  ЕДАГУВАННЯ</p>
                    </div>
                  )}
                </AnimatePresence>
 
                {/* Final Decision Panel */}
                <section className="rounded-[3rem] bg-black border-2 border-white/[0.04] p-10 shadow-3xl space-y-6">
-                  <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-6">ФІНАЛЬНЕ � ІШЕННЯ</h3>
+                  <h3 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] italic mb-6">ФІНАЛЬНЕ  ІШЕННЯ</h3>
                   <button className="w-full py-6 bg-emerald-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-emerald-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
-                     <CheckCircle size={20} className="group-hover:scale-110 transition-transform" /> ЗАТВЕ� ДИТИ_КОНТ� АГЕНТА
+                     <CheckCircle size={20} className="group-hover:scale-110 transition-transform" /> ЗАТВЕ ДИТИ_КОНТ АГЕНТА
                   </button>
                   <button className="w-full py-6 bg-red-700 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
-                     <X size={20} className="group-hover:rotate-90 transition-transform" /> ВІДХИЛИТИ_� ИЗИК
+                     <X size={20} className="group-hover:rotate-90 transition-transform" /> ВІДХИЛИТИ_РИЗИК
                   </button>
                </section>
 

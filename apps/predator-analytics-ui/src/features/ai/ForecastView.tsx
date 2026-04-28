@@ -48,7 +48,7 @@ const ForecastView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'Forecast_Engine',
-                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З П� ЕДИКТИВНИМ ЯД� ОМ (FORECAST_OFFLINE). Використовуються локальні моделі прогнозування.',
+                    message: 'ПОМИЛКА ЗВ’ЯЗКУ ЗПРЕДИКТИВНИМ ЯДРОМ (FORECAST_OFFLINE). Використовуються локальні моделі прогнозування.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'FORECAST_OFFLINE'
@@ -58,7 +58,7 @@ const ForecastView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'Forecast_Engine',
-                    message: 'П� ЕДИКТИВНЕ ЯД� О СИНХ� ОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
+                    message: 'П ЕДИКТИВНЕ ЯДРО СИНХ ОНІЗОВАНО (FORECAST_SUCCESS). Прогнози базуються на даних NVIDIA Titan.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'FORECAST_SUCCESS'
@@ -110,7 +110,7 @@ const ForecastView: React.FC = () => {
                 <ViewHeader
                     title="ML Прогнозування Попиту"
                     icon={<Brain className="text-purple-400" size={20} />}
-                    breadcrumbs={['ШІ', 'П� ОГНОЗУВАННЯ', productCode]}
+                    breadcrumbs={['ШІ', 'П ОГНОЗУВАННЯ', productCode]}
                     stats={[
                         { label: 'SOURCE', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                         { label: 'МОДЕЛЬ', value: forecast?.model_used || 'prophet_v4', icon: <Cpu size={14} />, color: 'primary' },
@@ -203,7 +203,7 @@ const ForecastView: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <TacticalCard
                                 variant="cyber"
-                                title="Оцінка � инку"
+                                title="Оцінка  инку"
                                 icon={<Box size={18} className="text-purple-400" />}
                                 metrics={[{ label: 'MAPE', value: `${(forecast?.mape || 0).toFixed(2)}%` }]}
                             />
@@ -288,7 +288,7 @@ const ForecastView: React.FC = () => {
                                 <div className="p-4 bg-rose-500/5 border border-rose-500/20 rounded-xl flex items-start gap-3">
                                     <AlertCircle className="text-rose-500 shrink-0" size={16} />
                                     <p className="text-[10px] text-rose-200/70 leading-relaxed">
-                                        УВАГА: � езультати базуються на імовірнісних моделях. Висока волатильність митних даних може впливати на точність.
+                                        УВАГА: результати базуються на імовірнісних моделях. Висока волатильність митних даних може впливати на точність.
                                     </p>
                                 </div>
                             </div>

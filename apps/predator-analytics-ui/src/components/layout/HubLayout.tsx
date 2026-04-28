@@ -20,7 +20,7 @@ interface HubLayoutProps {
 }
 
 /**
- * 📡 HUB LAYOUT // ЦЕНТ� АЛЬНИЙ МАКЕТ ХАБУ | v58.2-WRAITH
+ * 📡 HUB LAYOUT // ЦЕНТ АЛЬНИЙ МАКЕТ ХАБУ | v58.2-WRAITH
  * PREDATOR Analytics — Unified Navigation Matrix
  */
 export const HubLayout: React.FC<HubLayoutProps> = ({

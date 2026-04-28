@@ -48,6 +48,7 @@ class EventType(StrEnum):
     # System
     DLQ = "dlq"
     QUARANTINE = "quarantine"
+    SYSTEM_LOG = "system.log"
 
 
 class EventPriority(StrEnum):
@@ -243,3 +244,23 @@ class QuarantineEvent(BaseEvent):
         severity: str = "medium"  # low | medium | high
 
     payload: QuarantinePayload  # type: ignore[assignment]
+
+
+class SystemLogEvent(BaseEvent):
+    """Системний лог для моніторингу хмарних вузлів.
+
+    Топік: tenant.{id}.system.log
+    """
+
+    class LogPayload(BaseModel):
+        """Корисне навантаження системного логу."""
+
+        level: str
+        logger: str
+        message: str
+        service: str
+        timestamp: str
+        context: dict[str, Any] = Field(default_factory=dict)
+        exception: str | None = None
+
+    payload: LogPayload  # type: ignore[assignment]

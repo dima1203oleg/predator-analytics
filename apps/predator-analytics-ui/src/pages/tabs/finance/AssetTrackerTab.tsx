@@ -11,8 +11,8 @@ import { cn } from '@/lib/utils';
 import { analyticsService, FrozenAsset } from '@/services/unified/analytics.service';
 
 const MOCK_FROZEN = [
-  { entity: 'ПУМБ � АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: '� НБО', reason: 'Санкційний список', status: 'ЗАМО� ОЖЕНО' },
-  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО� ОЖЕНО' },
+  { entity: 'ПУМБ  АХУНОК 4521', amount: '$12.4M', date: '2025-12-01', authority: ' НБО', reason: 'Санкційний список', status: 'ЗАМО ОЖЕНО' },
+  { entity: 'ТОВ "АЛЬФА-ХОЛДИНГ"', amount: '$7.8M',  date: '2026-01-15', authority: 'EU SDN', reason: 'Фінансування агресії', status: 'ЗАМО ОЖЕНО' },
   { entity: 'ЯХТА "SOVEREIGN"', amount: '$18.5M', date: '2026-03-08', authority: 'MAS', reason: 'Ухилення від санкцій', status: 'КОНФІСКОВАНО' },
 ];
 
@@ -42,14 +42,14 @@ export const AssetTrackerTab: React.FC = () => {
               <div className="p-3 bg-emerald-600/10 border border-emerald-600/20 rounded-xl text-emerald-500">
                 <Lock size={20} className="animate-pulse" />
               </div>
-              � ЕЄСТ� _ЗАМО� ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
+               ЕЄСТ _ЗАМО ОЖЕНИХ_АКТИВІВ // АКТИВНИЙ_ЩИТ
             </h2>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic border-l-2 border-emerald-500/40 pl-4">
-              ПЕ� ЕЛІК ПЕ� ЕК� ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
+              ПЕ ЕЛІК ПЕ ЕК ИТИХ КАНАЛІВ ФІНАНСУВАННЯ ТА ВИЛУЧЕНОГО МАЙНА
             </p>
           </div>
           <button className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest italic hover:bg-white/10 hover:border-emerald-500/50 transition-all flex items-center gap-3">
-            ARBITRAGE_МАТ� ИЦЯ <ArrowUpRight size={14} />
+            ARBITRAGE_МАТ ИЦЯ <ArrowUpRight size={14} />
           </button>
         </div>
 
@@ -57,7 +57,7 @@ export const AssetTrackerTab: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead className="bg-white/[0.02]">
               <tr>
-                {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА', 'ДАТА', 'О� ГАН', 'СТАТУС'].map(h => (
+                {['ОБ\'ЄКТ_ВЛАСНОСТІ', 'СУМА', 'ДАТА', 'О ГАН', 'СТАТУС'].map(h => (
                   <th key={h} className="px-10 py-6 text-[9px] font-black text-slate-600 uppercase tracking-widest italic font-mono border-b border-white/5">{h}</th>
                 ))}
               </tr>
@@ -73,7 +73,7 @@ export const AssetTrackerTab: React.FC = () => {
                   </td>
                   <td className="px-10 py-8 relative z-10">
                     <div className="flex items-center gap-3">
-                      <div className={cn("w-2 h-2 rounded-full shadow-lg", asset.status === 'ЗАМО� ОЖЕНО' ? "bg-emerald-600 animate-pulse shadow-emerald-900/50" : "bg-cyan-600 shadow-cyan-900/50")} />
+                      <div className={cn("w-2 h-2 rounded-full shadow-lg", asset.status === 'ЗАМО ОЖЕНО' ? "bg-emerald-600 animate-pulse shadow-emerald-900/50" : "bg-cyan-600 shadow-cyan-900/50")} />
                       <span className="text-[10px] font-black text-white uppercase italic tracking-widest">{asset.status}</span>
                     </div>
                   </td>

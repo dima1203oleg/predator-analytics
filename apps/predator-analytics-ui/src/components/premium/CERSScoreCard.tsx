@@ -93,7 +93,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
             <TacticalCard variant="holographic" className={cn("min-h-[300px] flex items-center justify-center", className)}>
                 <div className="flex flex-col items-center gap-4 text-emerald-500/50">
                     <Activity size={32} className="animate-spin" />
-                    <span className="text-[10px] uppercase font-black tracking-widest">Агрегація CERS-� еєстрів...</span>
+                    <span className="text-[10px] uppercase font-black tracking-widest">Агрегація CERS-реєстрів...</span>
                 </div>
             </TacticalCard>
         );
@@ -145,7 +145,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                             )}
                         </div>
                         <div className="flex gap-3 text-[10px] font-mono text-slate-400">
-                            <span>ЄД� ПОУ: <span className="text-slate-200">{company.edrpou}</span></span>
+                            <span>ЄД ПОУ: <span className="text-slate-200">{company.edrpou}</span></span>
                             <span>СТАТУС: <span className="text-emerald-400">{company.status}</span></span>
                         </div>
                     </div>
@@ -188,7 +188,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <h4 className="text-[10px] uppercase font-black text-slate-500 tracking-widest flex items-center gap-2">
-                            <Target size={12} /> ДЕТАЛІЗАЦІЯ ВЕКТО� ІВ
+                            <Target size={12} /> ДЕТАЛІЗАЦІЯ ВЕКТО ІВ
                         </h4>
                         <button 
                             onClick={handleRecalculate}
@@ -196,7 +196,7 @@ export const CERSScoreCard: React.FC<CERSScoreCardProps> = ({ edrpou, className 
                             className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors disabled:opacity-50"
                         >
                             <RefreshCw size={10} className={cn(isRecalculating && "animate-spin")} />
-                            ПЕ� Е� АХУНОК
+                            ПЕ Е АХУНОК
                         </button>
                     </div>
 

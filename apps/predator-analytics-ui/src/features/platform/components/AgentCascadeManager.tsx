@@ -120,7 +120,7 @@ const AgentCascadeManager: React.FC = () => {
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-[10px] text-blue-400 font-black uppercase tracking-widest">ОПЕ� АЦІЯ</span>
+                                            <span className="text-[10px] text-blue-400 font-black uppercase tracking-widest">ОПЕ АЦІЯ</span>
                                         </div>
                                     )}
                                 </motion.div>
@@ -154,7 +154,7 @@ const AgentCascadeManager: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <TacticalCard title="КОНТ� ОЛЬ ПА� АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="КОНТ ОЛЬ ПА АЛЕЛІЗМУ" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
                     <div className="space-y-6 pt-4">
                         <div className="flex justify-between items-end">
                             <div>
@@ -177,7 +177,7 @@ const AgentCascadeManager: React.FC = () => {
                     </div>
                 </TacticalCard>
 
-                <TacticalCard title="СИНХ� ОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
+                <TacticalCard title="СИНХ ОНІЗАЦІЯ SAGA" className="bg-[#0b0f1a]/80 backdrop-blur-md border-white/5" variant="holographic">
                     <div className="space-y-4 pt-4">
                         {(activeCascade.steps || []).map((step: string, i: number) => {
                             const isCurrent = step === activeCascade.current_step;

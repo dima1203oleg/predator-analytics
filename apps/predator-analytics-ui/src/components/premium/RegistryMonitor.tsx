@@ -32,7 +32,7 @@ export const PremiumRegistryMonitor: React.FC = () => {
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2 text-cyan-400">
             <Globe className="w-6 h-6 animate-pulse" />
-            Хаб Українських � еєстрів
+            Хаб Українських реєстрів
           </h2>
           <p className="text-slate-400 text-sm mt-1">Моніторинг каналів збору даних у реальному часі</p>
         </div>

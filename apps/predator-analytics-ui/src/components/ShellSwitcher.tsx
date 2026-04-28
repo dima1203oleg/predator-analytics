@@ -22,8 +22,8 @@ export const ShellSwitcher: React.FC = () => {
 
   const shells = [
     { id: UIShell.EXPLORER, label: 'ДОСЛІДНИК', icon: <Eye size={14} />, role: UserRole.CLIENT_BASIC },
-    { id: UIShell.OPERATOR, label: 'ОПЕ� АТО� ', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
-    { id: UIShell.COMMANDER, label: 'КОМАНДИ� ', icon: <Crown size={14} />, role: UserRole.ADMIN },
+    { id: UIShell.OPERATOR, label: 'ОПЕ АТО ', icon: <Shield size={14} />, role: UserRole.CLIENT_PREMIUM },
+    { id: UIShell.COMMANDER, label: 'КОМАНДИ ', icon: <Crown size={14} />, role: UserRole.ADMIN },
   ];
 
   const roleHierarchy = {
@@ -55,7 +55,7 @@ export const ShellSwitcher: React.FC = () => {
                 : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
               }
             `}
-            title={shell.role === UserRole.ADMIN && isMobile ? '� ежим Командира недоступний на мобільних пристроях' : `Переключитися на режим ${shell.label}`}
+            title={shell.role === UserRole.ADMIN && isMobile ? 'режим Командира недоступний на мобільних пристроях' : `Переключитися на режим ${shell.label}`}
           >
             {shell.icon}
             <span className={isActive ? 'block' : 'hidden'}>{shell.label}</span>

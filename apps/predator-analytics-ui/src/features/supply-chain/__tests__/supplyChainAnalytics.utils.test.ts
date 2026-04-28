@@ -11,14 +11,14 @@ describe('supplyChainAnalytics.utils', () => {
         const result = normalizeSupplyChainStatsPayload({
             generated_at: '2026-03-30T10:00:00Z',
             globalStats: [
-                { label: 'ТОВА� И В � УСІ', value: '18 ОБʼЄКТІВ', sub: '6 кораблів', icon: 'Package', color: 'text-cyan-400' },
+                { label: 'ТОВА И В  УСІ', value: '18 ОБʼЄКТІВ', sub: '6 кораблів', icon: 'Package', color: 'text-cyan-400' },
             ],
         });
 
         expect(result.generatedAt).toBe('2026-03-30T10:00:00.000Z');
         expect(result.items).toEqual([
             {
-                label: 'ТОВА� И В � УСІ',
+                label: 'ТОВА И В  УСІ',
                 value: '18 ОБʼЄКТІВ',
                 sub: '6 кораблів',
                 iconKey: 'Package',

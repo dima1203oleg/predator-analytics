@@ -83,7 +83,7 @@ const DeploymentView: React.FC = () => {
     const tabConfig = [
         { id: 'OVERVIEW', label: 'Огляд Флоту', icon: LayoutGrid },
         { id: 'LIVE', label: 'Телеметричний Монітор', icon: MonitorPlay },
-        { id: 'CICD', label: '� еєстр Пайплайнів', icon: GitCommit },
+        { id: 'CICD', label: 'реєстр Пайплайнів', icon: GitCommit },
     ];
 
     return (
@@ -94,7 +94,7 @@ const DeploymentView: React.FC = () => {
             <ViewHeader
                 title="Командний Центр Деплою"
                 icon={<Rocket size={20} className="icon-3d-blue"/>}
-                breadcrumbs={['СИСТЕМА', 'ДЕПЛОЙ', 'КОНТ� ОЛЬ']}
+                breadcrumbs={['СИСТЕМА', 'ДЕПЛОЙ', 'КОНТ ОЛЬ']}
                 stats={[
                     { label: 'Стан Флоту', value: 'ОПТИМАЛЬНО', icon: <ShieldCheck size={14}/>, color: 'success' },
                     { label: 'Версія', value: 'v45.0.0', icon: <GitBranch size={14}/>, color: 'primary' },
@@ -151,7 +151,7 @@ const DeploymentView: React.FC = () => {
                             </div>
 
                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <TacticalCard variant="holographic"  title="� еєстр � елізів Ядра" className="glass-morphism panel-3d">
+                                <TacticalCard variant="holographic"  title="реєстр  елізів Ядра" className="glass-morphism panel-3d">
                                     <div className="flex items-center gap-8 p-4">
                                         <motion.div animate={{ rotate: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="p-6 bg-blue-600/10 rounded-2xl border border-blue-500/20 text-blue-500 shadow-xl shadow-blue-500/5">
                                             <GitBranch size={48} />
@@ -167,16 +167,16 @@ const DeploymentView: React.FC = () => {
                                     <div className="grid grid-cols-2 gap-4 mt-8">
                                         <div className="p-4 bg-slate-950/50 rounded-2xl border border-white/5 text-center">
                                             <div className="text-[9px] text-slate-600 uppercase tracking-widest mb-2 font-bold">Архітектура</div>
-                                            <div className="text-xs font-bold text-blue-400 font-mono">ГІБ� ИДНА К� ОС-КОМПІЛЯЦІЯ</div>
+                                            <div className="text-xs font-bold text-blue-400 font-mono">ГІБ ИДНА К ОС-КОМПІЛЯЦІЯ</div>
                                         </div>
                                         <div className="p-4 bg-slate-950/50 rounded-2xl border border-white/5 text-center">
                                             <div className="text-[9px] text-slate-600 uppercase tracking-widest mb-2 font-bold">Затримка</div>
-                                            <div className="text-xs font-bold text-emerald-400 font-mono">1.2с ХОЛОДНИЙ СТА� Т</div>
+                                            <div className="text-xs font-bold text-emerald-400 font-mono">1.2с ХОЛОДНИЙ СТА Т</div>
                                         </div>
                                     </div>
                                 </TacticalCard>
 
-                                <TacticalCard variant="holographic"  title="Узгодження GitOps" className="glass-morphism panel-3d" action={<span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase px-3 py-1 bg-emerald-500/10 rounded-lg">ЗДО� ОВО</span>}>
+                                <TacticalCard variant="holographic"  title="Узгодження GitOps" className="glass-morphism panel-3d" action={<span className="text-[10px] font-bold text-emerald-500 tracking-widest uppercase px-3 py-1 bg-emerald-500/10 rounded-lg">ЗДО ОВО</span>}>
                                     <div className="space-y-6 mt-4">
                                         {envs.map((e) => (
                                             <div key={e.id} className="group">

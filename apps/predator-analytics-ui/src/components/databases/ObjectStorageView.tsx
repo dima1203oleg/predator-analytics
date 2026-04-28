@@ -26,7 +26,7 @@ export const ObjectStorageView: React.FC<ObjectStorageViewProps> = ({ buckets })
                 className="rounded-[40px] border border-white/5 bg-slate-900/30 px-8 py-16 text-center"
             >
                 <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Об&apos;єктне сховище <span className="text-amber-500">MinIO</span></h2>
-                <p className="mt-3 text-sm font-black uppercase tracking-[0.3em] text-slate-300">НЕМАЄ ПІДТВЕ� ДЖЕНИХ BUCKET-ІВ</p>
+                <p className="mt-3 text-sm font-black uppercase tracking-[0.3em] text-slate-300">НЕМАЄ ПІДТВЕ ДЖЕНИХ BUCKET-ІВ</p>
                 <p className="mt-4 max-w-2xl mx-auto text-sm leading-6 text-slate-500">
                     Маршрут `/buckets` не повернув підтверджених записів. Екран не підставляє локальні bucket-и.
                 </p>
@@ -93,7 +93,7 @@ export const ObjectStorageView: React.FC<ObjectStorageViewProps> = ({ buckets })
                                                 )}>
                                                     {isPublic ? <Globe size={8} /> : <Shield size={8} />} {bucket.type}
                                                 </div>
-                                            <span className="text-[10px] text-slate-600 font-mono">ПІДТВЕ� ДЖЕНИЙ BUCKET</span>
+                                            <span className="text-[10px] text-slate-600 font-mono">ПІДТВЕ ДЖЕНИЙ BUCKET</span>
                                             </div>
                                         </div>
                                     </div>

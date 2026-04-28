@@ -94,7 +94,7 @@ export const OfflineBanner = () => {
                             <WifiOff size={14} className="text-amber-400" />
                         </div>
                         <span className="text-xs font-black text-amber-400 uppercase tracking-wider">
-                            Автономний � ежим
+                            Автономний режим
                         </span>
                     </div>
                     <div className="flex items-center gap-1">

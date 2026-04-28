@@ -17,7 +17,7 @@ export const OperatorIdentity: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-tr from-rose-600/[0.05] via-transparent to-transparent pointer-events-none" />
       
       <div className="text-right hidden sm:block relative z-10">
-        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] leading-none mb-2 italic group-hover:text-rose-500/40 transition-colors">АВТО� ИЗОВАННИЙ_ОПЕ� АТО� </div>
+        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] leading-none mb-2 italic group-hover:text-rose-500/40 transition-colors">АВТО ИЗОВАННИЙ_ОПЕ АТО </div>
         <div className="text-md font-black text-white tracking-[0.2em] uppercase italic group-hover:text-rose-400 transition-colors glint-elite chromatic-elite">Оператор_Омега</div>
       </div>
 
@@ -52,7 +52,7 @@ export const OperatorIdentity: React.FC = () => {
         <div className="flex items-center gap-3 px-4 py-1.5 bg-rose-600/10 border-2 border-rose-600/20 rounded-xl shadow-inner group-hover:border-rose-500/40 transition-all duration-700">
           <Award className="text-rose-500 glint-elite" size={14} />
           <span className="text-[10px] font-black text-rose-400 uppercase tracking-[0.3em] italic">
-            {userRole === 'premium' ? 'СУВЕ� ЕН_ЕЛІТ_v61' : 'АВТОНОМНИЙ_СПОСТЕ� ІГАЧ'}
+            {userRole === 'premium' ? 'СУВЕ ЕН_ЕЛІТ_v61' : 'АВТОНОМНИЙ_СПОСТЕ ІГАЧ'}
           </span>
         </div>
         <div className="text-[10px] text-white/20 flex items-center gap-3 font-black uppercase tracking-[0.3em] italic group-hover:text-white/40 transition-colors">

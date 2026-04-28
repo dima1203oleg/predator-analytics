@@ -136,7 +136,7 @@ export const intelligenceApi = {
             { id: 'r1', name: 'Контрабанда > $50k → Аудит', category: 'fraud', enabled: true },
             { id: 'r2', name: 'Санкційний список ЄС', category: 'sanctions', enabled: true },
             { id: 'r3', name: 'Ціновий демпінг > 30%', category: 'customs', enabled: false },
-            { id: 'r4', name: 'Нові ЄД� ПОУ < 1 рік', category: 'risk', enabled: true },
+            { id: 'r4', name: 'Нові ЄД ПОУ < 1 рік', category: 'risk', enabled: true },
         ]);
     },
     getCosts: async () => {

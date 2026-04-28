@@ -96,7 +96,7 @@ export const E2BSandboxFeed: React.FC<E2BSandboxFeedProps> = ({ session, classNa
       <div className="px-6 py-3 border-t border-white/5 flex items-center gap-4">
         <div className="flex items-center gap-2">
           <AlertTriangle size={12} className="text-rose-400" />
-          <span className="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em]">Монітор_Цілісності_Пісочниці: НО� МА</span>
+          <span className="text-[8px] font-black text-rose-500 uppercase tracking-[0.2em]">Монітор_Цілісності_Пісочниці: НО МА</span>
         </div>
       </div>
     </div>

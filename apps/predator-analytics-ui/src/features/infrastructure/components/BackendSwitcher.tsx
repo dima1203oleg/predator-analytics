@@ -60,7 +60,7 @@ export function BackendSwitcher() {
         </div>
         
         <div className="flex flex-col items-start mr-2 relative z-10">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1">МЕ� ЕЖЕВИЙ_ВУЗОЛ</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 leading-none mb-1">МЕ ЕЖЕВИЙ_ВУЗОЛ</span>
           <span className="text-xs font-black tracking-tight whitespace-nowrap uppercase italic">{activeNode?.name || 'INITIALIZING...'}</span>
         </div>
         
@@ -85,7 +85,7 @@ export function BackendSwitcher() {
           >
             <div className="p-4 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
                <div className="flex flex-col">
-                 <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 italic">ЦЕНТ� _МА� Ш� УТИЗАЦІЇ</span>
+                 <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90 italic">ЦЕНТ _МА Ш УТИЗАЦІЇ</span>
                  <span className="text-[7px] font-mono text-white/20 uppercase tracking-[0.1em]">Sovereign Headless Architecture v3.0</span>
                </div>
                <div className="px-2 py-0.5 rounded-sm bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[8px] font-black uppercase italic">ELITE_V61</div>
@@ -148,7 +148,7 @@ export function BackendSwitcher() {
               <div className="flex items-start gap-3">
                 <Activity size={12} className="text-white/20 mt-0.5 group-hover/footer:text-rose-500 transition-colors" />
                 <p className="text-[9px] text-slate-500 leading-relaxed italic font-medium uppercase tracking-tight">
-                  Адаптивна каскадна відмовостійкість: <span className="text-white/30">Sovereign ➔ Hybrid ➔ Cloud ➔ Mock</span>. � учне перемикання фіксує вузол як пріоритетний.
+                  Адаптивна каскадна відмовостійкість: <span className="text-white/30">Sovereign ➔ Hybrid ➔ Cloud ➔ Mock</span>.  учне перемикання фіксує вузол як пріоритетний.
                 </p>
               </div>
             </div>

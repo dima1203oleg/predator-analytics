@@ -169,7 +169,7 @@ export const OODALoopVisualizer: React.FC<{ activeStep?: string }> = ({ activeSt
                             </div>
                         ))}
                     </div>
-                    <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">3 АГЕНТИ В СИНК� ОНІ</span>
+                    <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">3 АГЕНТИ В СИНК ОНІ</span>
                 </div>
                 <button className="flex items-center gap-2 group text-[10px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors">
                     Детальна телеметрія <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

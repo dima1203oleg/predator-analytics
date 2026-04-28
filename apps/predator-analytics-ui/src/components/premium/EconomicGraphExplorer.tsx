@@ -14,7 +14,7 @@ const EconomicGraphExplorer: React.FC = () => {
     // Імітація роботи з Neo4j / Graph API v58.2-WRAITH
     const mockNodes = [
         { id: '1', label: 'ТОВ "Метінвест"', type: 'company', risk: 'stable' },
-        { id: '2', label: 'Ахметов � .Л.', type: 'person', risk: 'watchlist' },
+        { id: '2', label: 'Ахметов  .Л.', type: 'person', risk: 'watchlist' },
         { id: '3', label: 'SCM Holdings', type: 'company', risk: 'stable' },
         { id: '4', label: 'Офшор "Island Ltd"', type: 'company', risk: 'critical' },
     ];

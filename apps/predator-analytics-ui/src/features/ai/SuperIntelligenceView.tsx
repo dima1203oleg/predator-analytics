@@ -33,7 +33,7 @@ const SuperIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SuperIntelligence',
-                    message: 'АВТОНОМНИЙ � ЕЖИМ ЯД� А (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
+                    message: 'АВТОНОМНИЙ  ЕЖИМ ЯД А (CORE_DECOUPLING). Зв\'язок з центральним NVIDIA-кластером перервано.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'CORE_DECOUPLING'
@@ -43,7 +43,7 @@ const SuperIntelligenceView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'SuperIntelligence',
-                    message: 'ПОТОКОВА СИНХ� ОНІЗАЦІЯ ЯД� А УСПІШНА (CORE_SYNC_WRAITH). Повний доступ до GPU-ферми.',
+                    message: 'ПОТОКОВА СИНХ ОНІЗАЦІЯ ЯД А УСПІШНА (CORE_SYNC_WRAITH). Повний доступ до GPU-ферми.',
                     severity: 'info',
                     timestamp: new Date().toISOString(),
                     code: 'CORE_SYNC_WRAITH'
@@ -74,9 +74,9 @@ const SuperIntelligenceView: React.FC = () => {
         <div className={`space-y-8 animate-in fade-in duration-500 w-full mx-auto relative z-10 ${isFocusMode ? 'fixed inset-0 z-[100] bg-slate-950 p-0 m-0 max-w-none backdrop-blur-3xl' : 'max-w-[1600px] pb-24'}`}>
             {!isFocusMode && (
                 <ViewHeader
-                    title="СУПЕ� ІНТЕЛЕКТ (ЯД� О GLM-5.1)"
+                    title="СУПЕ ІНТЕЛЕКТ (ЯДРО GLM-5.1)"
                     icon={<Zap size={20} className="icon-3d-yellow" />}
-                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'СУВЕ� ЕННИЙ_ШІ']}
+                    breadcrumbs={['СИНАПСИС', 'СИСТЕМА', 'СУВЕ ЕННИЙ_ШІ']}
                     stats={[
                         { label: 'Статус', value: isActive ? 'АКТИВНИЙ' : 'ГОТОВИЙ', icon: <Activity size={14} />, color: isActive ? 'success' : 'warning', animate: isActive },
                         {
@@ -99,7 +99,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 className="flex-1 sm:flex-none px-6 py-2.5 bg-white/5 border border-white/10 text-white rounded-[24px] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all shadow-xl group"
                             >
                                 <Sparkles size={14} className="group-hover:rotate-12 transition-transform text-rose-400" />
-                                {availableScenarios[0]?.name || 'СЦЕНА� ІЙ'}
+                                {availableScenarios[0]?.name || 'СЦЕНА ІЙ'}
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -107,7 +107,7 @@ const SuperIntelligenceView: React.FC = () => {
                                 className={`flex-1 sm:flex-none px-8 py-2.5 rounded-[24px] text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all ${isActive ? 'bg-rose-600 shadow-[0_0_25px_#e11d48]' : 'bg-blue-600 shadow-[0_0_25px_#2563eb]'} text-white`}
                             >
                                 {isActive ? <Pause size={14} /> : <Play size={14} />}
-                                {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТ� ИЦІ'}
+                                {isActive ? 'ЗУПИНИТИ ЦИКЛ' : 'ЗАПУСК МАТ ИЦІ'}
                             </motion.button>
                         </div>
                     }
@@ -154,7 +154,7 @@ const SuperIntelligenceView: React.FC = () => {
                                         {agent.status !== 'IDLE' && (
                                             <div className="text-[8px] bg-yellow-500 text-white px-2 py-0.5 rounded-lg font-black animate-pulse uppercase tracking-widest">
                                                 {agent.status === 'SCANNING' ? 'СКАНУВАННЯ' :
-                                                    agent.status === 'TRANSMITTING' ? 'ПЕ� ЕДАЧА' :
+                                                    agent.status === 'TRANSMITTING' ? 'ПЕ ЕДАЧА' :
                                                         agent.status === 'CODING' ? 'КОДУВАННЯ' :
                                                             agent.status === 'TESTING' ? 'ФАЗА ТЕСТУ' :
                                                                 agent.status === 'DEPLOYING' ? 'ДЕПЛОЙ' : agent.status}
@@ -202,9 +202,9 @@ const SuperIntelligenceView: React.FC = () => {
                                                 <TruthLedgerTerminal />
                                             </div>
                                             <div className="mt-4 h-[25%] border border-white/5 bg-slate-900/30 p-4 rounded-[20px] overflow-hidden">
-                                                <div className="text-[9px] text-yellow-400 font-black mb-2 flex items-center gap-3"><Terminal size={12} /> КОМПІЛЯТО�  ЯД� А NAS</div>
+                                                <div className="text-[9px] text-yellow-400 font-black mb-2 flex items-center gap-3"><Terminal size={12} /> КОМПІЛЯТО  ЯД А NAS</div>
                                                 <div className="text-[10px] font-mono whitespace-pre opacity-80">
-                                                     <TypewriterBlock text={nasDiff || "--- ОЧІКУВАННЯ НЕЙ� ОННОГО СИНТЕЗУ ---"} isActive={stage === 'NAS_IMPLEMENTATION' || nasDiff === ''} />
+                                                     <TypewriterBlock text={nasDiff || "--- ОЧІКУВАННЯ НЕЙ ОННОГО СИНТЕЗУ ---"} isActive={stage === 'NAS_IMPLEMENTATION' || nasDiff === ''} />
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -221,7 +221,7 @@ const SuperIntelligenceView: React.FC = () => {
                                                     </div>
                                                     <p className="text-[10px] text-slate-400 leading-relaxed italic group-hover:text-slate-200">"{art.content.substring(0, 150)}..."</p>
                                                     <div className="mt-3 flex justify-between items-center text-[8px] font-black text-slate-600 uppercase tracking-widest">
-                                                        <span>� елевантність: {(art.relevance * 100).toFixed(1)}%</span>
+                                                        <span> елевантність: {(art.relevance * 100).toFixed(1)}%</span>
                                                         <span className="text-yellow-500">Vector ID: {art.id}</span>
                                                     </div>
                                                 </div>
@@ -265,7 +265,7 @@ const SuperIntelligenceView: React.FC = () => {
                             </div>
                         </TacticalCard>
 
-                        <TacticalCard variant="holographic" title="Арбітраж � ішень" className="h-[250px] glass-morphism panel-3d">
+                        <TacticalCard variant="holographic" title="Арбітраж  ішень" className="h-[250px] glass-morphism panel-3d">
                             <ResponsiveContainer width="100%" height="100%">
                                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={[
                                     { s: 'Безпека', A: arbitrationScores[0]?.criteria.safety * 100 || 0, B: arbitrationScores[1]?.criteria.safety * 100 || 0 },

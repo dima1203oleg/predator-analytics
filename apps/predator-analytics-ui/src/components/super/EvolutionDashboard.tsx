@@ -69,7 +69,7 @@ const EvolutionDashboard: React.FC = () => {
             <div className="col-span-12 flex items-center justify-between mb-2">
                 <div>
                     <h1 className="text-3xl font-black bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent uppercase tracking-tighter">
-                        AZR: УНІФІКОВАНА СУВЕ� ЕННІСТЬ
+                        AZR: УНІФІКОВАНА СУВЕ ЕННІСТЬ
                     </h1>
                     <p className="text-white/40 text-xs font-mono">SOVEREIGN CORE V40.0 • АВТОНОМНА ЕВОЛЮЦІЯ АКТИВНА</p>
                 </div>
@@ -164,7 +164,7 @@ const EvolutionDashboard: React.FC = () => {
                              </div>
                          </div>
                          <div className="bg-white/5 p-2 rounded">
-                             <div className="text-[10px] text-white/50">ВИКО� ИСТАННЯ ОЗП</div>
+                             <div className="text-[10px] text-white/50">ВИКО ИСТАННЯ ОЗП</div>
                              <div className="text-xl font-mono text-white">{stats?.system?.memory_percent || 0}%</div>
                              <div className="h-1 bg-white/10 mt-1 rounded ">
                                  <div className="h-full bg-purple-500" style={{ width: `${stats?.system?.memory_percent || 0}%`}} />

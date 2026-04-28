@@ -185,7 +185,7 @@ export const VectorDBView: React.FC<VectorDBViewProps> = ({ vectorData, selected
                                 </div>
                                 <div className="space-y-4">
                                     <p className="text-sm font-black text-slate-400 uppercase tracking-[0.2em] leading-relaxed">
-                                        СЕНСО�  ОЧІКУЄ <br /> <span className="text-blue-500/60">АКТИВАЦІЇ</span>
+                                        СЕНСО  ОЧІКУЄ <br /> <span className="text-blue-500/60">АКТИВАЦІЇ</span>
                                     </p>
                                     <p className="text-[10px] text-slate-600 font-medium uppercase tracking-widest max-w-[200px] mx-auto">
                                         Оберіть вузол на семантичному радарі для повного сканування ембеддингу

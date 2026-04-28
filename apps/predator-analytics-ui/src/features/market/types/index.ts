@@ -7,7 +7,15 @@ export interface MarketOverviewResponse {
     total_value_usd: number;
     total_companies: number;
     top_products: TopProduct[];
+    top_countries: TopCountry[];
     period: string;
+}
+
+export interface TopCountry {
+    code: string;
+    name: string;
+    value_usd: number;
+    declaration_count: number;
 }
 
 export interface TopProduct {

@@ -64,7 +64,7 @@ vi.mock('@/hooks/useBackendStatus', () => ({
     useBackendStatus: () => ({
         isOffline: false,
         isTruthOnly: true,
-        modeLabel: '� ежим правдивих даних',
+        modeLabel: 'режим правдивих даних',
         sourceLabel: 'localhost:9080/api/v1',
         sourceType: 'local',
         statusLabel: 'Зʼєднання активне',
@@ -79,8 +79,8 @@ vi.mock('@/services/api/config', () => ({
 
 const statsPayload = {
     globalStats: [
-        { label: 'ТОВА� И В � УСІ', value: '18 ОБʼЄКТІВ', sub: '6 кораблів, 8 фур, 4 поїзди', icon: 'Package', color: 'text-cyan-400' },
-        { label: '� ИЗИК ЛАНЦЮГА', value: 'HIGH', sub: '4 критичні аномалії', icon: 'ShieldAlert', color: 'text-amber-400' },
+        { label: 'ТОВА И В  УСІ', value: '18 ОБʼЄКТІВ', sub: '6 кораблів, 8 фур, 4 поїзди', icon: 'Package', color: 'text-cyan-400' },
+        { label: 'РИЗИК ЛАНЦЮГА', value: 'HIGH', sub: '4 критичні аномалії', icon: 'ShieldAlert', color: 'text-amber-400' },
         { label: 'ЕКОНОМІЯ AI', value: '$120K', sub: 'Оцінка оптимізації', icon: 'DollarSign', color: 'text-emerald-400' },
     ],
     generated_at: '2026-03-30T10:00:00Z',
@@ -132,7 +132,7 @@ const routesPayload = {
         },
         {
             id: 'route-2',
-            origin: '� умунія',
+            origin: ' умунія',
             destination: 'Україна',
             via: 'Порт Чорноморськ',
             risk_score: 35,
@@ -170,7 +170,7 @@ describe('SupplyChainAnalyticsView', () => {
 
         expect(await screen.findByText(/ЛАНЦЮГИ ПОСТАЧАННЯ/i)).toBeInTheDocument();
         expect(screen.getByText('Джерела: /supply-chain/stats, /supply-chain/tracking, /supply-chain/routes')).toBeInTheDocument();
-        expect(screen.getByText('ТОВА� И В � УСІ')).toBeInTheDocument();
+        expect(screen.getByText('ТОВА И В  УСІ')).toBeInTheDocument();
         expect((await screen.findAllByText('Порт Одеса')).length).toBeGreaterThan(0);
         expect(screen.getByText(/Туреччина → Україна/i)).toBeInTheDocument();
     });

@@ -28,7 +28,7 @@ import { DatabasePipelineMonitor } from '@/components/pipeline/DatabasePipelineM
 import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 
-// === ТИПИ ТА КОНФІГУ� АЦІЯ ===
+// === ТИПИ ТА КОНФІГУ АЦІЯ ===
 interface DataSource {
   id: string;
   name: string;
@@ -45,13 +45,13 @@ interface UploadedFile {
 }
 
 const SOURCE_TYPES = [
-  { id: 'customs', tier: 1, label: 'МИТНІ_ДЕКЛА� АЦІЇ', icon: FileSpreadsheet, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { id: 'customs', tier: 1, label: 'МИТНІ_ДЕКЛА АЦІЇ', icon: FileSpreadsheet, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'tax', tier: 1, label: 'ПОДАТКОВІ_ДАНІ', icon: Activity, color: 'text-blue-400', bg: 'bg-blue-500/10' },
   { id: 'logistics', tier: 1, label: 'ЛОГІСТИКА_CARGO', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-  { id: 'energy', tier: 1, label: 'ЕНЕ� ГОПОТОКИ', icon: CloudLightning, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-  { id: 'edr', tier: 2, label: '� ЕЄСТ� И_ЄД� ', icon: Database, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
-  { id: 'court', tier: 2, label: 'СУДОВІ_� ЕШЕННЯ', icon: ShieldAlert, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-  { id: 'tender', tier: 2, label: 'PROZORRO_ДЕ� Ж', icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+  { id: 'energy', tier: 1, label: 'ЕНЕ ГОПОТОКИ', icon: CloudLightning, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+  { id: 'edr', tier: 2, label: ' ЕЄСТ И_ЄД ', icon: Database, color: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+  { id: 'court', tier: 2, label: 'СУДОВІ_ ЕШЕННЯ', icon: ShieldAlert, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+  { id: 'tender', tier: 2, label: 'PROZORRO_ДЕ Ж', icon: Target, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   { id: 'media', tier: 3, label: 'OSINT_TELEGRAM', icon: MessageSquare, color: 'text-purple-400', bg: 'bg-purple-500/10' },
 ];
 
@@ -190,18 +190,18 @@ const DataIngestionHub: React.FC = () => {
               </div>
               <div>
                   <div className="flex items-center gap-3 mb-2">
-                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] animate-pulse">ЯД� О_ЗЛИТТЯ_ДАНИХ_v6.1</span>
+                       <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em] animate-pulse">ЯДРО_ЗЛИТТЯ_ДАНИХ_v6.1</span>
                        <Badge variant="outline" className="text-[8px] bg-emerald-500/10 text-emerald-400 border-emerald-500/20">LIVE_BRIDGE</Badge>
                   </div>
                   <h1 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-tight font-display">
-                      ЦЕНТ�  <span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">ІНГЕСТІЇ</span>
+                      ЦЕНТ  <span className="text-emerald-400 drop-shadow-[0_0_20px_rgba(16,185,129,0.4)]">ІНГЕСТІЇ</span>
                   </h1>
               </div>
            </div>
 
            <div className="flex items-center gap-8">
                 <div className="flex flex-col text-right">
-                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХ� ОНІЗАЦІЯ_ОЗЕ� А</span>
+                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] mb-1">СИНХ ОНІЗАЦІЯ_ОЗЕ А</span>
                     <span className="text-lg font-black text-emerald-400 font-mono italic">{lastUpdate}</span>
                 </div>
                 <button 
@@ -209,7 +209,7 @@ const DataIngestionHub: React.FC = () => {
                   className="px-10 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-xs uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-400 transition-all flex items-center gap-3 group active:scale-95"
                 >
                   <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" />
-                  ПІДКЛЮЧИТИ ДЖЕ� ЕЛО_v2
+                  ПІДКЛЮЧИТИ ДЖЕРЕЛО_v2
                 </button>
            </div>
         </div>
@@ -226,7 +226,7 @@ const DataIngestionHub: React.FC = () => {
                     <div className="flex items-center justify-between border-b border-white/5 pb-6">
                         <div className="flex items-center gap-4">
                             <Workflow size={20} className="text-blue-400" />
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНІ_КОНЕКТО� И_� ЕЄСТ� У</h3>
+                            <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">АКТИВНІ_КОНЕКТО И_ ЕЄСТ У</h3>
                         </div>
                         <div className="flex gap-4">
                             <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 font-black uppercase tracking-widest px-4 py-1">TOTAL_NODES: {sources.length}</Badge>
@@ -237,7 +237,7 @@ const DataIngestionHub: React.FC = () => {
                         <table className="w-full text-left border-separate border-spacing-y-4">
                             <thead>
                                 <tr>
-                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ID_КОНЕКТО� А</th>
+                                    <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ID_КОНЕКТО А</th>
                                     <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest">ТИП_ІНФО</th>
                                     <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">СТАТУС_КАНАЛУ</th>
                                     <th className="px-6 text-[10px] font-black text-slate-300 uppercase tracking-widest text-right">ОБ'ЄМ_ЗНАНЬ</th>
@@ -296,7 +296,7 @@ const DataIngestionHub: React.FC = () => {
                 <TacticalCard variant="cyber" className="p-10 flex flex-col gap-8 bg-blue-500/5">
                     <div className="flex items-center gap-4">
                         <Terminal size={24} className="text-blue-400" />
-                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ВИКОНАВЧИЙ_ТЕ� МІНАЛ_v6</h3>
+                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ВИКОНАВЧИЙ_ТЕ МІНАЛ_v6</h3>
                     </div>
                     <div className="bg-black/80 rounded-[2rem] p-8 font-mono text-[11px] border border-white/5 relative min-h-[300px] shadow-inner group">
                          <div className="absolute top-4 right-6 flex gap-2">
@@ -324,13 +324,13 @@ const DataIngestionHub: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                         <Globe size={24} className="text-amber-400" />
-                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ГЛОБАЛЬНИЙ_OSINT_СКАНЕ� </h3>
+                        <h3 className="text-xl font-black text-white uppercase italic tracking-tighter">ГЛОБАЛЬНИЙ_OSINT_СКАНЕ </h3>
                     </div>
                     <p className="text-xs text-slate-400 font-medium leading-relaxed uppercase tracking-wide">
                         Нейронний моніторинг інформаційного простору 24/7. Включає Telegram, новинні стрічки та офіційні урядові бюлетені.
                     </p>
                     <button className="w-full py-5 bg-amber-500 text-black font-black rounded-2xl text-[10px] uppercase tracking-[0.3em] shadow-xl hover:bg-amber-400 transition-all flex items-center justify-center gap-3 active:scale-95">
-                        <Search size={16} /> ІНІЦІЮВАТИ_� ЕЖИМ_ТИШІ
+                        <Search size={16} /> ІНІЦІЮВАТИ_ ЕЖИМ_ТИШІ
                     </button>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 bg-black/40 rounded-xl border border-white/5 flex flex-col items-center gap-2">
@@ -347,7 +347,7 @@ const DataIngestionHub: React.FC = () => {
                 <TacticalCard variant="glass" className="p-10 flex flex-col gap-6 bg-slate-900">
                      <div className="flex items-center gap-4 text-emerald-400">
                          <ShieldCheck size={24} />
-                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">П� ОТОКОЛИ_БЕЗПЕКИ</span>
+                         <span className="text-[10px] font-black uppercase tracking-[0.4em]">П ОТОКОЛИ_БЕЗПЕКИ</span>
                      </div>
                      <div className="space-y-4">
                         {[
@@ -383,7 +383,7 @@ const DataIngestionHub: React.FC = () => {
                                     <Layers size={40} />
                                 </div>
                                 <div>
-                                    <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase mb-2 font-display">ІНІЦІАЛІЗАЦІЯ_КОНВЕЄ� А</h2>
+                                    <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase mb-2 font-display">ІНІЦІАЛІЗАЦІЯ_КОНВЕЄ А</h2>
                                     <p className="text-slate-300 font-medium tracking-wide uppercase text-sm border-l-2 border-emerald-500/30 pl-4">Створення нового каналу поглинання знань</p>
                                 </div>
                             </div>
@@ -396,7 +396,7 @@ const DataIngestionHub: React.FC = () => {
                             <div className="grid grid-cols-12 gap-12">
                                 <div className="col-span-12 lg:col-span-12">
                                     <h3 className="text-[11px] font-black text-emerald-400 uppercase tracking-[0.4em] mb-8 flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> ВИБЕ� ІТЬ ТИП ТА Т� ІЄ�  ДЖЕ� ЕЛА
+                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> ВИБЕ ІТЬ ТИП ТА Т ІЄ  ДЖЕ ЕЛА
                                     </h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                         {SOURCE_TYPES.map(type => (
@@ -435,7 +435,7 @@ const DataIngestionHub: React.FC = () => {
                                         <div className="p-10 bg-emerald-500/10 rounded-[3rem] border border-emerald-500/20 mb-8 group-hover:scale-110 transition-transform duration-700">
                                             <Upload size={64} className="text-emerald-400 animate-bounce" />
                                         </div>
-                                        <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">ПЕ� ЕТЯГНІТЬ ФАЙЛИ ДЛЯ АНАЛІЗУ</h4>
+                                        <h4 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-2">ПЕ ЕТЯГНІТЬ ФАЙЛИ ДЛЯ АНАЛІЗУ</h4>
                                         <p className="text-[10px] font-mono text-slate-300 uppercase tracking-[0.4em]">MAX_LIMIT: 2.0GB_PER_PART // AI_VALIDATION_ENABLED</p>
                                     </div>
                                 </div>
@@ -443,7 +443,7 @@ const DataIngestionHub: React.FC = () => {
                                 {files.length > 0 && (
                                     <div className="col-span-12 space-y-4">
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕ� ЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">ОЧЕ ЕДЬ_ЗАВАНТАЖЕННЯ: {files.length} ОБ'ЄКТІВ</span>
                                             <button onClick={() => setFiles([])} className="text-[10px] font-black text-amber-500 uppercase tracking-widest hover:text-amber-400 transition-colors">ОЧИСТИТИ ВСЕ</button>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -470,7 +470,7 @@ const DataIngestionHub: React.FC = () => {
                                     className="px-16 py-6 bg-emerald-500 text-black font-black rounded-[2rem] text-[10px] uppercase tracking-[0.3em] shadow-[0_0_50px_rgba(16,185,129,0.3)] hover:bg-emerald-400 transition-all flex items-center gap-4 disabled:opacity-50"
                                 >
                                     {isSubmitting ? <RefreshCw className="animate-spin" size={18} /> : <Zap size={18} />}
-                                    {isSubmitting ? 'ІНІЦІАЛІЗАЦІЯ_ВУЗЛА...' : "� ОЗПОЧАТИ_Ф'ЮЖН_ДАНИХ"}
+                                    {isSubmitting ? 'ІНІЦІАЛІЗАЦІЯ_ВУЗЛА...' : " ОЗПОЧАТИ_Ф'ЮЖН_ДАНИХ"}
                                 </button>
                             </div>
                         </div>

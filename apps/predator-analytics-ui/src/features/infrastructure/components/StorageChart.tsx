@@ -40,7 +40,7 @@ export function StorageChart() {
               boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
             }}
             itemStyle={{ color: '#E11D48', fontWeight: 'black', fontSize: '11px', textTransform: 'uppercase' }}
-            formatter={(value: number) => [`${value} GB`, 'ВИКО� ИСТАНО']}
+            formatter={(value: number) => [`${value} GB`, 'ВИКО ИСТАНО']}
             cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
           <Legend 

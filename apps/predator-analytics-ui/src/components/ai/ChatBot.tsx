@@ -50,7 +50,7 @@ const ChatBot = () => {
       const botResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `Отримано запит: "${userText}". Аналізую дані Predator Analytics v58.2-WRAITH... \n\nЯ бачу, що за останній період ваша ефективність зросла на 14%. Всі системи працюють стабільно.`,
+        content: `Отримано запит: "${userText}". Аналізую дані Predator Analytics v58.2-WRAITH... \n\nЯ бачу, що за останній період вашарефективність зросла на 14%. Всі системи працюють стабільно.`,
         timestamp: format(new Date(), 'HH:mm')
       };
       setMessages(prev => [...prev, botResponse]);

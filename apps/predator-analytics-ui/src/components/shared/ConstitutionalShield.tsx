@@ -51,7 +51,7 @@ export const ConstitutionalShield: React.FC = () => {
     }, []);
 
     const isActive = status?.is_running;
-    const isFrozen = status?.message_uk?.includes("ЗАМО� ОЖЕНА");
+    const isFrozen = status?.message_uk?.includes("ЗАМО ОЖЕНА");
     const integrity = status?.system_integrity || '100%';
 
     return (
@@ -140,7 +140,7 @@ export const ConstitutionalShield: React.FC = () => {
                             {/* Stats Grid */}
                             <div className="p-6 grid grid-cols-2 gap-4">
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-blue-500/20 transition-colors">
-                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block mb-1">� ІВЕНЬ_ДОПУСКУ</span>
+                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block mb-1">РІВЕНЬ_ДОПУСКУ</span>
                                     <span className="text-sm font-black text-blue-400 italic uppercase tracking-tighter">{status.rights_level}</span>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-2xl border border-white/5">

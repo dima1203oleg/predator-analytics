@@ -1,5 +1,5 @@
 /**
- * 💰 PRICE COMPARISON // ПО� ІВНЯННЯ ЦІН | v58.2-WRAITH
+ * 💰 PRICE COMPARISON // ПО ІВНЯННЯ ЦІН | v58.2-WRAITH
  * PREDATOR Analytics — Market Analysis & Procurement Intelligence
  * 
  * Знаходження найкращих пропозицій від глобальних постачальників.
@@ -58,27 +58,27 @@ interface Product {
 const MOCK_PRODUCTS: Product[] = [
   {
     id: 'p1',
-    name: 'ГЕНЕ� АТО� И_ДИЗЕЛЬ_5KW',
-    category: 'ЕНЕ� ГЕТИКА',
+    name: 'ГЕНЕ АТО И_ДИЗЕЛЬ_5KW',
+    category: 'ЕНЕ ГЕТИКА',
     hsCode: '8502 11 20 00',
     unit: 'ШТ',
     avgPrice: 1250,
     offers: [
       { id: 'o1', supplierName: 'SINO_TECH_EXPORT', country: 'КИТАЙ', countryCode: 'CN', price: 980, currency: 'USD', minQuantity: 10, leadTime: 25, reliability: 98, lastUpdated: '2026-03-28', isVerified: true, isBestPrice: true },
       { id: 'o2', supplierName: 'EURO_POWER_GMBH', country: 'НІМЕЧЧИНА', countryCode: 'DE', price: 1450, currency: 'USD', minQuantity: 2, leadTime: 7, reliability: 99, lastUpdated: '2026-03-30', isVerified: true, isBestPrice: false },
-      { id: 'o3', supplierName: 'TR_ENERGY_SOLUTIONS', country: 'ТУ� ЕЧЧИНА', countryCode: 'TR', price: 1120, currency: 'USD', minQuantity: 5, leadTime: 14, reliability: 85, lastUpdated: '2026-03-25', isVerified: false, isBestPrice: false },
+      { id: 'o3', supplierName: 'TR_ENERGY_SOLUTIONS', country: 'ТУ ЕЧЧИНА', countryCode: 'TR', price: 1120, currency: 'USD', minQuantity: 5, leadTime: 14, reliability: 85, lastUpdated: '2026-03-25', isVerified: false, isBestPrice: false },
     ]
   },
   {
     id: 'p2',
-    name: 'А� МАТУ� А_СТАЛЕВА_12MM',
+    name: 'А МАТУ А_СТАЛЕВА_12MM',
     category: 'БУДІВНИЦТВО',
     hsCode: '7214 20 00 00',
     unit: 'ТОННА',
     avgPrice: 840,
     offers: [
       { id: 'o4', supplierName: 'POL_STEEL_WORKS', country: 'ПОЛЬЩА', countryCode: 'PL', price: 790, currency: 'USD', minQuantity: 20, leadTime: 5, reliability: 96, lastUpdated: '2026-03-29', isVerified: true, isBestPrice: true },
-      { id: 'o5', supplierName: 'METALL_GROUP_BG', country: 'БОЛГА� ІЯ', countryCode: 'BG', price: 820, currency: 'USD', minQuantity: 60, leadTime: 8, reliability: 92, lastUpdated: '2026-03-27', isVerified: true, isBestPrice: false },
+      { id: 'o5', supplierName: 'METALL_GROUP_BG', country: 'БОЛГА ІЯ', countryCode: 'BG', price: 820, currency: 'USD', minQuantity: 60, leadTime: 8, reliability: 92, lastUpdated: '2026-03-27', isVerified: true, isBestPrice: false },
     ]
   }
 ];
@@ -132,7 +132,7 @@ export default function PriceComparisonPremium() {
                          <span className="text-[10px] font-black text-yellow-800 font-mono tracking-widest uppercase italic shadow-sm">v58.2-WRAITH</span>
                       </div>
                       <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-3deg] leading-none">
-                        ПО� ІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>
+                        ПО ІВНЯННЯ <span className="text-[#D4AF37] underline decoration-[#D4AF37]/30 decoration-[14px] underline-offset-[12px] italic uppercase tracking-tighter">ЦІН</span>
                       </h1>
                    </div>
                 </div>
@@ -143,8 +143,8 @@ export default function PriceComparisonPremium() {
                 { label: 'CLASSIFIED_T1', color: 'primary', icon: <Target size={10} /> },
               ]}
               stats={[
-                { label: 'ТОВА� ІВ_У_БАЗІ', value: '47,201', icon: <Box size={14} />, color: 'primary' },
-                { label: 'СЕ� ЕДНЯ_ЕКОНОМІЯ', value: '28.4%', icon: <TrendingDown size={14} />, color: 'success', animate: true },
+                { label: 'ТОВА ІВ_У_БАЗІ', value: '47,201', icon: <Box size={14} />, color: 'primary' },
+                { label: 'СЕ ЕДНЯ_ЕКОНОМІЯ', value: '28.4%', icon: <TrendingDown size={14} />, color: 'success', animate: true },
                 { label: 'АКТИВНИХ_OFFERS', value: '1.2M+', icon: <Layers size={14} />, color: 'warning' },
                 { label: 'CORE_PRICE_INDEX', value: '1.042', icon: <Zap size={14} />, color: 'gold' },
               ]}
@@ -162,7 +162,7 @@ export default function PriceComparisonPremium() {
               <div className="relative flex-1 group">
                  <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within:text-[#D4AF37] transition-colors" size={24} />
                  <input 
-                   type="text" placeholder="ПОШУК ТОВА� У, КАТЕГО� ІЇ АБО КОДУ УКТЗЕД..."
+                   type="text" placeholder="ПОШУК ТОВА У, КАТЕГО ІЇ АБО КОДУ УКТЗЕД..."
                    value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                    className="w-full bg-white/[0.01] border-2 border-white/[0.04] p-5 pl-18 rounded-2xl text-xl font-black text-white italic tracking-tighter focus:border-[#D4AF37]/40 outline-none transition-all placeholder:text-slate-800"
                  />
@@ -187,7 +187,7 @@ export default function PriceComparisonPremium() {
                          <div className="space-y-1">
                             <h3 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">{product.name}</h3>
                             <div className="flex items-center gap-4 text-[10px] font-black text-slate-700 uppercase italic tracking-widest">
-                               <span>КАТЕГО� ІЯ: {product.category}</span>
+                               <span>КАТЕГО ІЯ: {product.category}</span>
                                <span className="text-slate-800">|</span>
                                <span>УКТЗЕД: {product.hsCode}</span>
                             </div>
@@ -195,7 +195,7 @@ export default function PriceComparisonPremium() {
                       </div>
                       <div className="flex items-center gap-10">
                          <div className="text-right">
-                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-1">СЕ� ЕДНЯ_ЦІНА</p>
+                            <p className="text-[10px] font-black text-slate-700 uppercase tracking-widest italic mb-1">СЕ ЕДНЯ_ЦІНА</p>
                             <p className="text-3xl font-black text-white italic font-mono tracking-tighter">{formatPrice(product.avgPrice)}</p>
                          </div>
                          <div className="p-6 bg-[#D4AF37] text-black rounded-[1.8rem] text-center min-w-[140px] shadow-2xl skew-x-[-3deg]">
@@ -240,7 +240,7 @@ export default function PriceComparisonPremium() {
                                          <p className="text-3xl font-black text-white italic font-mono tracking-tighter leading-none">{formatPrice(offer.price)}</p>
                                          <p className={cn("text-[9px] font-black italic mt-1", offer.price < product.avgPrice ? "text-[#D4AF37]" : "text-amber-500")}>
                                             {offer.price < product.avgPrice ? <TrendingDown size={14} className="inline mr-1" /> : <TrendingUp size={14} className="inline mr-1" />}
-                                            {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕ� ЕДНЬОЇ
+                                            {Math.abs(((offer.price - product.avgPrice) / product.avgPrice) * 100).toFixed(1)}% ВІД СЕ ЕДНЬОЇ
                                          </p>
                                       </div>
                                       <button className="p-6 bg-[#D4AF37] text-black rounded-2xl hover:brightness-110 shadow-2xl transition-all">

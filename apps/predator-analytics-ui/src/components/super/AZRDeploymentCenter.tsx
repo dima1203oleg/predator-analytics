@@ -66,13 +66,13 @@ export const AZRDeploymentCenter: React.FC = () => {
                             <Server size={32} className="text-blue-400" />
                         </div>
                         <div>
-                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">ПОТОЧНА ВЕ� СІЯ</div>
+                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">ПОТОЧНА ВЕРСІЯ</div>
                             <div className="text-4xl font-black text-white font-mono tracking-tighter">
                                 {currentVersion}
                             </div>
                             <div className="flex items-center gap-2 mt-2">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest">Стабільна � обота</span>
+                                <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest">Стабільна  обота</span>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                             <Rocket size={32} className="text-purple-400" />
                         </div>
                         <div>
-                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">ТА� ГЕТ-ВЕ� СІЯ (AZR_AUTO)</div>
+                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">ТА ГЕТ-ВЕРСІЯ (AZR_AUTO)</div>
                             <div className="text-4xl font-black text-white font-mono tracking-tighter">
                                 {targetVersion}
                             </div>
@@ -110,7 +110,7 @@ export const AZRDeploymentCenter: React.FC = () => {
 
                 <div className="flex items-center justify-between mb-12">
                     <div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter">ЦЕНТ� АЛЬНИЙ МОНІТО�  � ОЗГО� ТАННЯ</h3>
+                        <h3 className="text-2xl font-black text-white uppercase tracking-tighter">ЦЕНТ АЛЬНИЙ МОНІТО  РОЗГОРТАННЯ</h3>
                         <p className="text-[10px] text-slate-500 font-mono uppercase tracking-[0.2em] mt-1">Автономний Контролер Інфраструктури v8.2</p>
                     </div>
                     {!isDeploying ? (
@@ -123,7 +123,7 @@ export const AZRDeploymentCenter: React.FC = () => {
                     ) : (
                         <div className="flex items-center gap-6">
                             <div className="text-right">
-                                <div className="text-[10px] text-slate-500 font-black uppercase mb-1">П� ОГ� ЕС</div>
+                                <div className="text-[10px] text-slate-500 font-black uppercase mb-1">П ОГ ЕС</div>
                                 <div className="text-2xl font-black text-blue-400 font-mono leading-none">{Math.round(progress)}%</div>
                             </div>
                             <RefreshCw size={24} className="text-blue-500 animate-spin" />
@@ -183,10 +183,10 @@ export const AZRDeploymentCenter: React.FC = () => {
                         animate={{ opacity: 1, height: 'auto' }}
                         className="mt-10 p-6 bg-black rounded-3xl border border-blue-500/30 font-mono text-[10px] text-blue-400/80 space-y-1"
                     >
-                        <div>[SYSTEM] ІНІЦІАЛІЗАЦІЯ GITOPS � УКОСТИСКАННЯ...</div>
-                        <div>[K8S] � ЕЗЕ� ВУВАННЯ CANARY П� ОСТО� У ІМЕН: predator-canary-v45...</div>
-                        <div>[SCAN] ПЕ� ЕВІ� КА ПОЛІТИКИ БЕЗПЕКИ: П� ОЙДЕНО (VULN: 0)</div>
-                        {progress > 40 && <div>[NEURAL] СИНХ� ОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
+                        <div>[SYSTEM] ІНІЦІАЛІЗАЦІЯ GITOPS  УКОСТИСКАННЯ...</div>
+                        <div>[K8S]  ЕЗЕ ВУВАННЯ CANARY П ОСТО У ІМЕН: predator-canary-v45...</div>
+                        <div>[SCAN] ПЕ ЕВІ КА ПОЛІТИКИ БЕЗПЕКИ: П ОЙДЕНО (VULN: 0)</div>
+                        {progress > 40 && <div>[NEURAL] СИНХ ОНІЗАЦІЯ ЕМБЕДИНГІВ (1024-D) З QDRANT...</div>}
                         {progress > 70 && <div>[DEPLOY] ПОЧАТО ROLL-OUT: 1 З 12 ПОДІВ ЗАПУЩЕНО...</div>}
                         <div className="animate-pulse">_</div>
                     </motion.div>

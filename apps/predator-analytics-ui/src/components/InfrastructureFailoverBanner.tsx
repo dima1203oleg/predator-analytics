@@ -1,5 +1,5 @@
 /**
- * 🛰️ БАНЕ�  � ЕЗЕ� ВНОГО КОПІЮВАННЯ ІНФ� АСТ� УКТУ� И v5.0 // СТАТУС КЛАСТЕ� А | v58.2-WRAITH
+ * 🛰️ БАНЕ   ЕЗЕ ВНОГО КОПІЮВАННЯ ІНФ АСТ УКТУ И v5.0 // СТАТУС КЛАСТЕ А | v58.2-WRAITH
  * PREDATOR Analytics — Master/Mirror Infrastructure Coordination
  */
 
@@ -111,13 +111,13 @@ export const InfrastructureFailoverBanner: React.FC = () => {
 
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
-              <span className="text-[9px] font-black uppercase tracking-[0.5em] opacity-50 italic">ІНФ� АСТ� УКТУ� А //</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.5em] opacity-50 italic">ІНФ АСТРУКТУРА //</span>
               <div className={cn("px-2 py-0.5 rounded-lg text-[8px] font-black uppercase border animate-pulse", mode.color, mode.border)}>
                 {mode.label}
               </div>
             </div>
             <h4 className={cn("text-2xl font-black italic tracking-tighter uppercase leading-none font-serif mt-1", mode.color)}>
-              {isMirror ? 'ДЗЕ� КАЛО GOOGLE COLAB' : isOffline ? 'АВТОНОМНИЙ � ЕЖИМ' : 'NVIDIA PROD КЛАСТЕ� '}
+              {isMirror ? 'ДЗЕ КАЛО GOOGLE COLAB' : isOffline ? 'АВТОНОМНИЙ  ЕЖИМ' : 'NVIDIA PROD КЛАСТЕ '}
             </h4>
           </div>
         </div>
@@ -127,7 +127,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
           <div className="hidden xl:flex items-center gap-6 pl-6 border-l border-white/10">
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between gap-10">
-                <span className="text-[8px] font-black opacity-40 uppercase tracking-widest italic">VRAM_МОНІТО� _НАВАНТАЖЕННЯ</span>
+                <span className="text-[8px] font-black opacity-40 uppercase tracking-widest italic">VRAM_МОНІТО _НАВАНТАЖЕННЯ</span>
                 <span className={cn("text-[9px] font-black font-mono", vramMetrics.status === 'critical' ? 'text-rose-500' : 'text-emerald-500')}>
                   {vramMetrics.used.toFixed(1)} / {vramMetrics.total} GB
                 </span>
@@ -150,7 +150,7 @@ export const InfrastructureFailoverBanner: React.FC = () => {
         {/* Connection Telemetry */}
         <div className="hidden md:flex items-center gap-8 pl-8 border-l border-white/10 ml-2">
           <div className="text-right">
-            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest italic">ЗАТ� ИМКА (PING)</p>
+            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest italic">ЗАТ ИМКА (PING)</p>
             <p className="text-lg font-black italic font-mono tracking-tighter shadow-sm text-white">
               {isOffline ? '---' : isMirror ? '142ms' : '0.8ms'}
             </p>

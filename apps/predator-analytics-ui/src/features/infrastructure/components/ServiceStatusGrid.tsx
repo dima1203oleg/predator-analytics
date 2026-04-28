@@ -77,7 +77,7 @@ export function ServiceStatusGrid({ data }: ServiceStatusGridProps) {
               {comp.storage_total_gb && (
                 <div className="space-y-1.5">
                     <div className="flex justify-between text-[8px] uppercase font-black text-slate-600 tracking-widest">
-                        <span>ВИКО� ИСТАННЯ: {comp.storage_used_gb} GB</span>
+                        <span>ВИКО ИСТАННЯ: {comp.storage_used_gb} GB</span>
                         <span>ЛІМІТ: {comp.storage_total_gb} GB</span>
                     </div>
                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">

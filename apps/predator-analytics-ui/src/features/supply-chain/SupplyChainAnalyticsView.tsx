@@ -1,5 +1,5 @@
 /**
- * 🔗 SUPPLY CHAIN MATRIX // ЦИФ� ОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v58.2-WRAITH
+ * 🔗 SUPPLY CHAIN MATRIX // ЦИФ ОВІ ДВІЙНИКИ ПОСТАЧАННЯ | v58.2-WRAITH
  * PREDATOR Analytics — Supply Chain Risk & Logistics Intelligence
  * 
  * Моніторинг логістичних ланцюгів, AIS-трекінг суден та аналіз маршрутів.
@@ -66,9 +66,9 @@ const formatPercent = (value?: number | null): string =>
 
 const getRiskMeta = (value?: number | null) => {
     if (value == null || !Number.isFinite(value)) return { label: 'Н/д', tone: 'text-slate-500', border: 'border-white/10' };
-    if (value >= 80) return { label: 'К� ИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
+    if (value >= 80) return { label: 'К ИТИЧНО', tone: 'text-amber-500', border: 'border-amber-500/30' };
     if (value >= 60) return { label: 'ВИСОКИЙ', tone: 'text-amber-500', border: 'border-amber-500/30' };
-    return { label: 'НО� МА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
+    return { label: 'НО МА', tone: 'text-emerald-500', border: 'border-emerald-500/30' };
 };
 
 export default function SupplyChainAnalyticsView() {
@@ -104,7 +104,7 @@ export default function SupplyChainAnalyticsView() {
            window.dispatchEvent(new CustomEvent('predator-error', {
               detail: {
                 service: 'SupplyChainMatrix',
-                message: '� ЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
+                message: ' ЕЖИМ АВТОНОМНОЇ ЛОГІСТИКИ (LOGISTICS_OFFLINE). Трасування AIS виконується через дзеркальні вузли.',
                 severity: 'info',
                 timestamp: new Date().toISOString(),
                 code: 'LOGISTICS_OFFLINE'
@@ -120,12 +120,12 @@ export default function SupplyChainAnalyticsView() {
     }, [loadData]);
 
     const sections: Array<{ id: SectionType; label: string; icon: LucideIcon }> = [
-        { id: 'radar', label: 'ОПЕ� АЦІЙНИЙ_� АДА� ', icon: Globe },
+        { id: 'radar', label: 'ОПЕРАЦІЙНИЙ_ АДА ', icon: Globe },
         { id: 'tracking', label: 'ВІДСТЕЖЕННЯ_ВАНТАЖІВ', icon: Target },
-        { id: 'routing', label: 'МА� Ш� УТНИЙ_ШТАБ', icon: Navigation },
-        { id: 'ships', label: 'МО� СЬКІ_КО� ИДО� И', icon: Ship },
-        { id: 'risks', label: 'СИГНАЛИ_� ИЗИКУ', icon: ShieldAlert },
-        { id: 'forecasts', label: 'ГО� ИЗОНТ_ПЛАНУВАННЯ', icon: TrendingUp },
+        { id: 'routing', label: 'МА Ш УТНИЙ_ШТАБ', icon: Navigation },
+        { id: 'ships', label: 'МО СЬКІ_КО ИДО И', icon: Ship },
+        { id: 'risks', label: 'СИГНАЛИ_РИЗИКУ', icon: ShieldAlert },
+        { id: 'forecasts', label: 'ГО ИЗОНТ_ПЛАНУВАННЯ', icon: TrendingUp },
     ];
 
     return (
@@ -155,10 +155,10 @@ export default function SupplyChainAnalyticsView() {
                                 <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                               ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase">� АДА� </span>
+                               ЛОГІСТИЧНИЙ <span className="text-cyan-600 underline decoration-cyan-600/20 decoration-8 italic uppercase"> АДА </span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                МОНІТО� ИНГ ЛАНЦЮГІВ ПОСТАЧАННЯ ТА AIS-Т� ЕКІНГ
+                                МОНІТО ИНГ ЛАНЦЮГІВ ПОСТАЧАННЯ ТА AIS-Т ЕКІНГ
                              </p>
                           </div>
                        </div>
@@ -166,7 +166,7 @@ export default function SupplyChainAnalyticsView() {
                      stats={[
                        { label: 'АКТИВНИХ_ВАНТАЖІВ', value: statsData.items[0]?.value ?? '42', icon: <Box size={14} />, color: 'primary' },
                        { 
-                         label: isOffline ? 'SYNC_RECOVERY' : '� ИЗИКОВІ_ЗАТ� ИМКИ', 
+                         label: isOffline ? 'SYNC_RECOVERY' : 'РИЗИКОВІ_ЗАТ ИМКИ', 
                          value: isOffline ? `${Math.floor(healingProgress)}%` : '7', 
                          icon: isOffline ? <Activity /> : <Siren size={14} />, 
                          color: isOffline ? 'warning' : 'danger', 
@@ -180,7 +180,7 @@ export default function SupplyChainAnalyticsView() {
                              <RefreshCcw size={24} />
                           </button>
                           <button className="px-8 py-5 bg-cyan-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-cyan-600 shadow-2xl transition-all flex items-center gap-4">
-                             <Database size={18} /> СИНХ� ОНІЗУВАТИ_AIS
+                             <Database size={18} /> СИНХ ОНІЗУВАТИ_AIS
                           </button>
                        </div>
                      }
@@ -232,14 +232,14 @@ export default function SupplyChainAnalyticsView() {
                                  <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
                                     <div className="flex items-center justify-between border-b border-white/[0.04] pb-8">
                                        <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] flex items-center gap-6">
-                                          <Activity size={24} className="text-cyan-500" /> ОПЕ� АЦІЙНИЙ_МОНІТО� _2026
+                                          <Activity size={24} className="text-cyan-500" /> ОПЕРАЦІЙНИЙ_МОНІТО _2026
                                        </h3>
                                        <Badge className="bg-emerald-900/10 border-emerald-500/20 text-emerald-500 font-black italic">DATABASE_READY</Badge>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                        <div className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/[0.04] space-y-4">
                                           <p className="text-[10px] font-black text-slate-700 uppercase italic">ПОТОЧНИЙ_СТАТУС_ВАНТАЖУ</p>
-                                          <p className="text-2xl font-black text-white italic uppercase">{trackingData.currentStatus || 'ОБ� ОБКА_ДАННИХ'}</p>
+                                          <p className="text-2xl font-black text-white italic uppercase">{trackingData.currentStatus || 'ОБ ОБКА_ДАННИХ'}</p>
                                        </div>
                                        <div className="p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/[0.04] space-y-4">
                                           <p className="text-[10px] font-black text-slate-700 uppercase italic">ETA (ПЛАНОВАНИЙ_ЧАС)</p>
@@ -270,7 +270,7 @@ export default function SupplyChainAnalyticsView() {
                                {activeSection === 'routing' && (
                                  <div className="p-10 rounded-[4rem] bg-black border-2 border-white/[0.04] shadow-3xl space-y-10">
                                     <h3 className="text-[14px] font-black text-white italic uppercase tracking-[0.5em] pb-8 border-b border-white/[0.04] flex items-center gap-6">
-                                       <Map size={24} className="text-cyan-500" /> АНАЛІЗ_ОПТИМАЛЬНИХ_МА� Ш� УТІВ
+                                       <Map size={24} className="text-cyan-500" /> АНАЛІЗ_ОПТИМАЛЬНИХ_МА Ш УТІВ
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                        {routesData.routes.map(r => (
@@ -285,7 +285,7 @@ export default function SupplyChainAnalyticsView() {
                                             </div>
                                             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/[0.02]">
                                                <div>
-                                                  <p className="text-[8px] font-black text-slate-700 uppercase italic">Т� АНЗИТ</p>
+                                                  <p className="text-[8px] font-black text-slate-700 uppercase italic">Т АНЗИТ</p>
                                                   <p className="text-lg font-black text-white italic font-mono leading-none">{r.transitTimeDays} ДНІВ</p>
                                                </div>
                                                <div>
@@ -305,7 +305,7 @@ export default function SupplyChainAnalyticsView() {
                       <div className="col-span-12 xl:col-span-4 space-y-10">
                          <TacticalCard variant="holographic" className="p-10 rounded-[3.5rem] border-cyan-500/20 bg-cyan-500/[0.02] space-y-8">
                             <h3 className="text-xl font-black text-white italic uppercase flex items-center gap-4">
-                               <ShieldCheck size={24} className="text-cyan-500" /> ЦИФ� ОВІ_ДВІЙНИКИ
+                               <ShieldCheck size={24} className="text-cyan-500" /> ЦИФ ОВІ_ДВІЙНИКИ
                             </h3>
                             <div className="space-y-4">
                                {[
@@ -323,12 +323,12 @@ export default function SupplyChainAnalyticsView() {
                          </TacticalCard>
 
                          <div className="p-10 rounded-[3.5rem] bg-black border border-white/[0.04] shadow-3xl space-y-8">
-                            <h3 className="text-[12px] font-black text-slate-500 italic uppercase tracking-[0.4em]">ФО� ЕНЗІК_АКЦІЇ</h3>
+                            <h3 className="text-[12px] font-black text-slate-500 italic uppercase tracking-[0.4em]">ФО ЕНЗІК_АКЦІЇ</h3>
                             <div className="space-y-4">
                                {[
-                                 { i: Search, l: 'ШУКАТИ_КОНТЕЙНЕ� ', c: 'text-cyan-500' },
-                                 { i: Globe, l: 'КА� ТА_СУДЕН_AIS', c: 'text-yellow-500' },
-                                 { i: BarChart3, l: 'ЕКСПО� Т_МА� Ш� УТІВ', c: 'text-emerald-500' },
+                                 { i: Search, l: 'ШУКАТИ_КОНТЕЙНЕ ', c: 'text-cyan-500' },
+                                 { i: Globe, l: 'КА ТА_СУДЕН_AIS', c: 'text-yellow-500' },
+                                 { i: BarChart3, l: 'ЕКСПОРТ_МА Ш УТІВ', c: 'text-emerald-500' },
                                ].map((a, i) => (
                                  <button key={i} className="w-full flex items-center justify-between p-6 rounded-2xl bg-white/[0.01] border border-white/[0.03] hover:bg-cyan-600/[0.03] hover:border-cyan-500/30 transition-all group">
                                     <div className="flex items-center gap-6">

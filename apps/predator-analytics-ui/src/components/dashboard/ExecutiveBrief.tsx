@@ -1,5 +1,5 @@
 /**
- * 📊 EXECUTIVE BRIEF // � АНКОВИЙ ЗВІТ CEO | v60.0-ELITE
+ * 📊 EXECUTIVE BRIEF //  АНКОВИЙ ЗВІТ CEO | v60.0-ELITE
  * PREDATOR Analytics — Strategic Intelligence Dashboard
  * 
  * Перший екран, який бачить бізнесмен: ключові метрики, ШІ-аналіз та сигнали.
@@ -37,14 +37,14 @@ export const ExecutiveBrief: React.FC = () => {
 
   const coreStats = useMemo(() => [
     { 
-      label: 'ОБО� ОТ (USD)', 
+      label: 'ОБО ОТ (USD)', 
       value: summary ? `$${(summary.total_value_usd / 1e6).toFixed(1)}M` : '...', 
       trend: '+12.4%', 
       icon: TrendingUp, 
       color: 'text-emerald-500' 
     },
     { 
-      label: 'ІНДЕКС � ИЗИКУ', 
+      label: 'ІНДЕКС РИЗИКУ', 
       value: summary ? `${((summary.high_risk_count / (summary.total_declarations || 1)) * 100).toFixed(1)}%` : '...', 
       trend: '-2.1%', 
       icon: Shield, 
@@ -58,7 +58,7 @@ export const ExecutiveBrief: React.FC = () => {
       color: 'text-yellow-500' 
     },
     { 
-      label: 'ШІ-� ЕЗОЛЮЦІЇ', 
+      label: 'ШІ- ЕЗОЛЮЦІЇ', 
       value: summary?.vectors.toLocaleString() || '...', 
       trend: '+88', 
       icon: Sparkles, 
@@ -73,13 +73,13 @@ export const ExecutiveBrief: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-4">
             <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-4 py-1 text-[10px] font-black tracking-[0.4em] uppercase italic rounded-lg">
-              СТ� АТЕГІЧНА_� ОЗВІДКА // � АНКОВИЙ_ЗВІТ
+              СТ АТЕГІЧНА_РОЗВІДКА //  АНКОВИЙ_ЗВІТ
             </span>
             <div className="h-px w-12 bg-emerald-500/20" />
             <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">КОНФІДЕНЦІЙНО</span>
           </div>
           <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none">
-            � АНКОВИЙ <span className="text-emerald-500 underline decoration-emerald-500/20 decoration-[10px] underline-offset-8">ЗВІТ</span>
+             АНКОВИЙ <span className="text-emerald-500 underline decoration-emerald-500/20 decoration-[10px] underline-offset-8">ЗВІТ</span>
           </h2>
         </div>
         <div className="text-right">
@@ -182,10 +182,10 @@ export const ExecutiveBrief: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-6">
               {[
-                { label: 'АКТИВНІ ТЕНДЕ� И', val: summary?.completed_pipelines.toString() || '...', icon: Briefcase },
+                { label: 'АКТИВНІ ТЕНДЕ И', val: summary?.completed_pipelines.toString() || '...', icon: Briefcase },
                 { label: 'OSINT СИГНАЛИ', val: summary?.search_documents.toLocaleString() || '...', icon: Database },
-                { label: 'КОМПАНІЇ_МОНІТО� ', val: summary?.import_count.toLocaleString() || '...', icon: Users },
-                { label: 'МЕ� ЕЖЕВА_ЕНТ� ОПІЯ', val: '0.04', icon: Activity },
+                { label: 'КОМПАНІЇ_МОНІТО ', val: summary?.import_count.toLocaleString() || '...', icon: Users },
+                { label: 'МЕ ЕЖЕВА_ЕНТ ОПІЯ', val: '0.04', icon: Activity },
               ].map((item, i) => (
                 <div key={i} className="p-6 rounded-[2rem] bg-black border-2 border-white/5 hover:border-blue-500/30 transition-all group">
                   <div className="flex items-center gap-3 mb-4">
@@ -207,11 +207,11 @@ export const ExecutiveBrief: React.FC = () => {
                 <AlertTriangle size={32} />
               </div>
               <div className="space-y-2">
-                <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-2deg]">К� ИТИЧНИЙ СПОВІЩУВАЧ</h4>
+                <h4 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-none skew-x-[-2deg]">К ИТИЧНИЙ СПОВІЩУВАЧ</h4>
                 <p className="text-[11px] font-black text-rose-800 uppercase tracking-[0.3em] italic leading-none">
                   {summary?.high_risk_count && summary.high_risk_count > 0 
-                    ? `ВИЯВЛЕНО ${summary.high_risk_count} П� ЯМИХ ЗАГ� ОЗ ПО� ТФЕЛЮ` 
-                    : 'ЗАГ� ОЗ ПО� ТФЕЛЮ НЕ ВИЯВЛЕНО'}
+                    ? `ВИЯВЛЕНО ${summary.high_risk_count} П ЯМИХ ЗАГ ОЗ ПО ТФЕЛЮ` 
+                    : 'ЗАГ ОЗ ПО ТФЕЛЮ НЕ ВИЯВЛЕНО'}
                 </p>
               </div>
             </div>
@@ -227,7 +227,7 @@ export const ExecutiveBrief: React.FC = () => {
               <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500 border border-emerald-500/20">
                 <PieChart size={18} />
               </div>
-              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">П� ОГНОЗОВАНЕ � ВД (ROI)</h4>
+              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">П ОГНОЗОВАНЕ  ВД (ROI)</h4>
             </div>
             <span className="text-[10px] font-black text-emerald-500">+18.5%</span>
           </div>
@@ -249,7 +249,7 @@ export const ExecutiveBrief: React.FC = () => {
               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500 border border-blue-500/20">
                 <Globe size={18} />
               </div>
-              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ЕКСПАНСІЯ � ИНКУ</h4>
+              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ЕКСПАНСІЯ  ИНКУ</h4>
             </div>
             <span className="text-[10px] font-black text-blue-500">КЛАС-1</span>
           </div>
@@ -269,7 +269,7 @@ export const ExecutiveBrief: React.FC = () => {
               <div className="p-2 bg-rose-500/10 rounded-lg text-rose-500 border border-rose-500/20">
                 <Activity size={18} />
               </div>
-              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ВОЛАТИЛЬНІСТЬ � ИЗИКУ</h4>
+              <h4 className="text-[10px] font-black text-white italic uppercase tracking-widest">ВОЛАТИЛЬНІСТЬ РИЗИКУ</h4>
             </div>
             <span className="text-[10px] font-black text-rose-500">НИЗЬКА</span>
           </div>

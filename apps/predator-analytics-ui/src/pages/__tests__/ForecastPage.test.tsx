@@ -154,7 +154,7 @@ describe('ForecastPage Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText('Синтетичні')).toBeInTheDocument();
-            expect(screen.queryByText('� еальні дані')).not.toBeInTheDocument();
+            expect(screen.queryByText('реальні дані')).not.toBeInTheDocument();
         });
     });
 

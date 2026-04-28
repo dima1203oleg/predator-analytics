@@ -19,7 +19,7 @@ import { useBackendStatus } from '@/hooks/useBackendStatus';
 
 /**
  * 🦅 Sovereign Command Center | v61.0-ELITE
- * СТ� АТЕГІЧНИЙ_КУПОЛ_УП� АВЛІННЯ: Головний пульт PREDATOR Analytics.
+ * СТРАТЕГІЧНИЙ_КУПОЛ_УПРАВЛІННЯ: Головний пульт PREDATOR Analytics.
  * Версія ELITE: Максимальний візуальний контроль та кінематографічна синхронізація.
  */
 
@@ -81,12 +81,12 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
             <div className="flex items-center gap-3">
               <PulseIndicator color="emerald" />
-              <span className="text-emerald-500/80">ЯД� О_СИНХ� ОНІЗОВАНЕ</span>
+              <span className="text-emerald-500/80">ЯДРО_СИНХРОНІЗОВАНЕ</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3">
                <RefreshCw size={14} className="text-rose-500/60 animate-spin-slow" />
-               <span>ОПЕ� АЦІЙНИЙ_ЦИКЛ: 1.2с</span>
+               <span>ОПЕРАЦІЙНИЙ_ЦИКЛ: 1.2с</span>
             </div>
             <span className="opacity-20">•</span>
             <div className="flex items-center gap-3 text-rose-500/40">
@@ -99,7 +99,7 @@ export const SovereignCommandCenter: React.FC = () => {
         {/* Global Strategy Badge */}
         <div className="flex items-center gap-6 bg-black/60 backdrop-blur-3xl p-6 rounded-[2.5rem] border-2 border-white/5 shadow-4xl group hover:border-rose-500/30 transition-all duration-700">
            <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">ГЛОБАЛЬНА_СТ� АТЕГІЯ_ШІ</span>
+              <span className="text-[9px] font-black font-mono text-white/20 uppercase tracking-[0.4em] italic">ГЛОБАЛЬНА_СТРАТЕГІЯ_ШІ</span>
               <span className="text-[12px] font-black text-white/60 italic uppercase tracking-tighter group-hover:text-rose-500 transition-colors">{nodeSource}</span>
            </div>
            <div className="h-12 w-[2px] bg-white/5 mx-2" />
@@ -126,7 +126,7 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
               <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЯД� О_ІНФ� АСТ� УКТУ� И_ELITE</span>
+              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ЯДРО_ІНФРАСТРУКТУРИ_ELITE</span>
             </div>
             <div className="grid grid-cols-2 gap-6">
               <MiniStatus label="ТИСК_VRAM" value={`${vramGb} GB`} icon={Zap} />
@@ -138,7 +138,7 @@ export const SovereignCommandCenter: React.FC = () => {
               <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
               <div className="flex flex-col gap-3 relative z-10">
                 <div className="flex justify-between text-[10px] font-black font-mono text-white/30 italic uppercase tracking-widest">
-                  <span>СТАБІЛЬНІСТЬ_ЦЕНТ� У</span>
+                  <span>СТАБІЛЬНІСТЬ_ЦЕНТРУ</span>
                   <span className="text-emerald-500 glint-elite">99.99%</span>
                 </div>
                 <div className="h-2 bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
@@ -162,7 +162,7 @@ export const SovereignCommandCenter: React.FC = () => {
                <div className="p-8 glass-wraith border-2 border-white/5 rounded-[2.5rem] group hover:border-sky-500/40 transition-all duration-700 shadow-4xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                   <div className="flex items-center justify-between mb-4 relative z-10">
-                    <span className="text-[10px] font-black font-mono text-sky-500/60 uppercase tracking-[0.4em] italic font-black">ROI_ШІ_ОПЕ� АТО� А</span>
+                    <span className="text-[10px] font-black font-mono text-sky-500/60 uppercase tracking-[0.4em] italic font-black">ROI_ШІ_ОПЕРАТОРА</span>
                     <TrendingUp size={18} className="text-sky-500" />
                   </div>
                   <div className="flex items-end gap-4 relative z-10">
@@ -175,11 +175,11 @@ export const SovereignCommandCenter: React.FC = () => {
                   <div className="p-6 glass-wraith border-2 border-white/5 rounded-[2rem] flex flex-col gap-2 shadow-4xl group hover:border-emerald-500/40 transition-all duration-700 overflow-hidden relative">
                      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                      <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ОХОПЛЕННЯ_OSINT</span>
-                     <span className="text-xl font-black text-white italic tracking-tighter relative z-10 glint-elite">142 ДЖЕ� ЕЛА</span>
+                     <span className="text-xl font-black text-white italic tracking-tighter relative z-10 glint-elite">142 ДЖЕРЕЛА</span>
                   </div>
                   <div className="p-6 glass-wraith border-2 border-white/5 rounded-[2rem] flex flex-col gap-2 shadow-4xl group hover:border-rose-500/40 transition-all duration-700 overflow-hidden relative">
                      <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
-                     <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ВА� ТІСТЬ_ЗАПИТУ</span>
+                     <span className="text-[8px] text-white/20 uppercase font-black tracking-[0.3em] italic relative z-10">ВА ТІСТЬ_ЗАПИТУ</span>
                      <span className="text-xl font-black text-rose-500 italic tracking-tighter relative z-10 glint-elite">₴0.0004</span>
                   </div>
                </div>
@@ -189,12 +189,12 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
               <div className="w-2 h-2 bg-emerald-500 rotate-45 shadow-[0_0_10px_rgba(16,185,129,1)]" />
-              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕ� АЦІЙНІ_МАГІСТ� АЛІ</span>
+              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕРАЦІЙНІ_МАГІСТРАЛІ</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
               {[
-                { id: 'auto-factory', label: 'ШІ_ЗАВОД_PREDATOR', sub: 'ЦИКЛ_БЕЗПЕ� Е� ВНИЙ_L5', icon: Factory, color: 'text-rose-500', bg: 'rose' },
-                { id: 'models', label: 'НЕЙ� ОННИЙ_ПОЛІГОН', sub: 'ЕТАП_ВЕ� ТИКАЛЬНОЇ_ВАЛІДАЦІЇ', icon: BrainCircuit, color: 'text-sky-500', bg: 'sky' }
+                { id: 'auto-factory', label: 'ШІ_ЗАВОД_PREDATOR', sub: 'ЦИКЛ_БЕЗПЕРЕВНИЙ_L5', icon: Factory, color: 'text-rose-500', bg: 'rose' },
+                { id: 'models', label: 'НЕЙРОННИЙ_ПОЛІГОН', sub: 'ЕТАП_ВЕРТИКАЛЬНОЇ_ВАЛІДАЦІЇ', icon: BrainCircuit, color: 'text-sky-500', bg: 'sky' }
               ].map((link, i) => (
                 <motion.button 
                   key={link.id}
@@ -228,23 +228,23 @@ export const SovereignCommandCenter: React.FC = () => {
             <div className="absolute top-0 left-0 right-0 p-12 flex items-start justify-between z-30 pointer-events-none">
               <div className="flex flex-col gap-3">
                 <h3 className="text-white font-black tracking-[0.6em] text-2xl uppercase italic glint-elite drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]">
-                  СУВЕ� ЕННЕ_НЕЙ� ОННЕ_ЯД� О
+                  СУВЕРЕННЕ_НЕЙРОННЕ_ЯДРО
                 </h3>
                 <div className="flex items-center gap-6">
                   <div className="px-6 py-2 bg-rose-600 text-white text-[10px] font-black rounded-xl tracking-[0.4em] shadow-[0_0_30px_rgba(225,29,72,0.8)] border-2 border-rose-400/30 italic uppercase">PREDATOR_ELITE_v61</div>
                   <div className="flex items-center gap-4">
                     <PulseIndicator />
-                    <span className="text-rose-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase animate-pulse italic">СИНХ� ОНІЗАЦІЯ_� ЕАЛЬНОСТІ_АКТИВНА</span>
+                    <span className="text-rose-500 font-black font-mono text-[10px] tracking-[0.5em] uppercase animate-pulse italic">СИНХРОНІЗАЦІЯ_РЕАЛЬНОСТІ_АКТИВНА</span>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end gap-3 bg-black/60 p-6 border-2 border-white/5 backdrop-blur-3xl rounded-[2rem] shadow-4xl">
                 <div className="flex items-center gap-4">
-                  <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ЗДО� ОВ'Я_БУФЕ� А</span>
+                  <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ЗДОРОВ'Я_БУФЕРА</span>
                   <span className="text-emerald-500 font-black font-mono text-[11px] glint-elite">100.0%</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ТЕМП_ЯД� А_GPU</span>
+                  <span className="text-white/40 font-black font-mono text-[9px] tracking-widest uppercase italic">ТЕМП_ЯДРА_GPU</span>
                   <span className="text-rose-500 font-black font-mono text-[11px] glint-elite">{stats?.gpu_temp ? `${stats.gpu_temp}°C` : "42.4°C"}</span>
                 </div>
                 <div className="w-40 h-[2px] bg-gradient-to-l from-rose-500 to-transparent mt-2 rounded-full shadow-rose-500/20" />
@@ -282,14 +282,14 @@ export const SovereignCommandCenter: React.FC = () => {
                 className="px-16 py-6 bg-rose-600 text-white text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 shadow-4xl border-2 border-rose-400/50 italic group/btn overflow-hidden relative"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                <span className="relative z-10">ПЕ� ЕКАЛІБ� УВАТИ_ЯД� О_ELITE</span>
+                <span className="relative z-10">ПЕРЕКАЛІБРУВАТИ_ЯДРО_ELITE</span>
               </motion.button>
               <motion.button 
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.3)' }}
                 whileTap={{ scale: 0.95 }}
                 className="px-16 py-6 bg-white/5 border-2 border-white/10 text-white/70 text-[13px] font-black uppercase tracking-[0.5em] rounded-2xl transition-all duration-700 italic backdrop-blur-3xl shadow-4xl"
               >
-                АВА� ІЙНИЙ_ШЛЮЗ_OODA
+                АВАРІЙНИЙ_ШЛЮЗ_OODA
               </motion.button>
             </div>
           </div>
@@ -299,7 +299,7 @@ export const SovereignCommandCenter: React.FC = () => {
                 <div className="absolute top-6 right-6 p-4 bg-rose-500/10 rounded-2xl border-2 border-rose-500/20 group-hover:bg-rose-500/20 transition-all">
                   <Target size={24} className="text-rose-500" />
                 </div>
-                <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.5em] italic relative z-10">АКТИВНІ_НЕЙ� О-АГЕНТИ</span>
+                <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.5em] italic relative z-10">АКТИВНІ_НЕЙРО-АГЕНТИ</span>
                 <div className="flex items-end justify-between relative z-10">
                   <span className="text-6xl font-black text-white italic tracking-tighter glint-elite">{activeEnginesCount}</span>
                   <Boxes size={48} className="text-rose-500/10 group-hover:text-rose-500 group-hover:scale-110 transition-all duration-700" />
@@ -321,7 +321,7 @@ export const SovereignCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-[11px] font-black font-mono text-emerald-500 uppercase tracking-[0.5em] italic relative z-10">СТАТУС_БЕЗПЕКИ_L7</span>
                 <div className="flex items-end justify-between relative z-10">
-                  <span className="text-4xl font-black text-emerald-400 italic tracking-tighter glint-elite uppercase leading-none">ГЕ� МЕТИЧНО</span>
+                  <span className="text-4xl font-black text-emerald-400 italic tracking-tighter glint-elite uppercase leading-none">ГЕ МЕТИЧНО</span>
                   <Lock size={48} className="text-emerald-500/10 group-hover:text-emerald-500 group-hover:scale-110 transition-all duration-700" />
                 </div>
              </div>
@@ -333,12 +333,12 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
               <div className="w-2 h-2 bg-rose-500 rotate-45 shadow-[0_0_10px_rgba(225,29,72,1)]" />
-              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТ� АТЕГІЧНИЙ_� ЕЗЕ� В_ELITE</span>
+              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">СТРАТЕГІЧНИЙ_РЕЗЕРВ_ELITE</span>
             </div>
             <div className="grid grid-cols-1 gap-6">
               {[
-                { label: 'ДВИГУН_ОПТИМІЗАЦІЇ', sub: 'ШІ_ОПЕ� АТО� : ГІБ� ИД_v61', value: '92%', icon: BrainCircuit, color: 'text-rose-500' },
-                { label: 'БАЗА_НЕЙ� О-ВІДБИТКІВ', sub: 'СИНХ� ОНІЗАЦІЯ_ГЛОБАЛ_L3', value: '12.8M', icon: Database, color: 'text-sky-500' }
+                { label: 'ДВИГУН_ОПТИМІЗАЦІЇ', sub: 'ШІ_ОПЕРАТОР: ГІБРИД_v61', value: '92%', icon: BrainCircuit, color: 'text-rose-500' },
+                { label: 'БАЗА_НЕЙРО-ВІДБИТКІВ', sub: 'СИНХРОНІЗАЦІЯ_ГЛОБАЛ_L3', value: '12.8M', icon: Database, color: 'text-sky-500' }
               ].map((res, i) => (
                 <div key={i} className="p-8 glass-wraith border-2 border-white/5 rounded-[2.5rem] group hover:border-white/20 transition-all duration-700 shadow-4xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
@@ -369,28 +369,28 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-4 px-4">
               <div className="w-2 h-2 bg-amber-500 rotate-45 shadow-[0_0_10px_rgba(245,158,11,1)]" />
-              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ГЛОБАЛЬНІ_� ИЗИКИ_L7</span>
+              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ГЛОБАЛЬНІ_РИЗИКИ_L7</span>
             </div>
             <div className="p-10 glass-wraith border-2 border-amber-500/20 rounded-[3rem] space-y-8 shadow-4xl group hover:border-amber-500/40 transition-all duration-700 relative overflow-hidden">
                <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
                <div className="flex items-center justify-between text-[11px] font-black font-mono uppercase tracking-[0.3em] text-amber-500/60 italic relative z-10">
-                  <span>ІНДЕКС_ЗАГ� ОЗ_ЯД� А</span>
+                  <span>ІНДЕКС_ЗАГРОЗ_ЯДРА</span>
                   <span className="text-emerald-500 animate-pulse font-black">МІНІМАЛЬНИЙ</span>
                </div>
                <div className="grid grid-cols-2 gap-6 relative z-10">
                   <div className="p-6 bg-amber-500/5 border-2 border-amber-500/10 rounded-2xl flex flex-col gap-2 shadow-inner group-hover:border-amber-500/30 transition-all">
-                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">Ф� ОД-АКТИВНІСТЬ</span>
+                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">ФРОД-АКТИВНІСТЬ</span>
                      <span className="text-xl font-black text-amber-500 italic glint-elite">0.02%</span>
                   </div>
                   <div className="p-6 bg-white/5 border-2 border-white/5 rounded-2xl flex flex-col gap-2 shadow-inner group-hover:border-white/10 transition-all">
-                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">ВИТ� АТИ_ТОКЕНІВ</span>
+                     <span className="text-[8px] text-white/20 uppercase font-black tracking-widest italic">ВИТРАТИ_ТОКЕНІВ</span>
                      <span className="text-xl font-black text-white italic glint-elite">$12.45</span>
                   </div>
                </div>
                <div className="flex items-center gap-4 p-6 bg-amber-500/10 border-2 border-amber-500/20 rounded-[1.5rem] relative z-10 shadow-4xl">
                   <ShieldAlert size={20} className="text-amber-500 animate-pulse flex-shrink-0" />
                   <p className="text-[10px] text-amber-200/60 font-black leading-tight uppercase italic tracking-widest">
-                     ВИЯВЛЕНО_СП� ОБУ_ОБХОДУ_RLS_В_TENANT_42. КІБЕ� _ЩИТ_ЗАСТОСОВАНО_АВТОМАТИЧНО.
+                     ВИЯВЛЕНО_СПРОБУ_ОБХОДУ_RLS_В_TENANT_42. КІБЕР_ЩИТ_ЗАСТОСОВАНО_АВТОМАТИЧНО.
                   </p>
                </div>
             </div>
@@ -399,7 +399,7 @@ export const SovereignCommandCenter: React.FC = () => {
           <div className="flex-1 flex flex-col gap-6 min-h-[350px]">
             <div className="flex items-center gap-4 px-4">
               <div className="w-2 h-2 bg-white/40 rotate-45 shadow-[0_0_10px_rgba(255,255,255,1)]" />
-              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕ� АЦІЙНИЙ_ЖУ� НАЛ_ЯД� А</span>
+              <span className="text-[12px] font-black font-mono text-white/40 uppercase tracking-[0.5em] italic glint-elite">ОПЕРАЦІЙНИЙ_ЖУРНАЛ_ЯДРА</span>
             </div>
             <div className="flex-1 glass-wraith border-2 border-white/5 rounded-[3rem] flex flex-col overflow-hidden shadow-4xl p-8 relative">
               <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
@@ -417,14 +417,14 @@ export const SovereignCommandCenter: React.FC = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full opacity-10 gap-6">
                     <Terminal size={48} className="animate-pulse" />
-                    <span className="text-[11px] uppercase tracking-[0.6em] font-black italic">ОЧІКУВАННЯ_ЛОГІВ_ЯД� А_OODA...</span>
+                    <span className="text-[11px] uppercase tracking-[0.6em] font-black italic">ОЧІКУВАННЯ_ЛОГІВ_ЯДРА_OODA...</span>
                   </div>
                 )}
               </div>
               <div className="mt-8 pt-6 border-t-2 border-white/5 relative z-10">
                 <div className="flex items-center gap-4 p-5 bg-white/5 border-2 border-white/10 rounded-[1.5rem] group/input cursor-text hover:bg-white/10 transition-all duration-700 shadow-inner group">
                   <Terminal size={18} className="text-white/30 group-hover:text-rose-500 transition-colors duration-700" />
-                  <span className="text-[10px] font-black font-mono text-white/30 uppercase tracking-[0.4em] animate-pulse italic">ЯД� О_ГОТОВЕ_ДО_ДИ� ЕКТИВ_ELITE_</span>
+                  <span className="text-[10px] font-black font-mono text-white/30 uppercase tracking-[0.4em] animate-pulse italic">ЯДРО_ГОТОВЕ_ДО_ДИРЕКТИВ_ELITE_</span>
                 </div>
               </div>
             </div>

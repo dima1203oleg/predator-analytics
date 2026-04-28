@@ -85,13 +85,13 @@ vi.mock('../../../config/navigation', async () => {
   return {
     ...actual,
     getVisibleNavigation: () => [
-      { id: 'command', label: 'КОМАНДНИЙ ЦЕНТ� ', accent: 'emerald', items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'intelligence', label: '� ОЗВІДКА КОНТ� АГЕНТІВ', accent: 'cyan', items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'financial-sigint', label: 'ФІНАНСОВА � ОЗВІДКА', accent: 'amber', items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }] }] },
+      { id: 'command', label: 'КОМАНДНИЙ ЦЕНТ ', accent: 'emerald', items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '1', label: 'L1', path: '/', icon: () => null, description: 'd' }] }] },
+      { id: 'intelligence', label: 'РОЗВІДКА КОНТ АГЕНТІВ', accent: 'cyan', items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '2', label: 'L2', path: '/', icon: () => null, description: 'd' }] }] },
+      { id: 'financial-sigint', label: 'ФІНАНСОВА РОЗВІДКА', accent: 'amber', items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '3', label: 'L3', path: '/', icon: () => null, description: 'd' }] }] },
       { id: 'trade-logistics', label: 'ЛАНЦЮГИ ПОСТАЧАННЯ', accent: 'indigo', items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '4', label: 'L4', path: '/', icon: () => null, description: 'd' }] }] },
       { id: 'counterparties', label: 'БІЗНЕС-МОЖЛИВОСТІ', accent: 'violet', items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '5', label: 'L5', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'ai-automation', label: 'ШІ-ЛАБО� АТО� ІЯ', accent: 'rose', items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }] }] },
-      { id: 'system', label: 'МІСІЯ-КОНТ� ОЛЬ', accent: 'slate', items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }] }] },
+      { id: 'ai-automation', label: 'ШІ-ЛАБО АТО ІЯ', accent: 'rose', items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '6', label: 'L6', path: '/', icon: () => null, description: 'd' }] }] },
+      { id: 'system', label: 'МІСІЯ-КОНТ ОЛЬ', accent: 'slate', items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }], groups: [{ items: [{ id: '7', label: 'L7', path: '/', icon: () => null, description: 'd' }] }] },
     ],
     getNavigationTotals: () => ({ sections: 7, items: 42 }),
     getGlobalNavigationActions: () => [],
@@ -111,13 +111,13 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ� ')).toBeInTheDocument();
-    expect(screen.getByText('� ОЗВІДКА КОНТ� АГЕНТІВ')).toBeInTheDocument();
-    expect(screen.getByText('ФІНАНСОВА � ОЗВІДКА')).toBeInTheDocument();
+    expect(screen.getByText('КОМАНДНИЙ ЦЕНТ ')).toBeInTheDocument();
+    expect(screen.getByText('РОЗВІДКА КОНТ АГЕНТІВ')).toBeInTheDocument();
+    expect(screen.getByText('ФІНАНСОВА РОЗВІДКА')).toBeInTheDocument();
     expect(screen.getByText('ЛАНЦЮГИ ПОСТАЧАННЯ')).toBeInTheDocument();
     expect(screen.getByText('БІЗНЕС-МОЖЛИВОСТІ')).toBeInTheDocument();
-    expect(screen.getByText('ШІ-ЛАБО� АТО� ІЯ')).toBeInTheDocument();
-    expect(screen.getByText('МІСІЯ-КОНТ� ОЛЬ')).toBeInTheDocument();
+    expect(screen.getByText('ШІ-ЛАБО АТО ІЯ')).toBeInTheDocument();
+    expect(screen.getByText('МІСІЯ-КОНТ ОЛЬ')).toBeInTheDocument();
   });
 
   it('відображає брендинг та статус системи', () => {

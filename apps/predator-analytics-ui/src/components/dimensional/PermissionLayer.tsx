@@ -165,7 +165,7 @@ const LockedOverlay: React.FC<{
             Обмежений Доступ
           </h3>
           <p className="text-xs text-slate-500 font-mono">
-            � івень чутливості: <span className="text-red-400 font-bold">{sensitivity}</span>
+             івень чутливості: <span className="text-red-400 font-bold">{sensitivity}</span>
           </p>
         </div>
 
@@ -299,7 +299,7 @@ const SensitivityBadge: React.FC<{
   const config = {
     PUBLIC: { icon: '🌐', color: 'text-green-400 border-green-500/30 bg-green-500/10' },
     INTERNAL: { icon: '🔐', color: 'text-blue-400 border-blue-500/30 bg-blue-500/10' },
-    CONFIDENTIAL: { icon: '� ️', color: 'text-amber-400 border-amber-500/30 bg-amber-500/10' },
+    CONFIDENTIAL: { icon: ' ️', color: 'text-amber-400 border-amber-500/30 bg-amber-500/10' },
     CLASSIFIED: { icon: '🔒', color: 'text-red-400 border-red-500/30 bg-red-500/10' },
   };
 
@@ -309,7 +309,7 @@ const SensitivityBadge: React.FC<{
   return (
     <div
       className={`inline-flex items-center gap-1.5 rounded-full border font-black uppercase tracking-widest ${color} ${sizeClass} ${className}`}
-      title={`� івень чутливості: ${level}`}
+      title={` івень чутливості: ${level}`}
     >
       <span>{icon}</span>
       <span>{level}</span>

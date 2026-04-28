@@ -1,5 +1,5 @@
 /**
- * �  AZR v32 Dashboard Widget
+ *   AZR v32 Dashboard Widget
  * Real-time monitoring for Sovereign Autonomous Response Engine
  *
  * Features:
@@ -105,7 +105,7 @@ export const AZRDashboard: React.FC = () => {
   }, [fetchData]);
 
   const handleFreeze = async () => {
-    if (!confirm('� ️ Зупинити AZR Engine? Це заморозить всі автономні процеси.')) return;
+    if (!confirm(' ️ Зупинити AZR Engine? Це заморозить всі автономні процеси.')) return;
 
     try {
       const res = await fetch(`${API_BASE}/freeze`, { method: 'POST' });
@@ -157,7 +157,7 @@ export const AZRDashboard: React.FC = () => {
       {/* Header */}
       <div className="azr-header">
         <div className="azr-title">
-          <span className="azr-icon">� </span>
+          <span className="azr-icon"> </span>
           <div>
             <h2>AZR Engine {status.engine_version}</h2>
             <span className="azr-status-badge" data-running={status.is_running} data-frozen={status.is_frozen}>
@@ -169,7 +169,7 @@ export const AZRDashboard: React.FC = () => {
         <div className="azr-controls">
           {status.is_frozen ? (
             <button className="azr-btn azr-btn-unfreeze" onClick={handleUnfreeze}>
-              ♻️ � озморозити
+              ♻️  озморозити
             </button>
           ) : (
             <button className="azr-btn azr-btn-freeze" onClick={handleFreeze}>
@@ -263,7 +263,7 @@ export const AZRDashboard: React.FC = () => {
             {/* Anomalies Alert */}
             {anomalies && anomalies.anomalies.length > 0 && (
               <div className="azr-anomalies-alert">
-                <h4>� ️ Виявлені Аномалії</h4>
+                <h4> ️ Виявлені Аномалії</h4>
                 {anomalies.anomalies.map((anomaly, idx) => (
                   <div key={idx} className={`azr-anomaly-item azr-severity-${anomaly.severity}`}>
                     <span className="azr-anomaly-metric">{anomaly.metric}</span>
@@ -392,7 +392,7 @@ export const AZRDashboard: React.FC = () => {
                 <li>💾 Memory Pressure - Тиск на пам'ять</li>
                 <li>🌐 Network Latency - Затримка мережі 500ms</li>
                 <li>🗄️ DB Timeout - Таймаут бази даних</li>
-                <li>� ️ API Error - Випадкові помилки API</li>
+                <li> ️ API Error - Випадкові помилки API</li>
               </ul>
             </div>
           </div>
@@ -401,7 +401,7 @@ export const AZRDashboard: React.FC = () => {
 
       {/* Footer */}
       <div className="azr-footer">
-        <span className="azr-risk">� івень ризику: {status.risk_level}</span>
+        <span className="azr-risk"> івень ризику: {status.risk_level}</span>
         <span className="azr-violations">
           ⚖️ Порушень Конституції: {status.metrics.constitutional_violations}
         </span>

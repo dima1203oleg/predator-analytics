@@ -501,9 +501,9 @@ export const SOMDashboard: React.FC = () => {
           {status && (
             <div className={`status-badge ${status.emergency_level ? 'emergency' : 'operational'}`}>
               {status.emergency_level ? (
-                <>🚨 ЕКСТ� ЕНИЙ � ЕЖИМ</>
+                <>🚨 ЕКСТ ЕНИЙ  ЕЖИМ</>
               ) : (
-                <>{status.operational ? '✅ Операційний' : '� ️ Деградований'}</>
+                <>{status.operational ? '✅ Операційний' : ' ️ Деградований'}</>
               )}
             </div>
           )}
@@ -512,7 +512,7 @@ export const SOMDashboard: React.FC = () => {
 
       {error && (
         <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: 16, borderRadius: 12, marginBottom: 20, color: '#fca5a5' }}>
-          � ️ {error}
+           ️ {error}
         </div>
       )}
 
@@ -574,7 +574,7 @@ export const SOMDashboard: React.FC = () => {
           transition={{ delay: 0.2 }}
         >
           <div className="som-card-header">
-            <div className="som-card-title">� ️ Аномалії</div>
+            <div className="som-card-title"> ️ Аномалії</div>
             <div style={{ fontSize: 12, color: '#64748b' }}>
               {anomalies.filter(a => a.severity === 'critical').length} критичних
             </div>
@@ -593,7 +593,7 @@ export const SOMDashboard: React.FC = () => {
                 >
                   <span className="anomaly-icon">
                     {anomaly.severity === 'critical' ? '🔴' :
-                     anomaly.severity === 'high' ? '� ' :
+                     anomaly.severity === 'high' ? ' ' :
                      anomaly.severity === 'warning' ? '🟡' : '🔵'}
                   </span>
                   <div className="anomaly-info">
@@ -701,7 +701,7 @@ export const SOMDashboard: React.FC = () => {
           transition={{ delay: 0.5 }}
         >
           <div className="som-card-header">
-            <div className="som-card-title">📜 Truth Ledger (� еєстр Правди)</div>
+            <div className="som-card-title">📜 Truth Ledger (реєстр Правди)</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
              {ledgerEntries.length === 0 ? (

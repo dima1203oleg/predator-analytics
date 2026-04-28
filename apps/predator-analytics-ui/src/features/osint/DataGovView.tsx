@@ -1,5 +1,5 @@
 /**
- * 🌐 OPEN DATA MATRIX // МАТ� ИЦЯ ВІДК� ИТИХ ДАНИХ | v58.2-WRAITH
+ * 🌐 OPEN DATA MATRIX // МАТ ИЦЯ ВІДК ИТИХ ДАНИХ | v58.2-WRAITH
  * PREDATOR Analytics — Governance OSINT & Dataset Discovery
  * 
  * Модуль інтеграції з порталом data.gov.ua: пошук та аналіз датасетів.
@@ -67,8 +67,8 @@ export default function DataGovView() {
             console.error(e);
             // Mock
             setDatasets([
-                { id: 'ds-001', title: '� ЕЄСТ�  ОБ\'ЄКТІВ П� АВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ� ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
-                { id: 'ds-002', title: 'ПЕ� ЕЛІК ПІДП� ИЄМСТВ З ОЗНАКАМИ САНКЦІЙ', organizationTitle: 'МНС УК� АЇНИ', metadataModified: '2026-04-11', resources: [{ format: 'JSON', sizeLabel: '12 MB', name: 'SANCTIONS_UA', url: '#' }] }
+                { id: 'ds-001', title: ' ЕЄСТ  ОБ\'ЄКТІВ П АВА ВЛАСНОСТІ', organizationTitle: 'ФОНД ДЕ ЖМАЙНА', metadataModified: '2026-04-12', resources: [{ format: 'CSV', sizeLabel: '450 MB', name: 'OWN_2026', url: '#' }] },
+                { id: 'ds-002', title: 'ПЕ ЕЛІК ПІДП ИЄМСТВ З ОЗНАКАМИ САНКЦІЙ', organizationTitle: 'МНС УК АЇНИ', metadataModified: '2026-04-11', resources: [{ format: 'JSON', sizeLabel: '12 MB', name: 'SANCTIONS_UA', url: '#' }] }
             ]);
         } finally {
             setLoading(false);
@@ -103,18 +103,18 @@ export default function DataGovView() {
                                 <span className="text-[10px] font-black text-slate-700 font-mono tracking-widest uppercase italic">v58.2-WRAITH</span>
                              </div>
                              <h1 className="text-6xl font-black text-white tracking-tighter uppercase italic skew-x-[-2deg] leading-none mb-1">
-                               ДЕ� ЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase">� ЕЄСТ� И</span>
+                               ДЕ ЖАВНІ <span className="text-blue-500 underline decoration-blue-600/20 decoration-8 italic uppercase"> ЕЄСТ И</span>
                              </h1>
                              <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                МОНІТО� ИНГ ТА АНАЛІЗ ВІДК� ИТИХ ДЕ� ЖАВНИХ ДАТАСЕТІВ (DATA.GOV.UA)
+                                МОНІТО ИНГ ТА АНАЛІЗ ВІДК ИТИХ ДЕ ЖАВНИХ ДАТАСЕТІВ (DATA.GOV.UA)
                              </p>
                           </div>
                        </div>
                      }
                      stats={[
-                       { label: '� ЕЄСТ� ІВ_ЗНАЙДЕНО', value: totalCount.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
+                       { label: ' ЕЄСТ ІВ_ЗНАЙДЕНО', value: totalCount.toLocaleString(), icon: <Database size={14} />, color: 'primary' },
                        { label: 'СТАТУС_КАНАЛУ', value: 'ACTIVE', icon: <Satellite size={14} />, color: 'success' },
-                       { label: 'ДЖЕ� ЕЛО_OSINT', value: 'DATA.GOV.UA', icon: <Globe size={14} />, color: 'warning' }
+                       { label: 'ДЖЕРЕЛО_OSINT', value: 'DATA.GOV.UA', icon: <Globe size={14} />, color: 'warning' }
                      ]}
                      actions={
                        <div className="flex gap-4">
@@ -122,7 +122,7 @@ export default function DataGovView() {
                              <RefreshCcw size={24} className={loading ? 'animate-spin' : ''} />
                           </button>
                           <button className="px-8 py-5 bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-2xl transition-all flex items-center gap-4">
-                             <Radar size={18} /> ІНІЦІЮВАТИ_МАТ� ИЦЮ
+                             <Radar size={18} /> ІНІЦІЮВАТИ_МАТ ИЦЮ
                           </button>
                        </div>
                      }
@@ -139,7 +139,7 @@ export default function DataGovView() {
                             <input 
                                type="text" 
                                value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                               placeholder="ПОШУК_ПО_МІЛЬЙОНАХ_ДЕ� ЖАВНИХ_� ЕЄСТ� ІВ..."
+                               placeholder="ПОШУК_ПО_МІЛЬЙОНАХ_ДЕ ЖАВНИХ_ ЕЄСТ ІВ..."
                                className="w-full bg-transparent py-10 text-3xl font-black text-white focus:outline-none placeholder:text-slate-800 tracking-tighter italic uppercase"
                             />
                          </form>
@@ -191,7 +191,7 @@ export default function DataGovView() {
                                  <div className="flex justify-between items-start">
                                     <div className="space-y-2">
                                        <Badge className="bg-blue-600/10 text-blue-500 border border-blue-500/30 px-4 py-1.5 text-[9px] font-black uppercase italic rounded-lg">DATASET_PASSPORT</Badge>
-                                       <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПО� Т <span className="text-blue-500">� ЕЄСТ� У</span></h2>
+                                       <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">ПАСПО Т <span className="text-blue-500"> ЕЄСТ У</span></h2>
                                     </div>
                                     <button onClick={() => setSelectedDataset(null)} className="p-5 bg-white/5 rounded-[1.5rem] hover:bg-amber-500 transition-all text-slate-400 hover:text-white shadow-2xl"><X size={28} /></button>
                                  </div>
@@ -203,7 +203,7 @@ export default function DataGovView() {
                                     </div>
                                     <div className="grid grid-cols-2 gap-6">
                                        <div className="p-8 bg-white/[0.01] border border-white/[0.04] rounded-[2.5rem]">
-                                          <p className="text-[8px] font-black text-slate-700 uppercase italic tracking-widest mb-2">О� ГАНІЗАЦІЯ</p>
+                                          <p className="text-[8px] font-black text-slate-700 uppercase italic tracking-widest mb-2">О ГАНІЗАЦІЯ</p>
                                           <p className="text-xs font-black text-white uppercase italic truncate">{selectedDataset.organizationTitle}</p>
                                        </div>
                                        <div className="p-8 bg-white/[0.01] border border-white/[0.04] rounded-[2.5rem]">
@@ -212,7 +212,7 @@ export default function DataGovView() {
                                        </div>
                                     </div>
                                     <div className="space-y-6">
-                                       <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] italic flex items-center gap-4"><Layers size={16} /> � ЕСУ� СИ_ДАТАСЕТУ ({selectedDataset.resources?.length || 0})</h5>
+                                       <h5 className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] italic flex items-center gap-4"><Layers size={16} />  ЕСУ СИ_ДАТАСЕТУ ({selectedDataset.resources?.length || 0})</h5>
                                        <div className="space-y-4">
                                           {selectedDataset.resources?.map((res: any, idx: number) => (
                                              <div key={idx} className="p-8 bg-white/[0.02] border border-white/[0.04] rounded-[2.5rem] flex items-center justify-between group/res hover:border-blue-500/30 transition-all">
@@ -232,7 +232,7 @@ export default function DataGovView() {
                                  
                                  <div className="flex gap-6 relative z-10">
                                     <a href={`https://data.gov.ua/dataset/${selectedDataset.id}`} target="_blank" className="flex-1 py-8 bg-blue-700 text-white font-black rounded-[2.5rem] uppercase tracking-[0.3em] italic hover:bg-blue-600 shadow-3xl transition-all flex items-center justify-center gap-6">
-                                       <ExternalLink size={24} /> ВІДК� ИТИ НА ПО� ТАЛІ
+                                       <ExternalLink size={24} /> ВІДК ИТИ НА ПО ТАЛІ
                                     </a>
                                  </div>
                               </TacticalCard>

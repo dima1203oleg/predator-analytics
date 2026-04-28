@@ -9,7 +9,7 @@ interface PermissionLayerProps {
 }
 
 /**
- * 🔒 PERMISSION LAYER // ША�  ДОСТУПУ | v61.0-ELITE
+ * 🔒 PERMISSION LAYER // ША  ДОСТУПУ | v61.0-ELITE
  * PREDATOR Analytics — Dimensional Access Control
  */
 export const PermissionLayer: React.FC<PermissionLayerProps> = ({

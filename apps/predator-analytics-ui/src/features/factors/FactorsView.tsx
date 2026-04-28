@@ -180,7 +180,7 @@ export default function FactorsView() {
                                     </h1>
                                     <p className="mt-3 flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.45em] text-yellow-300/75">
                                         <Activity size={12} className="animate-pulse" />
-                                        � обочий контур факторних модулів без синтетичних метрик
+                                         обочий контур факторних модулів без синтетичних метрик
                                     </p>
                                 </div>
                             </div>

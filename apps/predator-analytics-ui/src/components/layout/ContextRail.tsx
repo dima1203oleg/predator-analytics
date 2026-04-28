@@ -228,7 +228,7 @@ export const ContextRail: React.FC = () => {
       className="surface-panel-strong sticky top-[5.5rem] z-[60] hidden h-[calc(100vh-7rem)] overflow-hidden border border-red-900/30 shadow-[0_0_60px_rgba(220,38,38,0.06),0_20px_50px_rgba(2,6,23,0.6)] xl:flex xl:flex-col"
       style={{ background: 'linear-gradient(180deg,rgba(5,2,2,0.97) 0%,rgba(8,3,3,0.95) 100%)' }}
     >
-      {/* � ед top accent лінія */}
+      {/*  ед top accent лінія */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-red-700/50 to-transparent" />
 
       <div className="border-b border-red-900/25 px-5 py-4">
@@ -326,7 +326,7 @@ export const ContextRail: React.FC = () => {
           </section>
         )}
 
-        <SectionList title="� изики" items={effectivePayload.risks} />
+        <SectionList title=" изики" items={effectivePayload.risks} />
 
       {/* Sovereign Footer */}
       <div className="border-t border-red-900/20 px-5 py-4">

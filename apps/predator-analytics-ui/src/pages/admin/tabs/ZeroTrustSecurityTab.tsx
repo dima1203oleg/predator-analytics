@@ -34,7 +34,7 @@ interface AuditEntry {
 const sessionCols: VirtualColumn<Session>[] = [
   { 
     key: 'user',         
-    label: 'КО� ИСТУВАЧ_ELITE',  
+    label: 'КО ИСТУВАЧ_ELITE',  
     width: '220px', 
     mono: true, 
     render: (v) => (
@@ -45,11 +45,11 @@ const sessionCols: VirtualColumn<Session>[] = [
     )
   },
   {
-    key: 'role',         label: '� ІВЕНЬ_ДОСТУПУ',         width: '140px',
+    key: 'role',         label: 'РІВЕНЬ_ДОСТУПУ',         width: '140px',
     render: (v) => {
       const s = String(v);
       const color = s === 'admin' ? 'text-rose-500' : s === 'client_premium' ? 'text-rose-400' : 'text-white/35';
-      const label = s === 'admin' ? 'АДМІНІСТ� АТО� ' : s === 'client_premium' ? 'КЛІЄНТ_П� ЕМІУМ' : s.toUpperCase();
+      const label = s === 'admin' ? 'АДМІНІСТ АТО ' : s === 'client_premium' ? 'КЛІЄНТ_П ЕМІУМ' : s.toUpperCase();
       return (
         <div className={cn('text-[10px] font-black tracking-[0.2em] flex items-center gap-2 italic uppercase', color)}>
            <div className={cn("w-1.5 h-1.5 rounded-full", s === 'admin' ? 'bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.8)]' : 'bg-current')} />
@@ -58,8 +58,8 @@ const sessionCols: VirtualColumn<Session>[] = [
       );
     },
   },
-  { key: 'ip',           label: 'IP_АД� ЕСА',           width: '130px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
-  { key: 'userAgent',    label: 'ТЕ� МІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
+  { key: 'ip',           label: 'IP_АД ЕСА',           width: '130px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
+  { key: 'userAgent',    label: 'ТЕ МІНАЛ_КЛІЄНТА',  width: '180px',  mono: true, render: (v) => <span className="text-white/20 font-black italic text-[9px] uppercase tracking-widest">{String(v)}</span> },
   { key: 'lastActivity', label: 'ОСТАННЯ_ДІЯ',   width: '120px',  mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
   { key: 'expiresIn',    label: 'ДО_ВИКЛЮЧЕННЯ', width: '110px',   mono: true, align: 'right', render: (v) => <span className="text-rose-500/60 font-black italic text-[10px]">{String(v)}</span> },
 ];
@@ -105,13 +105,13 @@ const keyCols: VirtualColumn<ApiKey>[] = [
   { key: 'owner',     label: 'ВЛАСНИК_АКТИВУ',   width: '180px', mono: true, render: (v) => <span className="text-white/45 font-black italic text-[10px] uppercase">{String(v)}</span> },
   { key: 'scopes',    label: 'ОБЛАСТЬ_ДОСТУПУ',                     mono: true, render: (v) => <span className="text-white/20 text-[9px] font-black italic uppercase tracking-widest">{String(v)}</span> },
   { key: 'lastUsed',  label: 'ОСТАННЯ_АКТИВ.', width: '120px', mono: true, render: (v) => <span className="text-white/40 font-black italic text-[10px]">{String(v)}</span> },
-  { key: 'expiresAt', label: 'ТЕ� МІН_ДІЇ', width: '120px', mono: true, render: (v) => <span className="text-rose-500/40 font-black italic text-[10px] uppercase">{String(v)}</span> },
+  { key: 'expiresAt', label: 'ТЕ МІН_ДІЇ', width: '120px', mono: true, render: (v) => <span className="text-rose-500/40 font-black italic text-[10px] uppercase">{String(v)}</span> },
   {
     key: 'status',    label: 'СТАТУС',    width: '120px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { active: 'text-rose-500', revoked: 'text-red-500', expired: 'text-white/30' };
-      const labelMap: Record<string, string> = { active: 'АКТИВНИЙ', revoked: 'ВІДКЛИКАНО', expired: 'П� ОТЕ� МІНОВАНО' };
+      const labelMap: Record<string, string> = { active: 'АКТИВНИЙ', revoked: 'ВІДКЛИКАНО', expired: 'П ОТЕ МІНОВАНО' };
       return (
         <div className={cn('text-[10px] font-black italic tracking-widest uppercase', map[s])}>
            {labelMap[s] || s.toUpperCase()}
@@ -154,7 +154,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
       <div className="flex flex-col gap-3 border-l-4 border-rose-500 pl-10 py-2 relative z-10">
         <div className="flex items-center gap-6">
           <h2 className="text-4xl font-black text-white uppercase tracking-tighter italic glint-elite">
-            ПЕ� ИМЕТ�  ZERO TRUST <span className="text-rose-500">& КІБЕ� ЗАХИСТ</span>
+            ПЕ ИМЕТ  ZERO TRUST <span className="text-rose-500">& КІБЕ ЗАХИСТ</span>
           </h2>
           <div className="px-4 py-1.5 bg-rose-500/10 border-2 border-rose-500/30 rounded-lg text-[10px] font-black text-rose-500 tracking-[0.3em] uppercase italic shadow-2xl">
             SECURITY_CORE_v61.0
@@ -163,7 +163,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
         <div className="flex items-center gap-8 text-[11px] font-black font-mono text-white/30 tracking-[0.2em] uppercase italic">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
-            <span className="text-emerald-500/80">ПЕ� ИМЕТ� _ЗАСТОСОВАНО_L7</span>
+            <span className="text-emerald-500/80">ПЕ ИМЕТ _ЗАСТОСОВАНО_L7</span>
           </div>
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
           <span className="opacity-20">•</span>
           <div className="flex items-center gap-3 text-rose-500/40">
              <Shield size={14} />
-             <span>АЛГО� ИТМ: AES-256-GCM + mTLS_v1.3</span>
+             <span>АЛГО ИТМ: AES-256-GCM + mTLS_v1.3</span>
           </div>
         </div>
       </div>
@@ -214,7 +214,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                    {t.label}
                  </div>
                  <div className="text-[10px] font-black font-mono text-white/10 uppercase tracking-[0.4em] mt-2 group-hover:text-rose-500/40 transition-colors italic">
-                   {t.count} ОБ'ЄКТІВ_СЕКТО� А
+                   {t.count} ОБ'ЄКТІВ_СЕКТО А
                  </div>
               </div>
             </button>
@@ -242,7 +242,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   <Shield className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
                </div>
                <div className="text-[14px] font-black font-mono text-rose-500/60 uppercase tracking-[0.6em] animate-pulse italic">
-                 СИНАПТИЧНИЙ_АНАЛІЗ_ПЕ� ИМЕТ� А_V61...
+                 СИНАПТИЧНИЙ_АНАЛІЗ_ПЕ ИМЕТ А_V61...
                </div>
             </motion.div>
           ) : (
@@ -273,7 +273,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   rowHeight={64}
                   maxHeight={650}
                   getRowStatus={getAuditStatus}
-                  emptyLabel="ЖУ� НАЛ_АУДИТУ_ПО� ОЖНІЙ"
+                  emptyLabel="ЖУ НАЛ_АУДИТУ_ПО ОЖНІЙ"
                 />
               )}
               {section === 'keys' && (
@@ -283,7 +283,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                   rowHeight={64}
                   maxHeight={650}
                   getRowStatus={getKeyStatus}
-                  emptyLabel="API_КЛЮЧІВ_НЕ_ГЕНЕ� ОВАНО"
+                  emptyLabel="API_КЛЮЧІВ_НЕ_ГЕНЕ ОВАНО"
                 />
               )}
               {section === 'mtls' && (
@@ -307,7 +307,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                           "px-4 py-1.5 rounded-xl text-[10px] font-black tracking-[0.2em] italic border-2 transition-all shadow-4xl",
                           service.status === 'ok' ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 shadow-emerald-500/10" : "bg-rose-500/10 border-rose-500/30 text-rose-500 animate-pulse shadow-rose-500/10"
                         )}>
-                          {service.status === 'ok' ? 'ВЕ� ИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}
+                          {service.status === 'ok' ? 'ВЕ ИФІКОВАНО' : 'ПОМИЛКА_СЕГМЕНТУ'}
                         </div>
                       </div>
                       
@@ -319,7 +319,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
                            </div>
                            <div className="flex items-center gap-2">
                               <Lock size={12} className="text-white/20" />
-                              <span>ШИФ� : <span className="text-white/60">mTLS 1.3</span></span>
+                              <span>ШИФ : <span className="text-white/60">mTLS 1.3</span></span>
                            </div>
                          </div>
                          <div className="h-2 w-full bg-white/5 rounded-full relative overflow-hidden border border-white/5 p-[1px]">
@@ -351,7 +351,7 @@ export const ZeroTrustSecurityTab: React.FC = () => {
            <span className="text-[11px] font-black font-mono text-rose-500 uppercase tracking-[0.3em] italic">ЗАХИСТ_WORM_LOCK_АКТИВНИЙ</span>
         </div>
         <div className="h-[2px] flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />
-        <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕ� ЕННИЙ_ВА� ТОВИЙ</span>
+        <span className="text-[10px] font-black font-mono text-white/20 uppercase tracking-[0.5em] italic glint-elite tracking-[0.2em]">Ядро Zero Trust v61.0-ELITE — СУВЕ ЕННИЙ_ВА ТОВИЙ</span>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

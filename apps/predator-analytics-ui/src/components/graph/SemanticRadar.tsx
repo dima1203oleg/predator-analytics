@@ -52,8 +52,8 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
             const data = await api.get('/graph/search', { params: { query } });
             const safeNodes = data?.data?.nodes || [
                 { id: '1', name: 'ТОВ "МЕТІНВЕСТ"', label: 'ORGANIZATION', properties: { edrpou: '12345678', capital: '100M' } },
-                { id: '2', name: 'АХМЕТОВ � .Л.', label: 'PERSON', properties: { role: 'Бенефіціар' } },
-                { id: '3', name: 'КІП� СЬКИЙ ОФШО�  №1', label: 'OFFSHORE', properties: { jurisdiction: 'Кипр' } }
+                { id: '2', name: 'АХМЕТОВ  .Л.', label: 'PERSON', properties: { role: 'Бенефіціар' } },
+                { id: '3', name: 'КІП СЬКИЙ ОФШО  №1', label: 'OFFSHORE', properties: { jurisdiction: 'Кипр' } }
             ];
             const safeEdges = data?.data?.edges || [
                 { id: 'e1', source: '2', target: '1', relation: 'BENEFICIARY' },
@@ -73,9 +73,9 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
         } catch (e) {
             // Mocks for premium experience
             setNodes([
-                { id: '1', name: 'ТОВ "УК� ГАЗ"', label: 'ORGANIZATION', x: 200, y: 200, size: 50, color: '#6366f1', status: 'critical', properties: { edrpou: '98765432', risk: 'HIGH' } },
+                { id: '1', name: 'ТОВ "УК ГАЗ"', label: 'ORGANIZATION', x: 200, y: 200, size: 50, color: '#6366f1', status: 'critical', properties: { edrpou: '98765432', risk: 'HIGH' } },
                 { id: '2', name: 'ІВАНОВ І.І.', label: 'PERSON', x: 100, y: 100, size: 35, color: '#ec4899', status: 'active', properties: { position: 'Директор' } },
-                { id: '3', name: 'ОФШО�  ЛТД', label: 'OFFSHORE', x: 300, y: 100, size: 40, color: '#f59e0b', status: 'warning', properties: { country: 'BVI' } }
+                { id: '3', name: 'ОФШО  ЛТД', label: 'OFFSHORE', x: 300, y: 100, size: 40, color: '#f59e0b', status: 'warning', properties: { country: 'BVI' } }
             ]);
             setEdges([
                 { id: 'e1', source: '2', target: '1', relation: 'DIRECTOR' },
@@ -100,7 +100,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                             <Binary className="w-6 h-6 text-indigo-400" />
                         </div>
                         <div>
-                           <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] leading-none italic">СЕМАНТИЧНИЙ_� АДА� </h3>
+                           <h3 className="text-xl font-black text-white uppercase tracking-[0.2em] leading-none italic">СЕМАНТИЧНИЙ_ АДА </h3>
                            <div className="flex items-center gap-2 mt-2">
                                 <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
                                 <span className="text-[9px] text-slate-500 font-mono uppercase tracking-widest">АКТИВНА_СЕСІЯ: 142k_ВУЗЛІВ</span>
@@ -148,7 +148,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 <Brain size={32} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white/40 animate-pulse" />
                             </div>
                             <div className="text-center">
-                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] animate-pulse">ЗА� ЯДЖАЮ_МАТ� ИЦЮ_ЗВ'ЯЗКІВ...</p>
+                                <p className="text-indigo-400 font-black tracking-[0.5em] uppercase text-[10px] animate-pulse">ЗА ЯДЖАЮ_МАТ ИЦЮ_ЗВ'ЯЗКІВ...</p>
                                 <p className="text-slate-600 text-[8px] font-mono mt-2 italic">DECRYPTING_NEURAL_LAYERS</p>
                             </div>
                         </motion.div>
@@ -251,7 +251,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                 <div className="absolute bottom-10 left-10 space-y-3 pointer-events-none">
                      <div className="flex items-center gap-3">
                          <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">О� ГАНІЗАЦІЯ_v58.2-WRAITH</span>
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">О ГАНІЗАЦІЯ_v58.2-WRAITH</span>
                      </div>
                      <div className="flex items-center gap-3">
                          <div className="w-2.5 h-2.5 rounded-full bg-pink-500 shadow-[0_0_10px_rgba(236,72,153,0.5)]" />
@@ -259,7 +259,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                      </div>
                      <div className="flex items-center gap-3">
                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">АКТИВИ_� ИЗИКОВІ</span>
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">АКТИВИ_РИЗИКОВІ</span>
                      </div>
                 </div>
             </div>
@@ -273,7 +273,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && fetchGraph(searchQuery)}
-                        placeholder="ПОШУК_ОБ'ЄКТІВ_v58.2-WRAITH (ЕД� ПОУ, ПІБ, КОД)..."
+                        placeholder="ПОШУК_ОБ'ЄКТІВ_v58.2-WRAITH (ЕД ПОУ, ПІБ, КОД)..."
                         className="w-full bg-[#030712]/60 border border-white/5 rounded-[2rem] py-5 pl-16 pr-6 text-xs text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:bg-indigo-500/5 transition-all outline-none shadow-inner italic"
                     />
                 </div>
@@ -283,7 +283,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}
                         className="px-10 py-5 bg-indigo-500 text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-3xl transition-all shadow-[0_0_30px_rgba(99,102,241,0.3)] flex items-center gap-3 group"
                     >
-                        <Zap size={18} className="group-hover:rotate-12 transition-transform" /> ЕКСТ� АКЦІЯ_ЗВ'ЯЗКІВ
+                        <Zap size={18} className="group-hover:rotate-12 transition-transform" /> ЕКСТ АКЦІЯ_ЗВ'ЯЗКІВ
                     </motion.button>
                 </div>
             </div>
@@ -317,12 +317,12 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                             </div>
                             
                             <div className="text-center">
-                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-500 mb-3 block italic">ОБ'ЄКТ_К� ИПТОГ� АФІЇ</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-indigo-500 mb-3 block italic">ОБ'ЄКТ_К ИПТОГ АФІЇ</span>
                                 <h4 className="text-3xl font-black text-white tracking-tighter uppercase leading-tight italic decoration-indigo-500/50 underline-offset-8 underline decoration-2">{selectedNode.name}</h4>
                                 <div className="flex justify-center gap-3 mt-4">
                                     <Badge variant="outline" className="border-white/10 text-slate-400 text-[8px] tracking-widest uppercase">{selectedNode.label}</Badge>
                                     <Badge className={cn("text-[8px] tracking-widest uppercase", selectedNode.status === 'critical' ? "bg-rose-500/20 text-rose-500" : "bg-emerald-500/20 text-emerald-500")}>
-                                        {selectedNode.status === 'critical' ? 'К� ИТИЧНА_ЗАГ� ОЗА' : 'СТАБІЛЬНИЙ_СТАН'}
+                                        {selectedNode.status === 'critical' ? 'К ИТИЧНА_ЗАГ ОЗА' : 'СТАБІЛЬНИЙ_СТАН'}
                                     </Badge>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                         <div className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-4">
                             <div className="p-8 bg-white/[0.02] rounded-[2rem] border border-white/5 space-y-4">
                                 <div className="flex justify-between items-center mb-2">
-                                     <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">ІНДЕКС_ДОВІ� И_v58.2-WRAITH</span>
+                                     <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">ІНДЕКС_ДОВІ И_v58.2-WRAITH</span>
                                      <span className="text-xs font-black text-emerald-400 font-mono italic">94.8%</span>
                                 </div>
                                 <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/5">
@@ -340,7 +340,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                         className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500" 
                                     />
                                 </div>
-                                <p className="text-[9px] text-slate-600 uppercase font-bold tracking-tight italic">АВТОМАТИЧНА_ВЕ� ЕФІКАЦІЯ_ОСІНТ_ЯД� ОМ</p>
+                                <p className="text-[9px] text-slate-600 uppercase font-bold tracking-tight italic">АВТОМАТИЧНА_ВЕ ЕФІКАЦІЯ_ОСІНТ_ЯДРОМ</p>
                             </div>
 
                             <div className="space-y-4">
@@ -364,7 +364,7 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 </div>
                                 <div className="p-6 bg-slate-900/40 border border-white/5 rounded-2xl text-center">
                                     <Target size={20} className="text-rose-400 mx-auto mb-3" />
-                                    <div className="text-[10px] font-black text-white uppercase tracking-widest">� ИЗИКИ</div>
+                                    <div className="text-[10px] font-black text-white uppercase tracking-widest">РИЗИКИ</div>
                                     <div className="text-xl font-black text-rose-500 mt-1">4</div>
                                 </div>
                             </div>
@@ -375,13 +375,13 @@ export const SemanticRadar: React.FC<{ className?: string }> = ({ className }) =
                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                 className="w-full py-6 bg-indigo-500 text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-[1.8rem] transition-all shadow-xl flex items-center justify-center gap-3"
                             >
-                                <Eye size={18} /> ПЕ� ЕГЛЯНУТИ_ПОВНЕ_ДОСЬЄ
+                                <Eye size={18} /> ПЕ ЕГЛЯНУТИ_ПОВНЕ_ДОСЬЄ
                             </motion.button>
                             <motion.button 
                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                 className="w-full py-6 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-[1.8rem] transition-all border border-white/10 flex items-center justify-center gap-3"
                             >
-                                <Share2 size={18} /> ЕКСПО� Т_МАТ� ИЦІ
+                                <Share2 size={18} /> ЕКСПОРТ_МАТ ИЦІ
                             </motion.button>
                         </div>
                     </motion.div>

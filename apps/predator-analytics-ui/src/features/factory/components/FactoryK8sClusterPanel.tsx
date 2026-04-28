@@ -43,7 +43,7 @@ export const FactoryK8sClusterPanel: React.FC<FactoryK8sClusterPanelProps> = ({
               <tr className="border-b border-white/5 bg-black/40 text-[9px] uppercase tracking-widest text-slate-500">
                 <th className="p-4 font-black">Підсистема (Pod)</th>
                 <th className="p-4 font-black">Статус</th>
-                <th className="p-4 font-black">� есурси</th>
+                <th className="p-4 font-black">ресурси</th>
                 <th className="p-4 font-black">Дії</th>
               </tr>
             </thead>

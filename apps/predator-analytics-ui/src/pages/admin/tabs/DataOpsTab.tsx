@@ -48,7 +48,7 @@ interface FactoryModule {
 
 const kafkaCols: VirtualColumn<KafkaTopic>[] = [
   { key: 'name',       label: 'ТОПІК',          mono: true },
-  { key: 'partitions', label: 'ПА� Т.', width: '65px',  mono: true, align: 'right' },
+  { key: 'partitions', label: 'ПА Т.', width: '65px',  mono: true, align: 'right' },
   {
     key: 'lag',        label: 'ЛАГ',   width: '100px',  mono: true, align: 'right',
     render: (v) => {
@@ -56,7 +56,7 @@ const kafkaCols: VirtualColumn<KafkaTopic>[] = [
       return <span className={cn('font-black italic glint-elite', n > 5000 ? 'text-rose-500' : n > 500 ? 'text-amber-500' : 'text-emerald-500/80')}>{n.toLocaleString()}</span>;
     },
   },
-  { key: 'throughput', label: 'Т� АФІК',  width: '110px', mono: true, render: (v) => <span className="text-white/60 font-black italic">{String(v)}</span> },
+  { key: 'throughput', label: 'Т АФІК',  width: '110px', mono: true, render: (v) => <span className="text-white/60 font-black italic">{String(v)}</span> },
   { key: 'consumers',  label: 'КОНС.',   width: '65px', mono: true, align: 'right' },
   {
     key: 'status',     label: 'СТАТУС',  width: '90px',
@@ -77,13 +77,13 @@ const datasetCols: VirtualColumn<DatasetRecord>[] = [
   { key: 'type',      label: 'ТИП_ДАТА',  width: '140px', mono: true, render: (v) => <span className="text-white/40 italic font-black uppercase tracking-tight">{String(v)}</span> },
   { key: 'records',   label: 'ЗАПИСІВ',  width: '120px', mono: true, align: 'right', render: (v) => <span className="font-black italic glint-elite">{Number(v).toLocaleString()}</span> },
   { key: 'sizeGb',    label: 'ГБ',       width: '80px',  mono: true, align: 'right', render: (v) => <span className="text-rose-500/60 font-black italic">{Number(v).toFixed(1)}</span> },
-  { key: 'version',   label: 'ВЕ� СІЯ',   width: '90px',  mono: true, render: (v) => <span className="text-white/20 font-black italic">v{String(v)}</span> },
+  { key: 'version',   label: 'ВЕРСІЯ',   width: '90px',  mono: true, render: (v) => <span className="text-white/20 font-black italic">v{String(v)}</span> },
   {
     key: 'status',    label: 'СТАТУС',   width: '110px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { ready: 'text-rose-500', training: 'text-rose-400', outdated: 'text-amber-400', draft: 'text-white/30' };
-      const labelMap: Record<string, string> = { ready: 'ГОТОВО', training: 'НАВЧАННЯ', outdated: 'ЗАСТА� ІЛО', draft: 'ЧЕ� НЕТКА' };
+      const labelMap: Record<string, string> = { ready: 'ГОТОВО', training: 'НАВЧАННЯ', outdated: 'ЗАСТА ІЛО', draft: 'ЧЕ НЕТКА' };
       return <span className={cn('text-[10px] font-mono font-black italic tracking-widest px-3 py-1 bg-white/5 border border-white/10 rounded-lg', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
@@ -97,17 +97,17 @@ const getDatasetStatus = (row: DatasetRecord): RowStatus =>
 
 const moduleCols: VirtualColumn<FactoryModule>[] = [
   { key: 'name',      label: 'МОДУЛЬ',    mono: true },
-  { key: 'template',  label: 'ШАБЛОН_КОНВЕЄ� А',    width: '220px', mono: true, render: (v) => <span className="text-white/35 text-[10px] italic font-black uppercase tracking-tight">{String(v)}</span> },
+  { key: 'template',  label: 'ШАБЛОН_КОНВЕЄ А',    width: '220px', mono: true, render: (v) => <span className="text-white/35 text-[10px] italic font-black uppercase tracking-tight">{String(v)}</span> },
   {
     key: 'status',    label: 'СТАТУС',    width: '110px',
     render: (v) => {
       const s = String(v);
       const map: Record<string, string> = { deployed: 'text-rose-500', pending: 'text-rose-400/70', failed: 'text-rose-600', draft: 'text-white/30' };
-      const labelMap: Record<string, string> = { deployed: 'АКТИВНО', pending: 'ОЧІКУВАННЯ', failed: 'ПОМИЛКА', draft: 'ЧЕ� НЕТКА' };
+      const labelMap: Record<string, string> = { deployed: 'АКТИВНО', pending: 'ОЧІКУВАННЯ', failed: 'ПОМИЛКА', draft: 'ЧЕ НЕТКА' };
       return <span className={cn('text-[10px] font-mono font-black italic tracking-widest px-3 py-1 bg-white/5 border border-white/10 rounded-lg', map[s])}>{labelMap[s] || s.toUpperCase()}</span>;
     },
   },
-  { key: 'createdBy', label: 'АВТО� ',     width: '120px',  mono: true, render: (v) => <span className="text-white/40 italic uppercase">{String(v)}</span> },
+  { key: 'createdBy', label: 'АВТО ',     width: '120px',  mono: true, render: (v) => <span className="text-white/40 italic uppercase">{String(v)}</span> },
   { key: 'createdAt', label: 'ДАТА_СТВ.',      width: '120px',  mono: true, render: (v) => <span className="text-white/20 italic">{String(v)}</span> },
 ];
 
@@ -137,7 +137,7 @@ export const DataOpsTab: React.FC = () => {
           <Database className="absolute inset-0 m-auto w-8 h-8 text-rose-500 animate-pulse" />
         </div>
         <div className="flex flex-col items-center gap-4">
-           <div className="text-[14px] font-mono uppercase tracking-[0.8em] animate-pulse italic font-black text-rose-500 glint-elite">ІНТЕ� ОПЕ� АБЕЛЬНІСТЬ_ДАНИХ...</div>
+           <div className="text-[14px] font-mono uppercase tracking-[0.8em] animate-pulse italic font-black text-rose-500 glint-elite">ІНТЕ ОПЕ АБЕЛЬНІСТЬ_ДАНИХ...</div>
            <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/10 italic">LAKE_CONTROLLER_v61_SYNCING</div>
         </div>
       </div>
@@ -150,16 +150,16 @@ export const DataOpsTab: React.FC = () => {
         <div className="absolute inset-0 bg-rose-900/5 blur-[150px] pointer-events-none" />
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.03] pointer-events-none" />
         <Database size={80} className="text-rose-600/40 mb-12 animate-pulse" />
-        <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">К� ИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ� А</div>
+        <div className="text-4xl font-black uppercase tracking-[0.3em] text-white mb-6 glint-elite chromatic-elite italic">К ИТИЧНИЙ_ЗБІЙ_ДАТА_КОНВЕЄ А</div>
         <p className="text-[14px] font-black text-white/30 max-w-2xl mb-16 leading-relaxed uppercase italic tracking-widest">
-          СИСТЕМА НЕ ЗМОГЛА ОТ� ИМАТИ СТАН ВУЗЛІВ ОБ� ОБКИ. <br/>
-          ПЕ� ЕВІ� ТЕ З'ЄДНАННЯ З КОНТ� ОЛЕ� ОМ ДАНИХ <span className="text-rose-500">PREDATOR_LAKE_MASTER_L7</span>.
+          СИСТЕМА НЕ ЗМОГЛА ОТ ИМАТИ СТАН ВУЗЛІВ ОБ ОБКИ. <br/>
+          ПЕ ЕВІ ТЕ З'ЄДНАННЯ З КОНТ ОЛЕ ОМ ДАНИХ <span className="text-rose-500">PREDATOR_LAKE_MASTER_L7</span>.
         </p>
         <button 
            onClick={() => window.location.reload()}
            className="px-16 py-7 bg-rose-600 text-white text-[12px] font-black uppercase tracking-[0.6em] rounded-[2rem] hover:bg-rose-500 transition-all shadow-4xl italic border-2 border-rose-400/50"
         >
-          ПОВТО� ИТИ_ЗАПИТ_СИНХ� ОНІЗАЦІЇ
+          ПОВТО ИТИ_ЗАПИТ_СИНХ ОНІЗАЦІЇ
         </button>
       </div>
     );
@@ -169,8 +169,8 @@ export const DataOpsTab: React.FC = () => {
 
   const tabs = [
     { id: 'kafka'    as const, label: `ШИНА_ПОДІЙ_KAFKA`,   count: kafkaTopics.length,    icon: Upload },
-    { id: 'datasets' as const, label: `СХОВИЩА_� ЕЄСТ� ІВ`,    count: datasets.length,       icon: Layers },
-    { id: 'factory'  as const, label: `ДАТА_ФАБ� ИКА_Ω`, count: factoryModules.length, icon: Factory },
+    { id: 'datasets' as const, label: `СХОВИЩА_ ЕЄСТ ІВ`,    count: datasets.length,       icon: Layers },
+    { id: 'factory'  as const, label: `ДАТА_ФАБ ИКА_Ω`, count: factoryModules.length, icon: Factory },
   ];
 
   const totalThroughput = kafkaTopics.reduce((s, t) => {
@@ -187,7 +187,7 @@ export const DataOpsTab: React.FC = () => {
         <div className="space-y-5">
            <div className="flex items-center gap-8">
              <h2 className="text-5xl font-black text-white uppercase tracking-tighter italic glint-elite chromatic-elite leading-tight">
-               УП� АВЛІННЯ ДАНИМИ & <span className="text-rose-500">ПОТОКОВА АНАЛІТИКА</span>
+               УП АВЛІННЯ ДАНИМИ & <span className="text-rose-500">ПОТОКОВА АНАЛІТИКА</span>
              </h2>
              <div className="px-5 py-1.5 bg-rose-600/10 border-2 border-rose-600/30 rounded-xl text-[11px] font-black text-rose-500 tracking-[0.4em] uppercase italic shadow-2xl">
                ELITE_DATA_v61.0
@@ -196,7 +196,7 @@ export const DataOpsTab: React.FC = () => {
            <div className="flex items-center gap-10 text-[12px] font-black font-mono text-white/30 tracking-[0.3em] uppercase italic">
              <div className="flex items-center gap-4">
                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_20px_rgba(16,185,129,0.8)]" />
-               <span className="text-emerald-500/80">СИСТЕМА_Т� АНСПО� ТУ_АКТИВНА_L7</span>
+               <span className="text-emerald-500/80">СИСТЕМА_Т АНСПОРТУ_АКТИВНА_L7</span>
              </div>
              <span className="opacity-20">|</span>
              <div className="flex items-center gap-4">
@@ -206,7 +206,7 @@ export const DataOpsTab: React.FC = () => {
              <span className="opacity-20">|</span>
              <div className="flex items-center gap-4 text-rose-500/40">
                <Shield size={18} className="glint-elite" />
-               <span>А� ХІТЕКТУ� А: PREDATOR_DATA_LAKE_v2_ELITE</span>
+               <span>А ХІТЕКТУ А: PREDATOR_DATA_LAKE_v2_ELITE</span>
              </div>
            </div>
         </div>
@@ -221,10 +221,10 @@ export const DataOpsTab: React.FC = () => {
       {/* Метрики-шапка */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {[
-          { label: 'КАНАЛИ_ПОДІЙ_KAFKA', value: kafkaTopics.length, color: 'text-white/90', sub: 'АКТИВНІ_ТОПІКИ_ОБ� ОБКИ', icon: Upload },
-          { label: 'ЗАГАЛЬНА_ЧЕ� ГА', value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'ЗАПИСІВ_У_ЧЕ� ЗІ_ОЧІКУВАННЯ', icon: Activity },
-          { label: '� ЕПОЗИТО� ІЇ_ДАТА_ЛЕЙК', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-400', sub: 'ВЕ� ИФІКОВАНІ_ДАТАСЕТИ_SSOT', icon: HardDrive },
-          { label: 'АКТИВНІ_ФАБ� ИКАТИ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/90', sub: 'П� ОЦЕСИ_ФАБ� ИКИ_Ω', icon: Factory },
+          { label: 'КАНАЛИ_ПОДІЙ_KAFKA', value: kafkaTopics.length, color: 'text-white/90', sub: 'АКТИВНІ_ТОПІКИ_ОБ ОБКИ', icon: Upload },
+          { label: 'ЗАГАЛЬНА_ЧЕ ГА', value: kafkaTopics.reduce((s,t)=>s+t.lag,0).toLocaleString(), color: 'text-rose-500', sub: 'ЗАПИСІВ_У_ЧЕ ЗІ_ОЧІКУВАННЯ', icon: Activity },
+          { label: ' ЕПОЗИТО ІЇ_ДАТА_ЛЕЙК', value: datasets.filter(d=>d.status==='ready').length, color: 'text-rose-400', sub: 'ВЕ ИФІКОВАНІ_ДАТАСЕТИ_SSOT', icon: HardDrive },
+          { label: 'АКТИВНІ_ФАБ ИКАТИ',  value: factoryModules.filter(m=>m.status==='deployed').length, color: 'text-white/90', sub: 'П ОЦЕСИ_ФАБ ИКИ_Ω', icon: Factory },
         ].map((m, i) => (
           <motion.div 
             key={m.label}
@@ -273,7 +273,7 @@ export const DataOpsTab: React.FC = () => {
                    <div className={cn('text-[18px] font-black uppercase tracking-[0.4em] italic leading-tight', active ? 'text-white glint-elite' : 'text-white/40 group-hover:text-white/60')}>
                      {t.label}
                    </div>
-                   <div className="text-[11px] font-black font-mono text-white/10 uppercase tracking-[0.3em] italic group-hover:text-rose-500/20 transition-colors">{t.count} ОБ'ЄКТІВ_ЯД� А</div>
+                   <div className="text-[11px] font-black font-mono text-white/10 uppercase tracking-[0.3em] italic group-hover:text-rose-500/20 transition-colors">{t.count} ОБ'ЄКТІВ_ЯД А</div>
                 </div>
                 {active && (
                    <motion.div 
@@ -297,7 +297,7 @@ export const DataOpsTab: React.FC = () => {
       >
         <div className="absolute inset-0 bg-cyber-grid opacity-[0.02] pointer-events-none" />
         <div className="absolute top-6 left-12 flex items-center gap-6 text-[11px] font-black text-white/20 uppercase tracking-[0.6em] italic mb-8 relative z-10">
-           <Terminal size={18} className="text-rose-600" /> ТАБЛИЦЯ_ОБ� ОБКИ_ДАТА_ОПС_L7
+           <Terminal size={18} className="text-rose-600" /> ТАБЛИЦЯ_ОБ ОБКИ_ДАТА_ОПС_L7
         </div>
         
         <div className="mt-12 relative z-10 border-2 border-white/5 rounded-[3rem] overflow-hidden shadow-inner bg-black/40">
@@ -317,7 +317,7 @@ export const DataOpsTab: React.FC = () => {
       <div className="flex flex-col md:flex-row items-center gap-12 opacity-40 hover:opacity-100 transition-opacity duration-[2000ms] px-10">
         <div className="flex items-center gap-6 px-10 py-5 bg-rose-600/5 border-2 border-rose-500/10 rounded-[2.5rem] shadow-4xl group hover:border-rose-500/30 transition-all">
            <TrendingUp className="w-6 h-6 text-rose-500 group-hover:scale-125 transition-transform" />
-           <span className="text-[13px] font-mono text-rose-500 font-black uppercase tracking-[0.5em] italic glint-elite">ЯД� О_ДАТА_КОНВЕЄ� А_СТАБІЛЬНЕ_v61.0</span>
+           <span className="text-[13px] font-mono text-rose-500 font-black uppercase tracking-[0.5em] italic glint-elite">ЯДРО_ДАТА_КОНВЕЄ А_СТАБІЛЬНЕ_v61.0</span>
         </div>
         <div className="h-px flex-1 bg-gradient-to-r from-rose-500/40 via-white/5 to-transparent" />
         <div className="flex flex-col items-end gap-2 text-right">

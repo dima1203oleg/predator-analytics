@@ -43,7 +43,7 @@ const ENGINE_TEMPLATES = [
         subScores: [
             { label: 'Корп. структури', value: 95 },
             { label: 'Комплаєнс', value: 91 },
-            { label: '� егуляторні', value: 88 },
+            { label: 'Регуляторні', value: 88 },
             { label: 'Санкційний скан', value: 99 },
         ],
     },
@@ -74,8 +74,8 @@ const ENGINE_TEMPLATES = [
         icon: Waves, color: '#ec4899',
         description: 'Прогностичний аналіз: ринкові тренди, ризикові сценарії, AI-прогнози.',
         subScores: [
-            { label: '� инкові прогнози', value: 84 },
-            { label: '� изик-сценарії', value: 79 },
+            { label: 'Ринкові прогнози', value: 84 },
+            { label: 'Ризик-сценарії', value: 79 },
             { label: 'Часові ряди', value: 88 },
             { label: 'NAS точність', value: 82 },
         ],
@@ -94,9 +94,9 @@ const ENGINE_TEMPLATES = [
 ];
 
 const SEVERITY_CONFIG: Record<RiskLevelValue, { color: string; bg: string; border: string; label: string }> = {
-    critical:  { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: 'К� ИТИЧНА' },
+    critical:  { color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', label: 'КРИТИЧНА' },
     high:      { color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.3)', label: 'ВИСОКА' },
-    medium:    { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: 'ПОПЕ� ЕДЖ.' },
+    medium:    { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', label: 'ПОПЕРЕДЖ.' },
     low:       { color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', label: 'СТАБІЛЬНА' },
     minimal:   { color: '#64748b', bg: 'rgba(100,116,139,0.1)', border: 'rgba(100,116,139,0.3)', label: 'МІНІМАЛЬНА' },
     stable:    { color: '#059669', bg: 'rgba(5,150,105,0.1)', border: 'rgba(5,150,105,0.3)', label: 'СТАБІЛЬНА' },
@@ -132,10 +132,10 @@ const EngineCardHeader: React.FC<{ engine: any }> = ({ engine }) => {
                 <p className="text-sm text-slate-400 font-bold italic leading-relaxed max-w-2xl">{engine.description}</p>
                 <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
                     {[
-                        { label: 'ОБ� ОБЛЕНО', value: engine.metrics.processed.toLocaleString(), unit: 'OBJ', icon: Database, color: 'slate' },
+                        { label: 'ОБ ОБЛЕНО', value: engine.metrics.processed.toLocaleString(), unit: 'OBJ', icon: Database, color: 'slate' },
                         { label: 'ТОЧНІСТЬ', value: `${engine.metrics.accuracy}%`, unit: 'ACC', icon: Target, color: 'emerald' },
                         { label: 'ПОТІК', value: engine.metrics.throughput, unit: 'TPS', icon: Radio, color: 'sky' },
-                        { label: 'ЗАТ� ИМКА', value: engine.metrics.latency, unit: 'MS', icon: Clock, color: 'amber' },
+                        { label: 'ЗАТРИМКА', value: engine.metrics.latency, unit: 'MS', icon: Clock, color: 'amber' },
                     ].map((m, i) => (
                         <div key={i} className="flex flex-col gap-1 p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
                             <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-2">
@@ -225,7 +225,8 @@ const EnginesView: React.FC = () => {
         };
 
         return ENGINE_TEMPLATES.map(t => {
-            const raw = enginesData[mapping[t.id] || 'copilot'] || { status: 'offline', label: 'OFFLINE' };
+            const engineId = mapping[t.id] || 'copilot';
+            const raw = (enginesData as any[]).find((e: any) => e.id === engineId) || { status: 'offline', label: 'OFFLINE' };
             
             // Generate some semi-real metrics based on raw data
             const baseScore = t.id === 'cers' ? 70 : 85;
@@ -233,14 +234,14 @@ const EnginesView: React.FC = () => {
             
             return {
                 ...t,
-                status: raw.status,
-                label: raw.label,
-                model: raw.model,
+                status: raw.status || 'offline',
+                label: raw.label || 'OFFLINE',
+                model: raw.model || 'N/A',
                 score: Math.round(baseScore + variance),
                 confidence: 0.9 + (Math.random() * 0.08),
                 trend: Number((Math.random() * 4 - 2).toFixed(1)),
                 metrics: {
-                    processed: (statsData?.documents_total || 0) / (t.id === 'behavioral' ? 1 : 4),
+                    processed: ((statsData as any)?.documents_total || 0) / (t.id === 'behavioral' ? 1 : 4),
                     accuracy: 94 + Math.round(Math.random() * 4),
                     latency: raw.latency_ms || 0,
                     throughput: raw.throughput || 0,
@@ -249,7 +250,7 @@ const EnginesView: React.FC = () => {
                 },
                 recentSignals: [
                     { msg: `Сигнал ${t.shortName}: Перевірка ${raw.model || 'Alpha'} завершена`, severity: 'low', time: '1хв' },
-                    { msg: `Вузол ${raw.status === 'ok' ? 'АКТИВНИЙ' : 'ДЕГ� АДОВАНО'}`, severity: raw.status === 'ok' ? 'low' : 'warning', time: '5хв' }
+                    { msg: `Вузол ${raw.status === 'ok' ? 'АКТИВНИЙ' : 'ДЕГРАДОВАНО'}`, severity: raw.status === 'ok' ? 'low' : 'warning', time: '5хв' }
                 ]
             };
         });
@@ -269,7 +270,7 @@ const EnginesView: React.FC = () => {
             window.dispatchEvent(new CustomEvent('predator-error', {
                 detail: {
                     service: 'EnginesMatrix',
-                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З КЛАСТЕ� ОМ GPU (ENGINES_OFFLINE). Перехід на локальні когнітивні копії.',
+                    message: 'ПОМИЛКА ЗВ’ЯЗКУ З КЛАСТЕРОМ GPU (ENGINES_OFFLINE). Перехід на локальні когнітивні копії.',
                     severity: 'warning',
                     timestamp: new Date().toISOString(),
                     code: 'ENGINES_OFFLINE'
@@ -378,7 +379,7 @@ const EnginesView: React.FC = () => {
                                     Матриця <span className="text-purple-400">Двигунів</span>
                                 </h1>
                                 <p className="text-[11px] font-mono font-black text-slate-500 uppercase tracking-[0.4em] mt-2">
-                                    COGNITIVE_KERNEL // МАТ� ИЦЯ_АНАЛІТИЧНИХ_ДВИГУНІВ
+                                    COGNITIVE_KERNEL // МАТРИЦЯ_АНАЛІТИЧНИХ_ДВИГУНІВ
                                 </p>
                             </div>
                         </div>
@@ -386,7 +387,7 @@ const EnginesView: React.FC = () => {
                     breadcrumbs={['СИСТЕМА', 'ДВИГУНИ', selectedEngine.shortName]}
                     stats={[
                         { label: 'АКТИВНО', value: `${engines.filter(e => e.status === 'ok').length}/6`, icon: <Activity size={14} />, color: 'success' },
-                        { label: 'ДЖЕ� ЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
+                        { label: 'ДЖЕРЕЛО', value: nodeSource, icon: <Server size={14} />, color: isOffline ? 'warning' : 'gold' },
                         { label: 'АНОМАЛІЇ', value: engines.reduce((s, e) => s + e.metrics.anomalies, 0).toString(), icon: <AlertTriangle size={14} />, color: 'danger', animate: true },
                         { label: 'ТОЧНІСТЬ', value: `${(engines.reduce((s, e) => s + e.metrics.accuracy, 0) / engines.length).toFixed(1)}%`, icon: <Target size={14} />, color: 'purple' },
                     ]}
@@ -411,9 +412,9 @@ const EnginesView: React.FC = () => {
                             <div className="mt-8 pt-6 border-t border-white/5 space-y-4">
                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest px-2">СИСТЕМНИЙ СТАТУС</p>
                                 {[
-                                    { label: 'ЛОГІЧНИХ ЯДЕ� ', value: statsData?.cpu_count || '...', color: 'slate' },
+                                    { label: 'ЛОГІЧНИХ ЯДЕР', value: (statsData as any)?.cpu_count || '...', color: 'slate' },
                                     { label: 'GPU CLUSTER', value: statsData?.gpu_name || 'N/A', color: 'emerald' },
-                                    { label: 'LATENCY', value: `${statsData?.avg_latency || 0}ms`, color: 'sky' },
+                                    { label: 'LATENCY', value: `${(statsData as any)?.avg_latency || 0}ms`, color: 'sky' },
                                 ].map((s, i) => (
                                     <div key={i} className="flex justify-between items-center px-2">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.label}</span>
@@ -425,7 +426,7 @@ const EnginesView: React.FC = () => {
 
                         <button className="w-full py-6 bg-purple-600/10 border border-purple-500/20 rounded-[32px] text-[10px] font-black text-purple-400 uppercase tracking-[0.5em] hover:bg-purple-600/20 hover:text-white transition-all italic flex items-center justify-center gap-4 group">
                             <RefreshCw size={16} className="group-hover:rotate-180 transition-transform duration-1000" />
-                            ПЕ� ЕКАЛІБ� УВАТИ_ВСІ_ДВИГУНИ
+                            ПЕРЕКАЛІБРУВАТИ_ВСІ_ДВИГУНИ
                         </button>
                     </div>
 
@@ -469,7 +470,7 @@ const EnginesView: React.FC = () => {
                                         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-4">ІНДЕКС_ВПЕВНЕНОСТІ: {selectedEngine.confidence.toFixed(2)}</p>
                                     </TacticalCard>
 
-                                    <TacticalCard variant="glass" title="ВЕКТО� НІ СУБ-СКО� И" className="p-8 h-[300px] rounded-[48px] overflow-hidden">
+                                    <TacticalCard variant="glass" title="ВЕКТОРНІ СУБ-СКОРИ" className="p-8 h-[300px] rounded-[48px] overflow-hidden">
                                         <div className="space-y-6 mt-4">
                                             {selectedEngine.subScores.map((sub: any, i: number) => (
                                                 <div key={i} className="space-y-2">
@@ -548,10 +549,10 @@ const EnginesView: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                             {[
-                                { label: 'CPU_USAGE', value: `${statsData?.cpu_usage || 0}%`, color: 'purple' },
-                                { label: 'ТЕМПЕ� АТУ� А_GPU', value: `${statsData?.gpu_temp || 0}°C`, color: 'amber' },
-                                { label: 'ВИКО� ИСТАННЯ_VRAM', value: `${((statsData?.gpu_mem_used || 0) / (1024**3)).toFixed(1)} GB`, color: 'sky' },
-                                { label: 'МЕ� ЕЖЕВИЙ_ПОТІК', value: `${((statsData?.network_bytes_recv || 0) / (1024**2)).toFixed(1)} MB/s`, color: 'emerald' },
+                                { label: 'CPU_USAGE', value: `${statsData?.cpu_percent || 0}%`, color: 'purple' },
+                                { label: 'ТЕМПЕРАТУРА_GPU', value: `${statsData?.gpu_temp || 0}°C`, color: 'amber' },
+                                { label: 'ВИКОРИСТАННЯ_VRAM', value: `${((statsData?.gpu_mem_used || 0) / (1024**3)).toFixed(1)} GB`, color: 'sky' },
+                                { label: 'МЕРЕЖЕВИЙ_ПОТІК', value: `${(((statsData as any)?.network_bytes_recv || 0) / (1024**2)).toFixed(1)} MB/s`, color: 'emerald' },
                             ].map((s, i) => (
                                 <div key={i} className="flex flex-col">
                                     <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest mb-1">{s.label}</span>

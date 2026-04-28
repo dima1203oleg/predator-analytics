@@ -125,7 +125,7 @@ describe('NetworkMapPage Component', () => {
         renderWithClient(<NetworkMapPage />);
 
         // Вводимо текст для пошуку
-        const searchInput = screen.getByPlaceholderText('Пошук вузлів (ЄД� ПОУ, ПІБ)...');
+        const searchInput = screen.getByPlaceholderText('Пошук вузлів (ЄД ПОУ, ПІБ)...');
         fireEvent.change(searchInput, { target: { value: 'Company A' } });
         
         // Клікаємо на кнопку пошуку

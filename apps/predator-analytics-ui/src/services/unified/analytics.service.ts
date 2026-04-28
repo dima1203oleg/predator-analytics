@@ -422,7 +422,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 🏛️ PROZORRO INTELLIGENCE // КОНТУ�  ЗАКУПІВЕЛЬ
+   * 🏛️ PROZORRO INTELLIGENCE // КОНТУ  ЗАКУПІВЕЛЬ
    */
   async getTenders(limit: number = 24): Promise<any[]> {
     try {
@@ -445,7 +445,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 💰 FINANCIAL SIGINT // ФІНАНСОВА � ОЗВІДКА
+   * 💰 FINANCIAL SIGINT // ФІНАНСОВА РОЗВІДКА
    * Отримує комплексний зріз фінансової розвідки: SWIFT, офшори, заморожені активи.
    */
   async getFinancialSigint(ueid?: string): Promise<FinancialSigintResult | null> {

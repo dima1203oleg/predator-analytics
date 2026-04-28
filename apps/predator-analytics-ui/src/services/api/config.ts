@@ -66,7 +66,7 @@ const getGlobalWindow = () => (typeof window !== 'undefined' ? window : {}) as a
 const resolveInitialUrl = (): string => {
     if (typeof window === 'undefined') return NODE_URLS[NODE_IDS.HYBRID];
 
-    // 1. � учний вибір користувача (пріоритет #1)
+    // 1. Ручний вибір користувача (пріоритет #1)
     const savedNode = localStorage.getItem('PREDATOR_ACTIVE_NODE');
     if (savedNode && NODE_URLS[savedNode]) {
         return NODE_URLS[savedNode];

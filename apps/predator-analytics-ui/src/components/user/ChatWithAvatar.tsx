@@ -24,7 +24,7 @@ export const ChatWithAvatar: React.FC = () => {
     } = useCouncilChat();
 
     const [messages, setMessages] = useState<ChatMsg[]>([
-        { id: 'init', role: 'ai', text: '� ада онлайн. Я слухаю вас, Директоре.' }
+        { id: 'init', role: 'ai', text: ' ада онлайн. Я слухаю вас, Директоре.' }
     ]);
     const [input, setInput] = useState('');
     const chatEndRef = useRef<HTMLDivElement>(null);
@@ -144,7 +144,7 @@ export const ChatWithAvatar: React.FC = () => {
                     ))}
                     {councilStatus === 'PROCESSING' && (
                         <div className="flex items-center gap-2 text-xs text-purple-400 p-2 animate-pulse">
-                            <Activity size={14} /> � ада обговорює рішення...
+                            <Activity size={14} />  ада обговорює рішення...
                         </div>
                     )}
                     <div ref={chatEndRef} />
@@ -168,7 +168,7 @@ export const ChatWithAvatar: React.FC = () => {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend(input)}
-                            placeholder="Звернутися до � ади..."
+                            placeholder="Звернутися до  ади..."
                             className="flex-1 bg-transparent border-none text-sm text-white placeholder-slate-500 focus:ring-0 font-medium py-3 px-2"
                             disabled={councilStatus === 'PROCESSING'}
                         />

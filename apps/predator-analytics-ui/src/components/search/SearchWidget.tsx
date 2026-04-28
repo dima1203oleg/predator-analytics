@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 import { useNavigate } from 'react-router-dom';
 
 /**
- * � ️ TACTICAL SEARCH WIDGET | v58.2-WRAITH (PREDATOR_CORE)
+ *  ️ TACTICAL SEARCH WIDGET | v58.2-WRAITH (PREDATOR_CORE)
  * ВІДЖЕТ ШВИДКОГО ПОШУКУ (ШВИДКИЙ ДОСТУП ДО СВЯТИЛИЩА)
  * 
  * Тепер у "Sovereign Gold" елітарному тактичному стилі.
@@ -106,10 +106,10 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3 border-b border-yellow-950/20 pb-2">
                                         <History size={12} className="text-yellow-900" />
-                                        <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ІСТО� ІЯ_ЗАПИТІВ</span>
+                                        <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ІСТО ІЯ_ЗАПИТІВ</span>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        {['ТОВ "ОФШО� -МИТО"', 'ЄД� ПОУ 44923412', 'Микола Верес'].map(item => (
+                                        {['ТОВ "ОФШО -МИТО"', 'ЄД ПОУ 44923412', 'Микола Верес'].map(item => (
                                             <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors uppercase font-bold italic tracking-tight">
                                                 {item}
                                             </button>
@@ -119,10 +119,10 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3 border-b border-yellow-950/20 pb-2">
                                         <TrendingUp size={12} className="text-yellow-900" />
-                                        <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ГА� ЯЧІ_Т� ЕНДИ_� ИЗИКУ</span>
+                                        <span className="text-[10px] font-black text-yellow-900 uppercase tracking-widest italic font-mono">ГА ЯЧІ_Т ЕНДИ_РИЗИКУ</span>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        {['ПСЕНИЦЯ_ЕКСПО� Т', 'САНКЦІЇ_� Ф', 'ТИЛОВА_КО� УПЦІЯ'].map(item => (
+                                        {['ПСЕНИЦЯ_ЕКСПОРТ', 'САНКЦІЇ_ Ф', 'ТИЛОВА_КО УПЦІЯ'].map(item => (
                                             <button key={item} className="text-left py-2 px-3 hover:bg-yellow-600/5 rounded-lg text-sm text-slate-400 hover:text-yellow-400 transition-colors flex items-center justify-between group/trend uppercase font-bold italic tracking-tight">
                                                 <span>{item}</span>
                                                 <Zap size={12} className="text-amber-500 opacity-0 group-hover/trend:opacity-100 transition-opacity" />
@@ -136,7 +136,7 @@ export const SearchWidget: React.FC<SearchWidgetProps> = ({ className }) => {
                             <div className="px-6 py-4 bg-yellow-600/10 flex items-center justify-between border-t border-yellow-500/20">
                                 <div className="flex items-center gap-3">
                                     <ShieldAlert size={14} className="text-yellow-500 animate-pulse" />
-                                    <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТО� ИНГУ АКТИВОВАНА</span>
+                                    <span className="text-[9px] font-black text-yellow-500 uppercase tracking-[0.2em] italic">СИСТЕМА ШІ-МОНІТО ИНГУ АКТИВОВАНА</span>
                                 </div>
                                 <span className="text-[8px] font-mono text-yellow-900 uppercase">LATENCY: 0.1ms</span>
                             </div>

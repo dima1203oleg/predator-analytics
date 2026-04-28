@@ -261,7 +261,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
                 <h3 className="text-lg font-bold text-white">Статус Guardian (v45.2)</h3>
             </div>
             <div className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono border border-emerald-500/30">
-                � ЕЖИМ: {mode || 'AUTO'}
+                 ЕЖИМ: {mode || 'AUTO'}
             </div>
         </div>
 
@@ -276,7 +276,7 @@ const GuardianStatus = ({ mode, healing_history }: { mode: string, healing_histo
                             <div className="text-sm font-medium text-white">{h.action}</div>
                             <div className="text-xs text-slate-400">{h.timestamp}</div>
                         </div>
-                        <div className="text-xs text-emerald-400 font-bold">ВИП� АВЛЕНО</div>
+                        <div className="text-xs text-emerald-400 font-bold">ВИП АВЛЕНО</div>
                     </div>
                 ))
             ) : (
@@ -352,7 +352,7 @@ const TruthVerification = ({ data, onVerify }: { data: any, onVerify: () => void
             className="flex items-center gap-2 ml-2 px-4 py-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 text-indigo-300 text-xs font-bold transition-all hover:scale-105 active:scale-95"
           >
             <RefreshCw size={14} />
-            ПЕ� ЕВІ� ИТИ
+            ПЕ ЕВІ ИТИ
           </button>
         </div>
       </div>

@@ -94,9 +94,9 @@ describe('AdvancedChartsPremium', () => {
         )
 
         expect(screen.getByText(/АНАЛІТИЧНІ/i)).toBeInTheDocument()
-        expect(screen.getByText(/Г� АФІКИ/i)).toBeInTheDocument()
+        expect(screen.getByText(/Г АФІКИ/i)).toBeInTheDocument()
         expect(screen.getByText(/30 ДНІВ/i)).toBeInTheDocument()
-        expect(screen.getByText(/� ІК_2026/i)).toBeInTheDocument()
+        expect(screen.getByText(/ ІК_2026/i)).toBeInTheDocument()
     })
 
     test('завантажує та відображає дані на графіках', async () => {
@@ -107,8 +107,8 @@ describe('AdvancedChartsPremium', () => {
         )
 
         await waitFor(() => {
-            expect(screen.getByText(/ДИНАМІКА � ИНКОВИХ Т� ЕНДІВ/i)).toBeInTheDocument()
-            expect(screen.getByText(/� ОЗПОДІЛ КАТЕГО� ІЙ/i)).toBeInTheDocument()
+            expect(screen.getByText(/ДИНАМІКА  ИНКОВИХ Т ЕНДІВ/i)).toBeInTheDocument()
+            expect(screen.getByText(/РОЗПОДІЛ КАТЕГО ІЙ/i)).toBeInTheDocument()
             expect(screen.getAllByText(/Електроніка/i).length).toBeGreaterThan(0)
             expect(screen.getByText(/\$50M/i)).toBeInTheDocument()
         })

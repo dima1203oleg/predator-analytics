@@ -98,7 +98,7 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
     graph_paths: [
       {
         nodes: [
-          { id: 'c1', type: 'company', name: 'ТОВ "� ОМАШКА"' },
+          { id: 'c1', type: 'company', name: 'ТОВ " ОМАШКА"' },
           { id: 'p1', type: 'person', name: 'Іванов І.І.' },
           { id: 'c2', type: 'company', name: 'ПП "ФІКУС"' },
         ],
@@ -107,7 +107,7 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
       },
       {
         nodes: [
-          { id: 'c1', type: 'company', name: 'ТОВ "� ОМАШКА"' },
+          { id: 'c1', type: 'company', name: 'ТОВ " ОМАШКА"' },
           { id: 'a1', type: 'address', name: 'вул. Хрещатик 1' },
           { id: 'c3', type: 'company', name: 'ТОВ "ТЮЛЬПАН"' },
         ],
@@ -137,7 +137,7 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
               <Brain size={24} className="text-indigo-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">ПОЯСНЕННЯ � ІШЕННЯ</h2>
+              <h2 className="text-xl font-bold text-white">ПОЯСНЕННЯ  ІШЕННЯ</h2>
               <p className="text-sm text-slate-400">Explainability Layer</p>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({
               <span className="text-xs text-slate-500 font-mono">{entityId}</span>
             </div>
             <div className="text-right">
-              <span className="text-xs text-slate-500 uppercase">� ішення</span>
+              <span className="text-xs text-slate-500 uppercase"> ішення</span>
               <p className={`text-lg font-bold text-${riskColor}-400`}>{decision}</p>
             </div>
           </div>

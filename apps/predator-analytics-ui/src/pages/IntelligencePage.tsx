@@ -1,6 +1,6 @@
 /**
- * �  PREDATOR Strategic Intelligence Center | v62.7-ELITE
- * Sovereign Elite Edition — МOДУЛЬ СТ� АТЕГІЧНОЇ � ОЗВІДКИ ТА КОГНІТИВНОГО МОНІТО� ИНГУ
+ *   PREDATOR Strategic Intelligence Center | v62.7-ELITE
+ * Sovereign Elite Edition — МOДУЛЬ СТ АТЕГІЧНОЇ  ОЗВІДКИ ТА КОГНІТИВНОГО МОНІТО ИНГУ
  *
  * Центр управління AI-агентами та стратегічного аналізу.
  * © 2026 PREDATOR Analytics - Повна українізація (HR-04)
@@ -76,7 +76,7 @@ const IntelligenceNode: React.FC<{
 
              <div className="space-y-3">
                  <div className="flex justify-between items-center text-[9px] font-black text-slate-500 uppercase tracking-widest italic px-1">
-                     <span>ОБ� ОБКА...</span>
+                     <span>ОБ ОБКА...</span>
                      <span>{progress}%</span>
                  </div>
                   <div className="h-3 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
@@ -103,7 +103,7 @@ const IntelligenceNode: React.FC<{
 // ========================
 
 const IntelligencePage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'СТ� АТЕГІЯ' | 'ТАКТИКА' | 'НЕЙ� ОМЕ� ЕЖА' | 'АВТОНОМІЯ'>('СТ� АТЕГІЯ');
+    const [activeTab, setActiveTab] = useState<'СТ АТЕГІЯ' | 'ТАКТИКА' | 'НЕЙ ОМЕ ЕЖА' | 'АВТОНОМІЯ'>('СТ АТЕГІЯ');
 
     const { data: metrics } = useQuery({
         queryKey: ['system-metrics'],
@@ -143,12 +143,12 @@ const IntelligencePage: React.FC = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <h1 className="text-5xl font-black text-white tracking-widest uppercase leading-none font-display italic skew-x-[-2deg]">
-                                        СТ� АТЕГІЧНА <span className="text-red-600">� ОЗВІДКА</span>
+                                        СТ АТЕГІЧНА <span className="text-red-600">РОЗВІДКА</span>
                                     </h1>
                                     <div className="flex items-center gap-4 mt-4">
                                         <div className="h-0.5 w-12 bg-red-600/50" />
                                         <span className="text-[10px] font-mono font-black text-red-500/80 uppercase tracking-[0.5em] animate-pulse">
-                                            КОГНІТИВНЕ_ЯД� О // v62.7-ELITE
+                                            КОГНІТИВНЕ_ЯДРО // v62.7-ELITE
                                         </span>
                                     </div>
                                 </div>
@@ -156,10 +156,10 @@ const IntelligencePage: React.FC = () => {
                         }
                         stats={[
                             { label: 'АКТИВНІ АГЕНТИ', value: metrics?.active_containers ? `${metrics.active_containers}` : '1,248', color: 'rose', icon: <Cpu size={14} />, animate: true },
-                            { label: 'СТ� АТ_ОЦІНКА', value: metrics?.cpu_percent != null ? `${((100 - metrics.cpu_percent) / 100).toFixed(2)}` : '0.82', color: 'success', icon: <TrendingUp size={14} /> },
-                            { label: 'ЧАС � ЕАКЦІЇ', value: '4ms', color: 'warning', icon: <Zap size={14} />, animate: true }
+                            { label: 'СТ АТ_ОЦІНКА', value: metrics?.cpu_percent != null ? `${((100 - metrics.cpu_percent) / 100).toFixed(2)}` : '0.82', color: 'success', icon: <TrendingUp size={14} /> },
+                            { label: 'ЧАС  ЕАКЦІЇ', value: '4ms', color: 'warning', icon: <Zap size={14} />, animate: true }
                         ]}
-                        breadcrumbs={['ЯД� О', 'OSINT-КОНТУ� ', 'ЦЕНТ� _� ОЗВІДКИ']}
+                        breadcrumbs={['ЯДРО', 'OSINT-КОНТУ ', 'ЦЕНТ _ ОЗВІДКИ']}
                     />
 
                     <div className="grid grid-cols-12 gap-10">
@@ -169,7 +169,7 @@ const IntelligencePage: React.FC = () => {
 
                              {/* Strategic Tabs */}
                              <div className="flex bg-[#050505]/60 backdrop-blur-3xl p-2 rounded-[2.5rem] border border-white/5 self-start shadow-xl">
-                                {['СТ� АТЕГІЯ', 'ТАКТИКА', 'НЕЙ� ОМЕ� ЕЖА', 'АВТОНОМІЯ'].map(tab => (
+                                {['СТ АТЕГІЯ', 'ТАКТИКА', 'НЕЙ ОМЕ ЕЖА', 'АВТОНОМІЯ'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab as any)}
@@ -187,22 +187,22 @@ const IntelligencePage: React.FC = () => {
                              {activeTab !== 'АВТОНОМІЯ' ? (
                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                      <IntelligenceNode
-                                        title="СТ� АТЕГІЧНИЙ_КАПІТАЛ"
+                                        title="СТРАТЕГІЧНИЙ_КАПІТАЛ"
                                         status="АНАЛІЗ"
                                         progress={88}
                                         icon={<Globe size={24} />}
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="ROI_� ОЗВІДКИ (x6.2)"
+                                        title="ROI_ ОЗВІДКИ (x6.2)"
                                         status="МАКСИМУМ"
                                         progress={95}
                                         icon={<TrendingUp size={24} />}
                                         color="crimson"
                                      />
                                      <IntelligenceNode
-                                        title="КОНКУ� ЕНТНИЙ_ПУЛЬС"
-                                        status="К� ИТИЧНО"
+                                        title="КОНКУ ЕНТНИЙ_ПУЛЬС"
+                                        status="К ИТИЧНО"
                                         progress={92}
                                         icon={<ShieldAlert size={24} />}
                                         color="crimson"
@@ -215,14 +215,14 @@ const IntelligencePage: React.FC = () => {
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="К� ИПТО_ПОТОКИ_SWIFT"
-                                        status="МОНІТО� ИНГ"
+                                        title="К ИПТО_ПОТОКИ_SWIFT"
+                                        status="МОНІТО ИНГ"
                                         progress={68}
                                         icon={<Lock size={24} />}
                                         color="rose"
                                      />
                                      <IntelligenceNode
-                                        title="НЕЙ� О_П� ОГНОЗ_� ИНКУ"
+                                        title="НЕЙ О_П ОГНОЗ_ ИНКУ"
                                         status="НАВЧАННЯ"
                                         progress={77}
                                         icon={<Sparkles size={24} />}
@@ -253,7 +253,7 @@ const IntelligencePage: React.FC = () => {
 
                                                <div className="absolute bottom-6 left-10 right-10 flex justify-between items-end">
                                                    <div className="space-y-4">
-                                                       <h4 className="text-[9px] font-black text-red-600 uppercase tracking-[0.4em] italic leading-none">СТАБІЛЬНІСТЬ_ЯД� А</h4>
+                                                       <h4 className="text-[9px] font-black text-red-600 uppercase tracking-[0.4em] italic leading-none">СТАБІЛЬНІСТЬ_ЯД А</h4>
                                                        <div className="flex gap-1">
                                                            {[...Array(20)].map((_, i) => (
                                                                <motion.div
@@ -266,8 +266,8 @@ const IntelligencePage: React.FC = () => {
                                                        </div>
                                                    </div>
                                                    <div className="text-right space-y-2">
-                                                       <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest leading-none">НЕЙ� О_НАВАНТАЖЕННЯ: {metrics?.cpu_percent ? `${metrics.cpu_percent}%` : '42.8%'}</p>
-                                                       <p className="text-[12px] font-black text-white italic uppercase tracking-widest leading-none">ГО� ИЗОНТ: 72Г</p>
+                                                       <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest leading-none">НЕЙ О_НАВАНТАЖЕННЯ: {metrics?.cpu_percent ? `${metrics.cpu_percent}%` : '42.8%'}</p>
+                                                       <p className="text-[12px] font-black text-white italic uppercase tracking-widest leading-none">ГО ИЗОНТ: 72Г</p>
                                                    </div>
                                                </div>
                                            </div>
@@ -278,7 +278,7 @@ const IntelligencePage: React.FC = () => {
                                        <VramSentinel />
                                        <div className="bg-[#0a0a0a]/60 backdrop-blur-3xl border border-white/5 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
                                            <div className="flex items-center justify-between mb-6">
-                                               <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] italic">ГЕОП� ОСТО� ОВИЙ_СКАНЕ� </h4>
+                                               <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.4em] italic">ГЕОП ОСТО ОВИЙ_СКАНЕ </h4>
                                                <Globe size={18} className="text-red-600/40 animate-[spin_10s_linear_infinite]" />
                                            </div>
                                            <div className="aspect-video bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden">
@@ -312,27 +312,27 @@ const IntelligencePage: React.FC = () => {
                                          <Target size={24} className="text-red-600" />
                                      </div>
                                      <div>
-                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">СТ� АТЕГІЧНІ_ЦІЛІ</h4>
-                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">П� ІО� ИТЕТ_ЦІЛЕЙ_v62.7</p>
+                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">СТ АТЕГІЧНІ_ЦІЛІ</h4>
+                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">П ІО ИТЕТ_ЦІЛЕЙ_v62.7</p>
                                      </div>
                                  </div>
 
                                  <div className="space-y-6">
                                      {(etlJobs && etlJobs.length > 0 ? etlJobs.slice(0, 4).map((job: any) => ({
-                                         name: job.name?.toUpperCase() || job.id || 'НЕВІДОМИЙ_П� ОЦЕС',
-                                         status: job.status?.toUpperCase() || 'В_П� ОЦЕСІ',
+                                         name: job.name?.toUpperCase() || job.id || 'НЕВІДОМИЙ_П ОЦЕС',
+                                         status: job.status?.toUpperCase() || 'В_П ОЦЕСІ',
                                          val: job.progress || job.completion_percentage || Math.floor(Math.random() * 100),
                                          color: job.status === 'error' || job.status === 'failed' ? 'crimson' : 'rose'
                                      })) : [
-                                         { name: 'ІДЕНТИФІКАЦІЯ_КБ', status: 'В_П� ОЦЕСІ', val: 74, color: 'rose' },
-                                         { name: 'Т� ЕКІНГ_ОФШО� ІВ', status: 'К� ИТИЧНО', val: 91, color: 'crimson' },
-                                         { name: 'КА� ТУВАННЯ_ПОСТАЧАНЬ', status: 'СКАНИНГ', val: 42, color: 'rose' },
+                                         { name: 'ІДЕНТИФІКАЦІЯ_КБ', status: 'В_П ОЦЕСІ', val: 74, color: 'rose' },
+                                         { name: 'Т ЕКІНГ_ОФШО ІВ', status: 'К ИТИЧНО', val: 91, color: 'crimson' },
+                                         { name: 'КА ТУВАННЯ_ПОСТАЧАНЬ', status: 'СКАНИНГ', val: 42, color: 'rose' },
                                          { name: 'АНОМАЛІЇ_ШІ', status: 'ВИКОНАНО', val: 100, color: 'rose' }
                                      ]).map((goal: any) => (
                                          <div key={goal.name} className="p-6 bg-white/[0.02] border border-white/5 rounded-[2rem] hover:bg-white/5 transition-all group/goal">
                                              <div className="flex justify-between items-center mb-4">
                                                   <span className="text-[10px] font-black text-white uppercase tracking-widest group-hover/goal:text-red-600 transition-colors italic">{goal.name}</span>
-                                                  <Badge className={cn("text-[7px] border-none px-2 py-0.5 text-white shadow-sm", goal.status === 'К� ИТИЧНО' || goal.color === 'crimson' ? "bg-red-700" : "bg-red-600")}>
+                                                  <Badge className={cn("text-[7px] border-none px-2 py-0.5 text-white shadow-sm", goal.status === 'К ИТИЧНО' || goal.color === 'crimson' ? "bg-red-700" : "bg-red-600")}>
                                                       {goal.status}
                                                   </Badge>
                                              </div>
@@ -353,8 +353,8 @@ const IntelligencePage: React.FC = () => {
                                          <Terminal size={24} className="text-red-600" />
                                      </div>
                                      <div>
-                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ПОТІК_� ОЗВІДДАНИХ</h4>
-                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ДЕШИФ� АТО� _� ЕАЛЬНОГО_ЧАСУ</p>
+                                         <h4 className="text-[11px] font-black text-white uppercase tracking-[0.4em] italic leading-none">ПОТІК_ ОЗВІДДАНИХ</h4>
+                                         <p className="text-[8px] font-mono text-slate-600 mt-2 uppercase tracking-widest italic">ДЕШИФ АТО _ ЕАЛЬНОГО_ЧАСУ</p>
                                      </div>
                                  </div>
 
@@ -375,9 +375,9 @@ const IntelligencePage: React.FC = () => {
                                                              "text-[8px] font-mono px-2 py-0.5 rounded border uppercase",
                                                              alert.severity === 'critical' ? "text-red-500 border-red-500/20 bg-red-500/5" : "text-slate-500 border-white/5 bg-white/5"
                                                          )}>
-                                                             � ИЗИК_{alert.severity === 'critical' ? '1.0' : '0.4'}
+                                                             РИЗИК_{alert.severity === 'critical' ? '1.0' : '0.4'}
                                                          </span>
-                                                         <span className="text-[8px] font-mono text-slate-700 uppercase">ВЕ� ИФІКОВАНО_AI</span>
+                                                         <span className="text-[8px] font-mono text-slate-700 uppercase">ВЕ ИФІКОВАНО_AI</span>
                                                      </div>
                                                  </div>
                                              </div>
@@ -387,7 +387,7 @@ const IntelligencePage: React.FC = () => {
                                              <div key={i} className="flex gap-6 border-l border-white/5 pl-6 py-4 opacity-40">
                                                  <span className="text-[9px] font-mono text-slate-600 shrink-0">0{i}:24:14</span>
                                                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                                                     СИНХ� ОНІЗАЦІЯ ПОТОКУ... ВУЗОЛ_0{i+1}
+                                                     СИНХ ОНІЗАЦІЯ ПОТОКУ... ВУЗОЛ_0{i+1}
                                                  </p>
                                              </div>
                                          ))
@@ -404,14 +404,14 @@ const IntelligencePage: React.FC = () => {
                                       <PieChart size={120} className="text-[#f43f5e]/5 group-hover:text-[#f43f5e]/10 transition-colors rotate-12" />
                                   </div>
                                   <div className="relative z-10 space-y-6">
-                                      <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] italic">МАТ� ИЦЯ_ЗАГ� ОЗ</h3>
+                                      <h3 className="text-xs font-black text-white uppercase tracking-[0.4em] italic">МАТ ИЦЯ_ЗАГ ОЗ</h3>
                                       <div className="grid grid-cols-2 gap-4">
                                           <div>
                                               <p className="text-[8px] font-mono text-slate-500 uppercase">ЗОВНІШНІ</p>
                                               <p className="text-2xl font-black text-[#E11D48] italic leading-none mt-2">ВИСОКА</p>
                                           </div>
                                           <div>
-                                              <p className="text-[8px] font-mono text-slate-500 uppercase">ВНУТ� ІШНІ</p>
+                                              <p className="text-[8px] font-mono text-slate-500 uppercase">ВНУТ ІШНІ</p>
                                               <p className="text-2xl font-black text-[#f43f5e] italic leading-none mt-2">СТАБІЛЬНА</p>
                                           </div>
                                       </div>

@@ -59,14 +59,14 @@ const MOCK_MATCHES: EntityMatch[] = [
     confidence: 97,
     status: 'high',
     suggestedAction: 'merge',
-    matchedFields: ['ЄД� ПОУ', 'Назва', 'Адреса'],
+    matchedFields: ['ЄД ПОУ', 'Назва', 'Адреса'],
     primaryRecord: {
       id: 'ENT-001',
-      source: 'ЄД�  України',
-      name: 'ТОВ "ГОЛДЕН Т� ЕЙД"',
+      source: 'ЄД  України',
+      name: 'ТОВ "ГОЛДЕН Т ЕЙД"',
       type: 'company',
       identifiers: [
-        { key: 'ЄД� ПОУ', value: '44891234' },
+        { key: 'ЄД ПОУ', value: '44891234' },
         { key: 'МФО', value: '320478' },
       ],
       lastSeen: '2025-04-20',
@@ -74,10 +74,10 @@ const MOCK_MATCHES: EntityMatch[] = [
     duplicateRecord: {
       id: 'ENT-002',
       source: 'Митні декларації',
-      name: 'ТОВ ГОЛДЕН Т� ЕЙД',
+      name: 'ТОВ ГОЛДЕН Т ЕЙД',
       type: 'company',
       identifiers: [
-        { key: 'ЄД� ПОУ', value: '44891234' },
+        { key: 'ЄД ПОУ', value: '44891234' },
         { key: 'Декларант', value: 'UA80E0' },
       ],
       lastSeen: '2025-04-18',
@@ -103,7 +103,7 @@ const MOCK_MATCHES: EntityMatch[] = [
     duplicateRecord: {
       id: 'ENT-004',
       source: 'ОСМД-база',
-      name: 'Марченко � оман Григорович',
+      name: 'Марченко  оман Григорович',
       type: 'person',
       identifiers: [
         { key: 'ІПН', value: '2834891234' },
@@ -120,11 +120,11 @@ const MOCK_MATCHES: EntityMatch[] = [
     matchedFields: ['Адреса', 'Телефон'],
     primaryRecord: {
       id: 'ENT-005',
-      source: 'ЄД�  України',
-      name: 'АГ� О-П� АЙМ ТОВ',
+      source: 'ЄД  України',
+      name: 'АГ О-П АЙМ ТОВ',
       type: 'company',
       identifiers: [
-        { key: 'ЄД� ПОУ', value: '38012345' },
+        { key: 'ЄД ПОУ', value: '38012345' },
         { key: 'Директор', value: 'Петренко М.О.' },
       ],
       lastSeen: '2025-03-15',
@@ -132,10 +132,10 @@ const MOCK_MATCHES: EntityMatch[] = [
     duplicateRecord: {
       id: 'ENT-006',
       source: 'Судовий реєстр',
-      name: 'ТОВ АГ� ОП� АЙМ',
+      name: 'ТОВ АГ ОП АЙМ',
       type: 'company',
       identifiers: [
-        { key: 'ЄД� ПОУ', value: '38012345' },
+        { key: 'ЄД ПОУ', value: '38012345' },
         { key: 'Позивач', value: 'АП-2024-1234' },
       ],
       lastSeen: '2024-11-20',

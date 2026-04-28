@@ -124,7 +124,7 @@ export default function InfraView() {
               <div className="h-10 w-px bg-white/5" />
 
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">� ЕЖИМ АВТОМАТИЗАЦІЇ</span>
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1"> ЕЖИМ АВТОМАТИЗАЦІЇ</span>
                 <div 
                   onClick={() => setIsFullyAutomated(!isFullyAutomated)}
                   className={cn(
@@ -136,7 +136,7 @@ export default function InfraView() {
                 >
                   <Bot className={cn("w-4 h-4", isFullyAutomated && "animate-pulse text-rose-500")} />
                   <span className="text-[10px] font-black uppercase tracking-widest">
-                    {isFullyAutomated ? "ПОВНИЙ АВТОПІЛОТ" : "ВТ� УЧАННЯ ОПЕ� АТО� А"}
+                    {isFullyAutomated ? "ПОВНИЙ АВТОПІЛОТ" : "ВТ УЧАННЯ ОПЕ АТО А"}
                   </span>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function InfraView() {
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-black text-white flex items-center gap-3 uppercase tracking-tighter">
                       <Layers className="text-rose-600 w-6 h-6" /> 
-                      МОНІТО� ИНГ АПА� АТНИХ ВУЗЛІВ
+                      МОНІТО ИНГ АПА АТНИХ ВУЗЛІВ
                     </h2>
                     <span className="text-[10px] text-slate-600 font-mono uppercase font-black">3 СИСТЕМИ ВИЯВЛЕНО</span>
                   </div>
@@ -221,7 +221,7 @@ export default function InfraView() {
                   <div className="lg:col-span-2 space-y-6">
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-black text-white mb-2 flex items-center gap-2 uppercase tracking-tight">
-                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА � ЕСУ� СІВ (24г)
+                        <Activity className="w-5 h-5 text-rose-500" /> ДИНАМІКА  ЕСУ СІВ (24г)
                       </h3>
                       <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest mb-4">Моніторинг CPU та RAM у часі</p>
                       <ResourceDynamicsChart />
@@ -240,7 +240,7 @@ export default function InfraView() {
 
                     <div className="bg-black/40 border border-white/5 rounded-xl p-6 backdrop-blur-sm">
                       <h3 className="text-lg font-black text-white mb-4 flex items-center gap-2 uppercase tracking-tight">
-                        <DatabaseIcon className="w-5 h-5 text-rose-500" /> � ОЗПОДІЛ СХОВИЩА
+                        <DatabaseIcon className="w-5 h-5 text-rose-500" /> РОЗПОДІЛ СХОВИЩА
                       </h3>
                       <StorageChart />
                     </div>

@@ -52,7 +52,7 @@ interface RiskLevelInfo {
 // ========================
 
 const RISK_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; glow: string }> = {
-    critical: { label: 'К ИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]' },
+    critical: { label: 'КРИТИЧНИЙ',   color: '#E11D48', bg: 'bg-rose-950/20',    border: 'border-rose-500/40',    glow: 'shadow-[0_0_40px_rgba(225,29,72,0.3)]' },
     high:     { label: 'ВИСОКИЙ',     color: '#9F1239', bg: 'bg-rose-950/20', border: 'border-rose-700/40',   glow: 'shadow-[0_0_30px_rgba(159,18,57,0.2)]' },
     medium:   { label: 'СЕРЕДНІЙ',    color: '#E11D48', bg: 'bg-rose-900/20',   border: 'border-rose-500/40',   glow: 'shadow-[0_0_30px_rgba(225,29,72,0.2)]' },
     low:      { label: 'НИЗЬКИЙ',     color: '#71717a', bg: 'bg-zinc-900/20',     border: 'border-zinc-500/40',     glow: 'shadow-none' },
@@ -186,7 +186,7 @@ const ScanningHUD: React.FC<{ vramStatus: 'nominal' | 'warning' | 'critical' }> 
 
             <div className="absolute bottom-24 left-10 flex flex-col gap-1 font-mono text-[8px] text-rose-500/40 italic">
                 <span className={cn("uppercase tracking-[0.3em] font-black", vramStatus === 'critical' ? 'text-rose-500 animate-pulse' : '')}>
-                    {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯД О_ТЕМП: 42°C'}
+                    {vramStatus === 'critical' ? 'CUDA_GUARD: ОБМЕЖЕННЯ_АКТИВНЕ' : 'ЯДРО_ТЕМП: 42°C'}
                 </span>
                 <span className="uppercase tracking-[0.3em] font-black">НАВАНТАЖЕННЯ: {Math.floor(Math.random() * 100)}%</span>
                 <span className="uppercase tracking-[0.3em] font-black">ЦІЛІСНІСТЬ_КЛАСТЕ А: 99.8%</span>
@@ -577,9 +577,9 @@ const AMLScoringView: React.FC = () => {
                         { label: 'CLASSIFIED_T1_ACCESS', color: 'primary', icon: <Lock size={10} /> },
                     ]}
                     stats={[
-                        { label: 'ФАКТО ІВ_ ИЗИКУ',  value: '10',      icon: <AlertTriangle />, color: 'danger'  },
+                        { label: 'ФАКТО ІВ_РИЗИКУ',  value: '10',      icon: <AlertTriangle />, color: 'danger'  },
                         { 
-                            label: isOffline ? 'ДЗЕ КАЛЬНЕ_ВІДНОВЛЕННЯ' : 'ДЖЕ ЕЛО_ВУЗЛА', 
+                            label: isOffline ? 'ДЗЕ КАЛЬНЕ_ВІДНОВЛЕННЯ' : 'ДЖЕРЕЛО_ВУЗЛА', 
                             value: isOffline ? `${Math.floor(healingProgress)}%` : (activeFailover ? 'NVIDIA_ZROK' : 'NVIDIA_PROD'), 
                             icon: isOffline ? <Activity /> : <Cpu />, 
                             color: isOffline ? 'danger' : 'rose',
@@ -600,7 +600,7 @@ const AMLScoringView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* ===  ежими WRAITH === */}
+                {/* === режими WRAITH === */}
                 <div className="z-10 flex gap-6">
                     {[
                         { id: false, label: 'ОДИНОЧНИЙ_АНАЛІЗ_WRAITH',    icon: <Target size={18} /> },
@@ -724,7 +724,7 @@ const AMLScoringView: React.FC = () => {
                                     className="py-12 border-4 border-dashed border-white/5 rounded-[2.5rem] text-slate-700 hover:border-rose-500/40 hover:text-rose-500 transition-all flex flex-col items-center gap-6 bg-black/40 group shadow-inner"
                                 >
                                     <Upload size={40} className="group-hover:scale-110 transition-transform opacity-40 group-hover:opacity-100" />
-                                    <span className="text-[11px] font-black uppercase tracking-[0.4em] italic">ІМПО Т_ЦІЛЬОВОГО_CSV</span>
+                                    <span className="text-[11px] font-black uppercase tracking-[0.4em] italic">ІМПОРТ_ЦІЛЬОВОГО_CSV</span>
                                 </button>
                                 <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
 

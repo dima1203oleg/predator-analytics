@@ -71,7 +71,7 @@ export const ResourceDynamicsChart: React.FC = () => {
                     <Area 
                         type="monotone" 
                         dataKey="cpu" 
-                        name="П� ОЦЕСО� "
+                        name="П ОЦЕСО "
                         stroke="#E11D48" 
                         strokeWidth={2}
                         fillOpacity={1} 

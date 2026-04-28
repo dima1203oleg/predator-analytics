@@ -166,9 +166,9 @@ export const GraphView = () => {
 
       <div className="relative z-10 flex flex-col p-6 min-h-screen">
         <ViewHeader
-          title="Г� АФ ЗНАНЬ (NEURAL MATRIX)"
+          title="Г АФ ЗНАНЬ (NEURAL MATRIX)"
           icon={<Network size={24} className="text-cyan-400 neon-text-cyan" />}
-          breadcrumbs={['� ОЗВІДКА', 'ВІЗУАЛІЗАЦІЯ', 'Г� АФ']}
+          breadcrumbs={['РОЗВІДКА', 'ВІЗУАЛІЗАЦІЯ', 'Г АФ']}
           stats={[
             { label: 'Вузлів', value: stats.nodes.toLocaleString(), color: 'primary' },
             { label: 'Зв\'язків', value: stats.edges.toLocaleString(), color: 'success' },
@@ -233,7 +233,7 @@ export const GraphView = () => {
         <div className="flex-1 mt-6 relative">
           <TacticalCard
             variant="holographic"
-            title="ІНТЕ� АКТИВНА НЕЙ� ОННА МОДЕЛЬ"
+            title="ІНТЕ АКТИВНА НЕЙ ОННА МОДЕЛЬ"
             className="border-white/5 bg-slate-950/40 backdrop-blur-xl hud-frame h-full min-h-[600px] flex flex-col"
             noPadding
           >
@@ -256,7 +256,7 @@ export const GraphView = () => {
                 <div className="flex flex-col items-center gap-4">
                   <div className="glow-orb" />
                   <span className="text-cyan-400 font-mono text-sm animate-pulse tracking-widest">
-                    ЗАВАНТАЖЕННЯ НЕЙ� ОННИХ ЗВ'ЯЗКІВ...
+                    ЗАВАНТАЖЕННЯ НЕЙ ОННИХ ЗВ'ЯЗКІВ...
                   </span>
                 </div>
               </div>
@@ -264,7 +264,7 @@ export const GraphView = () => {
                <div className="flex-1 flex items-center justify-center relative overflow-hidden">
                   <div className="text-center z-10">
                       <Database className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-                      <h3 className="text-xl font-bold text-slate-500">Г� АФ ПО� ОЖНІЙ</h3>
+                      <h3 className="text-xl font-bold text-slate-500">Г АФ ПО ОЖНІЙ</h3>
                       <p className="text-xs text-slate-600 mt-2 max-w-md mx-auto">
                           База знань не містить об'єктів. Запустіть Ingestion процес або додайте документи.
                       </p>
@@ -314,7 +314,7 @@ export const GraphView = () => {
                 {/* Interactive Hint */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
                   <span className="text-[10px] text-cyan-400 uppercase tracking-widest font-mono bg-cyan-950/80 px-6 py-2.5 rounded-full border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                    ✨ ІНТЕ� АКТИВНИЙ � ЕЖИМ (КЛІКНІТЬ ДЛЯ ДЕТАЛЕЙ)
+                    ✨ ІНТЕ АКТИВНИЙ  ЕЖИМ (КЛІКНІТЬ ДЛЯ ДЕТАЛЕЙ)
                   </span>
                 </div>
               </div>

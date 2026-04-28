@@ -39,10 +39,10 @@ export const GlobalSearchTab: React.FC = () => {
             console.error('Search failed:', err);
             // Fallback mock
             setResults([
-                { id: '1', title: 'ТОВ "ЗАВОД ОМЕГА-ТИТАН"', type: 'COMPANY', risk: 94, info: 'Виявлено зв\'язки з підсанкційними холдингами � Ф (ВТБ)', date: '2026-04-12', severity: 'CRITICAL' },
+                { id: '1', title: 'ТОВ "ЗАВОД ОМЕГА-ТИТАН"', type: 'COMPANY', risk: 94, info: 'Виявлено зв\'язки з підсанкційними холдингами  Ф (ВТБ)', date: '2026-04-12', severity: 'CRITICAL' },
                 { id: '2', title: 'Декларація UA-4001/01/26', type: 'DECLARATION', risk: 62, info: 'Аномальна митна вартість для групи HS-72 (Залізо)', date: '2026-04-11', severity: 'HIGH' },
-                { id: '3', title: 'Олексій � езніков (Archive)', type: 'PERSON', risk: 28, info: 'Зв\'язок через 3 структури з постачаннями БПЛА', date: '2026-04-01', severity: 'LOW' },
-                { id: '4', title: 'Хустський Логістичний Хаб', type: 'LOCATION', risk: 55, info: '� аптова зміна власника на кіпрський офшор', date: '2026-03-29', severity: 'MEDIUM' },
+                { id: '3', title: 'Олексій  езніков (Archive)', type: 'PERSON', risk: 28, info: 'Зв\'язок через 3 структури з постачаннями БПЛА', date: '2026-04-01', severity: 'LOW' },
+                { id: '4', title: 'Хустський Логістичний Хаб', type: 'LOCATION', risk: 55, info: ' аптова зміна власника на кіпрський офшор', date: '2026-03-29', severity: 'MEDIUM' },
             ]);
         } finally {
             setTimeout(() => setIsSearching(false), 800);
@@ -95,7 +95,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 ГЛОБАЛЬНИЙ <span className="text-red-500 underline decoration-red-600/20 decoration-8 italic uppercase">ПОШУК</span>
                             </h1>
                             <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] italic opacity-80 leading-none">
-                                СЕМАНТИЧНИЙ АНАЛІЗ ЦІЛОГО КОНТУ� У СИСТЕМИ
+                                СЕМАНТИЧНИЙ АНАЛІЗ ЦІЛОГО КОНТУ У СИСТЕМИ
                             </p>
                         </div>
                     </div>
@@ -103,7 +103,7 @@ export const GlobalSearchTab: React.FC = () => {
                 stats={[
                     { label: 'ІНДЕКСОВАНО_ОБ\'ЄКТІВ', value: '14.8M', icon: <Database size={14} />, color: 'primary' },
                     { label: 'ШВИДКІСТЬ_ПОШУКУ', value: '42ms', icon: <Zap size={14} />, color: 'success' },
-                    { label: 'ВІДК� ИТІ_ЗВ\'ЯЗКИ', value: '1.2B+', icon: <Activity size={14} />, color: 'warning' }
+                    { label: 'ВІДК ИТІ_ЗВ\'ЯЗКИ', value: '1.2B+', icon: <Activity size={14} />, color: 'warning' }
                 ]}
             />
 
@@ -122,7 +122,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 </div>
                                 <input 
                                     type="text" 
-                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕ� СОНУ ДЛЯ ГЛИБИННОГО АНАЛІЗУ..."
+                                    placeholder="ВВЕДІТЬ НАЗВУ, UEID АБО ПЕ СОНУ ДЛЯ ГЛИБИННОГО АНАЛІЗУ..."
                                     className="flex-1 bg-transparent border-none text-4xl font-black text-white italic tracking-tighter placeholder:text-red-950/20 focus:outline-none focus:ring-0 leading-none uppercase"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
@@ -203,7 +203,7 @@ export const GlobalSearchTab: React.FC = () => {
                                                       </div>
                                                    </div>
                                                    {res.severity === 'CRITICAL' && (
-                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-xl tracking-tighter">К� ИТИЧНО</span>
+                                                      <span className="bg-red-600 text-white text-[9px] font-black px-4 py-1.5 rounded-full animate-pulse shadow-xl tracking-tighter">К ИТИЧНО</span>
                                                    )}
                                                 </div>
 
@@ -238,9 +238,9 @@ export const GlobalSearchTab: React.FC = () => {
                             <div className="flex flex-col items-center justify-center py-32 text-center gap-10 border-2 border-dashed border-white/5 rounded-[4rem]">
                                 <Ghost size={120} className="text-red-950/10 animate-pulse" />
                                 <div className="space-y-4">
-                                   <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГО� ИЗОНТ ПОДІЙ ПО� ОЖНІЙ</p>
+                                   <p className="text-4xl font-black text-red-950/20 uppercase tracking-[0.5em] italic leading-tight">ГО ИЗОНТ ПОДІЙ ПО ОЖНІЙ</p>
                                    <p className="text-[11px] text-red-950/10 font-bold uppercase tracking-[0.3em] italic max-w-lg mx-auto leading-relaxed">
-                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПА� АМЕТ� И ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУ� І.
+                                      СИСТЕМА ГОТОВА ДО СКАНУВАННЯ. ВВЕДІТЬ ПА АМЕТ И ЦІЛІ ДЛЯ ПОШУКУ В ГЛОБАЛЬНОМУ ОСІНТ-КОНТУ І.
                                    </p>
                                 </div>
                             </div>
@@ -261,7 +261,7 @@ export const GlobalSearchTab: React.FC = () => {
                             onClick={() => setSelectedEntity(null)}
                             className="flex items-center gap-4 text-slate-500 hover:text-red-500 transition-all font-black uppercase text-xs italic tracking-widest p-4 bg-black border border-white/5 rounded-2xl group"
                         >
-                            <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" /> ПОВЕ� НУТИСЬ ДО ПОШУКУ
+                            <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" /> ПОВЕ НУТИСЬ ДО ПОШУКУ
                         </button>
 
                         <div className="grid grid-cols-12 gap-10">
@@ -284,7 +284,7 @@ export const GlobalSearchTab: React.FC = () => {
                                 <div className="p-10 bg-black/80 rounded-[3rem] border border-red-600/20 text-center min-w-[240px]">
                                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic mb-2 leading-none">CERS_THREAT_LVL</p>
                                     <p className={cn("text-6xl font-black italic tracking-tighter font-mono", selectedEntity.risk > 70 ? 'text-red-500' : 'text-emerald-500')}>{selectedEntity.risk}%</p>
-                                    <p className="text-[9px] font-black text-slate-500 uppercase italic mt-2">КАТЕГО� ІЯ: К� ИТИЧНО</p>
+                                    <p className="text-[9px] font-black text-slate-500 uppercase italic mt-2">КАТЕГО ІЯ: К ИТИЧНО</p>
                                 </div>
                             </TacticalCard>
 
@@ -292,7 +292,7 @@ export const GlobalSearchTab: React.FC = () => {
                             <div className="col-span-12 lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <TacticalCard variant="cyber" className="p-10 rounded-[3rem] space-y-8">
                                     <h3 className="text-xs font-black text-red-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6">
-                                        <Info size={18} /> КЛЮЧОВІ_� ЕКВІЗИТИ
+                                        <Info size={18} /> КЛЮЧОВІ_ ЕКВІЗИТИ
                                     </h3>
                                     <div className="space-y-6">
                                         {[
@@ -314,7 +314,7 @@ export const GlobalSearchTab: React.FC = () => {
 
                                 <TacticalCard variant="cyber" className="p-10 rounded-[3rem] space-y-8 h-full bg-red-950/5 border-red-900/20">
                                     <h3 className="text-xs font-black text-amber-500 uppercase tracking-[0.4em] italic flex items-center gap-4 border-b border-white/5 pb-6">
-                                        <ShieldAlert size={18} /> САНКЦІЙНІ_АЛЕ� ТИ
+                                        <ShieldAlert size={18} /> САНКЦІЙНІ_АЛЕ ТИ
                                     </h3>
                                     {selectedEntity.full_details.sanctions.length > 0 ? (
                                         <div className="space-y-4">
@@ -325,7 +325,7 @@ export const GlobalSearchTab: React.FC = () => {
                                                 </div>
                                             ))}
                                             <button className="w-full py-6 mt-4 bg-red-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] italic hover:bg-red-600 shadow-3xl transition-all flex items-center justify-center gap-4">
-                                                <Skull size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_СКО� ИНГ
+                                                <Skull size={20} /> ЗАПУСТИТИ_ГЛИБИННИЙ_СКО ИНГ
                                             </button>
                                         </div>
                                     ) : (
