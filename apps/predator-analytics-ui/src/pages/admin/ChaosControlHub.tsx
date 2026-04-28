@@ -17,7 +17,10 @@ import {
   RefreshCw,
   Box,
   Layers,
-  ChevronRight
+  ChevronRight,
+  Cloud,
+  Link,
+  Database
 } from 'lucide-react';
 import { useSystemStatus } from '@/hooks/useAdminApi';
 import { cn } from '@/lib/utils';
@@ -197,6 +200,36 @@ const ChaosControlHub: React.FC = () => {
             </motion.div>
           );
         })}
+      </div>
+
+      {/* Cloud Infrastructure Sync (Colab & zrok) */}
+      <div className="relative z-10 p-12 glass-wraith border-2 border-sky-500/30 rounded-[4rem] shadow-4xl overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-500/5 to-transparent pointer-events-none" />
+        <div className="flex flex-col lg:flex-row gap-12 justify-between items-start lg:items-center">
+          <div className="flex items-center gap-10">
+            <div className="p-8 bg-sky-500/10 rounded-[2.5rem] border-2 border-sky-500/40 text-sky-500 shadow-sky-500/20">
+              <Cloud size={48} className="animate-pulse" />
+            </div>
+            <div>
+              <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter glint-elite">Cloud Hybrid Sync</h3>
+              <p className="text-[12px] text-sky-400/60 font-black uppercase tracking-[0.4em] mt-3 italic">Управління вузлом Google Colab & zrok Tunnels</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-6">
+            <div className="px-8 py-5 glass-wraith border-2 border-emerald-500/20 rounded-2xl flex items-center gap-4">
+              <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-[11px] font-black text-emerald-500 uppercase tracking-widest italic">IMAC_COMPUTE: ONLINE</span>
+            </div>
+            <div className="px-8 py-5 glass-wraith border-2 border-sky-500/20 rounded-2xl flex items-center gap-4">
+              <div className="w-3 h-3 rounded-full bg-sky-500 animate-pulse" />
+              <span className="text-[11px] font-black text-sky-500 uppercase tracking-widest italic">COLAB_HYBRID: STANDBY</span>
+            </div>
+            <button className="px-10 py-5 bg-sky-600 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-sky-500 transition-all shadow-xl italic flex items-center gap-3">
+              <Link size={16} /> З'єднати з Colab
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Metrics & Analytics */}

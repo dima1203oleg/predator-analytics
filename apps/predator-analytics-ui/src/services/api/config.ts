@@ -20,6 +20,23 @@ export const NODE_IDS = {
     MOCK:      'mock',      // Sandbox
 } as const;
 
+// Визначення базового URL API з урахуванням Cloud/Hybrid режимів
+const getBaseUrl = () => {
+  if (typeof window === 'undefined') return 'http://194.177.1.240:8000/api/v1';
+  const host = window.location.hostname;
+  
+  // Автовизначення Google Colab / zrok тунелю
+  if (host.includes('zrok.io')) {
+    return `https://${host.replace('ui', 'api')}/api/v1`;
+  }
+  
+  if ((import.meta as any).env?.VITE_API_URL) {
+    return (import.meta as any).env.VITE_API_URL;
+  }
+  
+  return 'http://194.177.1.240:8000/api/v1';
+};
+
 const NODE_URLS: Record<string, string> = {
     [NODE_IDS.LOCAL]:     'http://localhost:8000/api/v1',
     [NODE_IDS.SOVEREIGN]: 'http://192.168.0.199:8000/api/v1',
